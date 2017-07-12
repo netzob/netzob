@@ -51,7 +51,7 @@ class Generator(metaclass=abc.ABCMeta):
     """Generates values. Abstract class.
     """
 
-    def __init__(self, values):
+    def __init__(self, values=None):
         self._values = values
         self._seed = 0
 
@@ -69,9 +69,9 @@ class Generator(metaclass=abc.ABCMeta):
         This is the method to get a new value.
         """
 
-    @abc.abstractmethod
     @typeCheck(int)
     def updateSeed(self, seedValue):
         """
         Update the seed value and forward value to all nested mutators.
         """
+        self._seed = seedValue
