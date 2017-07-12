@@ -186,7 +186,7 @@ class AltMutator(DomainMutator):
         # Call parent init
         super().__init__(domain, **kwargs)
 
-        # Configure internal mutator to determine the alternative position to select at each call to generate()
+        # Internal structure used to determine the position to select at each call to generate()
         domain_interval = Data(uint16le(interval=(0, len(domain.children))))
         self._positionMutator = PseudoRandomIntegerMutator(domain=domain_interval)
         self._currentDepth = 0

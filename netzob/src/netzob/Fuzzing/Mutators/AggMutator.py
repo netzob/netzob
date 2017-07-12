@@ -175,7 +175,7 @@ class AggMutator(DomainMutator):
     def generate(self):
         """This is the fuzz generation method of the aggregate field.
 
-        It :attr:`mutateChild` is True, the fuzzing is applied on
+        If :attr:`mutateChild` is True, the fuzzing is applied on
         the children.
 
         :return: None

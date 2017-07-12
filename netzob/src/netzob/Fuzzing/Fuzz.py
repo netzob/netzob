@@ -278,10 +278,7 @@ class Fuzz(object):
         if isinstance(key, type):
             # kwargs are useless here
             for t in self.mappingTypesMutators:
-                if type(key) == t:
-                    self.mappingTypesMutators[t] = value
-                    break
-                elif issubclass(key, t):  # For cases where partial() is used (e.g. on Integer types)
+                if issubclass(key, t):  # For cases where partial() is used (e.g. on Integer types)
                     self.mappingTypesMutators[t] = value
                     break
             else:
