@@ -479,6 +479,7 @@ class WiresharkDissector(object):
                     buf << "idx = idx + remaining_len"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         # Register dissector function to specific filter criterion
         filter_ = WiresharkFilterFactory.getFilter(sym)
@@ -491,6 +492,8 @@ class WiresharkDissector(object):
         """.format(*expr, type=luatype, **ctx)
 
 >>>>>>> ae8a03b... Added new Wireshark Dissector module. It was ported from version 0.4.2
+=======
+>>>>>>> 0b0b8a9... Removed redundant code from implementation
         return buf.getvalue()
 
 
