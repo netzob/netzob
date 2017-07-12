@@ -478,16 +478,6 @@ class WiresharkDissector(object):
                         .format(data_rep=data_rep)
                     buf << "idx = idx + remaining_len"
 
-        # Register dissector function to specific filter criterion
-        filter_ = WiresharkFilterFactory.getFilter(sym)
-        luatype = self.__getLuaTableType(filter_.pytype)
-        for expr in filter_.getExpressions():
-            buf << """if not pcall(DissectorTable.get, "{0}") then
-          DissectorTable.new("{0}", "Netzob-generated table", {type})
-        end
-        DissectorTable.get("{0}"):add({1}, {class_var})
-        """.format(*expr, type=luatype, **ctx)
-
         return buf.getvalue()
 
 
