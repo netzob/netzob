@@ -51,6 +51,7 @@ from netzob.Inference.Vocabulary.FormatOperations import ClusterByAlignment
 from netzob.Inference.Vocabulary.FormatOperations import ClusterBySize
 from netzob.Inference.Vocabulary.FormatOperations import FindKeyFields
 from netzob.Common.Utils import SortedTypedList
+from netzob.Common.Utils import MessageCells
 
 from netzob.Inference.Vocabulary.Search import SearchTask
 from netzob.Inference.Vocabulary.Search import SearchResult
@@ -125,6 +126,7 @@ def getSuite():
         Format.__module__,
         Session.__module__,
         SortedTypedList,
+        MessageCells,
         ApplicativeData.__module__,
         DomainEncodingFunction.__module__,
         TypeEncodingFunction.__module__,
