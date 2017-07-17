@@ -55,8 +55,8 @@ class MessageCells(OrderedDict):
     >>> m[1] = "a"
     >>> m[2] = "b"
     >>> m[1] = m[2]
-    >>> m.items()
-    odict_items([(1, 'b'), (2, 'b')])
+    >>> list(m.items())
+    [(1, 'b'), (2, 'b')]
     >>> m.headers = ["h1", "h2"]
     >>> m.headers
     ['h1', 'h2']
