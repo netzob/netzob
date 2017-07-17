@@ -54,6 +54,7 @@ from netzob.Model.Vocabulary.Functions.VisualizationFunction import Visualizatio
 from netzob.Model.Vocabulary.Functions.TransformationFunction import TransformationFunction
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Common.Utils.SortedTypedList import SortedTypedList
+from netzob.Common.Utils.MessageCells import MessageCells
 
 
 class InvalidVariableException(Exception):
@@ -380,6 +381,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         netzob, what's up in Berlin ? [b'netzob', b", what's up in ", b'Berlin', b' ?']
         zoby, what's up in Paris ? [b'zoby', b", what's up in ", b'Paris', b' ?']
         zoby, what's up in Berlin ? [b'zoby', b", what's up in ", b'Berlin', b' ?']
+        >>> messageCells.headers
+        ['pseudo', 'whatsup', 'city', 'end']
 
         :keyword encoded: if set to true, values are encoded
         :type encoded: :class:`bool`
@@ -394,12 +397,11 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         if styled is None:
             raise TypeError("Styled cannot be None")
 
-        result = OrderedDict()
         fieldCells = self.getCells(encoded=encoded, styled=styled)
-
+        result = MessageCells()
+        result.headers = fieldCells.headers
         for iMessage, message in enumerate(self.messages):
             result[message] = fieldCells[iMessage]
-
         return result
 
     @typeCheck(bool, bool)
