@@ -36,8 +36,8 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-from netzob.Fuzzing.Fuzz import Fuzz
-from netzob.Fuzzing.Mutator import Mutator
-from netzob.Fuzzing.Mutators.all import *
-from netzob.Fuzzing.Generator import Generator
-from netzob.Fuzzing.Generators.all import *
+from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
+from netzob.Fuzzing.Generators.PseudoRandomIntegerGenerator import PseudoRandomIntegerGenerator, repeatfunc
+from netzob.Fuzzing.Generators.StringPaddedGenerator import StringPaddedGenerator
+
+

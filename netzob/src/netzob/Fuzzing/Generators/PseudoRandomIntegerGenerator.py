@@ -58,7 +58,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 class PRNGFactory(object):
     """
     the :class:`PRNGFactory` is a factory that creates specific instances of
-    :class:`PseudoRandomIntegerMutator`.
+    :class:`PseudoRandomIntegerGenerator`.
     """
 
     @staticmethod
@@ -115,9 +115,11 @@ class PseudoRandomIntegerGenerator(Generator):
     """Generates integer values pseudo-randomly.
 
     >>> from netzob.all import *
-    >>> seed = 1234
-    >>> genObject = StringGenerator(seed)
-    >>> result = genObject.getNewValue()
+    >>> prng = PseudoRandomIntegerGenerator(seed=1342)
+    >>> prng.getNewValue(interval=(-3, 4))
+    1
+    >>> prng.getNewValue(interval=(-3, 4))
+    -2
     """
 
     # Types of PRNG in RandomState module
