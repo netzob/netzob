@@ -51,29 +51,31 @@ class MessageCells(OrderedDict):
     This data structure overwrites the notion of OrderedDict to support additionnal attributes
     such as 'headers'. This data structure has been created for the `AbstractField.getMessageCells` method
 
+    >>> from netzob.all import *
     >>> m = MessageCells()
     >>> m[1] = "a"
     >>> m[2] = "b"
     >>> m[1] = m[2]
     >>> list(m.items())
     [(1, 'b'), (2, 'b')]
-    >>> m.headers = ["h1", "h2"]
-    >>> m.headers
-    ['h1', 'h2']
+    >>> m.fields = [Field(name="f1"), Field(name="f2")]
+    >>> [f.name for f in m.fields]
+    ['f1', 'f2']
 
     """
 
     def __init__(self):
         super().__init__()
-        self.headers = []
+        self.fields = []
 
     @property
-    def headers(self):
-        """A list of sorted strings. Each string will be displayed as a column header"""
-        return self.__headers
+    def fields(self):
+        """Fields that participate in the message cells columns"""
+        return self.__fields
 
-    @headers.setter
-    def headers(self, headers):
-        self.__headers = []
-        for h in headers:
-            self.__headers.append(str(h))
+    @fields.setter
+    def fields(self, fields):
+        self.__fields = []
+        for f in fields:
+            self.__fields.append(f)
+            

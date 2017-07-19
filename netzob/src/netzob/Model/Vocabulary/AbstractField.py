@@ -381,7 +381,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         netzob, what's up in Berlin ? [b'netzob', b", what's up in ", b'Berlin', b' ?']
         zoby, what's up in Paris ? [b'zoby', b", what's up in ", b'Paris', b' ?']
         zoby, what's up in Berlin ? [b'zoby', b", what's up in ", b'Berlin', b' ?']
-        >>> messageCells.headers
+        >>> [f.name for f in messageCells.fields]
         ['pseudo', 'whatsup', 'city', 'end']
 
         :keyword encoded: if set to true, values are encoded
@@ -399,7 +399,10 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         fieldCells = self.getCells(encoded=encoded, styled=styled)
         result = MessageCells()
-        result.headers = fieldCells.headers
+
+        leaf_fields = self.getLeafFields()
+        result.fields = leaf_fields
+        
         for iMessage, message in enumerate(self.messages):
             result[message] = fieldCells[iMessage]
         return result
