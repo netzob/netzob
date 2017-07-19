@@ -44,7 +44,7 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
-from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
+from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
@@ -189,9 +189,10 @@ class RepeatMutator(DomainMutator):
         self.mappingTypesMutators = mappingTypesMutators
 
         domain_length_repeat = Data(uint16le())
-        self._lengthMutator = DeterministIntegerMutator(
+        self._lengthMutator = IntegerMutator(
             domain=domain_length_repeat,
             interval=(self._minLength, self._maxLength),
+            generator='determinist',
             bitsize=lengthBitSize,
             **kwargs)
 

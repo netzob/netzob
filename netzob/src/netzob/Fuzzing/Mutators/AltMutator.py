@@ -45,8 +45,7 @@ from typing import Dict  # noqa: F401
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
-from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator \
-    import PseudoRandomIntegerMutator
+from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
@@ -188,7 +187,7 @@ class AltMutator(DomainMutator):
 
         # Internal structure used to determine the position to select at each call to generate()
         domain_interval = Data(uint16le(interval=(0, len(domain.children))))
-        self._positionMutator = PseudoRandomIntegerMutator(domain=domain_interval)
+        self._positionMutator = IntegerMutator(domain=domain_interval)
         self._currentDepth = 0
 
     @property
@@ -296,8 +295,8 @@ called, first")
         # Call parent generate() method
         super().generate()
 
-        self._currentDepth += 1
-        if self._currentDepth >= self._maxDepth:
-            raise RecursionException("max depth reached ({})".format(self._maxDepth))
+        # self._currentDepth += 1
+        # if self._currentDepth >= self._maxDepth:
+        #     raise RecursionException("max depth reached ({})".format(self._maxDepth))
 
         return self._positionMutator.generateInt()

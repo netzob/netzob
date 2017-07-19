@@ -46,7 +46,8 @@ from bitarray import bitarray
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
-from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
+from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+from netzob.Fuzzing.Generators.PseudoRandomGenerator import PseudoRandomGenerator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.Integer import Integer
@@ -63,10 +64,10 @@ class BitArrayMutator(DomainMutator):
     The BitArrayMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
-        used to produce the value.
-        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
-        produce the value (not used yet).
+    :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`,
+        :meth:`generate` will be used to produce the value.
+        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`,
+        :meth:`mutate` will be used to produce the value (not used yet).
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param length: The scope of sequence length to generate. If set to
         (min, max), the values will be generated between min and max.
@@ -109,7 +110,8 @@ class BitArrayMutator(DomainMutator):
         size = domain.dataType.size
         if (isinstance(size, tuple) and len(size) == 2 and
                 all(isinstance(_, int) for _ in size)):
-            # Handle desired interval according to the storage space of the domain dataType
+            # Handle desired interval according to the storage space of the
+            # domain dataType
             self._minLength = max(self._minLength, domain.dataType.size[0])
             self._maxLength = min(self._maxLength, domain.dataType.size[1])
         if self._minLength is None or self._maxLength is None:
@@ -117,12 +119,14 @@ class BitArrayMutator(DomainMutator):
             self._maxLength = self.DEFAULT_MAX_LENGTH
 
         self._sequenceLength = Field(uint16le())
-        self._lengthMutator = DeterministIntegerMutator(
+        self._lengthMutator = IntegerMutator(
             domain=self._sequenceLength.domain,
             interval=(self._minLength, self._maxLength),
+            generator='determinist',
             bitsize=lengthBitSize,
             **kwargs)
-        self._prng = Xorshift128plus(self._seed)
+        self._prng = PseudoRandomGenerator(self._seed)
+        self._prng.setInterval((0, (2**64)-1))
         self.updateSeed(self._seed)
 
     @typeCheck(int)
@@ -151,13 +155,14 @@ class BitArrayMutator(DomainMutator):
 
         lm = self._lengthMutator
         lm_dom = lm.getDomain()
-        length = int.from_bytes(lm.generate(), lm_dom.dataType.endianness.value)
+        length = int.from_bytes(lm.generate(),
+                                lm_dom.dataType.endianness.value)
 
         valueBits = bitarray()
         if length == 0:
             return valueBits
         while True:
-            valueInt = self._prng.getNew64bitsValue()
+            valueInt = self._prng.getNewValue()
             bits = TypeConverter.convert(data=valueInt,
                                          sourceType=Integer,
                                          destinationType=BitArray,

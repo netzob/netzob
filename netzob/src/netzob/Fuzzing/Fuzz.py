@@ -66,7 +66,7 @@ from netzob.Fuzzing.Mutators.AltMutator import AltMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.AggMutator import AggMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorMode  # noqa: F401
-from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Mutators.StringMutator import StringMutator
 from netzob.Fuzzing.Mutators.TimestampMutator import TimestampMutator
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
@@ -190,12 +190,12 @@ class Fuzz(object):
 
     **Fuzzing and changing the default Mutator for types**
 
-    >>> from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
     >>> fuzz = Fuzz()
     >>> f_data1 = Field(name="data1", domain=int8(2))
     >>> f_data2 = Field(name="data2", domain=int8(4))
     >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-    >>> fuzz.set(Integer, DeterministIntegerMutator)
+    >>> fuzz.set(Integer, IntegerMutator)
     >>> fuzz.set(f_data2, MutatorMode.GENERATE)
     >>> symbol.specialize(fuzz=fuzz)
     b'\x02\xfc'
@@ -224,12 +224,12 @@ class Fuzz(object):
     def initializeMappings():
         Fuzz.mappingFieldsMutators = {}
         Fuzz.mappingTypesMutators = {}
-        Fuzz.mappingTypesMutators[Integer] = PseudoRandomIntegerMutator
+        Fuzz.mappingTypesMutators[Integer] = IntegerMutator
         Fuzz.mappingTypesMutators[String] = StringMutator
-        Fuzz.mappingTypesMutators[HexaString] = PseudoRandomIntegerMutator
-        Fuzz.mappingTypesMutators[Raw] = PseudoRandomIntegerMutator
-        Fuzz.mappingTypesMutators[BitArray] = PseudoRandomIntegerMutator
-        Fuzz.mappingTypesMutators[IPv4] = PseudoRandomIntegerMutator
+        Fuzz.mappingTypesMutators[HexaString] = IntegerMutator
+        Fuzz.mappingTypesMutators[Raw] = IntegerMutator
+        Fuzz.mappingTypesMutators[BitArray] = IntegerMutator
+        Fuzz.mappingTypesMutators[IPv4] = IntegerMutator
         Fuzz.mappingTypesMutators[Timestamp] = TimestampMutator
 
     def __init__(self,

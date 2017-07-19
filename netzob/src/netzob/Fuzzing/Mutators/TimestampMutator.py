@@ -44,7 +44,7 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutators.DomainMutator import MutatorInterval
-from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
@@ -56,7 +56,7 @@ from randomstate.prng import (mt19937, mlfg_1279_861, mrg32k3a, pcg32, pcg64,
                               dsfmt)
 
 
-class TimestampMutator(PseudoRandomIntegerMutator):
+class TimestampMutator(IntegerMutator):
     r"""The Timestamp mutator, using pseudo-random generator.
 
     The TimestampMutator constructor expects some parameters:

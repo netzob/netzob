@@ -56,18 +56,19 @@ class DeterministGenerator(Generator):
     >>> result = genObject.getNewValue()
     """
 
+    NG_determinist = "determinist"
     DEFAULT_MIN_VALUE = 0
     DEFAULT_BITSIZE = 16
     DEFAULT_MAX_VALUE = 1 << DEFAULT_BITSIZE
-    DEFAULT_SIGNED = False
 
-    def __init__(self):
+    def __init__(self, seed=0):
         super().__init__(values=[])
+        self._seed = seed
         self._currentPos = 0
         self._minValue = self.DEFAULT_MIN_VALUE
         self._maxValue = self.DEFAULT_MAX_VALUE
         self._bitSize = self.DEFAULT_BITSIZE
-        self._signed = self.DEFAULT_SIGNED
+        self._signed = False
 
     def createValues(self,
                      minValue,

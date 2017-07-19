@@ -41,8 +41,7 @@ from netzob.Fuzzing.Mutators.AltMutator import AltMutator
 from netzob.Fuzzing.Mutators.AggMutator import AggMutator
 from netzob.Fuzzing.Mutators.AutomataMutator import AutomataMutator
 from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
-from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
-from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Mutators.TimestampMutator import TimestampMutator
 from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator
 from netzob.Fuzzing.Mutators.StringMutator import StringMutator

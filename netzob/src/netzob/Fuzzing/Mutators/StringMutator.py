@@ -45,7 +45,7 @@ from typing import Tuple  # noqa: F401
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
-from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
+from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Generators.StringPaddedGenerator import StringPaddedGenerator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Types.Integer import uint16le
@@ -155,9 +155,10 @@ class StringMutator(DomainMutator):
             self._naughtyStrings = naughtyStrings
 
         self._stringLength = Field(uint16le())
-        self._lengthMutator = DeterministIntegerMutator(
+        self._lengthMutator = IntegerMutator(
             domain=self._stringLength.domain,
             interval=(self._minLength, self._maxLength),
+            generator='determinist',
             bitsize=lengthBitSize,
             **kwargs)
 
