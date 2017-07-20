@@ -144,7 +144,7 @@ class MessageSpecializer(object):
         specializingPaths = [SpecializingPath(memory=self.memory)]
 
         # First, we normalize the variables
-        for field in symbol.getLeafFields():
+        for field in symbol.getLeafFields(includePseudoFields=True):
             if field.domain is not None and isinstance(field.domain, AbstractRelationVariableLeaf):
                 self._logger.debug("Normalize field targets for field '{}'".format(field.name))
                 field.domain.normalize_targets()
