@@ -91,6 +91,15 @@ class TypeEncodingFunction(EncodingFunction):
     ------- | -----
     'hello' | 1    
     ------- | -----
+    >>> f2.encodingFunctions = [TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG)]
+    >>> f2.encodingFunctions = [TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG)]
+    >>> print(s)
+    Field   | Field
+    ------- | -----
+    'hello' | 1    
+    ------- | -----
+    
+
 
     """
 
