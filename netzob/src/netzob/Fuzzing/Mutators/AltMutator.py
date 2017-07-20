@@ -124,15 +124,15 @@ class AltMutator(DomainMutator):
     True
 
 
-    **Fuzzing of an alternate of variables with non-default types/mutators mapping (DeterministIntegerMutator instead of PseudoRandomIntegerMutator for Integer)**
+    **Fuzzing of an alternate of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
 
-    >>> from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
     >>> fuzz = Fuzz()
     >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> mapping = {}
-    >>> mapping[Integer] = DeterministIntegerMutator
+    >>> mapping[Integer] = IntegerMutator, generator='determinist'
     >>> fuzz.set(f_alt, AltMutator, mappingTypesMutators=mapping)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res
@@ -198,10 +198,10 @@ class AltMutator(DomainMutator):
         alternative list.
         It enables to change the position mutator, but with the condition that
         the class object inherits
-        :class:`PseudoRandomIntegerMutator <netzob.Fuzzing.PseudoRandomIntegerMutator>`.
+        :class:`IntegerMutator <netzob.Fuzzing.IntegerMutator>`.
 
-        :rtype: :class:`PseudoRandomIntegerMutator \
-        <netzob.Fuzzing.PseudoRandomIntegerMutator>`
+        :rtype: :class:`IntegerMutator \
+        <netzob.Fuzzing.IntegerMutator>`
         """
         return self._positionMutator
 

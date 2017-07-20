@@ -103,7 +103,7 @@ class DomainMutator(Mutator):
     >>> f2 = Field(Integer())
     >>> symbol = Symbol(fields=[f1, f2])
     >>> mutators = {f1: StringMutator,
-    ...             f2: (PseudoRandomIntegerMutator, minValue=12, maxValue=20)}  # doctest: +SKIP
+    ...             f2: (IntegerMutator, minValue=12, maxValue=20)}  # doctest: +SKIP
     >>> symbol.specialize(mutators=mutators)  # doctest: +SKIP
     """
 

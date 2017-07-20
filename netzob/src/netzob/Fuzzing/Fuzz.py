@@ -99,7 +99,7 @@ class Fuzz(object):
     >>> fuzz = Fuzz()
     >>> f_data = Field(name="data", domain=int16(interval=(1, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_data])
-    >>> fuzz.set(f_data, PseudoRandomIntegerMutator, interval=(20, 32000))
+    >>> fuzz.set(f_data, IntegerMutator, interval=(20, 32000))
     >>> symbol.specialize(fuzz=fuzz)
     b'`n'
 
@@ -110,7 +110,7 @@ class Fuzz(object):
     >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
-    >>> fuzz.set(f_agg, PseudoRandomIntegerMutator, interval=(20, 32000)) # doctest: +SKIP
+    >>> fuzz.set(f_agg, IntegerMutator, interval=(20, 32000)) # doctest: +SKIP
     >>> symbol.specialize(fuzz=fuzz) # doctest: +SKIP
     b'\x02\x84\x04\xf5'
 
@@ -121,19 +121,19 @@ class Fuzz(object):
     >>> f_data = Field(name="data", domain=int16(3))
     >>> f_size = Field(name="size", domain=Size([f_data], Integer(unitSize=UnitSize.SIZE_16)))
     >>> symbol = Symbol(name="sym", fields=[f_data, f_size])
-    >>> fuzz.set(f_size, PseudoRandomIntegerMutator, interval=(20, 32000))
+    >>> fuzz.set(f_size, IntegerMutator, interval=(20, 32000))
     >>> symbol.specialize(fuzz=fuzz)
     b'\x00\x03`n'
 
 
     **Fuzzing example in mutation mode of a field that contains an integer**
 
-    >>> from netzob.Fuzzing.Mutators.PseudoRandomIntegerMutator import PseudoRandomIntegerMutator
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
     >>> from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
     >>> fuzz = Fuzz()
     >>> f_data = Field(name="data", domain=int16(2))
     >>> symbol = Symbol(name="sym", fields=[f_data])
-    >>> fuzz.set(f_data, PseudoRandomIntegerMutator, mode=MutatorMode.MUTATE, interval=(20, 32000))
+    >>> fuzz.set(f_data, IntegerMutator, mode=MutatorMode.MUTATE, interval=(20, 32000))
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res != b'\x00\x02'
     True
@@ -144,7 +144,7 @@ class Fuzz(object):
     >>> fuzz = Fuzz()
     >>> f_data = Field(name="data", domain=int16(2))
     >>> symbol = Symbol(name="sym", fields=[f_data])
-    >>> fuzz.set(f_data, PseudoRandomIntegerMutator, interval=(20, 30000))
+    >>> fuzz.set(f_data, IntegerMutator, interval=(20, 30000))
     >>> nbFuzz = 1000
     >>> result = set()
     >>> for i in range(nbFuzz):
@@ -198,7 +198,7 @@ class Fuzz(object):
     >>> fuzz.set(Integer, IntegerMutator)
     >>> fuzz.set(f_data2, MutatorMode.GENERATE)
     >>> symbol.specialize(fuzz=fuzz)
-    b'\x02\xfc'
+    b'\x02\x04'
 
 
     **Fuzzing configuration with a maximum number of mutations**

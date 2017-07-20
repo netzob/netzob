@@ -130,14 +130,14 @@ class RepeatMutator(DomainMutator):
     True
 
 
-    **Fuzzing of a repeat of variables with non-default types/mutators mapping (DeterministIntegerMutator instead of PseudoRandomIntegerMutator for Integer)**
+    **Fuzzing of a repeat of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
 
-    >>> from netzob.Fuzzing.Mutators.DeterministIntegerMutator import DeterministIntegerMutator
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
     >>> fuzz = Fuzz()
     >>> f_repeat = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_repeat])
     >>> mapping = {}
-    >>> mapping[Integer] = DeterministIntegerMutator
+    >>> mapping[Integer] = IntegerMutator, generator='determinist'
     >>> fuzz.set(f_repeat, RepeatMutator, mappingTypesMutators=mapping)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res
