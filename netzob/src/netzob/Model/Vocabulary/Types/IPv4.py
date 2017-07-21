@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness,
 
 @NetzobLogger
 class IPv4(AbstractType):
-    """This class defines an IPv4 type.
+    r"""This class defines an IPv4 type.
 
     The IPv4 type encodes a :class:`bytes` object in an IPv4
     representation, and conversely to decode an IPv4 into a raw
@@ -81,8 +81,15 @@ class IPv4(AbstractType):
     >>> ip.value
     bitarray('11000000101010000000000000001010')
 
-    >>> f1 = Field("IP=")
-    >>> f2 = Field(IPv4())
+    >>> f1 = Field("IP=", name="magic")
+    >>> f2 = Field(IPv4(), name="ip4")
+
+    >>> raw_data = ip.value.tobytes()
+    >>> AbstractField.abstract(raw_data, [f2])
+    (ip4, OrderedDict([('ip4', b'\xc0\xa8\x00\n')]))
+    >>> raw_data = f1.specialize() + raw_data
+    >>> AbstractField.abstract(raw_data, [f1, f2])  # doctest: +SKIP
+
     >>> s = Symbol(fields=[f1,f2])
     >>> msgs = [RawMessage(s.specialize()) for x in range(10)]
     >>> print(len(msgs))
@@ -193,7 +200,7 @@ class IPv4(AbstractType):
                  unitSize=AbstractType.defaultUnitSize(),
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
-        """Computes if specified data can be parsed as an IPv4 with the predefined constraints.
+        r"""Computes if specified data can be parsed as an IPv4 with the predefined constraints.
 
         >>> from netzob.all import *
         >>> ip = IPv4()
@@ -211,6 +218,8 @@ class IPv4(AbstractType):
         False
         >>> ip.canParse("0.0.0.0")
         False
+        >>> ip.canParse(b"\1\2\3\4")
+        True
 
 
         And with some constraints over the expected IPv4:
@@ -248,6 +257,8 @@ class IPv4(AbstractType):
 
         if data is None:
             raise TypeError("data cannot be None")
+        if isinstance(data, bitarray):
+            data = data.tobytes()
 
         try:
             ip = IPv4.encode(
@@ -345,7 +356,7 @@ class IPv4(AbstractType):
         :type data: str or raw bytes (BBBB)
         :return: the encoded IPAddress
         """
-        if isinstance(data, (str, int)):
+        if isinstance(data, (str, bytes, int)):
             try:
                 ip = IPAddress(data)
                 if ip is not None and ip.version == 4 and not ip.is_netmask():
