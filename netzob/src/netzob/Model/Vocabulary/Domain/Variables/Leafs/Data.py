@@ -234,7 +234,7 @@ class Data(AbstractVariableLeaf):
 
         results = []
         if len(content) >= len(expectedValue) and content[:len(
-                expectedValue)] == expectedValue:
+                expectedValue)].tobytes() == expectedValue.tobytes():
             parsingPath.addResult(self, expectedValue.copy())
             results.append(parsingPath)
             self._logger.debug("Data '{}' can be parsed with variable {}".format(content.tobytes(), self))
@@ -249,15 +249,17 @@ class Data(AbstractVariableLeaf):
             raise Exception("ParsingPath cannot be None")
 
         content = parsingPath.getDataAssignedToVariable(self)
+        actualSize = len(content)
 
         self._logger.debug("Learn '{0}' with {1}".format(content.tobytes(), self.dataType))
 
         (minSize, maxSize) = self.dataType.size
+        if minSize is None:
+            minSize = 0
         if maxSize is None:
-            maxSize = len(content)
+            maxSize = actualSize
 
-
-        if len(content) < minSize:
+        if actualSize < minSize:
             self._logger.debug(
                 "Length of the content is too short ({0}), expect data of at least {1} bits".
                 format(len(content), minSize))
