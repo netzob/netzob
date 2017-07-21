@@ -181,10 +181,7 @@ class HexaString(AbstractType):
 
         # Compare with self.value if it is defined
         if self.value is not None:
-            if self.value == data:
-                return True
-            else:
-                return False
+            return self.value == data
 
         # Else, compare with expected size
         (minBits, maxBits) = self.size

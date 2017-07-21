@@ -290,129 +290,29 @@ class Integer(AbstractType):
 
     def _normalizeInterval(self, interval, unitSize, sign):
 
-        min_interval = None
-        max_interval = None
-
         if interval is None:
             interval = (None, None)
 
         if not (isinstance(interval, tuple) and len(interval) == 2):
             raise ValueError("Input interval shoud be a tuple of two integers. Value received: '{}'".format(interval))
 
-        # Handle min and max value if None is used in interval
-        if unitSize == UnitSize.SIZE_1:
-            if interval[0] is not None and interval[0] < 0:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 1:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = 0
-            if interval[1] is None:
-                max_interval = 1
-        elif unitSize == UnitSize.SIZE_4:
-            if interval[0] is not None and interval[0] < 0:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 15:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = 0
-            if interval[1] is None:
-                max_interval = 15
-        elif unitSize == UnitSize.SIZE_8 and sign == Sign.SIGNED:
-            if interval[0] is not None and interval[0] < -128:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 127:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = -128
-            if interval[1] is None:
-                max_interval = 127
-        elif unitSize == UnitSize.SIZE_8 and sign == Sign.UNSIGNED:
-            if interval[0] is not None and interval[0] < 0:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 255:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = 0
-            if interval[1] is None:
-                max_interval = 255
-        elif unitSize == UnitSize.SIZE_16 and sign == Sign.SIGNED:
-            if interval[0] is not None and interval[0] < -32767:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 32767:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = -32768
-            if interval[1] is None:
-                max_interval = 32767
-        elif unitSize == UnitSize.SIZE_16 and sign == Sign.UNSIGNED:
-            if interval[0] is not None and interval[0] < 0:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 65535:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = 0
-            if interval[1] is None:
-                max_interval = 65535
-        elif unitSize == UnitSize.SIZE_24 and sign == Sign.SIGNED:
-            if interval[0] is not None and interval[0] < -8388608:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 8388607:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = -8388608
-            if interval[1] is None:
-                max_interval = 8388607
-        elif unitSize == UnitSize.SIZE_24 and sign == Sign.UNSIGNED:
-            if interval[0] is not None and interval[0] < 0:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 16777215:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = 0
-            if interval[1] is None:
-                max_interval = 16777215
-        elif unitSize == UnitSize.SIZE_32 and sign == Sign.SIGNED:
-            if interval[0] is not None and interval[0] < -2147483648:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 2147483647:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = -2147483648
-            if interval[1] is None:
-                max_interval = 2147483647
-        elif unitSize == UnitSize.SIZE_32 and sign == Sign.UNSIGNED:
-            if interval[0] is not None and interval[0] < 0:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 4294967295:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = 0
-            if interval[1] is None:
-                max_interval = 4294967295
-        elif unitSize == UnitSize.SIZE_64 and sign == Sign.SIGNED:
-            if interval[0] is not None and interval[0] < -9223372036854775808:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 9223372036854775807:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = -9223372036854775808
-            if interval[1] is None:
-                max_interval = 9223372036854775807
-        elif unitSize == UnitSize.SIZE_64 and sign == Sign.UNSIGNED:
-            if interval[0] is not None and interval[0] < 0:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[1] is not None and interval[1] > 18446744073709551615:
-                raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
-            if interval[0] is None:
-                min_interval = 0
-            if interval[1] is None:
-                max_interval = 18446744073709551615
+        # Compute min and max value
+        if sign == Sign.UNSIGNED:
+            min_interval = 0
+            max_interval = (1 << unitSize.value) - 1
+        else:
+            min_interval = -(1 << unitSize.value - 1)
+            max_interval = (1 << unitSize.value - 1) - 1
 
-        if min_interval is None:
-            min_interval = interval[0]
-        if max_interval is None:
-            max_interval = interval[1]
+        if ((interval[0] is not None and interval[0] < min_interval) or
+            (interval[1] is not None and interval[1] > max_interval)):
+            raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
+
+        # Reset min and max value if a valid interval is provided
+        if interval[0] is not None:
+            min_interval = None
+        if interval[1] is not None:
+            max_interval = None
 
         return min_interval, max_interval
 
@@ -516,10 +416,7 @@ class Integer(AbstractType):
 
         # Compare with self.value if it is defined
         if self.value is not None:
-            if self.value == data:
-                return True
-            else:
-                return False
+            return self.value == data
 
         # Else, compare with expected size
         if self.size is not None and isinstance(self.size, Iterable) and len(self.size) == 2:
@@ -528,14 +425,15 @@ class Integer(AbstractType):
 
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
-            data = TypeConverter.convert(data, BitArray, Integer, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
+            int_data = TypeConverter.convert(data, BitArray, Integer,
+                                             dst_unitSize=self.unitSize,
+                                             dst_endianness=self.endianness,
+                                             dst_sign=self.sign)
 
-            if minSize <= data <= maxSize:
-                return True
-            else:
-                return False
-        else:
-            raise Exception("Cannot parse this data '{}' because no domain is expected.".format(data))
+            return minSize <= int_data <= maxSize
+
+        raise Exception("Cannot parse this data '{}' because no domain is "
+                        "expected.".format(data))
 
     @staticmethod
     def decode(data,
