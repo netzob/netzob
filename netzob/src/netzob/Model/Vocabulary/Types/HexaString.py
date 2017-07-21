@@ -108,7 +108,7 @@ class HexaString(AbstractType):
         return (nbMinBit, nbMaxBit)
 
     def canParse(self, data):
-        """It verifies the value is a string which only includes hexadecimal
+        r"""It verifies the value is a string which only includes hexadecimal
         values.
 
         :param data: the data to check
@@ -150,6 +150,17 @@ class HexaString(AbstractType):
         >>> print(HexaString().canParse(hex))
         True
 
+        A more complete example with the use of the abstract() method:
+
+        >>> domain = HexaString(nbBytes=2)
+        >>> data = b"aabb"
+        >>> domain.canParse(data)
+        True
+        >>> spec_data = Symbol(fields=[Field(domain)])
+        >>> data = b"\xaa\xbb"
+        >>> AbstractField.abstract(data, [spec_data])
+        (Symbol, OrderedDict([('Field', b'\xaa\xbb')]))
+
         """
 
         if data is None:
@@ -164,31 +175,34 @@ class HexaString(AbstractType):
                 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
                 from netzob.Model.Vocabulary.Types.BitArray import BitArray
                 bits_data = TypeConverter.convert(data, HexaString, BitArray)
+                data = bits_data
             else:
                 raise ValueError("Unsupported input format for data: '{}', type: '{}'".format(data, type(data)))
 
         # Compare with self.value if it is defined
         if self.value is not None:
-            if self.value == bits_data:
+            if self.value == data:
                 return True
             else:
                 return False
 
         # Else, compare with expected size
         (minBits, maxBits) = self.size
+
         if minBits is not None:
-            if len(data) < (minBits/4):
+            if len(data) < (minBits):
                 return False
         if maxBits is not None:
-            if len(data) > (maxBits/4):
+            if len(data) > (maxBits):
                 return False
 
         # And verify if content matches the expected hexastring permitted characters
         allowedValues = [str(i) for i in range(0, 10)]
         allowedValues.extend(["a", "b", "c", "d", "e", "f"])
 
-        for i in range(0, len(data)):
-            if not chr(data[i]) in allowedValues:
+        hexa_data = binascii.hexlify(data.tobytes())
+        for i in range(0, len(hexa_data)):
+            if not chr(hexa_data[i]) in allowedValues:
                 return False
 
         return True
