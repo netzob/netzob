@@ -50,6 +50,7 @@ from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.Integer import uint16be
 
 
 @NetzobLogger
@@ -72,10 +73,11 @@ class RawEthernetClient(AbstractChannel):
                     is 5.0 seconds. To specify no timeout, None value is expected.
     :type remoteMac: :class:`str`, required
     :type localMac: :class:`str`, required
-    :type upperProtocol: :class:`bytes`, optional
+    :type upperProtocol: :class:`int`, optional
     :type interface: :class:`str`, optional
     :type timeout: :class:`float`, optional
 
+    >>> from binascii import hexlify
 
     >>> client = RawEthernetClient("00:01:02:03:04:05", localMac="00:06:07:08:09:10")
     >>> client.open()
@@ -92,7 +94,7 @@ class RawEthernetClient(AbstractChannel):
     def __init__(self,
                  remoteMac,
                  localMac,
-                 upperProtocol=b'\x08\x00',
+                 upperProtocol=0x0800,
                  interface="lo",
                  timeout=5.):
         super(RawEthernetClient, self).__init__(isServer=False)
@@ -109,7 +111,7 @@ class RawEthernetClient(AbstractChannel):
     def initHeader(self):
         eth_dst = Field(name='eth.dst', domain=Raw(self.macToBitarray(self.remoteMac)))
         eth_src = Field(name='eth.src', domain=Raw(self.macToBitarray(self.localMac)))
-        eth_type = Field(name='eth.type', domain=Raw(self.upperProtocol))
+        eth_type = Field(name='eth.type', domain=uint16be(self.upperProtocol))
         eth_payload = Field(name='eth.payload', domain=Raw())
         self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
                                                             eth_src,
@@ -151,7 +153,23 @@ class RawEthernetClient(AbstractChannel):
             raise Exception("socket is not available")
 
     def sendReceive(self, data):
-        raise Exception("sendReceive not available")
+        """Write on the communication channel and returns the next packet coming from the
+        destination address.
+
+        :param data: the data to write on the channel
+        :type data: :class:`bytes`
+        """
+        if self.__socket is not None:
+
+            rawRemoteMac = binascii.unhexlify(self.remoteMac.replace(':', ''))
+            self.write(data)
+
+            while True:
+                (data, _) = self.__socket.recvfrom(65535)
+                if data[6:12] == rawRemoteMac:
+                    return data
+        else:
+            raise Exception("socket is not available")
 
     def writePacket(self, data):
         """Write on the communication channel the specified data
@@ -236,13 +254,13 @@ class RawEthernetClient(AbstractChannel):
         return self.__upperProtocol
 
     @upperProtocol.setter
-    @typeCheck(bytes)
+    @typeCheck(int)
     def upperProtocol(self, upperProtocol):
         if upperProtocol is None:
             raise TypeError("Upper protocol cannot be None")
 
-        if len(upperProtocol) != 2:
-            raise TypeError("Upper protocol size should be 2 bytes")
+        if upperProtocol < 0 or upperProtocol > 0xffff:
+            raise TypeError("Upper protocol should be between 0 and 0xffff")
 
         self.__upperProtocol = upperProtocol
 
