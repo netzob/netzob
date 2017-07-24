@@ -681,7 +681,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
     def clearEncodingFunctions(self):
         """Remove all the encoding functions attached to the current element"""
-        self.__encodingFunctions.clear()
+        self.__encodingFunctions = SortedTypedList(EncodingFunction)
         for child in self.fields:
             child.clearEncodingFunctions()
 
