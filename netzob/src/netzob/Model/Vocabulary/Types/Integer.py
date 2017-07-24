@@ -37,6 +37,7 @@
 import struct
 import math
 import random
+import unittest
 from bitarray import bitarray
 from typing import Iterable
 
@@ -724,3 +725,18 @@ uint64le = partialclass(Integer,
                         endianness=Endianness.LITTLE)
 int8, int16, int32, int64 = int8be, int16be, int32be, int64be
 uint8, uint16, uint32, uint64 = uint8be, uint16be, uint32be, uint64be
+
+
+class __TestInteger(unittest.TestCase):
+    """
+    Test class with test-only scenario that should not be documented.
+    """
+
+    def test_abstraction_arbitrary_values(self):
+        from netzob.all import AbstractField, Field, Symbol
+        domains = [
+            uint16(1), int8le(), int32be(0x007F0041), uint16le(2)
+        ]
+        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+        data = b''.join(f.specialize() for f in symbol.fields)
+        assert AbstractField.abstract(data, [symbol])[1]

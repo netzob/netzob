@@ -36,6 +36,7 @@
 # +---------------------------------------------------------------------------+
 import random
 import os
+import unittest
 from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
@@ -328,3 +329,18 @@ class Raw(AbstractType):
                     return False
 
         return True
+
+
+class __TestRaw(unittest.TestCase):
+    """
+    Test class with test-only scenario that should not be documented.
+    """
+
+    def test_abstraction_arbitrary_values(self):
+        from netzob.all import AbstractField, Field, Symbol
+        domains = [
+            Raw(b"xxxx"), Raw(nbBytes=2),
+        ]
+        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+        data = b''.join(f.specialize() for f in symbol.fields)
+        assert AbstractField.abstract(data, [symbol])[1]

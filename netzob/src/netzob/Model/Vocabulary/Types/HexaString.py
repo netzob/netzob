@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import binascii
+import unittest
 from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
@@ -287,3 +288,18 @@ class HexaString(AbstractType):
             raise TypeError("data cannot be None")
 
         return binascii.hexlify(data)
+
+
+class __TestHexaString(unittest.TestCase):
+    """
+    Test class with test-only scenario that should not be documented.
+    """
+
+    def test_abstraction_arbitrary_values(self):
+        from netzob.all import AbstractField, Field, Symbol
+        domains = [
+            HexaString(b"aabb"), HexaString(nbBytes=4),
+        ]
+        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+        data = b''.join(f.specialize() for f in symbol.fields)
+        assert AbstractField.abstract(data, [symbol])[1]

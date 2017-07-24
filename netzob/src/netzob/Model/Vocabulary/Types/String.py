@@ -37,6 +37,7 @@
 import random
 import string
 import collections
+import unittest
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -547,3 +548,18 @@ class String(AbstractType):
         if encoding is None:
             raise TypeError("Encoding cannot be None")
         self.__encoding = encoding
+
+
+class __TestString(unittest.TestCase):
+    """
+    Test class with test-only scenario that should not be documented.
+    """
+
+    def test_abstraction_arbitrary_values(self):
+        from netzob.all import AbstractField, Field, Symbol
+        domains = [
+            String("abcd"), String(nbChars=(4, 5)),
+        ]
+        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+        data = b''.join(f.specialize() for f in symbol.fields)
+        assert AbstractField.abstract(data, [symbol])[1]

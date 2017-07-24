@@ -35,6 +35,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import random
+import unittest
 from collections import OrderedDict
 
 # +---------------------------------------------------------------------------+
@@ -318,3 +319,18 @@ class BitArray(AbstractType):
         b = bitarray(endian=endianness.value)
         b.frombytes(norm_data)
         return b
+
+
+class __TestBitArray(unittest.TestCase):
+    """
+    Test class with test-only scenario that should not be documented.
+    """
+
+    def test_abstraction_arbitrary_values(self):
+        from netzob.all import AbstractField, Field, Symbol
+        domains = [
+            BitArray(nbBits=8), # BitArray(bitarray("00001111" "1")), BitArray(nbBits=7),
+        ]
+        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+        data = b''.join(f.specialize() for f in symbol.fields)
+        assert AbstractField.abstract(data, [symbol])[1]

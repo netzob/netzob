@@ -29,6 +29,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports
 # +---------------------------------------------------------------------------+
+import importlib
 import unittest
 import doctest
 
@@ -216,4 +217,7 @@ def getSuite():
     suite = unittest.TestSuite()
     for mod in modules:
         suite.addTest(doctest.DocTestSuite(mod))
+        if isinstance(mod, str):
+            mod = importlib.import_module(mod)
+        suite.addTest(unittest.defaultTestLoader.loadTestsFromModule(mod))
     return suite

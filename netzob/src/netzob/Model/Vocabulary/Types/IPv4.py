@@ -36,6 +36,7 @@
 # +---------------------------------------------------------------------------+
 import struct
 import random
+import unittest
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -382,3 +383,18 @@ class IPv4(AbstractType):
         except Exception as e:
             raise TypeError("Impossible to encode {0} into an IPv4 data ({1})".
                             format(data, e))
+
+
+class __TestIPv4(unittest.TestCase):
+    """
+    Test class with test-only scenario that should not be documented.
+    """
+
+    def test_abstraction_arbitrary_values(self):
+        from netzob.all import AbstractField, Field, Symbol
+        domains = [
+            IPv4("1.2.3.4"), IPv4(),
+        ]
+        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+        data = b''.join(f.specialize() for f in symbol.fields)
+        assert AbstractField.abstract(data, [symbol])[1]
