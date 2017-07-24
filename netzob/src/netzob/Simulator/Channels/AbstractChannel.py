@@ -89,10 +89,14 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
 
     DEFAULT_WRITE_COUNTER_MAX = -1
 
-    def __init__(self, isServer, _id=None):
+    DEFAULT_TIMEOUT = 5.
+
+    def __init__(self,
+                 isServer,
+                 _id=None):
         self.isServer = isServer
         self.id = uuid.uuid4() if _id is None else _id
-        self.isOpened = False
+        self._isOpened = False
         self.type = AbstractChannel.TYPE_UNDEFINED
         self.header = None  # The IP header symbol format
         self.header_presets = {}  # Dict used to parameterize IP header fields
@@ -199,10 +203,19 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     # OPEN, CLOSE, READ and WRITE methods
 
     @abc.abstractmethod
-    def open(self):
+    def open(self, timeout=DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a server, it starts
         to listen and will create an instance for each different client.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is 5.0 seconds. To specify no timeout, None value is
+                        expected.
+        :type timeout: :class:`float`, optional
         """
+        if self.isOpen:
+            raise RuntimeError(
+                "The channel is already open, cannot open it again")
+        self.timeout = timeout
 
     @abc.abstractmethod
     def close(self):
@@ -321,12 +334,12 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         :return: the status of the communication channel
         :type: :class:`bool`
         """
-        return self.isOpened
+        return self._isOpened
 
     @isOpen.setter
     @typeCheck(bool)
     def isOpen(self, isOpen):
-        self.isOpened = isOpen
+        self._isOpened = isOpen
 
     # Properties
 
@@ -375,3 +388,21 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         if _id is None:
             raise TypeError("ID cannot be None")
         self.__id = _id
+
+    @property
+    def timeout(self):
+        """The default timeout of the channel for opening connection and
+        waiting for a message. Default value is DEFAULT_TIMEOUT seconds
+        (float). To specify no timeout, None value is expected.
+
+        :rtype: :class:`float` or None
+        """
+        return self.__timeout
+
+    @timeout.setter
+    @typeCheck(float)
+    def timeout(self, timeout):
+        """
+        :type timeout: :class:`float`, optional
+        """
+        self.__timeout = timeout

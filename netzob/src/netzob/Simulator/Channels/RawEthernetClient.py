@@ -75,12 +75,12 @@ class RawEthernetClient(AbstractChannel):
     :type localMac: :class:`str`, required
     :type upperProtocol: :class:`int`, optional
     :type interface: :class:`str`, optional
-    :type timeout: :class:`float`, optional
 
     >>> from binascii import hexlify
 
     >>> client = RawEthernetClient("00:01:02:03:04:05", localMac="00:06:07:08:09:10")
     >>> client.open()
+    >>> client.initRawHeader(b"\x08\x06")
     >>> symbol = Symbol([Field("ABC")])
     >>> client.write(symbol.specialize())
     17
@@ -95,14 +95,12 @@ class RawEthernetClient(AbstractChannel):
                  remoteMac,
                  localMac,
                  upperProtocol=0x0800,
-                 interface="lo",
-                 timeout=5.):
+                 interface="lo"):
         super(RawEthernetClient, self).__init__(isServer=False)
         self.remoteMac = remoteMac
         self.localMac = localMac
         self.upperProtocol = upperProtocol
         self.interface = interface
-        self.timeout = timeout
         self.type = AbstractChannel.TYPE_RAWETHERNETCLIENT
         self.__socket = None
 
@@ -118,16 +116,24 @@ class RawEthernetClient(AbstractChannel):
                                                             eth_type,
                                                             eth_payload])
 
-    def open(self):
+    def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is 5.0 seconds. To specify no timeout, None value is
+                        expected.
+        :type timeout: :class:`float`, optional
+        :raise: RuntimeError if the channel is already opened
         """
 
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again")
+        super().open(timeout=timeout)
 
-        self.__socket = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(RawEthernetClient.ETH_P_ALL))
+        self.__socket = socket.socket(
+            socket.AF_PACKET,
+            socket.SOCK_RAW,
+            socket.htons(RawEthernetClient.ETH_P_ALL))
+        self.__socket.settimeout(self.timeout)
         self.__socket.bind((self.interface, RawEthernetClient.ETH_P_ALL))
         self.isOpen = True
 
@@ -144,30 +150,17 @@ class RawEthernetClient(AbstractChannel):
             (data, _) = self.__socket.recvfrom(65535)
 
             # Remove Ethernet header from received data
-            ethHeaderLen = 14
+            ethHeaderLen = 14  # (Bitwise AND 00001111) x 4bytes --> see RFC-791
             if len(data) > ethHeaderLen:
                 data = data[ethHeaderLen:]
 
+            # Remove IP header from received data if necessary
+            if self.__payload_id == "ip.payload":
+                ipHeaderLen = (data[0] & 15) * 4  # (Bitwise AND 00001111) x 4bytes --> see RFC-791
+                if len(data) > ipHeaderLen:
+                    data = data[ipHeaderLen:]
+
             return data
-        else:
-            raise Exception("socket is not available")
-
-    def sendReceive(self, data):
-        """Write on the communication channel and returns the next packet coming from the
-        destination address.
-
-        :param data: the data to write on the channel
-        :type data: :class:`bytes`
-        """
-        if self.__socket is not None:
-
-            rawRemoteMac = binascii.unhexlify(self.remoteMac.replace(':', ''))
-            self.write(data)
-
-            while True:
-                (data, _) = self.__socket.recvfrom(65535)
-                if data[6:12] == rawRemoteMac:
-                    return data
         else:
             raise Exception("socket is not available")
 
@@ -178,18 +171,146 @@ class RawEthernetClient(AbstractChannel):
         :type data: :class:`bytes`
         """
 
+        if self.header is None:
+            raise Exception("IP header structure is None")
+
         if self.__socket is None:
             raise Exception("socket is not available")
 
-        self.header_presets["eth.payload"] = data
+        self.header_presets[self.__payload_id] = data
         packet = self.header.specialize(presets=self.header_presets)
         len_data = self.__socket.sendto(packet, (self.interface, RawEthernetClient.ETH_P_ALL))
         return len_data
 
+    @typeCheck(bytes)
+    def sendReceive(self, data):
+        """Write on the communication channel the specified data and returns
+        the corresponding response.
+
+        :param data: the data to write on the channel
+        :type data: :class:`bytes`
+        """
+        if self.__socket is not None:
+            # get the ports from message to identify the good response (in TCP or UDP)
+            portSrcTx = (data[0] * 256) + data[1]
+            portDstTx = (data[2] * 256) + data[3]
+
+            responseOk = False
+            stopWaitingResponse = False
+            self.write(data)
+            while stopWaitingResponse is False:
+                dataReceived = self.read()
+                portSrcRx = (dataReceived[0] * 256) + dataReceived[1]
+                portDstRx = (dataReceived[2] * 256) + dataReceived[3]
+                stopWaitingResponse = (portSrcTx == portDstRx) and (portDstTx == portSrcRx)
+                if stopWaitingResponse:  # and not timeout
+                    responseOk = True
+            if responseOk:
+                return dataReceived
+        else:
+            raise Exception("socket is not available")
+
+    def initIPHeader(self, localIP, remoteIP):
+        """Initialize the IP header according to the IP format definition.
+
+        :param localIP: the local IP address
+        :param remoteIP: the remote IP address
+        :type localIP: :class:`str`
+        :type remoteIP: :class:`str`
+        """
+
+        # Ethernet header
+
+        eth_dst = Field(name='eth.dst', domain=Raw(self.macToBitarray(self.remoteMac)))
+        eth_src = Field(name='eth.src', domain=Raw(self.macToBitarray(self.localMac)))
+        eth_type = Field(name='eth.type', domain=Raw(b"\x08\x00"))
+
+        # IP header
+
+        self.localIP = localIP
+        self.remoteIP = remoteIP
+
+        ip_ver = Field(
+            name='ip.version', domain=BitArray(
+                value=bitarray('0100')))  # IP Version 4
+        ip_ihl = Field(name='ip.hdr_len', domain=BitArray(bitarray('0000')))
+        ip_tos = Field(
+            name='ip.tos',
+            domain=Data(
+                dataType=BitArray(nbBits=8),
+                originalValue=bitarray('00000000'),
+                svas=SVAS.PERSISTENT))
+        ip_tot_len = Field(
+            name='ip.len', domain=BitArray(bitarray('0000000000000000')))
+        ip_id = Field(name='ip.id', domain=BitArray(nbBits=16))
+        ip_flags = Field(name='ip.flags', domain=Data(dataType=BitArray(nbBits=3), originalValue=bitarray('000'), svas=SVAS.PERSISTENT))
+        ip_frag_off = Field(name='ip.fragment', domain=Data(dataType=BitArray(nbBits=13), originalValue=bitarray('0000000000000'), svas=SVAS.PERSISTENT))
+        ip_ttl = Field(name='ip.ttl', domain=Data(dataType=BitArray(nbBits=8), originalValue=bitarray('01000000'), svas=SVAS.PERSISTENT))
+        ip_proto = Field(name='ip.proto', domain=Integer(value=self.upperProtocol, unitSize=UnitSize.SIZE_8, endianness=Endianness.BIG, sign=Sign.UNSIGNED))
+        ip_checksum = Field(name='ip.checksum', domain=BitArray(bitarray('0000000000000000')))
+        ip_saddr = Field(name='ip.src', domain=IPv4(self.localIP))
+        ip_daddr = Field(
+            name='ip.dst', domain=IPv4(self.remoteIP))
+        ip_payload = Field(name='ip.payload', domain=Raw())
+        self.__payload_id = 'ip.payload'
+
+        ip_ihl.domain = Size([ip_ver,
+                              ip_ihl,
+                              ip_tos,
+                              ip_tot_len,
+                              ip_id, ip_flags,
+                              ip_frag_off,
+                              ip_ttl, ip_proto,
+                              ip_checksum,
+                              ip_saddr,
+                              ip_daddr], dataType=BitArray(nbBits=4), factor=1 / float(32))
+        ip_tot_len.domain = Size([ip_ver,
+                                  ip_ihl,
+                                  ip_tos,
+                                  ip_tot_len,
+                                  ip_id,
+                                  ip_flags,
+                                  ip_frag_off,
+                                  ip_ttl,
+                                  ip_proto,
+                                  ip_checksum,
+                                  ip_saddr,
+                                  ip_daddr,
+                                  ip_payload], dataType=Integer(unitSize=UnitSize.SIZE_16, sign=Sign.UNSIGNED), factor=1 / float(8))
+        ip_checksum.domain = InternetChecksum(targets=[ip_ver,
+                                               ip_ihl,
+                                               ip_tos,
+                                               ip_tot_len,
+                                               ip_id,
+                                               ip_flags,
+                                               ip_frag_off,
+                                               ip_ttl,
+                                               ip_proto,
+                                               ip_checksum,
+                                               ip_saddr,
+                                               ip_daddr], dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))
+
+        self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
+                                                            eth_src,
+                                                            eth_type,
+                                                            ip_ver,
+                                                            ip_ihl,
+                                                            ip_tos,
+                                                            ip_tot_len,
+                                                            ip_id,
+                                                            ip_flags,
+                                                            ip_frag_off,
+                                                            ip_ttl,
+                                                            ip_proto,
+                                                            ip_checksum,
+                                                            ip_saddr,
+                                                            ip_daddr,
+                                                            ip_payload])
+
     def macToBitarray(self, addr):
         """Converts a mac address represented as a string to its bitarray value.
 
-        >>> client = RawEthernetClient('00:01:02:03:04:05', '06:07:08:09:10:11')
+        >>> client = RawEthernetClient('00:01:02:03:04:05')
         >>> client.macToBitarray('00:01:02:03:04:05')
         bitarray('000000000000000100000010000000110000010000000101')
         >>> client.macToBitarray(b'\\x00\\x01\\x02\\x03\\x04\\x05')
@@ -211,45 +332,44 @@ class RawEthernetClient(AbstractChannel):
         binary = "0" * (48 - l) + binary
         return bitarray(binary)
 
+    # Management methods
+
     # Properties
 
     @property
-    def remoteMac(self):
-        """Remote hardware address (MAC)
+    def remoteIP(self):
+        """IP on which the server will listen.
 
         :type: :class:`str`
         """
-        return self.__remoteMac
+        return self.__remoteIP
 
-    @remoteMac.setter
+    @remoteIP.setter
     @typeCheck(str)
-    def remoteMac(self, remoteMac):
-        if remoteMac is None:
-            raise TypeError("remoteMac cannot be None")
+    def remoteIP(self, remoteIP):
+        if remoteIP is None:
+            raise TypeError("Listening IP cannot be None")
 
-        self.__remoteMac = remoteMac
+        self.__remoteIP = remoteIP
 
     @property
-    def localMac(self):
-        """Local hardware address (MAC)
+    def localIP(self):
+        """IP on which the server will listen.
 
         :type: :class:`str`
         """
-        return self.__localMac
+        return self.__localIP
 
-    @localMac.setter
+    @localIP.setter
     @typeCheck(str)
-    def localMac(self, localMac):
-        if localMac is None:
-            raise TypeError("localMac cannot be None")
-
-        self.__localMac = localMac
+    def localIP(self, localIP):
+        self.__localIP = localIP
 
     @property
     def upperProtocol(self):
-        """Upper protocol (two bytes form)
+        """Upper protocol, such as TCP, UDP, ICMP, etc.
 
-        :type: :class:`bytes`
+        :type: :class:`str`
         """
         return self.__upperProtocol
 
@@ -258,9 +378,6 @@ class RawEthernetClient(AbstractChannel):
     def upperProtocol(self, upperProtocol):
         if upperProtocol is None:
             raise TypeError("Upper protocol cannot be None")
-
-        if upperProtocol < 0 or upperProtocol > 0xffff:
-            raise TypeError("Upper protocol should be between 0 and 0xffff")
 
         self.__upperProtocol = upperProtocol
 

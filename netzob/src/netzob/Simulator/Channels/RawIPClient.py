@@ -78,14 +78,10 @@ class RawIPClient(AbstractChannel):
     :param interface: The network interface to use. This value is linked with
                       the local IP address to use (:attr:`localIP` parameter).
                       Default value is :const:`'eth0'`.
-    :param timeout: The default timeout of the channel for opening
-                    connection and waiting for a message. Default value
-                    is 5.0 seconds. To specify no timeout, None value is expected.
     :type remoteIP: :class:`str`, required
     :type localIP: :class:`str`, optional
     :type upperProtocol: :class:`int`, optional
     :type interface: :class:`str`, optional
-    :type timeout: :class:`float`, optional
 
 
     The following code shows the use of a :class:`RawIPClient <netzob.Simulator.Channels.RawIPClient.RawIPClient>`
@@ -105,8 +101,7 @@ class RawIPClient(AbstractChannel):
                  remoteIP,
                  localIP=None,
                  upperProtocol=socket.IPPROTO_TCP,
-                 interface="eth0",
-                 timeout=5.):
+                 interface="eth0"):
         super(RawIPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         if localIP is None:
@@ -114,23 +109,27 @@ class RawIPClient(AbstractChannel):
         self.localIP = localIP
         self.upperProtocol = upperProtocol
         self.interface = interface
-        self.timeout = timeout
         self.__socket = None
         self.type = AbstractChannel.TYPE_RAWIPCLIENT
 
         # Header initialization
         self.initHeader()
 
-    def open(self):
+    def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is 5.0 seconds. To specify no timeout, None value is
+                        expected.
+        :type timeout: :class:`float`, optional
+        :raise: RuntimeError if the channel is already opened
         """
 
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again")
+        super().open(timeout=timeout)
 
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, self.upperProtocol)
+        self.__socket.settimeout(self.timeout)
         self.__socket.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
         self.__socket.bind((self.localIP, self.upperProtocol))
         self.isOpen = True

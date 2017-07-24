@@ -61,12 +61,8 @@ class UDPServer(AbstractChannel):
 
     :param localIP: The local IP address.
     :param localPort: The local IP port.
-    :param timeout: The default timeout of the channel for waiting a
-                    client message. Default value is 5.0 seconds. To
-                    specify no timeout, None value is expected.
     :type localIP: :class:`str`, required
     :type localPort: :class:`int`, required
-    :type timeout: :class:`float`, optional
 
 
     The following code shows the use of a UDPServer channel:
@@ -107,23 +103,26 @@ class UDPServer(AbstractChannel):
     """
 
     @typeCheck(str, int)
-    def __init__(self, localIP, localPort, timeout=5.):
+    def __init__(self, localIP, localPort):
         super(UDPServer, self).__init__(isServer=False)
         self.localIP = localIP
         self.localPort = localPort
-        self.timeout = timeout
         self.type = AbstractChannel.TYPE_UDPSERVER
         self.__socket = None
         self.__remoteAddr = None
 
-    def open(self):
+    def open(self, timeout=5.):
         """Open the communication channel. This will open a UDP socket
         that listen for incoming messages.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is 5.0 seconds. To specify no timeout, None value is
+                        expected.
+        :type timeout: :class:`float`, optional
+        :raise: RuntimeError if the channel is already opened
         """
 
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again.")
+        super().open(timeout=timeout)
 
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection

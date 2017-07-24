@@ -65,14 +65,10 @@ class UDPClient(AbstractChannel):
                     will be used to send the packet.
     :param localPort: The local IP port. Default value in a random
                       valid integer chosen by the kernel.
-    :param timeout: The default timeout of the channel for opening
-                    connection and waiting for a message. Default value
-                    is 5.0 seconds. To specify no timeout, None value is expected.
     :type remoteIP: :class:`str`, required
     :type remotePort: :class:`int`, required
     :type localIP: :class:`str`, optional
     :type localPort: :class:`int`, optional
-    :type timeout: :class:`float`, optional
 
 
     The following code shows the use of a UDPClient channel:
@@ -114,25 +110,27 @@ class UDPClient(AbstractChannel):
                  remoteIP,
                  remotePort,
                  localIP=None,
-                 localPort=None,
-                 timeout=5.):
+                 localPort=None):
         super(UDPClient, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
-        self.timeout = timeout
         self.type = AbstractChannel.TYPE_UDPCLIENT
         self.__socket = None
 
-    def open(self):
+    def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is 5.0 seconds. To specify no timeout, None value is
+                        expected.
+        :type timeout: :class:`float`, optional
+        :raise: RuntimeError if the channel is already opened
         """
 
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again")
+        super().open(timeout=timeout)
 
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
@@ -243,21 +241,3 @@ class UDPClient(AbstractChannel):
     @typeCheck(int)
     def localPort(self, localPort):
         self.__localPort = localPort
-
-    @property
-    def timeout(self):
-        """The default timeout of the channel for opening connection and
-        waiting for a message. Default value is 5.0 seconds. To
-        specify no timeout, None value is expected.
-
-        :rtype: :class:`float` or None
-        """
-        return self.__timeout
-
-    @timeout.setter
-    @typeCheck(float)
-    def timeout(self, timeout):
-        """
-        :type timeout: :class:`float`, optional
-        """
-        self.__timeout = timeout

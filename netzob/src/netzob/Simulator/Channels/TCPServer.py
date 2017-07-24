@@ -61,12 +61,8 @@ class TCPServer(AbstractChannel):
 
     :param localIP: The local IP address.
     :param localPort: The local IP port.
-    :param timeout: The default timeout of the channel for opening the
-                    connection/reading a message. Default value is 5.0
-                    seconds. To specify no timeout, None value is expected.
     :type localIP: :class:`str`, required
     :type localPort: :class:`int`, required
-    :type timeout: :class:`float`, optional
 
 
     The following code shows the use of a TCPServer channel:
@@ -104,23 +100,26 @@ class TCPServer(AbstractChannel):
 
     """
 
-    def __init__(self, localIP, localPort, timeout=5.):
+    def __init__(self, localIP, localPort):
         super(TCPServer, self).__init__(isServer=True)
         self.localIP = localIP
         self.localPort = localPort
-        self.timeout = timeout
         self.type = AbstractChannel.TYPE_TCPSERVER
         self.__socket = None
         self.__clientSocket = None
 
-    def open(self):
-        """Open the communication channel. If the channel is a server, it
-        starts to listen and will create an instance for each different client.
-
+    def open(self, timeout=5.):
+        """Open the communication channel. If the channel is a client, it
+        starts to connect to the specified server.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is 5.0 seconds. To specify no timeout, None value is
+                        expected.
+        :type timeout: :class:`float`, optional
+        :raise: RuntimeError if the channel is already opened
         """
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again")
+
+        super().open(timeout=timeout)
 
         self.__socket = socket.socket()
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Reuse the connection

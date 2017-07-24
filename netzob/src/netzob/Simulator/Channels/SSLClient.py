@@ -66,9 +66,6 @@ class SSLClient(AbstractChannel):
                     will be used to send the packet.
     :param localPort: The local IP port. Default value in a random
                      valid integer chosen by the kernel.
-    :param timeout: The default timeout of the channel for opening
-                    connection and waiting for a message. Default value
-                    is 5.0 seconds. To specify no timeout, None value is expected.
     :param server_cert_file: The path to a single file in PEM format
                              containing the certificate as well as any
                              number of CA certificates needed to
@@ -85,7 +82,6 @@ class SSLClient(AbstractChannel):
     :type remotePort: :class:`int`, required
     :type localIP: :class:`str`, optional
     :type localPort: :class:`int`, optional
-    :type timeout: :class:`float`, optional
     :type server_cert_file: :class:`str`, optional
     :type alpn_protocols: :class:`list`, optional
 
@@ -96,7 +92,6 @@ class SSLClient(AbstractChannel):
                  remotePort,
                  localIP=None,
                  localPort=None,
-                 timeout=5.,
                  server_cert_file=None,
                  alpn_protocols=None):
         super(SSLClient, self).__init__(isServer=False)
@@ -104,21 +99,24 @@ class SSLClient(AbstractChannel):
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
-        self.timeout = timeout
         self.type = AbstractChannel.TYPE_SSLCLIENT
         self.__socket = None
         self.__ssl_socket = None
         self.server_cert_file = server_cert_file
         self.alpn_protocols = alpn_protocols
 
-    def open(self):
-        """Open the communication channel. If the channel is a client, it starts to connect
-        to the specified server.
+    def open(self, timeout=5.):
+        """Open the communication channel. If the channel is a client, it
+        starts to connect to the specified server.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is 5.0 seconds. To specify no timeout, None value is
+                        expected.
+        :type timeout: :class:`float`, optional
+        :raise: RuntimeError if the channel is already opened
         """
 
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again")
+        super().open(timeout=timeout)
 
         self.__socket = socket.socket()
         # Reuse the connection
