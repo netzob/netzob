@@ -146,7 +146,7 @@ class RawEthernetClient(AbstractChannel):
             (data, _) = self.__socket.recvfrom(65535)
 
             # Remove Ethernet header from received data
-            ethHeaderLen = 14  # (Bitwise AND 00001111) x 4bytes --> see RFC-791
+            ethHeaderLen = 14
             if len(data) > ethHeaderLen:
                 data = data[ethHeaderLen:]
 
