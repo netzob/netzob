@@ -45,7 +45,7 @@
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutators.DomainMutator import MutatorInterval
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
+from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Integer import Integer
@@ -53,10 +53,10 @@ from netzob.Model.Vocabulary.Types.AbstractType import Sign
 from randomstate import RandomState
 
 
-class TimestampMutator(IntegerMutator):
-    r"""The Timestamp mutator, using pseudo-random generator.
+class IPv4Mutator(IntegerMutator):
+    r"""The IPv4 mutator, using pseudo-random generator.
 
-    The TimestampMutator constructor expects some parameters:
+    The IPv4Mutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
     :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
@@ -77,17 +77,17 @@ class TimestampMutator(IntegerMutator):
 
     **Internal generator functions**
 
-    The following example shows how to generate a Timestamp value,
+    The following example shows how to generate an IPv4 value,
     with an arbitrary seed of 4321:
 
     >>> from netzob.all import *
-    >>> fieldTimestamp = Field(Timestamp())
-    >>> mutator = TimestampMutator(fieldTimestamp.domain, seed=4321)
+    >>> fieldIPv4 = Field(IPv4())
+    >>> mutator = IPv4Mutator(fieldIPv4.domain, seed=4321)
     >>> mutator.generate()
-    b'\n'
+    b'\x12 #$'
     """
 
-    DATA_TYPE = Timestamp
+    DATA_TYPE = IPv4
 
     def __init__(self,
                  domain,
@@ -100,7 +100,7 @@ class TimestampMutator(IntegerMutator):
                          **kwargs)
 
     def generate(self):
-        """This is the mutation method of the Timestamp type.
+        """This is the mutation method of the IPv4 type.
         It uses a PRNG to produce the value corresponding to the domain.
 
         :return: the generated content represented with bytes
@@ -114,17 +114,17 @@ class TimestampMutator(IntegerMutator):
         # Generate and return a random value in the interval
         self._currentCounter += 1
         dom_type = self.getDomain().dataType
-        timeValue = self.generateInt()
+        ipv4Value = self.generateInt()
 
-        return Integer.decode(timeValue,
+        return Integer.decode(ipv4Value,
                               unitSize=dom_type.unitSize,
                               endianness=dom_type.endianness,
                               sign=Sign.UNSIGNED)
 
         """
         # convert to bitarray
-        time_bits = TypeConverter.convert(
-            timeValue,
+        ipv4_bits = TypeConverter.convert(
+            ipv4Value,
             Integer,
             BitArray,
             src_unitSize=dom_type.unitSize,
@@ -132,4 +132,4 @@ class TimestampMutator(IntegerMutator):
             src_sign=Sign.UNSIGNED,
             dst_endianness=dom_type.endianness)
 
-        return time_bits"""
+        return ipv4_bits"""

@@ -137,6 +137,12 @@ class IPv4(AbstractType):
             endianness=AbstractType.defaultEndianness(),
             sign=AbstractType.defaultSign())
 
+    def getMinStorageValue(self):
+            return 0
+
+    def getMaxStorageValue(self):
+            return 2**self.unitSize.value - 1
+
     def generate(self, generationStrategy=None):
         """Generates a random IPv4 which follows the constraints.
 
