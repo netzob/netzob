@@ -284,9 +284,9 @@ class SSLClient(AbstractChannel):
         return self.__timeout
 
     @timeout.setter
-    @typeCheck(float)
+    @typeCheck((int, float))
     def timeout(self, timeout):
         """
         :type timeout: :class:`float`, optional
         """
-        self.__timeout = timeout
+        self.__timeout = float(timeout)
