@@ -298,12 +298,8 @@ class Integer(AbstractType):
             raise ValueError("Input interval shoud be a tuple of two integers. Value received: '{}'".format(interval))
 
         # Compute min and max value
-        if sign == Sign.UNSIGNED:
-            min_interval = 0
-            max_interval = (1 << unitSize.value) - 1
-        else:
-            min_interval = -(1 << unitSize.value - 1)
-            max_interval = (1 << unitSize.value - 1) - 1
+        min_interval = getMinStorageValue(unitSize=unitSize, sign=sign)
+        max_interval = getMaxStorageValue(unitSize=unitSize, sign=sign)
 
         if ((interval[0] is not None and interval[0] < min_interval) or
             (interval[1] is not None and interval[1] > max_interval)):
@@ -334,16 +330,10 @@ class Integer(AbstractType):
             return TypeConverter.convert(self.value, BitArray, Integer, dst_unitSize=self.unitSize, dst_endianness=self.endianness, dst_sign=self.sign)
 
     def getMinStorageValue(self):
-        if self.sign == Sign.UNSIGNED:
-            return 0
-        else:
-            return -int((2**int(self.unitSize.value))/2)
+        return getMinStorageValue(self.unitSize, self.sign)
 
     def getMaxStorageValue(self):
-        if self.sign == Sign.UNSIGNED:
-            return 2**self.unitSize.value - 1
-        else:
-            return int((2**self.unitSize.value)/2) - 1
+        return getMaxStorageValue(self.unitSize, self.sign)
 
     def canParse(self,
                  data,
@@ -658,6 +648,21 @@ class Integer(AbstractType):
                                          dst_endianness=self.endianness)
         else:
             raise Exception("Cannot generate integer value, as nor constant value or interval is defined")
+
+
+def getMinStorageValue(unitSize, sign):
+    if sign == Sign.UNSIGNED:
+        return 0
+    else:
+        return -int((2**int(unitSize.value)) / 2)
+
+
+def getMaxStorageValue(unitSize, sign):
+    if sign == Sign.UNSIGNED:
+        return 2**unitSize.value - 1
+    else:
+        return int((2**unitSize.value) / 2) - 1
+
 
 int8be   = partialclass(Integer,
                         unitSize=UnitSize.SIZE_8,
