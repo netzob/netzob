@@ -162,6 +162,8 @@ def typeCheck(*types):
            self.__id = id
 
     .. note:: set type = "SELF" to check the type of the self parameter
+    .. note:: type checking can be bypassed by setting :val:`NETZOB_NO_TYPECHECK`
+              as environment variable
     .. warning:: if argument is None, the type checking is not executed on it.
 
     """
@@ -187,6 +189,8 @@ def typeCheck(*types):
                                               ]), argument.__class__.__name__))
             return func(*args, **kwargs)
 
+        if 'NETZOB_NO_TYPECHECK' in os.environ:
+            return func
         return wraps(func)(wrapped_f)
 
     return _typeCheck_
