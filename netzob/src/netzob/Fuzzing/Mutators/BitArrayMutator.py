@@ -87,7 +87,7 @@ class BitArrayMutator(DomainMutator):
     >>> fieldBits = Field(BitArray())
     >>> mutator = BitArrayMutator(fieldBits.domain, length=(0,30), seed=19)
     >>> mutator.generate()
-    bitarray('00000000000000000000000000000000000010011000000000000100110100110')
+    bitarray('00011000111101111111011001001101110001100110010101001000000000001')
 
     Constant definitions:
     """

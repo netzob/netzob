@@ -51,9 +51,15 @@ class DeterministGenerator(Generator):
     Integer field.
 
     >>> from netzob.all import *
-    >>> seed = 10
+    >>> seed = 14
     >>> genObject = DeterministGenerator(seed)
-    >>> result = genObject.getNewValue()
+    >>> genObject.createValues(
+    ...     minValue=DeterministGenerator.DEFAULT_MIN_VALUE,
+    ...     maxValue=DeterministGenerator.DEFAULT_MAX_VALUE,
+    ...     bitSize=DeterministGenerator.DEFAULT_BITSIZE,
+    ...     signed=False)
+    >>> genObject.getNewValue()
+    33
     """
 
     NG_determinist = "determinist"
@@ -115,6 +121,8 @@ class DeterministGenerator(Generator):
         setValues = set(self._values)
         self._values = sorted(setValues)
 
+        self.updateSeed(self._seed)
+
     def updateSeed(self, seedValue):
         self._seed = seedValue % len(self._values)
         self.reset()
@@ -130,10 +138,15 @@ class DeterministGenerator(Generator):
         """This is the method to get the next value in the generated list.
         To obtain the previous values again, call reset() then getNewValue()
         or use accessor getValueAt().
+        createValues() has to be called once before, else an error is raised.
 
         :return: a generated int value
         :rtype: :class:`int`
+        :raise: ValueError if values is empty
         """
+        if len(self._values) == 0:
+            raise ValueError("value list is empty : please call createValues() before getNewValue()")
+
         if self._currentPos >= len(self._values):
             self.reset()
         value = self._values[self._currentPos]
@@ -142,10 +155,15 @@ class DeterministGenerator(Generator):
 
     def getValueAt(self, pos):
         """Returns the value set at postion 'pos' from the generated list.
+        createValues() has to be called once before, else an error is raised.
 
         :return: a generated int value
         :rtype: :class:`int`
+        :raise: ValueError if values is empty
         """
+        if len(self._values) == 0:
+            raise ValueError("value list is empty : please call createValues() before getValueAt()")
+
         if pos < len(self._values):
             return self._values(pos)
         else:

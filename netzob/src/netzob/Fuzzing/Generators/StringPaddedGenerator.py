@@ -48,15 +48,36 @@ from netzob.Common.Utils.Decorators import typeCheck
 
 
 class StringPaddedGenerator(Generator):
-    """Generates string values.
+    r"""Generates string values.
 
     >>> from netzob.all import *
     >>> seed = 1234
-    >>> genObject = StringGenerator(seed)
-    >>> result = genObject.getNewValue()
+    >>> stringLength = Field(uint16le())
+    >>> lengthMutator = IntegerMutator(
+    ...     domain=stringLength.domain,
+    ...     interval=(5, 25),
+    ...     seed=seed)
+    >>> genObject = StringPaddedGenerator(lengthMutator,
+    ...     StringPaddedGenerator.DEFAULT_NAUGHTY_STRINGS)
+    >>> genObject.updateSeed(seed)
+    >>> genObject.getNewValue()
+    '`ls -al\x00'
     """
 
-    def __init__(self, lengthMutator, stringsList):
+    DEFAULT_NAUGHTY_STRINGS = [
+        'System("ls -al /")',
+        '`ls -al /`',
+        'Kernel.exec("ls -al /")',
+        'Kernel.exit(1)',
+        '%x("ls -al /")',
+        '<img \\x00src=x onerror="alert(1)">',
+        '$ENV{"HOME"}',
+        '%d',
+        '%s']
+
+    def __init__(self,
+                 lengthMutator,
+                 stringsList):
         super().__init__(values=stringsList)
         self._lengthMutator = lengthMutator
 
@@ -71,7 +92,7 @@ class StringPaddedGenerator(Generator):
     def updateSeed(self, seedValue):
         super().updateSeed(seedValue % len(self._values))
 
-    def getNewValue(self, endChar):
+    def getNewValue(self, endChar='\0'):
         """This is the method to get a new string value from the list.
 
         :return: a generated str value

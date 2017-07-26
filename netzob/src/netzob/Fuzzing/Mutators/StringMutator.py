@@ -111,17 +111,6 @@ class StringMutator(DomainMutator):
     DEFAULT_END_CHAR = '\0'
     DEFAULT_MIN_LENGTH = 2
     DEFAULT_MAX_LENGTH = 10
-    DEFAULT_NAUGHTY_STRINGS = """
-    System("ls -al /"),
-    `ls -al /`,
-    Kernel.exec("ls -al /"),
-    Kernel.exit(1),
-    %x('ls -al /'),
-    <img \\x00src=x onerror="alert(1)">,
-    $ENV{'HOME'},
-    %d,
-    %s
-    """.split()
     PADDING_CHAR = ' '
     DATA_TYPE = String
 
@@ -150,7 +139,7 @@ class StringMutator(DomainMutator):
             self._maxLength = self.DEFAULT_MAX_LENGTH
 
         if not isinstance(naughtyStrings, list):
-            self._naughtyStrings = self.DEFAULT_NAUGHTY_STRINGS
+            self._naughtyStrings = StringPaddedGenerator.DEFAULT_NAUGHTY_STRINGS
         else:
             self._naughtyStrings = naughtyStrings
 
