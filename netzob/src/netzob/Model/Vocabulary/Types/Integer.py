@@ -307,9 +307,9 @@ class Integer(AbstractType):
 
         # Reset min and max value if a valid interval is provided
         if interval[0] is not None:
-            min_interval = None
+            min_interval = interval[0]
         if interval[1] is not None:
-            max_interval = None
+            max_interval = interval[1]
 
         return min_interval, max_interval
 
