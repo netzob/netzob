@@ -215,7 +215,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 parsingPath))
 
         if isinstance(self.dataType, Integer):
-            expectedSize = self.dataType.unitSize
+            expectedSize = self.dataType.unitSize.value
         else:
             minValue, maxValue = self.dataType.size
             if minValue != maxValue:
