@@ -255,6 +255,8 @@ class Fuzz(object):
         :param kwargs: some context dependent parameters.
         :type key: :class:`Field
                    <netzob.Model.Vocabulary.Field.Field>`,
+                   or :class:`Symbol
+                   <netzob.Model.Vocabulary.Symbol.Symbol>`,
                    or :class:`AbstractVariable
                    <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`,
                    or :class:`AbstractType
