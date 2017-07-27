@@ -525,9 +525,13 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         The :meth:`abstract` static method expects some parameters:
 
-        :param bytes data: The concrete message to abstract in symbol.
-        :param fields: A list of symbols to consider during abstraction.
-        :type fields: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol>`
+        :param data: The concrete message to abstract in symbol.
+        :type data: :class:`bytes`
+        :parameter fields: a list of fields targeted during the abstraction process
+        :type fields: :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`
+        :return: a field/symbol and the structured received message
+        :rtype: a tuple (:class:`Field <netzob.Model.Vocabulary.Field>`, dict)
+        :raises: :class:`AbstractionException <netzob.Model.Vocabulary.AbstractField.AbstractionException>` if an error occurs while abstracting the data
 
 
         >>> from netzob.all import *
@@ -548,7 +552,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> s2 = Symbol([f1b, f2b, f3b, f4b], name="Symbol-kurt")
 
         >>> for m in messages:
-        ...    (abstractedSymbol, structured_data) = AbstractField.abstract(m, [s1, s2])
+        ...    (abstractedSymbol, structured_data) = Symbol.abstract(m, [s1, s2])
         ...    print(structured_data)
         ...    print(abstractedSymbol.name)  # doctest: +NORMALIZE_WHITESPACE
         OrderedDict([('name', b'netzob'), ('question', b", what's up in "),
@@ -563,16 +567,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         OrderedDict([('name', b'kurt'), ('question', b", what's up in "),
                      ('city', b'Berlin'), ('mark', b' ?')])
         Symbol-kurt
-
-        :parameter data: the data that should be abstracted in symbol
-        :type data: :class:`str`
-        :parameter fields: a list of fields/symbols targeted during the abstraction process
-        :type fields: :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`
-
-        :return: a field/symbol and the structured received message
-        :rtype: a tuple (:class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, dict)
-        :raises: :class:`AbstractionException <netzob.Model.Vocabulary.AbstractField.AbstractionException>` if an error occurs while abstracting the data
         """
+
         from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
         for field in fields:
             try:

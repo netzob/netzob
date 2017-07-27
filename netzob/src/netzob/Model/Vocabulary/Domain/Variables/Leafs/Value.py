@@ -70,7 +70,7 @@ class Value(AbstractRelationVariableLeaf):
                      will be generated.
     :param operation: An optional transformation operation to be
                       applied on the targeted data.
-    :type target: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
+    :type target: :class:`Field <netzob.Model.Vocabulary.Field>`, required
     :type name: :class:`str`, optional
     :type operation: :class:`Callable <collections.abc.Callable>`, optional
 
@@ -212,7 +212,7 @@ class Value(AbstractRelationVariableLeaf):
 
         # we verify we have access to the expected value
         expectedValue = self.computeExpectedValue(parsingPath)
-        
+
         self._logger.debug(
             "Expected value to parse: {0}".format(expectedValue))
 

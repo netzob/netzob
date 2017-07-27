@@ -56,7 +56,7 @@ class SHA1_96(Hash):
                      represented according to this dataType.
                      If None, default value is Raw(nbBytes=1).
     :param name: The name of the Value variable. If None, the name will be generated.
-    :type targets: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
+    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
     :type name: :class:`str`, optional
 

@@ -56,7 +56,7 @@ class CRC16(Checksum):
     :param dataType: Specify that the produced value should be
                      represented according to this dataType.
                      If None, default value is Raw(nbBytes=2).
-    :type targets: a :class:`list` of :class:`AbstractField <netzob.Model.Vocabulary.AbstractField>`, required
+    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
 
 

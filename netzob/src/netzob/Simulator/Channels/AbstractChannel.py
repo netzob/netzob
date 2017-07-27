@@ -206,6 +206,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
     def open(self, timeout=DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a server, it starts
         to listen and will create an instance for each different client.
+
         :param timeout: The default timeout of the channel for opening
                         connection and waiting for a message. Default value
                         is 5.0 seconds. To specify no timeout, None value is

@@ -86,10 +86,10 @@ class IPv4(AbstractType):
     >>> f2 = Field(IPv4(), name="ip4")
 
     >>> raw_data = ip.value.tobytes()
-    >>> AbstractField.abstract(raw_data, [f2])
+    >>> Symbol.abstract(raw_data, [f2])
     (ip4, OrderedDict([('ip4', b'\xc0\xa8\x00\n')]))
     >>> raw_data = f1.specialize() + raw_data
-    >>> AbstractField.abstract(raw_data, [f1, f2])  # doctest: +SKIP
+    >>> Symbol.abstract(raw_data, [f1, f2])  # doctest: +SKIP
 
     >>> s = Symbol(fields=[f1,f2])
     >>> msgs = [RawMessage(s.specialize()) for x in range(10)]
@@ -397,10 +397,10 @@ class __TestIPv4(unittest.TestCase):
     """
 
     def test_abstraction_arbitrary_values(self):
-        from netzob.all import AbstractField, Field, Symbol
+        from netzob.all import Field, Symbol
         domains = [
             IPv4("1.2.3.4"), IPv4(),
         ]
         symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
         data = b''.join(f.specialize() for f in symbol.fields)
-        assert AbstractField.abstract(data, [symbol])[1]
+        assert Symbol.abstract(data, [symbol])[1]

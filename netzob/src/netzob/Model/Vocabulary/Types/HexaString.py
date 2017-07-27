@@ -159,7 +159,7 @@ class HexaString(AbstractType):
         True
         >>> spec_data = Symbol(fields=[Field(domain)])
         >>> data = b"\xaa\xbb"
-        >>> AbstractField.abstract(data, [spec_data])
+        >>> Symbol.abstract(data, [spec_data])
         (Symbol, OrderedDict([('Field', b'\xaa\xbb')]))
 
         """
@@ -296,10 +296,10 @@ class __TestHexaString(unittest.TestCase):
     """
 
     def test_abstraction_arbitrary_values(self):
-        from netzob.all import AbstractField, Field, Symbol
+        from netzob.all import Field, Symbol
         domains = [
             HexaString(b"aabb"), HexaString(nbBytes=4),
         ]
         symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
         data = b''.join(f.specialize() for f in symbol.fields)
-        assert AbstractField.abstract(data, [symbol])[1]
+        assert Symbol.abstract(data, [symbol])[1]

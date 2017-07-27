@@ -43,7 +43,7 @@ from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Common.Utils.SortedTypedList import SortedTypedList
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.ApplicativeData import ApplicativeData
-from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.Symbol import Symbol
 
 
 @NetzobLogger
@@ -324,6 +324,6 @@ class Session(object):
             )
             return abstractSession
         for message in list(self.messages.values()):
-            (symbol, structured_message) = AbstractField.abstract(message.data, symbolList)
+            (symbol, structured_message) = Symbol.abstract(message.data, symbolList)
             abstractSession.append((message.source, message.destination, symbol))
         return abstractSession

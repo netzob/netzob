@@ -253,8 +253,8 @@ class Fuzz(object):
         :param value: the fuzzing strategy (see below for available
                       strategies).
         :param kwargs: some context dependent parameters.
-        :type key: :class:`AbstractField
-                   <netzob.Model.Vocabulary.AbstractField.AbstractField>`,
+        :type key: :class:`Field
+                   <netzob.Model.Vocabulary.Field.Field>`,
                    or :class:`AbstractVariable
                    <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`,
                    or :class:`AbstractType

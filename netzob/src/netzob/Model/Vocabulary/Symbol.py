@@ -148,7 +148,7 @@ class Symbol(AbstractField):
     >>> concrete_message = symbol.specialize()
     >>> print(concrete_message)
     b'aaaa # bbbbbb'
-    >>> (abstracted_symbol, structured_data) = AbstractField.abstract(concrete_message, [symbol])
+    >>> (abstracted_symbol, structured_data) = Symbol.abstract(concrete_message, [symbol])
     >>> print(abstracted_symbol == symbol)
     True
 
