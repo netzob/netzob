@@ -85,7 +85,6 @@ try:
                 if not self.is_tty:
                     self.stream.write(message)
                 else:
-                    self.stream.write(self.colours[record.levelname] + message + Style.RESET_ALL)
                     self.stream.write(self.colours[record.levelname] + message
                                       + Style.RESET_ALL)
                 self.stream.write(getattr(self, 'terminator', '\n'))

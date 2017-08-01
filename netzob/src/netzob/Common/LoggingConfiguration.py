@@ -68,9 +68,6 @@ class LoggingConfiguration(object):
     #+----------------------------------------------
     def __init__(self, workspace, opts):
         # First we extract the normal logging config file
-        self.loggingFilePath = os.path.join(workspace.getPath(), workspace.getPathOfLogging())
-        if (self.loggingFilePath != "" and os.path.isfile(self.loggingFilePath)):
-            logging.debug("Logging config file: {0}".format(self.loggingFilePath))
         self.loggingFilePath = os.path.join(workspace.getPath(),
                                             workspace.getPathOfLogging())
         if (self.loggingFilePath != "" and
@@ -84,7 +81,6 @@ class LoggingConfiguration(object):
             logger = logging.getLogger("")
             logger.setLevel(logging.INFO)
             h = logging.StreamHandler()
-            f = logging.Formatter("[%(threadName)s]%(asctime)s - %(module)s - %(levelname)s - %(message)s")
             f = logging.Formatter(
                 "[%(threadName)s]%(asctime)s - %(module)s - %(levelname)s - %(message)s"
             )
@@ -92,7 +88,6 @@ class LoggingConfiguration(object):
             logger.addHandler(h)
 
         # Override default configuration with command line option
-        if opts.debugLevel in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
         if opts.debugLevel in [
                 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
         ]:

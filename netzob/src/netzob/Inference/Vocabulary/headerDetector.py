@@ -174,6 +174,7 @@ class headerDetector(object):
 
 
 
+
     @typeCheck(list)
     def __executeValueOnSymbols(self, symbols):
         for symbol in symbols:

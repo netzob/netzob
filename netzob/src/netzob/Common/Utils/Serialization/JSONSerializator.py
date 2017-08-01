@@ -78,10 +78,4 @@ class JSONSerializator(object):
         for prop in props:
             print(prop.fget.__name__, prop.fget)
             
-                                        
-                
-    
-        return "TEST"
-
-
         return "TEST"

@@ -44,6 +44,5 @@ except ImportError:
 # except ImportError:
 #     pass
 
-    
 if pcapy_available:  # and impacket_available:
     from netzob.Import.PCAPImporter.PCAPImporter import PCAPImporter

@@ -42,6 +42,8 @@ from netzob.Common.Utils.SortedTypedList import SortedTypedList
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Messages.FileMessage import FileMessage
 from netzob.Common.NetzobException import NetzobImportException
+from netzob.Model.Vocabulary.Session import Session
+
 
 @NetzobLogger
 class FileImporter(object):
@@ -102,7 +104,7 @@ class FileImporter(object):
         :rtype: a :class:`netzob.Common.Utils.SortedTypedList.SortedTypedList` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
         """
         # Verify the existence of input files
-        MessageList = []
+        errorMessageList = []
         for filePath in filePathList:
             try:
                 fp = open(filePath)
@@ -123,7 +125,10 @@ class FileImporter(object):
         self.messages = SortedTypedList(AbstractMessage)
         for filePath in filePathList:
             self.__readMessagesFromFile(filePath, delimitor)
-        
+            # Create a session and attribute it to messages:
+            session = Session(list(self.messages.values()), name=filePath)
+            for message in self.messages.values():
+                message.session = session
         return self.messages
     
     @typeCheck(str, bytes)
