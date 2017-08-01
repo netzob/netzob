@@ -91,6 +91,15 @@ class TypeEncodingFunction(EncodingFunction):
     ------- | -----
     'hello' | 1    
     ------- | -----
+    >>> f2.encodingFunctions = [TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG)]
+    >>> f2.encodingFunctions = [TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG)]
+    >>> print(s)
+    Field   | Field
+    ------- | -----
+    'hello' | 1    
+    ------- | -----
+    
+
 
     >>> m=RawMessage(b'\x68\x65\x6c\x6c\x6f\x00\x00\x00\x01')
     >>> f1=Field(Raw("\x68\x65\x6c\x6c\x6f"))

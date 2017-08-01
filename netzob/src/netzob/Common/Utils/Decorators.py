@@ -85,7 +85,6 @@ try:
                 if not self.is_tty:
                     self.stream.write(message)
                 else:
-                    self.stream.write(self.colours[record.levelname] + message + Style.RESET_ALL)
                     self.stream.write(self.colours[record.levelname] + message
                                       + Style.RESET_ALL)
                 self.stream.write(getattr(self, 'terminator', '\n'))
@@ -119,7 +118,6 @@ def NetzobLogger(klass):
             klass._logger.setLevel(int(os.environ['NETZOB_LOG_LEVEL']))
         except:
             pass
-        handler = ColourStreamHandler() if has_colour else logging.StreamHandler()
         handler = ColourStreamHandler(
         ) if has_colour else logging.StreamHandler()
         fmt = '%(relativeCreated)d: [%(levelname)s] %(module)s:%(funcName)s: %(message)s'

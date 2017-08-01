@@ -80,13 +80,13 @@ class CRCFinder(object):
             #TODO add right to left search (here is only left to right => Not found if it's CRC of header)
             results.CRC_be, results.CRC_le = self._search_CRC(searched_string)
             results.CRC_mid_be, results.CRC_mid_le = self._search_mid_CRC(searched_string)
-            self._logger.debug("Found the following results:")
-            self._logger.debug("CRC_BE : " + str(results.CRC_be) + "")
-            self._logger.debug("CRC_LE : " + str(results.CRC_le) + "")
-            self._logger.debug("CRC_mid_be : " + str(results.CRC_mid_be) + "")
-            self._logger.debug("CRC_mid_le : " + str(results.CRC_mid_le) + "")
+            self._logger.warning("Found the following results:")
+            self._logger.warning("CRC_BE : " + str(results.CRC_be) + "")
+            self._logger.warning("CRC_LE : " + str(results.CRC_le) + "")
+            self._logger.warning("CRC_mid_be : " + str(results.CRC_mid_be) + "")
+            self._logger.warning("CRC_mid_le : " + str(results.CRC_mid_le) + "")
         if create_fields and results:
-            self._logger.debug("Refining search to fields...")
+            self._logger.warning("Refining search to fields...")
             if symbol.fields:
                 for field in symbol.fields:
                     field_values = field.getValues()
@@ -100,11 +100,11 @@ class CRCFinder(object):
                     if field_results.CRC_be or field_results.CRC_le or field_results.CRC_mid_be or field_results.CRC_mid_le:
                         # If refining the search gives results => The CRC and the elements that are used for the CRC are all inside one field
                         # Hence we create subfields
-                        self._logger.debug("Found the following results in fields:")
-                        self._logger.debug("CRC_BE : " + str(field_results.CRC_be) + "")
-                        self._logger.debug("CRC_LE : " + str(field_results.CRC_le) + "")
-                        self._logger.debug("CRC_mid_be : " + str(field_results.CRC_mid_be) + "")
-                        self._logger.debug("CRC_mid_le : " + str(field_results.CRC_mid_le) + "")
+                        self._logger.warning("Found the following results in fields:")
+                        self._logger.warning("CRC_BE : " + str(field_results.CRC_be) + "")
+                        self._logger.warning("CRC_LE : " + str(field_results.CRC_le) + "")
+                        self._logger.warning("CRC_mid_be : " + str(field_results.CRC_mid_be) + "")
+                        self._logger.warning("CRC_mid_le : " + str(field_results.CRC_mid_le) + "")
                         if max_length > 4:
                             # More than one value (ALT FIELDS) => Need to resize field to CRC and add ALT Fields around
                             # Will need to create the CRC field and static/ALT fields around it.
@@ -144,13 +144,13 @@ class CRCFinder(object):
                         elif results.CRC_mid_le:
                             self.__automate_mid_field_creation(results.CRC_mid_le, symbol, endianness='little')
                         else:
-                            self._logger.debug('Did not succeed creating fields')
+                            self._logger.warning('Did not succeed creating fields')
 
 
             else:
-                self._logger.debug("Symbol has no fields. Creating new ones...")
+                self._logger.warning("Symbol has no fields. Creating new ones...")
         else:
-            self._logger.debug("Sorry, no CRC found")
+            self._logger.warning("Sorry, no CRC found")
 
 
     def _search_CRC(self,searched_string):
@@ -170,8 +170,8 @@ class CRCFinder(object):
             except:
                 compared = bytes.fromhex('0' + hex(binascii.crc32(searched_string[i + 4:]))[2:])[::-1]
             if searched_string[i:i + 4] == compared:
-                self._logger.debug(compared)
-                self._logger.debug("Found a CRC, adding it to found_LE_CRCS_index[]!")
+                self._logger.warning(compared)
+                self._logger.warning("Found a CRC, adding it to found_LE_CRCS_index[]!")
                 found_LE_CRCS_index.append(i)
             # BIG ENDIAN BASIC SEARCH
             try:
@@ -179,7 +179,7 @@ class CRCFinder(object):
             except:
                 compared = bytes.fromhex('0' + hex(binascii.crc32(searched_string[i + 4:][::-1]))[2:])[::-1]
             if searched_string[i:i+4] == compared :
-                self._logger.debug("Found a LE CRC, adding to found_BE_CRCS_index[]!")
+                self._logger.warning("Found a LE CRC, adding to found_BE_CRCS_index[]!")
                 found_BE_CRCS_index.append(i)
             i += 1
         return found_BE_CRCS_index,found_LE_CRCS_index
@@ -203,12 +203,12 @@ class CRCFinder(object):
             except:
                 compared = bytes.fromhex('0' + hex(binascii.crc32(searched_string[i-5:i-1] + b'\x00\x00\x00\x00' + searched_string[i+3:i+7]))[2:])
             if searched_string[i-1:i + 3] == compared:
-                self._logger.debug("Found a CRC, adding it to found_BE_CRCS_index[]!")
+                self._logger.warning("Found a CRC, adding it to found_BE_CRCS_index[]!")
                 found_BE_CRCS_index.append(i-1)
             # LITTLE ENDIAN BASIC SEARCH
             compared = compared[::-1]
             if searched_string[i-1:i+3] == compared :
-                self._logger.debug("Found a LE CRC, adding to found_LE_CRCS_index[]!")
+                self._logger.warning("Found a LE CRC, adding to found_LE_CRCS_index[]!")
                 found_LE_CRCS_index.append(i-1)
             i += 1
         return found_BE_CRCS_index,found_LE_CRCS_index

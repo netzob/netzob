@@ -121,23 +121,23 @@ class headerDetector(object):
                     #sym_field_values = self.__getPossibleValues(sym.fields[k])
                     sm = difflib.SequenceMatcher(None, sym_field_values, symbol_field_values)
                     if sm.ratio() >= self.ratioValue :
-                        self._logger.debug("Match at:" + str(sm.ratio()))
-                        self._logger.debug("Between:" + str(sym_field_values) + "and" + str(symbol_field_values))
+                        self._logger.warning("Match at:" + str(sm.ratio()))
+                        self._logger.warning("Between:" + str(sym_field_values) + "and" + str(symbol_field_values))
                         header.append(field)
                         try:
                             average_length[i] += symbol_field_averageLength
                         except:
                             average_length.append(symbol_field_averageLength)
                     else:
-                        self._logger.debug("No Match at:" + str(sm.ratio()))
-                        self._logger.debug("Between:" + str(sym_field_values) + "and" + str(symbol_field_values))
+                        self._logger.warning("No Match at:" + str(sm.ratio()))
+                        self._logger.warning("Between:" + str(sym_field_values) + "and" + str(symbol_field_values))
                         break
-        self._logger.debug("Computing the end index of header...")
+        self._logger.warning("Computing the end index of header...")
         total_length = int(sum(average_length)/len(average_length))
         number_of_fields_in_header = int(sum(header_list)/len(header_list))
         if number_of_fields_in_header >= 1 :
-            self._logger.debug("The index: " + str(total_length) + " is probably the end of the header")
-            self._logger.debug("Renaming fields")
+            self._logger.warning("The index: " + str(total_length) + " is probably the end of the header")
+            self._logger.warning("Renaming fields")
             for symbol in symbols:
                 try:
                     last_field_header,maxSize,indexInField = self.getFieldFromIndex(total_length,symbol)
@@ -151,7 +151,7 @@ class headerDetector(object):
                         field.name += "_HEADER"
             return True
         else:
-            self._logger.debug("Sorry, I don't think there's a header in there")
+            self._logger.warning("Sorry, I don't think there's a header in there")
             return False
 
     @typeCheck(list)
@@ -171,6 +171,7 @@ class headerDetector(object):
                 if field.domain.varType == self.fieldType:
                     return
             field.name += "_HEADER"
+
 
 
 

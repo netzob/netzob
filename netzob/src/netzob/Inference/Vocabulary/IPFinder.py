@@ -80,19 +80,19 @@ class IPFinder(object):
             print(message)
             sys.stdout = old_stdout
             #Print results using click
-            self._logger.debug("Results for [Message] : \n" + buffer1.getvalue() + "\n")
-            self._logger.debug("[Number of results found] : " + str(results.total_length) + "\n")
-            self._logger.debug("Result indexes in message: \n ")
-            self._logger.debug("[Whole IP Big Endian] : " +  str(results.full_be) +"\n" )
-            self._logger.debug("[Three last terms of IP Big Endian] : " + str(results.one_less_be) + "\n" )
-            self._logger.debug("[Two last terms of IP Big Endian] : " + str(results.two_less_be)  + "\n" )
-            self._logger.debug("[Whole IP Little Endian] : " + str(results.full_le) + "\n"  )
-            self._logger.debug("[Three last terms of IP Little Endian] : " + str(results.one_less_le) + "\n" )
-            self._logger.debug("[Two last terms of IP Little Endian] : " + str(results.two_less_le) + "\n" )
+            self._logger.warning("Results for [Message] : \n" + buffer1.getvalue() + "\n")
+            self._logger.warning("[Number of results found] : " + str(results.total_length) + "\n")
+            self._logger.warning("Result indexes in message: \n ")
+            self._logger.warning("[Whole IP Big Endian] : " +  str(results.full_be) +"\n" )
+            self._logger.warning("[Three last terms of IP Big Endian] : " + str(results.one_less_be) + "\n" )
+            self._logger.warning("[Two last terms of IP Big Endian] : " + str(results.two_less_be)  + "\n" )
+            self._logger.warning("[Whole IP Little Endian] : " + str(results.full_le) + "\n"  )
+            self._logger.warning("[Three last terms of IP Little Endian] : " + str(results.one_less_le) + "\n" )
+            self._logger.warning("[Two last terms of IP Little Endian] : " + str(results.two_less_le) + "\n" )
             if create_fields:
-                self._logger.debug("Attempting to create new fields")
+                self._logger.warning("Attempting to create new fields")
                 if symbol.fields:
-                    self._logger.debug("Refining search to fields...")
+                    self._logger.warning("Refining search to fields...")
                     for field in symbol.fields:
                         subfield_index_list = []
                         field_values = field.getValues()
@@ -109,7 +109,7 @@ class IPFinder(object):
                             field_result = self.__core_find(mess,hexipstring,index_list,two_terms)
                             if field_result.full_be or field_result.one_less_be or field_result.two_less_be or field_result.full_le or field_result.one_less_le or field_result.two_less_le :
                             # Searchstring not always split in between fields => Need to create subfields
-                                self._logger.debug("Searchstring inside fields, creating subfields...")
+                                self._logger.warning("Searchstring inside fields, creating subfields...")
                                 # Create field dict which contains fields and index
                                 fields_dict = dict()
                                 if number_of_values > 1:
@@ -197,9 +197,9 @@ class IPFinder(object):
                             else:
                                 #Searchstring always split in between other fields => Delete fields and create new ones Or just return indexes, and let user redefine fields manually
                                 # symbol.fields = []
-                                self._logger.debug("Searchstring in between fields...")
-                                self._logger.debug("[1] : Delete all fields and replace by IPFIELDS"+ "\n")
-                                self._logger.debug("[ANY] : Just print the index in the message"+ "\n")
+                                self._logger.warning("Searchstring in between fields...")
+                                self._logger.warning("[1] : Delete all fields and replace by IPFIELDS"+ "\n")
+                                self._logger.warning("[ANY] : Just print the index in the message"+ "\n")
         return
 
 

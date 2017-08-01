@@ -90,7 +90,7 @@ class ClusterByApplicativeData(object):
         pass
 
     @typeCheck(list, list)
-    def cluster(self, messages, appDatas):
+    def cluster(self, messages, appDatas, meta=False):
         if messages is None:
             raise TypeError("Messages cannot be None")
         if appDatas is None:
@@ -140,9 +140,6 @@ class ClusterByApplicativeData(object):
             message = searchTask.properties['message']
             label = searchTask.properties['label']
             if label not in list(labels.values()):
-                raise ValueError("Found label ({0}) in a result cannot be identified in the original list of searched labels.".format(label))
-            if message.id not in list(idMessages.keys()):
-                raise ValueError("Found message ({0}) cannot be identified in the original list of searched messages.".format(message.id))
                 raise ValueError(
                     "Found label ({0}) in a result cannot be identified in the original list of searched labels.".
                     format(label))
@@ -164,9 +161,8 @@ class ClusterByApplicativeData(object):
                 clusters[strAppDatas] = [message]
 
         # Build Symbols
-        symbols = [Symbol(name=strAppDatas, messages=msgs) for strAppDatas, msgs in list(clusters.items())]
         symbols = [
-            Symbol(name=strAppDatas, messages=msgs)
+            Symbol(name=strAppDatas, messages=msgs, meta=meta)
             for strAppDatas, msgs in list(clusters.items())
         ]
 

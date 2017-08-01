@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -25,38 +26,8 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
-#| Standard library imports
-#+----------------------------------------------
-from gettext import gettext as _
-import logging
+# List subpackages to import with the current one
+# see docs.python.org/2/tutorial/modules.html
 
-#+----------------------------------------------
-#| Related third party imports
-#+----------------------------------------------
-
-#+----------------------------------------------
-#| Local application imports
-#+----------------------------------------------
-
-
-#+----------------------------------------------
-#| AbstractEquivalenceOracle:
-#+----------------------------------------------
-class AbstractEquivalenceOracle(object):
-
-    def __init__(self, type):
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Grammar.EquivalenceOracles.AbstractEquivalenceOracle.py')
-    def __init__(self, type):
-        # create logger with the given configuration
-        self.log = logging.getLogger(
-            'netzob.Inference.Grammar.EquivalenceOracles.AbstractEquivalenceOracle.py'
-        )
-        self.type = type
-
-    def findCounterExample(self, mmstd):
-        self.log.error("The oracle doesn't support 'findCounterExample'.")
-        raise NotImplementedError("The oracle doesn't support 'findCounterExample'.")
-        raise NotImplementedError(
-            "The oracle doesn't support 'findCounterExample'.")
+from netzob.Export.WiresharkExporter import *
+from netzob.Export.KaitaiExporter import *
