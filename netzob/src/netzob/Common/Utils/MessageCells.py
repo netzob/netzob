@@ -27,8 +27,7 @@
 
 #+---------------------------------------------------------------------------+
 #| File contributors :                                                       |
-#|       - Georges Bossert <georges.bossert (a) supelec.fr>                  |
-#|       - Frédéric Guihéry <frederic.guihery (a) amossys.fr>                |
+#|       - Georges Bossert <gbossert (a) miskin.fr>                          |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
@@ -43,79 +42,40 @@ from collections import OrderedDict
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Symbol import Symbol
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.HexaString import HexaString
-from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
-from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
+from netzob.Common.Utils.Decorators import NetzobLogger
 
 
 @NetzobLogger
-class ClusterBySize(object):
-    """This clustering process regroups messages that have equivalent
-        size.
+class MessageCells(OrderedDict):
+    """
+    This data structure overwrites the notion of OrderedDict to support additionnal attributes
+    such as 'headers'. This data structure has been created for the `AbstractField.getMessageCells` method
+
+    >>> from netzob.all import *
+    >>> m = MessageCells()
+    >>> m[1] = "a"
+    >>> m[2] = "b"
+    >>> m[1] = m[2]
+    >>> list(m.items())
+    [(1, 'b'), (2, 'b')]
+    >>> m.fields = [Field(name="f1"), Field(name="f2")]
+    >>> [f.name for f in m.fields]
+    ['f1', 'f2']
+
     """
 
-    @typeCheck(list)
-    def cluster(self, messages,meta=False):
-        """Create and return new symbols according to the messages size.
+    def __init__(self):
+        super().__init__()
+        self.fields = []
 
-        >>> from netzob.all import *
-        >>> import binascii
-        >>> samples = ["00ffff1100abcd", "00aaaa1100abcd", "00bbbb1100abcd", "001100abcd", "001100ffff", "00ffffffff1100abcd"]
-        >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
-        >>> clusterer = ClusterBySize()
-        >>> newSymbols = clusterer.cluster(messages)
-        >>> for sym in newSymbols:
-        ...     print("[" + sym.name + "]")
-        ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print(sym)
-        [symbol_7]
-        Field           
-        ----------------
-        '00ffff1100abcd'
-        '00aaaa1100abcd'
-        '00bbbb1100abcd'
-        ----------------
-        [symbol_5]
-        Field       
-        ------------
-        '001100abcd'
-        '001100ffff'
-        ------------
-        [symbol_9]
-        Field               
-        --------------------
-        '00ffffffff1100abcd'
-        --------------------
+    @property
+    def fields(self):
+        """Fields that participate in the message cells columns"""
+        return self.__fields
 
-        :param messages: the messages to cluster.
-        :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
-        :raise Exception if something bad happens
-        """
-
-        # Safe checks
-        if messages is None:
-            raise TypeError("'messages' should not be None")
-
-        # Cluster messages by size
-        messagesByLen = {}
-        messagesByLen = OrderedDict()
-        for msg in messages:
-            l = len(msg.data)
-            if not l in list(messagesByLen.keys()):
-                messagesByLen[l] = []
-            messagesByLen[l].append(msg)
-
-        # Create new symbols for each group of equivalend message size
-        newSymbols = []
-        for (length, msgs) in list(messagesByLen.items()):
-            s = Symbol(messages=msgs, name="symbol_{0}".format(str(length)), meta=meta)
-            newSymbols.append(s)
-
-        return newSymbols
-
+    @fields.setter
+    def fields(self, fields):
+        self.__fields = []
+        for f in fields:
+            self.__fields.append(f)
+            
