@@ -227,10 +227,10 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """Read the next message from the communication channel.
         """
 
-    def setWriteCounterMax(self, maxValue):
+    def setSendLimit(self, maxValue):
         """Change the max number of writings.
         When it is reached, no packet can be sent anymore until
-        :meth:`clearWriteCounter` is called.
+        :meth:`clearSendLimit` is called.
         If maxValue is -1, the sending limit is deactivated.
 
         :param maxValue: the new max value
@@ -238,7 +238,7 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """
         self.writeCounterMax = maxValue
 
-    def clearWriteCounter(self):
+    def clearSendLimit(self):
         """Reset the writing counters.
         """
         self.writeCounter = 0
