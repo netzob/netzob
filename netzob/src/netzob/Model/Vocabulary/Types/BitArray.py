@@ -40,6 +40,8 @@ import random
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
 from bitarray import bitarray
+from lxml import etree
+from lxml.etree import ElementTree
 
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
@@ -207,3 +209,35 @@ class BitArray(AbstractType):
         b = bitarray(endian=endian)
         b.frombytes(norm_data)
         return b
+
+    def XMLProperties(currentType, xmlBitarray, symbol_namespace, common_namespace):
+        AbstractType.XMLProperties(currentType, xmlBitarray, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlBitarray = etree.SubElement(xmlroot, "{" + symbol_namespace + "}bitarray")
+
+        BitArray.XMLProperties(self, xmlBitarray, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        AbstractType.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = BitArray.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        bitarray = BitArray(value=a['value'], nbBits=a['size'])
+
+        if 'unitSize' in a.keys():
+            bitarray.unitSize = a['unitSize']
+        if 'endianness' in a.keys():
+            bitarray.endianness = a['endianness']
+        if 'sign' in a.keys():
+            bitarray.sign = a['sign']
+        if 'id' in a.keys():
+            bitarray.id = a['id']
+        return bitarray

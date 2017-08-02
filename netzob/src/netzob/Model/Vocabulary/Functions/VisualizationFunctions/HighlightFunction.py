@@ -38,7 +38,8 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -57,3 +58,30 @@ class HighlightFunction(VisualizationFunction):
 
     def getTags(self):
         return (self.TAG_START, self.TAG_END)
+
+    def XMLProperties(currentFunction, xmlHighlightFunction, symbol_namespace, common_namespace):
+        # Save the Properties
+        VisualizationFunction.XMLProperties(currentFunction, xmlHighlightFunction, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlHighlightFunction = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}HighlightFunction")
+
+        HighlightFunction.XMLProperties(self, xmlHighlightFunction, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        VisualizationFunction.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+        a = HighlightFunction.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        HighLightFunc = None
+
+        if 'start' in a.keys() and 'end' in a.keys():
+            HighLightFunc = HighlightFunction(start=a['start'], end=a['end'])
+            if 'id' in a.keys():
+                HighLightFunc.id = a['id']
+        return HighLightFunc

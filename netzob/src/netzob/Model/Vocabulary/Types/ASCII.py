@@ -42,6 +42,8 @@ import collections
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
 from bitarray import bitarray
+from lxml import etree
+from lxml.etree import ElementTree
 
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
@@ -104,6 +106,8 @@ class ASCII(AbstractType):
                 dst_unitSize=unitSize,
                 dst_endianness=endianness,
                 dst_sign=sign)
+        elif isinstance(value, bitarray):
+            pass
         else:
             value = None
 
@@ -386,3 +390,56 @@ class ASCII(AbstractType):
                 res += "."
 
         return res
+
+    def XMLProperties(currentType, xmlASCII, symbol_namespace, common_namespace):
+        AbstractType.XMLProperties(currentType, xmlASCII, symbol_namespace, common_namespace)
+
+        # Save Properties
+        if isinstance(currentType.nbChars, tuple) and currentType.nbChars != (None, None):
+            xmlASCII.set("nbMinChar", str(currentType.nbChars[0]))
+            xmlASCII.set("nbMaxChar", str(currentType.nbChars[1]))
+        elif isinstance(currentType.nbChars, int):
+            xmlASCII.set("nbMinChar", str(currentType.nbChars[0]))
+
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlASCII = etree.SubElement(xmlroot, "{" + symbol_namespace + "}ascii")
+
+        ASCII.XMLProperties(self, xmlASCII, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        AbstractType.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        # Size is modified in the ASCII Constructor so we do the same here
+        size = attributes['size']
+        if isinstance(size, int):
+            size = (int(size / 8), int(size / 8))
+        elif isinstance(size, tuple):
+            size = (int(size[0] / 8), int(size[1] / 8))
+        attributes['size'] = size
+
+        # If this properties are available, we overwrite the last changes
+
+        if xmlroot.get('nbMaxChar') is not None and xmlroot.get('nbMinChar') is not None:
+            # attributes['nbMaxChar'] = int(xmlroot.get('nbMaxChar'))
+            attributes['size'] = dict()
+            attributes['size'] = (int(xmlroot.get('nbMinChar')), int(xmlroot.get('nbMaxChar')))
+        elif xmlroot.get('nbMinChar') is not None:
+            attributes['size'] = int(xmlroot.get('nbMinChar'))
+
+
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = ASCII.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        ascii = ASCII(value=a['value'], nbChars=a['size'], unitSize=a['unitSize'], endianness=a['endianness'], sign=a['sign'])
+
+        if 'id' in a.keys():
+            ascii.id = a['id']
+        return ascii

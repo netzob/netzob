@@ -41,7 +41,8 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
@@ -111,6 +112,8 @@ class Integer(AbstractType):
                 dst_unitSize=unitSize,
                 dst_endianness=endianness,
                 dst_sign=sign)
+        elif isinstance(value, bitarray):
+            pass
         else:
             value = None
 
@@ -371,3 +374,41 @@ class Integer(AbstractType):
             unitFormat = unitFormat.upper()
 
         return endianFormat + unitFormat
+
+    def XMLProperties(currentType, xmlInteger, symbol_namespace, common_namespace):
+        AbstractType.XMLProperties(currentType, xmlInteger, symbol_namespace, common_namespace)
+
+        # Save Properties
+        # if currentType.length is not None:
+        #     xmlInteger.set("length", str(currentType.length))
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlInteger = etree.SubElement(xmlroot, "{" + symbol_namespace + "}integer")
+
+        Integer.XMLProperties(self, xmlInteger, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        AbstractType.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        # if xmlroot.get('length') is not None:
+        #     attributes['length'] = int(xmlroot.get('length'))
+        # else:
+        #     attributes['length'] = None
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = Integer.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        integer = Integer(value=a['value'], unitSize=a['unitSize'], endianness=a['endianness'], sign=a['sign'])
+        # integer = Integer(value=a['value'], length=a['length'], unitSize=a['unitSize'], endianness=a['endianness'],
+        #                   sign=a['sign'])
+
+        if 'id' in a.keys():
+            integer.id = a['id']
+        return integer
+

@@ -41,7 +41,8 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
@@ -244,3 +245,52 @@ class Raw(AbstractType):
                     return False
 
         return True
+
+    def XMLProperties(currentType, xmlRaw, symbol_namespace, common_namespace):
+        AbstractType.XMLProperties(currentType, xmlRaw, symbol_namespace, common_namespace)
+
+        # Save Properties
+        if currentType.alphabet is not None and len(currentType.alphabet) > 0:
+            xmlalphabet= etree.SubElement(xmlRaw, "{" + symbol_namespace + "}alphabet")
+            for char in currentType.alphabet:
+                xmlChar = etree.SubElement(xmlalphabet, "{" + symbol_namespace + "}char")
+                xmlChar.text = str(char)
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlRaw = etree.SubElement(xmlroot, "{" + symbol_namespace + "}raw")
+
+        Raw.XMLProperties(self, xmlRaw, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        AbstractType.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        alphabet = []
+        if xmlroot.find("{" + symbol_namespace + "}alphabet") is not None:
+            xmlalphabet = xmlroot.find("{" + symbol_namespace + "}alphabet")
+            for xmlChar in xmlalphabet.find("{" + symbol_namespace + "}char"):
+                alphabet.append(str(xmlChar.text))
+        attributes['alphabet'] = alphabet
+
+        # Size is modified in the raw Constructor so we do the same here
+        size = attributes['size']
+        if isinstance(size, int):
+            size = (int(size / 8), int(size / 8))
+        elif isinstance(size, tuple):
+            size = (int(size[0] / 8), int(size[1] / 8))
+        attributes['size'] = size
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = Raw.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        raw = Raw(value=a['value'], nbBytes=a['size'], unitSize=a['unitSize'], endianness=a['endianness'],
+                  sign=a['sign'], alphabet=a['alphabet'])
+
+        if 'id' in a.keys():
+            raw.id = a['id']
+        return raw

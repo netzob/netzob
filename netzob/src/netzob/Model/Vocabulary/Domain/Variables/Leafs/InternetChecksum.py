@@ -40,6 +40,8 @@ import random
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
+from lxml import etree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -328,3 +330,100 @@ class InternetChecksum(AbstractRelationVariableLeaf):
             raise ValueError(
                 "The datatype of a checksum field must declare its length")
         self.__dataType = dataType
+
+    def XMLProperties(currentNode, xmlCkSum, symbol_namespace, common_namespace):
+        AbstractRelationVariableLeaf.XMLProperties(currentNode, xmlCkSum, symbol_namespace, common_namespace)
+
+        # Save the DataType
+        if currentNode.dataType is not None:
+            xmlDataType = etree.SubElement(xmlCkSum, "{" + symbol_namespace + "}datatype")
+            currentNode.dataType.saveToXML(xmlDataType, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlCkSum = etree.SubElement(xmlroot, "{" + symbol_namespace + "}checksum")
+
+        InternetChecksum.XMLProperties(self, xmlCkSum, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        dataType = None
+        if xmlroot.find("{" + symbol_namespace + "}datatype") is not None:
+            xmlDataType = xmlroot.find("{" + symbol_namespace + "}datatype")
+            if xmlDataType.find("{" + symbol_namespace + "}raw") is not None:
+                xmlRaw = xmlDataType.find("{" + symbol_namespace + "}raw")
+                from netzob.Model.Vocabulary.Types.Raw import Raw
+                raw = Raw.loadFromXML(xmlRaw, symbol_namespace, common_namespace)
+                if raw is not None:
+                    dataType = raw
+            elif xmlDataType.find("{" + symbol_namespace + "}ascii") is not None:
+                xmlASCII = xmlDataType.find("{" + symbol_namespace + "}ascii")
+                from netzob.Model.Vocabulary.Types.ASCII import ASCII
+                ascii = ASCII.loadFromXML(xmlASCII, symbol_namespace, common_namespace)
+                if ascii is not None:
+                    dataType = ascii
+            elif xmlDataType.find("{" + symbol_namespace + "}bitarray") is not None:
+                xmlBitarray = xmlDataType.find("{" + symbol_namespace + "}bitarray")
+                from netzob.Model.Vocabulary.Types.BitArray import BitArray
+                bitarray = BitArray.loadFromXML(xmlBitarray, symbol_namespace, common_namespace)
+                if bitarray is not None:
+                    dataType = bitarray
+            elif xmlDataType.find("{" + symbol_namespace + "}hexaString") is not None:
+                xmlHexaString = xmlDataType.find("{" + symbol_namespace + "}hexaString")
+                from netzob.Model.Vocabulary.Types.HexaString import HexaString
+                hexastring = HexaString.loadFromXML(xmlHexaString, symbol_namespace, common_namespace)
+                if hexastring is not None:
+                    dataType = hexastring
+            elif xmlDataType.find("{" + symbol_namespace + "}integer") is not None:
+                xmlInteger = xmlDataType.find("{" + symbol_namespace + "}integer")
+                from netzob.Model.Vocabulary.Types.Integer import Integer
+                integer = Integer.loadFromXML(xmlInteger, symbol_namespace, common_namespace)
+                if integer is not None:
+                    dataType = integer
+            elif xmlDataType.find("{" + symbol_namespace + "}ipv4") is not None:
+                xmlIPv4 = xmlDataType.find("{" + symbol_namespace + "}ipv4")
+                from netzob.Model.Vocabulary.Types.IPv4 import IPv4
+                ipv4 = IPv4.loadFromXML(xmlIPv4, symbol_namespace, common_namespace)
+                if ipv4 is not None:
+                    dataType = ipv4
+            elif xmlDataType.find("{" + symbol_namespace + "}Timestamp") is not None:
+                xmlTimestamp = xmlDataType.find("{" + symbol_namespace + "}Timestamp")
+                from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
+                timestamp = Timestamp.loadFromXML(xmlTimestamp, symbol_namespace, common_namespace)
+                if timestamp is not None:
+                    dataType = timestamp
+            elif xmlDataType.find("{" + symbol_namespace + "}abstractType") is not None:
+                xmlAbstractType = xmlDataType.find("{" + symbol_namespace + "}abstractType")
+                from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+                abstractType = AbstractType.loadFromXML(xmlAbstractType, symbol_namespace, common_namespace)
+                if abstractType is not None:
+                    dataType = abstractType
+
+        attributes['dataType'] = dataType
+
+        AbstractRelationVariableLeaf.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = InternetChecksum.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        checksum = None
+
+        if 'fieldDependencies' in a.keys():
+            checksum = InternetChecksum(dataType=a['dataType'], name=a['name'], fields=list())
+            if 'id' in a.keys():
+                checksum.id = a['id']
+            if 'svas' in a.keys():
+                checksum.svas = a['svas']
+            if 'fieldDependencies' in a.keys():
+                from netzob.Export.XMLHandler.XMLHandler import XMLHandler
+                unresolved = dict()
+                for ref in a['fieldDependencies']:
+                    unresolved[ref] = checksum
+                XMLHandler.add_to_unresolved_dict('fieldDependencies', unresolved)
+        return checksum
+
+

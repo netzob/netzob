@@ -32,7 +32,8 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -66,7 +67,7 @@ class RawMessage(AbstractMessage):
         :type data: a :class:`object`
         """
         super(RawMessage, self).__init__(
-            data=data, date=date, source=source, destination=destination, messageType = messageType)
+            data=data, date=date, source=source, destination=destination, messageType=messageType)
 
     def priority(self):
         """Return the value that will be used to represent the current message when sorted
@@ -75,3 +76,39 @@ class RawMessage(AbstractMessage):
         :type: int
         """
         return int(self.date * 1000)
+
+    def XMLProperties(currentMessage, xmlRawMessage, symbol_namespace, common_namespace):
+        # Save the Properties inherited from  AbstractMessage
+        AbstractMessage.XMLProperties(currentMessage, xmlRawMessage, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlRawMessage = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}RawMessage")
+
+        RawMessage.XMLProperties(self, xmlRawMessage, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+        AbstractMessage.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+        a = RawMessage.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        rawMessage = None
+        if 'data' in a.keys():
+            rawMessage = RawMessage(data=a['data'], date=a['date'], source=a['source'], destination=a['destination'],
+                                    messageType=a['messageType'])
+            if 'id' in a.keys():
+                rawMessage.id = a['id']
+            if 'metadata' in a.keys():
+                rawMessage.metadata = a['metadata']
+            if 'semanticTags' in a.keys():
+                rawMessage.description = a['semanticTags']
+            if 'visualizationFunctions' in a.keys():
+                rawMessage.visualizationFunctions = a['visualizationFunctions']
+            if 'session' in a.keys():
+                from netzob.Export.XMLHandler.XMLHandler import XMLHandler
+                unresolved = {a['session']: rawMessage}
+                XMLHandler.add_to_unresolved_dict('session', unresolved)
+        return rawMessage

@@ -31,11 +31,13 @@
 import uuid
 import time
 from collections import OrderedDict
+import binascii
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -412,3 +414,132 @@ class AbstractMessage(SortableObject):
                     )
 
         self.__semanticTags = semanticTags
+
+    def XMLProperties(currentMessage, xmlAbsMsg, symbol_namespace, common_namespace):
+        if currentMessage.id is not None:
+            xmlAbsMsg.set("id", str(currentMessage.id.hex))
+        if currentMessage.date is not None:
+            xmlAbsMsg.set("date", str(currentMessage.date))
+        if currentMessage.source is not None:
+            xmlAbsMsg.set("source", str(currentMessage.source))
+        if currentMessage.destination is not None:
+            xmlAbsMsg.set("destination", str(currentMessage.destination))
+        if currentMessage.messageType is not None:
+            xmlAbsMsg.set("messageType", str(currentMessage.messageType))
+        if currentMessage.session is not None:
+            xmlAbsMsg.set("session", str(currentMessage.session.id))
+        if currentMessage.data is not None:
+            xmlData = etree.SubElement(xmlAbsMsg, "{" + symbol_namespace + "}data")
+            data = currentMessage.data
+            if not isinstance(data, bytes):
+                data = bytes(data, encoding='ascii')
+            xmlData.text = str(binascii.hexlify(data))[2:-1]
+
+        # Save the metadata
+        if currentMessage.metadata is not None and len(currentMessage.metadata) > 0:
+            xmlmetadata = etree.SubElement(xmlAbsMsg, "{" + symbol_namespace + "}metadata")
+            for key, value in currentMessage.metadata.items():
+                xmlmeta = etree.SubElement(xmlmetadata, "{" + symbol_namespace + "}meta")
+                xmlmeta.set("key", str(key))
+                xmlmeta.text = str(value)
+
+        # Save the Semantic Tags
+        if currentMessage.semanticTags is not None and len(currentMessage.semanticTags) > 0:
+            xmlSemanticTags = etree.SubElement(xmlAbsMsg, "{" + symbol_namespace + "}semanticTags")
+            for key, value in currentMessage.semanticTags.items():
+                xmlSemanticTag = etree.SubElement(xmlSemanticTags, "{" + symbol_namespace + "}semanticTag")
+                xmlSemanticTag.set("pos", str(key))
+                xmlSemanticTag.text = str(value)
+
+        # Save the VisualisationFunctions
+        if currentMessage.visualizationFunctions is not None and len(currentMessage.visualizationFunctions) > 0:
+            xmlVisuFunctions = etree.SubElement(xmlAbsMsg, "{" + symbol_namespace + "}visualizationFunctions")
+            for visuFunc in currentMessage.visualizationFunctions:
+                visuFunc.saveToXML(xmlVisuFunctions, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlAbsMsg = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}AbstractMessage")
+
+        AbstractMessage.XMLProperties(self, xmlAbsMsg, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+        if xmlroot.get('id') is not None:
+            attributes['id'] = uuid.UUID(hex=str(xmlroot.get('id')))
+        if xmlroot.get('date') is not None:
+            attributes['date'] = float(xmlroot.get('date'))
+        else:
+            attributes['date'] = None
+
+        if xmlroot.get('source') is not None:
+            attributes['source'] = str(xmlroot.get('source'))
+        else:
+            attributes['source'] = None
+
+        if xmlroot.get('destination') is not None:
+            attributes['destination'] = str(xmlroot.get('destination'))
+        else:
+            attributes['destination'] = None
+
+        if xmlroot.get('messageType') is not None:
+            attributes['messageType'] = str(xmlroot.get('messageType'))
+
+        if xmlroot.get('session') is not None:
+            attributes['session'] = uuid.UUID(hex=str(xmlroot.get('session')))
+
+        if xmlroot.find("{" + symbol_namespace + "}data") is not None:
+            data = str(xmlroot.find("{" + symbol_namespace + "}data").text)
+            attributes['data'] = binascii.unhexlify(data)
+
+        # TODO: This may be will not work because the Metadata Value is an Object. Cant reconstruct Object out of string
+        metadata = OrderedDict()
+        if xmlroot.find("{" + symbol_namespace + "}metadata") is not None:
+            xmlmetadata = xmlroot.find("{" + symbol_namespace + "}messages")
+            for xmlmeta in xmlmetadata.findall("{" + symbol_namespace + "}meta"):
+                if xmlmeta.get('key') is not None:
+                    key = str(xmlmeta.get('key'))
+                    value = str(xmlmeta.text)
+                    metadata[key] = value
+        attributes['metadata'] = metadata
+
+        semanticTags = OrderedDict()
+        if xmlroot.find("{" + symbol_namespace + "}semanticTags") is not None:
+            xmlsemanticTags = xmlroot.find("{" + symbol_namespace + "}semanticTags")
+            for xmlTag in xmlsemanticTags.findall("{" + symbol_namespace + "}semanticTag"):
+                if xmlTag.get('pos') is not None:
+                    key = int(xmlTag.get('pos'))
+                    value = str(xmlTag.text)
+                    semanticTags[key] = value
+        attributes['semanticTags'] = semanticTags
+
+        visualizationFunctions = []
+        if xmlroot.find("{" + symbol_namespace + "}visualizationFunctions") is not None:
+            xmlEncodingFunctions = xmlroot.find("{" + symbol_namespace + "}encodingFunctions")
+            for xmlVisu in xmlEncodingFunctions.findall("{" + symbol_namespace + "}HighlightFunction"):
+                from netzob.Model.Vocabulary.Functions.VisualizationFunctions.HighlightFunction import HighlightFunction
+                visoFunc = HighlightFunction.loadFromXML(xmlVisu, symbol_namespace, common_namespace)
+                if visoFunc is not None:
+                    visualizationFunctions.append(visoFunc)
+        attributes['visualizationFunctions'] = visualizationFunctions
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+        a = AbstractMessage.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        absMessage = None
+        if 'data' in a.keys() and 'id':
+            absMessage = AbstractMessage(data=a['data'], _id=a['id'], date=a['date'],
+                                         source=a['source'], destination=a['destination'], messageType=a['messageType'])
+            if 'metadata' in a.keys():
+                absMessage.metadata = a['metadata']
+            if 'semanticTags' in a.keys():
+                absMessage.semanticTags = a['semanticTags']
+            if 'visualizationFunctions' in a.keys():
+                absMessage.visualizationFunctions = a['visualizationFunctions']
+            if 'session' in a.keys():
+                from netzob.Export.XMLHandler.XMLHandler import XMLHandler
+                unresolved = {a['session']: absMessage}
+                XMLHandler.add_to_unresolved_dict('session', unresolved)
+        return absMessage

@@ -39,7 +39,8 @@
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -366,3 +367,73 @@ class Value(AbstractRelationVariableLeaf):
         if operation is not None and not callable(operation):
             raise TypeError("Operation must be a function")
         self.__operation = operation
+
+    def XMLProperties(currentNode, xmlValue, symbol_namespace, common_namespace):
+        AbstractRelationVariableLeaf.XMLProperties(currentNode, xmlValue, symbol_namespace, common_namespace)
+
+        # Save Properties
+        # if currentNode.factor is not None:
+        #     xmlValue.set("factor", str(currentNode.factor))
+        # if currentNode.offset is not None:
+        #     xmlValue.set("offset", str(currentNode.offset))
+        # Maybe not supported
+        # if currentNode.operation is not None:
+            # xmlValue.set("operation", str(currentNode.operation))
+
+        # Save the DataType
+        # if currentNode.dataType is not None:
+        #     currentNode.dataType.saveToXML(xmlValue, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlValue = etree.SubElement(xmlroot, "{" + symbol_namespace + "}value")
+
+        Value.XMLProperties(self, xmlValue, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        # if xmlroot.get('factor') is not None:
+        #     attributes['factor'] = float(xmlroot.get('factor'))
+        # else:
+        #     attributes['factor'] = None
+        # if xmlroot.get('offset') is not None:
+        #     attributes['offset'] = int(xmlroot.get('offset'))
+        # else:
+        #     attributes['offset'] = None
+        AbstractRelationVariableLeaf.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = Value.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        value = None
+
+        if 'fieldDependencies' in a.keys():
+            from netzob.Model.Vocabulary.Field import Field
+            value = Value(name=a['name'], field=Field())
+            if 'id' in a.keys():
+                value.id = a['id']
+            if 'svas' in a.keys():
+                value.svas = a['svas']
+            # if 'factor' in a.keys():
+            #     value.factor = a['factor']
+            # if 'offset' in a.keys():
+            #     value.offset = a['offset']
+            # TODO: Operation is missing. No way to save operation yet
+            if 'fieldDependencies' in a.keys():
+                from netzob.Export.XMLHandler.XMLHandler import XMLHandler
+                # remove placeholder field again
+                value.fieldDependencies = []
+                unresolved = dict()
+                for ref in a['fieldDependencies']:
+                    unresolved[ref] = value
+                XMLHandler.add_to_unresolved_dict('fieldDependencies', unresolved)
+        return value
+
+
+
+
+

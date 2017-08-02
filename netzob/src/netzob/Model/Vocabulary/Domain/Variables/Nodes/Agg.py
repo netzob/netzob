@@ -38,7 +38,8 @@
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
@@ -231,3 +232,33 @@ class Agg(AbstractVariableNode):
 
         # ok we managed to parse all the children, and it produced some valid specializer paths. We return them
         return specializingPaths
+
+    def XMLProperties(currentNode, xmlAgg, symbol_namespace, common_namespace):
+        AbstractVariableNode.XMLProperties(currentNode, xmlAgg, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlAgg = etree.SubElement(xmlroot, "{" + symbol_namespace + "}aggregation")
+
+        Agg.XMLProperties(self, xmlAgg, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+        AbstractVariableNode.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = Agg.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        agg = None
+
+        if 'children' in a.keys() and 'svas' in a.keys():
+            agg = Agg(children=a['children'], svas=a['svas'])
+            if 'id' in a.keys():
+                agg.id = a['id']
+            if 'name' in a.keys():
+                agg.name = a['name']
+        return agg
+
+

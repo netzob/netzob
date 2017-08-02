@@ -42,7 +42,8 @@ import random
 # +---------------------------------------------------------------------------+
 from netaddr import IPAddress, IPNetwork
 from bitarray import bitarray
-
+from lxml import etree
+from lxml.etree import ElementTree
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
@@ -354,3 +355,39 @@ class IPv4(AbstractType):
         except Exception as e:
             raise TypeError("Impossible encode {0} into an IPv4 data ({1})".
                             format(data, e))
+
+    def XMLProperties(currentType, xmlIPv4, symbol_namespace, common_namespace):
+        AbstractType.XMLProperties(currentType, xmlIPv4, symbol_namespace, common_namespace)
+
+        # Save Properties
+        if currentType.network is not None:
+            xmlIPv4.set("network", str(currentType.network))
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlIPv4 = etree.SubElement(xmlroot, "{" + symbol_namespace + "}ipv4")
+
+        IPv4.XMLProperties(self, xmlIPv4, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        AbstractType.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        if xmlroot.get('network') is not None:
+            attributes['network'] = IPNetwork(str(xmlroot.get('network')))
+        else:
+            attributes['network'] = None
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = IPv4.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        ipv4 = IPv4(value=a['value'], unitSize=a['unitSize'], endianness=a['endianness'],
+                  sign=a['sign'], network=a['network'])
+
+        if 'id' in a.keys():
+            ipv4.id = a['id']
+        return ipv4

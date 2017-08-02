@@ -39,7 +39,8 @@ import random
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -180,3 +181,31 @@ class Alt(AbstractVariableNode):
         # lets shuffle this ( :) ) >>> by default we only consider the first valid parsing path.
         random.shuffle(specializingPaths)
         return specializingPaths
+
+    def XMLProperties(currentNode, xmlAlt, symbol_namespace, common_namespace):
+        AbstractVariableNode.XMLProperties(currentNode, xmlAlt, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlAlt = etree.SubElement(xmlroot, "{" + symbol_namespace + "}alternative")
+
+        Alt.XMLProperties(self, xmlAlt, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+        AbstractVariableNode.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = Alt.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        alt = None
+
+        if 'children' in a.keys() and 'svas' in a.keys():
+            alt = Alt(children=a['children'], svas=a['svas'])
+            if 'id' in a.keys():
+                alt.id = a['id']
+            if 'name' in a.keys():
+                alt.name = a['name']
+        return alt

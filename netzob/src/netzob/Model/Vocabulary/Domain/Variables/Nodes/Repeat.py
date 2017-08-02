@@ -40,7 +40,8 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
@@ -281,3 +282,52 @@ class Repeat(AbstractVariableNode):
     @typeCheck(bitarray)
     def delimitor(self, delimitor):
         self.__delimitor = delimitor
+
+    def XMLProperties(currentNode, xmlRepeat, symbol_namespace, common_namespace):
+        AbstractVariableNode.XMLProperties(currentNode, xmlRepeat, symbol_namespace, common_namespace)
+        if currentNode.nbRepeat is not None and isinstance(currentNode.nbRepeat, tuple):
+            xmlRepeat.set("nbRepeatMin", str(currentNode.nbRepeat[0]))
+            xmlRepeat.set("nbRepeatMax", str(currentNode.nbRepeat[0]))
+        else:
+            xmlRepeat.set("nbRepeat", str(currentNode.nbRepeat))
+        if currentNode.delimitor is not None:
+            xmlRepeat.set("delimitor", str(currentNode.delimitor)[10:-2])
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlRepeat = etree.SubElement(xmlroot, "{" + symbol_namespace + "}repeat")
+
+        Repeat.XMLProperties(self, xmlRepeat, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        if xmlroot.get('nbRepeatMin') is not None and xmlroot.get('nbRepeatMax') is not None:
+            attributes['nbRepeat'] = (int(xmlroot.get('nbRepeatMin')), int(xmlroot.get('nbRepeatMin')))
+        elif xmlroot.get('nbRepeatMin') is not None:
+            attributes['nbRepeat'] = int(xmlroot.get('nbRepeatMin'))
+        if xmlroot.get('delimitor') is not None:
+            attributes['delimitor'] = bitarray(str(xmlroot.get('delimitor')))
+        else:
+            attributes['delimitor'] = None
+
+        AbstractVariableNode.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = Repeat.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        repeat = None
+
+        if 'children' in a.keys() and 'nbRepeat' in a.keys():
+            repeat = Repeat(child=a['children'], nbRepeat=a['nbRepeat'], delimitor=a['delimitor'])
+            if 'id' in a.keys():
+                repeat.id = a['id']
+            if 'name' in a.keys():
+                repeat.name = a['name']
+            if 'svas' in a.keys():
+                repeat.svas = a['svas']
+        return repeat
+
+

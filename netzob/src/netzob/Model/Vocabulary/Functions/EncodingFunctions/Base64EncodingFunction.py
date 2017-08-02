@@ -38,7 +38,8 @@ import base64
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -132,3 +133,33 @@ class Base64EncodingFunction(EncodingFunction):
     @typeCheck(bool)        
     def encode_data(self, _encode_data):
         self.__encode_data = _encode_data
+
+    def XMLProperties(currentFunction, xmlBase64EncodingFunction, symbol_namespace, common_namespace):
+        # Save the Properties
+        if currentFunction.encode_data is not None:
+            xmlBase64EncodingFunction.set("encode_data", str(currentFunction.encode_data))
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlBase64EncodingFunction = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}Base64EncodingFunction")
+
+        Base64EncodingFunction.XMLProperties(self, xmlBase64EncodingFunction, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        if xmlroot.get('encode_data') is not None:
+            attributes['encode_data'] = str(xmlroot.get('id')) == 'True'
+        else:
+            attributes['encode_data'] = True
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = Base64EncodingFunction.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        base64enc = None
+
+        if 'encode_data' in a.keys():
+            base64enc = Base64EncodingFunction(encode_data=a['encode_data'])
+        return base64enc
