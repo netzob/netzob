@@ -61,7 +61,7 @@ class DomainFactory(object):
     >>> print(domain.varType)
     Alt
     >>> print(domain.children[0].dataType)
-    Raw=None ((0, 524280))
+    Raw=None ((0, 524287))
     >>> print(domain.children[1].dataType)
     Integer=10 ((None, None))
 

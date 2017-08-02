@@ -99,11 +99,11 @@ class Field(AbstractField):
     Symbol
     |--  Field
     |--  |--  Field
-              |--   Data (Raw=None ((0, 524280)))
+              |--   Data (Raw=None ((0, 524287)))
     |--  |--  Field
-              |--   Data (Raw=None ((0, 524280)))
+              |--   Data (Raw=None ((0, 524287)))
     |--  Field
-         |--   Data (Raw=None ((0, 524280)))
+         |--   Data (Raw=None ((0, 524287)))
 
     More generally, a field is part of a tree whose root is a symbol
     and whose all other nodes of the tree are fields. Hence, a field

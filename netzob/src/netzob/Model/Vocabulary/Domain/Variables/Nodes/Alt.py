@@ -83,7 +83,7 @@ class Alt(AbstractVariableNode):
     >>> print(domain.varType)
     Alt
     >>> print(domain.children[0].dataType)
-    Raw=None ((0, 524280))
+    Raw=None ((0, 524287))
     >>> print(domain.children[1].dataType)
     String=None ((None, None))
 
