@@ -43,37 +43,37 @@ from typing import Callable  # noqa: F401
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash import Hash
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHash import AbstractHash
 
 
 class HashFactory(object):
     """
-    Factory that create :class:`Hash <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash.Hash>`
+    Factory that create :class:`AbstractHash <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHash.AbstractHash>`
     classes by providing concrete methods as argument.
     """
 
     @classmethod
     def create(cls,
                name,       # type: str
-               calculate,  # type: Callable[[Hash, bytes], bytes]
+               calculate,  # type: Callable[[AbstractHash, bytes], bytes]
                bitSize     # type: int
                ):
         r"""
         Given a :attr:`name`, corresponding to the name of the class to create,
-        this method will produce a specific :class:`Hash <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash.Hash>`
+        this method will produce a specific :class:`AbstractHash <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHash.AbstractHash>`
         class.
 
         The following attributes are expected:
 
         - :attr:`calculate`: a function whose prototype respects abstract method \
-          :meth:`Hash.calculate <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash.Hash.calculate>`
-        - :attr:`bitSize`: an :class:`int` value, respecting the :meth:`getBitSize <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash.Hash.getBitSize>` \
+          :meth:`AbstractHash.calculate <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHash.AbstractHash.calculate>`
+        - :attr:`bitSize`: an :class:`int` value, respecting the :meth:`getBitSize <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHash.AbstractHash.getBitSize>` \
           returned value prototype
 
         :param name: the class name to produce
         :type name: :class:`str`
         :param calculate: the calculate method
-        :type calculate: ``Callable[[Checksum, bytes], bytes]``
+        :type calculate: ``Callable[[AbstractHash, bytes], bytes]``
         :param bitSize: the bit-size of the hash value
         :type bitSize: :class:`int`
 
@@ -91,7 +91,7 @@ class HashFactory(object):
         >>> binascii.hexlify(s.specialize())
         b'aabb42'
         """
-        return type(name, (Hash,), {
+        return type(name, (AbstractHash,), {
             'calculate': calculate,
             'getBitSize': lambda self: bitSize
         })

@@ -43,11 +43,11 @@ from PyCRC.CRC32 import CRC32 as _CRC32
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractChecksum import AbstractChecksum
 from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 
 
-class CRC32(Checksum):
+class CRC32(AbstractChecksum):
     r"""This class implements the CRC32 function.
 
     The constructor expects some parameters:

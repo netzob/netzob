@@ -51,10 +51,23 @@ from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.Integer import Integer
 
 
-class Checksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
-    r"""The Checksum class implements a list of checksum relationships between fields.
+class AbstractChecksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
+    r"""
+    **Abstract class**.
+    The AbstractChecksum class comes with a list of concrete checksum relationships
+    between fields. Some implementations are available in the package
+    :mod:`netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums`.
+    Currently available checksum functions are:
+    :class:`CRC16 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16.CRC16>`,
+    :class:`CRC16DNP <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16DNP.CRC16DNP>`,
+    :class:`CRC16Kermit <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16Kermit.CRC16Kermit>`,
+    :class:`CRC16SICK <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC16SICK.CRC16SICK>`,
+    :class:`CRC32 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRC32.CRC32>`,
+    :class:`CRCCCITT <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.CRCCCITT.CRCCCITT>` and
+    :class:`InternetChecksum <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.InternetChecksum.InternetChecksum>`
+    (used in ICMP, UDP, IP, TCP protocols, as specified in :rfc:`1071`).
 
-    The Checksum constructor expects some parameters:
+    The AbstractChecksum constructor expects some parameters:
 
     :param targets: The targeted fields of the relationship.
     :param dataType: Specify that the produced value should be
@@ -66,16 +79,11 @@ class Checksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
     :type name: :class:`str`, optional
 
+    This class is abstract and cannot be instanciated.
+    The following methods MUST be inherited:
 
-    Currently supported checksum functions are:
-
-    * CRC16 (default checksum function)
-    * CRC16DNP
-    * CRC16Kermit
-    * CRC16SICK
-    * CRC32
-    * CRCCCITT
-    * InternetChecksum (this checksum is used in ICMP, UDP, IP, TCP protocols, as specified in RFC 1071)
+    * :meth:`calculate`
+    * :meth:`getBitSize`
 
 
     **Complete example with ICMP**
@@ -115,10 +123,10 @@ class Checksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         if dataType is None:
             dataType = Raw(nbBytes=self.getByteSize())
             # The computed checksum is generally on 16 bits
-        super(Checksum, self).__init__(self.__class__.__name__,
-                                       dataType=dataType,
-                                       targets=targets,
-                                       name=name)
+        super(AbstractChecksum, self).__init__(self.__class__.__name__,
+                                               dataType=dataType,
+                                               targets=targets,
+                                               name=name)
 
     def relationOperation(self, msg):
         """The relationOperation receive a bitarray object and should return a
@@ -142,8 +150,11 @@ class Checksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         return result
 
     @abc.abstractmethod
-    def calculate(self, msg: bytes) -> int:
+    def calculate(self,
+                  msg  # type: bytes
+                  ):   # type: int
         """
+        **Abstract method**.
         The most-specific computation method taking a :attr:`msg` and returning
         its checksum value.
 
@@ -154,8 +165,9 @@ class Checksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def getBitSize(self) -> int:
+    def getBitSize(self):  # type: int
         """
+        **Abstract method**.
         Get the unit size of the checksum'ed message.
 
         :return: the output unit size

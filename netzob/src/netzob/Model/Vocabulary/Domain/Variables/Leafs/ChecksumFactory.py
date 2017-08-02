@@ -43,38 +43,38 @@ from typing import Callable  # noqa: F401
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractChecksum import AbstractChecksum
 from netzob.Model.Vocabulary.Types.AbstractType import UnitSize  # noqa: F401
 
 
 class ChecksumFactory(object):
     """
-    Factory that create :class:`Checksum <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum.Checksum>`
+    Factory that create :class:`AbstractChecksum <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractChecksum.AbstractChecksum>`
     classes by providing concrete methods as argument.
     """
 
     @classmethod
     def create(cls,
                name,       # type: str
-               calculate,  # type: Callable[[Checksum, bytes], int]
+               calculate,  # type: Callable[[AbstractChecksum, bytes], int]
                bitSize     # type: int
                ):
         r"""
         Given a :attr:`name`, corresponding to the name of the class to create,
-        this method will produce a specific :class:`Checksum <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum.Checksum>`
+        this method will produce a specific :class:`AbstractChecksum <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractChecksum.AbstractChecksum>`
         class.
 
         The following attributes are expected:
 
         - :attr:`calculate`: a function whose prototype respects abstract method \
-          :meth:`Checksum.calculate <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum.Checksum.calculate>`
-        - :attr:`bitSize`: an int value, respecting the :meth:`getBitSize <netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum.Checksum.getBitSize>` \
+          :meth:`AbstractChecksum.calculate <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractChecksum.AbstractChecksum.calculate>`
+        - :attr:`bitSize`: an int value, respecting the :meth:`getBitSize <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractChecksum.AbstractChecksum.getBitSize>` \
           returned value prototype
 
         :param name: the class name to produce
         :type name: :class:`str`
         :param calculate: the calculate method
-        :type calculate: ``Callable[[Checksum, bytes], bytes]``
+        :type calculate: ``Callable[[AbstractChecksum, bytes], bytes]``
         :param bitSize: the bit-size of the checksum value
         :type bitSize: :class:`int`
 
@@ -92,7 +92,7 @@ class ChecksumFactory(object):
         >>> binascii.hexlify(s.specialize())
         b'aabbefcdab8967452301'
         """
-        return type(name, (Checksum,), {
+        return type(name, (AbstractChecksum,), {
             'calculate': calculate,
             'getBitSize': lambda self: bitSize
         })

@@ -52,10 +52,22 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
 @NetzobLogger
-class HMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
-    r"""The HMAC class implements the HMAC relationships between fields.
+class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
+    r"""
+    **Abstract class**.
+    The AbstractHMAC class comes with a list of concrete HMAC relationships
+    between fields. Some implementations are available in the package
+    :mod:`netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs`.
+    Currently available hash functions for HMAC are:
+    :class:`HMAC_MD5 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_MD5.HMAC_MD5>`,
+    :class:`HMAC_SHA1 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA1.HMAC_SHA1>`,
+    :class:`HMAC_SHA1_96 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA1_96.HMAC_SHA1_96>`,
+    :class:`HMAC_SHA224 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_224.HMAC_SHA2_224>`,
+    :class:`HMAC_SHA256 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_256.HMAC_SHA2_256>`,
+    :class:`HMAC_SHA384 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_384.HMAC_SHA2_384>` and
+    :class:`HMAC_SHA512 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_512.HMAC_SHA2_512>`.
 
-    The Hmac constructor expects some parameters:
+    The AbstractHMAC constructor expects some parameters:
 
     :param targets: The targeted fields of the relationship.
     :param key: The cryptographic key used in the hmac computation.
@@ -68,24 +80,20 @@ class HMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
     :type name: :class:`str`, optional
 
-    Currently supported hash functions for HMAC are:
+    This class is abstract and cannot be instanciated.
+    The following methods MUST be inherited:
 
-    * md5
-    * sha1
-    * sha1-96
-    * sha224
-    * sha256
-    * sha384
-    * sha512
+    * :meth:`calculate`
+    * :meth:`getBitSize`
     """
 
     def __init__(self, targets, key, dataType=None, name=None):
         if dataType is None:
             dataType = Raw(nbBytes=self.getByteSize())
-        super(HMAC, self).__init__(self.__class__.__name__,
-                                   dataType=dataType,
-                                   targets=targets,
-                                   name=name)
+        super(AbstractHMAC, self).__init__(self.__class__.__name__,
+                                           dataType=dataType,
+                                           targets=targets,
+                                           name=name)
         self.key = key
 
     def relationOperation(self, msg):
@@ -121,8 +129,11 @@ class HMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         self.__key = key
 
     @abc.abstractmethod
-    def calculate(self, msg: bytes) -> bytes:
+    def calculate(self,
+                  msg  # type: bytes
+                  ):   # type: bytes
         """
+        **Abstract method**.
         The most-specific computation method taking a :attr:`msg` and returning
         its hash value.
 
@@ -133,8 +144,9 @@ class HMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def getBitSize(self) -> int:
+    def getBitSize(self):  # type int
         """
+        **Abstract method**.
         Get the bit size of the hash'ed message.
 
         :return: the output unit size

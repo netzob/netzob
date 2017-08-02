@@ -43,10 +43,10 @@ import hashlib
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash import Hash
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHash import AbstractHash
 
 
-class SHA1(Hash):
+class SHA1(AbstractHash):
     r"""This class implements the SHA1 relationships between fields.
 
     The constructor expects some parameters:

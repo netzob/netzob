@@ -43,11 +43,11 @@ from PyCRC.CRC16 import CRC16 as _CRC16
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksum import Checksum
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractChecksum import AbstractChecksum
 from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 
 
-class CRC16(Checksum):
+class CRC16(AbstractChecksum):
     r"""This class implements the CRC16 function.
 
     The constructor expects some parameters:

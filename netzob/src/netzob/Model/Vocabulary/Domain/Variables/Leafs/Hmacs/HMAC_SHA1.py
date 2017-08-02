@@ -44,11 +44,11 @@ import hashlib
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC import HMAC
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHMAC import AbstractHMAC
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA1 import SHA1
 
 
-class HMAC_SHA1(HMAC):
+class HMAC_SHA1(AbstractHMAC):
     r"""This class implements the HMAC_SHA1.
 
     The constructor expects some parameters:

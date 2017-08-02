@@ -43,37 +43,37 @@ from typing import Callable  # noqa: F401
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC import HMAC
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHMAC import AbstractHMAC
 
 
 class HMACFactory(object):
     """
-    Factory that create :class:`HMAC <netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC.HMAC>`
+    Factory that create :class:`AbstractHMAC <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHMAC.AbstractHMAC>`
     classes by providing concrete methods as argument.
     """
 
     @classmethod
     def create(cls,
                name,       # type: str
-               calculate,  # type: Callable[[HMAC, bytes], bytes]
+               calculate,  # type: Callable[[AbstractHMAC, bytes], bytes]
                bitSize     # type: int
                ):
         r"""
         Given a :attr:`name`, corresponding to the name of the class to create,
-        this method will produce a specific :class:`HMAC <netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC.HMAC>`
+        this method will produce a specific :class:`AbstractHMAC <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHMAC.AbstractHMAC>`
         class.
 
         The following attributes are expected:
 
         - :attr:`calculate`: a function whose prototype respects abstract method \
-          :meth:`HMAC.calculate <netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC.HMAC.calculate>`
-        - :attr:`bitSize`: an :class:`int` value, respecting the :meth:`getBitSize <netzob.Model.Vocabulary.Domain.Variables.Leafs.HMAC.HMAC.getBitSize>` \
+          :meth:`AbstractHMAC.calculate <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHMAC.AbstractHMAC.calculate>`
+        - :attr:`bitSize`: an :class:`int` value, respecting the :meth:`getBitSize <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHMAC.AbstractHMAC.getBitSize>` \
           returned value prototype
 
         :param name: the class name to produce
         :type name: :class:`str`
         :param calculate: the calculate method
-        :type calculate: ``Callable[[Checksum, bytes], bytes]``
+        :type calculate: ``Callable[[AbstractHMAC, bytes], bytes]``
         :param bitSize: the bit-size of the hash value
         :type bitSize: :class:`int`
 
@@ -91,7 +91,7 @@ class HMACFactory(object):
         >>> binascii.hexlify(s.specialize())
         b'aabb42'
         """
-        return type(name, (HMAC,), {
+        return type(name, (AbstractHMAC,), {
             'calculate': calculate,
             'getBitSize': lambda self: bitSize
         })

@@ -50,10 +50,22 @@ from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
-class Hash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
-    r"""The Hash class implements a list of hash relationships between fields.
+class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
+    r"""
+    **Abstract class**.
+    The AbstractHash class comes with a list of concrete hash relationships
+    between fields. Some implementations are available in the package
+    :mod:`netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes`.
+    Currently available hash functions are:
+    :class:`MD5 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.MD5.MD5>`,
+    :class:`SHA1 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA1.SHA1>`,
+    :class:`SHA1_96 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA1_96.SHA1_96>`,
+    :class:`SHA224 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA2_224.SHA2_224>`,
+    :class:`SHA256 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA2_256.SHA2_256>`,
+    :class:`SHA384 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA2_384.SHA2_384>` and
+    :class:`SHA512 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA2_512.SHA2_512>`.
 
-    The Hash constructor expects some parameters:
+    The AbstractHash constructor expects some parameters:
 
     :param targets: The targeted fields of the relationship.
     :param dataType: Specify that the produced value should be
@@ -64,24 +76,20 @@ class Hash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
     :type name: :class:`str`, optional
 
-    Supported hash functions are:
+    This class is abstract and cannot be instanciated.
+    The following methods MUST be inherited:
 
-    * md5 (default hash function)
-    * sha1
-    * sha1-96
-    * sha224
-    * sha256
-    * sha384
-    * sha512
+    * :meth:`calculate`
+    * :meth:`getBitSize`
     """
 
     def __init__(self, targets, dataType=None, name=None):
         if dataType is None:
             dataType = Raw(nbBytes=self.getByteSize())
-        super(Hash, self).__init__(self.__class__.__name__,
-                                   dataType=dataType,
-                                   targets=targets,
-                                   name=name)
+        super(AbstractHash, self).__init__(self.__class__.__name__,
+                                           dataType=dataType,
+                                           targets=targets,
+                                           name=name)
 
     def relationOperation(self, msg):
         """The relationOperation receive a bitarray object and should return a
@@ -105,8 +113,11 @@ class Hash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         return result
 
     @abc.abstractmethod
-    def calculate(self, msg: bytes) -> bytes:
+    def calculate(self,
+                  msg  # type: bytes
+                  ):   # type: bytes
         """
+        **Abstract method**.
         The most-specific computation method taking a :attr:`msg` and returning
         its hash value.
 
@@ -117,8 +128,9 @@ class Hash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def getBitSize(self) -> int:
+    def getBitSize(self):  # type: int
         """
+        **Abstract method**.
         Get the bit size of the hash'ed message.
 
         :return: the output unit size

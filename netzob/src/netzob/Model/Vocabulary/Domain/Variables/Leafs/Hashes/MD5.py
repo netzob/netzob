@@ -43,10 +43,10 @@ import hashlib
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hash import Hash
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHash import AbstractHash
 
 
-class MD5(Hash):
+class MD5(AbstractHash):
     r"""This class implements the MD5 relationships between fields.
 
     The constructor expects some parameters:
