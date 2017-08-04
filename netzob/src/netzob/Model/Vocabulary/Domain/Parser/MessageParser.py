@@ -250,7 +250,8 @@ class MessageParser(object):
                     raise InvalidParsingPathException(msg)
                 result.append(field_data)
 
-            self.memory = parsingResult.memory
+            # We update the internal memory
+            self.memory.memory = parsingResult.memory.memory
 
             yield result
 

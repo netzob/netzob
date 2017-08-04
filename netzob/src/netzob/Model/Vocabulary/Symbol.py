@@ -132,7 +132,7 @@ class Symbol(AbstractField):
     'hello ' | 'bbbb' 
     -------- | -------
 
-    **Usage of Symbol for traffic generation**
+    **Usage of Symbol for traffic generation and parsing**
 
     A Symbol class may be used to generate concrete messages according
     to its field definition, through the
@@ -186,14 +186,12 @@ class Symbol(AbstractField):
         return hash(frozenset(self.name))
 
     @typeCheck(Memory, object)
-    def specialize(self, memory=None, presets=None, fuzz=None):
+    def specialize(self, presets=None, fuzz=None, memory=None):
         r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose
         content follows the field or symbol definition.
 
         The specialize() method expects some parameters:
 
-        :param memory: A memory used to store variable values during
-                       specialization and abstraction of sequence of symbols.
         :param presets: A dictionary of keys:values used to preset
                         (parameterize) fields during symbol
                         specialization. Values in this dictionary will
@@ -210,9 +208,11 @@ class Symbol(AbstractField):
                      :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`
                      for a complete explanation of its use for fuzzing
                      purpose.
-        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
+        :param memory: A memory used to store variable values during
+                       specialization and abstraction of sequence of symbols.
         :type presets: :class:`dict`
         :type fuzz: :class:`dict`
+        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
 
         The following example shows the :meth:`specialize()` method used for a
         field which contains a String and a Size fields.
@@ -328,7 +328,7 @@ class Symbol(AbstractField):
         """
 
         from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
-        msg = MessageSpecializer(memory=memory, presets=presets, fuzz=fuzz)
+        msg = MessageSpecializer(presets=presets, fuzz=fuzz, memory=memory)
         spePath = msg.specializeSymbol(self)
 
         if spePath is not None:
@@ -336,15 +336,13 @@ class Symbol(AbstractField):
                                          Raw)
 
     @typeCheck(Memory, object)
-    def specialize_count(self, memory=None, presets=None, fuzz=None):
+    def specialize_count(self, presets=None, fuzz=None):
         r"""The method :meth:`specialize_count` computes the expected number of unique
         produced messages, considering the initial symbol model, the
         preset fields and the fuzzed fields.
 
         The :meth:`specialize_count` method expects the same parameters as the :meth:`specialize` method:
 
-        :param memory: A memory used to store variable values during
-                       specialization and abstraction of sequence of symbols.
         :param presets: A dictionary of keys:values used to preset
                         (parameterize) fields during symbol
                         specialization. Values in this dictionary will
@@ -361,7 +359,6 @@ class Symbol(AbstractField):
                      :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`
                      for a complete explanation of its use for fuzzing
                      purpose.
-        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
         :type presets: :class:`dict`
         :type fuzz: :class:`dict`
 

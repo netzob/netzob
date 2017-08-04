@@ -57,6 +57,22 @@ class DataAlignment(object):
     specification. This class inherits from :class:`threading.Thread` which enables
     the processing to be synchronous or asynchronous.
 
+    The constructor expects some parameters:
+
+    :param data: the list of data that will be aligned, data must be encoded in HexaString
+    :param field: the format definition that will be user
+    :param depth: the limit in depth in the format (use None for not limit)
+    :param encoded: indicates if the result should be encoded following field definition
+    :param styled: indicated if the result visualization filter should be applied
+    :param memory: A memory used to store variable values during
+                   specialization and abstraction of sequence of symbols.
+    :type data: a :class:`list` of data to align
+    :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
+    :type depth: :class:`int`
+    :type encoded: :class:`bool`
+    :type styled: :class:`bool`
+    :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
+
     For instance, below is a very simple example of data alignment executed
     traditionnaly
 
@@ -115,26 +131,13 @@ class DataAlignment(object):
 
     """
 
-    def __init__(self, data, field, depth=None, encoded=True, styled=False):
-        """Constructor.
-
-        :param data: the list of data that will be aligned, data must be encoded in HexaString
-        :type data: a :class:`list` of data to align
-        :param field: the format definition that will be user
-        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
-        :keyword depth: the limit in depth in the format (use None for not limit)
-        :type depth: :class:`int`
-        :keyword encoded: indicates if the result should be encoded following field definition
-        :type encoded: :class:`bool`
-        :keyword styled: indicated if the result visualization filter should be applied
-        :type styled: :class:`bool`
-
-        """
+    def __init__(self, data, field, depth=None, encoded=True, styled=False, memory=None):
         self.data = data
         self.field = field
         self.depth = depth
         self.encoded = encoded
         self.styled = styled
+        self.memory = memory
 
     def execute(self):
         """Execute the alignment of data following specified field
@@ -158,8 +161,7 @@ class DataAlignment(object):
         result.headers = [str(field.name) for field in targetedFieldLeafFields]
         from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
         for d in self.data:
-            mp = MessageParser()
-            # alignedMsg = mp.parseRaw(TypeConverter.convert(d, HexaString, Raw), targetedFieldLeafFields)
+            mp = MessageParser(memory=self.memory)
             alignedMsg = next(mp.parseRaw(d, targetedFieldLeafFields))
 
             alignedEncodedMsg = []
@@ -184,79 +186,29 @@ class DataAlignment(object):
 
         return result
 
-    # @typeCheck(str)
-    # def __splitDataWithRegex(self, data, fields):
-    #     """Split the specified data in possible field following
-    #     the application of the regex
-
-    #     :param data: the data to split must be encoded in hexastring
-    #     :type data: :class:`str`
-    #     :param fields: the list of fields to use to parse the specified data
-    #     :type fields: a list of :class:`Field <netzob.Model.Vocabulary.Field.Field>`
-    #     """
-
-    #     if data is None:
-    #         raise TypeError("data cannot be None")
-
-    #     if fields is None:
-    #         raise TypeError("fields cannot be None")
-
-    #     if len(fields) == 0:
-    #         raise TypeError("At least one field must be specified")
-
-    #     build the regex
-    #     regexes = [field.regex for field in fields]
-
-    #     regex = NetzobAggregateRegex(regexes)
-
-    #     self._logger.debug("Regex: {0}".format(regex.finalRegex()))
-
-    #     dynamicDatas = None
-    #     try:
-    #         Now we apply the regex over the message
-    #         compiledRegex = re.compile(regex.finalRegex())
-    #         validDynamicDatas = compiledRegex.finditer(data)
-    #     except Exception, e:
-    #         self._logger.warning("An error occured in the alignment process")
-    #         self._logger.warning("The regex of the group doesn't match one of its message")
-    #         self._logger.warning("Regex: {0}".format(regex.finalRegex()))
-    #         if len(data) > 255:
-    #             self._logger.warning("Message: {0}...".format(data[:255]))
-    #         else:
-    #             self._logger.warning("Message: {0}".format(data))
-    #         raise e
-
-    #     results = []
-    #     for dynamicDatas in validDynamicDatas:
-    #         results.append(dynamicDatas.capturesdict())
-    #         Memory optimization offered by regex module
-    #         dynamicDatas.detach_string()
-
-    #     self._logger.debug("{0} ways of parsing the message with a regex was found.".format(len(results)))
-    #     self._logger.debug(results)
-
-    #     return results                
-
     # Static method
     @staticmethod
     @typeCheck(str, AbstractField, int)
-    def align(data, field, depth=None, encoded=True):
+    def align(data, field, depth=None, encoded=True, memory=None):
         """Execute an alignment of specified data with provided field.
         Data must be provided as a list of hexastring.
 
         :param data: the data to align as a list of hexastring
-        :type data: :class:`list`
         :param field : the field to consider when aligning
-        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
-        :keyword depth: maximum field depth to consider (similar to layer depth)
+        :param depth: maximum field depth to consider (similar to layer depth)
+        :param encoded: set to True if you want the returned result to follow the encoding functions
+        :param memory: A memory used to store variable values during
+                       specialization and abstraction of sequence of symbols.
+        :type data: :class:`list`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :type depth: :class:`int`.
-        :keyword encoded: set to True if you want the returned result to follow the encoding functions
         :type encoded: :class:`boolean`
+        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
         :return: the aligned data
         :rtype: :class:`MatrixList <netzob.Common.Utils.MatrixList.MatrixList>`
         """
 
-        dAlignment = DataAlignment(data, field, depth, encoded=encoded)
+        dAlignment = DataAlignment(data, field, depth, encoded=encoded, memory=memory)
         return dAlignment.execute()
 
     # Properties
@@ -354,3 +306,15 @@ class DataAlignment(object):
             raise ValueError("Styled cannot be None")
 
         self.__styled = styled
+
+    @property
+    def memory(self):
+        """The memory used for data persistence.
+
+        :type: :class:`netzob.Model.Vocabulary.Domain.Variables.Memory`
+        """
+        return self.__memory
+
+    @memory.setter
+    def memory(self, memory):
+        self.__memory = memory

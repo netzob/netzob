@@ -518,7 +518,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         return
 
     @staticmethod
-    def abstract(data, fields):
+    def abstract(data, fields, memory=None):
         """The method :meth:`abstract` is used to retrieve the
         corresponding symbol according to a concrete :class:`bytes`
         message.
@@ -526,9 +526,12 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         The :meth:`abstract` static method expects some parameters:
 
         :param data: The concrete message to abstract in symbol.
+        :param fields: a list of fields targeted during the abstraction process
+        :param memory: A memory used to store variable values during
+                       specialization and abstraction of sequence of symbols.
         :type data: :class:`bytes`
-        :parameter fields: a list of fields targeted during the abstraction process
         :type fields: :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`
+        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
         :return: a field/symbol and the structured received message
         :rtype: a tuple (:class:`Field <netzob.Model.Vocabulary.Field>`, dict)
         :raises: :class:`AbstractionException <netzob.Model.Vocabulary.AbstractField.AbstractionException>` if an error occurs while abstracting the data
@@ -573,7 +576,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         for field in fields:
             try:
                 # Try to align/parse the data with the current field
-                alignedData = DataAlignment.align([data], field, encoded=False)
+                alignedData = DataAlignment.align([data], field, encoded=False, memory=memory)
 
                 # If it matches, we build a dict that contains, for each field, the associated value that was present in the message
                 structured_data = OrderedDict()
