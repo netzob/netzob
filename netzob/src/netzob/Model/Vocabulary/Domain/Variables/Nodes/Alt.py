@@ -83,7 +83,7 @@ class Alt(AbstractVariableNode):
     >>> print(domain.varType)
     Alt
     >>> print(domain.children[0].dataType)
-    Raw=None ((0, 524287))
+    Raw=None ((0, 524288))
     >>> print(domain.children[1].dataType)
     String=None ((None, None))
 
@@ -96,28 +96,22 @@ class Alt(AbstractVariableNode):
     >>> from netzob.all import *
     >>> v0 = String("netzob")
     >>> v1 = String("kurt")
-    >>> f0 = Field(Alt([v0, v1]))
+    >>> f0 = Field(Alt([v0, v1]), name='f0')
     >>> s = Symbol([f0])
-    >>> msg1 = RawMessage("netzob")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    [bitarray('011011100110010101110100011110100110111101100010')]
-    >>> msg2 = RawMessage("kurt")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg2, s))
-    [bitarray('01101011011101010111001001110100')]
+    >>> data = "netzob"
+    >>> Symbol.abstract(data, [s])
+    (Symbol, OrderedDict([('f0', b'netzob')]))
+    >>> data = "kurt"
+    >>> Symbol.abstract(data, [s])
+    (Symbol, OrderedDict([('f0', b'kurt')]))
 
     In the following example, an Alternate variable is defined. A
     message that does not correspond to the expected model is then
-    parsed, thus creating an exception:
+    parsed, thus the returned symbol is unknown:
 
-    >>> msg3 = RawMessage("nothing")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg3, s))  # doctest: +IGNORE_EXCEPTION_DETAIL
-    Traceback (most recent call last):
-      ...
-    InvalidParsingPathException: No parsing path returned while parsing 'b'nothing''
-
+    >>> data = "nothing"
+    >>> Symbol.abstract(data, [s])
+    (Unknown Symbol 'nothing', OrderedDict())
 
     That is another simple example that also illustrates rollback mechanisms
 

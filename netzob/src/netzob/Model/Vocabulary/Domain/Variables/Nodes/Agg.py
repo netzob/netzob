@@ -93,7 +93,7 @@ class Agg(AbstractVariableNode):
     >>> print(domain.varType)
     Agg
     >>> print(domain.children[0].dataType)
-    Raw=None ((0, 524287))
+    Raw=None ((0, 524288))
     >>> print(domain.children[1].dataType)
     String=None ((None, None))
     >>> domain.children.append(Agg([10, 20, 30]))
@@ -113,24 +113,19 @@ class Agg(AbstractVariableNode):
     >>> v1 = String(nbChars=(1, 10))
     >>> v2 = String(".txt")
     >>> f0 = Field(Agg([v1, v2]), name="f0")
-    >>> f1 = Field(String("!"))
+    >>> f1 = Field(String("!"), name="f1")
     >>> s = Symbol([f0, f1])
-    >>> msg1 = RawMessage("netzob.txt!")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))  # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
-    [bitarray('011011100110010101110100011110100110111101100010001011100111...,
-     bitarray('00100001')]
+    >>> data = "netzob.txt!"
+    >>> Symbol.abstract(data, [s])
+    (Symbol, OrderedDict([('f0', b'netzob.txt'), ('f1', b'!')]))
 
     In the following example, an Aggregate variable is defined. A
     message that does not correspond to the expected model is then
-    parsed, thus creating an exception:
+    parsed, thus the returned symbol is unknown:
 
-    >>> msg2 = RawMessage("netzobtxt!")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg2, s))  # doctest: +IGNORE_EXCEPTION_DETAIL
-    Traceback (most recent call last):
-      ...
-    InvalidParsingPathException: No parsing path returned while parsing 'b'netzobtxt!''
+    >>> data = "netzobtxt!"
+    >>> Symbol.abstract(data, [s])
+    (Unknown Symbol 'netzobtxt!', OrderedDict())
 
 
     **Specialization of aggregate variables**

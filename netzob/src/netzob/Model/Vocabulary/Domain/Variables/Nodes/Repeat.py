@@ -89,15 +89,12 @@ class Repeat(AbstractVariableNode):
     depicted in the following example:
 
     >>> f1 = Field(Repeat(Alt([String("netzob"), String("kurt")]), nbRepeat=(1, 4),
-    ...            delimiter=TypeConverter.convert(";", Raw, BitArray)))
-    >>> f2 = Field(String("kurt"))
+    ...            delimiter=TypeConverter.convert(";", Raw, BitArray)), name='f1')
+    >>> f2 = Field(String("kurt"), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> msg1 = RawMessage("netzob;kurt;netzobkurt")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
-    [bitarray('011011100110010101110100011110100110111101100010001110110110...,
-     bitarray('01101011011101010111001001110100')]
+    >>> data = "netzob;kurt;netzobkurt"
+    >>> Symbol.abstract(data, [s])
+    (Symbol, OrderedDict([('f1', b'netzob;kurt;netzob'), ('f2', b'kurt')]))
 
 
     **Limiting the number of repetitions with an integer**
@@ -155,27 +152,21 @@ class Repeat(AbstractVariableNode):
     The following examples show how repeat variable can be parsed:
 
     >>> from netzob.all import *
-    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=(0,3)))
-    >>> f2 = Field(String("kurt"))
+    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=(0,3)), name="f1")
+    >>> f2 = Field(String("kurt"), name="f2")
     >>> s = Symbol([f1, f2])
 
-    >>> msg1 = RawMessage("netzobnetzobkurt")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    ... # doctest: +ELLIPSIS, +NORMALIZE_WHITESPACE
-    [bitarray('011011100110010101110100011110100110111101100010011011100110...,
-     bitarray('01101011011101010111001001110100')]
+    >>> data = "netzobnetzobkurt"
+    >>> Symbol.abstract(data, [s])
+    (Symbol, OrderedDict([('f1', b'netzobnetzob'), ('f2', b'kurt')]))
 
-    >>> msg2 = RawMessage("netzobkurt")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg2, s))  # doctest: +NORMALIZE_WHITESPACE
-    [bitarray('011011100110010101110100011110100110111101100010'),
-     bitarray('01101011011101010111001001110100')]
+    >>> data = "netzobkurt"
+    >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
+    (Symbol, OrderedDict([('f1', b'netzob'), ('f2', b'kurt')]))
 
-    >>> msg4 = RawMessage("kurt")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg4, s))
-    [bitarray(), bitarray('01101011011101010111001001110100')]
+    >>> data = "kurt"
+    >>> Symbol.abstract(data, [s])
+    (Symbol, OrderedDict([('f1', b''), ('f2', b'kurt')]))
 
 
     **Specialization of repeat variables**

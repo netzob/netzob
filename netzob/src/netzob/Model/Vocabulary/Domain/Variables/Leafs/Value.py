@@ -85,35 +85,27 @@ class Value(AbstractRelationVariableLeaf):
     >>> print(s.specialize())
     b'abcdabcd'
 
-    >>> msg = RawMessage("netzob;netzob!")
+    >>> data = "netzob;netzob!"
     >>> f1 = Field(String(nbChars=(2, 8)), name="f1")
     >>> f2 = Field(String(";"), name="f2")
     >>> f3 = Field(Value(f1), name="f3")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg, s))  # doctest: +NORMALIZE_WHITESPACE
-    [bitarray('011011100110010101110100011110100110111101100010'),
-     bitarray('00111011'),
-     bitarray('011011100110010101110100011110100110111101100010'),
-     bitarray('00100001')]
+    >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
+    (Symbol, OrderedDict([('f1', b'netzob'), ('f2', b';'), ('f3', b'netzob'), ('f4', b'!')]))
 
     The following example shows another way to define a field with a
     copy of another field value:
 
     >>> from netzob.all import *
-    >>> msg = RawMessage("netzob;netzob!")
+    >>> data = "netzob;netzob!"
     >>> f3 = Field(String(nbChars=6), name="f3")
     >>> f1 = Field(Value(f3), name="f1")
     >>> f2 = Field(String(";"), name="f2")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg, s))  # doctest: +NORMALIZE_WHITESPACE
-    [bitarray('011011100110010101110100011110100110111101100010'),
-     bitarray('00111011'),
-     bitarray('011011100110010101110100011110100110111101100010'),
-     bitarray('00100001')]
+    >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
+    (Symbol, OrderedDict([('f1', b'netzob'), ('f2', b';'), ('f3', b'netzob'), ('f4', b'!')]))
 
 
     **Value field with a variable as a target**

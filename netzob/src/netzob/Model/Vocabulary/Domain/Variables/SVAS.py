@@ -87,53 +87,53 @@ class SVAS(object):
       expected model:
 
       >>> from netzob.all import *
-      >>> f = Field()
-      >>> value = TypeConverter.convert("netzob", String, BitArray)
-      >>> f.domain = Data(dataType=String(), originalValue=value, svas=SVAS.CONSTANT)
+      >>> f = Field(name='f1')
+      >>> value = TypeConverter.convert("john", String, BitArray)
+      >>> f.domain = Data(String(), originalValue=value, svas=SVAS.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
-      >>> msg1 = RawMessage("netzob")
-      >>> mp = MessageParser()
-      >>> print(mp.parseMessage(msg1, s))
-      [bitarray('011011100110010101110100011110100110111101100010')]
+      >>> m = Memory()
+      >>> Symbol.abstract("john", [s], memory=m)
+      (S0, OrderedDict([('f1', b'john')]))
 
-      The following example shows that the abstraction of a constant
-      data raises an exception when Netzob tries to parse a message
-      that does not correspond to the expected model:
+      The following example shows that the abstraction of a data that
+      does not correspond to the expected model returns an unknown
+      symbol:
 
-      >>> msg2 = RawMessage("kurt")
-      >>> mp = MessageParser()
-      >>> print(mp.parseMessage(msg2, s))  # doctest: +IGNORE_EXCEPTION_DETAIL
-      Traceback (most recent call last):
-        ...
-      InvalidParsingPathException: No parsing path returned while parsing 'b'kurt''
-
+      >>> from netzob.all import *
+      >>> f = Field(name='f1')
+      >>> value = TypeConverter.convert("john", String, BitArray)
+      >>> f.domain = Data(String(), originalValue=value, svas=SVAS.CONSTANT)
+      >>> s = Symbol(name="S0", fields=[f])
+      >>> m = Memory()
+      >>> Symbol.abstract("kurt", [s], memory=m)
+      (Unknown Symbol 'kurt', OrderedDict())
 
       The following example shows the **specialization of a constant
       data**:
 
       >>> from netzob.all import *
-      >>> f = Field()
-      >>> value = TypeConverter.convert("netzob", String, BitArray)
-      >>> f.domain = Data(dataType=String(), originalValue=value, svas=SVAS.CONSTANT)
+      >>> f = Field(name='f1')
+      >>> value = TypeConverter.convert("john", String, BitArray)
+      >>> f.domain = Data(String(), originalValue=value, svas=SVAS.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
-      >>> ms = MessageSpecializer()
-      >>> print(ms.specializeSymbol(s).generatedContent)
-      bitarray('011011100110010101110100011110100110111101100010')
-      >>> print(ms.specializeSymbol(s).generatedContent)
-      bitarray('011011100110010101110100011110100110111101100010')
-      >>> print(len(str(ms.memory)))
+      >>> m = Memory()
+      >>> s.specialize(memory=m)
+      b'john'
+      >>> s.specialize(memory=m)
+      b'john'
+      >>> len(str(m))
       0
 
       The following example shows that the specialization of a
-      constant data raises an exception when no value is attached to
-      the definition domain of the variable:
+      constant data raises an exception when no original value is
+      attached to the definition domain of the variable:
 
       >>> from netzob.all import *
-      >>> f = Field()
-      >>> f.domain = Data(dataType=String(nbChars=(5, 10)), svas=SVAS.CONSTANT)
+      >>> f = Field(name='f1')
+      >>> f.domain = Data(String(nbChars=(5, 10)), svas=SVAS.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
-      >>> ms = MessageSpecializer()
-      >>> print(ms.specializeSymbol(s).generatedContent)
+      >>> m = Memory()
+      >>> s.specialize(memory=m)
       Traceback (most recent call last):
         ...
       Exception: Cannot specialize this symbol.
@@ -153,55 +153,55 @@ class SVAS(object):
       data**:
 
       >>> from netzob.all import *
-      >>> f = Field()
-      >>> f.domain = Data(dataType=String(nbChars=(5, 10)), svas=SVAS.PERSISTENT)
+      >>> f = Field(name='f1')
+      >>> f.domain = Data(String(nbChars=(5, 10)), svas=SVAS.PERSISTENT)
       >>> s = Symbol(name="S0", fields=[f])
-      >>> msg1 = RawMessage("netzob")
-      >>> msg2 = RawMessage("netzob")
-      >>> mp = MessageParser()
-      >>> print(mp.parseMessage(msg1, s))
-      [bitarray('011011100110010101110100011110100110111101100010')]
-      >>> print(mp.parseMessage(msg2, s))
-      [bitarray('011011100110010101110100011110100110111101100010')]
+      >>> m = Memory()
+      >>> Symbol.abstract("dylan", [s], memory=m)
+      (S0, OrderedDict([('f1', b'dylan')]))
+      >>> Symbol.abstract("dylan", [s], memory=m)
+      (S0, OrderedDict([('f1', b'dylan')]))
 
       The following example shows that the abstraction of a persistent
-      data raises an exception when Netzob tries to parse a message
-      that does not correspond to the expected model:
+      data that does not correspond to the expected model returns a
+      unknown symbol:
 
-      >>> msg3 = RawMessage("kurt")
-      >>> print(mp.parseMessage(msg3, s))  # doctest: +IGNORE_EXCEPTION_DETAIL
-      Traceback (most recent call last):
-        ...
-      InvalidParsingPathException: No parsing path returned while parsing 'b'kurt''
+      >>> from netzob.all import *
+      >>> f = Field(name='f1')
+      >>> f.domain = Data(String(nbChars=(5, 10)), svas=SVAS.PERSISTENT)
+      >>> s = Symbol(name="S0", fields=[f])
+      >>> m = Memory()
+      >>> Symbol.abstract("kurt", [s], memory=m)
+      (Unknown Symbol 'kurt', OrderedDict())
 
 
       The following examples show the **specialization of a persistent
       data**:
 
       >>> from netzob.all import *
-      >>> f = Field()
-      >>> value = TypeConverter.convert("netzob", String, BitArray)
-      >>> f.domain = Data(dataType=String(), originalValue=value, svas=SVAS.PERSISTENT)
+      >>> f = Field(name='f1')
+      >>> value = TypeConverter.convert("john", String, BitArray)
+      >>> f.domain = Data(String(), originalValue=value, svas=SVAS.PERSISTENT)
       >>> s = Symbol(name="S0", fields=[f])
-      >>> ms = MessageSpecializer()
-      >>> print(ms.specializeSymbol(s).generatedContent)
-      bitarray('011011100110010101110100011110100110111101100010')
-      >>> print(len(str(ms.memory)))
+      >>> m = Memory()
+      >>> s.specialize(memory=m)
+      b'john'
+      >>> len(str(m))
       0
 
       >>> from netzob.all import *
       >>> f = Field()
-      >>> f.domain = Data(dataType=String(nbChars=5), svas=SVAS.PERSISTENT)
+      >>> f.domain = Data(String(nbChars=5), svas=SVAS.PERSISTENT)
       >>> s = Symbol(name="S0", fields=[f])
-      >>> ms = MessageSpecializer()
-      >>> generated1 = ms.specializeSymbol(s).generatedContent
-      >>> print(len(generated1))
-      40
-      >>> print(ms.memory.hasValue(f.domain))
+      >>> m = Memory()
+      >>> generated1 = s.specialize(memory=m)
+      >>> len(generated1)
+      5
+      >>> m.hasValue(f.domain)
       True
-      >>> generated2 = ms.specializeSymbol(s).generatedContent
-      >>> print(len(generated2))
-      40
+      >>> generated2 = s.specialize(memory=m)
+      >>> len(generated2)
+      5
       >>> generated1 == generated2
       True
   
@@ -221,24 +221,21 @@ class SVAS(object):
       data**:
   
       >>> from netzob.all import *
-      >>> f = Field()
-      >>> f.domain = Data(dataType=String(nbChars=(4, 10)), svas=SVAS.EPHEMERAL)
+      >>> f = Field(name='f1')
+      >>> f.domain = Data(String(nbChars=(4, 10)), svas=SVAS.EPHEMERAL)
       >>> s = Symbol(name="S0", fields=[f])
-      >>> msg1 = RawMessage("netzob")
-      >>> msg2 = RawMessage("netzob")
-      >>> msg3 = RawMessage("kurt")
-      >>> mp = MessageParser()
-      >>> print(mp.parseMessage(msg1, s))
-      [bitarray('011011100110010101110100011110100110111101100010')]
-      >>> print(mp.memory)
-      Data (String=None ((32, 80))): b'netzob'
-      >>> print(mp.parseMessage(msg2, s))
-      [bitarray('011011100110010101110100011110100110111101100010')]
-      >>> print(mp.memory)
-      Data (String=None ((32, 80))): b'netzob'
-      >>> print(mp.parseMessage(msg3, s))
-      [bitarray('01101011011101010111001001110100')]
-      >>> print(mp.memory)
+      >>> m = Memory()
+      >>> Symbol.abstract("john", [s], memory=m)
+      (S0, OrderedDict([('f1', b'john')]))
+      >>> print(m)
+      Data (String=None ((32, 80))): b'john'
+      >>> Symbol.abstract("john", [s], memory=m)
+      (S0, OrderedDict([('f1', b'john')]))
+      >>> print(m)
+      Data (String=None ((32, 80))): b'john'
+      >>> Symbol.abstract("kurt", [s], memory=m)
+      (S0, OrderedDict([('f1', b'kurt')]))
+      >>> print(m)
       Data (String=None ((32, 80))): b'kurt'
 
 
@@ -246,38 +243,20 @@ class SVAS(object):
       data**:
 
       >>> from netzob.all import *
-      >>> f = Field()
-      >>> value = TypeConverter.convert("netzob", String, BitArray)
-      >>> f.domain = Data(dataType=String(), originalValue=value, svas=SVAS.EPHEMERAL)
+      >>> f = Field(name='f1')
+      >>> value = TypeConverter.convert("john", String, BitArray)
+      >>> f.domain = Data(String(), originalValue=value, svas=SVAS.EPHEMERAL)
       >>> s = Symbol(name="S0", fields=[f])
-      >>> ms = MessageSpecializer()
-      >>> print(ms.memory.hasValue(f.domain))
+      >>> m = Memory()
+      >>> m.hasValue(f.domain)
       False
-      >>> generated1 = ms.specializeSymbol(s).generatedContent
-      >>> print(ms.memory.hasValue(f.domain))
+      >>> generated1 = s.specialize(memory=m)
+      >>> m.hasValue(f.domain)
       True
-      >>> generated2 = ms.specializeSymbol(s).generatedContent
-      >>> generated2 == ms.memory.getValue(f.domain)
-      True
+      >>> generated2 = s.specialize(memory=m)
       >>> generated1 == generated2
       False
   
-      >>> from netzob.all import *
-      >>> f = Field()
-      >>> f.domain = Data(dataType=String(nbChars=(5, 10)), svas=SVAS.EPHEMERAL)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> ms = MessageSpecializer()
-      >>> print(ms.memory.hasValue(f.domain))
-      False
-      >>> generated1 = ms.specializeSymbol(s).generatedContent
-      >>> print(ms.memory.hasValue(f.domain))
-      True
-      >>> generated2 = ms.specializeSymbol(s).generatedContent
-      >>> generated2 == ms.memory.getValue(f.domain)
-      True
-      >>> generated1 == generated2
-      False
-
 
     * **SVAS.VOLATILE**: A volatile variable denotes a value which
       changes whenever it is specialized and that is never
@@ -292,24 +271,21 @@ class SVAS(object):
       data**:
   
       >>> from netzob.all import *
-      >>> f = Field()
-      >>> f.domain = Data(dataType=String(nbChars=(4, 10)), svas=SVAS.VOLATILE)
+      >>> f = Field(name='f1')
+      >>> f.domain = Data(String(nbChars=(4, 10)), svas=SVAS.VOLATILE)
       >>> s = Symbol(name="S0", fields=[f])
-      >>> msg1 = RawMessage("netzob")
-      >>> msg2 = RawMessage("netzob")
-      >>> msg3 = RawMessage("kurt")
-      >>> mp = MessageParser()
-      >>> print(mp.parseMessage(msg1, s))
-      [bitarray('011011100110010101110100011110100110111101100010')]
-      >>> print(len(str(mp.memory)))
+      >>> m = Memory()
+      >>> Symbol.abstract("john", [s], memory=m)
+      (S0, OrderedDict([('f1', b'john')]))
+      >>> len(m)
       0
-      >>> print(mp.parseMessage(msg2, s))
-      [bitarray('011011100110010101110100011110100110111101100010')]
-      >>> print(len(str(mp.memory)))
+      >>> Symbol.abstract("john", [s], memory=m)
+      (S0, OrderedDict([('f1', b'john')]))
+      >>> len(m)
       0
-      >>> print(mp.parseMessage(msg3, s))
-      [bitarray('01101011011101010111001001110100')]
-      >>> print(len(str(mp.memory)))
+      >>> Symbol.abstract("kurt", [s], memory=m)
+      (S0, OrderedDict([('f1', b'kurt')]))
+      >>> len(m)
       0
 
 
@@ -317,19 +293,14 @@ class SVAS(object):
       data**:
 
       >>> from netzob.all import *
-      >>> f = Field()
-      >>> f.domain = Data(dataType=String(nbChars=(5,10)), svas=SVAS.VOLATILE)
+      >>> f = Field(name='f1')
+      >>> f.domain = Data(String(nbChars=(5,10)), svas=SVAS.VOLATILE)
       >>> s = Symbol(name="S0", fields=[f])
-      >>> ms = MessageSpecializer()
-      >>> print(ms.memory.hasValue(f.domain))
+      >>> m = Memory()
+      >>> m.hasValue(f.domain)
       False
-      >>> generated1 = ms.specializeSymbol(s).generatedContent
-      >>> print(ms.memory.hasValue(f.domain))
-      False
-      >>> generated2 = ms.specializeSymbol(s).generatedContent
-      >>> generated2 == ms.memory.hasValue(f.domain)
-      False
-      >>> generated1 == generated2
+      >>> generated = s.specialize(memory=m)
+      >>> m.hasValue(f.domain)
       False
 
     """

@@ -120,25 +120,21 @@ class Size(AbstractRelationVariableLeaf):
 
     In the following example, a size field is declared after its field.
 
-    >>> f0 = Field(String(nbChars=(1,10)))
-    >>> f1 = Field(String(";"))
-    >>> f2 = Field(Size(f0))
+    >>> f0 = Field(String(nbChars=(1,10)), name='f0')
+    >>> f1 = Field(String(";"), name='f1')
+    >>> f2 = Field(Size(f0), name='f2')
     >>> s  = Symbol(fields=[f0, f1, f2])
-    >>> msg1  = RawMessage(b"netzob;\x06")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('00111011'), bitarray('00000110')]
+    >>> data  = b"netzob;\x06"
+    >>> Symbol.abstract(data, [s])
+    (Symbol, OrderedDict([('f0', b'netzob'), ('f1', b';'), ('f2', b'\x06')]))
 
     In the following example, a size field is declared after its
     targeted field. A message that does not correspond to the expected
-    model is then parsed, thus creating an exception:
+    model is then parsed, thus the returned symbol is unknown:
 
-    >>> msg2  = RawMessage(b"netzob;\x03")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg2, s))  # doctest: +IGNORE_EXCEPTION_DETAIL
-    Traceback (most recent call last):
-      ...
-    InvalidParsingPathException: No parsing path returned while parsing 'b'netzob;\x03''
+    >>> data = b"netzob;\x03"
+    >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
+    (Unknown Symbol b'netzob;\x03', OrderedDict())
 
 
     In the following example, a size field is declared before the
@@ -149,21 +145,17 @@ class Size(AbstractRelationVariableLeaf):
     >>> f0 = Field(Size(f2), name="f0")
     >>> s  = Symbol(fields=[f0, f1, f2])
 
-    >>> msg1  = RawMessage(b"\x06;netzob")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg1, s))
-    [bitarray('00000110'), bitarray('00111011'), bitarray('011011100110010101110100011110100110111101100010')]
+    >>> data = b"\x06;netzob"
+    >>> Symbol.abstract(data, [s])
+    (Symbol, OrderedDict([('f0', b'\x06'), ('f1', b';'), ('f2', b'netzob')]))
 
     In the following example, a size field is declared before its
     targeted field. A message that does not correspond to the expected model is
-    then parsed, thus creating an exception:
+    then parsed, thus the returned symbol is unknown:
 
-    >>> msg2  = RawMessage(b"\x03;netzob")
-    >>> mp = MessageParser()
-    >>> print(mp.parseMessage(msg2, s))  # doctest: +IGNORE_EXCEPTION_DETAIL
-    Traceback (most recent call last):
-      ...
-    InvalidParsingPathException: No parsing path returned while parsing 'b'\x03;netzob''
+    >>> data = b"\x03;netzob"
+    >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
+    (Unknown Symbol b'\x03;netzob', OrderedDict())
 
 
     **Size field with fields and variables as target**
