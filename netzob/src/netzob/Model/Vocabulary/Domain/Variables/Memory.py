@@ -239,6 +239,9 @@ class Memory(object):
                 var, TypeConverter.convert(value, BitArray, Raw)))
         return '\n'.join(result)
 
+    def __len__(self):
+        return len(self.memory)
+
     @property
     def memory(self):
         """The content of the memory is stored in this :class:`dict` object.
