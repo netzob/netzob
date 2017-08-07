@@ -148,7 +148,7 @@ class String(AbstractType):
     **Examples of conversions**
 
     The following example shows how to convert the
-    current type to any other Netzob type:
+    current type to any other Netzob types:
 
     >>> raw = cAscii.convert(Raw)
     >>> print(repr(raw))
@@ -258,8 +258,8 @@ class String(AbstractType):
         >>> len(gen)/8
         10.0
 
-        >>> b = String("netzob")
-        >>> b.generate().tobytes() == b"netzob"
+        >>> b = String("john")
+        >>> b.generate().tobytes() == b"john"
         True
 
         """
@@ -374,9 +374,9 @@ class String(AbstractType):
         False
 
         >>> a = String(nbChars=(2,20))
-        >>> a.canParse(String("Netzob").value)
+        >>> a.canParse(String("John").value)
         True
-        >>> a.canParse(String("Hello netzob, what's up ?").value)
+        >>> a.canParse(String("Hello john, what's up ?").value)
         False
 
         >>> String("hello").canParse(String("hello").value)

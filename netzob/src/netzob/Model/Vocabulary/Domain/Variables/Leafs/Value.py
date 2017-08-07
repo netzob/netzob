@@ -84,27 +84,27 @@ class Value(AbstractRelationVariableLeaf):
     >>> print(s.specialize())
     b'abcdabcd'
 
-    >>> data = "netzob;netzob!"
+    >>> data = "john;john!"
     >>> f1 = Field(String(nbChars=(2, 8)), name="f1")
     >>> f2 = Field(String(";"), name="f2")
     >>> f3 = Field(Value(f1), name="f3")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-    (Symbol, OrderedDict([('f1', b'netzob'), ('f2', b';'), ('f3', b'netzob'), ('f4', b'!')]))
+    (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
 
     The following example shows another way to define a field with a
     copy of another field value:
 
     >>> from netzob.all import *
-    >>> data = "netzob;netzob!"
-    >>> f3 = Field(String(nbChars=6), name="f3")
+    >>> data = "john;john!"
+    >>> f3 = Field(String(nbChars=4), name="f3")
     >>> f1 = Field(Value(f3), name="f1")
     >>> f2 = Field(String(";"), name="f2")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-    (Symbol, OrderedDict([('f1', b'netzob'), ('f2', b';'), ('f3', b'netzob'), ('f4', b'!')]))
+    (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
 
 
     **Value field with a variable as a target**
@@ -112,14 +112,14 @@ class Value(AbstractRelationVariableLeaf):
     The following example shows the specialization process of a Value
     field whose target is a variable:
 
-    >>> d = Data(String("netzob"))
+    >>> d = Data(String("john"))
     >>> f1 = Field(domain=d, name="f1")
     >>> f2 = Field(String(";"), name="f2")
     >>> f3 = Field(Value(d), name="f3")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> print(s.specialize())
-    b'netzob;netzob!'
+    b'john;john!'
 
 
     **Specialization of Value objects**
@@ -127,21 +127,21 @@ class Value(AbstractRelationVariableLeaf):
     The following examples show the specialization process of Value
     objects:
 
-    >>> f1 = Field(String("netzob"), name="f1")
+    >>> f1 = Field(String("john"), name="f1")
     >>> f2 = Field(String(";"), name="f2")
     >>> f3 = Field(Value(f1), name="f3")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> print(s.specialize())
-    b'netzob;netzob!'
+    b'john;john!'
 
-    >>> f3 = Field(String("netzob"), name="f3")
+    >>> f3 = Field(String("john"), name="f3")
     >>> f2 = Field(String(";"), name="f2")
     >>> f1 = Field(Value(f3), name="f1")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> print(s.specialize())
-    b'netzob;netzob!'
+    b'john;john!'
 
 
     **Transformation operation on targeted field value**

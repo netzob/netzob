@@ -94,13 +94,13 @@ class Alt(AbstractVariableNode):
     variable:
 
     >>> from netzob.all import *
-    >>> v0 = String("netzob")
+    >>> v0 = String("john")
     >>> v1 = String("kurt")
     >>> f0 = Field(Alt([v0, v1]), name='f0')
     >>> s = Symbol([f0])
-    >>> data = "netzob"
+    >>> data = "john"
     >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f0', b'netzob')]))
+    (Symbol, OrderedDict([('f0', b'john')]))
     >>> data = "kurt"
     >>> Symbol.abstract(data, [s])
     (Symbol, OrderedDict([('f0', b'kurt')]))

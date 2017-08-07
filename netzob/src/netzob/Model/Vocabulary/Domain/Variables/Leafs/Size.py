@@ -124,17 +124,17 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"), name='f1')
     >>> f2 = Field(Size(f0), name='f2')
     >>> s  = Symbol(fields=[f0, f1, f2])
-    >>> data  = b"netzob;\x06"
+    >>> data  = b"john;\x04"
     >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f0', b'netzob'), ('f1', b';'), ('f2', b'\x06')]))
+    (Symbol, OrderedDict([('f0', b'john'), ('f1', b';'), ('f2', b'\x04')]))
 
     In the following example, a size field is declared after its
     targeted field. A message that does not correspond to the expected
     model is then parsed, thus the returned symbol is unknown:
 
-    >>> data = b"netzob;\x03"
+    >>> data = b"john;\x03"
     >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
-    (Unknown Symbol b'netzob;\x03', OrderedDict())
+    (Unknown Symbol b'john;\x03', OrderedDict())
 
 
     In the following example, a size field is declared before the
@@ -145,17 +145,17 @@ class Size(AbstractRelationVariableLeaf):
     >>> f0 = Field(Size(f2), name="f0")
     >>> s  = Symbol(fields=[f0, f1, f2])
 
-    >>> data = b"\x06;netzob"
+    >>> data = b"\x04;john"
     >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f0', b'\x06'), ('f1', b';'), ('f2', b'netzob')]))
+    (Symbol, OrderedDict([('f0', b'\x04'), ('f1', b';'), ('f2', b'john')]))
 
     In the following example, a size field is declared before its
     targeted field. A message that does not correspond to the expected model is
     then parsed, thus the returned symbol is unknown:
 
-    >>> data = b"\x03;netzob"
+    >>> data = b"\x03;john"
     >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
-    (Unknown Symbol b'\x03;netzob', OrderedDict())
+    (Unknown Symbol b'\x03;john', OrderedDict())
 
 
     **Size field with fields and variables as target**

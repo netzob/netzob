@@ -186,7 +186,7 @@ class BitArray(AbstractType):
 
 
         >>> from netzob.all import *
-        >>> BitArray().canParse(String("hello netzob").value)
+        >>> BitArray().canParse(String("hello john").value)
         True
 
         >>> BitArray(nbBits=8).canParse(bitarray('01010101'))
@@ -252,13 +252,13 @@ class BitArray(AbstractType):
 
         >>> from netzob.all import *
         >>> from netzob.Model.Vocabulary.Types.BitArray import BitArray
-        >>> d = String.decode("hello netzob")
+        >>> d = String.decode("hello john")
         >>> r = BitArray.encode(d)
         >>> print(r.to01())
-        011010000110010101101100011011000110111100100000011011100110010101110100011110100110111101100010
+        01101000011001010110110001101100011011110010000001101010011011110110100001101110
         >>> t = BitArray.decode(r)
         >>> print(t)
-        b'hello netzob'
+        b'hello john'
 
 
         :param data: the data encoded in BitArray which will be decoded in raw

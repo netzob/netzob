@@ -80,10 +80,10 @@ class UnitSize(Enum):
 class AbstractType(object, metaclass=abc.ABCMeta):
     """AbstractType is the abstract class of all the classes that represents netzob types.
 
-    In Netzob, a type defines a definition domain as a unique value or
-    specified with specific rules.  For instance, an integer under a
-    specific interval, a string with a number of chars and an IPv4 of
-    a specific netmask.
+    A type defines a definition domain as a unique value or specified
+    with specific rules.  For instance, an integer under a specific
+    interval, a string with a number of chars and an IPv4 of a
+    specific netmask.
 
     The constructor for an AbstractType expects some parameters:
 
@@ -123,11 +123,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     **Internal representation of Type objects**
 
-    Regarding the internal representation of variables in Netzob, the
-    Python module :class:`bitarray.bitarray` is used, thus allowing to specify
-    fields at the bit granularity. As an example, the following code
-    show how to access the internal representation of the value of an
-    Integer object::
+    Regarding the internal representation of variables, the Python
+    module :class:`bitarray.bitarray` is used, thus allowing to
+    specify fields at the bit granularity. As an example, the
+    following code show how to access the internal representation of
+    the value of an Integer object::
 
     >>> from netzob.all import *
     >>> f = Field(Integer(20))
@@ -316,7 +316,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """Convert the current data type in a destination type specified in
         parameter.
 
-        :param typeClass: The netzob class to which the current data
+        :param typeClass: The Netzob type class to which the current data
                           must be converted.
         :param dst_unitSize: The unitsize of the destination
                              value. Values must be one of
@@ -597,11 +597,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :rtype: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
 
         >>> from netzob.all import *
-        >>> normalizedData = AbstractType.normalize("netzob")
+        >>> normalizedData = AbstractType.normalize("john")
         >>> print(normalizedData.__class__)
         <class 'netzob.Model.Vocabulary.Types.String.String'>
         >>> print(normalizedData.value)
-        bitarray('011011100110010101110100011110100110111101100010')
+        bitarray('01101010011011110110100001101110')
         """
 
         if data is None:
@@ -637,14 +637,14 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         for instance, user can specify a domain with its type which is much more simple than creating a Data with the type
 
         >>> from netzob.all import *
-        >>> ascii = String("hello netzob !")
+        >>> ascii = String("hello john !")
         >>> print(ascii.typeName)
         String
         >>> data = ascii.buildDataRepresentation()
         >>> data.currentValue.tobytes()
-        b'hello netzob !'
+        b'hello john !'
         >>> print(data.dataType)
-        String=hello netzob ! ((None, None))
+        String=hello john ! ((None, None))
 
         :return: a Data of the current type
         :rtype: :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leads.Data.Data>`

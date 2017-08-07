@@ -90,13 +90,13 @@ class Repeat(AbstractVariableNode):
 
     >>> delimiter = bitarray(endian='big')
     >>> delimiter.frombytes(b";")
-    >>> f1 = Field(Repeat(Alt([String("netzob"), String("kurt")]), nbRepeat=(1, 4),
+    >>> f1 = Field(Repeat(Alt([String("john"), String("kurt")]), nbRepeat=(1, 4),
     ...            delimiter=delimiter), name='f1')
     >>> f2 = Field(String("kurt"), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> data = "netzob;kurt;netzobkurt"
+    >>> data = "john;kurt;johnkurt"
     >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f1', b'netzob;kurt;netzob'), ('f2', b'kurt')]))
+    (Symbol, OrderedDict([('f1', b'john;kurt;john'), ('f2', b'kurt')]))
 
 
     **Limiting the number of repetitions with an integer**
@@ -104,7 +104,7 @@ class Repeat(AbstractVariableNode):
     The following example shows how to create a Repeat variable whose
     number of repetitions is limited by an integer:
 
-    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=3))
+    >>> f1 = Field(Repeat(String("john"), nbRepeat=3))
 
 
     **Limiting the number of repetitions with an interval of integers**
@@ -112,7 +112,7 @@ class Repeat(AbstractVariableNode):
     The following example shows how to create a Repeat variable whose
     number of repetitions is limited by an interval of integers:
 
-    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=(2,5)))
+    >>> f1 = Field(Repeat(String("john"), nbRepeat=(2,5)))
 
 
     **Limiting the number of repetitions with a Python integer variable**
@@ -122,7 +122,7 @@ class Repeat(AbstractVariableNode):
     variable. Such variable is typically managed by the calling script:
 
     >>> var = 3
-    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=var))
+    >>> f1 = Field(Repeat(String("john"), nbRepeat=var))
 
 
     **Limiting the number of repetitions with the value of another field**
@@ -131,7 +131,7 @@ class Repeat(AbstractVariableNode):
     number of repetitions is limited by the value of another field:
 
     >>> f_end = Field(Integer(interval=(2, 5)))
-    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=f_end)) # doctest: +SKIP
+    >>> f1 = Field(Repeat(String("john"), nbRepeat=f_end)) # doctest: +SKIP
 
 
     **Limiting the number of repetitions by calling a callback function**
@@ -146,7 +146,7 @@ class Repeat(AbstractVariableNode):
     ...         return True
     ...     else:
     ...         return False
-    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=cbk)) # doctest: +SKIP
+    >>> f1 = Field(Repeat(String("john"), nbRepeat=cbk)) # doctest: +SKIP
 
 
     **Abstraction of repeat variables**
@@ -154,17 +154,17 @@ class Repeat(AbstractVariableNode):
     The following examples show how repeat variable can be parsed:
 
     >>> from netzob.all import *
-    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=(0,3)), name="f1")
+    >>> f1 = Field(Repeat(String("john"), nbRepeat=(0,3)), name="f1")
     >>> f2 = Field(String("kurt"), name="f2")
     >>> s = Symbol([f1, f2])
 
-    >>> data = "netzobnetzobkurt"
+    >>> data = "johnjohnkurt"
     >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f1', b'netzobnetzob'), ('f2', b'kurt')]))
+    (Symbol, OrderedDict([('f1', b'johnjohn'), ('f2', b'kurt')]))
 
-    >>> data = "netzobkurt"
+    >>> data = "johnkurt"
     >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-    (Symbol, OrderedDict([('f1', b'netzob'), ('f2', b'kurt')]))
+    (Symbol, OrderedDict([('f1', b'john'), ('f2', b'kurt')]))
 
     >>> data = "kurt"
     >>> Symbol.abstract(data, [s])
@@ -176,10 +176,10 @@ class Repeat(AbstractVariableNode):
     The following examples show how repeat variable can be specialized:
 
     >>> from netzob.all import *
-    >>> f1 = Field(Repeat(String("netzob"), nbRepeat=2))
+    >>> f1 = Field(Repeat(String("john"), nbRepeat=2))
     >>> s = Symbol([f1])
     >>> print(s.specialize())
-    b'netzobnetzob'
+    b'johnjohn'
 
     >>> from netzob.all import *
     >>> delimiter = bitarray(endian='big')

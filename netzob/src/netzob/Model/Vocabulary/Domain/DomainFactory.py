@@ -75,13 +75,13 @@ class DomainFactory(object):
     >>> print(domain.children[1].dataType)
     String=! ((None, None))
 
-    >>> f = Field(domain=Agg([String("hello"), ["netzob", "kurt"]]))
+    >>> f = Field(domain=Agg([String("hello"), ["john", "kurt"]]))
     >>> print(f.str_structure())
     Field
     |--   Agg
           |--   Data (String=hello ((None, None)))
           |--   Alt
-               |--   Data (String=netzob ((None, None)))
+               |--   Data (String=john ((None, None)))
                |--   Data (String=kurt ((None, None)))
     """
 

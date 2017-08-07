@@ -252,11 +252,11 @@ class Raw(AbstractType):
 
         >>> from netzob.all import *
         >>> b = bitarray(endian='big')
-        >>> b.frombytes(b"hello netzob")
+        >>> b.frombytes(b"hello john")
         >>> Raw().canParse(b)
         True
 
-        >>> Raw().canParse(b"hello netzob")
+        >>> Raw().canParse(b"hello john")
         True
 
         >>> Raw(b"hello").canParse(b"hello")

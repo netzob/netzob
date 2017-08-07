@@ -115,17 +115,17 @@ class Agg(AbstractVariableNode):
     >>> f0 = Field(Agg([v1, v2]), name="f0")
     >>> f1 = Field(String("!"), name="f1")
     >>> s = Symbol([f0, f1])
-    >>> data = "netzob.txt!"
+    >>> data = "john.txt!"
     >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f0', b'netzob.txt'), ('f1', b'!')]))
+    (Symbol, OrderedDict([('f0', b'john.txt'), ('f1', b'!')]))
 
     In the following example, an Aggregate variable is defined. A
     message that does not correspond to the expected model is then
     parsed, thus the returned symbol is unknown:
 
-    >>> data = "netzobtxt!"
+    >>> data = "johntxt!"
     >>> Symbol.abstract(data, [s])
-    (Unknown Symbol 'netzobtxt!', OrderedDict())
+    (Unknown Symbol 'johntxt!', OrderedDict())
 
 
     **Specialization of aggregate variables**
@@ -135,11 +135,11 @@ class Agg(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> d1 = String("hello")
-    >>> d2 = String(" netzob")
+    >>> d2 = String(" john")
     >>> f = Field(Agg([d1, d2]))
     >>> s = Symbol(fields=[f])
     >>> print(s.specialize())
-    b'hello netzob'
+    b'hello john'
 
     """
 

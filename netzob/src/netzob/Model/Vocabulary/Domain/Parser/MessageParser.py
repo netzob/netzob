@@ -67,17 +67,17 @@ class MessageParser(object):
     
     >>> from netzob.all import *
     >>> msg = RawMessage("hello world !")
-    >>> msg1 = RawMessage("hello netzob !")
+    >>> msg1 = RawMessage("hello john !")
     >>> f0 = Field(name="F0", domain=String(nbChars=(4,5)))
     >>> f1 = Field(name="F1", domain=String(" "))
-    >>> f2 = Field(name="F2", domain=Alt([String("world"), String("netzob")]))
+    >>> f2 = Field(name="F2", domain=Alt([String("world"), String("john")]))
     >>> f3 = Field(name="F3", domain=Agg([String(" "), String("!")]))
     >>> s = Symbol(name="S0", fields=[f0, f1, f2, f3])
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg, s))
     [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('0111011101101111011100100110110001100100'), bitarray('0010000000100001')]
     >>> print(mp.parseMessage(msg1, s))
-    [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000100001')]
+    [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('01101010011011110110100001101110'), bitarray('0010000000100001')]
 
 
     >>> from netzob.all import *
@@ -123,21 +123,20 @@ class MessageParser(object):
     # Let's verify the abstraction of intra-relationships
 
     >>> from netzob.all import *
-    >>> r = b"netzob > my name is netzob"
-    >>> msg = RawMessage(r)
+    >>> msg = RawMessage(b"john > my name is john")
     >>> f1 = Field(String(nbChars=(1,20)), name="F1")
     >>> f2 = Field(" > my name is ", name="F2")
     >>> f3 = Field(Value(f1), name="F3")
     >>> s = Symbol(fields=[f1, f2, f3])
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg, s))
-    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000111110001000000110110101111001001000000110111001100001011011010110010100100000011010010111001100100000'), bitarray('011011100110010101110100011110100110111101100010')]
+    [bitarray('01101010011011110110100001101110'), bitarray('0010000000111110001000000110110101111001001000000110111001100001011011010110010100100000011010010111001100100000'), bitarray('01101010011011110110100001101110')]
 
     # Let's test inter-symbol relationships
 
-    >>> msg1 = RawMessage("my pseudo is: netzob!")
-    >>> msg2 = RawMessage("welcome netzob")
-    >>> msg3 = RawMessage("netzob > hello")
+    >>> msg1 = RawMessage("my pseudo is: john!")
+    >>> msg2 = RawMessage("welcome john")
+    >>> msg3 = RawMessage("john > hello")
 
     >>> f11 = Field(domain=String("my pseudo is: "), name="F11")
     >>> f12 = Field(domain=String(nbChars=(3, 10)), name="F12")
@@ -154,11 +153,11 @@ class MessageParser(object):
 
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg1, s1))
-    [bitarray('0110110101111001001000000111000001110011011001010111010101100100011011110010000001101001011100110011101000100000'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
+    [bitarray('0110110101111001001000000111000001110011011001010111010101100100011011110010000001101001011100110011101000100000'), bitarray('01101010011011110110100001101110'), bitarray('00100001')]
     >>> print(mp.parseMessage(msg2, s2))
-    [bitarray('0111011101100101011011000110001101101111011011010110010100100000'), bitarray('011011100110010101110100011110100110111101100010')]
+    [bitarray('0111011101100101011011000110001101101111011011010110010100100000'), bitarray('01101010011011110110100001101110')]
     >>> print(mp.parseMessage(msg3, s3))
-    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000111110001000000110100001100101011011000110110001101111')]
+    [bitarray('01101010011011110110100001101110'), bitarray('0010000000111110001000000110100001100101011011000110110001101111')]
 
     """
 

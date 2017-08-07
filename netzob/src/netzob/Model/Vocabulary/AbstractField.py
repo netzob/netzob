@@ -108,9 +108,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         If parameter Transposed is set to True, the matrix is built with rows for fields and columns for messages.
 
         >>> from netzob.all import *
-        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'kurt', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
+        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['john', 'kurt', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
         >>> fh1 = Field(String("hello "), name="hello")
-        >>> fh2 = Field(Alt([String("netzob"), String("kurt"), String("lapy"), String("sygus")]), name="pseudo")
+        >>> fh2 = Field(Alt([String("john"), String("kurt"), String("lapy"), String("sygus")]), name="pseudo")
         >>> fheader = Field(name="header")
         >>> fheader.fields = [fh1, fh2]
         >>> fb1 = Field(String(", what's up in "), name="whatsup")
@@ -121,48 +121,48 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> symbol = Symbol([fheader, fbody], messages=messages)
 
         >>> print(symbol.str_data())
-        hello    | pseudo   | whatsup           | city       | end 
-        -------- | -------- | ----------------- | ---------- | ----
-        'hello ' | 'netzob' | ", what's up in " | 'Paris'    | ' ?'
-        'hello ' | 'netzob' | ", what's up in " | 'Berlin'   | ' ?'
-        'hello ' | 'netzob' | ", what's up in " | 'New-York' | ' ?'
-        'hello ' | 'kurt'   | ", what's up in " | 'Paris'    | ' ?'
-        'hello ' | 'kurt'   | ", what's up in " | 'Berlin'   | ' ?'
-        'hello ' | 'kurt'   | ", what's up in " | 'New-York' | ' ?'
-        'hello ' | 'lapy'   | ", what's up in " | 'Paris'    | ' ?'
-        'hello ' | 'lapy'   | ", what's up in " | 'Berlin'   | ' ?'
-        'hello ' | 'lapy'   | ", what's up in " | 'New-York' | ' ?'
-        -------- | -------- | ----------------- | ---------- | ----
+        hello    | pseudo | whatsup           | city       | end 
+        -------- | ------ | ----------------- | ---------- | ----
+        'hello ' | 'john' | ", what's up in " | 'Paris'    | ' ?'
+        'hello ' | 'john' | ", what's up in " | 'Berlin'   | ' ?'
+        'hello ' | 'john' | ", what's up in " | 'New-York' | ' ?'
+        'hello ' | 'kurt' | ", what's up in " | 'Paris'    | ' ?'
+        'hello ' | 'kurt' | ", what's up in " | 'Berlin'   | ' ?'
+        'hello ' | 'kurt' | ", what's up in " | 'New-York' | ' ?'
+        'hello ' | 'lapy' | ", what's up in " | 'Paris'    | ' ?'
+        'hello ' | 'lapy' | ", what's up in " | 'Berlin'   | ' ?'
+        'hello ' | 'lapy' | ", what's up in " | 'New-York' | ' ?'
+        -------- | ------ | ----------------- | ---------- | ----
 
         >>> fh1.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> fb2.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print(symbol.str_data())
-        hello          | pseudo   | whatsup           | city               | end 
-        -------------- | -------- | ----------------- | ------------------ | ----
-        '68656c6c6f20' | 'netzob' | ", what's up in " | '5061726973'       | ' ?'
-        '68656c6c6f20' | 'netzob' | ", what's up in " | '4265726c696e'     | ' ?'
-        '68656c6c6f20' | 'netzob' | ", what's up in " | '4e65772d596f726b' | ' ?'
-        '68656c6c6f20' | 'kurt'   | ", what's up in " | '5061726973'       | ' ?'
-        '68656c6c6f20' | 'kurt'   | ", what's up in " | '4265726c696e'     | ' ?'
-        '68656c6c6f20' | 'kurt'   | ", what's up in " | '4e65772d596f726b' | ' ?'
-        '68656c6c6f20' | 'lapy'   | ", what's up in " | '5061726973'       | ' ?'
-        '68656c6c6f20' | 'lapy'   | ", what's up in " | '4265726c696e'     | ' ?'
-        '68656c6c6f20' | 'lapy'   | ", what's up in " | '4e65772d596f726b' | ' ?'
-        -------------- | -------- | ----------------- | ------------------ | ----
+        hello          | pseudo | whatsup           | city               | end 
+        -------------- | ------ | ----------------- | ------------------ | ----
+        '68656c6c6f20' | 'john' | ", what's up in " | '5061726973'       | ' ?'
+        '68656c6c6f20' | 'john' | ", what's up in " | '4265726c696e'     | ' ?'
+        '68656c6c6f20' | 'john' | ", what's up in " | '4e65772d596f726b' | ' ?'
+        '68656c6c6f20' | 'kurt' | ", what's up in " | '5061726973'       | ' ?'
+        '68656c6c6f20' | 'kurt' | ", what's up in " | '4265726c696e'     | ' ?'
+        '68656c6c6f20' | 'kurt' | ", what's up in " | '4e65772d596f726b' | ' ?'
+        '68656c6c6f20' | 'lapy' | ", what's up in " | '5061726973'       | ' ?'
+        '68656c6c6f20' | 'lapy' | ", what's up in " | '4265726c696e'     | ' ?'
+        '68656c6c6f20' | 'lapy' | ", what's up in " | '4e65772d596f726b' | ' ?'
+        -------------- | ------ | ----------------- | ------------------ | ----
 
         >>> print(fheader.getCells()) 
-        Field          | Field   
-        -------------- | --------
-        '68656c6c6f20' | 'netzob'
-        '68656c6c6f20' | 'netzob'
-        '68656c6c6f20' | 'netzob'
-        '68656c6c6f20' | 'kurt'  
-        '68656c6c6f20' | 'kurt'  
-        '68656c6c6f20' | 'kurt'  
-        '68656c6c6f20' | 'lapy'  
-        '68656c6c6f20' | 'lapy'  
-        '68656c6c6f20' | 'lapy'  
-        -------------- | --------
+        Field          | Field 
+        -------------- | ------
+        '68656c6c6f20' | 'john'
+        '68656c6c6f20' | 'john'
+        '68656c6c6f20' | 'john'
+        '68656c6c6f20' | 'kurt'
+        '68656c6c6f20' | 'kurt'
+        '68656c6c6f20' | 'kurt'
+        '68656c6c6f20' | 'lapy'
+        '68656c6c6f20' | 'lapy'
+        '68656c6c6f20' | 'lapy'
+        -------------- | ------
 
         >>> print(fh1.getCells())
         Field         
@@ -179,18 +179,18 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         --------------
 
         >>> print(fh2.getCells())
-        Field   
-        --------
-        'netzob'
-        'netzob'
-        'netzob'
-        'kurt'  
-        'kurt'  
-        'kurt'  
-        'lapy'  
-        'lapy'  
-        'lapy'  
-        --------
+        Field 
+        ------
+        'john'
+        'john'
+        'john'
+        'kurt'
+        'kurt'
+        'kurt'
+        'lapy'
+        'lapy'
+        'lapy'
+        ------
 
         >>> print(fbody.getCells())
         Field             | Field              | Field
@@ -286,48 +286,48 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         In addition, visualizationFunctions are also applied if parameter styled is set to True.
 
         >>> from netzob.all import *
-        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'kurt', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
+        >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['john', 'kurt', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
         >>> f1 = Field("hello ", name="hello")
-        >>> f2 = Field(["netzob", "kurt", "lapy", "sygus"], name="pseudo")
+        >>> f2 = Field(["john", "kurt", "lapy", "sygus"], name="pseudo")
         >>> f3 = Field(", what's up in ", name="whatsup")
         >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f5 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
         >>> print(symbol.str_data())
-        hello    | pseudo   | whatsup           | city       | end 
-        -------- | -------- | ----------------- | ---------- | ----
-        'hello ' | 'netzob' | ", what's up in " | 'Paris'    | ' ?'
-        'hello ' | 'netzob' | ", what's up in " | 'Berlin'   | ' ?'
-        'hello ' | 'netzob' | ", what's up in " | 'New-York' | ' ?'
-        'hello ' | 'kurt'   | ", what's up in " | 'Paris'    | ' ?'
-        'hello ' | 'kurt'   | ", what's up in " | 'Berlin'   | ' ?'
-        'hello ' | 'kurt'   | ", what's up in " | 'New-York' | ' ?'
-        'hello ' | 'lapy'   | ", what's up in " | 'Paris'    | ' ?'
-        'hello ' | 'lapy'   | ", what's up in " | 'Berlin'   | ' ?'
-        'hello ' | 'lapy'   | ", what's up in " | 'New-York' | ' ?'
-        -------- | -------- | ----------------- | ---------- | ----
+        hello    | pseudo | whatsup           | city       | end 
+        -------- | ------ | ----------------- | ---------- | ----
+        'hello ' | 'john' | ", what's up in " | 'Paris'    | ' ?'
+        'hello ' | 'john' | ", what's up in " | 'Berlin'   | ' ?'
+        'hello ' | 'john' | ", what's up in " | 'New-York' | ' ?'
+        'hello ' | 'kurt' | ", what's up in " | 'Paris'    | ' ?'
+        'hello ' | 'kurt' | ", what's up in " | 'Berlin'   | ' ?'
+        'hello ' | 'kurt' | ", what's up in " | 'New-York' | ' ?'
+        'hello ' | 'lapy' | ", what's up in " | 'Paris'    | ' ?'
+        'hello ' | 'lapy' | ", what's up in " | 'Berlin'   | ' ?'
+        'hello ' | 'lapy' | ", what's up in " | 'New-York' | ' ?'
+        -------- | ------ | ----------------- | ---------- | ----
 
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
         >>> print(symbol.str_data())
-        hello          | pseudo         | whatsup                          | city               | end   
-        -------------- | -------------- | -------------------------------- | ------------------ | ------
-        '68656c6c6f20' | '6e65747a6f62' | '2c2077686174277320757020696e20' | '5061726973'       | '203f'
-        '68656c6c6f20' | '6e65747a6f62' | '2c2077686174277320757020696e20' | '4265726c696e'     | '203f'
-        '68656c6c6f20' | '6e65747a6f62' | '2c2077686174277320757020696e20' | '4e65772d596f726b' | '203f'
-        '68656c6c6f20' | '6b757274'     | '2c2077686174277320757020696e20' | '5061726973'       | '203f'
-        '68656c6c6f20' | '6b757274'     | '2c2077686174277320757020696e20' | '4265726c696e'     | '203f'
-        '68656c6c6f20' | '6b757274'     | '2c2077686174277320757020696e20' | '4e65772d596f726b' | '203f'
-        '68656c6c6f20' | '6c617079'     | '2c2077686174277320757020696e20' | '5061726973'       | '203f'
-        '68656c6c6f20' | '6c617079'     | '2c2077686174277320757020696e20' | '4265726c696e'     | '203f'
-        '68656c6c6f20' | '6c617079'     | '2c2077686174277320757020696e20' | '4e65772d596f726b' | '203f'
-        -------------- | -------------- | -------------------------------- | ------------------ | ------
+        hello          | pseudo     | whatsup                          | city               | end   
+        -------------- | ---------- | -------------------------------- | ------------------ | ------
+        '68656c6c6f20' | '6a6f686e' | '2c2077686174277320757020696e20' | '5061726973'       | '203f'
+        '68656c6c6f20' | '6a6f686e' | '2c2077686174277320757020696e20' | '4265726c696e'     | '203f'
+        '68656c6c6f20' | '6a6f686e' | '2c2077686174277320757020696e20' | '4e65772d596f726b' | '203f'
+        '68656c6c6f20' | '6b757274' | '2c2077686174277320757020696e20' | '5061726973'       | '203f'
+        '68656c6c6f20' | '6b757274' | '2c2077686174277320757020696e20' | '4265726c696e'     | '203f'
+        '68656c6c6f20' | '6b757274' | '2c2077686174277320757020696e20' | '4e65772d596f726b' | '203f'
+        '68656c6c6f20' | '6c617079' | '2c2077686174277320757020696e20' | '5061726973'       | '203f'
+        '68656c6c6f20' | '6c617079' | '2c2077686174277320757020696e20' | '4265726c696e'     | '203f'
+        '68656c6c6f20' | '6c617079' | '2c2077686174277320757020696e20' | '4e65772d596f726b' | '203f'
+        -------------- | ---------- | -------------------------------- | ------------------ | ------
 
         >>> print(symbol.getValues())
-        [b'68656c6c6f206e65747a6f622c2077686174277320757020696e205061726973203f', b'68656c6c6f206e65747a6f622c2077686174277320757020696e204265726c696e203f', b'68656c6c6f206e65747a6f622c2077686174277320757020696e204e65772d596f726b203f', b'68656c6c6f206b7572742c2077686174277320757020696e205061726973203f', b'68656c6c6f206b7572742c2077686174277320757020696e204265726c696e203f', b'68656c6c6f206b7572742c2077686174277320757020696e204e65772d596f726b203f', b'68656c6c6f206c6170792c2077686174277320757020696e205061726973203f', b'68656c6c6f206c6170792c2077686174277320757020696e204265726c696e203f', b'68656c6c6f206c6170792c2077686174277320757020696e204e65772d596f726b203f']
+        [b'68656c6c6f206a6f686e2c2077686174277320757020696e205061726973203f', b'68656c6c6f206a6f686e2c2077686174277320757020696e204265726c696e203f', b'68656c6c6f206a6f686e2c2077686174277320757020696e204e65772d596f726b203f', b'68656c6c6f206b7572742c2077686174277320757020696e205061726973203f', b'68656c6c6f206b7572742c2077686174277320757020696e204265726c696e203f', b'68656c6c6f206b7572742c2077686174277320757020696e204e65772d596f726b203f', b'68656c6c6f206c6170792c2077686174277320757020696e205061726973203f', b'68656c6c6f206c6170792c2077686174277320757020696e204265726c696e203f', b'68656c6c6f206c6170792c2077686174277320757020696e204e65772d596f726b203f']
         >>> print(f1.getValues())
         [b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20', b'68656c6c6f20']
         >>> print(f2.getValues())
-        [b'6e65747a6f62', b'6e65747a6f62', b'6e65747a6f62', b'6b757274', b'6b757274', b'6b757274', b'6c617079', b'6c617079', b'6c617079']
+        [b'6a6f686e', b'6a6f686e', b'6a6f686e', b'6b757274', b'6b757274', b'6b757274', b'6c617079', b'6c617079', b'6c617079']
         >>> print(f3.getValues())
         [b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20', b'2c2077686174277320757020696e20']
         >>> print(f4.getValues())
@@ -357,26 +357,26 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         per message.
 
         >>> from netzob.all import *
-        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'kurt'] for city in ['Paris', 'Berlin']]
-        >>> f1 = Field(["netzob", "kurt", "lapy", "sygus"], name="pseudo")
+        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['john', 'kurt'] for city in ['Paris', 'Berlin']]
+        >>> f1 = Field(["john", "kurt", "lapy", "sygus"], name="pseudo")
         >>> f2 = Field(", what's up in ", name="whatsup")
         >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f4 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> print(symbol.str_data())
-        pseudo   | whatsup           | city     | end 
-        -------- | ----------------- | -------- | ----
-        'netzob' | ", what's up in " | 'Paris'  | ' ?'
-        'netzob' | ", what's up in " | 'Berlin' | ' ?'
-        'kurt'   | ", what's up in " | 'Paris'  | ' ?'
-        'kurt'   | ", what's up in " | 'Berlin' | ' ?'
-        -------- | ----------------- | -------- | ----
+        pseudo | whatsup           | city     | end 
+        ------ | ----------------- | -------- | ----
+        'john' | ", what's up in " | 'Paris'  | ' ?'
+        'john' | ", what's up in " | 'Berlin' | ' ?'
+        'kurt' | ", what's up in " | 'Paris'  | ' ?'
+        'kurt' | ", what's up in " | 'Berlin' | ' ?'
+        ------ | ----------------- | -------- | ----
 
         >>> messageCells = symbol.getMessageCells()
         >>> for message in symbol.messages:
         ...    print(message.data, messageCells[message])
-        netzob, what's up in Paris ? [b'netzob', b", what's up in ", b'Paris', b' ?']
-        netzob, what's up in Berlin ? [b'netzob', b", what's up in ", b'Berlin', b' ?']
+        john, what's up in Paris ? [b'john', b", what's up in ", b'Paris', b' ?']
+        john, what's up in Berlin ? [b'john', b", what's up in ", b'Berlin', b' ?']
         kurt, what's up in Paris ? [b'kurt', b", what's up in ", b'Paris', b' ?']
         kurt, what's up in Berlin ? [b'kurt', b", what's up in ", b'Berlin', b' ?']
 
@@ -408,26 +408,26 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         per message.
 
         >>> from netzob.all import *
-        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'kurt'] for city in ['Paris', 'Berlin']]
-        >>> f1 = Field(["netzob", "kurt", "lapy", "sygus"], name="pseudo")
+        >>> messages = [RawMessage("{0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['john', 'kurt'] for city in ['Paris', 'Berlin']]
+        >>> f1 = Field(["john", "kurt", "lapy", "sygus"], name="pseudo")
         >>> f2 = Field(", what's up in ", name="whatsup")
         >>> f3 = Field(["Paris", "Berlin", "New-York"], name="city")
         >>> f4 = Field(" ?", name="end")
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> print(symbol.str_data())
-        pseudo   | whatsup           | city     | end 
-        -------- | ----------------- | -------- | ----
-        'netzob' | ", what's up in " | 'Paris'  | ' ?'
-        'netzob' | ", what's up in " | 'Berlin' | ' ?'
-        'kurt'   | ", what's up in " | 'Paris'  | ' ?'
-        'kurt'   | ", what's up in " | 'Berlin' | ' ?'
-        -------- | ----------------- | -------- | ----
+        pseudo | whatsup           | city     | end 
+        ------ | ----------------- | -------- | ----
+        'john' | ", what's up in " | 'Paris'  | ' ?'
+        'john' | ", what's up in " | 'Berlin' | ' ?'
+        'kurt' | ", what's up in " | 'Paris'  | ' ?'
+        'kurt' | ", what's up in " | 'Berlin' | ' ?'
+        ------ | ----------------- | -------- | ----
 
         >>> messageValues = f3.getMessageValues()
         >>> for message in symbol.messages:
         ...    print(message.data, messageValues[message])
-        netzob, what's up in Paris ? b'Paris'
-        netzob, what's up in Berlin ? b'Berlin'
+        john, what's up in Paris ? b'Paris'
+        john, what's up in Berlin ? b'Berlin'
         kurt, what's up in Paris ? b'Paris'
         kurt, what's up in Berlin ? b'Berlin'
 
@@ -451,57 +451,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
             result[message] = fieldValues[iMessage]
 
         return result
-
-    # def getMessagesWithValue(self, value):
-    #     """Computes and returns the messages that have a specified value
-    #     in the current field.
-
-    #     >>> from netzob.all import *
-    #     >>> messages = [RawMessage("hello {0}, what's up in {1} ?".format(pseudo, city)) for pseudo in ['netzob', 'kurt', 'lapy'] for city in ['Paris', 'Berlin', 'New-York']]
-    #     >>> f1 = Field("hello ", name="hello")
-    #     >>> f2 = Field(["netzob", "kurt", "lapy", "sygus"], name="pseudo")
-    #     >>> f3 = Field(", what's up in ", name="whatsup")
-    #     >>> f4 = Field(["Paris", "Berlin", "New-York"], name="city")
-    #     >>> f5 = Field(" ?", name="end")
-    #     >>> symbol = Symbol([f1, f2, f3, f4, f5], messages=messages)
-    #     >>> print(symbol.specialize())
-    #     >>> print(symbol.str_data())
-    #     hello  | netzob | , what's up in  | Paris    |  ?
-    #     hello  | netzob | , what's up in  | Berlin   |  ?
-    #     hello  | netzob | , what's up in  | New-York |  ?
-    #     hello  | kurt   | , what's up in  | Paris    |  ?
-    #     hello  | kurt   | , what's up in  | Berlin   |  ?
-    #     hello  | kurt   | , what's up in  | New-York |  ?
-    #     hello  | lapy   | , what's up in  | Paris    |  ?
-    #     hello  | lapy   | , what's up in  | Berlin   |  ?
-    #     hello  | lapy   | , what's up in  | New-York |  ?
-    #     >>> lapySymbol = Symbol(messages=symbol.fields[1].getMessagesWithValue("lapy"))
-    #     >>> print(lapySymbol)
-    #     hello lapy, what's up in Paris ?   
-    #     hello lapy, what's up in Berlin ?  
-    #     hello lapy, what's up in New-York ?
-    #     >>> Format.splitStatic(lapySymbol)
-    #     >>> lapySymbol.encodingFunctions.add(TypeEncodingFunction(HexaString))
-    #     >>> print(lapySymbol)
-    #     68656c6c6f206c6170792c2077686174277320757020696e20 | 5061726973203f      
-    #     68656c6c6f206c6170792c2077686174277320757020696e20 | 4265726c696e203f    
-    #     68656c6c6f206c6170792c2077686174277320757020696e20 | 4e65772d596f726b203f
-
-    #     :parameter value: a Raw value
-    #     :type value: :class:`object`
-    #     :return: a list of messages
-    #     :rtype: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
-    #     """
-
-    #     if value is None:
-    #         raise TypeError("Value cannot be None")
-
-    #     fieldValues = self.getValues(encoded=False, styled=False)
-    #     result = []
-    #     for i_message, message in enumerate(self.messages):
-    #         if fieldValues[i_message] == value:
-    #             result.append(message)
-    #     return result
 
     @abc.abstractmethod
     def specialize(self, mutator=None):
@@ -539,14 +488,14 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         >>> from netzob.all import *
         >>> messages = ["{0}, what's up in {1} ?".format(pseudo, city)
-        ...             for pseudo in ['netzob', 'kurt']
+        ...             for pseudo in ['john', 'kurt']
         ...             for city in ['Paris', 'Berlin']]
 
-        >>> f1a = Field(name="name", domain="netzob")
+        >>> f1a = Field(name="name", domain="john")
         >>> f2a = Field(name="question", domain=", what's up in ")
         >>> f3a = Field(name="city", domain=Alt(["Paris", "Berlin"]))
         >>> f4a = Field(name="mark", domain=" ?")
-        >>> s1 = Symbol([f1a, f2a, f3a, f4a], name="Symbol-netzob")
+        >>> s1 = Symbol([f1a, f2a, f3a, f4a], name="Symbol-john")
 
         >>> f1b = Field(name="name", domain="kurt")
         >>> f2b = Field(name="question", domain=", what's up in ")
@@ -558,17 +507,13 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         ...    (abstractedSymbol, structured_data) = Symbol.abstract(m, [s1, s2])
         ...    print(structured_data)
         ...    print(abstractedSymbol.name)  # doctest: +NORMALIZE_WHITESPACE
-        OrderedDict([('name', b'netzob'), ('question', b", what's up in "),
-                     ('city', b'Paris'), ('mark', b' ?')])
-        Symbol-netzob
-        OrderedDict([('name', b'netzob'), ('question', b", what's up in "),
-                     ('city', b'Berlin'), ('mark', b' ?')])
-        Symbol-netzob
-        OrderedDict([('name', b'kurt'), ('question', b", what's up in "),
-                     ('city', b'Paris'), ('mark', b' ?')])
+        OrderedDict([('name', b'john'), ('question', b", what's up in "), ('city', b'Paris'), ('mark', b' ?')])
+        Symbol-john
+        OrderedDict([('name', b'john'), ('question', b", what's up in "), ('city', b'Berlin'), ('mark', b' ?')])
+        Symbol-john
+        OrderedDict([('name', b'kurt'), ('question', b", what's up in "), ('city', b'Paris'), ('mark', b' ?')])
         Symbol-kurt
-        OrderedDict([('name', b'kurt'), ('question', b", what's up in "),
-                     ('city', b'Berlin'), ('mark', b' ?')])
+        OrderedDict([('name', b'kurt'), ('question', b", what's up in "), ('city', b'Berlin'), ('mark', b' ?')])
         Symbol-kurt
         """
 

@@ -75,19 +75,19 @@ class FieldSpecializer(object):
     >>> print(32<=len(fs.specialize()[0].getDataAssignedToVariable(f.domain))<=80)
     True
 
-    >>> d = Alt([String("netzob"), String("kurt")])
+    >>> d = Alt([String("john"), String("kurt")])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
     >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToVariable(f.domain), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
-    ['kurt', 'netzob']
+    ['john', 'kurt']
 
-    >>> d = Agg([String("hello"), String(" "), Alt([String("netzob"), String("kurt")])])
+    >>> d = Agg([String("hello"), String(" "), Alt([String("john"), String("kurt")])])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
     >>> val = set([TypeConverter.convert(fs.specialize()[0].getDataAssignedToVariable(f.domain), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
-    ['hello kurt', 'hello netzob']
+    ['hello john', 'hello kurt']
 
     >>> fpayload = Field()
     >>> f1 = Field(String("hello "), name="f1")
