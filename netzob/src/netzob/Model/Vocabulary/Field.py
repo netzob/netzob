@@ -69,7 +69,6 @@ class Field(AbstractField):
                    be ``Raw()``, meaning it accepts any values.
     :param name: The name of the field. If not specified, the
                  default name will be "Field".
-    :param layer: A flag indicating if the field is a layer.
     :param isPseudoField: A flag indicating if the field is a
                           pseudo field, meaning it is used
                           internally to help for the computation
@@ -77,7 +76,6 @@ class Field(AbstractField):
                           not directly produce data.
     :type domain: a :class:`list` of :class:`object`, optional
     :type name: :class:`str`, optional
-    :type layer: :class:`bool`, optional
     :type isPseudoField: :class:`bool`, optional
 
 
