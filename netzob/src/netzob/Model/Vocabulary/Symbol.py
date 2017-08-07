@@ -243,8 +243,8 @@ class Symbol(AbstractField):
         in ``f = Field(name="udp.dport")``). Values are either
         expressed as :class:`BitArray
         <netzob.Model.Vocabulary.Types.BitArray.BitArray>` (as it is
-        the internal type for variables in Netzob) or in the type of
-        the overridden field variable.
+        the internal type for variables in the Netzob library) or in
+        the type of the overridden field variable.
 
         The following code shows the definition of a simplified UDP
         header that will be latter used as base example. This UDP
@@ -279,7 +279,8 @@ class Symbol(AbstractField):
 
         The previous example shows the use of BitArray as dict
         values. BitArray are always permitted for any parameterized
-        field, as it is the internal type for variables in Netzob.
+        field, as it is the internal type for variables in the Netzob
+        library.
 
         The two following codes show the same way to express the
         parameterized **keys** during specialization of the fields

@@ -115,9 +115,9 @@ class Field(AbstractField):
     or to model complex data structures (such has alternatives,
     repetitions or sequences).
 
-    The following examples present the different forms that are
-    authorized by Netzob to express the same field content (i.e. an
-    Integer with a constant value of 10):
+    The following examples present the different forms that permit to
+    express the same field content (i.e. an Integer with a constant
+    value of 10):
 
     >>> f = Field(10)
     >>> f = Field(Integer(10))
@@ -144,8 +144,8 @@ class Field(AbstractField):
     **Relationships between fields**
 
     A field can have its value related to the content of another
-    field. Such relationships may be specified in Netzob through
-    specific domain objects, such as Size or Value classes.
+    field. Such relationships may be specified through specific domain
+    objects, such as Size or Value classes.
 
     The following example describes a size relationship with a String
     field:
@@ -244,9 +244,9 @@ class Field(AbstractField):
 
       >>> f = Field([Size(payloadField)])
 
-    * a field representing an alternative between two different strings, either "netzob" or "kurt":
+    * a field representing an alternative between two different strings, either "john" or "kurt":
 
-      >>> f = Field(["netzob", "kurt"])
+      >>> f = Field(["john", "kurt"])
 
     * a field representing a decimal (10) or a String of 16 chars:
 

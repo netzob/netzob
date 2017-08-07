@@ -76,7 +76,7 @@ class Raw(AbstractType):
     >>> print(len(f.specialize()))
     6
 
-    Netzob can define a range, regarding the valid size of the
+    It is possible to define a range regarding the valid size of the
     raw field:
 
     >>> f = Field(Raw(nbBytes = (2, 20)))

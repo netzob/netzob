@@ -100,7 +100,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     :type endianness: :class:`Enum`, optional
     :type sign: :class:`Enum`, optional
 
-    Netzob support the following unit sizes:
+    The following unit sizes are available:
 
     * UnitSize.SIZE_1
     * UnitSize.SIZE_4
@@ -110,12 +110,12 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     * UnitSize.SIZE_32
     * UnitSize.SIZE_64
 
-    Netzob support the following endianness:
+    The following endianness are available:
 
     * Endianness.BIG (default value)
     * Endianness.LITTLE
 
-    Netzob support the following signs:
+    The following signs are available:
 
     * Sign.SIGNED (default value)
     * Sign.UNSIGNED

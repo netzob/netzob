@@ -83,7 +83,7 @@ class String(AbstractType):
     Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_
 
 
-    Netzob can describe a field that contains a string. Strings can be
+    It is possible to describe a field that contains a string. Strings can be
     either static or dynamic with fixed sizes or even dynamic with
     variable sizes.
 
@@ -121,7 +121,7 @@ class String(AbstractType):
 
     **String with terminal character**
 
-    Netzob supports strings with a terminal delimiter. Its usage is as
+    Strings with a terminal delimiter are supported. Its usage is as
     follows:
 
     >>> f_eos    = Field(String('\t'))

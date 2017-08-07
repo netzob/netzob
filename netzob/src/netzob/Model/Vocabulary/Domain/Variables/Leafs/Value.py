@@ -58,7 +58,7 @@ from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 class Value(AbstractRelationVariableLeaf):
     r"""The Value class is a variable whose content is the value of another field.
 
-    Netzob can define a field so that its value is equal to the
+    It is possible to define a field so that its value is equal to the
     value of another field, on which a transformation operation can be
     realized.
 
