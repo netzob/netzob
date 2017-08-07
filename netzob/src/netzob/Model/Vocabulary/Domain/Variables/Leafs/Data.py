@@ -53,7 +53,7 @@ from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
 @NetzobLogger
 class Data(AbstractVariableLeaf):
-    """The Data class is a variable with concrete content associated with constraints.
+    """The Data class is a variable which embeds specific content.
 
     A Data object stores at least two things: 1) the definition domain
     and the constraints over it, through a Type object, and 2) the
@@ -66,9 +66,9 @@ class Data(AbstractVariableLeaf):
     :param originalValue: The original value of the data (can be
                           None).
     :param name: The name of the data (if None, the name will
-                     be generated).
+                 be generated).
     :param svas: The SVAS strategy defining how the Data value is
-                     used for abstracting and specializing.
+                 used for abstracting and specializing.
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, required
     :type originalValue: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
     :type name: :class:`str`, optional
@@ -82,8 +82,7 @@ class Data(AbstractVariableLeaf):
 
     >>> from netzob.all import *
     >>> f = Field()
-    >>> b = bitarray(endian='big')
-    >>> b.frombytes(b'hello')
+    >>> b = String('hello').value
     >>> f.domain = Data(dataType=String(), originalValue=b, name="pseudo")
     >>> print(f.domain.varType)
     Data
@@ -169,37 +168,6 @@ class Data(AbstractVariableLeaf):
                 "Length of the content is too short ({0}), expect data of at least {1} bits".
                 format(len(content), minSize))
         else:
-
-            # if carnivorous:
-            #     minSize = len(content)
-            #     maxSize = len(content)
-
-            # for offset in xrange(len(content) / 2):
-
-            #     # left
-            #     size = content[:offset]
-            #     if size == 0 or self.dataType.canParse(content[:size]):
-            #         # we create a new parsing path and returns it
-            #         newParsingPath = parsingPath.duplicate()
-            #         newParsingPath.addResult(self, content[:size].copy())
-            #         yield newParsingPath
-
-            #     # right
-            #     size = len(content) - 1 - offset
-            #     if self.dataType.canParse(content[:size]):
-            #         # we create a new parsing path and returns it
-            #         newParsingPath = parsingPath.duplicate()
-            #         newParsingPath.addResult(self, content[:size].copy())
-            #         yield newParsingPath
-
-            # if len(content) / 2 % 2 == 1:
-            #     size = len(content) / 2
-            #     if self.dataType.canParse(content[:size]):
-            #         # we create a new parsing path and returns it
-            #         newParsingPath = parsingPath.duplicate()
-            #         newParsingPath.addResult(self, content[:size].copy())
-            #         yield newParsingPath
-
             for size in range(min(maxSize, len(content)), minSize - 1, -1):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
@@ -265,11 +233,6 @@ class Data(AbstractVariableLeaf):
                 "Length of the content is too short ({0}), expect data of at least {1} bits".
                 format(len(content), minSize))
         else:
-
-            #        if carnivorous:
-            #            minSize = len(content)
-            #            maxSize = len(content)
-
             for size in range(min(maxSize, len(content)), minSize - 1, -1):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
