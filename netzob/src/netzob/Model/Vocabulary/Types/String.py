@@ -71,13 +71,29 @@ class String(AbstractType):
                 to other fields containing the permitted terminal
                 values. Default value is an empty list, meaning there
                 is no terminal character.
-    :param unitSize: Not implemented.
-    :param endianness: Not implemented.
-    :param sign: Not implemented.
-    :type value: :class:`bitarray.bitarray`, optional
+    :type value: :class:`bitarray.bitarray` or :class:`str`, optional
     :type nbChars: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
     :type encoding: :class:`str`, optional
     :type eos: a :class:`list` of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, optional
+
+
+    The String class provides the following public variables:
+
+    :var typeName: The name of the implemented data type.
+    :var value: The current value of the instance. This value is represented
+                under the bitarray format.
+    :var size: The size in bits of the expected data type defined by a tuple (min, max).
+               Instead of a tuple, an integer can be used to represent both min and max value.
+    :var encoding: The encoding of the current value, such as 'ascii' or 'utf-8'.
+    :var eos: A list defining the potential terminal characters for
+              the string, with either specific constants or pointers
+              to other fields containing the permitted terminal
+              values.
+    :vartype typeName: :class:`str`
+    :vartype value: :class:`bitarray.bitarray`
+    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
+    :vartype encoding: :class:`str`
+    :type eos: a :class:`list` of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`
 
 
     Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_
@@ -177,10 +193,12 @@ class String(AbstractType):
                  value=None,
                  nbChars=(None, None),
                  encoding='utf-8',
+                 eos=[],
                  unitSize=AbstractType.defaultUnitSize(),
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
         self.encoding = encoding
+        self.eos = eos # TODO(fgy): to implement
 
         # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):

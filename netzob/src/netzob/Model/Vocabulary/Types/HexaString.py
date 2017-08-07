@@ -55,18 +55,27 @@ class HexaString(AbstractType):
     r"""This class defines a HexaString type.
 
     The HexaString type describes a sequence of bytes of
-    arbitrary sizes with the hexastring notation (i.e. b'aabbcc'
-    instead of the raw notation b'\xaa\xbb\xcc').
+    arbitrary sizes with the hexastring notation (e.g. ``b'aabbcc'``
+    instead of the raw notation ``b'\xaa\xbb\xcc'``).
 
     The HexaString constructor expects some parameters:
 
     :param value: The current value of the type instance.
     :param nbBytes: The size in bytes that this value can take.
-    :param unitSize: Not implemented.
-    :param endianness: Not implemented.
-    :param sign: Not implemented.
     :type value: :class:`bitarray.bitarray`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
+
+
+    The HexaString class provides the following public variables:
+
+    :var typeName: The name of the implemented data type.
+    :var value: The current value of the instance. This value is represented
+                under the bitarray format.
+    :var size: The size in bits of the expected data type defined by a tuple (min, max).
+               Instead of a tuple, an integer can be used to represent both min and max value.
+    :vartype typeName: :class:`str`
+    :vartype value: :class:`bitarray.bitarray`
+    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
 
 
     The following example shows how to define a hexastring field with
@@ -74,8 +83,16 @@ class HexaString(AbstractType):
 
     >>> from netzob.all import *
     >>> f = Field(HexaString(b"aabbcc"))
-    >>> print(f.specialize())
+    >>> f.specialize()
     b'\xaa\xbb\xcc'
+
+    The following example shows how to define a hexastring field with
+    a variable value, and the used of the specialization method:
+
+    >>> from netzob.all import *
+    >>> f = Field(HexaString(nbBytes=6))
+    >>> len(f.specialize())
+    6
 
     """
 

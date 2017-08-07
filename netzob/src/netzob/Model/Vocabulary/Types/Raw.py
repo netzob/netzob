@@ -60,12 +60,24 @@ class Raw(AbstractType):
     :param value: The current value of the type instance.
     :param nbBytes: The size in bytes that this value can take.
     :param alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.
-    :param unitSize: Not implemented.
-    :param endianness: Not implemented.
-    :param sign: Not implemented.
-    :type value: :class:`bitarray.bitarray`, optional
+    :type value: :class:`bitarray.bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
     :type alphabet: a :class:`list` of :class:`bytes`, optional
+
+
+    The Raw class provides the following public variables:
+
+    :var typeName: The name of the implemented data type.
+    :var value: The current value of the instance. This value is represented
+                under the bitarray format.
+    :var size: The size in bits of the expected data type defined by a tuple (min, max).
+                  Instead of a tuple, an integer can be used to represent both min and max value.
+    :var alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.
+    :vartype typeName: :class:`str`
+    :vartype value: :class:`bitarray.bitarray`
+    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
+    :vartype alphabet: a :class:`list` of :class:`bytes`
+
 
     The following example shows how to define a six bytes long raw
     field, and the used of the specialization method to generate a

@@ -63,15 +63,33 @@ class Integer(AbstractType):
 
     :param value: The current value of the type instance.
     :param interval: The interval of permitted values for the Integer. This information will be used to compute the size of the Integer.
-    :param nbUnits: The amount of permitted repetitions of the unit size of the Integer.
-    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). If None, the value is the default one.
-    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one.
-    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. If None, the value is the default one.
-    :type value: :class:`bitarray.bitarray`, optional
+    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). If None, the value is the default one (UnitSize.SIZE_8).
+    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one (Endianness.BIG).
+    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. If None, the value is the default one (Sign.SIGNED).
+    :type value: :class:`bitarray.bitarray` or :class:`int`, optional
     :type interval: an :class:`int` or a tuple with the min and the max values specified as :class:`int`, optional
     :type unitSize: :class:`str`, optional
     :type endianness: :class:`Enum`, optional
     :type sign: :class:`Enum`, optional
+
+
+    The Integer class provides the following public variables:
+
+    :var typeName: The name of the implemented data type.
+    :var value: The current value of the instance. This value is represented
+                under the bitarray format.
+    :var size: The size of the expected data type defined by a tuple (min integer, max integer).
+               Instead of a tuple, an integer can be used to represent both min and max value.
+    :var unitSize: The unitSize of the current value.
+    :var endianness: The endianness of the current value.
+    :var sign: The sign of the current value.
+    :vartype typeName: :class:`str`
+    :vartype value: :class:`bitarray.bitarray`
+    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
+    :vartype unitSize: :class:`str`
+    :vartype endianness: :class:`str`
+    :vartype sign: :class:`str`
+
 
     The following unit sizes are available:
 
@@ -202,21 +220,20 @@ class Integer(AbstractType):
     False
 
 
-    **Examples of conversions between Integer type objects**
+    **Integer raw representations**
 
-    Conversion methods enables the representation of objects to be encoded
-    from a source type to a destination type. The following
-    examples show how to convert an integer respectively to 16 bits
-    little endian, to 16 bits big endian, to 32 bits little endian and
-    to 32 bits big endian:
+    The following examples show how to create integers with different
+    raw representation, depending on data type attributes. In these
+    examples, we create a 16 bits little endian, a 16 bits big endian,
+    a 32 bits little endian and a 32 bits big endian:
 
-    >>> Integer.decode(1234, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
+    >>> Integer(1234, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE).value.tobytes()
     b'\xd2\x04'
-    >>> Integer.decode(1234, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)
+    >>> Integer(1234, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG).value.tobytes()
     b'\x04\xd2'
-    >>> Integer.decode(1234, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)
+    >>> Integer(1234, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE).value.tobytes()
     b'\xd2\x04\x00\x00'
-    >>> Integer.decode(1234, unitSize=UnitSize.SIZE_32, endianness=Endianness.BIG)
+    >>> Integer(1234, unitSize=UnitSize.SIZE_32, endianness=Endianness.BIG).value.tobytes()
     b'\x00\x00\x04\xd2'
 
 

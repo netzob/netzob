@@ -64,18 +64,39 @@ class Timestamp(AbstractType):
     :param value: The raw value of the timestamp.
     :param epoch: The initial date expressed in UTC from which
                   timestamp is measured. Default value is EPOCH_UNIX.
-    :param unity: specifies the unity of the timestamp (seconds,
-                      milliseconds, nanoseconds). Default value is
-                      UNITY_SECOND.
+    :param unity: This specifies the unity of the timestamp (seconds,
+                  milliseconds, nanoseconds). Default value is
+                  UNITY_SECOND.
     :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). If None, the value is the default one.
     :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one.
     :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. If None, the value is the default one.
-    :type value: :class:`int` or a :class:`BitArray <netzob.Model.Types.BitArray>`, optional
+    :type value: :class:`bitarray.bitarray` or :class:`int`, optional
     :type epoch: :class:`datetime.datetime`, optional
     :type unity: :class:`int`, optional
     :type unitSize: :class:`Enum`, optional
     :type endianness: :class:`Enum`, optional
     :type sign: :class:`Enum`, optional
+
+
+    The Timestamp class provides the following public variables:
+
+    :var typeName: The name of the implemented data type.
+    :var value: The current value of the instance. This value is represented
+                under the bitarray format.
+    :var size: The size in bits of the expected data type defined by a tuple (min, max).
+               Instead of a tuple, an integer can be used to represent both min and max value.
+    :var unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes).
+    :var epoch: The initial date expressed in UTC from which
+                timestamp is measured.
+    :var unity: This specifies the unity of the timestamp (seconds,
+                milliseconds, nanoseconds).
+    :vartype typeName: :class:`str`
+    :vartype value: :class:`bitarray.bitarray`
+    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
+    :vartype unitSize: :class:`Enum`, optional
+    :vartype epoch: :class:`datetime.datetime`
+    :vartype unity: :class:`int`
+
 
     Available values for `epoch` parameter are:
 

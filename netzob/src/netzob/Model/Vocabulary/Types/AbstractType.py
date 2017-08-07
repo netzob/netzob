@@ -321,21 +321,21 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :param dst_unitSize: The unitsize of the destination
                              value. Values must be one of
                              UnitSize.SIZE_*. If None, the
-                             value is the default one.
+                             value is the default one (UnitSize.SIZE_8).
         :param dst_endianness: The endianness of the destination
                                value. Values must be
                                Endianness.BIG or
                                Endianness.LITTLE. If None,
-                               the value is the default one.
+                               the value is the default one (Endianness.BIG).
         :param dst_sign: The sign of the destination. Values must be
                          Sign.SIGNED or
                          Sign.UNSIGNED. If None, the
-                         value is the default one.
+                         value is the default one (Sign.SIGNED).
         :type typeClass: type
         :type dst_unitSize: :class:`Enum`
         :type dst_endianness: :class:`Enum`
         :type dst_sign: :class:`Enum`
-        :return: the converted current value in the specified netzob type
+        :return: The converted current value in the specified data type.
         :rtype: :class:`AbstractType <netzob.Model.AbstractType.AbstractType>`
 
         """
@@ -526,9 +526,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     @property
     def value(self):
         """The current value of the instance. This value is represented
-        under BitArray format
+        under the bitarray format.
 
-        :type: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray.BitArray>`
+        :type: :class:`bitarray.bitarray`
         """
 
         return self.__value

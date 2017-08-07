@@ -60,11 +60,23 @@ class BitArray(AbstractType):
     The BitArray constructor expects some parameters:
 
     :param value: The current value of the type instance.
-    :param nbBits: The size in bits that this value can take. In such
-                   case, default bitarray elements value is False.
+    :param nbBits: The size in bits that this value can take.
     :type value: :class:`bitarray.bitarray`, optional
     :type nbBits: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
+
+    The BitArray class provides the following public variables:
+
+    :var typeName: The name of the implemented data type.
+    :var value: The current value of the instance. This value is represented
+                under the bitarray format.
+    :var size: The size in bits of the expected data type defined by a tuple (min, max).
+               Instead of a tuple, an integer can be used to represent both min and max value.
+    :var constants: A list of named constant used to access the bitarray internal elements.
+    :vartype typeName: :class:`str`
+    :vartype value: :class:`bitarray.bitarray`
+    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
+    :vartype constants: a :class:`list` of :class:`str`
 
     The two following examples show how to define a field with a
     BitArray containing a fixed constant. Both examples are

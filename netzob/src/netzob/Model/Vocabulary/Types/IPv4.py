@@ -61,16 +61,29 @@ class IPv4(AbstractType):
 
     The IPv4 constructor expects some parameters:
 
-    :parameter value: An IP value expressed in standard dot notation
+    :param value: An IP value expressed in standard dot notation
                           (ex: "192.168.0.10").
-    :parameter network: A network address expressed in standard
+    :param network: A network address expressed in standard
                             dot notation (ex: "192.168.0.0/24").
     :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one.
-    :param unitSize: Not implemented.
-    :param sign: Not implemented.
     :type value: :class:`str` or :class:`netaddr.IPAddress`, optional
     :type network: :class:`str` or :class:`netaddr.IPNetwork`, optional
     :type endianness: :class:`Enum`, optional
+
+
+    The IPv4 class provides the following public variables:
+
+    :var typeName: The name of the implemented data type.
+    :var value: The current value of the instance. This value is represented
+                under the bitarray format.
+    :var size: The size in bits of the expected data type defined by a tuple (min, max).
+               Instead of a tuple, an integer can be used to represent both min and max value.
+    :var network: A constraint over the network the parsed data belongs to this network or not.
+    :vartype typeName: :class:`str`
+    :vartype value: :class:`bitarray.bitarray`
+    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
+    :vartype network: :class:`str` or :class:`netaddr.IPNetwork`
+
 
     The following examples show the use of an IPv4 type for the
     definition domain of a field:
