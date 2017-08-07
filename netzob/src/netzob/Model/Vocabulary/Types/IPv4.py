@@ -106,7 +106,7 @@ class IPv4(AbstractType):
 
     >>> s = Symbol(fields=[f1,f2])
     >>> msgs = [RawMessage(s.specialize()) for x in range(10)]
-    >>> print(len(msgs))
+    >>> len(msgs)
     10
 
     It is also possible to specify a field that accepts a range of IP
@@ -352,7 +352,7 @@ class IPv4(AbstractType):
         r"""Decode the specified IPv4 data into its raw representation.
 
         >>> from netzob.all import *
-        >>> print(IPv4.decode("127.0.0.1"))
+        >>> IPv4.decode("127.0.0.1")
         b'\x7f\x00\x00\x01'
 
         """

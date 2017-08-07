@@ -84,14 +84,14 @@ class Data(AbstractVariableLeaf):
     >>> f = Field()
     >>> b = String('hello').value
     >>> f.domain = Data(dataType=String(), originalValue=b, name="pseudo")
-    >>> print(f.domain.varType)
-    Data
+    >>> f.domain.varType
+    'Data'
     >>> f.domain.currentValue.tobytes()
     b'hello'
     >>> print(f.domain.dataType)
     String=None ((None, None))
-    >>> print(f.domain.name)
-    pseudo
+    >>> f.domain.name
+    'pseudo'
 
     Besides, the Data object is the default Variable when we create a
     Field without explicitly specifying the Data domain, as shown on
@@ -99,8 +99,8 @@ class Data(AbstractVariableLeaf):
 
     >>> from netzob.all import *
     >>> f = Field(String("hello"))
-    >>> print(f.domain.varType)
-    Data
+    >>> f.domain.varType
+    'Data'
     >>> f.domain.currentValue.tobytes()
     b'hello'
 

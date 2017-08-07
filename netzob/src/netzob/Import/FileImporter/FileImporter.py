@@ -53,7 +53,7 @@ class FileImporter(object):
 
     >>> from netzob.all import *
     >>> messages = FileImporter.readFile("./test/resources/files/test_import_text_message.txt").values()
-    >>> print(len(messages))
+    >>> len(messages)
     13
     >>> for m in messages:
     ...    print(repr(m.data))
@@ -75,15 +75,15 @@ class FileImporter(object):
     >>> file1 = "./test/resources/files/test_import_raw_message1.dat"
     >>> file2 = "./test/resources/files/test_import_raw_message2.dat"
     >>> messages = FileImporter.readFiles([file1, file2], delimitor=b"\x00\x00").values()
-    >>> print(len(messages))
+    >>> len(messages)
     802
-    >>> print(messages[10].data)
+    >>> messages[10].data
     b'\xbdq75\x18'
-    >>> print(messages[797].data)
+    >>> messages[797].data
     b'\xfcJ\xd1\xbf\xff\xd90\x98m\xeb'
-    >>> print(messages[797].file_path)
-    ./test/resources/files/test_import_raw_message2.dat
-    >>> print(messages[707].file_message_number)
+    >>> messages[797].file_path
+    './test/resources/files/test_import_raw_message2.dat'
+    >>> messages[707].file_message_number
     353
     """
 

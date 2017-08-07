@@ -85,9 +85,9 @@ class Transition(AbstractTransition):
 
     >>> print(t.name)
     None
-    >>> print(s0 == t.startState)
+    >>> s0 == t.startState
     True
-    >>> print(s1 == t.endState)
+    >>> s1 == t.endState
     True
 
     The following example shows the definition of a named Transition
@@ -296,10 +296,10 @@ class Transition(AbstractTransition):
         0
         >>> transition.outputSymbols.append(Symbol())
         >>> transition.outputSymbols.extend([Symbol(), Symbol()])
-        >>> print(len(transition.outputSymbols))
+        >>> len(transition.outputSymbols)
         3
         >>> transition.outputSymbols = []
-        >>> print(len(transition.outputSymbols))
+        >>> len(transition.outputSymbols)
         0
 
         :type: list of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`

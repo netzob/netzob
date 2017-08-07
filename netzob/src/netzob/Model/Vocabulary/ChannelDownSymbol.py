@@ -54,14 +54,14 @@ class ChannelDownSymbol(Symbol):
 
     >>> from netzob.all import *
     >>> u = ChannelDownSymbol()
-    >>> print(u.name)
-    ChannelDown Symbol
+    >>> u.name
+    'ChannelDown Symbol'
 
     >>> from netzob.all import *
     >>> msg = RawMessage("hello")
     >>> u = ChannelDownSymbol(msg)
-    >>> print(u.name)
-    ChannelDown Symbol
+    >>> u.name
+    'ChannelDown Symbol'
 
     """
 

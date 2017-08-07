@@ -83,24 +83,24 @@ class Agg(AbstractVariableNode):
     >>> f0 = Field(Agg([BitArray(bitarray('01101001')), BitArray(nbBits=3), BitArray(nbBits=5)]))
     >>> s = Symbol(fields=[f0])
     >>> t = s.specialize()
-    >>> print(len(t))
+    >>> len(t)
     2
 
 
     **Examples of Agg internal attribute access**
 
     >>> domain = Agg([Raw(), String()])
-    >>> print(domain.varType)
-    Agg
+    >>> domain.varType
+    'Agg'
     >>> print(domain.children[0].dataType)
     Raw=None ((0, 524288))
     >>> print(domain.children[1].dataType)
     String=None ((None, None))
     >>> domain.children.append(Agg([10, 20, 30]))
-    >>> print(len(domain.children))
+    >>> len(domain.children)
     3
     >>> domain.children.remove(domain.children[0])
-    >>> print(len(domain.children))
+    >>> len(domain.children)
     2
 
 
@@ -138,7 +138,7 @@ class Agg(AbstractVariableNode):
     >>> d2 = String(" john")
     >>> f = Field(Agg([d1, d2]))
     >>> s = Symbol(fields=[f])
-    >>> print(s.specialize())
+    >>> s.specialize()
     b'hello john'
 
     """

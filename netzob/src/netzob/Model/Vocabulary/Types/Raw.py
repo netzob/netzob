@@ -85,7 +85,7 @@ class Raw(AbstractType):
 
     >>> from netzob.all import *
     >>> f = Field(Raw(nbBytes=6))
-    >>> print(len(f.specialize()))
+    >>> len(f.specialize())
     6
 
     It is possible to define a range regarding the valid size of the
@@ -106,7 +106,7 @@ class Raw(AbstractType):
     >>> f = Field(Raw(nbBytes=100, alphabet=[b"t", b"o"]))
     >>> data = f.specialize()
     >>> data_set = set(data)
-    >>> print(data_set)
+    >>> data_set
     {116, 111}
 
     """

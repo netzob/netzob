@@ -79,7 +79,7 @@ class Repeat(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> f1 = Field(Repeat(Agg([String("A"), String("B"), String("C")]), nbRepeat=16))
-    >>> print(f1.specialize())
+    >>> f1.specialize()
     b'ABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABC'
 
 
@@ -178,7 +178,7 @@ class Repeat(AbstractVariableNode):
     >>> from netzob.all import *
     >>> f1 = Field(Repeat(String("john"), nbRepeat=2))
     >>> s = Symbol([f1])
-    >>> print(s.specialize())
+    >>> s.specialize()
     b'johnjohn'
 
     >>> from netzob.all import *

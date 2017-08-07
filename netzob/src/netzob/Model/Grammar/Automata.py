@@ -221,7 +221,7 @@ class Automata(object):
 
         >>> automata = Automata.generateChainedStatesAutomata(abstractSession, symbolList)
         >>> dotcode = automata.generateDotCode()
-        >>> print(len(dotcode))
+        >>> len(dotcode)
         1024
         >>> print(dotcode) #doctest: +ELLIPSIS
         digraph G {
@@ -266,7 +266,7 @@ class Automata(object):
 
         >>> automata = Automata.generateOneStateAutomata(abstractSession, symbolList)
         >>> dotcode = automata.generateDotCode()
-        >>> print(len(dotcode))
+        >>> len(dotcode)
         841
         >>> print(dotcode) #doctest: +ELLIPSIS
         digraph G {

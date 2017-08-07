@@ -153,19 +153,19 @@ class Integer(AbstractType):
     >>> cDec = Integer(20)
     >>> print(repr(cDec))
     20
-    >>> print(cDec.typeName)
-    Integer
-    >>> print(cDec.value)
+    >>> cDec.typeName
+    'Integer'
+    >>> cDec.value
     bitarray('00010100')
 
     The required size in bits is automatically computed following the specifications:
 
     >>> dec = Integer(10)
-    >>> print(dec.size)
+    >>> dec.size
     (None, None)
 
     >>> dec = Integer(interval=(-120, 10))
-    >>> print(dec.size)
+    >>> dec.size
     (-120, 10)
 
 
@@ -452,28 +452,28 @@ class Integer(AbstractType):
         r"""This method convert the specified data in python raw format.
 
         >>> from netzob.all import *
-        >>> print(Integer.decode(23))
+        >>> Integer.decode(23)
         b'\x17'
 
-        >>> print(Integer.decode(-1, sign=Sign.UNSIGNED))
+        >>> Integer.decode(-1, sign=Sign.UNSIGNED)
         Traceback (most recent call last):
         ...
         struct.error: ubyte format requires 0 <= number <= 255
 
-        >>> print(Integer.decode(-1, sign=Sign.SIGNED))
+        >>> Integer.decode(-1, sign=Sign.SIGNED)
         b'\xff'
 
-        >>> print(Integer.decode(2000000000000000))
+        >>> Integer.decode(2000000000000000)
         Traceback (most recent call last):
         ...
         struct.error: byte format requires -128 <= number <= 127
 
-        >>> print(Integer.decode(2000000000000000, unitSize=UnitSize.SIZE_64))
+        >>> Integer.decode(2000000000000000, unitSize=UnitSize.SIZE_64)
         b'\x00\x07\x1a\xfdI\x8d\x00\x00'
 
-        >>> print(Integer.decode(25, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE))
+        >>> Integer.decode(25, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
         b'\x19\x00'
-        >>> print(Integer.decode(25, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG))
+        >>> Integer.decode(25, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)
         b'\x00\x19'
 
         >>> val = 167749568
@@ -513,30 +513,30 @@ class Integer(AbstractType):
         >>> from netzob.all import *
 
         >>> raw = Integer.decode(23)
-        >>> print(Integer.encode(raw))
+        >>> Integer.encode(raw)
         23
 
         >>> raw = Integer.decode(1200, unitSize=UnitSize.SIZE_16)
-        >>> print(Integer.encode(raw, unitSize=UnitSize.SIZE_16))
+        >>> Integer.encode(raw, unitSize=UnitSize.SIZE_16)
         1200
 
         >>> raw = Integer.decode(25, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
-        >>> print(repr(Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)))
+        >>> Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)
         6400
-        >>> print(repr(Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)))
+        >>> Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
         25
 
-        >>> print(Integer.encode(b'\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=UnitSize.SIZE_8))
+        >>> Integer.encode(b'\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac', unitSize=UnitSize.SIZE_8)
         -395865088909314208584756
 
         >>> raw = b'\xcc\xac\x9c'
-        >>> print(Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG))
+        >>> Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)
         10210476
 
-        >>> print(Integer.encode(raw, unitSize=UnitSize.SIZE_32, endianness=Endianness.BIG))
+        >>> Integer.encode(raw, unitSize=UnitSize.SIZE_32, endianness=Endianness.BIG)
         13413532
 
-        >>> print(Integer.encode(raw, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE))
+        >>> Integer.encode(raw, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)
         10267852
 
         :param data: the data encoded in python raw which will be encoded in current type

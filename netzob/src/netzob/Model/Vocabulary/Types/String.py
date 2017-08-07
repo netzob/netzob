@@ -156,9 +156,9 @@ class String(AbstractType):
     >>> cAscii = String("hello")
     >>> print(cAscii)
     String=hello ((None, None))
-    >>> print(cAscii.typeName)
-    String
-    >>> print(cAscii.value)
+    >>> cAscii.typeName
+    'String'
+    >>> cAscii.value
     bitarray('0110100001100101011011000110110001101111')
 
     **Examples of conversions**
@@ -316,9 +316,9 @@ class String(AbstractType):
         >>> from netzob.all import *
         >>> t = String("helloworld")
         >>> values = t.mutate()
-        >>> print(values['ascii(upper)-bits(littleEndian)'])
+        >>> values['ascii(upper)-bits(littleEndian)']
         bitarray('00010010101000100011001000110010111100101110101011110010010010100011001000100010')
-        >>> print(values['ascii(inversed)-bits(bigEndian)'])
+        >>> values['ascii(inversed)-bits(bigEndian)']
         bitarray('01100100011011000111001001101111011101110110111101101100011011000110010101101000')
 
 
@@ -524,8 +524,8 @@ class String(AbstractType):
 
         >>> from netzob.all import *
         >>> raw = String.decode("hello john!")
-        >>> print(String.encode(raw))
-        hello john!
+        >>> String.encode(raw)
+        'hello john!'
 
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw

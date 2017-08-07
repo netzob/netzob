@@ -72,11 +72,11 @@ class OpenChannelTransition(AbstractTransition):
     >>> s0 = State()
     >>> s1 = State()
     >>> t = OpenChannelTransition(s0, s1)
-    >>> print(t.name)
+    >>> t.name
     None
-    >>> print(s0 == t.startState)
+    >>> s0 == t.startState
     True
-    >>> print(s1 == t.endState)
+    >>> s1 == t.endState
     True
 
     """

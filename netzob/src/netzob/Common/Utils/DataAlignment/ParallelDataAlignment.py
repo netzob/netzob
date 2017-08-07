@@ -86,14 +86,14 @@ class ParallelDataAlignment(object):
     >>> alignedData = pAlignment.execute(data)
     >>> end = time.time()
     >>> oneThreadDuration = end-start
-    >>> print(len(alignedData))
+    >>> len(alignedData)
     1000
     >>> pAlignment = ParallelDataAlignment(field=symbol, depth=None)
     >>> start = time.time()
     >>> alignedData = pAlignment.execute(data)
     >>> end = time.time()
     >>> autoThreadDuration = end-start
-    >>> print(len(alignedData))
+    >>> len(alignedData)
     1000
     >>> if ('NETZOB_TEST_NO_PERFORMANCE' not in os.environ.keys() or os.environ['NETZOB_TEST_NO_PERFORMANCE'] != "yes") and autoThreadDuration >= oneThreadDuration:
     ...     print("Error, multi-thread version slower ({}) than single threaded execution ({})".format(autoThreadDuration, oneThreadDuration))

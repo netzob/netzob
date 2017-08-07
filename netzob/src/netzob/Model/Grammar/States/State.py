@@ -65,27 +65,27 @@ class State(AbstractState):
 
     >>> from netzob.all import *
     >>> s0 = State()
-    >>> print(s0.name)
-    State
+    >>> s0.name
+    'State'
 
     >>> s1 = State(name="S1")
-    >>> print(s1.name)
-    S1
+    >>> s1.name
+    'S1'
 
     The following example shows the definition of a transition `t`
     between a state `s0` and a state `s1`:
 
     >>> t = Transition(s0, s1, None, None)
-    >>> print(t.startState.name)
-    State
-    >>> print(t.endState.name)
-    S1
-    >>> print(len(s0.transitions))
+    >>> t.startState.name
+    'State'
+    >>> t.endState.name
+    'S1'
+    >>> len(s0.transitions)
     1
-    >>> print(s0.transitions[0].startState.name)
-    State
-    >>> print(s0.transitions[0].endState.name)
-    S1
+    >>> s0.transitions[0].startState.name
+    'State'
+    >>> s0.transitions[0].endState.name
+    'S1'
 
 
     """

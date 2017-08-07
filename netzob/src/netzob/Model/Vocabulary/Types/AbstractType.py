@@ -133,7 +133,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     >>> f = Field(Integer(20))
     >>> print(f.domain.dataType)
     Integer=20 ((None, None))
-    >>> print(f.domain.dataType.value)
+    >>> f.domain.dataType.value
     bitarray('00010100')
 
     """
@@ -383,12 +383,12 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         >>> from netzob.all import *
         >>> a = String(nbChars=20)
         >>> l = a.generate()
-        >>> print(len(l))
+        >>> len(l)
         160
 
         >>> a = HexaString(nbBytes=20)
         >>> l = a.generate()
-        >>> print(len(l))
+        >>> len(l)
         160
 
         >>> a = HexaString(b"aabbccdd")
@@ -598,9 +598,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         >>> from netzob.all import *
         >>> normalizedData = AbstractType.normalize("john")
-        >>> print(normalizedData.__class__)
+        >>> normalizedData.__class__
         <class 'netzob.Model.Vocabulary.Types.String.String'>
-        >>> print(normalizedData.value)
+        >>> normalizedData.value
         bitarray('01101010011011110110100001101110')
         """
 
@@ -638,8 +638,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         >>> from netzob.all import *
         >>> ascii = String("hello john !")
-        >>> print(ascii.typeName)
-        String
+        >>> ascii.typeName
+        'String'
         >>> data = ascii.buildDataRepresentation()
         >>> data.currentValue.tobytes()
         b'hello john !'

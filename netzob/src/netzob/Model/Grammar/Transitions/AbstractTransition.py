@@ -45,7 +45,6 @@ import abc
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Grammar.States.AbstractState import AbstractState
 
 
 class AbstractTransition(object, metaclass=abc.ABCMeta):
@@ -134,12 +133,12 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         >>> s1 = State(name="S1")
         >>> s2 = State(name="S2")
         >>> t = Transition(s0, s1, name="T0")
-        >>> print(t.startState.name)
+        >>> t.startState.name
         S0
-        >>> print(len(s0.transitions))
+        >>> len(s0.transitions)
         1
         >>> t.startState = s2
-        >>> print(len(s0.transitions))
+        >>> len(s0.transitions)
         0
 
         :type: :class:`AbstractState <netzob.Model.Grammar.State.AbstractState.AbstractState>`
@@ -148,7 +147,6 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         return self.__startState
 
     @startState.setter
-    @typeCheck(AbstractState)
     def startState(self, startState):
         if self.__startState is not None:
             self.__startState.removeTransition(self)
@@ -166,7 +164,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         >>> s0 = State(name="S0")
         >>> s1 = State(name="S1")
         >>> t = Transition(s0, s1, name="T0")
-        >>> print(t.endState.name)
+        >>> t.endState.name
         S1
 
         :type: :class:`AbstractState <netzob.Model.Grammar.State.AbstractState.AbstractState>`
@@ -175,7 +173,6 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         return self.__endState
 
     @endState.setter
-    @typeCheck(AbstractState)
     def endState(self, endState):
         self.__endState = endState
 

@@ -80,8 +80,8 @@ class Alt(AbstractVariableNode):
     **Examples of Alt internal attribute access**
 
     >>> domain = Alt([Raw(), String()])
-    >>> print(domain.varType)
-    Alt
+    >>> domain.varType
+    'Alt'
     >>> print(domain.children[0].dataType)
     Raw=None ((0, 524288))
     >>> print(domain.children[1].dataType)

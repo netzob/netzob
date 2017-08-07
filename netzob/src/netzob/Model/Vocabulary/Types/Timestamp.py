@@ -291,10 +291,10 @@ class Timestamp(AbstractType):
         >>> from netzob.all import *
         >>> f = Field(Timestamp())
         >>> value = f.specialize()
-        >>> print(len(value))
+        >>> len(value)
         4
         >>> f = Field(Timestamp(epoch=Timestamp.EPOCH_WINDOWS, unitSize=UnitSize.SIZE_64))
-        >>> print(len(f.specialize()))
+        >>> len(f.specialize())
         8
         """
         if self.value is not None:
@@ -333,7 +333,7 @@ class Timestamp(AbstractType):
 
         >>> from netzob.all import *
         >>> value = 1444494130
-        >>> print(len(Timestamp.decode(value)))
+        >>> len(Timestamp.decode(value))
         4
         """
 

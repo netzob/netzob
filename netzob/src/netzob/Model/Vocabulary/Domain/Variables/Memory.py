@@ -130,9 +130,9 @@ class Memory(object):
     >>> abstractionLayerOut.writeSymbol(symbol)
     11
     >>> (receivedSymbol, receivedMessage) = abstractionLayerIn.readSymbol()
-    >>> print(receivedSymbol.name)
-    Symbol_Hello
-    >>> print(receivedMessage)
+    >>> receivedSymbol.name
+    'Symbol_Hello'
+    >>> receivedMessage
     b'master>John'
 
     """

@@ -99,15 +99,15 @@ class BitArray(AbstractType):
     size between 13 and 128 bits:
 
     >>> f1 = Field(BitArray(nbBits=1))
-    >>> print(len(f1.domain.dataType.generate()))
+    >>> len(f1.domain.dataType.generate())
     1
 
     >>> f2 = Field(BitArray(nbBits=47))
-    >>> print(len(f2.domain.dataType.generate()))
+    >>> len(f2.domain.dataType.generate())
     47
 
     >>> f3 = Field(BitArray(nbBits=64))
-    >>> print(len(f3.domain.dataType.generate()))
+    >>> len(f3.domain.dataType.generate())
     64
 
     >>> f4 = Field(BitArray(nbBits=(13, 128)))
@@ -266,10 +266,10 @@ class BitArray(AbstractType):
         >>> from netzob.Model.Vocabulary.Types.BitArray import BitArray
         >>> d = String.decode("hello john")
         >>> r = BitArray.encode(d)
-        >>> print(r.to01())
-        01101000011001010110110001101100011011110010000001101010011011110110100001101110
+        >>> r.to01()
+        '01101000011001010110110001101100011011110010000001101010011011110110100001101110'
         >>> t = BitArray.decode(r)
-        >>> print(t)
+        >>> t
         b'hello john'
 
 

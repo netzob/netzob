@@ -72,7 +72,7 @@ class SortedTypedList(object):
     >>> l.addAll([msg5, msg6])
     >>> print(list(l.values())[5])
     [0;32m[1745645548.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m 'msg6'
-    >>> print(len(l))
+    >>> len(l)
     6
 
     """

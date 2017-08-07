@@ -182,7 +182,7 @@ class Field(AbstractField):
     >>> f0 = Field(String("test"))
     >>> f1 = Field(Size(f0))
     >>> symbol = Symbol(fields=[f0, f1])
-    >>> print(symbol.specialize())
+    >>> symbol.specialize()
     b'test\x04'
 
 
@@ -201,7 +201,7 @@ class Field(AbstractField):
     >>> f_pseudo = Field(domain="An external data", isPseudoField=True)
     >>> f_real = Field(domain=Size(f_pseudo))
     >>> symbol = Symbol(fields=[f_pseudo, f_real])
-    >>> print(symbol.specialize())
+    >>> symbol.specialize()
     b'\x10'
 
     A real example of a pseudo field is found in the UDP checksum,

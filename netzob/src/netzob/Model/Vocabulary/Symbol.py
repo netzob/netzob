@@ -155,10 +155,10 @@ class Symbol(AbstractField):
     >>> f2 = Field("bbbbbb")
     >>> symbol = Symbol(fields=[f0, f1, f2])
     >>> concrete_message = symbol.specialize()
-    >>> print(concrete_message)
+    >>> concrete_message
     b'aaaa # bbbbbb'
     >>> (abstracted_symbol, structured_data) = Symbol.abstract(concrete_message, [symbol])
-    >>> print(abstracted_symbol == symbol)
+    >>> abstracted_symbol == symbol
     True
 
     """
@@ -231,9 +231,9 @@ class Symbol(AbstractField):
         >>> f0 = Field(domain=Size(f1))
         >>> s = Symbol(fields=[f0, f1])
         >>> result = s.specialize()
-        >>> print(result[0])
+        >>> result[0]
         5
-        >>> print(len(result))
+        >>> len(result)
         6
 
         **Parameterized specialization of field values (`preset=` parameter)**
@@ -318,7 +318,7 @@ class Symbol(AbstractField):
         >>> f1.domain = Size(f2)
         >>> s = Symbol(fields=[f1, f2])
         >>> presetValues = {f1: bitarray('11111111')}
-        >>> print(s.specialize(presets = presetValues)[0])
+        >>> s.specialize(presets = presetValues)[0]
         255
 
 

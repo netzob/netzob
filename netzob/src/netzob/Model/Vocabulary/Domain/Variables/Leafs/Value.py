@@ -81,7 +81,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f0 = Field(String("abcd"))
     >>> f1 = Field(Value(f0))
     >>> s  = Symbol(fields=[f0, f1])
-    >>> print(s.specialize())
+    >>> s.specialize()
     b'abcdabcd'
 
     >>> data = "john;john!"
@@ -118,7 +118,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f3 = Field(Value(d), name="f3")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> print(s.specialize())
+    >>> s.specialize()
     b'john;john!'
 
 
@@ -132,7 +132,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f3 = Field(Value(f1), name="f3")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> print(s.specialize())
+    >>> s.specialize()
     b'john;john!'
 
     >>> f3 = Field(String("john"), name="f3")
@@ -140,7 +140,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f1 = Field(Value(f3), name="f1")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> print(s.specialize())
+    >>> s.specialize()
     b'john;john!'
 
 
@@ -160,7 +160,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f0 = Field(Raw(b'\x01'))
     >>> f1 = Field(Value(f0, operation = cbk))
     >>> s = Symbol([f0, f1])
-    >>> print(s.specialize())
+    >>> s.specialize()
     b'\x01\x80'
 
 

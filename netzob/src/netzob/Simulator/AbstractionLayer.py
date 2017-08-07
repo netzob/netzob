@@ -88,9 +88,9 @@ class AbstractionLayer(object):
     >>> abstractionLayerOut.writeSymbol(symbol)
     12
     >>> (receivedSymbol, receivedMessage) = abstractionLayerIn.readSymbol()
-    >>> print(receivedSymbol.name)
-    Symbol_Hello
-    >>> print(receivedMessage)
+    >>> receivedSymbol.name
+    'Symbol_Hello'
+    >>> receivedMessage
     b'Hello Kurt !'
 
 
@@ -109,7 +109,7 @@ class AbstractionLayer(object):
     >>> abstractionLayerOut.writeSymbol(symbolflow)
     22
     >>> (receivedSymbols, receivedMessage) = abstractionLayerIn.readSymbols()
-    >>> print(receivedSymbols)
+    >>> receivedSymbols
     [Symbol_Hello, Symbol_WUP]
 
     """

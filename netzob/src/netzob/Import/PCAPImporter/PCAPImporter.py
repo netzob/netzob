@@ -70,7 +70,7 @@ class PCAPImporter(object):
 
     >>> from netzob.all import *
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap").values()
-    >>> print(len(messages))
+    >>> len(messages)
     14
 
     >>> for m in messages:
@@ -114,14 +114,14 @@ class PCAPImporter(object):
 
     >>> from netzob.all import *
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_http_flow.pcap", mergePacketsInFlow=False).values()
-    >>> print(len(messages))
+    >>> len(messages)
     4
-    >>> print(len(messages[1].data))
+    >>> len(messages[1].data)
     1228
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_http_flow.pcap", mergePacketsInFlow=True).values()
-    >>> print(len(messages))
+    >>> len(messages)
     2
-    >>> print(len(messages[1].data))
+    >>> len(messages[1].data)
     3224
     """
 

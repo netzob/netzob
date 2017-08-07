@@ -258,7 +258,7 @@ class HexaString(AbstractType):
 
         >>> # Convert back to byte and verify we didn't lost anything
         >>> raw = hex.convert(Raw)
-        >>> print(raw.value.tobytes() == randomData)
+        >>> raw.value.tobytes() == randomData
         True
 
 
@@ -301,7 +301,7 @@ class HexaString(AbstractType):
         32768
         >>> # Convert back to byte and verify we didn't lost anything
         >>> raw = hex.convert(Raw)
-        >>> print(raw.value.tobytes() == randomData)
+        >>> raw.value.tobytes() == randomData
         True
 
         :param data: the data encoded in python raw which will be encoded in current type
