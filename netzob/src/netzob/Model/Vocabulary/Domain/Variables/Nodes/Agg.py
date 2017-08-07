@@ -62,11 +62,11 @@ class Agg(AbstractVariableNode):
                      the aggregate.
     :param svas: The SVAS strategy defining how the Aggregate
                      behaves during abstraction and specialization.
-    :type children: a :class:`dict` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+    :type children: a :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type svas: :class:`str`, optional
 
 
-    For example, the following code represents a field which
+    For example, the following code represents a field that
     accepts values that are made of a String of 3 to 20 random
     characters followed by a ".txt" extension:
 

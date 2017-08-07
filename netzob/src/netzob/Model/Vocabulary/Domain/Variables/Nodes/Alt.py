@@ -64,7 +64,7 @@ class Alt(AbstractVariableNode):
                      alternative.
     :param svas: The SVAS strategy defining how the Alternate
                      behaves during abstraction and specialization.
-    :type children: a :class:`dict` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+    :type children: a :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type svas: :class:`str`, optional
 
 
