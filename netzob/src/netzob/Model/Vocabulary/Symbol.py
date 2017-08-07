@@ -78,6 +78,16 @@ class Symbol(AbstractField):
     :type name: :class:`str`, optional
 
 
+    The Symbol class provides the following public variables:
+
+    :var name: The name of the symbol.
+    :var description: The description of the symbol.
+    :var fields: The sorted list of sub-fields.
+    :vartype name: str
+    :vartype description: str
+    :vartype fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`
+
+
     **Usage of Symbol for protocol modeling**
 
     The Symbol class may be used to model a protocol from scratch, by
@@ -418,17 +428,6 @@ class Symbol(AbstractField):
 
     def __repr__(self):
         return self.name
-
-    def getField(self, field_name):
-        """
-        Get a field from its name in the field database.
-
-        :param field_name: the name of the :class:`Field <netzob.Model.Vocabulary.Field.Field>` object
-        :type field_name: :class:`str`
-        """
-        for field in self.fields:
-            if field_name == field.name:
-                return field
 
     def __getitem__(self, field_name):
         """

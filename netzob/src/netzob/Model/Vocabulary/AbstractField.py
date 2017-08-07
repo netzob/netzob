@@ -541,14 +541,29 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         return (unknown_symbol, structured_data)
 
     def getSymbol(self):
-        """Computes the symbol to which this field is attached.
+        """Return the symbol to which this field is attached.
 
-        To retrieve it, this method recursively call the parent of the current object until the root is found.
-        If the last root is not a :class:`Symbol <netzob.Model.Vocabulary.Symbol>`, it raises an Exception.
-
-        :returns: the symbol if available
-        :type: :class:`Symbol <netzob.Model.Vocabulary.Symbol>`
+        :returns: The associated symbol if available.
+        :rtype: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         :raises: :class:`NoSymbolException <netzob.Model.Vocabulary.AbstractField.NoSymbolException>`
+
+        To retrieve the associated symbol, this method recursively
+        call the parent of the current object until the root is found.
+        
+        If the root is not a :class:`Symbol
+        <netzob.Model.Vocabulary.Symbol.Symbol>`, this raises an Exception.
+
+        The following example shows how to retrieve the parent symbol
+        from a field object:
+
+        >>> from netzob.all import *
+        >>> field = Field("hello", name="F0")
+        >>> symbol = Symbol([field], name="S0")
+        >>> field.getSymbol()
+        S0
+        >>> type(field.getSymbol())
+        <class 'netzob.Model.Vocabulary.Symbol.Symbol'>
+
         """
         from netzob.Model.Vocabulary.Symbol import Symbol
         if isinstance(self, Symbol):
@@ -559,8 +574,35 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
             raise NoSymbolException(
                 "Impossible to retrieve the symbol attached to this element")
 
+    def getField(self, field_name):
+        """Retrieve a sub-field based on its name.
+
+        :param field_name: the name of the :class:`Field <netzob.Model.Vocabulary.Field.Field>` object
+        :type field_name: :class:`str`
+        :returns: The sub-field object.
+        :rtype: :class:`Field <netzob.Model.Vocabulary.Field>`
+
+        The following example shows how to retrieve a sub-field based
+        on its name:
+
+        >>> from netzob.all import *
+        >>> f1 = Field("hello", name="f1")
+        >>> f2 = Field("hello", name="f3")
+        >>> f3 = Field("hello", name="f2")
+        >>> fheader = Field("hello", name="fheader")
+        >>> fheader.fields = [f1, f2, f3]
+        >>> fheader.getField('f2')
+        f2
+        >>> type(fheader.getField('f2'))
+        <class 'netzob.Model.Vocabulary.Field.Field'>
+
+        """
+        for field in self.fields:
+            if field_name == field.name:
+                return field
+
     def getLeafFields(self, depth=None, currentDepth=0, includePseudoFields=False):
-        """Extract the leaf fields to consider regarding the specified depth
+        """Extract the leaf fields to consider, regarding the specified depth.
 
         >>> from netzob.all import *
         >>> field = Field("hello", name="F0")
@@ -862,7 +904,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
     @property
     def fields(self):
-        """Sorted list of field fields."""
+        """A sorted list of sub-fields."""
 
         return self.__fields
 

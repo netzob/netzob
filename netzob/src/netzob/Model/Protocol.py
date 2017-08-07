@@ -61,6 +61,17 @@ class Protocol(object):
     :type name: an :class:`str`, required
     :type path_zdl: an :class:`str`, optional
 
+
+    The Protocol class provides the following public variables:
+
+    :var name: The name of the protocol.
+    :var symbols: The defined symbols for the protocol.
+    :var automata: The automaton defined for the protocol.
+    :vartype name: str
+    :vartype symbols: a :class:`dict` where keys are symbol names and values are :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+    :vartype automata: an :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
+
+
     If .zdl files are provided, they should follow a specific
     convention to export the defined symbols and automaton:
 
@@ -175,7 +186,7 @@ class Protocol(object):
     def name(self):
         """
         Property (getter).
-        The name of the protocol (ex: "ICMP", "HTTP", ...)
+        The name of the protocol (ex: "ICMP", "HTTP", ...).
 
         :type: a :class:`str`, read-only
         """
@@ -208,7 +219,7 @@ class Protocol(object):
     def automata(self):
         """
         Property (getter/setter).
-        The Automata object defined for the protocol.
+        The Automata defined for the protocol.
 
         :type: an :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
         """

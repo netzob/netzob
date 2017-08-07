@@ -79,33 +79,60 @@ class Field(AbstractField):
     :type isPseudoField: :class:`bool`, optional
 
 
+    The Field class provides the following public variables:
+
+    :var name: The name of the field.
+    :var description: The description of the field.
+    :var domain: The definition domain of the field (i.e. the
+                 set of values the field accepts).
+    :var fields: The sorted list of sub-fields.
+    :var parent: The parent element.
+    :var isPseudoField: A flag indicating if the field is a
+                        pseudo field, meaning it is used
+                        internally to help for the computation
+                        of the value of another field, but does
+                        not directly produce data.
+    :vartype name: str
+    :vartype description: str
+    :vartype domain: a :class:`list` of :class:`object`
+    :vartype fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`
+    :vartype parent: :class:`Field <netzob.Model.Vocabulary.Field.Field>` or :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+    :vartype isPseudoField: bool
+
+
     **Fields hierarchy**
 
     A field can be composed of sub-fields. This is useful for example
     to separate a header, composed of multiple fields, from its
-    payload:
+    payload.  The parent field can be seen as a facility to access to
+    a group of fields.
+
+    In the following example, the ``fheader`` field is a parent field
+    for a group of sub-fields. The parent field does not contain any
+    concrete data, in contrary to its sub-fields.
 
     >>> from netzob.all import *
-    >>> fh0 = Field()
-    >>> fh1 = Field()
-    >>> fheader = Field()
+    >>> fh0 = Field(name='fh0')
+    >>> fh1 = Field(name='fh1')
+    >>> fheader = Field(name='fheader')
     >>> fheader.fields = [fh0, fh1]
-    >>> fpayload = Field()
+    >>> fpayload = Field(name='fpayload')
     >>> symbol = Symbol(fields=[fheader, fpayload])
     >>> print(symbol.str_structure())
     Symbol
-    |--  Field
-    |--  |--  Field
+    |--  fheader
+    |--  |--  fh0
               |--   Data (Raw=None ((0, 524288)))
-    |--  |--  Field
+    |--  |--  fh1
               |--   Data (Raw=None ((0, 524288)))
-    |--  Field
+    |--  fpayload
          |--   Data (Raw=None ((0, 524288)))
 
     More generally, a field is part of a tree whose root is a symbol
     and whose all other nodes of the tree are fields. Hence, a field
     always has a parent which can be another field or a symbol if it
     is the root.
+
 
     **Field definition domain**
 
@@ -141,6 +168,7 @@ class Field(AbstractField):
     >>> f = Field(Repeat("a", nbRepeat=(4,8)))
     >>> f = Field(Agg(["aa", "bb"]))
 
+
     **Relationships between fields**
 
     A field can have its value related to the content of another
@@ -156,6 +184,7 @@ class Field(AbstractField):
     >>> symbol = Symbol(fields=[f0, f1])
     >>> print(symbol.specialize())
     b'test\x04'
+
 
     **Pseudo fields**
 
@@ -177,6 +206,7 @@ class Field(AbstractField):
 
     A real example of a pseudo field is found in the UDP checksum,
     which relies on a pseudo IP header for its computation.
+
 
     **Encoding functions applied on fields**
 
@@ -369,10 +399,12 @@ class Field(AbstractField):
 
     @property
     def isPseudoField(self):
-        """Flag describing if current field is a isPseudoField.
+        """A flag indicating if the field is a pseudo field, meaning it is
+        used internally to help for the computation of the value of
+        another field, but does not directly produce data.
 
         :type: :class:`bool`
-        :raises: :class:`TypeError`
+
         """
 
         return self.__isPseudoField
