@@ -62,6 +62,8 @@ class ClusterByApplicativeData(object):
 
 
     >>> from netzob.all import *
+    >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+
     >>> pseudos = ["kurt", "ditrich", "toto", "carlito"]
     >>> cities = ["Paris", "Munich", "Barcelone", "Vienne"]
     >>> ips = ["192.168.0.10", "10.120.121.212", "78.167.23.10"]

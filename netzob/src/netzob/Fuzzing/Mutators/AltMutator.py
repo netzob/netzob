@@ -76,7 +76,7 @@ class AltMutator(DomainMutator):
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type mode: :class:`int`, optional
     :type mutateChild: :class:`bool`, optional
-    :type mappingTypesMutators: :class:`dict` where keys are :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>` and values are :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`, optional
+    :type mappingTypesMutators: :class:`dict` where keys are :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>` and values are tuples (:class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`, mutator parameters, ...), optional
     :type maxDepth: :class:`int`.
     :raises: :class:`Exception` if domain is not valid
 
@@ -132,7 +132,7 @@ class AltMutator(DomainMutator):
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> mapping = {}
-    >>> mapping[Integer] = IntegerMutator, generator='determinist'
+    >>> mapping[Integer] = (IntegerMutator, generator='determinist')
     >>> fuzz.set(f_alt, AltMutator, mappingTypesMutators=mapping)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res
@@ -295,8 +295,8 @@ called, first")
         # Call parent generate() method
         super().generate()
 
-        # self._currentDepth += 1
-        # if self._currentDepth >= self._maxDepth:
-        #     raise RecursionException("max depth reached ({})".format(self._maxDepth))
+        self._currentDepth += 1
+        if self._currentDepth >= self._maxDepth:
+            raise RecursionException("Max depth reached ({})".format(self._maxDepth))
 
         return self._positionMutator.generateInt()

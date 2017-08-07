@@ -186,8 +186,7 @@ class BitArray(AbstractType):
 
 
         >>> from netzob.all import *
-
-        >>> BitArray().canParse(TypeConverter.convert("hello netzob", String, BitArray))
+        >>> BitArray().canParse(String("hello netzob").value)
         True
 
         >>> BitArray(nbBits=8).canParse(bitarray('01010101'))

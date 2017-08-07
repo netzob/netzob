@@ -150,10 +150,10 @@ class String(AbstractType):
     The following example shows how to convert the
     current type to any other Netzob type:
 
-    >>> raw = cAscii.convertValue(Raw)
+    >>> raw = cAscii.convert(Raw)
     >>> print(repr(raw))
     b'hello'
-    >>> ip = cAscii.convertValue(IPv4)
+    >>> ip = cAscii.convert(IPv4)
     Traceback (most recent call last):
     ...
     TypeError: Impossible to encode b'hello' into an IPv4 data (unpack requires a bytes object of length 4)
@@ -166,7 +166,7 @@ class String(AbstractType):
 
     It is not possible to convert if the object has not value:
 
-    >>> a.convertValue(Raw)
+    >>> a.convert(Raw)
     Traceback (most recent call last):
     ...
     TypeError: Data cannot be None
@@ -259,7 +259,7 @@ class String(AbstractType):
         10.0
 
         >>> b = String("netzob")
-        >>> b.generate() == TypeConverter.convert("netzob", String, BitArray)
+        >>> b.generate().tobytes() == b"netzob"
         True
 
         """
@@ -358,26 +358,28 @@ class String(AbstractType):
         **Some examples with bitarray as input**
 
         >>> from netzob.all import *
-        >>> String().canParse(TypeConverter.convert("hello netzob", String, BitArray))
+        >>> b = bitarray(endian='big')
+        >>> b.frombytes(b"hello netzob")
+        >>> String().canParse(b)
         True
 
         The ascii table is defined from 0 to 127:
-        >>> String(encoding='ascii').canParse(TypeConverter.convert(128, Integer, BitArray, src_sign=Sign.UNSIGNED))
+        >>> String(encoding='ascii').canParse(Integer(128, sign=Sign.UNSIGNED).value)
         False
 
         >>> a = String(nbChars=10)
-        >>> a.canParse(TypeConverter.convert("hellohello", String, BitArray))
+        >>> a.canParse(String("hellohello").value)
         True
-        >>> a.canParse(TypeConverter.convert("hello hello", String, BitArray))
+        >>> a.canParse(String("hello hello").value)
         False
 
         >>> a = String(nbChars=(2,20))
-        >>> a.canParse(TypeConverter.convert("Netzob", String, BitArray))
+        >>> a.canParse(String("Netzob").value)
         True
-        >>> a.canParse(TypeConverter.convert("Hello netzob, what's up ?", String, BitArray))
+        >>> a.canParse(String("Hello netzob, what's up ?").value)
         False
 
-        >>> String("hello").canParse(TypeConverter.convert("hello", String, BitArray))
+        >>> String("hello").canParse(String("hello").value)
         True
 
 

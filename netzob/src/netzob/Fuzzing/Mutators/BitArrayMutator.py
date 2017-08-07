@@ -163,9 +163,9 @@ class BitArrayMutator(DomainMutator):
             return valueBits
         while True:
             valueInt = self._prng.getNewValue()
-            bits = TypeConverter.convert(data=valueInt,
-                                         sourceType=Integer,
-                                         destinationType=BitArray,
+            bits = TypeConverter.convert(valueInt,
+                                         Integer,
+                                         BitArray,
                                          src_unitSize=UnitSize.SIZE_64,
                                          src_sign=Sign.UNSIGNED,
                                          dst_sign=Sign.UNSIGNED)

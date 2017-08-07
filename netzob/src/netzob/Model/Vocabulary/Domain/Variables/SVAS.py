@@ -88,7 +88,7 @@ class SVAS(object):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = TypeConverter.convert("john", String, BitArray)
+      >>> value = String("john").value
       >>> f.domain = Data(String(), originalValue=value, svas=SVAS.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
@@ -101,7 +101,7 @@ class SVAS(object):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = TypeConverter.convert("john", String, BitArray)
+      >>> value = String("john").value
       >>> f.domain = Data(String(), originalValue=value, svas=SVAS.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
@@ -113,7 +113,7 @@ class SVAS(object):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = TypeConverter.convert("john", String, BitArray)
+      >>> value = String("john").value
       >>> f.domain = Data(String(), originalValue=value, svas=SVAS.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
@@ -180,7 +180,7 @@ class SVAS(object):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = TypeConverter.convert("john", String, BitArray)
+      >>> value = String("john").value
       >>> f.domain = Data(String(), originalValue=value, svas=SVAS.PERSISTENT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
@@ -244,7 +244,7 @@ class SVAS(object):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = TypeConverter.convert("john", String, BitArray)
+      >>> value = String("john").value
       >>> f.domain = Data(String(), originalValue=value, svas=SVAS.EPHEMERAL)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()

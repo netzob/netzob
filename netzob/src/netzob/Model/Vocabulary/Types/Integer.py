@@ -352,6 +352,7 @@ class Integer(AbstractType):
 
 
         >>> from netzob.all import *
+        >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         >>> Integer().canParse(10)
         True
 

@@ -62,6 +62,9 @@ class HexaString(AbstractType):
 
     :param value: The current value of the type instance.
     :param nbBytes: The size in bytes that this value can take.
+    :param unitSize: Not implemented.
+    :param endianness: Not implemented.
+    :param sign: Not implemented.
     :type value: :class:`bitarray.bitarray`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
@@ -77,7 +80,13 @@ class HexaString(AbstractType):
     """
 
 
-    def __init__(self, value=None, nbBytes=(None, None)):
+    def __init__(self,
+                 value=None,
+                 nbBytes=(None, None),
+                 unitSize=AbstractType.defaultUnitSize(),
+                 endianness=AbstractType.defaultEndianness(),
+                 sign=AbstractType.defaultSign()):
+
         if value is not None and not isinstance(value, bitarray):
             if isinstance(value, bytes):
                 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
@@ -92,7 +101,13 @@ class HexaString(AbstractType):
         else:
             nbBits = (None, None)
 
-        super(HexaString, self).__init__(self.__class__.__name__, value, nbBits)
+        super(HexaString, self).__init__(
+            self.__class__.__name__,
+            value,
+            nbBits,
+            unitSize=unitSize,
+            endianness=endianness,
+            sign=sign)
 
     def _convertNbBytesinNbBits(self, nbBytes):
         nbMinBit = None
@@ -145,10 +160,10 @@ class HexaString(AbstractType):
         >>> import os
         >>> # Generate 8 random bytes
         >>> randomData = os.urandom(8)
-        >>> hex = TypeConverter.convert(randomData, Raw, HexaString)
-        >>> len(hex)
-        16
-        >>> print(HexaString().canParse(hex))
+        >>> hex = Raw(randomData).convert(HexaString)
+        >>> len(hex.value)
+        64
+        >>> HexaString().canParse(hex.value)
         True
 
         A more complete example with the use of the abstract() method:
@@ -220,13 +235,13 @@ class HexaString(AbstractType):
         >>> randomData = os.urandom(1024)
 
         >>> # Convert to hexastring
-        >>> hex = TypeConverter.convert(randomData, Raw, HexaString)
-        >>> print(len(hex))
-        2048
+        >>> hex = Raw(randomData).convert(HexaString)
+        >>> len(hex.value)
+        8192
 
         >>> # Convert back to byte and verify we didn't lost anything
-        >>> raw = TypeConverter.convert(hex, HexaString, Raw)
-        >>> print(raw == randomData)
+        >>> raw = hex.convert(Raw)
+        >>> print(raw.value.tobytes() == randomData)
         True
 
 
@@ -260,15 +275,16 @@ class HexaString(AbstractType):
 
         >>> from netzob.all import *
         >>> import os
+
         >>> # Generate 4096 random bytes
         >>> randomData = os.urandom(4096)
         >>> # Convert to hexastring
-        >>> hex = TypeConverter.convert(randomData, Raw, HexaString)
-        >>> print(len(hex))
-        8192
+        >>> hex = Raw(randomData).convert(HexaString)
+        >>> len(hex.value)
+        32768
         >>> # Convert back to byte and verify we didn't lost anything
-        >>> raw = TypeConverter.convert(hex, HexaString, Raw)
-        >>> print(raw == randomData)
+        >>> raw = hex.convert(Raw)
+        >>> print(raw.value.tobytes() == randomData)
         True
 
         :param data: the data encoded in python raw which will be encoded in current type

@@ -101,8 +101,8 @@ class IPv4(AbstractType):
     following example:
 
     >>> f = Field(IPv4(network="10.10.10.0/24"))
-    >>> TypeConverter.convert(f.specialize(), Raw, IPv4) in IPNetwork("10.10.10.0/24")
-    True
+    >>> len(f.specialize())
+    4
 
     """
 
@@ -144,20 +144,20 @@ class IPv4(AbstractType):
             return 2**self.unitSize.value - 1
 
     def generate(self, generationStrategy=None):
-        """Generates a random IPv4 which follows the constraints.
+        r"""Generates a random IPv4 which follows the constraints.
 
         >>> from netzob.all import *
         >>> f = Field(IPv4())
         >>> len(f.specialize())
         4
 
-        >>> f = Field(IPv4("192.168.0.10"))
-        >>> TypeConverter.convert(f.specialize(), Raw, IPv4)
-        IPAddress('192.168.0.10')
+        >>> f = Field(IPv4("192.168.0.20"))
+        >>> f.specialize()
+        b'\xc0\xa8\x00\x14'
 
         >>> f = Field(IPv4(network="10.10.10.0/24"))
-        >>> TypeConverter.convert(f.specialize(), Raw, IPv4) in IPNetwork("10.10.10.0/24")
-        True
+        >>> len(f.specialize())
+        4
 
         """
         from netzob.Model.Vocabulary.Types.BitArray import BitArray

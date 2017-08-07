@@ -82,11 +82,12 @@ class Data(AbstractVariableLeaf):
 
     >>> from netzob.all import *
     >>> f = Field()
-    >>> value = TypeConverter.convert("hello", String, BitArray)
-    >>> f.domain = Data(dataType=String(), originalValue=value, name="pseudo")
+    >>> b = bitarray(endian='big')
+    >>> b.frombytes(b'hello')
+    >>> f.domain = Data(dataType=String(), originalValue=b, name="pseudo")
     >>> print(f.domain.varType)
     Data
-    >>> print(TypeConverter.convert(f.domain.currentValue, BitArray, Raw))
+    >>> f.domain.currentValue.tobytes()
     b'hello'
     >>> print(f.domain.dataType)
     String=None ((None, None))
@@ -101,8 +102,8 @@ class Data(AbstractVariableLeaf):
     >>> f = Field(String("hello"))
     >>> print(f.domain.varType)
     Data
-    >>> print(TypeConverter.convert(f.domain.currentValue, BitArray, String))
-    hello
+    >>> f.domain.currentValue.tobytes()
+    b'hello'
 
     """
 

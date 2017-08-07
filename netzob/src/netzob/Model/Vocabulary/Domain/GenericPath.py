@@ -86,6 +86,7 @@ class GenericPath(object):
         """This method can be used to register the bitarray obtained after having parsed a variable
 
         >>> from netzob.all import *
+        >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         >>> path = GenericPath()
         >>> var = Data(dataType=String())
         >>> print(path.isDataAvailableForVariable(var))
@@ -109,6 +110,7 @@ class GenericPath(object):
         """Return the data that is assigned to the specified varibale
 
         >>> from netzob.all import *
+        >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         >>> path = GenericPath()
         >>> v1 = Data(dataType=String(nbChars=(5, 10)), name="netzob")
         >>> print(path.isDataAvailableForVariable(v1))

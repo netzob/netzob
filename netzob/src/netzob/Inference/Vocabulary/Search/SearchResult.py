@@ -59,6 +59,7 @@ class SearchResult(object):
     the target.
 
     >>> from netzob.all import *
+    >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
     >>> from netzob.Inference.Vocabulary.Search.SearchTask import SearchTask
     >>> target = TypeConverter.convert(b"Hello world, that is just a test of netzob.", Raw, BitArray)
     >>> searchTask = SearchTask(TypeConverter.convert("o", Raw, BitArray), "letter-o-original")

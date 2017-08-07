@@ -65,7 +65,7 @@ class Raw(AbstractType):
     :param sign: Not implemented.
     :type value: :class:`bitarray.bitarray`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
-    :type alphabet: a :class:`list` of :class:`object`, optional
+    :type alphabet: a :class:`list` of :class:`bytes`, optional
 
     The following example shows how to define a six bytes long raw
     field, and the used of the specialization method to generate a
@@ -91,7 +91,7 @@ class Raw(AbstractType):
     The alphabet optional argument can be used to limit the bytes that
     can participate in the domain value:
 
-    >>> f = Field(Raw(nbBytes=100, alphabet=["t", "o"]))
+    >>> f = Field(Raw(nbBytes=100, alphabet=[b"t", b"o"]))
     >>> data = f.specialize()
     >>> data_set = set(data)
     >>> print(data_set)
@@ -133,13 +133,9 @@ class Raw(AbstractType):
 
     def __str__(self):
         if self.value is not None:
-            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-            from netzob.Model.Vocabulary.Types.BitArray import BitArray
-            from netzob.Model.Vocabulary.Types.HexaString import HexaString
-            return "{0}={1} ({2})".format(
-                self.typeName,
-                repr(TypeConverter.convert(self.value, BitArray, Raw)),
-                self.size)
+            return "{0}={1} ({2})".format(self.typeName,
+                                          repr(self.value.tobytes()),
+                                          self.size)
         else:
             return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
 
@@ -162,10 +158,7 @@ class Raw(AbstractType):
 
         """
         if self.value is not None:
-            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-            from netzob.Model.Vocabulary.Types.BitArray import BitArray
-            return str(
-                TypeConverter.convert(self.value, BitArray, self.__class__))
+            return str(self.value.tobytes())
         else:
             return str(self.value)
 
@@ -212,9 +205,6 @@ class Raw(AbstractType):
         if self.value is not None:
             return self.value
 
-        from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-        from netzob.Model.Vocabulary.Types.BitArray import BitArray
-
         minSize, maxSize = self.size
         if maxSize is None:
             maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
@@ -227,9 +217,11 @@ class Raw(AbstractType):
         if self.alphabet is None:
             generatedValue = os.urandom(int(generatedSize / 8))
         else:
-            generatedValue = "".join([random.choice(self.alphabet) for _ in range(int(generatedSize / 8))])
-            
-        return TypeConverter.convert(generatedValue, Raw, BitArray)
+            generatedValue = b"".join([random.choice(self.alphabet) for _ in range(int(generatedSize / 8))])
+
+        result = bitarray(endian='big')
+        result.frombytes(generatedValue)
+        return result
 
     @staticmethod
     def decode(data,
@@ -259,7 +251,9 @@ class Raw(AbstractType):
         :raise: TypeError if the data is None
 
         >>> from netzob.all import *
-        >>> Raw().canParse(TypeConverter.convert("hello netzob", String, BitArray))
+        >>> b = bitarray(endian='big')
+        >>> b.frombytes(b"hello netzob")
+        >>> Raw().canParse(b)
         True
 
         >>> Raw().canParse(b"hello netzob")

@@ -86,6 +86,7 @@ class TypeConverter(object):
         For example, to convert a String to a binary (BitArray) representation:
 
         >>> from netzob.all import *
+
         >>> data = "hello"
         >>> bin = TypeConverter.convert(data, String, BitArray)
         >>> print(bin)

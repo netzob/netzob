@@ -308,13 +308,13 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         return hash(self.__key())
 
     @typeCheck(type)
-    def convertValue(self,
-                     typeClass,
-                     dst_unitSize=None,
-                     dst_endianness=None,
-                     dst_sign=None):
-        """Convert the current data in the netzob type
-        specified in parameter.
+    def convert(self,
+                typeClass,
+                dst_unitSize=None,
+                dst_endianness=None,
+                dst_sign=None):
+        """Convert the current data type in a destination type specified in
+        parameter.
 
         :param typeClass: The netzob class to which the current data
                           must be converted.
@@ -641,8 +641,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         >>> print(ascii.typeName)
         String
         >>> data = ascii.buildDataRepresentation()
-        >>> print(TypeConverter.convert(data.currentValue, BitArray, String))
-        hello netzob !
+        >>> data.currentValue.tobytes()
+        b'hello netzob !'
         >>> print(data.dataType)
         String=hello netzob ! ((None, None))
 

@@ -58,6 +58,7 @@ class FieldSpecializer(object):
     Examples:
 
     >>> from netzob.all import *
+    >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 
     >>> f = Field("Hello")
     >>> fs = FieldSpecializer(f)

@@ -51,7 +51,6 @@ from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 
 
 class Symbol(AbstractField):
@@ -273,8 +272,8 @@ class Symbol(AbstractField):
         b'\x0b\xaa\xbb'
 
         >>> presets = {}
-        >>> presets["udp.dport"] = TypeConverter.convert(11, Integer, BitArray)
-        >>> presets["udp.payload"] = TypeConverter.convert(b"\xaa\xbb", Raw, BitArray)
+        >>> presets["udp.dport"] = bitarray('00001011', endian='big')
+        >>> presets["udp.payload"] = bitarray('1010101010111011', endian='big')
         >>> symbol_udp.specialize(presets=presets)
         b'\x0b\xaa\xbb'
 
@@ -307,9 +306,9 @@ class Symbol(AbstractField):
         >>> f2 = Field(domain=Raw(nbBytes=(10,15)))
         >>> f1.domain = Size(f2)
         >>> s = Symbol(fields=[f1, f2])
-        >>> presetValues = {f1: TypeConverter.convert("\xff", Raw, BitArray)}
+        >>> presetValues = {f1: bitarray('11111111')}
         >>> print(s.specialize(presets = presetValues)[0])
-        195
+        255
 
 
         **Fuzzing of Fields**
@@ -332,8 +331,7 @@ class Symbol(AbstractField):
         spePath = msg.specializeSymbol(self)
 
         if spePath is not None:
-            return TypeConverter.convert(spePath.generatedContent, BitArray,
-                                         Raw)
+            return spePath.generatedContent.tobytes()
 
     @typeCheck(Memory, object)
     def specialize_count(self, presets=None, fuzz=None):
@@ -370,7 +368,7 @@ class Symbol(AbstractField):
         >>> symbol = Symbol(fields=[f1, f2, f3])
         >>>
         >>> # Specify the preset fields
-        >>> presetValues = {f1: TypeConverter.convert("\xff\xff", Raw, BitArray)}        
+        >>> presetValues = {f1: bitarray('1111111111111111')}        
         >>>
         >>> # Specify the fuzzed fields
         >>> fuzz = Fuzz()

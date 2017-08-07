@@ -63,6 +63,7 @@ class FieldSplitDelimiter(object):
 
 
         >>> from netzob.all import *
+        >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         >>> samples = [b"aaaaff000000ff10", b"bbff110010ff00000011", b"ccccccccfffe1f000000ff12"]
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages[:3])

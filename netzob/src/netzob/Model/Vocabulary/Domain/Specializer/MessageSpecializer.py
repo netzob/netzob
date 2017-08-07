@@ -57,6 +57,7 @@ from netzob.Model.Vocabulary.Field import Field
 class MessageSpecializer(object):
     """
     >>> from netzob.all import *
+    >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 
     >>> f0 = Field("TOTO")
     >>> f1 = Field()

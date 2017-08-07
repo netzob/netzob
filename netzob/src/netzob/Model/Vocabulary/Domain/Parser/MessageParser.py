@@ -83,7 +83,7 @@ class MessageParser(object):
     >>> from netzob.all import *
     >>> from bitarray import bitarray
     >>> data = bitarray("0000110001101110011001010111010001111010011011110110001000000000")
-    >>> msg = RawMessage(TypeConverter.convert(data, BitArray, Raw))
+    >>> msg = RawMessage(data.tobytes())
     >>> f1 = Field(name="F1", domain=BitArray(nbBits=8))
     >>> f2 = Field(name="F2", domain=String(nbChars=(3,9)))
     >>> f3 = Field(name="F3", domain=BitArray(nbBits=3))
@@ -96,7 +96,7 @@ class MessageParser(object):
     >>> from netzob.all import *
     >>> from bitarray import bitarray
     >>> b = bitarray('01101110011001010111010001111010011011110110001000111011000001100110100001100101011011000110110001101111')
-    >>> r = TypeConverter.convert(b, BitArray, Raw)
+    >>> r = b.tobytes()
     >>> msg = RawMessage(r)
     >>> f1 = Field(String(nbChars=(6)), name="F1")
     >>> f2 = Field(";", name="F2")
@@ -110,7 +110,7 @@ class MessageParser(object):
     >>> from netzob.all import *
     >>> from bitarray import bitarray
     >>> b = bitarray('0000011001101110011001010111010001111010011011110110001000111011')
-    >>> r = TypeConverter.convert(b, BitArray, Raw)
+    >>> r = b.tobytes()
     >>> msg = RawMessage(r)
     >>> f2 = Field(String(nbChars=(1,20)), name="F2")
     >>> f3 = Field(";", name="F3")
@@ -123,8 +123,7 @@ class MessageParser(object):
     # Let's verify the abstraction of intra-relationships
 
     >>> from netzob.all import *
-    >>> b = "netzob > my name is netzob"
-    >>> r = TypeConverter.convert(b, String, Raw)
+    >>> r = b"netzob > my name is netzob"
     >>> msg = RawMessage(r)
     >>> f1 = Field(String(nbChars=(1,20)), name="F1")
     >>> f2 = Field(" > my name is ", name="F2")
@@ -316,4 +315,3 @@ class MessageParser(object):
                 pass
 
         raise StopIteration()
-        # InvalidParsingPathException("No parsing path returned while parsing '{}'".format(TypeConverter.convert(value_before_parsing, BitArray, Raw)))

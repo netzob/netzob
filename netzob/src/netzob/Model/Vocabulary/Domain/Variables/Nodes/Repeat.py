@@ -88,8 +88,10 @@ class Repeat(AbstractVariableNode):
     We can specify a delimiter between each repeated element, as
     depicted in the following example:
 
+    >>> delimiter = bitarray(endian='big')
+    >>> delimiter.frombytes(b";")
     >>> f1 = Field(Repeat(Alt([String("netzob"), String("kurt")]), nbRepeat=(1, 4),
-    ...            delimiter=TypeConverter.convert(";", Raw, BitArray)), name='f1')
+    ...            delimiter=delimiter), name='f1')
     >>> f2 = Field(String("kurt"), name='f2')
     >>> s = Symbol([f1, f2])
     >>> data = "netzob;kurt;netzobkurt"
@@ -180,8 +182,10 @@ class Repeat(AbstractVariableNode):
     b'netzobnetzob'
 
     >>> from netzob.all import *
+    >>> delimiter = bitarray(endian='big')
+    >>> delimiter.frombytes(b";")
     >>> f1 = Field(Repeat(IPv4(), nbRepeat=3,
-    ...           delimiter=TypeConverter.convert(";", Raw, BitArray)))
+    ...           delimiter=delimiter))
     >>> s = Symbol([f1])
     >>> gen = s.specialize()
     >>> len(gen) == 14
@@ -190,9 +194,11 @@ class Repeat(AbstractVariableNode):
     True
 
     >>> from netzob.all import *
+    >>> delimiter = bitarray(endian='big')
+    >>> delimiter.frombytes(b";")
     >>> child = Data(dataType=String(nbChars=(5)), svas=SVAS.PERSISTENT)
     >>> f1 = Field(Repeat(child, nbRepeat=3,
-    ...            delimiter=TypeConverter.convert(";", Raw, BitArray)))
+    ...            delimiter=delimiter))
     >>> s = Symbol([f1])
     >>> gen = s.specialize()
     >>> len(gen) == 17

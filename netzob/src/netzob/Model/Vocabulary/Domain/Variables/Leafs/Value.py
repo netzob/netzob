@@ -48,7 +48,6 @@ from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
@@ -147,31 +146,12 @@ class Value(AbstractRelationVariableLeaf):
 
     **Transformation operation on targeted field value**
 
-    A value relationship also accepts custom operations, as shown on
-    the following example with a lambda function:
-
-    >>> f0 = Field(1, name="f0")
-    >>> f1 = Field(String(":"), name="f1")
-    >>> f2 = Field(Value(f0, operation = lambda x: TypeConverter.convert(
-    ... TypeConverter.convert(x, BitArray, Integer) + 1, Integer, BitArray)), name="f2")
-    >>> s = Symbol([f0, f1, f2])
-    >>> print(s.specialize())
-    b'\x01:\x02'
-    >>> m1 = RawMessage(s.specialize())
-    >>> s.messages = [m1]
-    >>> print(s.str_data())
-    f0     | f1  | f2    
-    ------ | --- | ------
-    '\x01' | ':' | '\x02'
-    ------ | --- | ------
-
-
-    A named callback function can also be used to specify a more
-    complex relationship. The following example shows a relationship
-    where the computed value corresponds to the reversed bits of the
-    targeted field. The ``data`` parameter of the ``cbk`` function
-    contains a bitarray object of the targeted fields. The ``cbk``
-    function returns a bitarray object.
+    A named callback function can be used to specify a more complex
+    relationship. The following example shows a relationship where the
+    computed value corresponds to the reversed bits of the targeted
+    field. The ``data`` parameter of the ``cbk`` function contains a
+    bitarray object of the targeted fields. The ``cbk`` function
+    returns a bitarray object.
 
     >>> def cbk(data):
     ...    ret = data.copy()

@@ -46,7 +46,6 @@
 from netzob.Fuzzing.Mutators.DomainMutator import MutatorInterval
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.AbstractType import Sign
@@ -120,16 +119,3 @@ class TimestampMutator(IntegerMutator):
                               unitSize=dom_type.unitSize,
                               endianness=dom_type.endianness,
                               sign=Sign.UNSIGNED)
-
-        """
-        # convert to bitarray
-        time_bits = TypeConverter.convert(
-            timeValue,
-            Integer,
-            BitArray,
-            src_unitSize=dom_type.unitSize,
-            src_endianness=dom_type.endianness,
-            src_sign=Sign.UNSIGNED,
-            dst_endianness=dom_type.endianness)
-
-        return time_bits"""

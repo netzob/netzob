@@ -46,7 +46,6 @@
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.MatrixList import MatrixList
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
 
@@ -176,8 +175,7 @@ class DataAlignment(object):
                             currentField.encodingFunctions.values()):
                         fieldValue = encodingFunction.encode(fieldValue)
                 else:
-                    fieldValue = TypeConverter.convert(fieldValue, BitArray,
-                                                       Raw)
+                    fieldValue = fieldValue.tobytes()
 
                 if currentField in self.field.getLeafFields(depth=self.depth):
                     alignedEncodedMsg.append(fieldValue)

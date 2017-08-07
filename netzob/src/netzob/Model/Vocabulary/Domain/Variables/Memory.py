@@ -88,7 +88,7 @@ class Memory(object):
     >>> # Environment variables definition
     >>> memory = Memory()
     >>> env1 = Data(String(), name="env1")
-    >>> memory.memorize(env1, TypeConverter.convert("John", String, BitArray))
+    >>> memory.memorize(env1, String("John").value)
     >>>
     >>> # Symbol definition
     >>> f7 = Field(domain=String("master"), name="F7")
@@ -110,7 +110,7 @@ class Memory(object):
     >>> # Environment variables definition
     >>> memory1 = Memory()
     >>> env1 = Data(String(), name="env1")
-    >>> memory1.memorize(env1, TypeConverter.convert("John", String, BitArray))
+    >>> memory1.memorize(env1, String("John").value)
     >>>
     >>> # Symbol definition
     >>> f7 = Field(domain=String("master"), name="F7")
@@ -149,7 +149,7 @@ class Memory(object):
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")
         >>> memory = Memory()
-        >>> memory.memorize(variable, TypeConverter.convert("hello", String, BitArray))
+        >>> memory.memorize(variable, String("hello").value)
         >>> print(memory)
         Data (String=None ((None, None))): b'hello'
 
@@ -163,7 +163,7 @@ class Memory(object):
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")
         >>> memory = Memory()
-        >>> memory.memorize(variable, TypeConverter.convert("hello", String, BitArray))
+        >>> memory.memorize(variable, String("hello").value)
         >>> memory.hasValue(variable)
         True
         >>> variable2 = Data(String(), name="var2")
@@ -180,8 +180,8 @@ class Memory(object):
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")
         >>> memory = Memory()
-        >>> memory.memorize(variable, TypeConverter.convert("hello", String, BitArray))
-        >>> print(TypeConverter.convert(memory.getValue(variable), BitArray, Raw))
+        >>> memory.memorize(variable, String("hello").value)
+        >>> memory.getValue(variable).tobytes()
         b'hello'
 
         """
@@ -194,7 +194,7 @@ class Memory(object):
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")
         >>> memory = Memory()
-        >>> memory.memorize(variable, TypeConverter.convert("hello", String, BitArray))
+        >>> memory.memorize(variable, String("hello").value)
         >>> memory.hasValue(variable)
         True
         >>> memory.forget(variable)
@@ -211,8 +211,8 @@ class Memory(object):
         >>> d1 = Data(Integer)
         >>> d2 = Data(String)
         >>> m = Memory()
-        >>> m.memorize(d1, TypeConverter.convert(100, Integer, BitArray))
-        >>> m.memorize(d2, TypeConverter.convert("hello", String, BitArray))
+        >>> m.memorize(d1, Integer(100).value)
+        >>> m.memorize(d2, String("hello").value)
         >>> m.getValue(d1)
         bitarray('01100100')
         >>> m2 = m.duplicate()

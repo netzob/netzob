@@ -51,7 +51,6 @@ from netzob.Common.Utils.SortedTypedList import SortedTypedList
 from netzob.Common.NetzobException import NetzobImportException
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
 from netzob.Model.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage
@@ -532,5 +531,4 @@ class PCAPImporter(object):
         """
 
         decoder = Decoders.EthDecoder()
-        return decoder.decode(
-            TypeConverter.convert(message.data, HexaString, Raw))
+        return decoder.decode(message.data.convert(Raw))

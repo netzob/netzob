@@ -102,9 +102,9 @@ class DomainMutator(Mutator):
     >>> f1 = Field(String())
     >>> f2 = Field(Integer())
     >>> symbol = Symbol(fields=[f1, f2])
-    >>> mutators = {f1: StringMutator,
-    ...             f2: (IntegerMutator, minValue=12, maxValue=20)}  # doctest: +SKIP
-    >>> symbol.specialize(mutators=mutators)  # doctest: +SKIP
+    >>> fuzz = {f1: StringMutator,
+    ...             f2: (IntegerMutator, minValue=12, maxValue=20)}
+    >>> symbol.specialize(fuzz=fuzz)
     """
 
     # Constants
