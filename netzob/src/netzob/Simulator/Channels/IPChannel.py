@@ -35,8 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
-import binascii
-from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -47,70 +45,62 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
-from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Symbol import Symbol
-from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.Integer import uint16be
 
 
 @NetzobLogger
-class RawEthernetClient(AbstractChannel):
-    r"""A RawEthernetClient is a communication channel to send
-    Ethernet frames. This channel is responsible for building the
-    Ethernet layer.
+class IPChannel(AbstractChannel):
+    """An IPChannel is a communication channel to send IP
+    payloads. The **kernel** is responsible to build the IP header. It is
+    similar to RawIPChannel channel, except that with RawIPChannel the
+    channel builds the IP header. Therefore, with :class:`IPChannel <netzob.Simulator.Channels.IPChannel.IPChannel>`,
+    we **cannot** modify or fuzz the IP header fields.
 
-    The RawEthernetClient constructor expects some parameters:
+    The IPChannel constructor expects some parameters:
 
-    :param remoteMac: The remote MAC address to connect to.
-    :param localMac: The local MAC address.
-    :param upperProtocol: The protocol following Ethernet in the stack.
-                          Default value is IPv4 (0x0800)
+    :param remoteIP: The remote IP address to connect to.
+    :param localIP: The local IP address. Default value is the local
+                    IP address corresponding to the interface that
+                    will be used to send the packet.
+    :param upperProtocol: The protocol following the IP header.
+                          Default value is socket.IPPROTO_TCP.
     :param interface: The network interface to use. It is linked with
-                      the local MAC address to use (`localMac` parameter).
-                      Default value is 'lo'.
-    :type remoteMac: :class:`str`, required
-    :type localMac: :class:`str`, required
+                      the local IP address to use (`localIP` parameter).
+                      Default value is 'eth0'.
+    :param timeout: The default timeout of the channel for opening
+                    connection and waiting for a message. Default value
+                    is 5.0 seconds. To specify no timeout, None value is
+                    expected.
+    :type remoteIP: :class:`str`, required
+    :type localIP: :class:`str`, optional
     :type upperProtocol: :class:`int`, optional
     :type interface: :class:`str`, optional
+    :type timeout: :class:`float`, optional
 
-    >>> from binascii import hexlify
 
-    >>> client = RawEthernetClient("00:01:02:03:04:05", localMac="00:06:07:08:09:10")
+    The following code shows the use of an IPChannel channel:
+
+    >>> from netzob.all import *
+    >>> client = IPChannel(remoteIP='127.0.0.1')
     >>> client.open()
-    >>> symbol = Symbol([Field("ABC")])
+    >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
-    17
     >>> client.close()
 
     """
 
-    ETH_P_ALL = 3
-
-    @typeCheck(str, str)
+    @typeCheck(str, int)
     def __init__(self,
-                 remoteMac,
-                 localMac,
-                 upperProtocol=0x0800,
-                 interface="lo"):
-        super(RawEthernetClient, self).__init__(isServer=False)
-        self.remoteMac = remoteMac
-        self.localMac = localMac
+                 remoteIP,
+                 localIP=None,
+                 upperProtocol=socket.IPPROTO_TCP,
+                 interface="eth0"):
+        super(IPChannel, self).__init__(isServer=False)
+        self.remoteIP = remoteIP
+        self.localIP = localIP
         self.upperProtocol = upperProtocol
         self.interface = interface
-        self.type = AbstractChannel.TYPE_RAWETHERNETCLIENT
+        self.type = AbstractChannel.TYPE_IPCHANNEL
         self.__socket = None
-
-        self.initHeader()
-
-    def initHeader(self):
-        eth_dst = Field(name='eth.dst', domain=Raw(self.macToBitarray(self.remoteMac)))
-        eth_src = Field(name='eth.src', domain=Raw(self.macToBitarray(self.localMac)))
-        eth_type = Field(name='eth.type', domain=uint16be(self.upperProtocol))
-        eth_payload = Field(name='eth.payload', domain=Raw())
-        self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
-                                                            eth_src,
-                                                            eth_type,
-                                                            eth_payload])
 
     def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
@@ -125,12 +115,13 @@ class RawEthernetClient(AbstractChannel):
 
         super().open(timeout=timeout)
 
-        self.__socket = socket.socket(
-            socket.AF_PACKET,
-            socket.SOCK_RAW,
-            socket.htons(RawEthernetClient.ETH_P_ALL))
+        self.__socket = socket.socket(socket.AF_INET,
+                                      socket.SOCK_RAW,
+                                      self.upperProtocol)
         self.__socket.settimeout(self.timeout)
-        self.__socket.bind((self.interface, RawEthernetClient.ETH_P_ALL))
+        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2**30)
+        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
+        self.__socket.bind((self.localIP, self.upperProtocol))
         self.isOpen = True
 
     def close(self):
@@ -145,34 +136,7 @@ class RawEthernetClient(AbstractChannel):
         if self.__socket is not None:
             (data, _) = self.__socket.recvfrom(65535)
 
-            # Remove Ethernet header from received data
-            ethHeaderLen = 14
-            if len(data) > ethHeaderLen:
-                data = data[ethHeaderLen:]
-
             return data
-        else:
-            raise Exception("socket is not available")
-
-    def sendReceive(self, data):
-        """Write on the communication channel and returns the next packet
-        coming from the destination address.
-
-        :param data: the data to write on the channel
-        :type data: :class:`bytes`
-        """
-        if self.__socket is not None:
-
-            rawRemoteMac = binascii.unhexlify(self.remoteMac.replace(':', ''))
-            self.write(data)
-            while True:
-                (data, _) = self.__socket.recvfrom(65535)
-                if data[6:12] == rawRemoteMac:
-                    # Remove Ethernet header from received data
-                    ethHeaderLen = 14
-                    if len(data) > ethHeaderLen:
-                        data = data[ethHeaderLen:]
-                    return data
         else:
             raise Exception("socket is not available")
 
@@ -182,78 +146,87 @@ class RawEthernetClient(AbstractChannel):
         :param data: the data to write on the channel
         :type data: :class:`bytes`
         """
-
-        if self.__socket is None:
+        if self.__socket is not None:
+            len_data = self.__socket.sendto(data, (self.remoteIP, 0))
+            return len_data
+        else:
             raise Exception("socket is not available")
 
-        self.header_presets["eth.payload"] = data
-        packet = self.header.specialize(presets=self.header_presets)
-        len_data = self.__socket.sendto(packet, (self.interface,
-                                                 RawEthernetClient.ETH_P_ALL))
-        return len_data
+    def sendReceive(self, data):
+        """Write on the communication channel the specified data and returns
+        the corresponding response.
 
-    def macToBitarray(self, addr):
-        """Converts a mac address represented as a string to its bitarray value.
+        :param data: the data to write on the channel
+        :type data: :class:`bytes`
 
-        >>> client = RawEthernetClient('00:01:02:03:04:05', '06:07:08:09:10:11')
-        >>> client.macToBitarray('00:01:02:03:04:05')
-        bitarray('000000000000000100000010000000110000010000000101')
-        >>> client.macToBitarray(b'\\x00\\x01\\x02\\x03\\x04\\x05')
-        bitarray('000000000000000100000010000000110000010000000101')
         """
+        if self.__socket is not None:
+            # get the ports from message to identify the good response
+            #  (in TCP or UDP)
 
-        if addr is None:
-            return bitarray(48)
+            portSrcTx = (data[0] * 256) + data[1]
+            portDstTx = (data[2] * 256) + data[3]
 
-        if isinstance(addr, bytes):
-            addr = binascii.hexlify(addr).decode()
+            responseOk = False
+            stopWaitingResponse = False
+            self.write(data)
+            while stopWaitingResponse is False:
+                dataReceived = self.read()
 
-        numeric = int(addr.replace(":", ""), 16)
-        binary = bin(numeric)[2:]
-        binLength = len(binary)
-        if binLength > 48:
-            raise Exception("Binary overflow while converting hexadecimal value")
+                # IHL = (Bitwise AND 00001111) x 4bytes
+                ipHeaderLen = (dataReceived[0] & 15) * 4
+                portSrcRx = (dataReceived[ipHeaderLen] * 256) + \
+                    dataReceived[ipHeaderLen + 1]
+                portDstRx = (dataReceived[ipHeaderLen + 2] * 256) + \
+                    dataReceived[ipHeaderLen + 3]
 
-        binary = "0" * (48 - binLength) + binary
-        return bitarray(binary)
+                stopWaitingResponse = (portSrcTx == portDstRx) and \
+                    (portDstTx == portSrcRx)
+                if stopWaitingResponse:  # and not timeout
+                    responseOk = True
+            if responseOk:
+                return dataReceived
+        else:
+            raise Exception("socket is not available")
+
+    # Management methods
 
     # Properties
 
     @property
-    def remoteMac(self):
-        """Remote hardware address (MAC)
+    def remoteIP(self):
+        """IP on which the server will listen.
 
         :type: :class:`str`
         """
-        return self.__remoteMac
+        return self.__remoteIP
 
-    @remoteMac.setter
+    @remoteIP.setter
     @typeCheck(str)
-    def remoteMac(self, remoteMac):
-        if remoteMac is None:
-            raise TypeError("remoteMac cannot be None")
-        self.__remoteMac = remoteMac
+    def remoteIP(self, remoteIP):
+        if remoteIP is None:
+            raise TypeError("Listening IP cannot be None")
+
+        self.__remoteIP = remoteIP
 
     @property
-    def localMac(self):
-        """Local hardware address (MAC)
+    def localIP(self):
+        """IP on which the server will listen.
 
         :type: :class:`str`
         """
-        return self.__localMac
+        return self.__localIP
 
-    @localMac.setter
+    @localIP.setter
     @typeCheck(str)
-    def localMac(self, localMac):
-        if localMac is None:
-            raise TypeError("localMac cannot be None")
-        self.__localMac = localMac
+    def localIP(self, localIP):
+        self.__localIP = localIP
 
     @property
     def upperProtocol(self):
-        """Upper protocol (two bytes form)
+        """Upper protocol, such as TCP, UDP, ICMP, etc.
 
-        :type: :class:`bytes`
+        :type: :class:`str`
         """
         return self.__upperProtocol
 
@@ -263,8 +236,6 @@ class RawEthernetClient(AbstractChannel):
         if upperProtocol is None:
             raise TypeError("Upper protocol cannot be None")
 
-        if upperProtocol < 0 or upperProtocol > 0xffff:
-            raise TypeError("Upper protocol should be between 0 and 0xffff")
         self.__upperProtocol = upperProtocol
 
     @property

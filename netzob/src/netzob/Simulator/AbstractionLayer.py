@@ -65,7 +65,7 @@ class AbstractionLayer(object):
 
     The AbstractionLayer constructor expects some parameters:
 
-    :param channel: The underlying communication channel (such as IPClient, UDPClient...).
+    :param channel: The underlying communication channel (such as IPChannel, UDPClient...).
     :param symbols: The list of permitted symbols during translation from/to concrete messages.
     :param memory: A memory object use to make persistent specific variables.
     :type channel: :class:`AbstractChannel <netzob.Model.Simuator.Channels.AbstractChannel.AbstractChannel>`, required

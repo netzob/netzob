@@ -60,14 +60,14 @@ from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 
 
 @NetzobLogger
-class RawIPClient(AbstractChannel):
-    """A RawIPClient is a communication channel to send IP
+class RawIPChannel(AbstractChannel):
+    """A RawIPChannel is a communication channel to send IP
     payloads. This **channel** is responsible to build the IP header. It is
-    similar to :class:`IPClient <netzob.Simulator.Channels.IPClient.IPClient>`
-    channel, except that with :class:`IPClient` the OS kernel builds the IP header.
-    Therefore, with RawIPclient, we **can** modify or fuzz the IP header fields.
+    similar to :class:`IPChannel <netzob.Simulator.Channels.IPChannel.IPChannel>`
+    channel, except that with :class:`IPChannel` the OS kernel builds the IP header.
+    Therefore, with RawIPChannel, we **can** modify or fuzz the IP header fields.
 
-    The RawIPClient constructor expects some parameters:
+    The RawIPChannel constructor expects some parameters:
 
     :param remoteIP: The remote IP address to connect to.
     :param localIP: The local IP address. Default value is the local
@@ -84,11 +84,11 @@ class RawIPClient(AbstractChannel):
     :type interface: :class:`str`, optional
 
 
-    The following code shows the use of a :class:`RawIPClient <netzob.Simulator.Channels.RawIPClient.RawIPClient>`
+    The following code shows the use of a :class:`RawIPChannel <netzob.Simulator.Channels.RawIPChannel.RawIPChannel>`
     channel:
 
     >>> from netzob.all import *
-    >>> client = RawIPClient(remoteIP='127.0.0.1')
+    >>> client = RawIPChannel(remoteIP='127.0.0.1')
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
@@ -102,7 +102,7 @@ class RawIPClient(AbstractChannel):
                  localIP=None,
                  upperProtocol=socket.IPPROTO_TCP,
                  interface="eth0"):
-        super(RawIPClient, self).__init__(isServer=False)
+        super(RawIPChannel, self).__init__(isServer=False)
         self.remoteIP = remoteIP
         if localIP is None:
             localIP = self.getLocalIP(remoteIP)
@@ -110,14 +110,13 @@ class RawIPClient(AbstractChannel):
         self.upperProtocol = upperProtocol
         self.interface = interface
         self.__socket = None
-        self.type = AbstractChannel.TYPE_RAWIPCLIENT
+        self.type = AbstractChannel.TYPE_RAWIPCHANNEL
 
         # Header initialization
         self.initHeader()
 
     def open(self, timeout=5.):
-        """Open the communication channel. If the channel is a client, it
-        starts to connect to the specified server.
+        """Open the communication channel.
         :param timeout: The default timeout of the channel for opening
                         connection and waiting for a message. Default value
                         is 5.0 seconds. To specify no timeout, None value is
