@@ -208,35 +208,37 @@ class Field(AbstractField):
     which relies on a pseudo IP header for its computation.
 
 
-    **Encoding functions applied on fields**
+    .. ifconfig:: scope in ('netzob')
 
-    Encoding functions represent functions which apply to modify the
-    encoding of a data. The following example shows the use of the
-    :class:`Base64EncodingFunction <netzob.Model.Vocabulary.Functions.EncodingFunctions.Base64EncodingFunction.Base64EncodingFunction>`
-    function to automatically decode base64 strings in the `f1` field:
+       **Encoding functions applied on fields**
 
-    >>> m1 = "hello YWxs"
-    >>> m2 = "hello bXkgbG9yZA=="
-    >>> m3 = "hello d29ybGQ="
-    >>> messages = [RawMessage(m1), RawMessage(m2), RawMessage(m3)]
-    >>> f0 = Field(name="f0", domain=String("hello "))
-    >>> f1 = Field(name="f1", domain=String(nbChars=(0, 20)))
-    >>> s = Symbol(fields=[f0, f1], messages=messages)
-    >>> print(s.str_data())
-    f0       | f1            
-    -------- | --------------
-    'hello ' | 'YWxs'        
-    'hello ' | 'bXkgbG9yZA=='
-    'hello ' | 'd29ybGQ='    
-    -------- | --------------
-    >>> f1.addEncodingFunction(Base64EncodingFunction(encode_data = False))
-    >>> print(s.str_data())
-    f0       | f1       
-    -------- | ---------
-    'hello ' | 'all'    
-    'hello ' | 'my lord'
-    'hello ' | 'world'  
-    -------- | ---------
+       Encoding functions represent functions which apply to modify the
+       encoding of a data. The following example shows the use of the
+       :class:`Base64EncodingFunction <netzob.Model.Vocabulary.Functions.EncodingFunctions.Base64EncodingFunction.Base64EncodingFunction>`
+       function to automatically decode base64 strings in the `f1` field:
+
+       >>> m1 = "hello YWxs"
+       >>> m2 = "hello bXkgbG9yZA=="
+       >>> m3 = "hello d29ybGQ="
+       >>> messages = [RawMessage(m1), RawMessage(m2), RawMessage(m3)]
+       >>> f0 = Field(name="f0", domain=String("hello "))
+       >>> f1 = Field(name="f1", domain=String(nbChars=(0, 20)))
+       >>> s = Symbol(fields=[f0, f1], messages=messages)
+       >>> print(s.str_data())
+       f0       | f1            
+       -------- | --------------
+       'hello ' | 'YWxs'        
+       'hello ' | 'bXkgbG9yZA=='
+       'hello ' | 'd29ybGQ='    
+       -------- | --------------
+       >>> f1.addEncodingFunction(Base64EncodingFunction(encode_data = False))
+       >>> print(s.str_data())
+       f0       | f1       
+       -------- | ---------
+       'hello ' | 'all'    
+       'hello ' | 'my lord'
+       'hello ' | 'world'  
+       -------- | ---------
 
     **Field examples**
 

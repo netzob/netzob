@@ -124,22 +124,25 @@ class Symbol(AbstractField):
     'hello' | ' earth'
     ------- | --------
 
-    **Usage of Symbol for protocol reverse engineering**
 
-    The Symbol class may be used is to do reverse engineering on a
-    list of captured messages of unknown/undocumented protocols:
+    .. ifconfig:: scope in ('netzob')
 
-    >>> from netzob.all import *
-    >>> m1 = RawMessage("hello aaaa")
-    >>> m2 = RawMessage("hello bbbb")
-    >>> symbol = Symbol(messages=[m1, m2])
-    >>> Format.splitStatic(symbol)
-    >>> print(symbol.str_data())
-    Field-0  | Field-1
-    -------- | -------
-    'hello ' | 'aaaa' 
-    'hello ' | 'bbbb' 
-    -------- | -------
+       **Usage of Symbol for protocol reverse engineering**
+
+       The Symbol class may be used is to do reverse engineering on a
+       list of captured messages of unknown/undocumented protocols:
+
+       >>> from netzob.all import *
+       >>> m1 = RawMessage("hello aaaa")
+       >>> m2 = RawMessage("hello bbbb")
+       >>> symbol = Symbol(messages=[m1, m2])
+       >>> Format.splitStatic(symbol)
+       >>> print(symbol.str_data())
+       Field-0  | Field-1
+       -------- | -------
+       'hello ' | 'aaaa' 
+       'hello ' | 'bbbb' 
+       -------- | -------
 
     **Usage of Symbol for traffic generation and parsing**
 
