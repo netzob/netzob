@@ -61,18 +61,32 @@ class Repeat(AbstractVariableNode):
     The Repeat constructor expects some parameters:
 
     :param child: The variable element that will be repeated.
-    :param nbRepeat: The number of repetitions of the element. This value can be a fixed integer, a tuple of integers defining the minimum and maximum of permitted repetitions, a constant from the calling script, a value present in another field, or can be identified by calling a callback function. In the latter case, the callback function should return a boolean telling if the expected number of repetitions is reached.
+    :param nbRepeat: The number of repetitions of the element. This value can be a fixed integer, a tuple of integers defining the minimum and maximum of permitted repetitions, a constant from the calling script, a value present in another field, or can be identified by calling a callback function. In the latter case, the callback function should return a boolean telling if the expected number of repetitions is reached. Those use cases are described below.
     :param delimiter: The delimiter used to separate the repeated element.
     :type child: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
-    :type nbRepeat: a :class:`int` describing the number of
-                    repetitions, or a tuple of :class:`int` describing
-                    the (min, max) of repetitions, required
+    :type nbRepeat: an :class:`int` or a :class:`tuple` of :class:`int` or
+                    a Python variable containing an :class:`int` or a
+                    :class:`AbstractField
+                    <netzob.Model.Vocabulary.AbstractField>` or a
+                    :class:`func` method, optional
     :type delimiter: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
-    :type eof: an :class:`int` or a :class:`tuple` of :class:`int` or
-               a Python variable containing an :class:`int` or a
-               :class:`AbstractField
-               <netzob.Model.Vocabulary.AbstractField>` or a
-               :class:`func` method, optional
+
+    The callback function that can be used in the ``nbRepeat``
+    parameter has the following prototype:
+
+    ``def cbk_nbRepeat(current_nb_repetitions):``
+
+    Where:
+
+    * ``current_nb_repetitions`` an :class:`int` that corresponds to the amount
+      of time the child element has been parsed.
+
+    The callback function is called each time the child element is
+    seen.
+
+    The callback function should return a boolean telling if the
+    expected number of repetitions is reached (True) or not (False).
+
 
     The following example shows a repeat variable where the repeated
     element is an aggregate of String characters:
@@ -240,7 +254,7 @@ class Repeat(AbstractVariableNode):
             newParsingPath.assignDataToVariable(dataToParse.copy(),self.children[0])
             newParsingPaths = [newParsingPath]
 
-            # deal with the case no repetition is accepted
+            # deal with the case where no repetition is accepted
             if nb_repeat == 0:
                 newParsingPath.addResult(self, bitarray())
                 yield newParsingPath
