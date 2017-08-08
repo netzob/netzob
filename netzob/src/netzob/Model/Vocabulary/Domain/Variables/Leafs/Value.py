@@ -74,8 +74,8 @@ class Value(AbstractRelationVariableLeaf):
     :type operation: :class:`Callable <collections.abc.Callable>`, optional
 
 
-    The following examples show how to define a field with a copy of
-    another field value:
+    The following example shows how to define a field with a copy of
+    another field value, in specialization mode:
 
     >>> from netzob.all import *
     >>> f0 = Field(String("abcd"))
@@ -84,23 +84,14 @@ class Value(AbstractRelationVariableLeaf):
     >>> s.specialize()
     b'abcdabcd'
 
+    The following example shows how to define a field with a copy of
+    another field value, in abstraction mode:
+
+    >>> from netzob.all import *
     >>> data = "john;john!"
     >>> f1 = Field(String(nbChars=(2, 8)), name="f1")
     >>> f2 = Field(String(";"), name="f2")
     >>> f3 = Field(Value(f1), name="f3")
-    >>> f4 = Field(String("!"), name="f4")
-    >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-    (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
-
-    The following example shows another way to define a field with a
-    copy of another field value:
-
-    >>> from netzob.all import *
-    >>> data = "john;john!"
-    >>> f3 = Field(String(nbChars=4), name="f3")
-    >>> f1 = Field(Value(f3), name="f1")
-    >>> f2 = Field(String(";"), name="f2")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
@@ -286,3 +277,23 @@ class Value(AbstractRelationVariableLeaf):
         if operation is not None and not callable(operation):
             raise TypeError("Operation must be a function")
         self.__operation = operation
+
+
+    def _test(self):
+        """
+
+        The following example shows how to define a field with a copy of
+        another field value:
+
+        >>> from netzob.all import *
+        >>> data = "john;john!"
+        >>> f3 = Field(String(nbChars=4), name="f3")
+        >>> f1 = Field(Value(f3), name="f1")
+        >>> f2 = Field(String(";"), name="f2")
+        >>> f4 = Field(String("!"), name="f4")
+        >>> s = Symbol(fields=[f1, f2, f3, f4])
+        >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
+        (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
+
+        """
+
