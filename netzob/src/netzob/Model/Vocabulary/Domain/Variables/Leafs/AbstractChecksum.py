@@ -108,7 +108,7 @@ class AbstractChecksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     >>> chksumField.domain = InternetChecksum([headerField, dataField],
     ...                                       dataType=Raw(nbBytes=2))
     >>> s = Symbol(fields = [headerField, dataField])
-    >>> msgs = [RawMessage(s.specialize()) for i in range(1)]
+    >>> msgs = [RawMessage(s.specialize())]
     >>> s.messages = msgs
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print(s.str_data())  # doctest: +ELLIPSIS
