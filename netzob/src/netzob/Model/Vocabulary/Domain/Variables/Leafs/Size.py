@@ -61,11 +61,15 @@ from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 
 @NetzobLogger
 class Size(AbstractRelationVariableLeaf):
-    r"""The Size class is a variable whose content is the size of another field value.
+    r"""The Size class is a variable whose content is the size of other field values.
 
     It is possible to define a field so that its value is equal to the
     size of another field, or group of fields (potentially including
     itself).
+
+    By default, the computed size expresses an amount of bytes. It is
+    possible to change this behavior by using the parameters ``factor``
+    and ``offset``.
 
     The Size constructor expects some parameters:
 
@@ -74,41 +78,58 @@ class Size(AbstractRelationVariableLeaf):
                      represented according to this dataType. If None, default
                      value is Raw(nbBytes=1).
     :param factor: Specify that the initial size value (always
-                       expressed in bits) should be divided by this
-                       factor. For example, to express a size in bytes,
-                       the factor should be 1./8.
-    :param offset: Specify that the final size value
-                       should be shifted according to the offset value.
+                   expressed in bits) should be divided by this
+                   factor. The default value is 1./8. For example, to express a size in bytes,
+                   the factor should be ``1./8``, whereas to express a size in bits, the factor should be ``1.``.
+    :param offset: Specify that an offset value should be added to
+                   the final size value (after applying the factor
+                   parameter). The default value is 0.
     :param name: The name of the Value variable. If None, the name
-                     will be generated.
+                 will be generated.
     :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
-    :type factor: :class:`int`, optional
+    :type factor: :class:`float`, optional
     :type offset: :class:`int`, optional
     :type name: :class:`str`, optional
 
 
     The following example shows how to define a size field with a
-    String dataType:
+    Raw dataType:
 
     >>> from netzob.all import *
-    >>> f0 = Field(String(nbChars=(1,10)))
+    >>> f0 = Field(String(nbChars=10))
     >>> f1 = Field(String(";"))
-    >>> f2 = Field(Size([f0, f1], dataType=String(nbChars=2), factor=1./8, offset=16))
+    >>> f2 = Field(Size([f0], dataType=Raw(nbBytes=1)))
     >>> s  = Symbol(fields=[f0, f1, f2])
+    >>> data = s.specialize()
+    >>> data[-1] == 10
+    True
+
+    The following example shows how to define a size field with a
+    Raw dataType, along with specifying the ``factor`` and ``offset`` parameters.
+
+    >>> from netzob.all import *
+    >>> f0 = Field(String(nbChars=(4,10)))
+    >>> f1 = Field(String(";"))
+    >>> f2 = Field(Size([f0, f1], dataType=Raw(nbBytes=1), factor=1./8, offset=4))
+    >>> s  = Symbol(fields=[f0, f1, f2])
+    >>> data = s.specialize()
+    >>> data[-1] > (4*8*1./8 + 4) # == 4 bytes minimum * 8 bits * a factor of 1./8 + an offset of 4
+    True
 
     In this example, the field *f2* is a size field where its value is
     equal to the size of the concatenated values of fields *f0* and
     *f1*. The *dataType* parameter specifies that the produced value
-    should be represented as a string. The *factor* parameter
+    should be represented as a ``Raw``. The *factor* parameter
     specifies that the initial size value (always expressed in bits)
     should be divided by 8 (in order to retrieve the amount of
     bytes). The *offset* parameter specifies that the final size value
-    should be computed minus 16 bytes.
+    should be computed by adding 4 bytes.
 
     The following example shows how to define a size field so that its
     value depends on a list of non-consecutive fields:
 
+    >>> from netzob.all import *
     >>> f1 = Field(String("="))
     >>> f2 = Field(String("#"))
     >>> f4 = Field(String("%"))
@@ -118,8 +139,11 @@ class Size(AbstractRelationVariableLeaf):
     >>> print(repr(s.specialize()))
     b'=#\x04%_'
 
-    In the following example, a size field is declared after its field.
+    In the following example, a size field is declared after its
+    targeted field. This shows that the field order does not impact
+    the relationship computations.
 
+    >>> from netzob.all import *
     >>> f0 = Field(String(nbChars=(1,10)), name='f0')
     >>> f1 = Field(String(";"), name='f1')
     >>> f2 = Field(Size(f0), name='f2')
@@ -129,30 +153,41 @@ class Size(AbstractRelationVariableLeaf):
     (Symbol, OrderedDict([('f0', b'john'), ('f1', b';'), ('f2', b'\x04')]))
 
     In the following example, a size field is declared after its
-    targeted field. A message that does not correspond to the expected
-    model is then parsed, thus the returned symbol is unknown:
+    targeted field, and a message that does not correspond to the
+    expected model is then parsed. As the data does not match the
+    expected symbol, the returned symbol is unknown:
 
+    >>> from netzob.all import *
+    >>> f0 = Field(String(nbChars=(1,10)), name='f0')
+    >>> f1 = Field(String(";"), name='f1')
+    >>> f2 = Field(Size(f0), name='f2')
+    >>> s  = Symbol(fields=[f0, f1, f2])
     >>> data = b"john;\x03"
     >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
     (Unknown Symbol b'john;\x03', OrderedDict())
 
-
     In the following example, a size field is declared before the
     targeted field:
 
+    >>> from netzob.all import *
     >>> f2 = Field(String(nbChars=(1,10)), name="f2")
     >>> f1 = Field(String(";"), name="f1", )
     >>> f0 = Field(Size(f2), name="f0")
     >>> s  = Symbol(fields=[f0, f1, f2])
-
     >>> data = b"\x04;john"
     >>> Symbol.abstract(data, [s])
     (Symbol, OrderedDict([('f0', b'\x04'), ('f1', b';'), ('f2', b'john')]))
 
     In the following example, a size field is declared before its
-    targeted field. A message that does not correspond to the expected model is
-    then parsed, thus the returned symbol is unknown:
+    targeted field, and a message that does not correspond to the
+    expected model is then parsed. As the data does not match the
+    expected symbol, the returned symbol is unknown:
 
+    >>> from netzob.all import *
+    >>> f2 = Field(String(nbChars=(1,10)), name="f2")
+    >>> f1 = Field(String(";"), name="f1", )
+    >>> f0 = Field(Size(f2), name="f0")
+    >>> s  = Symbol(fields=[f0, f1, f2])
     >>> data = b"\x03;john"
     >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
     (Unknown Symbol b'\x03;john', OrderedDict())
@@ -163,6 +198,7 @@ class Size(AbstractRelationVariableLeaf):
     The following examples show the specialization process of a Size
     field whose targets are both fields and variables:
 
+    >>> from netzob.all import *
     >>> d = Data(String(nbChars=20))
     >>> f0 = Field(domain=d)
     >>> f1 = Field(String(";"))
@@ -172,6 +208,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> b'\x15' in res
     True
 
+    >>> from netzob.all import *
     >>> d = Data(String(nbChars=20))
     >>> f2 = Field(domain=d)
     >>> f1 = Field(String(";"))
@@ -187,6 +224,7 @@ class Size(AbstractRelationVariableLeaf):
     The following examples show the specialization process of a Size
     field:
 
+    >>> from netzob.all import *
     >>> f0 = Field(String(nbChars=20))
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size(f0))
@@ -195,6 +233,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> b'\x14' in res
     True
 
+    >>> from netzob.all import *
     >>> f0 = Field(String("CMDauthentify"), name="f0")
     >>> f1 = Field(String('#'), name="sep")
     >>> f2 = Field(name="f2")
@@ -212,6 +251,7 @@ class Size(AbstractRelationVariableLeaf):
     The following example shows a real example with an IP header with
     two Size fields:
 
+    >>> from netzob.all import *
     >>> # Fields
     >>> ip_ver      = Field(name='Version', domain=BitArray(value=bitarray('0100')))
     >>> ip_ihl      = Field(name='Header length', domain=BitArray(bitarray('0000')))
