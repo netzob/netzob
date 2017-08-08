@@ -128,9 +128,9 @@ class Actor(threading.Thread):
     communication meaning she sends the input symbols while Bob
     answers with the output symbols of the grammar. The grammar is
     very simple, and different for each actor. We first open the
-    channel, and allow Alice to send random time ``"alice> hello"``. Bob
-    answers every time ``"bob> hello"``. It's Alice who decides to stop the
-    communication.
+    channel, and allow Alice to send the data ``"alice> hello"``
+    multiple times. Bob answers every time with the data ``"bob>
+    hello"``. It is Alice who decides to stop the communication.
 
     >>> from netzob.all import *
     >>> import time
