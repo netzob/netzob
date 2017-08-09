@@ -83,8 +83,8 @@ class Symbol(AbstractField):
     :var name: The name of the symbol.
     :var description: The description of the symbol.
     :var fields: The sorted list of sub-fields.
-    :vartype name: str
-    :vartype description: str
+    :vartype name: :class:`str`
+    :vartype description: :class:`str`
     :vartype fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`
 
 

@@ -70,9 +70,9 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         """This is a computation method that takes a :attr:`data` and returns
         its hash value.
 
-        :param data: input data on which to compute the hash relationship
+        :param data: The input data on which to compute the hash relationship.
         :type data: :class:`bytes`
-        :return: the hash value
+        :return: The hash value.
         :rtype: :class:`bytes`
 
         """
@@ -82,7 +82,7 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         """This method should return the unit size in bits of the produced
         hash (such as ``160`` bits).
 
-        :return: the output unit size in bits
+        :return: The output unit size in bits.
         :type: :class:`int`
 
         """

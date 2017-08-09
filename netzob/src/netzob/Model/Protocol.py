@@ -67,7 +67,7 @@ class Protocol(object):
     :var name: The name of the protocol.
     :var symbols: The defined symbols for the protocol.
     :var automata: The automaton defined for the protocol.
-    :vartype name: str
+    :vartype name: :class:`str`
     :vartype symbols: a :class:`dict` where keys are symbol names and values are :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
     :vartype automata: an :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
 

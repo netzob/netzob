@@ -92,12 +92,12 @@ class Field(AbstractField):
                         internally to help for the computation
                         of the value of another field, but does
                         not directly produce data.
-    :vartype name: str
-    :vartype description: str
+    :vartype name: :class:`str`
+    :vartype description: :class:`str`
     :vartype domain: a :class:`list` of :class:`object`
     :vartype fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`
     :vartype parent: :class:`Field <netzob.Model.Vocabulary.Field.Field>` or :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-    :vartype isPseudoField: bool
+    :vartype isPseudoField: :class:`bool`
 
 
     **Fields hierarchy**

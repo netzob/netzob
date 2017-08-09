@@ -71,9 +71,9 @@ class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         """This is a computation method that takes a :attr:`data` and returns
         its HMAC value.
 
-        :param data: input data on which to compute the HMAC relationship
+        :param data: The input data on which to compute the HMAC relationship.
         :type data: :class:`bytes`
-        :return: the HMAC value
+        :return: The HMAC value.
         :rtype: :class:`bytes`
 
         """
@@ -83,7 +83,7 @@ class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         """This method should return the unit size in bits of the produced
         HMAC (such as ``160`` bits).
 
-        :return: the output unit size in bits
+        :return: The output unit size in bits.
         :type: :class:`int`
 
         """

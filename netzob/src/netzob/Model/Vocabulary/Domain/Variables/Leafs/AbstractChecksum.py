@@ -71,9 +71,9 @@ class AbstractChecksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         """This is a computation method that takes a :attr:`data` and returns
         its checksum value.
 
-        :param data: input data on which to compute the checksum relationship
+        :param data: The input data on which to compute the checksum relationship.
         :type data: :class:`bytes`
-        :return: the checksum value
+        :return: The checksum value.
         :rtype: :class:`bytes`
 
         """
@@ -83,7 +83,7 @@ class AbstractChecksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         """This method should return the unit size in bits of the produced
         checksum (such as ``16`` bits or ``UnitSize.SIZE_16.value``).
 
-        :return: the output unit size in bits
+        :return: The output unit size in bits.
         :type: :class:`int`
 
         """
