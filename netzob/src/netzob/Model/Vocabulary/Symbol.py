@@ -63,7 +63,7 @@ class Symbol(AbstractField):
     The Symbol constructor expects some parameters:
 
     :param fields: The fields that participate in the symbol
-                   definition. May be ``None`` (thus, a generic :class:`Field <netzob.Model.Vocabulary.Field.Field>`
+                   definition, in the wire order. May be ``None`` (thus, a generic :class:`Field <netzob.Model.Vocabulary.Field.Field>`
                    instance would be defined), especially when using Symbols
                    for reverse engineering (i.e. fields identification).
     :param messages: The messages that are associated with the
@@ -106,23 +106,26 @@ class Symbol(AbstractField):
     |--  Field
          |--   Data (String=bbbbbb ((None, None)))
 
-    **Usage of Symbol for protocol dissecting**
 
-    The Symbol class may be used to dissect a list of messages
-    according to the fields structure:
+    .. ifconfig:: scope in ('netzob')
 
-    >>> from netzob.all import *
-    >>> f0 = Field("hello", name="f0")
-    >>> f1 = Field(String(nbChars=(0, 10)), name="f1")
-    >>> m1 = RawMessage("hello world")
-    >>> m2 = RawMessage("hello earth")
-    >>> symbol = Symbol(fields=[f0, f1], messages=[m1, m2])
-    >>> print(symbol.str_data())
-    f0      | f1      
-    ------- | --------
-    'hello' | ' world'
-    'hello' | ' earth'
-    ------- | --------
+       **Usage of Symbol for protocol dissecting**
+
+       The Symbol class may be used to dissect a list of messages
+       according to the fields structure:
+
+       >>> from netzob.all import *
+       >>> f0 = Field("hello", name="f0")
+       >>> f1 = Field(String(nbChars=(0, 10)), name="f1")
+       >>> m1 = RawMessage("hello world")
+       >>> m2 = RawMessage("hello earth")
+       >>> symbol = Symbol(fields=[f0, f1], messages=[m1, m2])
+       >>> print(symbol.str_data())
+       f0      | f1      
+       ------- | --------
+       'hello' | ' world'
+       'hello' | ' earth'
+       ------- | --------
 
 
     .. ifconfig:: scope in ('netzob')
@@ -200,7 +203,7 @@ class Symbol(AbstractField):
     @typeCheck(Memory, object)
     def specialize(self, presets=None, fuzz=None, memory=None):
         r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose
-        content follows the field or symbol definition.
+        content follows the symbol definition.
 
         The specialize() method expects some parameters:
 
@@ -221,10 +224,14 @@ class Symbol(AbstractField):
                      for a complete explanation of its use for fuzzing
                      purpose.
         :param memory: A memory used to store variable values during
-                       specialization and abstraction of sequence of symbols.
-        :type presets: :class:`dict`
-        :type fuzz: :class:`dict`
-        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
+                       specialization and abstraction of successive
+                       symbols, especially to handle inter-symbol
+                       relationships. If None, a temporary memory is
+                       used internally during the scope of the
+                       specialization process.
+        :type presets: :class:`dict`, optional
+        :type fuzz: :class:`dict`, optional
+        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`, optional
 
         The following example shows the :meth:`specialize()` method used for a
         field which contains a String and a Size fields.
@@ -260,7 +267,7 @@ class Symbol(AbstractField):
         the type of the overridden field variable.
 
         The following code shows the definition of a simplified UDP
-        header that will be latter used as base example. This UDP
+        header that will be later used as base example. This UDP
         header is made of one named field containing a destination
         port, and a named field containing a payload:
 
@@ -371,14 +378,14 @@ class Symbol(AbstractField):
                      :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`
                      for a complete explanation of its use for fuzzing
                      purpose.
-        :type presets: :class:`dict`
-        :type fuzz: :class:`dict`
+        :type presets: :class:`dict`, optional
+        :type fuzz: :class:`dict`, optional
 
         >>> # Symbol definition
         >>> from netzob.all import *
-        >>> f1 = Field(uint16be(interval=(50, 1000)))
-        >>> f2 = Field(uint8be())
-        >>> f3 = Field(uint8be())
+        >>> f1 = Field(uint16(interval=(50, 1000)))
+        >>> f2 = Field(uint8())
+        >>> f3 = Field(uint8())
         >>> symbol = Symbol(fields=[f1, f2, f3])
         >>>
         >>> # Specify the preset fields
