@@ -63,7 +63,7 @@ class Alt(AbstractVariableNode):
     :param children: The set of variable elements permitted in the
                      alternative.
     :param svas: The SVAS strategy defining how the Alternate
-                     behaves during abstraction and specialization.
+                 behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type children: a :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type svas: :class:`str`, optional
 
@@ -112,19 +112,6 @@ class Alt(AbstractVariableNode):
     >>> data = "nothing"
     >>> Symbol.abstract(data, [s])
     (Unknown Symbol 'nothing', OrderedDict())
-
-    That is another simple example that also illustrates rollback mechanisms
-
-    >>> from netzob.all import *
-    >>> m1 = RawMessage("220044")
-    >>> f1 = Field("22", name="f1")
-    >>> f2 = Field(Alt(["00", "0044", "0", "004"]), name="f2")
-    >>> s = Symbol([f1, f2], messages=[m1], name="S0")
-    >>> print(s.str_data())
-    f1   | f2    
-    ---- | ------
-    '22' | '0044'
-    ---- | ------
 
     """
 
@@ -221,3 +208,20 @@ class Alt(AbstractVariableNode):
         # lets shuffle this ( :) ) >>> by default we only consider the first valid parsing path.
         random.shuffle(specializingPaths)
         return specializingPaths
+
+    def _test(self):
+        """
+        Here is an example with an Alt variable:
+
+        >>> from netzob.all import *
+        >>> m1 = RawMessage("220044")
+        >>> f1 = Field("22", name="f1")
+        >>> f2 = Field(Alt(["00", "0044", "0", "004"]), name="f2")
+        >>> s = Symbol([f1, f2], messages=[m1], name="S0")
+        >>> print(s.str_data())
+        f1   | f2    
+        ---- | ------
+        '22' | '0044'
+        ---- | ------
+
+        """    
