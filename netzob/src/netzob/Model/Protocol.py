@@ -57,7 +57,7 @@ class Protocol(object):
     The Protocol constructor expects some parameters:
 
     :param name: The name of the protocol.
-    :param path_zdl: The path contains the .zdl file of the format messages and the automaton.
+    :param path_zdl: The path contains the .zdl files of the format messages and the automaton.
     :type name: an :class:`str`, required
     :type path_zdl: an :class:`str`, optional
 
@@ -77,11 +77,11 @@ class Protocol(object):
 
     * The .zdl file for the format messages should be named
       ``{PROTOCOL_NAME}_format.zdl``, and should contain a variable
-      named ``symbols`` that contains a list of :class:`Symbol
+      named :attr:`symbols` that contains a :class:`list` of :class:`Symbol
       <netzob.Model.Vocabulary.Symbol.Symbol>`.
     * The .zdl file for the automaton should be named
       ``{PROTOCOL_NAME}_automata.zdl``, and should export a variable
-      named automata that contains an :class:`Automata
+      named :attr:`automata` that contains an :class:`Automata
       <netzob.Model.Grammar.Automata.Automata>`.
 
     The following code describes the instantiation of a new Protocol,
@@ -92,15 +92,14 @@ class Protocol(object):
     'ICMP'
 
     The following code describes the instantiation of a new Protocol
-    with provided protocol definition in .zdl files:
+    with provided protocol definition in .zdl files. The automaton is
+    retrieved and rendered with a ``dot`` syntax.
 
     >>> udp = Protocol("UDP", path_zdl="test/resources/files/UDP_example/")
     >>> udp.name
     'UDP'
-
     >>> udp.symbols
     {'udp': udp}
-
     >>> dot_code = udp.automata.generateDotCode()
     >>> print(dot_code)  # doctest: +ELLIPSIS
     digraph G {
@@ -109,8 +108,8 @@ class Protocol(object):
     "Initial state" -> "Channel opened" [fontsize=5, label="OpenChannelTransition", URL="..."];
     }
 
-    For visualization purpose, the following lines would generate
-    a PNG file with the dot representation of the automaton::
+    For visualization purposes, the following lines would generate
+    a PNG file with the ``dot`` representation of the automaton::
 
       fd = open("/tmp/dotcode.dot", "w")
       fd.write(dotCode)
