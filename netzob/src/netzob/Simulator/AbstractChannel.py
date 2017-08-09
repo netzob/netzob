@@ -61,45 +61,194 @@ class ChannelDownException(Exception):
     pass
 
 
-class AbstractChannel(object, metaclass=abc.ABCMeta):
-    """The AbstractChannel is the parent class of all communication channels.
+class ChannelInterface(object, metaclass=abc.ABCMeta):
+    """The AbstractChannel interface specifies the methods to implement in
+    order to create a new communication channel.
 
-    The AbstractChannel exposes an interface that should be
-    implemented by channel classes that inherit from it.
+    The following methods have to be implemented:
 
-    The AbstractChannel constructor expects some parameters:
-
-    :param isServer: This flag indicates if the channel is a server or not.
-    :param _id: The unique identifier of the channel.
-    :type isServer: :class:`bool`, required
-    :type _id: :class:`uuid.UUID`, optional
-    :raise: TypeError if parameters are not valid
+    * :meth:`open`
+    * :meth:`close`
+    * :meth:`read`
+    * :meth:`writePacket`
+    * :meth:`sendReceive`
 
     """
 
-    TYPE_UNDEFINED = 0
-    TYPE_RAWIPCHANNEL = 1
-    TYPE_IPCHANNEL = 2
-    TYPE_RAWETHERNETCHANNEL = 3
-    TYPE_SSLCLIENT = 4
-    TYPE_TCPCLIENT = 5
-    TYPE_TCPSERVER = 6
-    TYPE_UDPCLIENT = 7
-    TYPE_UDPSERVER = 8
+
+    ## Class internal attributes ##
 
     DEFAULT_WRITE_COUNTER_MAX = -1
-
     DEFAULT_TIMEOUT = 5.
 
-    def __init__(self,
-                 isServer,
-                 _id=None):
-        self.isServer = isServer
+
+    ## Interface methods ##
+
+    @abc.abstractmethod
+    def open(self, timeout=DEFAULT_TIMEOUT):
+        """Open the communication channel. If the channel is a server, it
+        starts to listen for incoming data.
+
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is 5.0 seconds. To specify no timeout, None value is
+                        expected.
+        :type timeout: :class:`float`, optional
+
+        """
+        if self.isOpen:
+            raise RuntimeError(
+                "The channel is already open, cannot open it again")
+        self.timeout = timeout
+
+    @abc.abstractmethod
+    def close(self):
+        """Close the communication channel."""
+
+    @abc.abstractmethod
+    def read(self):
+        """Read the next message from the communication channel.
+
+        :return: The received data.
+        :rtype: :class:`bytes`
+
+        """
+
+    @abc.abstractmethod
+    def writePacket(self, data):
+        """Write on the communication channel the specified data.
+
+        :param data: The data to write on the channel.
+        :type data: :class:`bytes`
+        """
+
+    @abc.abstractmethod
+    def sendReceive(self, data):
+        """Write on the communication channel the specified data, wait for a
+        response and return the received data.
+
+        :param data: The data to write on the channel.
+        :type data: :class:`bytes`
+        :return: The received data.
+        :rtype: :class:`bytes`
+
+        """
+
+
+class AbstractChannel(ChannelInterface):
+    """A communication channel is an element allowing to establish a
+    connection to or from a remote device.
+
+    The AbstractChannel defines the API of a communication channel.
+
+    A communication channel provides the following public variables:
+
+    :var isOpen: The status of the communication channel.
+    :var timeout: The default timeout in seconds for opening a connection and
+                  waiting for a message.
+    :var header: A Symbol that permits to access to the protocol header.
+    :var header_presets: A dictionary of keys:values used to preset
+                        (parameterize) the header fields during symbol
+                        specialization. See :meth:`Symbol.specialize <netzob.Model.Vocabulary.Symbol.Symbol.specialize>` for more information.
+    :vartype isOpen: :class:`bool`
+    :vartype timeout: :class:`int`
+    :vartype header: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+    :vartype header_presets: :class:`dict`, optional
+
+    """
+
+    ## Public API methods ##
+
+    def setSendLimit(self, maxValue):
+        """Change the max number of writings.
+
+        When it is reached, no packet can be sent anymore until
+        :meth:`clearSendLimit` is called.
+
+        If maxValue is -1, the sending limit is deactivated.
+
+        :param maxValue: the new max value
+        :type maxValue: :class:`int`
+        """
+        self.writeCounterMax = maxValue
+
+    def clearSendLimit(self):
+        """Reset the writing counters.
+        """
+        self.writeCounter = 0
+        self.writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
+
+    def write(self, data, rate=None, duration=None):
+        """Write to the communication channel the specified data.
+
+        :param data: The data to write on the channel.
+        :param rate: This specifies the bandwidth in octets to respect during
+                     traffic emission (should be used with duration= parameter).
+        :param duration: This tells how much seconds the symbol is continuously
+                         written on the channel.
+        :type data: :class:`bytes`, required
+        :type rate: :class:`int`, optional
+        :type duration: :class:`int`, optional
+        :return: The amount of written data, in bytes.
+        :rtype: :class:`int`
+        """
+
+        if ((self.writeCounterMax > 0) and
+           (self.writeCounter > self.writeCounterMax)):
+            raise Exception("Max write counter reached ({})"
+                            .format(self.writeCounterMax))
+
+        rate_text = "unlimited"
+        rate_unlimited = True
+        if type(rate) is int and rate > 0:
+            rate_text = "{} ko/s".format(round(rate / 1024, 2))
+            rate_unlimited = False
+
+        self.writeCounter += 1
+        len_data = 0
+        if duration is None:
+            len_data = self.writePacket(data)
+        else:
+
+            t_start = time.time()
+            t_elapsed = 0
+            t_delta = 0
+            while True:
+
+                t_elapsed = time.time() - t_start
+                if t_elapsed > duration:
+                    break
+
+                # Specialize the symbol and send it over the channel
+                len_data += self.writePacket(data)
+
+                while True:
+                    t_tmp = t_elapsed
+                    t_elapsed = time.time() - t_start
+                    t_delta += t_elapsed - t_tmp
+
+                    if not rate_unlimited and (len_data / t_elapsed) > rate:
+                        time.sleep(0.001)
+                    else:
+                        break
+
+                # Show some log every seconds
+                if t_delta > 1:
+                    t_delta = 0
+                    self._logger.debug("Rate rule: {}, current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(rate_text,
+                                                                                                                               round((len_data / t_elapsed) / 1024, 2),
+                                                                                                                               round(len_data / 1024, 2),
+                                                                                                                               round(t_elapsed, 2)))
+        return len_data
+
+
+    ## Internal methods ##
+
+    def __init__(self, _id=None):
         self.id = uuid.uuid4() if _id is None else _id
         self._isOpened = False
-        self.type = AbstractChannel.TYPE_UNDEFINED
-        self.header = None  # The IP header symbol format
-        self.header_presets = {}  # Dict used to parameterize IP header fields
+        self.header = None  # A Symbol corresponding to the protocol header
+        self.header_presets = {}  # A dict used to parameterize the header Symbol
         self.writeCounter = 0
         self.writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 
@@ -113,6 +262,69 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         """Exit the runtime channel context.
         """
         self.close()
+
+
+    ## Properties ##
+
+    @property
+    def isOpen(self):
+        """
+        Property (getter/setter).
+        Returns ``True`` if the communication channel is open.
+
+        :return: The status of the communication channel.
+        :type: :class:`bool`
+        """
+        return self._isOpened
+
+    @isOpen.setter
+    @typeCheck(bool)
+    def isOpen(self, isOpen):
+        self._isOpened = isOpen
+
+    @property
+    def id(self):
+        """
+        Property (getter/setter).
+        The unique identifier of the channel.
+
+        :type: :class:`uuid.UUID`
+        """
+        return self.__id
+
+    @id.setter
+    @typeCheck(uuid.UUID)
+    def id(self, _id):
+        if _id is None:
+            raise TypeError("ID cannot be None")
+        self.__id = _id
+
+    @property
+    def timeout(self):
+        """The default timeout of the channel for opening connection and
+        waiting for a message. Default value is DEFAULT_TIMEOUT seconds
+        (float). To specify no timeout, None value is expected.
+
+        :rtype: :class:`float` or None
+        """
+        return self.__timeout
+
+    @timeout.setter
+    @typeCheck((int, float))
+    def timeout(self, timeout):
+        """
+        :type timeout: :class:`float`, optional
+        """
+        self.__timeout = float(timeout)
+
+
+## Utilitary methods ##
+
+class NetUtils(object):
+    """A utilitary class that provides static methods to handle network
+    address and interface resolutions.
+
+    """
 
     @staticmethod
     def getRemoteMacAddress(remoteIP):
@@ -200,210 +412,3 @@ class AbstractChannel(object, metaclass=abc.ABCMeta):
         s.close()
         return localIPAddress
 
-    # OPEN, CLOSE, READ and WRITE methods
-
-    @abc.abstractmethod
-    def open(self, timeout=DEFAULT_TIMEOUT):
-        """Open the communication channel. If the channel is a server, it starts
-        to listen and will create an instance for each different client.
-
-        :param timeout: The default timeout of the channel for opening
-                        connection and waiting for a message. Default value
-                        is 5.0 seconds. To specify no timeout, None value is
-                        expected.
-        :type timeout: :class:`float`, optional
-        """
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again")
-        self.timeout = timeout
-
-    @abc.abstractmethod
-    def close(self):
-        """Close the communication channel."""
-
-    @abc.abstractmethod
-    def read(self):
-        """Read the next message from the communication channel.
-        """
-
-    def setSendLimit(self, maxValue):
-        """Change the max number of writings.
-        When it is reached, no packet can be sent anymore until
-        :meth:`clearSendLimit` is called.
-        If maxValue is -1, the sending limit is deactivated.
-
-        :param maxValue: the new max value
-        :type maxValue: :class:`int`
-        """
-        self.writeCounterMax = maxValue
-
-    def clearSendLimit(self):
-        """Reset the writing counters.
-        """
-        self.writeCounter = 0
-        self.writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
-
-    def write(self, data, rate=None, duration=None):
-        """Write to the communication channel the specified data.
-
-        :param data: The data to write on the channel.
-        :param rate: This specifies the bandwidth in octets to respect during
-                     traffic emission (should be used with duration= parameter).
-        :param duration: This tells how much seconds the symbol is continuously
-                         written on the channel.
-        :type data: :class:`bytes`, required
-        :type rate: :class:`int`, optional
-        :type duration: :class:`int`, optional
-        :return: The amount of written data, in bytes.
-        :rtype: :class:`int`
-        """
-
-        if ((self.writeCounterMax > 0) and
-           (self.writeCounter > self.writeCounterMax)):
-            raise Exception("Max write counter reached ({})"
-                            .format(self.writeCounterMax))
-
-        rate_text = "unlimited"
-        rate_unlimited = True
-        if type(rate) is int and rate > 0:
-            rate_text = "{} ko/s".format(round(rate / 1024, 2))
-            rate_unlimited = False
-
-        self.writeCounter += 1
-        len_data = 0
-        if duration is None:
-            len_data = self.writePacket(data)
-        else:
-
-            t_start = time.time()
-            t_elapsed = 0
-            t_delta = 0
-            while True:
-
-                t_elapsed = time.time() - t_start
-                if t_elapsed > duration:
-                    break
-
-                # Specialize the symbol and send it over the channel
-                len_data += self.writePacket(data)
-
-                while True:
-                    t_tmp = t_elapsed
-                    t_elapsed = time.time() - t_start
-                    t_delta += t_elapsed - t_tmp
-
-                    if not rate_unlimited and (len_data / t_elapsed) > rate:
-                        time.sleep(0.001)
-                    else:
-                        break
-
-                # Show some log every seconds
-                if t_delta > 1:
-                    t_delta = 0
-                    self._logger.debug("Rate rule: {}, current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(rate_text,
-                                                                                                                               round((len_data / t_elapsed) / 1024, 2),
-                                                                                                                               round(len_data / 1024, 2),
-                                                                                                                               round(t_elapsed, 2)))
-        return len_data
-
-    @abc.abstractmethod
-    def writePacket(self, data):
-        """Write on the communication channel the specified data.
-
-        :param data: the data to write on the channel
-        :type data: :class:`bytes`
-        """
-
-    @abc.abstractmethod
-    def sendReceive(self, data):
-        """Write to the communication channel the specified data and return
-        the corresponding response.
-
-        :param data: the data to write on the channel
-        :type data: :class:`bytes`
-        """
-
-    # Management methods
-
-    @property
-    def isOpen(self):
-        """
-        Property (getter/setter).
-        Returns if the communication channel is open.
-
-        :return: the status of the communication channel
-        :type: :class:`bool`
-        """
-        return self._isOpened
-
-    @isOpen.setter
-    @typeCheck(bool)
-    def isOpen(self, isOpen):
-        self._isOpened = isOpen
-
-    # Properties
-
-    @property
-    def channelType(self):
-        """
-        Property (getter).
-        Returns if the communication channel type.
-
-        :return: the type of the communication channel
-        :type: :class:`int`
-        """
-        return self.type
-
-    @property
-    def isServer(self):
-        """
-        Property (getter/setter).
-        :meth:`isServer` indicates if this side of the channel plays the role
-        of a server.
-
-        :type: :class:`bool`
-        """
-        return self.__isServer
-
-    @isServer.setter
-    @typeCheck(bool)
-    def isServer(self, isServer):
-        if isServer is None:
-            raise TypeError("IsServer cannot be None")
-        self.__isServer = isServer
-
-    @property
-    def id(self):
-        """
-        Property (getter/setter).
-        The unique identifier of the channel.
-
-        :type: :class:`uuid.UUID`
-        """
-        return self.__id
-
-    @id.setter
-    @typeCheck(uuid.UUID)
-    def id(self, _id):
-        if _id is None:
-            raise TypeError("ID cannot be None")
-        self.__id = _id
-
-    @property
-    def timeout(self):
-        """The default timeout of the channel for opening connection and
-        waiting for a message. Default value is DEFAULT_TIMEOUT seconds
-        (float). To specify no timeout, None value is expected.
-
-        :rtype: :class:`float` or None
-        """
-        return self.__timeout
-
-    @timeout.setter
-    @typeCheck((int, float))
-    def timeout(self, timeout):
-        """
-        :type timeout: :class:`float`, optional
-        """
-        self.__timeout = float(timeout)

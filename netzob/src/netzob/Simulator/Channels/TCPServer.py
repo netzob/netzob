@@ -101,10 +101,9 @@ class TCPServer(AbstractChannel):
     """
 
     def __init__(self, localIP, localPort):
-        super(TCPServer, self).__init__(isServer=True)
+        super(TCPServer, self).__init__()
         self.localIP = localIP
         self.localPort = localPort
-        self.type = AbstractChannel.TYPE_TCPSERVER
         self.__socket = None
         self.__clientSocket = None
 

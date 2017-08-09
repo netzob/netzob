@@ -104,10 +104,9 @@ class UDPServer(AbstractChannel):
 
     @typeCheck(str, int)
     def __init__(self, localIP, localPort):
-        super(UDPServer, self).__init__(isServer=False)
+        super(UDPServer, self).__init__()
         self.localIP = localIP
         self.localPort = localPort
-        self.type = AbstractChannel.TYPE_UDPSERVER
         self.__socket = None
         self.__remoteAddr = None
 

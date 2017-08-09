@@ -94,23 +94,24 @@ class IPChannel(AbstractChannel):
                  localIP=None,
                  upperProtocol=socket.IPPROTO_TCP,
                  interface="eth0"):
-        super(IPChannel, self).__init__(isServer=False)
+        super(IPChannel, self).__init__()
         self.remoteIP = remoteIP
         self.localIP = localIP
         self.upperProtocol = upperProtocol
         self.interface = interface
-        self.type = AbstractChannel.TYPE_IPCHANNEL
         self.__socket = None
 
     def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
+
         :param timeout: The default timeout of the channel for opening
                         connection and waiting for a message. Default value
                         is 5.0 seconds. To specify no timeout, None value is
                         expected.
         :type timeout: :class:`float`, optional
         :raise: RuntimeError if the channel is already opened
+
         """
 
         super().open(timeout=timeout)

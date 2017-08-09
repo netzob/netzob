@@ -45,7 +45,7 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Simulator.AbstractChannel import AbstractChannel
+from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
@@ -102,15 +102,14 @@ class RawIPChannel(AbstractChannel):
                  localIP=None,
                  upperProtocol=socket.IPPROTO_TCP,
                  interface="eth0"):
-        super(RawIPChannel, self).__init__(isServer=False)
+        super(RawIPChannel, self).__init__()
         self.remoteIP = remoteIP
         if localIP is None:
-            localIP = self.getLocalIP(remoteIP)
+            localIP = NetUtils.getLocalIP(remoteIP)
         self.localIP = localIP
         self.upperProtocol = upperProtocol
         self.interface = interface
         self.__socket = None
-        self.type = AbstractChannel.TYPE_RAWIPCHANNEL
 
         # Header initialization
         self.initHeader()

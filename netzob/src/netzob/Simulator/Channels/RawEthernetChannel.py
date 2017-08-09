@@ -55,9 +55,9 @@ from netzob.Model.Vocabulary.Types.Integer import uint16be
 
 @NetzobLogger
 class RawEthernetChannel(AbstractChannel):
-    r"""A RawEthernetChannel is a communication channel to send
-    Ethernet frames. This channel is responsible for building the
-    Ethernet layer.
+    r"""A RawEthernetChannel is a communication channel to send Ethernet
+    frames. This channel is responsible for building the Ethernet
+    layer.
 
     The RawEthernetChannel constructor expects some parameters:
 
@@ -74,7 +74,6 @@ class RawEthernetChannel(AbstractChannel):
     :type interface: :class:`str`, optional
 
     >>> from binascii import hexlify
-
     >>> client = RawEthernetChannel("00:01:02:03:04:05", localMac="00:06:07:08:09:10")
     >>> client.open()
     >>> symbol = Symbol([Field("ABC")])
@@ -92,12 +91,11 @@ class RawEthernetChannel(AbstractChannel):
                  localMac,
                  upperProtocol=0x0800,
                  interface="lo"):
-        super(RawEthernetChannel, self).__init__(isServer=False)
+        super(RawEthernetChannel, self).__init__()
         self.remoteMac = remoteMac
         self.localMac = localMac
         self.upperProtocol = upperProtocol
         self.interface = interface
-        self.type = AbstractChannel.TYPE_RAWETHERNETCHANNEL
         self.__socket = None
 
         self.initHeader()
@@ -115,12 +113,14 @@ class RawEthernetChannel(AbstractChannel):
     def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
+
         :param timeout: The default timeout of the channel for opening
                         connection and waiting for a message. Default value
                         is 5.0 seconds. To specify no timeout, None value is
                         expected.
         :type timeout: :class:`float`, optional
         :raise: RuntimeError if the channel is already opened
+
         """
 
         super().open(timeout=timeout)

@@ -94,12 +94,11 @@ class SSLClient(AbstractChannel):
                  localPort=None,
                  server_cert_file=None,
                  alpn_protocols=None):
-        super(SSLClient, self).__init__(isServer=False)
+        super(SSLClient, self).__init__()
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
-        self.type = AbstractChannel.TYPE_SSLCLIENT
         self.__socket = None
         self.__ssl_socket = None
         self.server_cert_file = server_cert_file

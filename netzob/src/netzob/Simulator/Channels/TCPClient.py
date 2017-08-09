@@ -107,12 +107,11 @@ class TCPClient(AbstractChannel):
                  remotePort,
                  localIP=None,
                  localPort=None):
-        super(TCPClient, self).__init__(isServer=False)
+        super(TCPClient, self).__init__()
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
-        self.type = AbstractChannel.TYPE_TCPCLIENT
         self.__socket = None
 
     def open(self, timeout=5.):
