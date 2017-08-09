@@ -63,13 +63,19 @@ class Repeat(AbstractVariableNode):
     :param child: The variable element that will be repeated.
     :param nbRepeat: The number of repetitions of the element. This value can be a fixed integer, a tuple of integers defining the minimum and maximum of permitted repetitions, a constant from the calling script, a value present in another field, or can be identified by calling a callback function. In the latter case, the callback function should return a boolean telling if the expected number of repetitions is reached. Those use cases are described below.
     :param delimiter: The delimiter used to separate the repeated element.
+    :param svas: The SVAS strategy defining how the Alternate
+                 behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type child: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type nbRepeat: an :class:`int` or a :class:`tuple` of :class:`int` or
                     a Python variable containing an :class:`int` or a
-                    :class:`AbstractField
-                    <netzob.Model.Vocabulary.AbstractField>` or a
+                    :class:`Field
+                    <netzob.Model.Vocabulary.Field.Field>` or a
                     :class:`func` method, optional
     :type delimiter: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
+    :type svas: :class:`str`, optional
+
+
+    **Callback prototype**
 
     The callback function that can be used in the ``nbRepeat``
     parameter has the following prototype:
@@ -78,8 +84,8 @@ class Repeat(AbstractVariableNode):
 
     Where:
 
-    * ``current_nb_repetitions`` an :class:`int` that corresponds to the amount
-      of time the child element has been parsed.
+    * ``current_nb_repetitions`` is an :class:`int` that corresponds
+      to the amount of time the child element has been parsed.
 
     The callback function is called each time the child element is
     seen.
@@ -88,16 +94,18 @@ class Repeat(AbstractVariableNode):
     expected number of repetitions is reached (True) or not (False).
 
 
+    **Basic usage of Repeat**
+
     The following example shows a repeat variable where the repeated
-    element is an aggregate of String characters:
+    element is a String:
 
     >>> from netzob.all import *
-    >>> f1 = Field(Repeat(Agg([String("A"), String("B"), String("C")]), nbRepeat=16))
+    >>> f1 = Field(Repeat(String("A"), nbRepeat=16))
     >>> f1.specialize()
-    b'ABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABC'
+    b'AAAAAAAAAAAAAAAA'
 
 
-    **Usage of a delimiter**
+    **Usage of a delimiter in Repeat**
 
     We can specify a delimiter between each repeated element, as
     depicted in the following example:
@@ -222,8 +230,8 @@ class Repeat(AbstractVariableNode):
 
     """
 
-    def __init__(self, child, nbRepeat, delimiter=None):
-        super(Repeat, self).__init__(self.__class__.__name__, [child])
+    def __init__(self, child, nbRepeat, delimiter=None, svas=None):
+        super(Repeat, self).__init__(self.__class__.__name__, [child], svas=svas)
         self.nbRepeat = nbRepeat
         self.delimiter = delimiter
 
