@@ -61,15 +61,15 @@ class Timestamp(AbstractType):
 
     The Timestamp constructor expects some parameters:
 
-    :param value: The raw value of the timestamp.
+    :param value: The raw value of the timestamp (in seconds by default). If None, the default generated value is the current time in UTC.
     :param epoch: The initial date expressed in UTC from which
                   timestamp is measured. Default value is EPOCH_UNIX.
     :param unity: This specifies the unity of the timestamp (seconds,
-                  milliseconds, nanoseconds). Default value is
+                  milliseconds, nanoseconds). The default value is
                   UNITY_SECOND.
-    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). If None, the value is the default one.
-    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one.
-    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. If None, the value is the default one.
+    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). The default value is UnitSize.SIZE_32.
+    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
+    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. The default value is Sign.SIGNED.
     :type value: :class:`bitarray.bitarray` or :class:`int`, optional
     :type epoch: :class:`datetime.datetime`, optional
     :type unity: :class:`int`, optional
@@ -137,21 +137,24 @@ class Timestamp(AbstractType):
     Endianness.BIG
 
 
-    >>> from netzob.all import *
-    >>> f0 = Field(Raw(b"00"), name="Start")
-    >>> f1 = Field(Timestamp(1444737333), name="Timestamp")
-    >>> f2 = Field(Raw(b"00"), name="End")
-    >>> s = Symbol(fields=[f0, f1, f2])
-    >>> s.messages = [RawMessage(s.specialize()) for x in range(5)]
-    >>> print(s.str_data())
-    Start | Timestamp     | End 
-    ----- | ------------- | ----
-    '00'  | b'V\x1c\xf15' | '00'
-    '00'  | b'V\x1c\xf15' | '00'
-    '00'  | b'V\x1c\xf15' | '00'
-    '00'  | b'V\x1c\xf15' | '00'
-    '00'  | b'V\x1c\xf15' | '00'
-    ----- | ------------- | ----
+    .. ifconfig:: scope in ('netzob')
+
+       >>> from netzob.all import *
+       >>> f0 = Field(Raw(b"00"), name="Start")
+       >>> f1 = Field(Timestamp(1444737333), name="Timestamp")
+       >>> f2 = Field(Raw(b"00"), name="End")
+       >>> s = Symbol(fields=[f0, f1, f2])
+       >>> s.messages = [RawMessage(s.specialize()) for x in range(5)]
+       >>> print(s.str_data())
+       Start | Timestamp     | End 
+       ----- | ------------- | ----
+       '00'  | b'V\x1c\xf15' | '00'
+       '00'  | b'V\x1c\xf15' | '00'
+       '00'  | b'V\x1c\xf15' | '00'
+       '00'  | b'V\x1c\xf15' | '00'
+       '00'  | b'V\x1c\xf15' | '00'
+       ----- | ------------- | ----
+
 
     .. ifconfig:: scope in ('netzob')
 

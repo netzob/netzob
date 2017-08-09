@@ -108,10 +108,8 @@ class String(AbstractType):
     >>> from netzob.all import *
     >>> Field(String("Paris")).specialize()
     b'Paris'
-
     >>> Field(String("Paris in Euro: €")).specialize()
     b'Paris in Euro: \xe2\x82\xac'
-
     >>> Field(String("Paris in Euro: €", encoding='utf-8')).specialize()
     b'Paris in Euro: \xe2\x82\xac'
 
@@ -119,6 +117,7 @@ class String(AbstractType):
     value is not valid, with the definition of a string where
     the associated value contains a non-String element:
 
+    >>> from netzob.all import *
     >>> Field(String("Paris in €", encoding='ascii')).specialize()  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
     ...
@@ -127,11 +126,13 @@ class String(AbstractType):
     The following example shows how to define a string with a
     fixed size and a dynamic content:
 
+    >>> from netzob.all import *
     >>> f = Field(String(nbChars=10))
 
     The following example shows how to define a string with a
     variable size and a dynamic content:
 
+    >>> from netzob.all import *
     >>> f = Field(String(nbChars=(10, 32)))
 
 
@@ -140,6 +141,7 @@ class String(AbstractType):
     Strings with a terminal delimiter are supported. Its usage is as
     follows:
 
+    >>> from netzob.all import *
     >>> f_eos    = Field(String('\t'))
     >>> f_string = Field(String(eos=[String('\n'), Raw(b'\x00'), f_eos])) # doctest: +SKIP
 
@@ -148,44 +150,6 @@ class String(AbstractType):
     defined as constants (such as ``String('\n')`` and ``Raw('\x00')``
     in the previous example) or defined as specific fields (such as
     ``f_eos`` in the previous example).
-
-
-    **Examples of string internal attribute access**
-
-    >>> from netzob.all import *
-    >>> cAscii = String("hello")
-    >>> print(cAscii)
-    String=hello ((None, None))
-    >>> cAscii.typeName
-    'String'
-    >>> cAscii.value
-    bitarray('0110100001100101011011000110110001101111')
-
-    **Examples of conversions**
-
-    The following example shows how to convert the
-    current type to any other Netzob types:
-
-    >>> raw = cAscii.convert(Raw)
-    >>> print(repr(raw))
-    b'hello'
-    >>> ip = cAscii.convert(IPv4)
-    Traceback (most recent call last):
-    ...
-    TypeError: Impossible to encode b'hello' into an IPv4 data (unpack requires a bytes object of length 4)
-
-    The type can be used to specify constraints over the domain:
-
-    >>> a = String(nbChars=10)
-    >>> print(a.value)
-    None
-
-    It is not possible to convert if the object has not value:
-
-    >>> a.convert(Raw)
-    Traceback (most recent call last):
-    ...
-    TypeError: Data cannot be None
 
     """
 
@@ -570,16 +534,56 @@ class String(AbstractType):
         self.__encoding = encoding
 
 
-class __TestString(unittest.TestCase):
-    """
-    Test class with test-only scenario that should not be documented.
-    """
+    def _test(self):
+        """
+        Examples of string internal attributes access:
 
-    def test_abstraction_arbitrary_values(self):
-        from netzob.all import Field, Symbol
-        domains = [
-            String("abcd"), String(nbChars=(4, 5)),
-        ]
-        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-        data = b''.join(f.specialize() for f in symbol.fields)
-        assert Symbol.abstract(data, [symbol])[1]
+        >>> from netzob.all import *
+        >>> cAscii = String("hello")
+        >>> print(cAscii)
+        String=hello ((None, None))
+        >>> cAscii.typeName
+        'String'
+        >>> cAscii.value
+        bitarray('0110100001100101011011000110110001101111')
+
+        The following example shows how to convert the
+        current type to any other Netzob types:
+
+        >>> from netzob.all import *
+        >>> cAscii = String("hello")
+        >>> raw = cAscii.convert(Raw)
+        >>> print(repr(raw))
+        b'hello'
+        >>> ip = cAscii.convert(IPv4)
+        Traceback (most recent call last):
+        ...
+        TypeError: Impossible to encode b'hello' into an IPv4 data (unpack requires a bytes object of length 4)
+
+        The type can be used to specify constraints over the domain:
+
+        >>> from netzob.all import *
+        >>> a = String(nbChars=10)
+        >>> print(a.value)
+        None
+
+        It is not possible to convert if the object has not value:
+
+        >>> from netzob.all import *
+        >>> a = String(nbChars=10)
+        >>> a.convert(Raw)
+        Traceback (most recent call last):
+        ...
+        TypeError: Data cannot be None
+
+
+        >>> from netzob.all import Field, Symbol
+        >>> domains = [
+        ...    String("abcd"), String(nbChars=(4, 5)),
+        ... ]
+        >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+        >>> data = b''.join(f.specialize() for f in symbol.fields)
+        >>> Symbol.abstract(data, [symbol])  #doctest: +ELLIPSIS
+        (Symbol, OrderedDict([('0', b'abcd'), ('1', ...)]))
+
+        """

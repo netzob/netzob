@@ -53,19 +53,17 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness,
 
 
 class Integer(AbstractType):
-    r"""This class defines an Integer type.
-
-    The type Integer is a wrapper for the Python :class:`int` object
-    with the capability to express more constraints regarding to the
-    sign, endianness and unit size.
+    r"""The Integer class enables to represent an integer, with the
+    capability to express constraints regarding the sign, the
+    endianness and the unit size.
 
     The Integer constructor expects some parameters:
 
     :param value: The current value of the type instance.
-    :param interval: The interval of permitted values for the Integer. This information will be used to compute the size of the Integer.
-    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). If None, the value is the default one (UnitSize.SIZE_8).
-    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one (Endianness.BIG).
-    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. If None, the value is the default one (Sign.SIGNED).
+    :param interval: The interval of permitted values for the Integer. This information is used to compute the size of the Integer.
+    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). The default value is UnitSize.SIZE_8.
+    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
+    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. The default value is Sign.SIGNED.
     :type value: :class:`bitarray.bitarray` or :class:`int`, optional
     :type interval: an :class:`int` or a tuple with the min and the max values specified as :class:`int`, optional
     :type unitSize: :class:`str`, optional
@@ -145,28 +143,6 @@ class Integer(AbstractType):
     >>> f = Field(Integer(value=-12, sign=Sign.SIGNED, unitSize=UnitSize.SIZE_16))
     >>> f.specialize()
     b'\xff\xf4'
-
-
-    **Examples of Integer internal attribute access**
-
-    >>> from netzob.all import *
-    >>> cDec = Integer(20)
-    >>> print(repr(cDec))
-    20
-    >>> cDec.typeName
-    'Integer'
-    >>> cDec.value
-    bitarray('00010100')
-
-    The required size in bits is automatically computed following the specifications:
-
-    >>> dec = Integer(10)
-    >>> dec.size
-    (None, None)
-
-    >>> dec = Integer(interval=(-120, 10))
-    >>> dec.size
-    (-120, 10)
 
 
     **Examples of specific Integer types**
@@ -668,6 +644,43 @@ class Integer(AbstractType):
             raise Exception("Cannot generate integer value, as nor constant value or interval is defined")
 
 
+    def _test(self):
+        r"""
+        Examples of Integer internal attribute access
+
+        >>> from netzob.all import *
+        >>> cDec = Integer(20)
+        >>> print(repr(cDec))
+        20
+        >>> cDec.typeName
+        'Integer'
+        >>> cDec.value
+        bitarray('00010100')
+
+        The required size in bits is automatically computed following the specifications:
+
+        >>> dec = Integer(10)
+        >>> dec.size
+        (None, None)
+
+        >>> dec = Integer(interval=(-120, 10))
+        >>> dec.size
+        (-120, 10)
+
+        Symbol abstraction:
+
+        >>> from netzob.all import Field, Symbol
+        >>> domains = [
+        ...     uint16(1), int8le(), int32be(0x007F0041), uint16le(2)
+        ... ]
+        >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+        >>> data = b''.join(f.specialize() for f in symbol.fields)
+        >>> Symbol.abstract(data, [symbol])  #doctest: +ELLIPSIS
+        (Symbol, OrderedDict([('0', b'\x00\x01'), ('1', b'...'), ('2', b'\x00\x7f\x00A'), ('3', b'\x02\x00')]))
+
+        """
+
+
 def getMinStorageValue(unitSize, sign):
     if sign == Sign.UNSIGNED:
         return 0
@@ -748,18 +761,3 @@ uint64le = partialclass(Integer,
                         endianness=Endianness.LITTLE)
 int8, int16, int32, int64 = int8be, int16be, int32be, int64be
 uint8, uint16, uint32, uint64 = uint8be, uint16be, uint32be, uint64be
-
-
-class __TestInteger(unittest.TestCase):
-    """
-    Test class with test-only scenario that should not be documented.
-    """
-
-    def test_abstraction_arbitrary_values(self):
-        from netzob.all import Field, Symbol
-        domains = [
-            uint16(1), int8le(), int32be(0x007F0041), uint16le(2)
-        ]
-        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-        data = b''.join(f.specialize() for f in symbol.fields)
-        assert Symbol.abstract(data, [symbol])[1]

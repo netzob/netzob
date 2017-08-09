@@ -65,7 +65,7 @@ class IPv4(AbstractType):
                           (ex: "192.168.0.10").
     :param network: A network address expressed in standard
                             dot notation (ex: "192.168.0.0/24").
-    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one.
+    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
     :type value: :class:`str` or :class:`netaddr.IPAddress`, optional
     :type network: :class:`str` or :class:`netaddr.IPNetwork`, optional
     :type endianness: :class:`Enum`, optional
@@ -104,10 +104,13 @@ class IPv4(AbstractType):
     >>> raw_data = f1.specialize() + raw_data
     >>> Symbol.abstract(raw_data, [f1, f2])  # doctest: +SKIP
 
-    >>> s = Symbol(fields=[f1,f2])
-    >>> msgs = [RawMessage(s.specialize()) for x in range(10)]
-    >>> len(msgs)
-    10
+
+    .. ifconfig:: scope in ('netzob')
+
+       >>> s = Symbol(fields=[f1,f2])
+       >>> msgs = [RawMessage(s.specialize()) for x in range(10)]
+       >>> len(msgs)
+       10
 
     It is also possible to specify a field that accepts a range of IP
     addresses, through the `network=` parameter, as shown on the
