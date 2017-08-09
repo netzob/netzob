@@ -104,15 +104,17 @@ class Fuzz(object):
     b'`n'
 
 
-    **Fuzzing example of a field that contains an aggregate of variables**
+    .. ifconfig:: scope in ('netzob')
 
-    >>> fuzz = Fuzz()
-    >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
-    ...                                       int16(interval=(5, 8))]))
-    >>> symbol = Symbol(name="sym", fields=[f_agg])
-    >>> fuzz.set(f_agg, IntegerMutator, interval=(20, 32000)) # doctest: +SKIP
-    >>> symbol.specialize(fuzz=fuzz) # doctest: +SKIP
-    b'\x02\x84\x04\xf5'
+       **Fuzzing example of a field that contains an aggregate of variables**
+
+       >>> fuzz = Fuzz()
+       >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
+       ...                                       int16(interval=(5, 8))]))
+       >>> symbol = Symbol(name="sym", fields=[f_agg])
+       >>> fuzz.set(f_agg, IntegerMutator, interval=(20, 32000)) # doctest: +SKIP
+       >>> symbol.specialize(fuzz=fuzz) # doctest: +SKIP
+       b'\x02\x84\x04\xf5'
 
 
     **Fuzzing example of a field that contains a size relationship with another field**
