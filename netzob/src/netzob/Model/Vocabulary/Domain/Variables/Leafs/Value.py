@@ -68,11 +68,33 @@ class Value(AbstractRelationVariableLeaf):
     :param name: The name of the Value variable. If None, the name
                      will be generated.
     :param operation: An optional transformation operation to be
-                      applied on the targeted data.
+                      applied on the targeted field value, through a callback.
     :type target: :class:`Field <netzob.Model.Vocabulary.Field>`, required
     :type name: :class:`str`, optional
     :type operation: :class:`Callable <collections.abc.Callable>`, optional
 
+
+    **Callback prototype**
+
+    A callback function can be used to specify a complex
+    relationship. The callback function that can be used in the
+    ``operation`` parameter has the following prototype:
+
+    ``def cbk_operation(data):``
+
+    Where:
+
+    * ``data`` is a :class:`bitarray <bitarray.bitarray>` that
+    contains the value of the targeted field.
+
+    The callback function is expected to implement relationship
+    operations based on the provided data.
+
+    The callback function should return a :class:`bitarray
+    <bitarray.bitarray>`.
+
+
+    **Value examples**
 
     The following example shows how to define a field with a copy of
     another field value, in specialization mode:
@@ -140,8 +162,8 @@ class Value(AbstractRelationVariableLeaf):
     A named callback function can be used to specify a more complex
     relationship. The following example shows a relationship where the
     computed value corresponds to the reversed bits of the targeted
-    field. The ``data`` parameter of the ``cbk`` function contains a
-    bitarray object of the targeted fields. The ``cbk`` function
+    field value. The ``data`` parameter of the ``cbk`` function contains a
+    bitarray object of the targeted field value. The ``cbk`` function
     returns a bitarray object.
 
     >>> def cbk(data):
