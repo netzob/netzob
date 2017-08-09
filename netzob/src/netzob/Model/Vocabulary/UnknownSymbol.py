@@ -63,11 +63,14 @@ class UnknownSymbol(Symbol):
     >>> u.name
     "Unknown Symbol ''"
 
-    >>> from netzob.all import *
-    >>> msg = RawMessage("hello")
-    >>> u = UnknownSymbol(msg)
-    >>> u.name
-    "Unknown Symbol 'hello'"
+
+    .. ifconfig:: scope in ('netzob')
+
+       >>> from netzob.all import *
+       >>> msg = RawMessage("hello")
+       >>> u = UnknownSymbol(msg)
+       >>> u.name
+       "Unknown Symbol 'hello'"
 
     """
 
