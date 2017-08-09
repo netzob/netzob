@@ -146,6 +146,11 @@ class Memory(object):
     def memorize(self, variable, value):
         """Memorizes the provided variable value.
 
+        :param variable: The variable for which we want to memorize a value.
+        :param value: The value to memorize.
+        :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
+        :type value: :class:`bitarray <bitarray.bitarray>`, required
+
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")
         >>> memory = Memory()
@@ -158,7 +163,12 @@ class Memory(object):
 
     @typeCheck(AbstractVariable)
     def hasValue(self, variable):
-        """Returns true if memory contains a value for the provided variable
+        """Returns true if the memory contains a value for the provided variable.
+
+        :param variable: The variable to look for in the memory.
+        :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
+        :return: ``True`` if the memory contains a value for the variable.
+        :rtype: :class:`bool`
 
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")
@@ -175,7 +185,12 @@ class Memory(object):
 
     @typeCheck(AbstractVariable)
     def getValue(self, variable):
-        """Returns the value memorized for the provided variable
+        """Returns the value memorized for the provided variable.
+
+        :param variable: The variable for which we want to retrieve the value in memory.
+        :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
+        :return: The value in memory.
+        :rtype: :class:`bitarray <bitarray.bitarray>`
 
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")
@@ -191,6 +206,9 @@ class Memory(object):
     def forget(self, variable):
         """Forgets any memorized value of the provided variable
 
+        :param variable: The variable for which we want to forget the value in memory.
+        :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
+
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")
         >>> memory = Memory()
@@ -205,7 +223,10 @@ class Memory(object):
             self.memory.pop(variable, None)
 
     def duplicate(self):
-        """Duplicates in a new memory
+        """Duplicates the current memory in a new memory.
+
+        :return: A new memory containing the same entries than the current memory.
+        :rtype: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
 
         >>> from netzob.all import *
         >>> d1 = Data(Integer)
@@ -224,8 +245,6 @@ class Memory(object):
         >>> m2.getValue(d1)
         bitarray('01100100')
 
-        :return: a new memory containing the same entries than current one
-        :rtype: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
         """
         duplicatedMemory = Memory()
         for k in list(self.memory.keys()):
