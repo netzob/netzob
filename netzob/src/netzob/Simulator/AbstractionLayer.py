@@ -68,7 +68,7 @@ class AbstractionLayer(object):
     :param channel: The underlying communication channel (such as IPChannel, UDPClient...).
     :param symbols: The list of permitted symbols during translation from/to concrete messages.
     :param memory: A memory object use to make persistent specific variables.
-    :type channel: :class:`AbstractChannel <netzob.Model.Simuator.Channels.AbstractChannel.AbstractChannel>`, required
+    :type channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`, required
     :type symbols: :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`, required
     :type memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`, optional
 

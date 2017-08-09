@@ -45,7 +45,7 @@ import socket
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Simulator.Channels.AbstractChannel import AbstractChannel, ChannelDownException
+from netzob.Simulator.AbstractChannel import AbstractChannel, ChannelDownException
 
 
 @NetzobLogger
