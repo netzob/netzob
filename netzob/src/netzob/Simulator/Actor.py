@@ -57,17 +57,17 @@ class Actor(threading.Thread):
     The Actor constructor expects some parameters:
 
     :param automata: The automaton the actor will visit.
+    :param abstractionLayer: The underlying abstraction layer used to abstract
+                             and specialize symbols.
     :param initiator: If True, indicates that the actor initiates the
                       communication and emits the input symbol.
                       If False, indicates that the actor waits for another
                       peer to initiate the connection. Default value is
                       :const:`True`.
-    :param abstractionLayer: The underlying abstraction layer used to abstract
-                             and specialize symbols.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
                     required
-    :type initiator: :class:`bool`, required
     :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`, required
+    :type initiator: :class:`bool`, optional
 
 
     **Example with a common automaton for a client and a server**
@@ -76,22 +76,21 @@ class Actor(threading.Thread):
     communicate together through a TCP channel and exchange their
     names until one stops.
 
-    The two actors are Alice and Bob. Alice is the initiator of the
-    communication, meaning she sends the input symbols, while Bob
+    The two actors are Alice and Bob. Bob is the initiator of the
+    communication, meaning he sends the input symbols, while Alice
     answers with the output symbols of the grammar. The grammar is
-    very simple, we first open the channel, and allow Alice to send
-    ``"alice> hello"`` asynchronously. At each received message, Bob answers
-    ``"bob> hello"``.
-    It's Alice who decides to stop the communication.
+    very simple, we first open the channel, and allow Bob to send
+    ``"Bob> hello"``. At each received message, Alice answers
+    ``"Alice> hello"``.
 
     >>> from netzob.all import *
     >>> import time
-
+    >>>
     >>> # First we create the symbols
     >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
     >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
     >>> symbolList = [aliceSymbol, bobSymbol]
-
+    >>>
     >>> # Create the grammar
     >>> s0 = State(name="S0")
     >>> s1 = State(name="S1")
@@ -103,42 +102,41 @@ class Actor(threading.Thread):
     ...                             outputSymbols=[bobSymbol], name="hello")
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
     >>> automata = Automata(s0, symbolList)
-
+    >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
-
+    >>> alice = Actor(automata = automata, abstractionLayer=abstractionLayer, initiator = False)
+    >>>
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
-
+    >>> bob = Actor(automata = automata, abstractionLayer=abstractionLayer)
+    >>>
     >>> alice.start()
     >>> bob.start()
-
+    >>>
     >>> time.sleep(2)
-
+    >>>
     >>> bob.stop()
     >>> alice.stop()
 
 
     **Example with a dedicated automaton for a client and a server**
 
-    The two actors are Alice and Bob. Alice is the initiator of the
-    communication meaning she sends the input symbols while Bob
+    The two actors are Alice and Bob. Bob is the initiator of the
+    communication meaning he sends the input symbols while Alice
     answers with the output symbols of the grammar. The grammar is
     very simple, and different for each actor. We first open the
-    channel, and allow Alice to send the data ``"alice> hello"``
-    multiple times. Bob answers every time with the data ``"bob>
-    hello"``. It is Alice who decides to stop the communication.
+    channel, and allow Bob to send the data ``"hello"`` multiple
+    times. Alice answers every time with the data ``"hello"``.
 
     >>> from netzob.all import *
     >>> import time
-
+    >>>
     >>> # First we create the symbols
     >>> symbol = Symbol(name="Main-symbol", fields=[Field("hello")])
-    >>> symbolList = [symbol, symbol]
-
+    >>> symbolList = [symbol]
+    >>>
     >>> # Create Bob's automaton
     >>> bob_s0 = State(name="S0")
     >>> bob_s1 = State(name="S1")
@@ -155,7 +153,7 @@ class Actor(threading.Thread):
     ...                                   outputSymbols=[symbol], name="hello")
     >>> bob_closeTransition = CloseChannelTransition(startState=bob_s2, endState=bob_s2, name="Close")
     >>> bob_automata = Automata(bob_s0, symbolList)
-
+    >>>
     >>> # Create Alice's automaton
     >>> alice_s0 = State(name="S0")
     >>> alice_s1 = State(name="S1")
@@ -167,22 +165,22 @@ class Actor(threading.Thread):
     ...                                   outputSymbols=[symbol], name="hello")
     >>> alice_closeTransition = CloseChannelTransition(startState=alice_s1, endState=alice_s2, name="Close")
     >>> alice_automata = Automata(alice_s0, symbolList)
-
+    >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata = bob_automata, initiator = True, abstractionLayer=abstractionLayer)
-
+    >>> bob = Actor(automata = bob_automata, abstractionLayer=abstractionLayer)
+    >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata = alice_automata, initiator = False, abstractionLayer=abstractionLayer)
-
+    >>> alice = Actor(automata = alice_automata, abstractionLayer=abstractionLayer, initiator = False)
+    >>>
     >>> alice.start()
     >>> bob.start()
-
+    >>>
     >>> time.sleep(2)
-
+    >>>
     >>> bob.stop()
     >>> alice.stop()
 
@@ -203,12 +201,12 @@ class Actor(threading.Thread):
 
     >>> from netzob.all import *
     >>> import time
-
+    >>>
     >>> # First we create the symbols
     >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
     >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
     >>> symbolList = [aliceSymbol, bobSymbol]
-
+    >>>
     >>> # Create the grammar
     >>> s0 = State(name="S0")
     >>> s1 = State(name="S1")
@@ -223,24 +221,24 @@ class Actor(threading.Thread):
     >>>
     >>> # We set the callback function on state s1
     >>> s1.cbk_pickNextTransition = cbk_function
-
+    >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
-
+    >>> alice = Actor(automata = automata, abstractionLayer=abstractionLayer, initiator = False)
+    >>>
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
-
+    >>> bob = Actor(automata = automata, abstractionLayer=abstractionLayer)
+    >>>
     >>> alice.start()
     >>> bob.start()
-
+    >>>
     >>> time.sleep(2)
-
+    >>>
     >>> bob.stop()
     >>> alice.stop()
-
+    >>>
     >>> cbk_executed == True
     True
 
@@ -260,12 +258,12 @@ class Actor(threading.Thread):
 
     >>> from netzob.all import *
     >>> import time
-
+    >>>
     >>> # First we create the symbols
     >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
     >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
     >>> symbolList = [aliceSymbol, bobSymbol]
-
+    >>>
     >>> # Create the grammar
     >>> s0 = State(name="S0")
     >>> s1 = State(name="S1")
@@ -277,36 +275,36 @@ class Actor(threading.Thread):
     ...                             outputSymbols=[bobSymbol], name="hello")
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
     >>> automata = Automata(s0, symbolList)
-
+    >>>
     >>> # We set the callback function on transition mainTransition
     >>> mainTransition.cbk_pickOutputSymbol = cbk_function
-
+    >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
-
+    >>> alice = Actor(automata = automata, abstractionLayer=abstractionLayer, initiator = False)
+    >>>
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
-
+    >>> bob = Actor(automata = automata, abstractionLayer=abstractionLayer)
+    >>>
     >>> alice.start()
     >>> bob.start()
-
+    >>>
     >>> time.sleep(2)
-
+    >>>
     >>> bob.stop()
     >>> alice.stop()
-
+    >>>
     >>> cbk_executed == True
     True
 
     """
 
     def __init__(self,
-                 automata,         # type: Automata
-                 initiator,        # type: bool
-                 abstractionLayer  # type: AbstractionLayer
+                 automata,          # type: Automata
+                 abstractionLayer,  # type: AbstractionLayer
+                 initiator=True     # type: bool
                  ):
         super(Actor, self).__init__()
         self.automata = automata
