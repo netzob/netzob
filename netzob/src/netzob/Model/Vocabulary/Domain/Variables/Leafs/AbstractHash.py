@@ -51,37 +51,44 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
 class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
-    r"""
-    **Abstract class**.
-    The AbstractHash class comes with a list of concrete hash relationships
-    between fields. Some implementations are available in the package
-    :mod:`netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes`.
-    Currently available hash functions are:
-    :class:`MD5 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.MD5.MD5>`,
-    :class:`SHA1 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA1.SHA1>`,
-    :class:`SHA1_96 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA1_96.SHA1_96>`,
-    :class:`SHA224 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA2_224.SHA2_224>`,
-    :class:`SHA256 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA2_256.SHA2_256>`,
-    :class:`SHA384 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA2_384.SHA2_384>` and
-    :class:`SHA512 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.SHA2_512.SHA2_512>`.
+    r"""The AbstractHash interface specifies the methods to implement
+    in order to create a new hash relationship.
 
-    The AbstractHash constructor expects some parameters:
-
-    :param targets: The targeted fields of the relationship.
-    :param dataType: Specify that the produced value should be
-                     represented according to this dataType.
-                     If None, default value is Raw(nbBytes=1).
-    :param name: The name of the Value variable. If None, the name will be generated.
-    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
-    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
-    :type name: :class:`str`, optional
-
-    This class is abstract and cannot be instanciated.
-    The following methods MUST be inherited:
+    The following methods have to be implemented:
 
     * :meth:`calculate`
     * :meth:`getBitSize`
+
     """
+
+    ## Interface methods ##
+
+    @abc.abstractmethod
+    def calculate(self,
+                  data  # type: bytes
+                  ):   # type: bytes
+        """This is a computation method that takes a :attr:`data` and returns
+        its hash value.
+
+        :param data: input data on which to compute the hash relationship
+        :type data: :class:`bytes`
+        :return: the hash value
+        :rtype: :class:`bytes`
+
+        """
+
+    @abc.abstractmethod
+    def getBitSize(self):  # type: int
+        """This method should return the unit size in bits of the produced
+        hash (such as ``160`` bits).
+
+        :return: the output unit size in bits
+        :type: :class:`int`
+
+        """
+
+
+    ## Internal methods ##
 
     def __init__(self, targets, dataType=None, name=None):
         if dataType is None:
@@ -91,16 +98,19 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
                                            targets=targets,
                                            name=name)
 
-    def relationOperation(self, msg):
+    def getByteSize(self):
+        return int(self.getBitSize() / 8)
+
+    def relationOperation(self, data):
         """The relationOperation receive a bitarray object and should return a
         bitarray object.
 
         """
         # The calling function provides a BitArray
-        msg = msg.tobytes()
+        data = data.tobytes()
 
         # Compute hash
-        result = self.calculate(msg)
+        result = self.calculate(data)
 
         # Convert the result in a BitArray (be carefull with the src_unitSize)
         result = TypeConverter.convert(result, Raw, BitArray,
@@ -111,31 +121,3 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
                                        src_sign=Sign.UNSIGNED)
 
         return result
-
-    @abc.abstractmethod
-    def calculate(self,
-                  msg  # type: bytes
-                  ):   # type: bytes
-        """
-        **Abstract method**.
-        The most-specific computation method taking a :attr:`msg` and returning
-        its hash value.
-
-        :param msg: input message
-        :type msg: :class:`bytes`
-        :return: hash value
-        :rtype: :class:`bytes`
-        """
-
-    @abc.abstractmethod
-    def getBitSize(self):  # type: int
-        """
-        **Abstract method**.
-        Get the bit size of the hash'ed message.
-
-        :return: the output unit size
-        :type: :class:`int`
-        """
-
-    def getByteSize(self):
-        return int(self.getBitSize() / 8)

@@ -52,13 +52,7 @@ class MD5(AbstractHash):
     The constructor expects some parameters:
 
     :param targets: The targeted fields of the relationship.
-    :param dataType: Specify that the produced value should be
-                     represented according to this dataType.
-                     If None, default value is Raw(nbBytes=1).
-    :param name: The name of the Value variable. If None, the name will be generated.
     :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
-    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
-    :type name: :class:`str`, optional
 
     The following example shows how to create a hash relation with
     another field:

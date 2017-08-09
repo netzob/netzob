@@ -53,11 +53,7 @@ class CRC32(AbstractChecksum):
     The constructor expects some parameters:
 
     :param targets: The targeted fields of the relationship.
-    :param dataType: Specify that the produced value should be
-                     represented according to this dataType.
-                     If None, default value is Raw(nbBytes=4).
     :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
-    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
 
 
     The following example shows how to create a checksum relation with

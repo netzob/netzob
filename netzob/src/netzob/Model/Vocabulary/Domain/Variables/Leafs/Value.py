@@ -84,8 +84,7 @@ class Value(AbstractRelationVariableLeaf):
 
     Where:
 
-    * ``data`` is a :class:`bitarray <bitarray.bitarray>` that
-    contains the value of the targeted field.
+    * ``data`` is a :class:`bitarray <bitarray.bitarray>` that contains the value of the targeted field.
 
     The callback function is expected to implement relationship
     operations based on the provided data.

@@ -53,39 +53,43 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 
 @NetzobLogger
 class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
-    r"""
-    **Abstract class**.
-    The AbstractHMAC class comes with a list of concrete HMAC relationships
-    between fields. Some implementations are available in the package
-    :mod:`netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs`.
-    Currently available hash functions for HMAC are:
-    :class:`HMAC_MD5 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_MD5.HMAC_MD5>`,
-    :class:`HMAC_SHA1 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA1.HMAC_SHA1>`,
-    :class:`HMAC_SHA1_96 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA1_96.HMAC_SHA1_96>`,
-    :class:`HMAC_SHA224 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_224.HMAC_SHA2_224>`,
-    :class:`HMAC_SHA256 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_256.HMAC_SHA2_256>`,
-    :class:`HMAC_SHA384 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_384.HMAC_SHA2_384>` and
-    :class:`HMAC_SHA512 <netzob.Model.Vocabulary.Domain.Variables.Leafs.Hmacs.HMAC_SHA2_512.HMAC_SHA2_512>`.
+    r"""The AbstractHMAC interface specifies the methods to implement
+    in order to create a new HMAC relationship.
 
-    The AbstractHMAC constructor expects some parameters:
-
-    :param targets: The targeted fields of the relationship.
-    :param key: The cryptographic key used in the hmac computation.
-    :param dataType: Specify that the produced value should be
-                     represented according to this dataType.
-                     If None, default value is Raw(nbBytes=1).
-    :param name: The name of the Value variable. If None, the name will be generated.
-    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
-    :type key: :class:`bytes`, required
-    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
-    :type name: :class:`str`, optional
-
-    This class is abstract and cannot be instanciated.
-    The following methods MUST be inherited:
+    The following methods have to be implemented:
 
     * :meth:`calculate`
     * :meth:`getBitSize`
     """
+
+    ## Interface methods ##
+
+    @abc.abstractmethod
+    def calculate(self,
+                  data  # type: bytes
+                  ):   # type: bytes
+        """This is a computation method that takes a :attr:`data` and returns
+        its HMAC value.
+
+        :param data: input data on which to compute the HMAC relationship
+        :type data: :class:`bytes`
+        :return: the HMAC value
+        :rtype: :class:`bytes`
+
+        """
+
+    @abc.abstractmethod
+    def getBitSize(self):  # type int
+        """This method should return the unit size in bits of the produced
+        HMAC (such as ``160`` bits).
+
+        :return: the output unit size in bits
+        :type: :class:`int`
+
+        """
+
+
+    ## Internal methods ##
 
     def __init__(self, targets, key, dataType=None, name=None):
         if dataType is None:
@@ -96,16 +100,19 @@ class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
                                            name=name)
         self.key = key
 
-    def relationOperation(self, msg):
+    def getByteSize(self):
+        return int(self.getBitSize() / 8)
+
+    def relationOperation(self, data):
         """The relationOperation receive a bitarray object and should return a
         bitarray object.
 
         """
         # The calling function provides a BitArray
-        msg = msg.tobytes()
+        data = data.tobytes()
 
         # Compute HMAC
-        result = self.calculate(msg)
+        result = self.calculate(data)
 
         # The calling function expects a BitArray
         result = TypeConverter.convert(result, Raw, BitArray,
@@ -127,31 +134,3 @@ class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         if key is None:
             raise TypeError("key cannot be None")
         self.__key = key
-
-    @abc.abstractmethod
-    def calculate(self,
-                  msg  # type: bytes
-                  ):   # type: bytes
-        """
-        **Abstract method**.
-        The most-specific computation method taking a :attr:`msg` and returning
-        its hash value.
-
-        :param msg: input message
-        :type msg: :class:`bytes`
-        :return: hash value
-        :rtype: :class:`bytes`
-        """
-
-    @abc.abstractmethod
-    def getBitSize(self):  # type int
-        """
-        **Abstract method**.
-        Get the bit size of the hash'ed message.
-
-        :return: the output unit size
-        :type: :class:`int`
-        """
-
-    def getByteSize(self):
-        return int(self.getBitSize() / 8)

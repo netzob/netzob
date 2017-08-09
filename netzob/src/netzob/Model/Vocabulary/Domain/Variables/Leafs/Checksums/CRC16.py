@@ -53,15 +53,11 @@ class CRC16(AbstractChecksum):
     The constructor expects some parameters:
 
     :param targets: The targeted fields of the relationship.
-    :param dataType: Specify that the produced value should be
-                     represented according to this dataType.
-                     If None, default value is Raw(nbBytes=2).
     :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
-    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
 
 
-    The following example shows how to create a checksum relation with
-    another field:
+    The following example shows how to create a checksum relationship
+    with another field:
 
     >>> from netzob.all import *
     >>> import binascii
@@ -70,6 +66,20 @@ class CRC16(AbstractChecksum):
     >>> s = Symbol(fields = [f1, f2])
     >>> binascii.hexlify(s.specialize())
     b'aabb3ed3'
+
+    The following example shows how to create a checksum relationship
+    with a group of fields:
+
+    >>> from netzob.all import *
+    >>> import binascii
+    >>> f1 = Field(Raw(b'\xaa\xbb'))
+    >>> f2 = Field(Raw(b'\xcc\xdd'))
+    >>> f3 = Field(Raw(b'\xee\xff'))
+    >>> f4 = Field(CRC16([f1, f2, f3]))
+    >>> s = Symbol(fields = [f1, f2, f3, f4])
+    >>> binascii.hexlify(s.specialize())
+    b'aabbccddeeff5e9b'
+
     """
 
     def calculate(self, msg):
