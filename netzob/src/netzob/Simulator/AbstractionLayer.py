@@ -67,9 +67,13 @@ class AbstractionLayer(object):
 
     :param channel: The underlying communication channel (such as IPChannel, UDPClient...).
     :param symbols: The list of permitted symbols during translation from/to concrete messages.
-    :param memory: A memory object use to make persistent specific variables.
+    :param memory: A memory used to store variable values during
+                   specialization and abstraction of successive
+                   symbols, especially to handle inter-symbol
+                   relationships. If None, a temporary memory is
+                   created by default and used internally.
     :type channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`, required
-    :type symbols: :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`, required
+    :type symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`, required
     :type memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`, optional
 
 
@@ -126,7 +130,7 @@ class AbstractionLayer(object):
         self.flow_parser = FlowParser(memory=self.memory)
 
     @typeCheck(Symbol)
-    def writeSymbol(self, symbol, rate=None, duration=None, presets=None):
+    def writeSymbol(self, symbol, rate=None, duration=None, presets=None, fuzz=None):
         """Write the specified symbol on the communication channel
         after specializing it into a contextualized message.
 
@@ -142,10 +146,18 @@ class AbstractionLayer(object):
                         symbol. The expected content of this dict is
                         specified in :meth:`Symbol.specialize \
                         <netzob.Model.Vocabulary.Symbol.Symbol.specialize>`.
+        :param fuzz: A fuzzing configuration used during the specialization process. Values
+                     in this configuration will override any field
+                     definition, constraints, relationship
+                     dependencies or parameterized fields. See
+                     :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
+                     for a complete explanation of its use for fuzzing
+                     purpose.
         :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
         :type rate: :class:`int`, optional
         :type duration: :class:`int`, optional
         :type presets: :class:`dict`, optional
+        :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :raise: :class:`TypeError` if parameter is not valid and Exception if an exception occurs.
 
         """
@@ -156,7 +168,7 @@ class AbstractionLayer(object):
 
         len_data = 0
         if duration is None:
-            len_data = self._writeSymbol(symbol, presets=presets)
+            len_data = self._writeSymbol(symbol, presets=presets, fuzz=fuzz)
         else:
 
             t_start = time.time()
@@ -169,7 +181,7 @@ class AbstractionLayer(object):
                     break
 
                 # Specialize the symbol and send it over the channel
-                len_data += self._writeSymbol(symbol, presets=presets)
+                len_data += self._writeSymbol(symbol, presets=presets, fuzz=fuzz)
 
                 if rate is None:
                     t_tmp = t_elapsed
@@ -196,14 +208,25 @@ class AbstractionLayer(object):
                                                                                                                                     round(t_elapsed, 2)))
         return len_data
 
-    def _writeSymbol(self, symbol, presets=None):
+    def _writeSymbol(self, symbol, presets=None, fuzz=None):
         """Write the specified symbol on the communication channel after
         specializing it into a contextualized message.
 
         :param symbol: The symbol to write on the channel.
-        :param presets: This specifies how to parameterize the emitted symbol.
+        :param presets: This specifies how to parameterize the emitted
+                        symbol. The expected content of this dict is
+                        specified in :meth:`Symbol.specialize \
+                        <netzob.Model.Vocabulary.Symbol.Symbol.specialize>`.
+        :param fuzz: A fuzzing configuration used during the specialization process. Values
+                     in this configuration will override any field
+                     definition, constraints, relationship
+                     dependencies or parameterized fields. See
+                     :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
+                     for a complete explanation of its use for fuzzing
+                     purpose.
         :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-        :type presets: :clasl:`dict`
+        :type presets: :class:`dict`, optional
+        :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :raise: :class:`TypeError` if parameter is not valid and Exception if an exception occurs.
 
         """
@@ -212,8 +235,10 @@ class AbstractionLayer(object):
             symbol.name, symbol.id))
 
         self.specializer.presets = presets
+        self.specializer.fuzz = fuzz
         dataBin = self.specializer.specializeSymbol(symbol).generatedContent
-        self.specializer.presets = None
+        self.specializer.presets = None  # This is needed, in order to avoid applying the preset configuration on an already preseted symbol
+                                         # Regarding the fuzz attribute, as its behavior is different from preset, we don't have to set it to None
 
         self.memory = self.specializer.memory
         self.parser.memory = self.memory

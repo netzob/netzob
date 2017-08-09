@@ -212,25 +212,21 @@ class Symbol(AbstractField):
                         specialization. Values in this dictionary will
                         override any field definition, constraints or
                         relationship dependencies.
-        :param fuzz: A dictionary of keys:values used for fuzzing
-                     purpose during the specialization process. This
-                     parameter is handled in the same way as the
-                     ``presets`` parameter (i.e. a mutator can be
-                     defined for each field we want to fuzz). Values
-                     in this dictionary will override any field
+        :param fuzz: A fuzzing configuration used during the specialization process. Values
+                     in this configuration will override any field
                      definition, constraints, relationship
                      dependencies or parameterized fields. See
-                     :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`
+                     :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
                      purpose.
         :param memory: A memory used to store variable values during
                        specialization and abstraction of successive
                        symbols, especially to handle inter-symbol
                        relationships. If None, a temporary memory is
-                       used internally during the scope of the
+                       created by default and used internally during the scope of the
                        specialization process.
         :type presets: :class:`dict`, optional
-        :type fuzz: :class:`dict`, optional
+        :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`, optional
 
         The following example shows the :meth:`specialize()` method used for a
