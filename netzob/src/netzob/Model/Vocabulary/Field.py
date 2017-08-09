@@ -146,10 +146,9 @@ class Field(AbstractField):
     express the same field content (i.e. an Integer with a constant
     value of 10):
 
-    >>> f = Field(10)
-    >>> f = Field(Integer(10))
     >>> f = Field(Data(Integer(10)))
-    >>> f = Field(domain=Data(Integer(10)))
+    >>> f = Field(Integer(10))
+    >>> f = Field(10)
 
     If these fields are equivalent, this is because the first
     parameter of the Field constructor is *domain=*, thus its name can
@@ -158,15 +157,17 @@ class Field(AbstractField):
     domain (such as `domain=Data(Integer(10))`) or a shortened form
     (such as `domain=Integer(10)`, or even `domain=10`).
 
-    A domain may be composed of basic types, or complex data
-    structures. The following examples show how to express data
-    structures composed of 1) an alternative between the integers `10`
-    and `20`, 2) a repetition of the string `a`, and 3) an aggregate
-    (or concatenation) of the strings `aa` and `bb`:
+    .. ifconfig:: scope in ('netzob')
 
-    >>> f = Field(Alt([10, 20]))
-    >>> f = Field(Repeat("a", nbRepeat=(4,8)))
-    >>> f = Field(Agg(["aa", "bb"]))
+       A domain may be composed of basic types, or complex data
+       structures. The following examples show how to express data
+       structures composed of 1) an alternative between the integers `10`
+       and `20`, 2) a repetition of the string `a`, and 3) an aggregate
+       (or concatenation) of the strings `aa` and `bb`:
+
+       >>> f = Field(Alt([10, 20]))
+       >>> f = Field(Repeat("a", nbRepeat=(4,8)))
+       >>> f = Field(Agg(["aa", "bb"]))
 
 
     **Relationships between fields**
@@ -240,49 +241,52 @@ class Field(AbstractField):
        'hello ' | 'world'  
        -------- | ---------
 
-    **Field examples**
 
-    Here are examples of fields:
+    .. ifconfig:: scope in ('netzob')
 
-    * a field containing the integer value 100
+       **Field examples**
 
-      >>> f = Field(100)
+       Here are examples of fields:
 
-    * a field containing a specific binary: '1000' = 8 in decimal
+       * a field containing the integer value 100
 
-      >>> f = Field(0b1000)
+         >>> f = Field(100)
 
-    * a field containing a raw value of 8 bits (1 byte)
+       * a field containing a specific binary: '1000' = 8 in decimal
 
-      >>> f = Field(Raw(nbBytes=8))
+         >>> f = Field(0b1000)
 
-    * a field with a specific raw value
+       * a field containing a raw value of 8 bits (1 byte)
 
-      >>> f = Field(Raw(b'\x00\x01\x02\x03'))
+         >>> f = Field(Raw(nbBytes=8))
 
-    * a field representing a random IPv4:
+       * a field with a specific raw value
 
-      >>> f = Field(IPv4())
+         >>> f = Field(Raw(b'\x00\x01\x02\x03'))
 
-    * a field representing a random String of 6 characters length:
+       * a field representing a random IPv4:
 
-      >>> f = Field(String(nbChars=6))
+         >>> f = Field(IPv4())
 
-    * a field representing a random String with length between 5 and 20 characters:
+       * a field representing a random String of 6 characters length:
 
-      >>> payloadField = Field(String(nbChars=(5, 20)))
+         >>> f = Field(String(nbChars=6))
 
-    * a field whose value is the size of the payloadField:
+       * a field representing a random String with length between 5 and 20 characters:
 
-      >>> f = Field([Size(payloadField)])
+         >>> payloadField = Field(String(nbChars=(5, 20)))
 
-    * a field representing an alternative between two different strings, either "john" or "kurt":
+       * a field whose value is the size of the payloadField:
 
-      >>> f = Field(["john", "kurt"])
+         >>> f = Field([Size(payloadField)])
 
-    * a field representing a decimal (10) or a String of 16 chars:
+       * a field representing an alternative between two different strings, either "john" or "kurt":
 
-      >>> f = Field([10, String(nbChars=(16))])
+         >>> f = Field(["john", "kurt"])
+
+       * a field representing a decimal (10) or a String of 16 chars:
+
+         >>> f = Field([10, String(nbChars=(16))])
 
     """
 

@@ -478,9 +478,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :param fields: a list of fields targeted during the abstraction process
         :param memory: A memory used to store variable values during
                        specialization and abstraction of sequence of symbols.
-        :type data: :class:`bytes`
-        :type fields: :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`
-        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
+        :type data: :class:`bytes`, required
+        :type fields: :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
+        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`, optional
         :return: a field/symbol and the structured received message
         :rtype: a tuple (:class:`Field <netzob.Model.Vocabulary.Field>`, dict)
         :raises: :class:`AbstractionException <netzob.Model.Vocabulary.AbstractField.AbstractionException>` if an error occurs while abstracting the data
