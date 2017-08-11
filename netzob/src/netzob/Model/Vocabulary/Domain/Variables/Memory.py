@@ -56,84 +56,52 @@ class Memory(object):
     definition during the abstraction and specialization processes.
 
 
-    **Relationships between fields of successive messages**
+    .. ifconfig:: scope in ('netzob')
 
-    The following example shows how to define a relationship between a
-    received message and the next message to send.
+       **Relationships between fields of successive messages**
 
-    >>> from netzob.all import *
-    >>> f1 = Field(domain=String("hello"), name="F1")
-    >>> f2 = Field(domain=String(";"), name="F2")
-    >>> f3 = Field(domain=String(nbChars=(5,10)), name="F3")
-    >>> s1 = Symbol(fields=[f1, f2, f3], name="S1")
-    >>>
-    >>> f4 = Field(domain=String("master"), name="F4")
-    >>> f5 = Field(domain=String(">"), name="F5")
-    >>> f6 = Field(domain=Value(f3), name="F6")
-    >>> s2 = Symbol(fields=[f4, f5, f6])
-    >>>
-    >>> memory = Memory()
-    >>> m1 = s1.specialize(memory=memory)
-    >>> m2 = s2.specialize(memory=memory)
-    >>>
-    >>> m1[6:] == m2[7:]
-    True
+       The following example shows how to define a relationship between a
+       received message and the next message to send.
 
-
-    **Relationships between a message field and the environment**
-
-    The following example shows how to define a relationship between a
-    message to send and an environment variable.
-
-    >>> # Environment variables definition
-    >>> memory = Memory()
-    >>> env1 = Data(String(), name="env1")
-    >>> memory.memorize(env1, String("John").value)
-    >>>
-    >>> # Symbol definition
-    >>> f7 = Field(domain=String("master"), name="F7")
-    >>> f8 = Field(domain=String(">"), name="F8")
-    >>> f9 = Field(domain=Value(env1), name="F9")
-    >>> s3 = Symbol(fields=[f7, f8, f9])
-    >>>
-    >>> # Symbol specialization
-    >>> s3.specialize(memory=memory)
-    b'master>John'
+       >>> from netzob.all import *
+       >>> f1 = Field(domain=String("hello"), name="F1")
+       >>> f2 = Field(domain=String(";"), name="F2")
+       >>> f3 = Field(domain=String(nbChars=(5,10)), name="F3")
+       >>> s1 = Symbol(fields=[f1, f2, f3], name="S1")
+       >>>
+       >>> f4 = Field(domain=String("master"), name="F4")
+       >>> f5 = Field(domain=String(">"), name="F5")
+       >>> f6 = Field(domain=Value(f3), name="F6")
+       >>> s2 = Symbol(fields=[f4, f5, f6])
+       >>>
+       >>> memory = Memory()
+       >>> m1 = s1.specialize(memory=memory)
+       >>> m2 = s2.specialize(memory=memory)
+       >>>
+       >>> m1[6:] == m2[7:]
+       True
 
 
-    **Memory usage with the abstraction layer**
+       **Relationships between a message field and the environment**
 
-    The following example shows how to define a relationship between a
-    message to send and an environment variable, then how to leverage this
-    relationship when using the abstraction layer.
+       The following example shows how to define a relationship between a
+       message to send and an environment variable.
 
-    >>> # Environment variables definition
-    >>> memory1 = Memory()
-    >>> env1 = Data(String(), name="env1")
-    >>> memory1.memorize(env1, String("John").value)
-    >>>
-    >>> # Symbol definition
-    >>> f7 = Field(domain=String("master"), name="F7")
-    >>> f8 = Field(domain=String(">"), name="F8")
-    >>> f9 = Field(domain=Value(env1), name="F9")
-    >>> symbol = Symbol(fields=[f7, f8, f9], name="Symbol_Hello")
-    >>>
-    >>> # Creation of channels with dedicated abstraction layer
-    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889)
-    >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol], memory1)
-    >>> abstractionLayerIn.openChannel()
-    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889)
-    >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbol], memory1)
-    >>> abstractionLayerOut.openChannel()
-    >>>
-    >>> # Sending of a symbol containing a data coming from the environment
-    >>> abstractionLayerOut.writeSymbol(symbol)
-    11
-    >>> (receivedSymbol, receivedMessage) = abstractionLayerIn.readSymbol()
-    >>> receivedSymbol.name
-    'Symbol_Hello'
-    >>> receivedMessage
-    b'master>John'
+       >>> from netzob.all import *
+       >>> # Environment variables definition
+       >>> memory = Memory()
+       >>> env1 = Data(String(), name="env1")
+       >>> memory.memorize(env1, String("John").value)
+       >>>
+       >>> # Symbol definition
+       >>> f7 = Field(domain=String("master"), name="F7")
+       >>> f8 = Field(domain=String(">"), name="F8")
+       >>> f9 = Field(domain=Value(env1), name="F9")
+       >>> s3 = Symbol(fields=[f7, f8, f9])
+       >>>
+       >>> # Symbol specialization
+       >>> s3.specialize(memory=memory)
+       b'master>John'
 
     """
 
