@@ -72,7 +72,7 @@ class AbstractChecksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         its checksum value.
 
         :param data: The input data on which to compute the checksum relationship.
-        :type data: :class:`bytes`
+        :type data: :class:`bytes`, required
         :return: The checksum value.
         :rtype: :class:`bytes`
 

@@ -71,7 +71,7 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         its hash value.
 
         :param data: The input data on which to compute the hash relationship.
-        :type data: :class:`bytes`
+        :type data: :class:`bytes`, required
         :return: The hash value.
         :rtype: :class:`bytes`
 
