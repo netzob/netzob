@@ -101,22 +101,25 @@ class Value(AbstractRelationVariableLeaf):
     >>> from netzob.all import *
     >>> f0 = Field(String("abcd"))
     >>> f1 = Field(Value(f0))
-    >>> s  = Symbol(fields=[f0, f1])
-    >>> s.specialize()
+    >>> fheader = Field([f0, f1])
+    >>> fheader.specialize()
     b'abcdabcd'
 
-    The following example shows how to define a field with a copy of
-    another field value, in abstraction mode:
 
-    >>> from netzob.all import *
-    >>> data = "john;john!"
-    >>> f1 = Field(String(nbChars=(2, 8)), name="f1")
-    >>> f2 = Field(String(";"), name="f2")
-    >>> f3 = Field(Value(f1), name="f3")
-    >>> f4 = Field(String("!"), name="f4")
-    >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-    (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
+    .. ifconfig:: scope in ('netzob')
+
+       The following example shows how to define a field with a copy of
+       another field value, in abstraction mode:
+
+       >>> from netzob.all import *
+       >>> data = "john;john!"
+       >>> f1 = Field(String(nbChars=(2, 8)), name="f1")
+       >>> f2 = Field(String(";"), name="f2")
+       >>> f3 = Field(Value(f1), name="f3")
+       >>> f4 = Field(String("!"), name="f4")
+       >>> s = Symbol(fields=[f1, f2, f3, f4])
+       >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
+       (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
 
 
     **Value field with a variable as a target**
@@ -129,8 +132,8 @@ class Value(AbstractRelationVariableLeaf):
     >>> f2 = Field(String(";"), name="f2")
     >>> f3 = Field(Value(d), name="f3")
     >>> f4 = Field(String("!"), name="f4")
-    >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> s.specialize()
+    >>> f = Field([f1, f2, f3, f4])
+    >>> f.specialize()
     b'john;john!'
 
 
@@ -143,16 +146,16 @@ class Value(AbstractRelationVariableLeaf):
     >>> f2 = Field(String(";"), name="f2")
     >>> f3 = Field(Value(f1), name="f3")
     >>> f4 = Field(String("!"), name="f4")
-    >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> s.specialize()
+    >>> f = Field([f1, f2, f3, f4])
+    >>> f.specialize()
     b'john;john!'
 
     >>> f3 = Field(String("john"), name="f3")
     >>> f2 = Field(String(";"), name="f2")
     >>> f1 = Field(Value(f3), name="f1")
     >>> f4 = Field(String("!"), name="f4")
-    >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> s.specialize()
+    >>> f = Field([f1, f2, f3, f4])
+    >>> f.specialize()
     b'john;john!'
 
 
@@ -171,8 +174,8 @@ class Value(AbstractRelationVariableLeaf):
     ...    return ret
     >>> f0 = Field(Raw(b'\x01'))
     >>> f1 = Field(Value(f0, operation = cbk))
-    >>> s = Symbol([f0, f1])
-    >>> s.specialize()
+    >>> f = Field([f0, f1])
+    >>> f.specialize()
     b'\x01\x80'
 
 
