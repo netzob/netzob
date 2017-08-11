@@ -199,7 +199,7 @@ class RawIPChannel(AbstractChannel):
         ip_ver = Field(
             name='ip.version', domain=BitArray(
                 value=bitarray('0100')))  # IP Version 4
-        ip_ihl = Field(name='ip.hdr_len', domain=BitArray(bitarray('0000')))
+        ip_ihl = Field(name='ip.hdr_len', domain=BitArray('0000'))
         ip_tos = Field(
             name='ip.tos',
             domain=Data(
@@ -207,13 +207,13 @@ class RawIPChannel(AbstractChannel):
                 originalValue=bitarray('00000000'),
                 svas=SVAS.PERSISTENT))
         ip_tot_len = Field(
-            name='ip.len', domain=BitArray(bitarray('0000000000000000')))
+            name='ip.len', domain=BitArray('0000000000000000'))
         ip_id = Field(name='ip.id', domain=BitArray(nbBits=16))
         ip_flags = Field(name='ip.flags', domain=Data(dataType=BitArray(nbBits=3), originalValue=bitarray('000'), svas=SVAS.PERSISTENT))
         ip_frag_off = Field(name='ip.fragment', domain=Data(dataType=BitArray(nbBits=13), originalValue=bitarray('0000000000000'), svas=SVAS.PERSISTENT))
         ip_ttl = Field(name='ip.ttl', domain=Data(dataType=BitArray(nbBits=8), originalValue=bitarray('01000000'), svas=SVAS.PERSISTENT))
         ip_proto = Field(name='ip.proto', domain=Integer(value=self.upperProtocol, unitSize=UnitSize.SIZE_8, endianness=Endianness.BIG, sign=Sign.UNSIGNED))
-        ip_checksum = Field(name='ip.checksum', domain=BitArray(bitarray('0000000000000000')))
+        ip_checksum = Field(name='ip.checksum', domain=BitArray('0000000000000000'))
         ip_saddr = Field(name='ip.src', domain=IPv4(self.localIP))
         ip_daddr = Field(
             name='ip.dst', domain=IPv4(self.remoteIP))
