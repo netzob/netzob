@@ -40,6 +40,7 @@ import uuid
 from bitarray import bitarray
 import random
 import collections
+from enum import Enum
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -50,29 +51,45 @@ import collections
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
-from enum import Enum
 
 
 class Endianness(Enum):
+    """Enum class used to specify the endianness of a type.
+    """
     BIG = 'big'
+    """Endianness.BIG can be used to specify the endianness of a type."""
     LITTLE = 'little'
+    """Endianness.LITTLE can be used to specify the endianness of a type."""
     __repr__ = Enum.__str__
 
 
 class Sign(Enum):
+    """Enum class used to specify the sign of a type.
+    """
     SIGNED = 'signed'
+    """Sign.SIGNED can be used to specify the sign of a type."""
     UNSIGNED = 'unsigned'
+    """Sign.UNISGNED can be used to specify the sign of a type."""
     __repr__ = Enum.__str__
 
 
 class UnitSize(Enum):
+    """Enum class used to specify the unit size of a type (i.e. the space in bits that a unitary element takes).
+    """
     SIZE_1 = 1
+    """UnitSize.SIZE_1 can be used to specify the unit size of a type."""
     SIZE_4 = 4
+    """UnitSize.SIZE_4 can be used to specify the unit size of a type."""
     SIZE_8 = 8
+    """UnitSize.SIZE_8 can be used to specify the unit size of a type."""
     SIZE_16 = 16
+    """UnitSize.SIZE_16 can be used to specify the unit size of a type."""
     SIZE_24 = 24
+    """UnitSize.SIZE_24 can be used to specify the unit size of a type."""
     SIZE_32 = 32
+    """UnitSize.SIZE_32 can be used to specify the unit size of a type."""
     SIZE_64 = 64
+    """UnitSize.SIZE_64 can be used to specify the unit size of a type."""
     __repr__ = Enum.__str__
 
 
@@ -96,9 +113,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     :type typeName: :class:`str`, optional
     :type value: :class:`bitarray.bitarray`, required
     :type size: a tuple with the min and the max size specified as :class:`int`, optional
-    :type unitSize: :class:`Enum`, optional
-    :type endianness: :class:`Enum`, optional
-    :type sign: :class:`Enum`, optional
+    :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
+    :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
+    :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign`, optional
 
     The following unit sizes are available:
 
@@ -125,15 +142,15 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     Regarding the internal representation of variables, the Python
     module :class:`bitarray.bitarray` is used, thus allowing to
-    specify fields at the bit granularity. As an example, the
+    specify objects at the bit granularity. As an example, the
     following code show how to access the internal representation of
     the value of an Integer object::
 
     >>> from netzob.all import *
-    >>> f = Field(Integer(20))
-    >>> print(f.domain.dataType)
+    >>> i = Integer(20)
+    >>> print(i)
     Integer=20 ((None, None))
-    >>> f.domain.dataType.value
+    >>> i.value
     bitarray('00010100')
 
     """
@@ -331,10 +348,10 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                          Sign.SIGNED or
                          Sign.UNSIGNED. If None, the
                          value is the default one (Sign.SIGNED).
-        :type typeClass: type
-        :type dst_unitSize: :class:`Enum`
-        :type dst_endianness: :class:`Enum`
-        :type dst_sign: :class:`Enum`
+        :type typeClass: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, required
+        :type dst_unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
+        :type dst_endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
+        :type dst_sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
         :return: The converted current value in the specified data type.
         :rtype: :class:`AbstractType <netzob.Model.AbstractType.AbstractType>`
 
