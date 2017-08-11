@@ -171,7 +171,7 @@ class Mutator(metaclass=abc.ABCMeta):
         self._currentCounter += 1
 
     @abc.abstractmethod
-    def mutate(self, *args):
+    def mutate(self, data):
         """This is the mutation method of the field domain. It has to be
         overridden by all the inherited mutators which call the
         :meth:`mutate` function.
