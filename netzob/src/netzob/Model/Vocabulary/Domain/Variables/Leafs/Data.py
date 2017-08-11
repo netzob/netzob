@@ -56,7 +56,8 @@ class Data(AbstractVariableLeaf):
     """The Data class is a variable which embeds specific content.
 
     A Data object stores at least two things: 1) the definition domain
-    and the constraints over it, through a Type object, and 2) the
+    and the constraints over it, through a :class:`Type
+    <netzob.Model.Vocabulary.Types.AbstractType>` object, and 2) the
     current value of the variable.
 
     The Data constructor expects some parameters:
@@ -64,15 +65,15 @@ class Data(AbstractVariableLeaf):
     :param dataType: The type of the data (for example Integer,
                      Raw, String, ...).
     :param originalValue: The original value of the data (can be
-                          None).
+                          None, which is the default behavior).
     :param name: The name of the data (if None, the name will
                  be generated).
     :param svas: The SVAS strategy defining how the Data value is
-                 used for abstracting and specializing.
+                 used during abstraction and specializion process. The default strategy is SVAS.EPHEMERAL.
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, required
     :type originalValue: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
     :type name: :class:`str`, optional
-    :type svas: :class:`str`, optional
+    :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
     The following example shows the definition of the Data `pseudo`
@@ -81,28 +82,29 @@ class Data(AbstractVariableLeaf):
     of this object is `"hello"`.
 
     >>> from netzob.all import *
-    >>> f = Field()
-    >>> b = String('hello').value
-    >>> f.domain = Data(dataType=String(), originalValue=b, name="pseudo")
-    >>> f.domain.varType
+    >>> s = String('hello').value
+    >>> data = Data(dataType=String(), originalValue=s, name="pseudo")
+    >>> data.varType
     'Data'
-    >>> f.domain.currentValue.tobytes()
+    >>> data.currentValue.tobytes()
     b'hello'
-    >>> print(f.domain.dataType)
+    >>> print(data.dataType)
     String=None ((None, None))
-    >>> f.domain.name
+    >>> data.name
     'pseudo'
 
-    Besides, the Data object is the default Variable when we create a
-    Field without explicitly specifying the Data domain, as shown on
-    the following example:
+    .. ifconfig:: scope in ('netzob')
 
-    >>> from netzob.all import *
-    >>> f = Field(String("hello"))
-    >>> f.domain.varType
-    'Data'
-    >>> f.domain.currentValue.tobytes()
-    b'hello'
+       Besides, the Data object is the default Variable when we create a
+       Field without explicitly specifying the Data domain, as shown on
+       the following example:
+
+       >>> from netzob.all import *
+       >>> f = Field(String("hello"))
+       >>> f.domain.varType
+       'Data'
+       >>> f.domain.currentValue.tobytes()
+       b'hello'
 
     """
 
@@ -124,7 +126,7 @@ class Data(AbstractVariableLeaf):
     def isDefined(self, path):
         """Checks if a value is available either in data's definition or in memory
 
-        :parameter path: the current path used either to abstract and specializa this data
+        :parameter path: the current path used either to abstract and specialize this data
         :type path: :class:`GenericPath <netzob.Model.Vocabulary.Domain.GenericPath.GenericPath>`
         :return: a boolean that indicates if a value is available for this data
         :rtype: :class:`bool`
