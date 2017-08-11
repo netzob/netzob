@@ -65,8 +65,8 @@ class HMAC_MD5(AbstractHMAC):
     >>> import binascii
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(HMAC_MD5([f1], key=b'1234'))
-    >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
+    >>> f = Field([f1, f2])
+    >>> binascii.hexlify(f.specialize())
     b'aabbb71c98baa40dc8a49361816d5dc1eb25'
     """
 
