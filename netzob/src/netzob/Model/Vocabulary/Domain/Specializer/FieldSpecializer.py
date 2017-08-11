@@ -136,7 +136,6 @@ class FieldSpecializer(object):
         if self.arbitraryValue is not None:
             # In case an arbitrary value is specified, we consider it for field specialization
             specializingPath.addResult(self.field.domain, self.arbitraryValue)
-            #specializingPath.addResultToField(self.field, self.arbitraryValue)
             specializingPaths = [specializingPath]
         elif len(self.field.fields) > 0:
             # If no arbitrary value is specified, we specialize the sub-fields if there are any
@@ -165,6 +164,11 @@ class FieldSpecializer(object):
         for resultPath in resultPaths:
             value = None
             for child in self.field.fields:
+
+                # do no produce content if it is a pseudo field
+                if child.isPseudoField is True:
+                    continue
+
                 childResult = resultPath.getDataAssignedToVariable(
                     child.domain)
                 if value is None:
@@ -173,7 +177,6 @@ class FieldSpecializer(object):
                     value += childResult.copy()
 
             resultPath.addResult(self.field.domain, value)
-            #resultPath.addResultToField(self.field, value)
 
         return resultPaths
 

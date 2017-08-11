@@ -164,7 +164,6 @@ class MessageSpecializer(object):
 
                 for specializingPath in specializingPaths:
                     specializingPath.addResult(field.domain, self.presets[field])
-                    #specializingPath.addResultToField(field, self.presets[field])
 
         # Third, we specialize the other fields (no presets)
         for field in symbol.fields:
