@@ -227,7 +227,10 @@ class Symbol(AbstractField):
                        specialization process.
         :type presets: :class:`dict`, optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
-        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`, optional
+        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
+        :return: The produced content after specializing the symbol.
+        :rtype: :class:`bytes`
+        :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
 
         The following example shows the :meth:`specialize()` method used for a
         field which contains a String and a Size fields.
@@ -242,7 +245,7 @@ class Symbol(AbstractField):
         >>> len(result)
         6
 
-        **Parameterized specialization of field values (`preset=` parameter)**
+        **Parameterized specialization of field values (`presets=` parameter)**
 
         It is possible to preset (parameterize) fields during symbol
         specialization, through a dict passed in the ``presets=``
