@@ -267,7 +267,7 @@ class AltMutator(DomainMutator):
         Return the current depth in searching a type different of
         :class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>` in :meth:`generate`.
 
-        :type: :class:`bool`
+        :type: :class:`int`
         :raises: :class:`RecursionError` if _currentDepth is None
         """
         if self._currentDepth is None:
@@ -278,8 +278,8 @@ called, first")
     def generate(self):
         """This is the fuzz generation method of the alternative field.
 
-        It selects randomly the type among the alternative list, by using
-        :attr:`positionMutator`, and stores it in :attr:`randomType`.
+        It randomly selects the child among the alternative list by using
+        :attr:`positionMutator`.
 
         If the mutation encounters recursivity (:class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>`
         containing :class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>`),

@@ -85,11 +85,10 @@ class DomainMutator(Mutator):
 
     :param domain: The domain of the field to mutate, in case of a data
         mutator.
-    :param mode: If set to :attr:`MutatorMode.GENERATE`, :meth:`generate` will be
-        used to produce the value.
-        If set to :attr:`MutatorMode.MUTATE`, :meth:`mutate` will be used to
-        produce the value (not used yet).
-        Default value is :attr:`MutatorMode.GENERATE`.
+    :param mode: If set to :attr:`MutatorMode.GENERATE`, :meth:`Mutator.generate()` will be
+        called in order to produce the fuzzing value.
+        If set to :attr:`MutatorMode.MUTATE`, :meth:`Mutator.mutate()` will be called in order to
+        mutate the current value. Default value is :attr:`MutatorMode.GENERATE`.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type mode: :class:`MutatorMode`, optional

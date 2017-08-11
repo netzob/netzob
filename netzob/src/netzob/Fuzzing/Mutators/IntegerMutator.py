@@ -88,7 +88,7 @@ class IntegerMutator(DomainMutator):
 
     **Internal generator functions**
 
-    The following example shows how to generate an 8bits integer in [10, 20]
+    The following example shows how to generate an 8 bits integer in [10, 20]
     interval, with an arbitrary seed of 4321 and by using the default
     pseudo-random generator:
 
@@ -98,7 +98,7 @@ class IntegerMutator(DomainMutator):
     >>> mutator.generate()
     b'\n'
 
-    The following example shows how to generate an 8bits integer in [-128, +127]
+    The following example shows how to generate an 8 bits integer in [-128, +127]
     interval, with an arbitrary seed of 52 and by using the determinist
     generator:
 
@@ -107,7 +107,7 @@ class IntegerMutator(DomainMutator):
     >>> mutator1.generate()
     b'\x03'
 
-    The following example shows how to generate an 8bits integer in [10, 20]
+    The following example shows how to generate an 8 bits integer in [10, 20]
     interval, with an arbitrary seed of 1234 and by using the determinist
     generator:
 
@@ -116,7 +116,7 @@ class IntegerMutator(DomainMutator):
     >>> mutator1.generate()
     b'\x11'
 
-    The following example shows how to generate an 8bits integer in [-10, +5]
+    The following example shows how to generate an 8 bits integer in [-10, +5]
     interval, with an arbitrary seed of 1234 and by using the determinist
     generator:
 
@@ -125,7 +125,7 @@ class IntegerMutator(DomainMutator):
     >>> mutator1.generate()
     b'\xfd'
 
-    The following example shows how to generate an 8bits integer in
+    The following example shows how to generate an 16 bits integer in
     [-32768, +32767] interval, with an arbitrary seed of 1234 and by using the
     determinist generator:
 
