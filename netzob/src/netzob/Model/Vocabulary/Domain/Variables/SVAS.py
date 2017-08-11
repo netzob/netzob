@@ -34,6 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from enum import Enum
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -46,7 +47,7 @@ from netzob.Common.Utils.Decorators import NetzobLogger
 
 
 @NetzobLogger
-class SVAS(object):
+class SVAS(Enum):
     """This class represents the Assignment Strategy of a variable.
 
     The State Variable Assignment Strategy (SVAS) of a variable
@@ -309,6 +310,3 @@ class SVAS(object):
     EPHEMERAL = "Ephemeral SVAS"
     VOLATILE = "Volatile SVAS"
     PERSISTENT = "Persistent SVAS"
-
-    def __init__(self):
-        pass
