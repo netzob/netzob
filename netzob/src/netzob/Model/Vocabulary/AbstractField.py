@@ -460,8 +460,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :keyword mutator: if set, the mutator will be used to mutate the field definitions
         :type mutator: :class:`Mutator <netzob.Fuzzing.Mutator>`
 
-        :return: a generated content represented with a hexastring
-        :rtype: :class:`str`
+        :return: The produced content after the specializion process.
+        :rtype: :class:`bytes`
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while generating a message
         """
         return
@@ -480,7 +480,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
                        specialization and abstraction of sequence of symbols.
         :type data: :class:`bytes`, required
         :type fields: :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
-        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`, optional
+        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
         :return: a field/symbol and the structured received message
         :rtype: a tuple (:class:`Field <netzob.Model.Vocabulary.Field>`, dict)
         :raises: :class:`AbstractionException <netzob.Model.Vocabulary.AbstractField.AbstractionException>` if an error occurs while abstracting the data
@@ -578,7 +578,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """Retrieve a sub-field based on its name.
 
         :param field_name: the name of the :class:`Field <netzob.Model.Vocabulary.Field.Field>` object
-        :type field_name: :class:`str`
+        :type field_name: :class:`str`, required
         :returns: The sub-field object.
         :rtype: :class:`Field <netzob.Model.Vocabulary.Field>`
 
@@ -721,7 +721,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         using a tree display.
 
         :param deepness: Parameter used to specify th number of indentations.
-        :type deepness: :class:`int`
+        :type deepness: :class:`int`, required
 
         >>> from netzob.all import *
         >>> f1 = Field(String(), name="field1")
