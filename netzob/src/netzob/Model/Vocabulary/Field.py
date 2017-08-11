@@ -74,7 +74,7 @@ class Field(AbstractField):
                           internally to help for the computation
                           of the value of another field, but does
                           not directly produce data.
-    :type domain: a :class:`list` of :class:`object`, optional
+    :type domain: a :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`, optional
     :type name: :class:`str`, optional
     :type isPseudoField: :class:`bool`, optional
 
@@ -114,18 +114,12 @@ class Field(AbstractField):
     >>> from netzob.all import *
     >>> fh0 = Field(name='fh0')
     >>> fh1 = Field(name='fh1')
-    >>> fheader = Field(name='fheader')
-    >>> fheader.fields = [fh0, fh1]
-    >>> fpayload = Field(name='fpayload')
-    >>> symbol = Symbol(fields=[fheader, fpayload])
-    >>> print(symbol.str_structure())
-    Symbol
-    |--  fheader
-    |--  |--  fh0
-              |--   Data (Raw=None ((0, 524288)))
-    |--  |--  fh1
-              |--   Data (Raw=None ((0, 524288)))
-    |--  fpayload
+    >>> fheader = Field([fh0, fh1], name='fheader')
+    >>> print(fheader.str_structure())
+    fheader
+    |--  fh0
+         |--   Data (Raw=None ((0, 524288)))
+    |--  fh1
          |--   Data (Raw=None ((0, 524288)))
 
     More generally, a field is part of a tree whose root is a symbol
@@ -182,8 +176,8 @@ class Field(AbstractField):
     >>> from netzob.all import *
     >>> f0 = Field(String("test"))
     >>> f1 = Field(Size(f0))
-    >>> symbol = Symbol(fields=[f0, f1])
-    >>> symbol.specialize()
+    >>> fheader = Field([f0, f1])
+    >>> fheader.specialize()
     b'test\x04'
 
 
@@ -201,8 +195,8 @@ class Field(AbstractField):
     >>> from netzob.all import *
     >>> f_pseudo = Field(domain="An external data", isPseudoField=True)
     >>> f_real = Field(domain=Size(f_pseudo))
-    >>> symbol = Symbol(fields=[f_pseudo, f_real])
-    >>> symbol.specialize()
+    >>> fheader = Field([f_pseudo, f_real])
+    >>> fheader.specialize()
     b'\x10'
 
     A real example of a pseudo field is found in the UDP checksum,
