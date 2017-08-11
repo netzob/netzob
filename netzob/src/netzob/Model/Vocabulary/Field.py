@@ -47,6 +47,7 @@ from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 
 
@@ -289,7 +290,7 @@ class Field(AbstractField):
 
         # Handle each possibility for the domain parameter
         if domain is None:  # Check if domain is not defined
-            self.domain = Raw(None)
+            self.domain = Raw()
         elif isinstance(domain, list):  # Check if domain is a list of fields
 
             # Check if each domain element is of type Field
@@ -298,6 +299,7 @@ class Field(AbstractField):
                 if not isinstance(elt, Field):
                     is_domain_list_of_fields = False
                     break
+
             if is_domain_list_of_fields:
                 self.fields = domain
                 self.domain = None
@@ -309,47 +311,52 @@ class Field(AbstractField):
         self.isPseudoField = isPseudoField
 
     def specialize(self):
-        r"""Specialize the current field to build a raw data that
-        follows the field definitions attached to current element.
+        r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose
+        content follows the symbol definition.
 
-        This method generates some content, following the field definition:
+        :return: The produced content after specializing the symbol.
+        :rtype: :class:`bytes`
+        :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
+
+        The following example shows the :meth:`specialize()` method used for a
+        field which contains a string with a constant value.
 
         >>> from netzob.all import *
-        >>> f = Field("hello")
-        >>> print('\n'.join([str(f.specialize()) for x in range(3)]))
-        b'hello'
-        b'hello'
+        >>> f = Field(String("hello"))
+        >>> f.specialize()
         b'hello'
 
-        This method also applies on multiple fields using a Symbol
+        The following example shows the :meth:`specialize()` method used for a
+        field which contains a string with a variable value.
 
-        >>> fHello = Field("hello ")
-        >>> fName = Field("kurt")
-        >>> s = Symbol([fHello, fName])
-        >>> print('\n'.join([str(s.specialize()) for x in range(3)]))
-        b'hello kurt'
-        b'hello kurt'
-        b'hello kurt'
+        >>> from netzob.all import *
+        >>> f = Field(String(nbChars=4))
+        >>> len(f.specialize())
+        4
 
-        :return: a generated content represented with a hexastring
-        :rtype: :class:`str``
-        :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while generating a message
         """
         self._logger.debug("Specializes field {0}".format(self.name))
-        if self.__domain is None:
-            raise InvalidDomainException("The domain is not defined.")
+        if self.__domain is None and len(self.fields) == 0:
+            raise InvalidDomainException("No domain or sub-fields are defined.")
+
+        # We normalize the sub_fields variables
+        from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
+        if len(self.fields) > 0:
+            for field in self.getLeafFields(includePseudoFields=True):
+                if field.domain is not None and isinstance(field.domain, AbstractRelationVariableLeaf):
+                    self._logger.debug("Normalize field targets for field '{}'".format(field.name))
+                    field.domain.normalize_targets()
 
         from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
         fs = FieldSpecializer(self)
         specializingPaths = fs.specialize()
 
         if len(specializingPaths) < 1:
-            raise Exception("Cannot specialize this field")
+            raise Exception("Cannot specialize this field.")
 
         specializingPath = specializingPaths[0]
 
-        self._logger.debug(
-            "field specializing done: {0}".format(specializingPath))
+        self._logger.debug("Field specializing done: {0}".format(specializingPath))
         if specializingPath is None:
             raise Exception(
                 "The specialization of the field {0} returned no result.".
@@ -372,13 +379,16 @@ class Field(AbstractField):
 
     @domain.setter
     def domain(self, domain):
-        # Normalize the domain
-        normalizedDomain = DomainFactory.normalizeDomain(domain)
+        if domain is None:
+            self.__domain = Data(Raw())
+        else:
+            # Normalize the domain
+            normalizedDomain = DomainFactory.normalizeDomain(domain)
 
-        # Link the domain variables with the current field
-        normalizedDomain.field = self
+            # Link the domain variables with the current field
+            normalizedDomain.field = self
 
-        self.__domain = normalizedDomain
+            self.__domain = normalizedDomain
 
     @property
     def messages(self):
