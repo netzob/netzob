@@ -78,20 +78,22 @@ class HexaString(AbstractType):
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
 
 
-    The following example shows how to define a hexastring field with
-    a constant value, and the use of the specialization method:
+    The following example shows how to define a hexastring object with
+    a constant value, and the use of the generation method to produce
+    a value:
 
     >>> from netzob.all import *
-    >>> f = Field(HexaString(b"aabbcc"))
-    >>> f.specialize()
+    >>> h = HexaString(b"aabbcc")
+    >>> h.generate().tobytes()
     b'\xaa\xbb\xcc'
 
-    The following example shows how to define a hexastring field with
-    a variable value, and the use of the specialization method:
+    The following example shows how to define a hexastring object with
+    a variable value, and the use of the generation method to produce
+    a value:
 
     >>> from netzob.all import *
-    >>> f = Field(HexaString(nbBytes=6))
-    >>> len(f.specialize())
+    >>> h = HexaString(nbBytes=6)
+    >>> len(h.generate().tobytes())
     6
 
     """

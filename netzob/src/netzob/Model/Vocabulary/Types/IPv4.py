@@ -68,7 +68,7 @@ class IPv4(AbstractType):
     :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
     :type value: :class:`str` or :class:`netaddr.IPAddress`, optional
     :type network: :class:`str` or :class:`netaddr.IPNetwork`, optional
-    :type endianness: :class:`Enum`, optional
+    :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
 
 
     The IPv4 class provides the following public variables:
@@ -85,8 +85,7 @@ class IPv4(AbstractType):
     :vartype network: :class:`str` or :class:`netaddr.IPNetwork`
 
 
-    The following examples show the use of an IPv4 type for the
-    definition domain of a field:
+    The following examples show the use of an IPv4 type:
 
     >>> from netzob.all import *
     >>> ip = IPv4("192.168.0.10")
@@ -95,29 +94,29 @@ class IPv4(AbstractType):
     >>> ip.value
     bitarray('11000000101010000000000000001010')
 
-    >>> f1 = Field("IP=", name="magic")
-    >>> f2 = Field(IPv4(), name="ip4")
-
-    >>> raw_data = ip.value.tobytes()
-    >>> Symbol.abstract(raw_data, [f2])
-    (ip4, OrderedDict([('ip4', b'\xc0\xa8\x00\n')]))
-    >>> raw_data = f1.specialize() + raw_data
-    >>> Symbol.abstract(raw_data, [f1, f2])  # doctest: +SKIP
-
-
     .. ifconfig:: scope in ('netzob')
+
+       >>> f1 = Field("IP=", name="magic")
+       >>> f2 = Field(IPv4(), name="ip4")
+
+       >>> raw_data = ip.value.tobytes()
+       >>> Symbol.abstract(raw_data, [f2])
+       (ip4, OrderedDict([('ip4', b'\xc0\xa8\x00\n')]))
+       >>> raw_data = f1.specialize() + raw_data
+       >>> Symbol.abstract(raw_data, [f1, f2])  # doctest: +SKIP
+
 
        >>> s = Symbol(fields=[f1,f2])
        >>> msgs = [RawMessage(s.specialize()) for x in range(10)]
        >>> len(msgs)
        10
 
-    It is also possible to specify a field that accepts a range of IP
-    addresses, through the `network=` parameter, as shown on the
+    It is also possible to specify an IPv4 type that accepts a range
+    of IP addresses, through the `network=` parameter, as shown on the
     following example:
 
-    >>> f = Field(IPv4(network="10.10.10.0/24"))
-    >>> len(f.specialize())
+    >>> ip = IPv4(network="10.10.10.0/24")
+    >>> len(ip.generate().tobytes())
     4
 
     """

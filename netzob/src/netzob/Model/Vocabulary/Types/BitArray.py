@@ -54,7 +54,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness,
 class BitArray(AbstractType):
     r"""This class defines a BitArray type.
 
-    The BitArray type describes a field that contains a
+    The BitArray type describes an object that contains a
     sequence of bits of arbitrary sizes.
 
     The BitArray constructor expects some parameters:
@@ -78,39 +78,36 @@ class BitArray(AbstractType):
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype constants: a :class:`list` of :class:`str`
 
-    The two following examples show how to define a field with a
-    BitArray containing a fixed constant. Both examples are
-    equivalent. The second one is just more concise.
+    The following example show how to define a BitArray
+    containing a fixed constant.
 
     >>> from netzob.all import *  
-    >>> f1 = Field(BitArray(bitarray('00001111')))
-    >>> f1.specialize()
-    b'\x0f'
-
-    >>> f1 = Field(bitarray('00001111'))
-    >>> f1.specialize()
+    >>> b = BitArray('00001111')
+    >>> b.generate().tobytes()
     b'\x0f'
 
 
     **Bitarray of fixed and dynamic sizes**
 
     The following example shows how to define a bitarray of 1 bit, 47
-    bits, 64 bits and then a field that accepts a bitarray of variable
-    size between 13 and 128 bits:
+    bits, 64 bits and then a bitarray whith a variable size between 13
+    and 128 bits:
 
-    >>> f1 = Field(BitArray(nbBits=1))
-    >>> len(f1.domain.dataType.generate())
+    >>> b = BitArray(nbBits=1)
+    >>> len(b.generate())
     1
 
-    >>> f2 = Field(BitArray(nbBits=47))
-    >>> len(f2.domain.dataType.generate())
+    >>> b = BitArray(nbBits=47)
+    >>> len(b.generate())
     47
 
-    >>> f3 = Field(BitArray(nbBits=64))
-    >>> len(f3.domain.dataType.generate())
+    >>> b = BitArray(nbBits=64)
+    >>> len(b.generate())
     64
 
-    >>> f4 = Field(BitArray(nbBits=(13, 128)))
+    >>> b = BitArray(nbBits=(13, 128))
+    >>> 13 <= len(b.generate()) <= 128
+    True
 
 
     **Accessing bitarray elements by named constant**
@@ -119,36 +116,49 @@ class BitArray(AbstractType):
     elements. As this bitarray has a fixed length, element are
     automatically accessible by predefined named constants ('item_0'
     and 'item_1'):
-    
-    >>> f1 = Field(bitarray('00'))
-    >>> f1.domain.dataType.constants
+
+    >>> b = BitArray('00')
+    >>> b.constants
     ['item_0', 'item_1']
 
     Bitarray element names can be changed:
 
-    >>> f1.domain.dataType.constants[0] = 'Urgent flag'
-    >>> f1.domain.dataType.constants[1] = 'Data flag'
-    >>> f1.domain.dataType.constants
+    >>> b.constants[0] = 'Urgent flag'
+    >>> b.constants[1] = 'Data flag'
+    >>> b.constants
     ['Urgent flag', 'Data flag']
 
     Bitarray element can be accessed in read or write mode:
 
-    >>> f1.domain.dataType['Urgent flag']
+    >>> b['Urgent flag']
     False
 
-    >>> f1.domain.dataType['Urgent flag'] = True
-    >>> f1.domain.dataType['Urgent flag']
+    >>> b['Urgent flag'] = True
+    >>> b['Urgent flag']
     True
 
     Bitarray element can be used with binary operators:
 
-    >>> f1.domain.dataType['Urgent flag'] |= f1.domain.dataType['Data flag']
-    >>> f1.domain.dataType['Urgent flag']
+    >>> b['Urgent flag'] |= b['Data flag']
+    >>> b['Urgent flag']
     True
 
     """
 
     def __init__(self, value=None, nbBits=(None, None)):
+
+        # Handle input value
+        if value is not None and not isinstance(value, bitarray):
+
+            # Check if value is correct, and normalize it in str object, and then in bitarray
+            if isinstance(value, str):
+                try:
+                    value = bitarray(value)
+                except Exception as e:
+                    raise ValueError("Input value for the following BitArray is incorrect: '{}'. Error: '{}'".format(value, e))
+            else:
+                raise ValueError("Unsupported input format for value: '{}', type: '{}'".format(value, type(value)))
+
         super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
         self.constants = None  # A list of named constant used to access the bitarray elements
 
@@ -207,7 +217,7 @@ class BitArray(AbstractType):
         >>> BitArray(nbBits=8).canParse(bitarray('010101011'))
         False
 
-        >>> BitArray(bitarray('11110101')).canParse(bitarray('11110101'))
+        >>> BitArray('11110101').canParse(bitarray('11110101'))
         True
 
         """

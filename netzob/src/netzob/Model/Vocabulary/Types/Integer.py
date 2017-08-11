@@ -66,9 +66,9 @@ class Integer(AbstractType):
     :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. The default value is Sign.SIGNED.
     :type value: :class:`bitarray.bitarray` or :class:`int`, optional
     :type interval: an :class:`int` or a tuple with the min and the max values specified as :class:`int`, optional
-    :type unitSize: :class:`str`, optional
-    :type endianness: :class:`Enum`, optional
-    :type sign: :class:`Enum`, optional
+    :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
+    :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
+    :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
 
 
     The Integer class provides the following public variables:
@@ -116,36 +116,36 @@ class Integer(AbstractType):
     ``\x0c``):
 
     >>> from netzob.all import *
-    >>> f = Field(Integer(value=12, unitSize=UnitSize.SIZE_8))
-    >>> f.specialize()
+    >>> i = Integer(value=12, unitSize=UnitSize.SIZE_8)
+    >>> i.generate().tobytes()
     b'\x0c'
 
     The following example shows how to define an integer encoded in
     sequences of 32 bits and with a default value of 12 (thus
     producing ``\x00\x00\x00\x0c``):
 
-    >>> f = Field(Integer(value=12, unitSize=UnitSize.SIZE_32))
-    >>> f.specialize()
+    >>> i = Integer(value=12, unitSize=UnitSize.SIZE_32)
+    >>> i.generate().tobytes()
     b'\x00\x00\x00\x0c'
 
     The following example shows how to define an integer encoded in
     sequences of 32 bits in little endian with a default value of 12
     (thus producing ``\x0c\x00\x00\x00``):
 
-    >>> f = Field(Integer(value=12, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE))
-    >>> f.specialize()
+    >>> i = Integer(value=12, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)
+    >>> i.generate().tobytes()
     b'\x0c\x00\x00\x00'
 
     The following example shows how to define a signed integer
     encoded in sequences of 16 bits with a default value of -12 (thus
     producing ``\xff\xf4``):
 
-    >>> f = Field(Integer(value=-12, sign=Sign.SIGNED, unitSize=UnitSize.SIZE_16))
-    >>> f.specialize()
+    >>> i = Integer(value=-12, sign=Sign.SIGNED, unitSize=UnitSize.SIZE_16)
+    >>> i.generate().tobytes()
     b'\xff\xf4'
 
 
-    **Examples of specific Integer types**
+    **Examples of pre-defined Integer types**
 
     For convenience, common specific integer types are also available, with
     pre-defined values of :attr:`unitSize`, :attr:`sign` and :attr:`endianness`
@@ -154,45 +154,46 @@ class Integer(AbstractType):
     For example, a *16-bit little-endian unsigned* Integer is classically defined
     like this:
 
-    >>> f1 = Integer(42,
-    ...              unitSize=UnitSize.SIZE_16,
-    ...              sign=Sign.UNSIGNED,
-    ...              endianness=Endianness.LITTLE)
+    >>> i = Integer(42,
+    ...             unitSize=UnitSize.SIZE_16,
+    ...             sign=Sign.UNSIGNED,
+    ...             endianness=Endianness.LITTLE)
 
     Could also be called in an equivalent form:
 
-    >>> f2 = uint16le(42)
+    >>> i = uint16le(42)
 
-    There is an equivalence between these two fields, for every internal value
-    of the type:
+    There is an equivalence between these two integers, for every
+    internal value of the type:
 
-    >>> f1 = Integer(42,
+    >>> i1 = Integer(42,
     ...              unitSize=UnitSize.SIZE_16,
     ...              sign=Sign.UNSIGNED,
     ...              endianness=Endianness.LITTLE)
-    >>> f2 = uint16le(42)
-    >>> f1, f2
+    >>> i2 = uint16le(42)
+    >>> i1, i2
     (42, 42)
-    >>> f1 == f2
+    >>> i1 == i2
     True
 
     But a comparison between two specific integers of different kind will
-    always fail, even if their value looks equivalent:
+    always fail, even if their values look equivalent:
 
-    >>> f2 = uint16le(42)
-    >>> f3 = uint32le(42)
-    >>> f2 == f3
+    >>> i1 = uint16le(42)
+    >>> i2 = uint32le(42)
+    >>> i1 == i2
     False
 
-    And even when the concrete value seems identical, fields are not:
+    And even when the concrete value seems identical, the integer
+    objects are not:
 
-    >>> f2 = uint16le(42)
-    >>> f4 = int16le(42)
-    >>> f2, f4
+    >>> i1 = uint16le(42)
+    >>> i2 = int16le(42)
+    >>> i1, i2
     (42, 42)
-    >>> print(f2, f4)
+    >>> print(i1, i2)
     Integer=42 ((None, None)) Integer=42 ((None, None))
-    >>> f2 == f4
+    >>> i1 == i2
     False
 
 
@@ -203,13 +204,13 @@ class Integer(AbstractType):
     examples, we create a 16 bits little endian, a 16 bits big endian,
     a 32 bits little endian and a 32 bits big endian:
 
-    >>> Integer(1234, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE).value.tobytes()
+    >>> int16le(1234).value.tobytes()
     b'\xd2\x04'
-    >>> Integer(1234, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG).value.tobytes()
+    >>> int16be(1234).value.tobytes()
     b'\x04\xd2'
-    >>> Integer(1234, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE).value.tobytes()
+    >>> int32le(1234).value.tobytes()
     b'\xd2\x04\x00\x00'
-    >>> Integer(1234, unitSize=UnitSize.SIZE_32, endianness=Endianness.BIG).value.tobytes()
+    >>> int32be(1234).value.tobytes()
     b'\x00\x00\x04\xd2'
 
 
@@ -218,12 +219,12 @@ class Integer(AbstractType):
     The following examples show the representation of Integer objects
     with and without default value.
 
-    >>> data = Integer(value=12, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)
-    >>> str(data)
+    >>> i = int16le(value=12)
+    >>> str(i)
     'Integer=12 ((None, None))'
 
-    >>> data = Integer(unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
-    >>> str(data)
+    >>> i = int16le()
+    >>> str(i)
     'Integer=None ((-32768, 32767))'
 
 
@@ -232,12 +233,12 @@ class Integer(AbstractType):
     The following examples show the encoding of Integer objects with
     and without default value.
 
-    >>> data = Integer(value=12, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)
-    >>> repr(data)
+    >>> i = int32le(value=12)
+    >>> repr(i)
     '12'
 
-    >>> data = Integer(unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
-    >>> repr(data)
+    >>> i = int32le()
+    >>> repr(i)
     'None'
 
     """

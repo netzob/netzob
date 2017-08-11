@@ -80,31 +80,32 @@ class Raw(AbstractType):
 
 
     The following example shows how to define a six bytes long raw
-    field, and the used of the specialization method to generate a
+    object, and the used of the generation method to produce a
     value:
 
     >>> from netzob.all import *
-    >>> f = Field(Raw(nbBytes=6))
-    >>> len(f.specialize())
+    >>> r = Raw(nbBytes=6)
+    >>> len(r.generate().tobytes())
     6
 
     It is possible to define a range regarding the valid size of the
-    raw field:
+    raw object:
 
-    >>> f = Field(Raw(nbBytes = (2, 20)))
+    >>> r = Raw(nbBytes=(2, 20))
+    >>> 2 <= len(r.generate().tobytes()) <= 20
+    True
 
-    The following example shows the specification of a constant for a
-    field:
+    The following example shows the specification of a raw constant:
 
-    >>> f = Field(Raw(b'\x01\x02\x03'))
-    >>> print(f.domain.dataType)
+    >>> r = Raw(b'\x01\x02\x03')
+    >>> print(r)
     Raw=b'\x01\x02\x03' ((None, None))
 
     The alphabet optional argument can be used to limit the bytes that
     can participate in the domain value:
 
-    >>> f = Field(Raw(nbBytes=100, alphabet=[b"t", b"o"]))
-    >>> data = f.specialize()
+    >>> r = Raw(nbBytes=100, alphabet=[b"t", b"o"])
+    >>> data = r.generate().tobytes()
     >>> data_set = set(data)
     >>> data_set
     {116, 111}
@@ -336,13 +337,8 @@ class Raw(AbstractType):
 
         return True
 
-
-class __TestRaw(unittest.TestCase):
-    """
-    Test class with test-only scenario that should not be documented.
-    """
-
-    def test_abstraction_arbitrary_values(self):
+    def _test(self):
+        """
         from netzob.all import Field, Symbol
         domains = [
             Raw(b"xxxx"), Raw(nbBytes=2),
@@ -350,3 +346,4 @@ class __TestRaw(unittest.TestCase):
         symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
         data = b''.join(f.specialize() for f in symbol.fields)
         assert Symbol.abstract(data, [symbol])[1]
+        """

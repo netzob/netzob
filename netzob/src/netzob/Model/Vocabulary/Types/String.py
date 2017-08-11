@@ -53,8 +53,8 @@ from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 
 @NetzobLogger
 class String(AbstractType):
-    r"""This class defines a String type, in order to represent String or
-    Unicode characters.
+    r"""This class defines a String type, which is used to represent String
+    or Unicode characters.
 
     The type String is a wrapper for the Python :class:`str` object
     with the capability to express more constraints on the permitted
@@ -99,18 +99,20 @@ class String(AbstractType):
     Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_
 
 
-    It is possible to describe a field that contains a string. Strings can be
-    either static or dynamic with fixed sizes or even dynamic with
-    variable sizes.
+    Strings can be either static, dynamic with fixed sizes or even
+    dynamic with variable sizes.
 
     The following examples show how to define a static string in UTF-8:
 
     >>> from netzob.all import *
-    >>> Field(String("Paris")).specialize()
+    >>> s = String("Paris")
+    >>> s.generate().tobytes()
     b'Paris'
-    >>> Field(String("Paris in Euro: €")).specialize()
+    >>> s = String("Paris in Euro: €")
+    >>> s.generate().tobytes()
     b'Paris in Euro: \xe2\x82\xac'
-    >>> Field(String("Paris in Euro: €", encoding='utf-8')).specialize()
+    >>> s = String("Paris in Euro: €", encoding='utf-8')
+    >>> s.generate().tobytes()
     b'Paris in Euro: \xe2\x82\xac'
 
     The following example shows the raising of an exception if input
@@ -118,7 +120,7 @@ class String(AbstractType):
     the associated value contains a non-String element:
 
     >>> from netzob.all import *
-    >>> Field(String("Paris in €", encoding='ascii')).specialize()  # doctest: +IGNORE_EXCEPTION_DETAIL
+    >>> s = String("Paris in €", encoding='ascii') # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
     ...
     ValueError: Input value for the following string is incorrect: 'Paris in €'...
@@ -127,29 +129,35 @@ class String(AbstractType):
     fixed size and a dynamic content:
 
     >>> from netzob.all import *
-    >>> f = Field(String(nbChars=10))
+    >>> s = String(nbChars=10)
+    >>> len(s.generate().tobytes())
+    10
 
     The following example shows how to define a string with a
     variable size and a dynamic content:
 
     >>> from netzob.all import *
-    >>> f = Field(String(nbChars=(10, 32)))
+    >>> s = String(nbChars=(10, 32))
+    >>> 10 <= len(s.generate().tobytes()) <= 32
+    True
 
 
     **String with terminal character**
 
-    Strings with a terminal delimiter are supported. Its usage is as
-    follows:
+    Strings with a terminal delimiter are supported. The following
+    example shows the usage of a delimiter that can either be a
+    constant or a Field object (see :class:`Field
+    <netzob.Model.Vocabulary.Field.Field>` for more information).
 
     >>> from netzob.all import *
     >>> f_eos    = Field(String('\t'))
-    >>> f_string = Field(String(eos=[String('\n'), Raw(b'\x00'), f_eos])) # doctest: +SKIP
+    >>> s = String(eos=[String('\n'), Raw(b'\x00'), f_eos]) # doctest: +SKIP
 
     The ``eos`` attribute specifies a list of values that is used as
-    potential terminal characters. Terminal characters can either be
-    defined as constants (such as ``String('\n')`` and ``Raw('\x00')``
-    in the previous example) or defined as specific fields (such as
-    ``f_eos`` in the previous example).
+    potential terminal characters. Terminal characters can either be a
+    constant (such as ``String('\n')`` and ``Raw('\x00')`` in the
+    previous example) or a targeted Field (such as ``f_eos`` in the
+    previous example) from which the terminal character is used.
 
     """
 
