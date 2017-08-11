@@ -77,6 +77,8 @@ class AbstractionLayer(object):
     :type memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`, optional
 
 
+    **Usage example of the abstraction layer**
+
     The following code shows a usage of the abstraction layer class,
     where two UDP channels (client and server) are built and transport
     just one permitted symbol:
@@ -98,9 +100,12 @@ class AbstractionLayer(object):
     b'Hello Kurt !'
 
 
+    **Handling message flow within the abstraction layer**
+
     The following example demonstrates that the abstraction layer can
     also handle a message flow:
 
+    >>> from netzob.all import *
     >>> symbolflow = Symbol([Field(b"Hello Kurt !Whats up ?")], name = "Symbol Flow")
     >>> symbol1 = Symbol([Field(b"Hello Kurt !")], name = "Symbol_Hello")
     >>> symbol2 = Symbol([Field(b"Whats up ?")], name = "Symbol_WUP")
@@ -115,6 +120,42 @@ class AbstractionLayer(object):
     >>> (receivedSymbols, receivedMessage) = abstractionLayerIn.readSymbols()
     >>> receivedSymbols
     [Symbol_Hello, Symbol_WUP]
+
+
+    **Memory usage with the abstraction layer**
+
+    The following example shows how to define a relationship between a
+    message to send and an environment variable, then how to leverage this
+    relationship when using the abstraction layer.
+
+    >>> from netzob.all import *
+    >>> # Environment variables definition
+    >>> memory1 = Memory()
+    >>> env1 = Data(String(), name="env1")
+    >>> memory1.memorize(env1, String("John").value)
+    >>>
+    >>> # Symbol definition
+    >>> f7 = Field(domain=String("master"), name="F7")
+    >>> f8 = Field(domain=String(">"), name="F8")
+    >>> f9 = Field(domain=Value(env1), name="F9")
+    >>> symbol = Symbol(fields=[f7, f8, f9], name="Symbol_Hello")
+    >>>
+    >>> # Creation of channels with dedicated abstraction layer
+    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889)
+    >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol], memory1)
+    >>> abstractionLayerIn.openChannel()
+    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889)
+    >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbol], memory1)
+    >>> abstractionLayerOut.openChannel()
+    >>>
+    >>> # Sending of a symbol containing a data coming from the environment
+    >>> abstractionLayerOut.writeSymbol(symbol)
+    11
+    >>> (receivedSymbol, receivedMessage) = abstractionLayerIn.readSymbol()
+    >>> receivedSymbol.name
+    'Symbol_Hello'
+    >>> receivedMessage
+    b'master>John'
 
     """
 
