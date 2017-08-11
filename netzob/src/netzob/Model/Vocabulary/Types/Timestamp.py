@@ -36,11 +36,12 @@
 # +---------------------------------------------------------------------------+
 import unittest
 from datetime import datetime, timedelta
+from enum import Enum
+from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
-from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
@@ -51,6 +52,27 @@ from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Integer import Integer
 
+class Epoch(Enum):
+    WINDOWS = datetime(1601, 1, 1)
+    MUMPS = datetime(1840, 12, 31)
+    VMS = datetime(1858, 11, 17)
+    EXCEL = datetime(1899, 12, 31)
+    NTP = datetime(1900, 1, 1)
+    MACOS_9 = datetime(1904, 1, 1)
+    PICKOS = datetime(1967, 12, 31)
+    UNIX = datetime(1970, 1, 1)
+    FAT = datetime(1980, 1, 1)
+    GPS = datetime(1980, 1, 6)
+    ZIGBEE = datetime(2000, 1, 1)
+    COCOA = datetime(2001, 1, 1)
+
+class Unity(Enum):
+    SECOND = 1
+    DECISECOND = 10
+    CENTISECOND = 100
+    MILLISECOND = 1000
+    MICROSECOND = 1000000
+    NANOSECOND = 10000000000
 
 @NetzobLogger
 class Timestamp(AbstractType):
@@ -68,14 +90,10 @@ class Timestamp(AbstractType):
                   milliseconds, nanoseconds). The default value is
                   UNITY_SECOND.
     :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). The default value is UnitSize.SIZE_32.
-    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
-    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. The default value is Sign.SIGNED.
     :type value: :class:`bitarray.bitarray` or :class:`int`, optional
-    :type epoch: :class:`datetime.datetime`, optional
-    :type unity: :class:`int`, optional
-    :type unitSize: :class:`Enum`, optional
-    :type endianness: :class:`Enum`, optional
-    :type sign: :class:`Enum`, optional
+    :type epoch: :class:`Epoch <netzob.Model.Vocabulary.Types.Timestamp.Epoch`, optional
+    :type unity: :class:`Unity <netzob.Model.Vocabulary.Types.Timestamp.Unity`, optional
+    :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
 
 
     The Timestamp class provides the following public variables:
@@ -93,34 +111,34 @@ class Timestamp(AbstractType):
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray.bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
-    :vartype unitSize: :class:`Enum`, optional
-    :vartype epoch: :class:`datetime.datetime`
-    :vartype unity: :class:`int`
+    :vartype unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
+    :vartype epoch: :class:`Epoch <netzob.Model.Vocabulary.Types.Timestamp.Epoch`
+    :vartype unity: :class:`Unity <netzob.Model.Vocabulary.Types.Timestamp.Unity`
 
 
     Available values for `epoch` parameter are:
 
-    * EPOCH_WINDOWS = datetime(1601, 1, 1)
-    * EPOCH_MUMPS = datetime(1840, 12, 31)
-    * EPOCH_VMS = datetime(1858, 11, 17)
-    * EPOCH_EXCEL = datetime(1899, 12, 31)
-    * EPOCH_NTP = datetime(1900, 1, 1)
-    * EPOCH_MACOS_9 = datetime(1904, 1, 1)
-    * EPOCH_PICKOS = datetime(1967, 12, 31)
-    * EPOCH_UNIX = datetime(1970, 1, 1)
-    * EPOCH_FAT = datetime(1980, 1, 1)
-    * EPOCH_GPS = datetime(1980, 1, 6)
-    * EPOCH_ZIGBEE = datetime(2000, 1, 1)
-    * EPOCH_COCOA = datetime(2001, 1, 1)
+    * Epoch.WINDOWS = datetime(1601, 1, 1)
+    * Epoch.MUMPS = datetime(1840, 12, 31)
+    * Epoch.VMS = datetime(1858, 11, 17)
+    * Epoch.EXCEL = datetime(1899, 12, 31)
+    * Epoch.NTP = datetime(1900, 1, 1)
+    * Epoch.MACOS_9 = datetime(1904, 1, 1)
+    * Epoch.PICKOS = datetime(1967, 12, 31)
+    * Epoch.UNIX = datetime(1970, 1, 1)
+    * Epoch.FAT = datetime(1980, 1, 1)
+    * Epoch.GPS = datetime(1980, 1, 6)
+    * Epoch.ZIGBEE = datetime(2000, 1, 1)
+    * Epoch.COCOA = datetime(2001, 1, 1)
 
     Available values for `unity` parameter are:
 
-    * UNITY_SECOND = 1
-    * UNITY_DECISECOND = 10
-    * UNITY_CENTISECOND = 100
-    * UNITY_MILLISECOND = 1000
-    * UNITY_MICROSECOND = 1000000
-    * UNITY_NANOSECOND = 10000000000
+    * Unity.SECOND = 1
+    * Unity.DECISECOND = 10
+    * Unity.CENTISECOND = 100
+    * Unity.MILLISECOND = 1000
+    * Unity.MICROSECOND = 1000000
+    * Unity.NANOSECOND = 10000000000
 
     In the following example, a Timestamp data is created with a
     specific value '1444492442' and represented as 32 bits:
@@ -171,30 +189,10 @@ class Timestamp(AbstractType):
 
     """
 
-    EPOCH_WINDOWS = datetime(1601, 1, 1)
-    EPOCH_MUMPS = datetime(1840, 12, 31)
-    EPOCH_VMS = datetime(1858, 11, 17)
-    EPOCH_EXCEL = datetime(1899, 12, 31)
-    EPOCH_NTP = datetime(1900, 1, 1)
-    EPOCH_MACOS_9 = datetime(1904, 1, 1)
-    EPOCH_PICKOS = datetime(1967, 12, 31)
-    EPOCH_UNIX = datetime(1970, 1, 1)
-    EPOCH_FAT = datetime(1980, 1, 1)
-    EPOCH_GPS = datetime(1980, 1, 6)
-    EPOCH_ZIGBEE = datetime(2000, 1, 1)
-    EPOCH_COCOA = datetime(2001, 1, 1)
-
-    UNITY_SECOND = 1
-    UNITY_DECISECOND = 10
-    UNITY_CENTISECOND = 100
-    UNITY_MILLISECOND = 1000
-    UNITY_MICROSECOND = 1000000
-    UNITY_NANOSECOND = 10000000000
-
     def __init__(self,
                  value=None,
-                 epoch=EPOCH_UNIX,
-                 unity=UNITY_SECOND,
+                 epoch=Epoch.UNIX,
+                 unity=Unity.SECOND,
                  unitSize=UnitSize.SIZE_32,
                  endianness=AbstractType.defaultEndianness(),
                  sign=Sign.UNSIGNED):
@@ -246,7 +244,7 @@ class Timestamp(AbstractType):
         However, some constrains over the definition of the Timestamp can be set to restrain the accepted values
 
         >>> from netzob.all import *
-        >>> time = Timestamp(epoch=Timestamp.EPOCH_WINDOWS, unity=Timestamp.UNITY_NANOSECOND, unitSize=UnitSize.SIZE_64)
+        >>> time = Timestamp(epoch=Epoch.WINDOWS, unity=Unity.NANOSECOND, unitSize=UnitSize.SIZE_64)
         >>> # the returned year is < 1900
         >>> time.canParse(String("test").value)
         False
@@ -272,10 +270,10 @@ class Timestamp(AbstractType):
                 dst_sign=Sign.UNSIGNED)
 
             # convert the value in seconds
-            value = value / self.unity
+            value = value / self.unity.value
 
             # add the utc now with the epoch
-            timestamp_datetime = self.epoch + timedelta(seconds=value)
+            timestamp_datetime = self.epoch.value + timedelta(seconds=value)
 
             # convert obtained datetime to timestamp in seconds
             result_sec = int(timestamp_datetime.strftime('%s'))
@@ -300,7 +298,7 @@ class Timestamp(AbstractType):
         >>> value = f.specialize()
         >>> len(value)
         4
-        >>> f = Field(Timestamp(epoch=Timestamp.EPOCH_WINDOWS, unitSize=UnitSize.SIZE_64))
+        >>> f = Field(Timestamp(epoch=Epoch.WINDOWS, unitSize=UnitSize.SIZE_64))
         >>> len(f.specialize())
         8
         """
@@ -311,13 +309,13 @@ class Timestamp(AbstractType):
         now = datetime.utcnow()
 
         # substract the utc now with the epoch
-        timestamp_datetime = now - self.epoch
+        timestamp_datetime = now - self.epoch.value
 
         # convert obtained datetime to timestamp in seconds
         result_sec = timestamp_datetime.total_seconds()
 
         # apply the unity
-        result_unity = int(result_sec * self.unity)
+        result_unity = int(result_sec * self.unity.value)
 
         # convert to bitarray
         final = TypeConverter.convert(
@@ -373,7 +371,6 @@ class Timestamp(AbstractType):
         return self.__epoch
 
     @epoch.setter
-    @typeCheck(datetime)
     def epoch(self, epoch):
         if epoch is None:
             raise Exception("Epoch cannot be None")
