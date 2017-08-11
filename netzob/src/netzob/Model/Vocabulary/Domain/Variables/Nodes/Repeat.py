@@ -52,10 +52,8 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 
 @NetzobLogger
 class Repeat(AbstractVariableNode):
-    """The Repeat class is a node variable that represents a sequence of the same variable.
-
-    A field can be defined under a repetition form of one or multiple
-    tokens with a repeat node. This denotes an n-time repetition of a
+    """The Repeat class is a node variable that represents a sequence of
+    the same variable. This denotes an n-time repetition of a
     variable, which can be a terminal leaf or a non-terminal node.
 
     The Repeat constructor expects some parameters:
@@ -72,7 +70,7 @@ class Repeat(AbstractVariableNode):
                     <netzob.Model.Vocabulary.Field.Field>` or a
                     :class:`func` method, optional
     :type delimiter: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
-    :type svas: :class:`str`, optional
+    :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
     **Callback prototype**
@@ -111,14 +109,11 @@ class Repeat(AbstractVariableNode):
     depicted in the following example:
 
     >>> delimiter = bitarray(endian='big')
-    >>> delimiter.frombytes(b";")
-    >>> f1 = Field(Repeat(Alt([String("john"), String("kurt")]), nbRepeat=(1, 4),
-    ...            delimiter=delimiter), name='f1')
-    >>> f2 = Field(String("kurt"), name='f2')
-    >>> s = Symbol([f1, f2])
-    >>> data = "john;kurt;johnkurt"
-    >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f1', b'john;kurt;john'), ('f2', b'kurt')]))
+    >>> delimiter.frombytes(b"-")
+    >>> f = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=(2, 4),
+    ...           delimiter=delimiter), name='f1')
+    >>> 1 <= len(f.specialize()) <= 7
+    True
 
 
     **Limiting the number of repetitions with an integer**
@@ -171,62 +166,64 @@ class Repeat(AbstractVariableNode):
     >>> f1 = Field(Repeat(String("john"), nbRepeat=cbk)) # doctest: +SKIP
 
 
-    **Abstraction of repeat variables**
+    .. ifconfig:: scope in ('netzob')
 
-    The following examples show how repeat variable can be parsed:
+       **Abstraction of repeat variables**
 
-    >>> from netzob.all import *
-    >>> f1 = Field(Repeat(String("john"), nbRepeat=(0,3)), name="f1")
-    >>> f2 = Field(String("kurt"), name="f2")
-    >>> s = Symbol([f1, f2])
+       The following examples show how repeat variable can be parsed:
 
-    >>> data = "johnjohnkurt"
-    >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f1', b'johnjohn'), ('f2', b'kurt')]))
+       >>> from netzob.all import *
+       >>> f1 = Field(Repeat(String("john"), nbRepeat=(0,3)), name="f1")
+       >>> f2 = Field(String("kurt"), name="f2")
+       >>> s = Symbol([f1, f2])
 
-    >>> data = "johnkurt"
-    >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-    (Symbol, OrderedDict([('f1', b'john'), ('f2', b'kurt')]))
+       >>> data = "johnjohnkurt"
+       >>> Symbol.abstract(data, [s])
+       (Symbol, OrderedDict([('f1', b'johnjohn'), ('f2', b'kurt')]))
 
-    >>> data = "kurt"
-    >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f1', b''), ('f2', b'kurt')]))
+       >>> data = "johnkurt"
+       >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
+       (Symbol, OrderedDict([('f1', b'john'), ('f2', b'kurt')]))
+
+       >>> data = "kurt"
+       >>> Symbol.abstract(data, [s])
+       (Symbol, OrderedDict([('f1', b''), ('f2', b'kurt')]))
 
 
-    **Specialization of repeat variables**
+       **Specialization of repeat variables**
 
-    The following examples show how repeat variable can be specialized:
+       The following examples show how repeat variable can be specialized:
 
-    >>> from netzob.all import *
-    >>> f1 = Field(Repeat(String("john"), nbRepeat=2))
-    >>> s = Symbol([f1])
-    >>> s.specialize()
-    b'johnjohn'
+       >>> from netzob.all import *
+       >>> f1 = Field(Repeat(String("john"), nbRepeat=2))
+       >>> s = Symbol([f1])
+       >>> s.specialize()
+       b'johnjohn'
 
-    >>> from netzob.all import *
-    >>> delimiter = bitarray(endian='big')
-    >>> delimiter.frombytes(b";")
-    >>> f1 = Field(Repeat(IPv4(), nbRepeat=3,
-    ...           delimiter=delimiter))
-    >>> s = Symbol([f1])
-    >>> gen = s.specialize()
-    >>> len(gen) == 14
-    True
-    >>> gen.count(b";") >= 2
-    True
+       >>> from netzob.all import *
+       >>> delimiter = bitarray(endian='big')
+       >>> delimiter.frombytes(b";")
+       >>> f1 = Field(Repeat(IPv4(), nbRepeat=3,
+       ...           delimiter=delimiter))
+       >>> s = Symbol([f1])
+       >>> gen = s.specialize()
+       >>> len(gen) == 14
+       True
+       >>> gen.count(b";") >= 2
+       True
 
-    >>> from netzob.all import *
-    >>> delimiter = bitarray(endian='big')
-    >>> delimiter.frombytes(b";")
-    >>> child = Data(dataType=String(nbChars=(5)), svas=SVAS.PERSISTENT)
-    >>> f1 = Field(Repeat(child, nbRepeat=3,
-    ...            delimiter=delimiter))
-    >>> s = Symbol([f1])
-    >>> gen = s.specialize()
-    >>> len(gen) == 17
-    True
-    >>> gen.count(b";") >= 2
-    True
+       >>> from netzob.all import *
+       >>> delimiter = bitarray(endian='big')
+       >>> delimiter.frombytes(b";")
+       >>> child = Data(dataType=String(nbChars=(5)), svas=SVAS.PERSISTENT)
+       >>> f1 = Field(Repeat(child, nbRepeat=3,
+       ...            delimiter=delimiter))
+       >>> s = Symbol([f1])
+       >>> gen = s.specialize()
+       >>> len(gen) == 17
+       True
+       >>> gen.count(b";") >= 2
+       True
 
     """
 

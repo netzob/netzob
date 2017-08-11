@@ -65,16 +65,17 @@ class Alt(AbstractVariableNode):
     :param svas: The SVAS strategy defining how the Alternate
                  behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type children: a :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
-    :type svas: :class:`str`, optional
+    :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
-    For example, the following code denotes a field accepts either
-    "filename1.txt" or "filename2.txt":
+    For example, the following code denotes an alternate object that
+    accepts either the string "filename1.txt" or the string
+    "filename2.txt":
 
     >>> from netzob.all import *
     >>> t1 = String("filename1.txt")
     >>> t2 = String("filename2.txt")
-    >>> f = Field(Alt([t1, t2]))
+    >>> domain = Alt([t1, t2])
 
 
     **Examples of Alt internal attribute access**
@@ -88,30 +89,32 @@ class Alt(AbstractVariableNode):
     String=None ((None, None))
 
 
-    **Abstraction of alternate variables**
+    .. ifconfig:: scope in ('netzob')
 
-    This example shows the abstraction process of an Alternate
-    variable:
+       **Abstraction of alternate variables**
 
-    >>> from netzob.all import *
-    >>> v0 = String("john")
-    >>> v1 = String("kurt")
-    >>> f0 = Field(Alt([v0, v1]), name='f0')
-    >>> s = Symbol([f0])
-    >>> data = "john"
-    >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f0', b'john')]))
-    >>> data = "kurt"
-    >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f0', b'kurt')]))
+       This example shows the abstraction process of an Alternate
+       variable:
 
-    In the following example, an Alternate variable is defined. A
-    message that does not correspond to the expected model is then
-    parsed, thus the returned symbol is unknown:
+       >>> from netzob.all import *
+       >>> v0 = String("john")
+       >>> v1 = String("kurt")
+       >>> f0 = Field(Alt([v0, v1]), name='f0')
+       >>> s = Symbol([f0])
+       >>> data = "john"
+       >>> Symbol.abstract(data, [s])
+       (Symbol, OrderedDict([('f0', b'john')]))
+       >>> data = "kurt"
+       >>> Symbol.abstract(data, [s])
+       (Symbol, OrderedDict([('f0', b'kurt')]))
 
-    >>> data = "nothing"
-    >>> Symbol.abstract(data, [s])
-    (Unknown Symbol 'nothing', OrderedDict())
+       In the following example, an Alternate variable is defined. A
+       message that does not correspond to the expected model is then
+       parsed, thus the returned symbol is unknown:
+
+       >>> data = "nothing"
+       >>> Symbol.abstract(data, [s])
+       (Unknown Symbol 'nothing', OrderedDict())
 
     """
 
@@ -224,4 +227,4 @@ class Alt(AbstractVariableNode):
         '22' | '0044'
         ---- | ------
 
-        """    
+        """

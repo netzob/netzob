@@ -63,7 +63,7 @@ class Agg(AbstractVariableNode):
     :param svas: The SVAS strategy defining how the Aggregate
                  behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type children: a :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
-    :type svas: :class:`str`, optional
+    :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
     For example, the following code represents a field that
@@ -80,7 +80,7 @@ class Agg(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> from bitarray import bitarray
-    >>> f0 = Field(Agg([BitArray(bitarray('01101001')), BitArray(nbBits=3), BitArray(nbBits=5)]))
+    >>> f0 = Field(Agg([BitArray('01101001'), BitArray(nbBits=3), BitArray(nbBits=5)]))
     >>> s = Symbol(fields=[f0])
     >>> t = s.specialize()
     >>> len(t)
