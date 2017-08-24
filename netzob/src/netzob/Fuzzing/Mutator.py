@@ -36,6 +36,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import abc
+from enum import Enum
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -46,115 +47,60 @@ import abc
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Grammar.Automata import Automata  # noqa: F401
+from netzob.Fuzzing.Generator import Generator
+
+
+class MutatorMode(Enum):
+    """Mutator Fuzzing modes"""
+    NONE     = 0  #: No fuzzing
+    MUTATE   = 1  #: Fuzzing by mutation of a legitimate value
+    GENERATE = 2  #: Fuzzing by generation
 
 
 class Mutator(metaclass=abc.ABCMeta):
-    """The model of any mutator.
+    """This class provides the interface of any mutator.
 
     This class provides the common properties and API to all inherited mutators.
 
     The Mutator constructor expects some parameters:
 
-    :param seed: the initial seed value of the mutator
-    :param counterMax: the max number of values that the mutator would produce
-    :param counterMaxRelative: whether the counter value is absolute \
-(``False``) or relative (``True``)
+    :param seed: The initial seed value of the mutator.
+    :param counterMax: The max number of values that the mutator would produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent).
     :type seed: :class:`int`, defaults to :attr:`SEED_DEFAULT`
-    :type counterMax: :class:`int`, defaults to :attr:`COUNTER_MAX_DEFAULT`
-    :type counterMaxRelative: :class:`bool`, defaults to ``False``
+    :type counterMax: :class:`int` or :class:`float`, defaults to :attr:`COUNTER_MAX_DEFAULT`
 
-    Constant definitions:
+
+    The Mutator class provides the following public variables:
+
+    :var seed:
+    :var counterMax: 
+    :vartype seed: :class:`str`
+    :vartype xxx: :class:`str`
+    :vartype xxx: :class:`str`
+
     """
 
-    # Constants
+    # Class constants
     SEED_DEFAULT = 10  #: the default seed value
     COUNTER_MAX_DEFAULT = 2**16  #: the default max counter value
 
     def __init__(self,
+                 mode=MutatorMode.GENERATE,  # type: MutatorMode
+                 generator=Generator.NG_mt19937,
                  seed=SEED_DEFAULT,
-                 counterMax=COUNTER_MAX_DEFAULT,
-                 counterMaxRelative=False
-                 ):
-        # Handle class variables
-        self._seed = seed
-        self._currentState = 0
-        self.setCounterMax(counterMax, counterMaxRelative)
-        self._currentCounter = 0
+                 counterMax=COUNTER_MAX_DEFAULT):
 
-    @typeCheck(int)
-    def updateSeed(self,
-                   seedValue  # type: int
-                   ):
-        """
-        Update the seed value and forward value to all nested mutators.
+        # Public variables linked with parameters
+        self.mode = mode
+        self.generator = generator
+        self.seed = seed
+        self.counterMax = counterMax
 
-        :param seedValue: the new seed value
-        :type seedValue: int
-        """
-        self._seed = seedValue
+        # Public variables
+        self.currentCounter = 0
+        self.currentState = 0
 
-    @property
-    def currentState(self):
-        """
-        Property (getter/setter).
-        The current state of the pseudo-random mutator.
-        The mutator can reproduce a value by using this state.
-
-        :type: :class:`int`
-        """
-        return self._currentState
-
-    @currentState.setter
-    @typeCheck(int)
-    def currentState(self, stateValue):
-        self._currentState = stateValue
-
-    def getCounterMax(self):
-        """
-        Get the max number of values that the mutator would produce.
-        When this limit is reached, :meth:`mutate` returns None.
-
-        :type: :class:`int` (absolute) or :class:`float` (relative)
-        """
-        return self._counterMax
-
-    @typeCheck((int, float), bool)
-    def setCounterMax(self, counterMaxValue, relative):
-        """
-        Set the max number of values that the mutator would produce.
-
-        :param counterMaxValue: the counter max value
-        :type counterMaxValue: :class:`int` (absolute) or :class:`float` (relative)
-        :param relative: whether the counter value is absolute or relative
-        :type relative: :class:`bool`
-        """
-        self._counterMax = (self.COUNTER_MAX_DEFAULT if counterMaxValue is None
-                            else counterMaxValue)
-        self._counterMaxRelative = relative
-
-    @property
-    def currentCounter(self):
-        """
-        Property (getter).
-        The counter of :meth:`mutate` calls.
-        In :meth:`mutate`, this value is compared to counterMax, to determine if the
-        limit of mutation is reached.
-
-        :type: :class:`int`
-        """
-        return self._currentCounter
-
-    def resetCurrentCounter(self):
-        """Reset the current counter of :meth:`mutate`.
-
-        :type: :class:`int`
-        """
-        self._currentCounter = 0
-
-    def reset(self):
-        """Reset environment of the mutator.
-        """
-        self._currentCounter = 0
+    ## API methods
 
     def generate(self):
         """This is the fuzz generation method of the field domain. It has to
@@ -166,9 +112,9 @@ class Mutator(metaclass=abc.ABCMeta):
         :raises: :class:`Exception` when **currentCounter** reaches
                  :attr:`Mutator.counterMax`.
         """
-        if self._currentCounter >= self.getCounterMax():
+        if self.currentCounter >= self.counterMax:
             raise Exception("Max mutation counter reached")
-        self._currentCounter += 1
+        self.currentCounter += 1
 
     @abc.abstractmethod
     def mutate(self, data):
@@ -185,3 +131,65 @@ class Mutator(metaclass=abc.ABCMeta):
 
         :meth:`mutate` is an *abstract method* and must be inherited.
         """
+        
+
+    ## Properties
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, mode):
+        # Sanity checks on mutator mode
+        if not isinstance(mode, MutatorMode):
+            raise TypeError("Mutator mode should be of type '{}'. Received object: '{}'"
+                            .format(MutatorMode, mode))
+        self._mode = mode
+
+    @property
+    def generator(self):
+        return self._generator
+
+    @generator.setter
+    def generator(self, generator):
+        self._generator = generator
+
+    @property
+    def seed(self):
+        return self._seed
+
+    @seed.setter
+    def seed(self, seed):
+        self._seed = seed
+
+    @property
+    def counterMax(self):
+        return self._counterMax
+
+    @counterMax.setter
+    def counterMax(self, counterMax):
+        self._counterMax = counterMax
+
+    @property
+    def currentCounter(self):
+        return self._currentCounter
+
+    @currentCounter.setter
+    def currentCounter(self, currentCounter):
+        self._currentCounter = currentCounter
+
+    @property
+    def currentState(self):
+        """
+        Property (getter/setter).
+        The current state of the pseudo-random mutator.
+        The mutator can reproduce a value by using this state.
+
+        :type: :class:`int`
+        """
+        return self._currentState
+
+    @currentState.setter
+    def currentState(self, currentState):
+        self._currentState = currentState

@@ -53,51 +53,73 @@ class DeterministGenerator(Generator):
     >>> from netzob.all import *
     >>> seed = 14
     >>> genObject = DeterministGenerator(seed)
-    >>> genObject.createValues(
-    ...     minValue=DeterministGenerator.DEFAULT_MIN_VALUE,
-    ...     maxValue=DeterministGenerator.DEFAULT_MAX_VALUE,
-    ...     bitSize=DeterministGenerator.DEFAULT_BITSIZE,
-    ...     signed=False)
-    >>> genObject.getNewValue()
+    >>> next(genObject)
     33
     """
 
     NG_determinist = "determinist"
+    name = NG_determinist
     DEFAULT_MIN_VALUE = 0
     DEFAULT_BITSIZE = 16
     DEFAULT_MAX_VALUE = 1 << DEFAULT_BITSIZE
 
-    def __init__(self, seed=0):
-        super().__init__(values=[])
-        self._seed = seed
-        self._currentPos = 0
-        self._minValue = self.DEFAULT_MIN_VALUE
-        self._maxValue = self.DEFAULT_MAX_VALUE
-        self._bitSize = self.DEFAULT_BITSIZE
-        self._signed = False
+    def __init__(self,
+                 seed=0,
+                 minValue = DEFAULT_MIN_VALUE,
+                 maxValue = DEFAULT_MAX_VALUE,
+                 bitsize = DEFAULT_BITSIZE,
+                 signed = False):
 
-    def createValues(self,
+        # Call parent init
+        super().__init__(values=[])
+
+        # Initialize variables
+        self.seed = seed
+        self.currentPos = 0
+
+        # Initialize deterministic values
+        self._createValues(minValue, maxValue, bitsize, signed)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        """This is the method to get the next value in the generated list.
+        
+        :return: a generated int value
+        :rtype: :class:`int`
+        :raise: ValueError if values is empty
+
+        """
+        if len(self._values) == 0:
+            raise ValueError("Value list is empty.")
+
+        if self.currentPos >= len(self._values):
+            self.reset()
+        value = self._values[self.currentPos]
+        self.currentPos += 1
+        return value
+    
+    def _createValues(self,
                      minValue,
                      maxValue,
-                     bitSize,
+                     bitsize,
                      signed):
-        self._currentPos = 0
-        self._minValue = minValue
-        self._maxValue = maxValue
-        self._bitSize = bitSize
+        self.currentPos = 0
         signedShift = 0
+
         if not signed:
             # on 8 bits : -1 = 0b11111111 = 255 = -1 + 2^8
-            signedShift = 2**self._bitSize
+            signedShift = 2**bitsize
 
         self._values = list()
         self._values.append(minValue)  # P
         self._values.append(maxValue)  # Q
-        if (minValue-1) & 2**bitSize == minValue-1:
+        if (minValue-1) & 2**bitsize == minValue-1:
             self._values.append(minValue-1)  # P-1
         self._values.append(maxValue-1)  # Q-1
         self._values.append(minValue+1)  # P+1
-        if (maxValue+1) & 2**bitSize == maxValue+1:
+        if (maxValue+1) & 2**bitsize == maxValue+1:
             self._values.append(maxValue+1)  # Q+1
         self._values.append(0)  # 0
         self._values.append(-1 + signedShift)  # -1
@@ -109,7 +131,7 @@ class DeterministGenerator(Generator):
         self._values.append(1)  # 2^0 = 1
         self._values.append(0)  # 2^0 - 1 = 0
         self._values.append(2)  # 2^0 + 1 = 2
-        for k in range(1, self._bitSize-2):  # k in [0..N-2]
+        for k in range(1, bitsize-2):  # k in [0..N-2]
             self._values.append(-2**k + signedShift)  # -2^k
             self._values.append(-2**k - 1 + signedShift)  # -2^k - 1
             self._values.append(-2**k + 1 + signedShift)  # -2^k + 1
@@ -121,48 +143,18 @@ class DeterministGenerator(Generator):
         setValues = set(self._values)
         self._values = sorted(setValues)
 
-        self.updateSeed(self._seed)
-
-    def updateSeed(self, seedValue):
-        self._seed = seedValue % len(self._values)
-        self.reset()
-
-    def reset(self):
-        """Reset the current position in the list.
-
-        :type: :class:`set`
-        """
-        self._currentPos = self._seed
-
-    def getNewValue(self):
-        """This is the method to get the next value in the generated list.
-        To obtain the previous values again, call reset() then getNewValue()
-        or use accessor getValueAt().
-        createValues() has to be called once before, else an error is raised.
-
-        :return: a generated int value
-        :rtype: :class:`int`
-        :raise: ValueError if values is empty
-        """
-        if len(self._values) == 0:
-            raise ValueError("value list is empty : please call createValues() before getNewValue()")
-
-        if self._currentPos >= len(self._values):
-            self.reset()
-        value = self._values[self._currentPos]
-        self._currentPos += 1
-        return value
+        # Update seed value
+        self.seed = self.seed % len(self._values)
 
     def getValueAt(self, pos):
         """Returns the value set at postion 'pos' from the generated list.
-        createValues() has to be called once before, else an error is raised.
 
         :return: a generated int value
         :rtype: :class:`int`
         :raise: ValueError if values is empty
         """
         if len(self._values) == 0:
-            raise ValueError("value list is empty : please call createValues() before getValueAt()")
+            raise ValueError("Value list is empty.")
 
         if pos < len(self._values):
             return self._values(pos)

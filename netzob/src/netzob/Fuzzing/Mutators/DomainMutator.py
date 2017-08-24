@@ -51,13 +51,8 @@ from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVa
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Fuzzing.Mutator import Mutator
-
-
-class MutatorMode(Enum):
-    """Mutator Fuzzing modes"""
-    NONE     = 0  #: No fuzzing
-    MUTATE   = 1  #: Fuzzing by mutation of a legitimate value
-    GENERATE = 2  #: Fuzzing by generation
+from netzob.Fuzzing.Mutator import MutatorMode
+from netzob.Fuzzing.Generator import Generator
 
 
 class MutatorInterval(Enum):
@@ -68,7 +63,7 @@ class MutatorInterval(Enum):
 
 
 class DomainMutator(Mutator):
-    """The model of domain mutators.
+    """This class provides the interface of domain mutators.
 
     This class provides the common properties and API to all inherited mutators.
 
@@ -93,17 +88,6 @@ class DomainMutator(Mutator):
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type mode: :class:`MutatorMode`, optional
 
-    The following code shows the instantiation of a symbol composed of
-    a string and an integer, and the fuzzing request during the
-    specialization process:
-
-    >>> from netzob.all import *
-    >>> f1 = Field(String())
-    >>> f2 = Field(Integer())
-    >>> symbol = Symbol(fields=[f1, f2])
-    >>> fuzz = {f1: StringMutator,
-    ...             f2: (IntegerMutator, minValue=12, maxValue=20)}
-    >>> symbol.specialize(fuzz=fuzz)
     """
 
     # Constants
@@ -113,16 +97,22 @@ class DomainMutator(Mutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,  # type: MutatorMode
-                 **kwargs):
-        # Call parent init
-        super().__init__(**kwargs)
+                 generator=Generator.NG_mt19937,
+                 seed=Mutator.SEED_DEFAULT,
+                 counterMax=Mutator.COUNTER_MAX_DEFAULT):
 
-        # Sanity checks on domain
+        # Call parent init
+        super().__init__(mode=mode,
+                         generator=generator,
+                         seed=seed,
+                         counterMax=counterMax)
+
+        # Sanity checks on domain parameter
         if not isinstance(domain, self.DOMAIN_TYPE):
             raise TypeError("Mutator domain should be of type {}. Received object: '{}'"
                             .format(self.DOMAIN_TYPE, domain))
 
-        # Sanity checks on domain on datatype (AbstractVariableLeaf have a dataType, so we check its consistency)
+        # Sanity checks on domain datatype (AbstractVariableLeaf have a dataType, so we check its consistency)
         if isinstance(domain, AbstractVariableLeaf):
             domain_datatype = type(getattr(domain, 'dataType', None))
 
@@ -133,25 +123,8 @@ class DomainMutator(Mutator):
                 raise TypeError("Mutator domain dataType should be of type '{}'. Received object: '{}'"
                                 .format(self.DATA_TYPE, domain_datatype))
 
-        # Sanity checks on mutator mode
-        if not isinstance(mode, MutatorMode):
-            raise TypeError("Mutator mode should be of type '{}'. Received object: '{}'"
-                                .format(MutatorMode, mode))
-
         # Handle parameters
-        self._domain = domain
-        self._mode = mode
-
-    def getDomain(self):
-        """
-        Get the domain of the DomainMutator
-
-        :return: the domain of the mutator
-        :raise: ValueError
-        """
-        if self._domain is None:
-            raise ValueError("No domain has been set")
-        return self._domain
+        self.domain = domain
 
     def mutate(self, data):
         """This is the mutation method of the field domain. It has to be
@@ -173,10 +146,51 @@ class DomainMutator(Mutator):
         data[idx] = not data[idx]
         return data
 
-    @property
-    def mode(self):
-        return self._mode
 
-    @mode.setter
-    def mode(self, mode):
-        self._mode = mode
+    ## Properties
+
+    @property
+    def domain(self):
+        return self._domain
+
+    @domain.setter
+    def domain(self, domain):
+        self._domain = domain
+
+
+    ## Unit tests
+    
+    def _test(self):
+        """
+
+        Test constructor with different parameters:
+
+        >>> from netzob.all import *
+        >>> domain = Data(Integer())
+        >>> d = IntegerMutator(domain)
+        >>> type(d)
+        <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
+
+        >>> d = IntegerMutator(domain, mode=MutatorMode.MUTATE)
+        >>> type(d)
+        <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
+
+        >>> d = IntegerMutator(domain, generator=Generator.NG_mt19937)
+        >>> type(d)
+        <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
+        >>> type(d.generator)
+        <class 'itertools.starmap'>
+
+        >>> d = IntegerMutator(domain, seed=42)
+        >>> type(d)
+        <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
+        >>> d.seed
+        42
+
+        >>> d = IntegerMutator(domain, counterMax=42)
+        >>> type(d)
+        <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
+        >>> d.counterMax
+        42
+
+        """

@@ -44,6 +44,7 @@ from typing import Tuple  # noqa: F401
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Generators.StringPaddedGenerator import StringPaddedGenerator
@@ -51,6 +52,7 @@ from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Field import Field
+from netzob.Fuzzing.Generators.PseudoRandomGenerator import PseudoRandomGenerator
 
 
 class StringMutator(DomainMutator):
@@ -116,16 +118,23 @@ class StringMutator(DomainMutator):
 
     def __init__(self,
                  domain,
+                 mode=MutatorMode.GENERATE,
+                 generator=PseudoRandomGenerator.NG_mt19937,
+                 seed=Mutator.SEED_DEFAULT,
+                 counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  endChar=DEFAULT_END_CHAR,  # type: str
                  length=(None, None),       # type: Tuple[int, int]
                  lengthBitSize=None,
-                 naughtyStrings=None,
-                 **kwargs):
+                 naughtyStrings=None):
 
         # Call parent init
-        super().__init__(domain, **kwargs)
+        super().__init__(domain,
+                         mode=mode,  # type: MutatorMode
+                         generator=generator,
+                         seed=seed,
+                         counterMax=counterMax)
 
-        self._endChar = endChar
+        self.endChar = endChar
 
         if isinstance(length, tuple) and len(length) == 2 and all(isinstance(_, int) for _ in length):
             self._minLength, self._maxLength = length

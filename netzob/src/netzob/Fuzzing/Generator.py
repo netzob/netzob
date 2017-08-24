@@ -47,13 +47,33 @@ import abc
 from netzob.Common.Utils.Decorators import typeCheck
 
 
-class Generator(metaclass=abc.ABCMeta):
+class Generator(object, metaclass=abc.ABCMeta):
     """Generates values. Abstract class.
     """
 
-    def __init__(self, values=None):
-        self._values = values
-        self._seed = 0
+    # Available algorithms for number generation in RandomState module
+    NG_mt19937 = 'mt19937'
+    NG_mlfg_1279_861 = 'mlfg_1279_861'
+    NG_mrg32k3a = 'mrg32k3a'
+    NG_pcg32 = 'pcg32'
+    NG_pcg64 = 'pcg64'
+    NG_xorshift128 = 'xorshift128'
+    NG_xoroshiro128plus = 'xoroshiro128plus'
+    NG_xorshift1024 = 'xorshift1024'
+    NG_dsfmt = 'dsfmt'
+
+
+    def __init__(self, seed=0, values=None):
+        self.values = values
+        self.seed = seed
+
+    @property
+    def seed(self):
+        return self._seed
+
+    @seed.setter
+    def seed(self, seed):
+        self._seed = seed
 
     @property
     def values(self):
@@ -63,15 +83,6 @@ class Generator(metaclass=abc.ABCMeta):
         """
         return self._values
 
-    @abc.abstractmethod
-    def getNewValue(self, *args, **kwargs):
-        """
-        This is the method to get a new value.
-        """
-
-    @typeCheck(int)
-    def updateSeed(self, seedValue):
-        """
-        Update the seed value and forward value to all nested mutators.
-        """
-        self._seed = seedValue
+    @values.setter
+    def values(self, values):
+        self._values = values

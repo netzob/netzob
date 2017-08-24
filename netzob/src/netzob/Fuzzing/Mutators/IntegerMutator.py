@@ -43,10 +43,12 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Types.Integer import Integer
-from netzob.Fuzzing.Generators.PseudoRandomGenerator import PseudoRandomGenerator
+from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 from netzob.Model.Vocabulary.Types.AbstractType import Sign
 
@@ -86,53 +88,85 @@ class IntegerMutator(DomainMutator):
     :type generator: :class:`str`, optional
     :type seed: :class:`int`, optional
 
+
     **Internal generator functions**
+
+    The following example shows how to generate an 8 bits unsigned
+    integer with a default seed and by using the default pseudo-random
+    generator:
+
+    >>> from netzob.all import *
+    >>> fieldInt = Field(uint8())
+    >>> mutator = IntegerMutator(fieldInt.domain)
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big') <= 255
+    True
+
+    The following example shows how to generate an 8 bits unsigned
+    integer in [10, 20] interval with a default seed and by using the
+    default pseudo-random generator:
+
+    >>> from netzob.all import *
+    >>> fieldInt = Field(uint8())
+    >>> mutator = IntegerMutator(fieldInt.domain, interval=(10, 20))
+    >>> d = mutator.generate()
+    >>> 10 <= int.from_bytes(d, byteorder='big') <= 20
+    True
 
     The following example shows how to generate an 8 bits integer in [10, 20]
     interval, with an arbitrary seed of 4321 and by using the default
     pseudo-random generator:
 
     >>> from netzob.all import *
-    >>> fieldInt = Field(uint8be())
-    >>> mutator = IntegerMutator(fieldInt.domain, interval=(10, 20), seed=4321)
-    >>> mutator.generate()
-    b'\n'
+    >>> fieldInt = Field(uint8())
+    >>> mutator = IntegerMutator(fieldInt.domain, generator=GeneratorFactory.buildGenerator(seed=4321), interval=(10, 20))
+    >>> d = mutator.generate()
+    >>> 10 <= int.from_bytes(d, byteorder='big') <= 20
+    True
 
     The following example shows how to generate an 8 bits integer in [-128, +127]
     interval, with an arbitrary seed of 52 and by using the determinist
     generator:
 
+    >>> from netzob.all import *
     >>> fieldInt1 = Field(Integer())
-    >>> mutator1 = IntegerMutator(fieldInt1.domain, generator='determinist', seed=52)
-    >>> mutator1.generate()
-    b'\x03'
+    >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=52)
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    128
 
     The following example shows how to generate an 8 bits integer in [10, 20]
     interval, with an arbitrary seed of 1234 and by using the determinist
     generator:
 
-    >>> fieldInt1 = Field(uint8be())
-    >>> mutator1 = IntegerMutator(fieldInt1.domain, interval=(10, 20), generator='determinist', seed=1234)
-    >>> mutator1.generate()
-    b'\x11'
+    >>> from netzob.all import *
+    >>> fieldInt1 = Field(uint8())
+    >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=1234, interval=(10, 20))
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    0
 
     The following example shows how to generate an 8 bits integer in [-10, +5]
     interval, with an arbitrary seed of 1234 and by using the determinist
     generator:
 
+    >>> from netzob.all import *
     >>> fieldInt1 = Field(Integer(interval=(-10, 5)))
-    >>> mutator1 = IntegerMutator(fieldInt1.domain, generator='determinist', seed=42)
-    >>> mutator1.generate()
-    b'\xfd'
+    >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=42)
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    223
 
     The following example shows how to generate an 16 bits integer in
     [-32768, +32767] interval, with an arbitrary seed of 1234 and by using the
     determinist generator:
 
+    >>> from netzob.all import *
     >>> fieldInt1 = Field(Integer(unitSize=UnitSize.SIZE_16))
-    >>> mutator1 = IntegerMutator(fieldInt1.domain, generator='determinist', seed=430)
-    >>> mutator1.generate()
-    b'\xff\xc1'
+    >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=430)
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    32768
 
 
     **Custom generators**
@@ -150,37 +184,52 @@ class IntegerMutator(DomainMutator):
     This example wraps the :func:`random.random` Python generator (providing
     values in the expected set) into a valid generator mechanism:
 
+    >>> from netzob.all import *
     >>> import random
+    >>> from itertools import repeat, starmap
+    >>> def repeatfunc(func, times=None, *args):
+    ...     if times is None:
+    ...         return starmap(func, repeat(args))
+    ...     return starmap(func, repeat(args, times))
     >>> random.seed(4321)
-    >>> mutator2 = IntegerMutator(fieldInt.domain, generator=repeatfunc(random.random))
-    >>> mutator2.generate()
-    b'@'
+    >>> mutator = IntegerMutator(fieldInt.domain, generator=repeatfunc(random.random))
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    64
 
     This example uses an iterator object with a finite number of values (3),
     resulting in an error as soon as the limit is reached:
 
-    >>> mutator3 = IntegerMutator(fieldInt.domain, generator=(0., 0.5, 1.))
-    >>> mutator3.generate()
-    b'\x00'
-    >>> mutator3.generate()
-    b'\x7f'
-    >>> mutator3.generate()
-    b'\xff'
-    >>> mutator3.generate()
+    >>> from netzob.all import *
+    >>> mutator = IntegerMutator(fieldInt.domain, generator=(0., 0.5, 1.))
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    0
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    127
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    255
+    >>> d = mutator.generate()
     Traceback (most recent call last):
     StopIteration
 
-    Note that, it is simple to make an infinite number generator from a finite
+    Note that it is simple to make an infinite number generator from a finite
     number of values by using the function :func:`itertools.cycle` of Python:
 
+    >>> from netzob.all import *
     >>> from itertools import cycle
-    >>> mutator4 = IntegerMutator(fieldInt.domain, generator=cycle(range(2)))
-    >>> mutator4.generate()
-    b'\x00'
-    >>> mutator4.generate()
-    b'\xff'
-    >>> mutator4.generate()
-    b'\x00'
+    >>> mutator = IntegerMutator(fieldInt.domain, generator=cycle(range(2)))
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    0
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    255
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    0
 
     Constant definitions:
     """
@@ -189,83 +238,69 @@ class IntegerMutator(DomainMutator):
 
     def __init__(self,
                  domain,
+                 mode=MutatorMode.GENERATE,
+                 generator=Generator.NG_mt19937,
+                 seed=Mutator.SEED_DEFAULT,
+                 counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  interval=MutatorInterval.DEFAULT_INTERVAL,
-                 bitsize=None,
-                 generator=PseudoRandomGenerator.NG_mt19937,
-                 **kwargs):
-        # Call parent init
-        super().__init__(domain, **kwargs)
+                 bitsize=None):
 
-        # Find min and max potential values for interval
-        minValue = 0
-        maxValue = 0
+        # Call parent init
+        super().__init__(domain,
+                         mode=mode,  # type: MutatorMode
+                         generator=generator,
+                         seed=seed,
+                         counterMax=counterMax)
+
+        # Initialize generator
+        self.initializeGenerator(interval, bitsize)
+
+    def initializeGenerator(self, interval, bitsize):
+
+        # Find min and max potential values for the datatype interval
+        self.minValue = 0
+        self.maxValue = 0
         if isinstance(interval, tuple) and len(interval) == 2 and all(isinstance(_, int) for _ in interval):
             # Handle desired interval according to the storage space of the domain dataType
-            minValue = max(interval[0], domain.dataType.getMinStorageValue())
-            maxValue = min(interval[1], domain.dataType.getMaxStorageValue())
+            self.minValue = max(interval[0], self.domain.dataType.getMinStorageValue())
+            self.maxValue = min(interval[1], self.domain.dataType.getMaxStorageValue())
         elif interval == MutatorInterval.DEFAULT_INTERVAL:
-            minValue = domain.dataType.getMinValue()
-            maxValue = domain.dataType.getMaxValue()
+            self.minValue = self.domain.dataType.getMinValue()
+            self.maxValue = self.domain.dataType.getMaxValue()
         elif interval == MutatorInterval.FULL_INTERVAL:
-            minValue = domain.dataType.getMinStorageValue()
-            maxValue = domain.dataType.getMaxStorageValue()
+            self.minValue = self.domain.dataType.getMinStorageValue()
+            self.maxValue = self.domain.dataType.getMaxStorageValue()
         else:
-            raise Exception("Not enough information to generate the mutated data")
-        self._minValue = minValue
-        self._maxValue = maxValue
+            raise Exception("Not enough information to generate the mutated data.")
 
-        # Initialize the number generator
-        if generator == DeterministGenerator.NG_determinist:
-            self._ng = DeterministGenerator(seed=self._seed)
+        # Initialize either the determinist number generator
+        if self.generator == DeterministGenerator.name:
 
             if bitsize is not None:
                 if not isinstance(bitsize, int) or bitsize <= 0:
                     raise ValueError("{} is not a valid bitsize value".format(bitsize))
-            self._bitsize = bitsize
-            if self._bitsize is None:
-                self._bitsize = domain.dataType.unitSize.value
-            if self._minValue >= 0:
-                if self._maxValue > 2**self._bitsize - 1:
-                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self._maxValue, self._bitsize))
+            if bitsize is None:
+                bitsize = self.domain.dataType.unitSize.value
+            if self.minValue >= 0:
+                if self.maxValue > 2**bitsize - 1:
+                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self.maxValue, bitsize))
             else:
-                if self._maxValue > 2**(self._bitsize - 1) - 1:
-                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self._maxValue, self._bitsize))
-                if self._minValue < -2**(self._bitsize - 1):
-                    raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self._minValue, self._bitsize))
+                if self.maxValue > 2**(bitsize - 1) - 1:
+                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self.maxValue, bitsize))
+                if self.minValue < -2**(bitsize - 1):
+                    raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self.minValue, bitsize))
 
-            # Initialize values to generate
-            self._ng.createValues(self._minValue,
-                                  self._maxValue,
-                                  self._bitsize,
-                                  domain.dataType.sign == Sign.SIGNED)
+            self.generator = GeneratorFactory.buildGenerator(self.generator,
+                                                             seed = self.seed,
+                                                             minValue = self.minValue,
+                                                             maxValue = self.maxValue,
+                                                             bitsize = bitsize,
+                                                             signed = self.domain.dataType.sign == Sign.SIGNED)
+
+        # Else instanciate the other kind of generator
         else:
-            self._ng = PseudoRandomGenerator(seed=self._seed,
-                                                    generator=generator)
-            self._ng.setInterval((self._minValue, self._maxValue))
-
-        # forward seed to ng
-        self.updateSeed(self._seed)
-
-    @typeCheck(int)
-    def updateSeed(self, seedValue):
-        super().updateSeed(seedValue)
-        self._ng.updateSeed(seedValue)
-
-    def reset(self):
-        self._ng.reset()
-        self.resetCurrentCounter()
-
-    def getNbValues(self):
-        """Returns the number of values available for the field domain.
-
-        :return: the number of available values
-        :rtype: :class:`int`
-        """
-        if isinstance(self._ng, DeterministGenerator):
-            return len(self._ng.values)
-        else:
-            return 1 + self._maxValue - self._minValue
-
+            self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
+                
     def generate(self):
         """This is the mutation method of the integer type.
         It uses a PRNG to produce the value between minValue and maxValue.
@@ -277,7 +312,7 @@ class IntegerMutator(DomainMutator):
         super().generate()
 
         # Generate and return a random value in the interval
-        dom_type = self.getDomain().dataType
+        dom_type = self.domain.dataType
         return Integer.decode(self.generateInt(),
                               unitSize=dom_type.unitSize,
                               endianness=dom_type.endianness,
@@ -290,4 +325,17 @@ class IntegerMutator(DomainMutator):
         :return: the generated int value
         :rtype: :class:`int`
         """
-        return self._ng.getNewValue()
+        v = next(self.generator)
+
+        if not isinstance(self.generator, DeterministGenerator):        
+            v = center(v, self.minValue, self.maxValue)
+
+        return v
+
+def center(val, lower, upper):
+    """
+    Center :attr:`val` between :attr:`lower` and :attr:`upper`.
+    """
+    return int(val * (upper - lower) + lower)
+
+
