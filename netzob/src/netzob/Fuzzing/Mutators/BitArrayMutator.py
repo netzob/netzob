@@ -47,7 +47,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-from netzob.Fuzzing.Generators.PseudoRandomGenerator import PseudoRandomGenerator
+from netzob.Fuzzing.Generator import Generator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.Integer import Integer
@@ -125,7 +125,7 @@ class BitArrayMutator(DomainMutator):
             generator='determinist',
             bitsize=lengthBitSize,
             **kwargs)
-        self._prng = PseudoRandomGenerator(self._seed)
+        self._prng = GeneratorFactory.buildGenerator(self._seed)
         self._prng.setInterval((0, (2**64)-1))
         self.updateSeed(self._seed)
 
@@ -134,13 +134,6 @@ class BitArrayMutator(DomainMutator):
         super().updateSeed(seedValue)
         self._lengthMutator.seed = self._seed
         self._prng.seed = self._seed
-
-    def getLength(self):
-        """The length of the last generated sequence.
-
-        :rtype: :class:`int`
-        """
-        return self._sequenceLength.value
 
     def generate(self):
         """This is the fuzz generation method of the binary sequence field.

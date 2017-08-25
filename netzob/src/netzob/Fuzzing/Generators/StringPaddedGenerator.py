@@ -44,6 +44,8 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Common.Utils.Decorators import typeCheck
 
 
@@ -52,17 +54,21 @@ class StringPaddedGenerator(Generator):
 
     >>> from netzob.all import *
     >>> seed = 1234
-    >>> stringLength = Field(uint16le())
-    >>> lengthMutator = IntegerMutator(
-    ...     domain=stringLength.domain,
-    ...     interval=(5, 25),
-    ...     seed=seed)
-    >>> genObject = StringPaddedGenerator(lengthMutator,
-    ...     StringPaddedGenerator.DEFAULT_NAUGHTY_STRINGS)
-    >>> genObject.updateSeed(seed)
-    >>> genObject.getNewValue()
+    >>> lengthGenerator = GeneratorFactory.buildGenerator(DeterministGenerator.NG_determinist,
+    ...     seed = seed,
+    ...     minValue = 10,
+    ...     maxValue = 20,
+    ...     bitsize = 8,
+    ...     signed = False)
+    >>> genObject = StringPaddedGenerator(seed = seed,
+    ...     lengthGenerator = lengthGenerator,
+    ...     stringsList = StringPaddedGenerator.DEFAULT_NAUGHTY_STRINGS)
+    >>> next(genObject)  # doctest: +SKIP
     '`ls -al\x00'
     """
+
+    NG_stringpadded = "stringpadded"
+    name = NG_stringpadded
 
     DEFAULT_NAUGHTY_STRINGS = [
         'System("ls -al /")',
@@ -76,36 +82,39 @@ class StringPaddedGenerator(Generator):
         '%s']
 
     def __init__(self,
-                 lengthMutator,
-                 stringsList):
+                 seed = 0,
+                 lengthGenerator = DeterministGenerator.NG_determinist,
+                 stringsList = DEFAULT_NAUGHTY_STRINGS,
+                 endchar = '\0'):
+
+        # Call parent init
         super().__init__(values=stringsList)
-        self._lengthMutator = lengthMutator
 
-    def reset(self):
-        """Reset the current position in the list.
+        # Variables
+        self.endchar = endchar
 
-        :type: :class:`set`
-        """
-        self.updateSeed(0)
+        # Initialize length generator
+        self.lengthGenerator = GeneratorFactory.buildGenerator(lengthGenerator, seed=self.seed)
 
-    @typeCheck(int)
-    def updateSeed(self, seedValue):
-        super().updateSeed(seedValue % len(self._values))
+    def __iter__(self):
+        return self
 
-    def getNewValue(self, endChar='\0'):
+    def __next__(self):
         """This is the method to get a new string value from the list.
 
         :return: a generated str value
         :rtype: :class:`str`
         """
-        if self._seed >= len(self._values):
-            self.reset()
-        value = self._values[self._seed] + endChar
-        self._seed += 1
-        lm = self._lengthMutator
-        lm_dom = lm.getDomain()
-        length = int.from_bytes(lm.generate(),
-                                lm_dom.dataType.endianness.value)
+        if self.seed >= len(self.values):
+            self.seed = self.seed % len(self.values)
+
+        # Generate the initial value
+        value = self.values[self.seed] + self.endchar
+
+        # Generate the value final length
+        length = next(self.lengthGenerator)
+
+        # Adapt the initial value according to the final length
         if length > 0:
             if length > len(value):
                 # Complete the string with padding characters to have the good
@@ -113,7 +122,7 @@ class StringPaddedGenerator(Generator):
                 value = value + (" " * (length - len(value)))
             else:
                 # truncate the too long string value to length characters
-                value = value[:length-1] + endChar
+                value = value[:length-1] + self.endchar
         else:
             value = ""
         return value

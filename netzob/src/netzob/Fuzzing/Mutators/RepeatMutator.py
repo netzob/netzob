@@ -238,7 +238,6 @@ class RepeatMutator(DomainMutator):
     def generate(self):
         """This is the fuzz generation method of the sequence field.
         It generates a sequence length by using lengthMutator.
-        To access this length value, use :meth:`getLength`.
 
         :return: None
         :rtype: :class:`None`

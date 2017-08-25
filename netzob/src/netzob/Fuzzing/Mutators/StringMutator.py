@@ -49,10 +49,13 @@ from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Generators.StringPaddedGenerator import StringPaddedGenerator
 from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Fuzzing.Generators.PseudoRandomGenerator import PseudoRandomGenerator
+from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
+from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 
 
 class StringMutator(DomainMutator):
@@ -79,10 +82,10 @@ class StringMutator(DomainMutator):
         If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
         produce the value (not used yet).
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
-    :param endChar: The character(s) ending the string.
+    :param endchar: The character(s) ending the string.
         Default value is :attr:`DEFAULT_END_CHAR`. It is used to set the eos parameter of :class:`String <netzob.Model.Vocabulary.Types.String>`.
         This terminal symbol will be mutated by truncating its value if defined on several bytes.
-    :param length: The scope of string length to generate. If set to
+    :param interval: The scope of string length to generate. If set to
         (min, max), the values will be generated between min and max.
         Default value is **(None, None)**.
     :param lengthBitSize: The size in bits of the memory on which the generated
@@ -92,8 +95,8 @@ class StringMutator(DomainMutator):
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type mode: :class:`int`, optional
-    :type endChar: :class:`str`, optional
-    :type length: :class:`tuple`, optional
+    :type endchar: :class:`str`, optional
+    :type interval: :class:`tuple`, optional
     :type lengthBitSize: :class:`int`, optional
     :type naughtyStrings: :class:`list` of :class:`str`, optional
 
@@ -103,7 +106,7 @@ class StringMutator(DomainMutator):
 
     >>> from netzob.all import *
     >>> fieldString = Field(String(nbChars=(35, 60)))
-    >>> mutator = StringMutator(fieldString.domain, length=(10,600), seed=10)
+    >>> mutator = StringMutator(fieldString.domain, interval=(10,600), seed=10)
     >>> mutator.generate()  # doctest: +SKIP
     b'`ls -al /`\x00     '
 
@@ -119,12 +122,12 @@ class StringMutator(DomainMutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,
-                 generator=PseudoRandomGenerator.NG_mt19937,
+                 generator=Generator.NG_mt19937,
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
-                 endChar=DEFAULT_END_CHAR,  # type: str
-                 length=(None, None),       # type: Tuple[int, int]
-                 lengthBitSize=None,
+                 endchar=DEFAULT_END_CHAR,  # type: str
+                 interval=(None, None),       # type: Tuple[int, int]
+                 lengthBitSize=UnitSize.SIZE_8,
                  naughtyStrings=None):
 
         # Call parent init
@@ -134,48 +137,45 @@ class StringMutator(DomainMutator):
                          seed=seed,
                          counterMax=counterMax)
 
-        self.endChar = endChar
+        # Variables
+        self.naughtyStrings = naughtyStrings
 
-        if isinstance(length, tuple) and len(length) == 2 and all(isinstance(_, int) for _ in length):
-            self._minLength, self._maxLength = length
-        dom_size = domain.dataType.size
+        # Initialize generator
+        self.initializeGenerator(interval, lengthBitSize, endchar)
+
+    def initializeGenerator(self, interval, lengthBitSize, endchar):
+
+        # Check minLength and maxLength
+        if isinstance(interval, tuple) and len(interval) == 2 and all(isinstance(_, int) for _ in interval):
+            minLength, maxLength = interval
+        dom_size = self.domain.dataType.size
         if isinstance(dom_size, tuple) and len(dom_size) == 2 and all(isinstance(_, int) for _ in dom_size):
             # Handle desired interval according to the storage space of the domain dataType
-            self._minLength = max(self._minLength, int(dom_size[0] / 8))
-            self._maxLength = min(self._maxLength, int(dom_size[1] / 8))
-        if self._minLength is None or self._maxLength is None:
-            self._minLength = self.DEFAULT_MIN_LENGTH
-            self._maxLength = self.DEFAULT_MAX_LENGTH
+            minLength = max(minLength, int(dom_size[0] / 8))
+            maxLength = min(maxLength, int(dom_size[1] / 8))
+        if minLength is None or maxLength is None:
+            minLength = self.DEFAULT_MIN_LENGTH
+            maxLength = self.DEFAULT_MAX_LENGTH
 
-        if not isinstance(naughtyStrings, list):
-            self._naughtyStrings = StringPaddedGenerator.DEFAULT_NAUGHTY_STRINGS
-        else:
-            self._naughtyStrings = naughtyStrings
+        # Check lengthBitSize
+        if isinstance(lengthBitSize, UnitSize):
+            lengthBitSize = lengthBitSize.value
 
-        self._stringLength = Field(uint16le())
-        self._lengthMutator = IntegerMutator(
-            domain=self._stringLength.domain,
-            interval=(self._minLength, self._maxLength),
-            generator='determinist',
-            bitsize=lengthBitSize,
-            **kwargs)
+        # Build the length generator
+        lengthGenerator = GeneratorFactory.buildGenerator(DeterministGenerator.NG_determinist,
+                                                          seed = self.seed,
+                                                          minValue = minLength,
+                                                          maxValue = maxLength,
+                                                          bitsize = lengthBitSize,
+                                                          signed = False)
 
-        self._sg = StringPaddedGenerator(self._lengthMutator,
-                                         self._naughtyStrings)
-        self._seed = 0
+        # Build the string generator
+        self.generator = StringPaddedGenerator(lengthGenerator,
+                                         self.naughtyStrings,
+                                         endchar)
 
-    @typeCheck(int)
-    def updateSeed(self, seedValue):
-        super().updateSeed(seedValue)
-        self._lengthMutator.updateSeed(seedValue)
-        self._sg.updateSeed(seedValue)
 
-    def getLength(self):
-        """The length of the last generated string.
-
-        :rtype: :class:`int`
-        """
-        return self._stringLength.value
+    ## Properties
 
     @property
     def naughtyStrings(self):
@@ -187,9 +187,18 @@ class StringMutator(DomainMutator):
         """
         return self._naughtyStrings
 
+    @naughtyStrings.setter
+    def naughtyStrings(self, naughtyStrings):
+        if not isinstance(naughtyStrings, list):
+            self._naughtyStrings = StringPaddedGenerator.DEFAULT_NAUGHTY_STRINGS
+        else:
+            self._naughtyStrings = naughtyStrings
+
+
+    ## API methods
+
     def generate(self):
         """This is the fuzz generation method of the string field.
-        It uses lengthMutator, then a random generator to produce the value.
 
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
@@ -197,13 +206,11 @@ class StringMutator(DomainMutator):
         # Call parent generate() method
         super().generate()
 
-        value = self._sg.getNewValue(self._endChar)
-        value = self._sg.getNewValue(self._endChar)
-        dom_type = self.getDomain().dataType
+        value = next(self.generator)
         return String.decode(value,
-                             unitSize=dom_type.unitSize,
-                             endianness=dom_type.endianness,
-                             sign=dom_type.sign)
+                             unitSize = self.domain.dataType.unitSize,
+                             endianness = self.domain.dataType.endianness,
+                             sign = self.domain.dataType.sign)
 
     def mutate(self, data):
         raise NotImplementedError

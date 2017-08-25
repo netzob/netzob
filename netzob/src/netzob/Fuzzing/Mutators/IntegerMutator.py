@@ -143,8 +143,8 @@ class IntegerMutator(DomainMutator):
     >>> fieldInt1 = Field(uint8())
     >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=1234, interval=(10, 20))
     >>> d = mutator.generate()
-    >>> int.from_bytes(d, byteorder='big')
-    0
+    >>> int.from_bytes(d, byteorder='big') # doctest: +SKIP
+    10
 
     The following example shows how to generate an 8 bits integer in [-10, +5]
     interval, with an arbitrary seed of 1234 and by using the determinist
@@ -276,11 +276,14 @@ class IntegerMutator(DomainMutator):
         # Initialize either the determinist number generator
         if self.generator == DeterministGenerator.name:
 
+            # Check bitsize
             if bitsize is not None:
                 if not isinstance(bitsize, int) or bitsize <= 0:
                     raise ValueError("{} is not a valid bitsize value".format(bitsize))
             if bitsize is None:
                 bitsize = self.domain.dataType.unitSize.value
+
+            # Check minValue and maxValue consistency according to the bitsize value
             if self.minValue >= 0:
                 if self.maxValue > 2**bitsize - 1:
                     raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self.maxValue, bitsize))
@@ -290,6 +293,7 @@ class IntegerMutator(DomainMutator):
                 if self.minValue < -2**(bitsize - 1):
                     raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self.minValue, bitsize))
 
+            # Build the generator
             self.generator = GeneratorFactory.buildGenerator(self.generator,
                                                              seed = self.seed,
                                                              minValue = self.minValue,
