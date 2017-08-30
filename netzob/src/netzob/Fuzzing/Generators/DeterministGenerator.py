@@ -52,8 +52,8 @@ class DeterministGenerator(Generator):
 
     >>> from netzob.all import *
     >>> seed = 14
-    >>> genObject = DeterministGenerator(seed)
-    >>> next(genObject)
+    >>> g = DeterministGenerator(seed)
+    >>> next(g)
     33
     """
 
@@ -113,8 +113,8 @@ class DeterministGenerator(Generator):
             signedShift = 2**bitsize
 
         self._values = list()
-        self._values.append(minValue)  # P
         self._values.append(maxValue)  # Q
+        self._values.append(minValue)  # P
         if (minValue-1) & 2**bitsize == minValue-1:
             self._values.append(minValue-1)  # P-1
         self._values.append(maxValue-1)  # Q-1
@@ -139,9 +139,12 @@ class DeterministGenerator(Generator):
             self._values.append(2**k)  # 2^k
             self._values.append(2**k - 1)  # 2^k - 1
             self._values.append(2**k + 1)  # 2^k + 1
+
         # Removing duplicates
-        setValues = set(self._values)
-        self._values = sorted(setValues)
+        self._values = sorted(set(self._values))
+
+        # Order by greater values first
+        self._values.reverse()
 
         # Update seed value
         self.seed = self.seed % len(self._values)
