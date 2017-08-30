@@ -142,7 +142,7 @@ class DomainMutator(Mutator):
             return data
 
         # The current implementation makes a bitflip at a random position
-        idx = random.randint(0, len(data) - 1)
+        idx = next(self.generator) % len(data)
         data[idx] = not data[idx]
         return data
 

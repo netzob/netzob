@@ -105,7 +105,7 @@ class RepeatMutator(DomainMutator):
     >>> fuzz = Fuzz()
     >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=2))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
-    >>> fuzz.set(f_rep, RepeatMutator)
+    >>> fuzz.set(f_rep)
     >>> symbol.specialize(fuzz=fuzz)  # doctest: +ELLIPSIS
     b'\x00\x03\x00\x01\x00\x02...\x00\x03'
 
@@ -115,7 +115,7 @@ class RepeatMutator(DomainMutator):
     >>> fuzz = Fuzz()
     >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
-    >>> fuzz.set(f_rep, RepeatMutator)
+    >>> fuzz.set(f_rep)
     >>> symbol.specialize(fuzz=fuzz)  # doctest: +ELLIPSIS
     b'\x00\x03\x00\x01\x00\x02...\x00\x03'
     >>> symbol.specialize(fuzz=fuzz)  # doctest: +ELLIPSIS
@@ -127,24 +127,23 @@ class RepeatMutator(DomainMutator):
     >>> fuzz = Fuzz()
     >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
-    >>> fuzz.set(f_rep, RepeatMutator, mode=MutatorMode.MUTATE)
+    >>> fuzz.set(f_rep, mode=MutatorMode.MUTATE)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
 
 
-    # **Fuzzing of a repeat of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
+    **Fuzzing of a repeat of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
 
-    # >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-    # >>> fuzz = Fuzz()
-    # >>> f_repeat = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
-    # >>> symbol = Symbol(name="sym", fields=[f_repeat])
-    # >>> mapping = {}
-    # >>> mapping[Integer] = IntegerMutator, generator='determinist'
-    # >>> fuzz.set(f_repeat, RepeatMutator, mappingTypesMutators=mapping)
-    # >>> res = symbol.specialize(fuzz=fuzz)
-    # >>> res
-    # b'\xfc\x00\xfc\x01\xfd\xff\xfe\x00\xfe\x01\xfe\xff\xff\x00\xff\x01\xff\x7f\xff\x80\xff\x81\xff\xbf\xff\xc0\xff\xc1\xff\xdf'
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+    >>> fuzz = Fuzz()
+    >>> f_repeat = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
+    >>> symbol = Symbol(name="sym", fields=[f_repeat])
+    >>> mapping = {}
+    >>> mapping[Integer] = {'generator':'determinist'}
+    >>> fuzz.set(f_repeat, mappingTypesMutators=mapping)
+    >>> symbol.specialize(fuzz=fuzz)  # doctest: +ELLIPSIS
+    b' \x01 \x00\x1f\xff\x10\x01...@\x00?'
 
 
     **Fuzzing of a repeat of variables without fuzzing the children**
@@ -152,7 +151,7 @@ class RepeatMutator(DomainMutator):
     >>> fuzz = Fuzz()
     >>> f_repeat = Field(name="rep", domain=Repeat(int8(interval=(5, 8)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_repeat])
-    >>> fuzz.set(f_repeat, RepeatMutator, mutateChild=False)
+    >>> fuzz.set(f_repeat, mutateChild=False)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> for i in range(int(len(res))):
     ...     assert 5 <= ord(res[i:i+1]) <= 8
@@ -250,7 +249,11 @@ class RepeatMutator(DomainMutator):
         """
         from netzob.Fuzzing.Fuzz import Fuzz
         self._mappingTypesMutators = Fuzz.mappingTypesMutators.copy()
-        self._mappingTypesMutators.update(mappingTypesMutators)
+        for k, v in self._mappingTypesMutators.items():
+            if k in mappingTypesMutators.keys():
+                mutator, mutator_default_parameters = v
+                mutator_default_parameters.update(mappingTypesMutators[k])
+                self._mappingTypesMutators[k] = mutator, mutator_default_parameters
 
     def generate(self):
         """This is the fuzz generation method of the sequence field.

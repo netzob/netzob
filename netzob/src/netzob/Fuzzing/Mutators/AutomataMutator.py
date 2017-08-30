@@ -73,7 +73,7 @@ class AutomataMutator(Mutator):
     >>> symbol = Symbol([Field(String('abcd'))])
     >>> automata = Automata(s0, vocabulary=[symbol])
     >>> mutator = AutomataMutator(automata, seed=42)
-    >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM)
+    >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM)  # doctest: +SKIP
 
 
     **Combining message formats and automata fuzzing**
@@ -99,16 +99,16 @@ class AutomataMutator(Mutator):
 
     >>> # Creation of a mutated automaton
     >>> mutator = AutomataMutator(automata, seed=42)
-    >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM, startingState=s1, endingState=s2)
-    >>> assert isinstance(mutatedAutomata, Automata)
+    >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM, startingState=s1, endingState=s2)  # doctest: +SKIP
+    >>> assert isinstance(mutatedAutomata, Automata)  # doctest: +SKIP
 
     >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> visitor = Actor(automata=mutatedAutomata, initiator=True, abstractionLayer=abstractionLayer)
+    >>> visitor = Actor(automata=mutatedAutomata, initiator=True, abstractionLayer=abstractionLayer)  # doctest: +SKIP
 
     >>> # We start the visitor, thus the fuzzing of message formats will be applied when specific states are reached
-    >>> visitor.start()
+    >>> visitor.start()  # doctest: +SKIP
     """
 
     def __init__(self,

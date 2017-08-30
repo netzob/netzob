@@ -82,7 +82,7 @@ class AggMutator(DomainMutator):
     >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
-    >>> fuzz.set(f_agg, AggMutator)
+    >>> fuzz.set(f_agg)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res
     b'\x00\x03\x00\x07'
@@ -94,7 +94,7 @@ class AggMutator(DomainMutator):
     >>> f_agg = Field(name="agg", domain=Agg([int16(1),
     ...                                       int16(2)]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
-    >>> fuzz.set(f_agg, AggMutator, mode=MutatorMode.MUTATE)
+    >>> fuzz.set(f_agg, mode=MutatorMode.MUTATE)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
@@ -102,17 +102,17 @@ class AggMutator(DomainMutator):
 
     **Fuzzing of an aggregate of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
 
-    # >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-    # >>> fuzz = Fuzz()
-    # >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
-    # ...                                       int16(interval=(5, 8))]))
-    # >>> symbol = Symbol(name="sym", fields=[f_agg])
-    # >>> mapping = {}
-    # >>> mapping[Integer] = IntegerMutator, generator='determinist'
-    # >>> fuzz.set(f_agg, AggMutator, mappingTypesMutators=mapping)
-    # >>> res = symbol.specialize(fuzz=fuzz)
-    # >>> res
-    # b'\xfc\x00\xfc\x00'
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+    >>> fuzz = Fuzz()
+    >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
+    ...                                       int16(interval=(5, 8))]))
+    >>> symbol = Symbol(name="sym", fields=[f_agg])
+    >>> mapping = {}
+    >>> mapping[Integer] = {'generator':'determinist'}
+    >>> fuzz.set(f_agg, mappingTypesMutators=mapping)
+    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res
+    b' \x01 \x01'
 
 
     **Fuzzing of an aggregate of variables without fuzzing the children**
@@ -121,7 +121,7 @@ class AggMutator(DomainMutator):
     >>> f_agg = Field(name="agg", domain=Agg([int8(interval=(1, 4)),
     ...                                       int8(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
-    >>> fuzz.set(f_agg, AggMutator, mutateChild=False)
+    >>> fuzz.set(f_agg, mutateChild=False)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> 1 <= res[0] <= 4
     True
@@ -182,7 +182,11 @@ class AggMutator(DomainMutator):
         """
         from netzob.Fuzzing.Fuzz import Fuzz
         self._mappingTypesMutators = Fuzz.mappingTypesMutators.copy()
-        self._mappingTypesMutators.update(mappingTypesMutators)
+        for k, v in self._mappingTypesMutators.items():
+            if k in mappingTypesMutators.keys():
+                mutator, mutator_default_parameters = v
+                mutator_default_parameters.update(mappingTypesMutators[k])
+                self._mappingTypesMutators[k] = mutator, mutator_default_parameters
 
     def generate(self):
         """This is the fuzz generation method of the aggregate field.

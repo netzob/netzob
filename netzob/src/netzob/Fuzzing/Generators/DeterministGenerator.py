@@ -54,7 +54,7 @@ class DeterministGenerator(Generator):
     >>> seed = 14
     >>> g = DeterministGenerator(seed)
     >>> next(g)
-    33
+    65536
     """
 
     NG_determinist = "determinist"
@@ -94,8 +94,8 @@ class DeterministGenerator(Generator):
         if len(self._values) == 0:
             raise ValueError("Value list is empty.")
 
-        if self.currentPos >= len(self._values):
-            self.reset()
+        self.currentPos = self.currentPos % len(self._values)
+
         value = self._values[self.currentPos]
         self.currentPos += 1
         return value

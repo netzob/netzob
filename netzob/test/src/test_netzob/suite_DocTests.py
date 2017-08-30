@@ -76,6 +76,7 @@ from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory imp
 from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAutomataFactory
 
 from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 from netzob.Fuzzing.Generators.StringPaddedGenerator import StringPaddedGenerator
