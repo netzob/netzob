@@ -90,7 +90,8 @@ class Fuzz(object):
 
     The Fuzz constructor expects some parameters:
 
-    :param counterMax: the max number of values that the mutator would produce. See definition of Mutator.counterMax.
+    :param counterMax: The max number of values that the mutator would produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent).
+    :type counterMax: :class:`int` or :class:`float`, defaults to :attr:`COUNTER_MAX_DEFAULT`
 
 
     The following examples show the different usages of the fuzzing
@@ -155,6 +156,19 @@ class Fuzz(object):
     ...     result.add(symbol.specialize(fuzz=fuzz))
     >>> len(result) == 980
     True
+
+
+    **Fuzzing of a field that contains sub-fields**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f_data1 = Field(name="data1", domain=int8())
+    >>> f_data2 = Field(name="data2", domain=int16())
+    >>> f_parent = Field(name="parent", domain=[f_data1, f_data2])
+    >>> symbol = Symbol(name="sym", fields=[f_parent])
+    >>> fuzz.set(f_parent)
+    >>> symbol.specialize(fuzz=fuzz)
+    b'DEt'
 
 
     **Fuzzing of a whole symbol, and covering all fields storage spaces with default mutator per types**
@@ -396,14 +410,21 @@ class Fuzz(object):
             # Handle case where k is a Variable -> nothing to do
             if isinstance(k, AbstractVariable):
                 pass
+
+            # Handle case where k is a Field containing sub-Fields -> we retrieve all its field variables
+            elif isinstance(k, Field) and len(k.fields) > 0:
+                subfields = k.fields
+                keys_to_remove.append(k)
+                for f in subfields:
+                    # We check if the variable is not already present in the variables to mutate
+                    if f.domain not in self.mappingFieldsMutators.keys():
+                        new_keys[f.domain] = v
+
             # Handle case where k is a Field -> retrieve the associated variable
             elif isinstance(k, Field):
                 keys_to_remove.append(k)
                 new_keys[k.domain] = v
-            # Handle case where k is a Field containing sub-Fields -> we retrieve all its field variables
-            elif isinstance(k, Field) and len(k.fields) > 0:
-                # TODO (fgy)
-                raise NotImplementedError()
+
             # Handle case where k is a Symbol -> we retrieve all its field variables
             elif isinstance(k, Symbol):
                 subfields = k.getLeafFields(includePseudoFields=True)
@@ -412,6 +433,7 @@ class Fuzz(object):
                     # We check if the variable is not already present in the variables to mutate
                     if f.domain not in self.mappingFieldsMutators.keys():
                         new_keys[f.domain] = v
+
             else:
                 raise Exception("Fuzzing keys must contain Symbols, Fields or Variables"
                                 ", but not a '{}'".format(type(k)))
