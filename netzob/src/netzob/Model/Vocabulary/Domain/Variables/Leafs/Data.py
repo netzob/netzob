@@ -49,6 +49,7 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 @NetzobLogger
@@ -69,7 +70,8 @@ class Data(AbstractVariableLeaf):
     :param name: The name of the data (if None, the name will
                  be generated).
     :param svas: The SVAS strategy defining how the Data value is
-                 used during abstraction and specializion process. The default strategy is SVAS.EPHEMERAL.
+                 used during abstraction and specialization process.
+                 The default strategy is SVAS.EPHEMERAL.
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, required
     :type originalValue: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
     :type name: :class:`str`, optional
@@ -130,8 +132,8 @@ class Data(AbstractVariableLeaf):
         :type path: :class:`GenericPath <netzob.Model.Vocabulary.Domain.GenericPath.GenericPath>`
         :return: a boolean that indicates if a value is available for this data
         :rtype: :class:`bool`
-    
         """
+
         if path is None:
             raise Exception("Path cannot be None")
 
@@ -222,7 +224,7 @@ class Data(AbstractVariableLeaf):
         content = parsingPath.getDataAssignedToVariable(self)
         actualSize = len(content)
 
-        self._logger.debug("Learn '{0}' with {1}".format(content.tobytes(), self.dataType))
+        self._logger.debug("Learn '{0}' with {1}".format(content.tobytes(),self.dataType))
 
         (minSize, maxSize) = self.dataType.size
         if minSize is None:
@@ -327,3 +329,16 @@ class Data(AbstractVariableLeaf):
         else:
             cv = currentValue
         self.__currentValue = cv
+
+    @property
+    def dataType(self):
+        """The type of the data.
+
+        :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
+        """
+        return self.__dataType
+
+    @dataType.setter
+    @typeCheck(AbstractType)
+    def dataType(self, dataType):
+        self.__dataType = dataType
