@@ -133,7 +133,7 @@ class IntegerMutator(DomainMutator):
     >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=52)
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
-    128
+    127
 
     The following example shows how to generate an 8 bits integer in [10, 20]
     interval, with an arbitrary seed of 1234 and by using the determinist
@@ -155,7 +155,7 @@ class IntegerMutator(DomainMutator):
     >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=42)
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
-    223
+    33
 
     The following example shows how to generate an 16 bits integer in
     [-32768, +32767] interval, with an arbitrary seed of 1234 and by using the
@@ -166,7 +166,7 @@ class IntegerMutator(DomainMutator):
     >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=430)
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
-    32768
+    32767
 
 
     **Custom generators**

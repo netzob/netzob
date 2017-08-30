@@ -43,7 +43,10 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
+from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 
@@ -99,17 +102,17 @@ class AggMutator(DomainMutator):
 
     **Fuzzing of an aggregate of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
 
-    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-    >>> fuzz = Fuzz()
-    >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
-    ...                                       int16(interval=(5, 8))]))
-    >>> symbol = Symbol(name="sym", fields=[f_agg])
-    >>> mapping = {}
-    >>> mapping[Integer] = IntegerMutator, generator='determinist'
-    >>> fuzz.set(f_agg, AggMutator, mappingTypesMutators=mapping)
-    >>> res = symbol.specialize(fuzz=fuzz)
-    >>> res
-    b'\xfc\x00\xfc\x00'
+    # >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+    # >>> fuzz = Fuzz()
+    # >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
+    # ...                                       int16(interval=(5, 8))]))
+    # >>> symbol = Symbol(name="sym", fields=[f_agg])
+    # >>> mapping = {}
+    # >>> mapping[Integer] = IntegerMutator, generator='determinist'
+    # >>> fuzz.set(f_agg, AggMutator, mappingTypesMutators=mapping)
+    # >>> res = symbol.specialize(fuzz=fuzz)
+    # >>> res
+    # b'\xfc\x00\xfc\x00'
 
 
     **Fuzzing of an aggregate of variables without fuzzing the children**
@@ -129,14 +132,23 @@ class AggMutator(DomainMutator):
 
     def __init__(self,
                  domain,
+                 mode=MutatorMode.GENERATE,
+                 generator=Generator.NG_mt19937,
+                 seed=Mutator.SEED_DEFAULT,
+                 counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  mutateChild=True,
-                 mappingTypesMutators={},
-                 **kwargs):
-        self._mutateChild = mutateChild
-        self.mappingTypesMutators = mappingTypesMutators
+                 mappingTypesMutators={}):
 
         # Call parent init
-        super().__init__(domain, **kwargs)
+        super().__init__(domain,
+                         mode=mode,  # type: MutatorMode
+                         generator=generator,
+                         seed=seed,
+                         counterMax=counterMax)
+
+        # Variables from parameters
+        self.mutateChild = mutateChild
+        self.mappingTypesMutators = mappingTypesMutators
 
     @property
     def mutateChild(self):
@@ -174,9 +186,6 @@ class AggMutator(DomainMutator):
 
     def generate(self):
         """This is the fuzz generation method of the aggregate field.
-
-        If :attr:`mutateChild` is True, the fuzzing is applied on
-        the children.
 
         :return: None
         :rtype: :class:`None`

@@ -44,8 +44,11 @@ from typing import Dict  # noqa: F401
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
@@ -126,17 +129,17 @@ class AltMutator(DomainMutator):
 
     **Fuzzing of an alternate of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
 
-    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-    >>> fuzz = Fuzz()
-    >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
-    ...                                       int16(interval=(5, 8))]))
-    >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> mapping = {}
-    >>> mapping[Integer] = (IntegerMutator, generator='determinist')
-    >>> fuzz.set(f_alt, AltMutator, mappingTypesMutators=mapping)
-    >>> res = symbol.specialize(fuzz=fuzz)
-    >>> res
-    b'\xfc\x00'
+    # >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+    # >>> fuzz = Fuzz()
+    # >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
+    # ...                                       int16(interval=(5, 8))]))
+    # >>> symbol = Symbol(name="sym", fields=[f_alt])
+    # >>> mapping = {}
+    # >>> mapping[Integer] = (IntegerMutator, generator='determinist')
+    # >>> fuzz.set(f_alt, AltMutator, mappingTypesMutators=mapping)
+    # >>> res = symbol.specialize(fuzz=fuzz)
+    # >>> res
+    # b'\xfc\x00'
 
 
     **Fuzzing of an alternate of variables without fuzzing the children**
@@ -164,7 +167,7 @@ class AltMutator(DomainMutator):
     >>> symbol.specialize(fuzz=fuzz)
     Traceback (most recent call last):
     ...
-    netzob.Fuzzing.Mutators.AltMutator.RecursionException: max depth reached (2)
+    netzob.Fuzzing.Mutators.AltMutator.RecursionException: Max depth reached (2)
 
 
     **Constant definitions:**
@@ -174,40 +177,29 @@ class AltMutator(DomainMutator):
 
     def __init__(self,
                  domain,
+                 mode=MutatorMode.GENERATE,
+                 generator=Generator.NG_mt19937,
+                 seed=Mutator.SEED_DEFAULT,
+                 counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  mutateChild=True,
                  mappingTypesMutators={},
-                 maxDepth=DEFAULT_MAX_DEPTH,
-                 **kwargs):
-        self._mutateChild = mutateChild
-        self.mappingTypesMutators = mappingTypesMutators
-        self._maxDepth = maxDepth
+                 maxDepth=DEFAULT_MAX_DEPTH):
 
         # Call parent init
-        super().__init__(domain, **kwargs)
+        super().__init__(domain,
+                         mode=mode,  # type: MutatorMode
+                         generator=generator,
+                         seed=seed,
+                         counterMax=counterMax)
+
+        # Variables from parameters
+        self.mutateChild = mutateChild
+        self.mappingTypesMutators = mappingTypesMutators
+        self.maxDepth = maxDepth
 
         # Internal structure used to determine the position to select at each call to generate()
-        domain_interval = Data(uint16le(interval=(0, len(domain.children))))
-        self._positionMutator = IntegerMutator(domain=domain_interval)
+        self.positionGenerator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
         self._currentDepth = 0
-
-    @property
-    def positionMutator(self):
-        """
-        Property (getter/setter).
-        The PRNG mutator used to get the random position of the type in the
-        alternative list.
-        It enables to change the position mutator, but with the condition that
-        the class object inherits
-        :class:`IntegerMutator <netzob.Fuzzing.IntegerMutator>`.
-
-        :rtype: :class:`IntegerMutator \
-        <netzob.Fuzzing.IntegerMutator>`
-        """
-        return self._positionMutator
-
-    @positionMutator.setter
-    def positionMutator(self, posMutator):
-        self._positionMutator = posMutator
 
     @property
     def maxDepth(self):
@@ -279,7 +271,7 @@ called, first")
         """This is the fuzz generation method of the alternative field.
 
         It randomly selects the child among the alternative list by using
-        :attr:`positionMutator`.
+        :attr:`positionGenerator`.
 
         If the mutation encounters recursivity (:class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>`
         containing :class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>`),
@@ -296,7 +288,7 @@ called, first")
         super().generate()
 
         self._currentDepth += 1
-        if self._currentDepth >= self._maxDepth:
-            raise RecursionException("Max depth reached ({})".format(self._maxDepth))
+        if self._currentDepth >= self.maxDepth:
+            raise RecursionException("Max depth reached ({})".format(self.maxDepth))
 
-        return self._positionMutator.generateInt()
+        return int(next(self.positionGenerator) * len(self.domain.children))

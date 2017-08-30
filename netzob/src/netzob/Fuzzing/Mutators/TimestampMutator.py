@@ -43,16 +43,17 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutators.DomainMutator import MutatorInterval
-from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
+from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.AbstractType import Sign
-from randomstate import RandomState
 
 
-class TimestampMutator(IntegerMutator):
+class TimestampMutator(DomainMutator):
     r"""The Timestamp mutator, using pseudo-random generator.
 
     The TimestampMutator constructor expects some parameters:
@@ -82,21 +83,32 @@ class TimestampMutator(IntegerMutator):
     >>> from netzob.all import *
     >>> fieldTimestamp = Field(Timestamp())
     >>> mutator = TimestampMutator(fieldTimestamp.domain, seed=4321)
-    >>> mutator.generate()
-    b'\n'
+    >>> d = mutator.generate()
+    >>> d
+    b'\x12 #$'
+    >>> len(d)
+    4
+
     """
 
     DATA_TYPE = Timestamp
 
     def __init__(self,
                  domain,
-                 generator='mt19937',
-                 **kwargs):
+                 mode=MutatorMode.GENERATE,
+                 generator=Generator.NG_mt19937,
+                 seed=Mutator.SEED_DEFAULT,
+                 counterMax=Mutator.COUNTER_MAX_DEFAULT):
 
         # Call parent init
         super().__init__(domain,
-                         interval=MutatorInterval.FULL_INTERVAL,
-                         **kwargs)
+                         mode=mode,  # type: MutatorMode
+                         generator=generator,
+                         seed=seed,
+                         counterMax=counterMax)
+
+        # Initialize generator
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
 
     def generate(self):
         """This is the mutation method of the Timestamp type.
@@ -106,16 +118,10 @@ class TimestampMutator(IntegerMutator):
         :rtype: :class:`bytes`
         """
 
-        if self._currentCounter >= self.getCounterMax():
-            raise Exception("Max mutation counter reached")
-        self._currentCounter += 1
-
-        # Generate and return a random value in the interval
-        self._currentCounter += 1
-        dom_type = self.getDomain().dataType
-        timeValue = self.generateInt()
+        # Generate a random integer between 0 and 2**unitsize-1
+        timeValue = next(self.generator) * (2**self.domain.dataType.unitSize.value - 1)
 
         return Integer.decode(timeValue,
-                              unitSize=dom_type.unitSize,
-                              endianness=dom_type.endianness,
-                              sign=Sign.UNSIGNED)
+                              unitSize = self.domain.dataType.unitSize,
+                              endianness = self.domain.dataType.endianness,
+                              sign = Sign.UNSIGNED)

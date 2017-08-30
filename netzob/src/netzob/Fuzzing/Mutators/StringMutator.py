@@ -47,15 +47,15 @@ from typing import Tuple  # noqa: F401
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
+from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 from netzob.Fuzzing.Generators.StringPaddedGenerator import StringPaddedGenerator
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Fuzzing.Generator import Generator
-from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
-from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 
 
 class StringMutator(DomainMutator):
@@ -145,6 +145,9 @@ class StringMutator(DomainMutator):
 
     def initializeGenerator(self, interval, lengthBitSize, endchar):
 
+        minLength = None
+        maxLength = None
+
         # Check minLength and maxLength
         if isinstance(interval, tuple) and len(interval) == 2 and all(isinstance(_, int) for _ in interval):
             minLength, maxLength = interval
@@ -171,8 +174,8 @@ class StringMutator(DomainMutator):
 
         # Build the string generator
         self.generator = StringPaddedGenerator(lengthGenerator,
-                                         self.naughtyStrings,
-                                         endchar)
+                                               self.naughtyStrings,
+                                               endchar)
 
 
     ## Properties
