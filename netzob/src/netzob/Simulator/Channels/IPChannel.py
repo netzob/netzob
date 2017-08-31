@@ -45,6 +45,7 @@ import socket
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Simulator.AbstractChannel import AbstractChannel
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 @NetzobLogger
@@ -100,6 +101,10 @@ class IPChannel(AbstractChannel):
         self.upperProtocol = upperProtocol
         self.interface = interface
         self.__socket = None
+
+    @staticmethod
+    def getBuilder():
+        return IPChannelBuilder
 
     def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
@@ -272,3 +277,34 @@ class IPChannel(AbstractChannel):
         :type timeout: :class:`float`, optional
         """
         self.__timeout = float(timeout)
+
+
+class IPChannelBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channel.IPChannel.IPChannel` instance
+
+    >>> import socket
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(dst_addr="1.2.3.4",
+    ...                   src_addr="4.3.2.1",
+    ...                   protocol=socket.IPPROTO_TCP,
+    ...                   interface="eth0")
+    >>> chan = IPChannelBuilder().set_map(netinfo.getDict()).build()
+    >>> assert isinstance(chan, IPChannel)
+    """
+
+    def __init__(self):
+        super().__init__(IPChannel)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_dst_addr(self, value):
+        self.attrs['remoteIP'] = value
+
+    def set_protocol(self, value):
+        self.attrs['upperProtocol'] = value
+
+    def set_interface(self, value):
+        self.attrs['interface'] = value

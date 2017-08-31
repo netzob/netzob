@@ -46,6 +46,7 @@ import socket
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Simulator.AbstractChannel import AbstractChannel
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 @NetzobLogger
@@ -117,6 +118,10 @@ class UDPClient(AbstractChannel):
         self.localIP = localIP
         self.localPort = localPort
         self.__socket = None
+
+    @staticmethod
+    def getBuilder():
+        return UDPClientBuilder
 
     def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
@@ -240,3 +245,31 @@ class UDPClient(AbstractChannel):
     @typeCheck(int)
     def localPort(self, localPort):
         self.__localPort = localPort
+
+
+class UDPClientBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channel.UDPClient.UDPClient` instance
+
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(dst_addr="1.2.3.4", dst_port=1024,
+    ...                   src_addr="4.3.2.1", src_port=32000)
+    >>> chan = UDPClientBuilder().set_map(netinfo.getDict()).build()
+    >>> assert isinstance(chan, UDPClient)
+    """
+
+    def __init__(self):
+        super().__init__(UDPClient)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_dst_addr(self, value):
+        self.attrs['remoteIP'] = value
+
+    def set_src_port(self, value):
+        self.attrs['localPort'] = value
+
+    def set_dst_port(self, value):
+        self.attrs['remotePort'] = value

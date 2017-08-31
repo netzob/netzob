@@ -46,6 +46,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
@@ -57,6 +58,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.InternetChecksum import InternetChecksum
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+
 
 
 @NetzobLogger
@@ -113,6 +115,10 @@ class RawIPChannel(AbstractChannel):
 
         # Header initialization
         self.initHeader()
+
+    @staticmethod
+    def getBuilder():
+        return RawIPChannelBuilder
 
     def open(self, timeout=5.):
         """Open the communication channel.
@@ -351,3 +357,34 @@ class RawIPChannel(AbstractChannel):
         :type timeout: :class:`float`, optional
         """
         self.__timeout = float(timeout)
+
+
+class RawIPChannelBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channel.RawIPChannel.RawIPChannel` instance
+
+    >>> import socket
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(dst_addr="1.2.3.4",
+    ...                   src_addr="4.3.2.1",
+    ...                   protocol=socket.IPPROTO_TCP,
+    ...                   interface="eth0")
+    >>> chan = RawIPChannelBuilder().set_map(netinfo.getDict()).build()
+    >>> assert isinstance(chan, RawIPChannel)
+    """
+
+    def __init__(self):
+        super().__init__(RawIPChannel)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_dst_addr(self, value):
+        self.attrs['remoteIP'] = value
+
+    def set_protocol(self, value):
+        self.attrs['upperProtocol'] = value
+
+    def set_interface(self, value):
+        self.attrs['interface'] = value

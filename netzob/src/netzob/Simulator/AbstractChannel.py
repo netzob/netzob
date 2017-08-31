@@ -46,6 +46,7 @@ import arpreq
 import binascii
 from fcntl import ioctl
 import subprocess
+from typing import Type
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -55,7 +56,7 @@ import subprocess
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 class ChannelDownException(Exception):
     pass
@@ -135,7 +136,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         """
 
 
-class AbstractChannel(ChannelInterface):
+class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     """A communication channel is an element allowing to establish a
     connection to or from a remote device.
 
@@ -156,6 +157,14 @@ class AbstractChannel(ChannelInterface):
     :vartype header_presets: :class:`dict`, optional
 
     """
+
+    ## Abstract methods ##
+
+    @abc.abstractstaticmethod
+    def getBuilder():  # type: Type[ChannelBuilder]
+        """
+        Provide the builder specific to an :class:`AbstractChannel`
+        """
 
     ## Public API methods ##
 

@@ -46,6 +46,7 @@ import socket
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Simulator.AbstractChannel import AbstractChannel, ChannelDownException
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 @NetzobLogger
@@ -113,6 +114,10 @@ class TCPClient(AbstractChannel):
         self.localIP = localIP
         self.localPort = localPort
         self.__socket = None
+
+    @staticmethod
+    def getBuilder():
+        return TCPClientBuilder
 
     def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
@@ -275,3 +280,31 @@ class TCPClient(AbstractChannel):
         :type timeout: :class:`float`, optional
         """
         self.__timeout = float(timeout)
+
+
+class TCPClientBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channel.TCPClient.TCPClient` instance
+
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(dst_addr="1.2.3.4", dst_port=1024,
+    ...                   src_addr="4.3.2.1", src_port=32000)
+    >>> chan = TCPClientBuilder().set_map(netinfo.getDict()).build()
+    >>> assert isinstance(chan, TCPClient)
+    """
+
+    def __init__(self):
+        super().__init__(TCPClient)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_dst_addr(self, value):
+        self.attrs['remoteIP'] = value
+
+    def set_src_port(self, value):
+        self.attrs['localPort'] = value
+
+    def set_dst_port(self, value):
+        self.attrs['remotePort'] = value

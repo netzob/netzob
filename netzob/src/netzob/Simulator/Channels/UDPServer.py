@@ -46,6 +46,7 @@ import socket
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Simulator.AbstractChannel import AbstractChannel
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 @NetzobLogger
@@ -109,6 +110,10 @@ class UDPServer(AbstractChannel):
         self.localPort = localPort
         self.__socket = None
         self.__remoteAddr = None
+
+    @staticmethod
+    def getBuilder():
+        return UDPServerBuilder
 
     def open(self, timeout=5.):
         """Open the communication channel. This will open a UDP socket
@@ -222,3 +227,24 @@ class UDPServer(AbstractChannel):
         :type timeout: :class:`float`, optional
         """
         self.__timeout = float(timeout)
+
+
+class UDPServerBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channel.UDPServer.UDPServer` instance
+
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(src_addr="4.3.2.1", src_port=32000)
+    >>> chan = UDPServerBuilder().set_map(netinfo.getDict()).build()
+    >>> assert isinstance(chan, UDPServer)
+    """
+
+    def __init__(self):
+        super().__init__(UDPServer)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_src_port(self, value):
+        self.attrs['localPort'] = value

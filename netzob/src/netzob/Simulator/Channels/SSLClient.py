@@ -46,6 +46,7 @@ import ssl
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Simulator.AbstractChannel import AbstractChannel, ChannelDownException
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 @NetzobLogger
@@ -103,6 +104,10 @@ class SSLClient(AbstractChannel):
         self.__ssl_socket = None
         self.server_cert_file = server_cert_file
         self.alpn_protocols = alpn_protocols
+
+    @staticmethod
+    def getBuilder():
+        return SSLClientBuilder
 
     def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
@@ -289,3 +294,37 @@ class SSLClient(AbstractChannel):
         :type timeout: :class:`float`, optional
         """
         self.__timeout = float(timeout)
+
+
+class SSLClientBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channel.SSLClient.SSLClient` instance
+
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(dst_addr="1.2.3.4", dst_port=1024,
+    ...                   src_addr="4.3.2.1", src_port=32000)
+    >>> chan = SSLClientBuilder().set_map(netinfo.getDict()).build()
+    >>> assert isinstance(chan, SSLClient)
+    """
+
+    def __init__(self):
+        super().__init__(SSLClient)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_dst_addr(self, value):
+        self.attrs['remoteIP'] = value
+
+    def set_src_port(self, value):
+        self.attrs['localPort'] = value
+
+    def set_dst_port(self, value):
+        self.attrs['remotePort'] = value
+
+    def set_server_cert_file(self, value):
+        self.attrs['server_cert_file'] = value
+
+    def set_alpn_protocls(self, value):
+        self.attrs['alpn_protocls'] = value

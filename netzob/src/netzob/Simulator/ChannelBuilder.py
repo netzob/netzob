@@ -1,0 +1,101 @@
+#-*- coding: utf-8 -*-
+
+#+---------------------------------------------------------------------------+
+#|          01001110 01100101 01110100 01111010 01101111 01100010            |
+#|                                                                           |
+#|               Netzob : Inferring communication protocols                  |
+#+---------------------------------------------------------------------------+
+#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
+#| This program is free software: you can redistribute it and/or modify      |
+#| it under the terms of the GNU General Public License as published by      |
+#| the Free Software Foundation, either version 3 of the License, or         |
+#| (at your option) any later version.                                       |
+#|                                                                           |
+#| This program is distributed in the hope that it will be useful,           |
+#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+#| GNU General Public License for more details.                              |
+#|                                                                           |
+#| You should have received a copy of the GNU General Public License         |
+#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+#+---------------------------------------------------------------------------+
+#| @url      : http://www.netzob.org                                         |
+#| @contact  : contact@netzob.org                                            |
+#| @sponsors : Amossys, http://www.amossys.fr                                |
+#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             ANSSI,   https://www.ssi.gouv.fr                              |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| File contributors :                                                       |
+#|       - Alexandre Pigné <alexandre.pigne (a) amossys.fr>                  |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
+from typing import Mapping
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import NetzobLogger
+
+
+@NetzobLogger
+class ChannelBuilder(object):
+    """This builder pattern enables the creation of any kind of
+    :class:`~netzob.Simulator.AbstractChannel`
+
+    Initialize the builder context by providing the kind of object to build.
+
+    Sub classes should use specific methods to handle the setting of attributes
+    in a specific way. Otherwise, the named attribute of
+    :meth:`~ChannelBuilder.set` will be used.
+
+    :param kind: the kind of object to build
+    :type kind: an AbstractChannel class
+    """
+
+    def __init__(self, kind):
+        self.kind = kind  # type: Type[AbstractChannel]
+        self.attrs = {}
+
+    def set(self, key, value):
+        """
+        Set a named parameter that will be passed to :meth:`build`
+
+        :param key: a named parameter expected by :meth:`self.kind.__init__`
+        :type key: str
+        :param value: any object
+        """
+        setter_name = "set_{}".format(key)
+        setter = getattr(self, setter_name, None)
+        if callable(setter):
+            setter(value)
+        else:
+            self._logger.debug("The setter '{}' is not provided by {}"
+                               .format(setter_name, type(self).__name__))
+        return self
+
+    def set_map(self, mapping: Mapping):
+        """
+        Set a mapping of key-value named parametres.
+        See :meth:`set` for details.
+
+        :param mapping: A key-value parameter mapping
+        :type mapping: Mapping[str, Any]
+        """
+        for key, value in mapping.items():
+            self.set(key, value)
+        return self
+
+    def build(self):
+        """
+        Generate the final object instance
+        """
+        return self.kind(**self.attrs)

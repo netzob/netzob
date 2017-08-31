@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
@@ -27,16 +26,42 @@
 #|             ANSSI,   https://www.ssi.gouv.fr                              |
 #+---------------------------------------------------------------------------+
 
-# List subpackages to import with the current one
-# see docs.python.org/2/tutorial/modules.html
+#+---------------------------------------------------------------------------+
+#| File contributors :                                                       |
+#|       - Alexandre Pigné <alexandre.pigne (a) amossys.fr>                  |
+#+---------------------------------------------------------------------------+
 
-from netzob.Simulator.Channels.TCPServer import TCPServer, TCPServerBuilder
-from netzob.Simulator.Channels.TCPClient import TCPClient, TCPClientBuilder
-from netzob.Simulator.Channels.UDPClient import UDPClient, UDPClientBuilder
-from netzob.Simulator.Channels.UDPServer import UDPServer, UDPServerBuilder
-from netzob.Simulator.Channels.SSLClient import SSLClient, SSLClientBuilder
-from netzob.Simulator.Channels.IPChannel import IPChannel, IPChannelBuilder
-from netzob.Simulator.Channels.RawIPChannel import RawIPChannel, RawIPChannelBuilder
-from netzob.Simulator.Channels.RawEthernetChannel import RawEthernetChannel, RawEthernetChannelBuilder
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
 
-from netzob.Simulator.Channels.NetInfo import NetInfo
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
+
+
+class NetInfo(object):
+    """Data structure containing relevent information for creating
+    :class:`~netzob.Simulator.AbstractChannel.AbstractChannel` objects
+    """
+
+    __slots__ = (
+        "src_addr", "dst_addr", "src_port", "dst_port", "protocol", "interface"
+    )
+
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+    def __repr__(self):
+        return "{}({})".format(type(self).__name__,
+                               ", ".join("{}={!r}".format(*kvp) for kvp
+                                         in self.getDict().items()))
+
+    def getDict(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__
+                if hasattr(self, slot)}

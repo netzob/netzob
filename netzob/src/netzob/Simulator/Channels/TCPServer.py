@@ -46,6 +46,7 @@ import socket
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Simulator.AbstractChannel import AbstractChannel
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 @NetzobLogger
@@ -106,6 +107,10 @@ class TCPServer(AbstractChannel):
         self.localPort = localPort
         self.__socket = None
         self.__clientSocket = None
+
+    @staticmethod
+    def getBuilder():
+        return TCPServerBuilder
 
     def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
@@ -241,3 +246,24 @@ class TCPServer(AbstractChannel):
         :type timeout: :class:`float`, optional
         """
         self.__timeout = float(timeout)
+
+
+class TCPServerBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channel.TCPServer.TCPServer` instance
+
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(src_addr="4.3.2.1", src_port=32000)
+    >>> chan = TCPServerBuilder().set_map(netinfo.getDict()).build()
+    >>> assert isinstance(chan, TCPServer)
+    """
+
+    def __init__(self):
+        super().__init__(TCPServer)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_src_port(self, value):
+        self.attrs['localPort'] = value

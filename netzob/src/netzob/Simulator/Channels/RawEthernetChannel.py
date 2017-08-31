@@ -47,6 +47,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Simulator.AbstractChannel import AbstractChannel
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.Raw import Raw
@@ -99,6 +100,10 @@ class RawEthernetChannel(AbstractChannel):
         self.__socket = None
 
         self.initHeader()
+
+    @staticmethod
+    def getBuilder():
+        return RawEthernetChannelBuilder
 
     def initHeader(self):
         eth_dst = Field(name='eth.dst', domain=Raw(self.macToBitarray(self.remoteMac)))
@@ -300,3 +305,33 @@ class RawEthernetChannel(AbstractChannel):
         :type timeout: :class:`float`, optional
         """
         self.__timeout = float(timeout)
+
+
+class RawEthernetChannelBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channel.RawEthernetChannel.RawEthernetChannel` instance
+
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(dst_addr="00:11:22:33:44:55",
+    ...                   src_addr="55:44:33:22:11:00",
+    ...                   protocol=0x0800,
+    ...                   interface="eth0")
+    >>> chan = RawEthernetChannelBuilder().set_map(netinfo.getDict()).build()
+    >>> assert isinstance(chan, RawEthernetChannel)
+    """
+
+    def __init__(self):
+        super().__init__(RawEthernetChannel)
+
+    def set_src_addr(self, value):
+        self.attrs['localMac'] = value
+
+    def set_dst_addr(self, value):
+        self.attrs['remoteMac'] = value
+
+    def set_protocol(self, value):
+        self.attrs['upperProtocol'] = value
+
+    def set_interface(self, value):
+        self.attrs['interface'] = value
