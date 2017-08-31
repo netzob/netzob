@@ -71,11 +71,11 @@ class DeterministGenerator(Generator):
                  signed = False):
 
         # Call parent init
-        super().__init__(values=[])
+        super().__init__(seed=seed)
 
-        # Initialize variables
-        self.seed = seed
-        self.currentPos = 0
+        # Initialize other variables
+        self._currentPos = 0
+        self._values = []
 
         # Initialize deterministic values
         self._createValues(minValue, maxValue, bitsize, signed)
@@ -94,10 +94,10 @@ class DeterministGenerator(Generator):
         if len(self._values) == 0:
             raise ValueError("Value list is empty.")
 
-        self.currentPos = self.currentPos % len(self._values)
+        self._currentPos = self._currentPos % len(self._values)
 
-        value = self._values[self.currentPos]
-        self.currentPos += 1
+        value = self._values[self._currentPos]
+        self._currentPos += 1
         return value
     
     def _createValues(self,
@@ -105,7 +105,7 @@ class DeterministGenerator(Generator):
                      maxValue,
                      bitsize,
                      signed):
-        self.currentPos = 0
+        self._currentPos = 0
         signedShift = 0
 
         if not signed:

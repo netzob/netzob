@@ -68,7 +68,7 @@ class IntegerMutator(DomainMutator):
         between min and max.
         Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL <netzob.Fuzzing.DomainMutator.MutatorInterval.DEFAULT_INTERVAL>`.
     :param bitsize: The size in bits of the memory on which the generated
-        values have to be encoded. Only used with a determinist generator.
+        values have to be encoded. It is only used with a determinist generator.
         Default value is `None`, which indicates to use the unit size set in the field domain.
     :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
         used to produce the value.
@@ -77,7 +77,7 @@ class IntegerMutator(DomainMutator):
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param generator: The name of the generator to use. Set 'determinist' for the determinist generator, else among those
         available in :mod:`randomstate.prng` for a pseudo-random generator.
-        Default value is :attr:`PRNG_mt19937`.
+        Default value is :attr:`NG_mt19937`.
     :param seed: The seed used in pseudo-random Mutator.
         Default value is :attr:`SEED_DEFAULT <netzob.Fuzzing.Mutator.Mutator.SEED_DEFAULT>`.
     :type domain: :class:`AbstractVariable

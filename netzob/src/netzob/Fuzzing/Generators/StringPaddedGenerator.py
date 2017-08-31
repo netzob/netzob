@@ -88,10 +88,11 @@ class StringPaddedGenerator(Generator):
                  endchar = '\0'):
 
         # Call parent init
-        super().__init__(values=stringsList)
+        super().__init__(seed=seed)
 
-        # Variables
-        self.endchar = endchar
+        # Variables from parameters
+        self._endchar = endchar
+        self._values = stringsList
 
         # Initialize length generator
         self.lengthGenerator = GeneratorFactory.buildGenerator(lengthGenerator, seed=self.seed)
@@ -105,11 +106,11 @@ class StringPaddedGenerator(Generator):
         :return: a generated str value
         :rtype: :class:`str`
         """
-        if self.seed >= len(self.values):
-            self.seed = self.seed % len(self.values)
+        if self.seed >= len(self._values):
+            self.seed = self.seed % len(self._values)
 
         # Generate the initial value
-        value = self.values[self.seed] + self.endchar
+        value = self._values[self.seed] + self._endchar
 
         # Generate the value final length
         length = next(self.lengthGenerator)
@@ -122,7 +123,7 @@ class StringPaddedGenerator(Generator):
                 value = value + (" " * (length - len(value)))
             else:
                 # truncate the too long string value to length characters
-                value = value[:length-1] + self.endchar
+                value = value[:length-1] + self._endchar
         else:
             value = ""
         return value

@@ -142,7 +142,7 @@ class DomainMutator(Mutator):
             return data
 
         # The current implementation makes a bitflip at a random position
-        idx = next(self.generator) % len(data)
+        idx = int(next(self.generator) % len(data))
         data[idx] = not data[idx]
         return data
 
@@ -166,6 +166,7 @@ class DomainMutator(Mutator):
         Test constructor with different parameters:
 
         >>> from netzob.all import *
+        >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
         >>> domain = Data(Integer())
         >>> d = IntegerMutator(domain)
         >>> type(d)

@@ -52,37 +52,42 @@ from netzob.Fuzzing.Generator import Generator
 
 class MutatorMode(Enum):
     """Mutator Fuzzing modes"""
-    NONE     = 0  #: No fuzzing
     MUTATE   = 1  #: Fuzzing by mutation of a legitimate value
     GENERATE = 2  #: Fuzzing by generation
 
 
 class Mutator(metaclass=abc.ABCMeta):
-    """This class provides the interface of any mutator.
-
-    This class provides the common properties and API to all inherited mutators.
+    """This class provides the interface that a mutator should implement.
 
     The Mutator constructor expects some parameters:
 
-    :param seed: The initial seed value of the mutator.
-    :param counterMax: The max number of values that the mutator would produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent).
-    :type seed: :class:`int`, defaults to :attr:`SEED_DEFAULT`
-    :type counterMax: :class:`int` or :class:`float`, defaults to :attr:`COUNTER_MAX_DEFAULT`
+    :param seed: The initial seed value of the mutator. Default value is :attr:`SEED_DEFAULT` = 10.
+    :param counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent). Defaults value is :attr:`COUNTER_MAX_DEFAULT` = 65536.
+    :type seed: :class:`int`
+    :type counterMax: :class:`int` or :class:`float`
 
 
     The Mutator class provides the following public variables:
 
-    :var seed:
-    :var counterMax: 
+    :var mode: The mode of fuzzing (either MutationMode.GENERATE or MutationMode.MUTATE)
+    :var generator: The underlying generator used to produce pseudo-random or deterministic values.
+    :var seed: The seed value of the mutator used to initialize the generator.
+    :var counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent).
+    :vartype mode: :class:`MutatorMode`
+    :vartype generator: :class:`iter`
     :vartype seed: :class:`str`
-    :vartype xxx: :class:`str`
-    :vartype xxx: :class:`str`
+    :vartype counterMax: :class:`int` or :class:`float`
 
     """
 
     # Class constants
     SEED_DEFAULT = 10  #: the default seed value
     COUNTER_MAX_DEFAULT = 2 << 16  #: the default max counter value (65536)
+
+
+    # Class variables
+    globalCounterMax = COUNTER_MAX_DEFAULT
+
 
     def __init__(self,
                  mode=MutatorMode.GENERATE,  # type: MutatorMode
@@ -114,7 +119,12 @@ class Mutator(metaclass=abc.ABCMeta):
         """
         if self.currentCounter >= self.counterMax:
             raise Exception("Max mutation counter reached")
+
+        if self.currentCounter >= Mutator.globalCounterMax:
+            raise Exception("Max mutation counter reached")
+
         self.currentCounter += 1
+
 
     @abc.abstractmethod
     def mutate(self, data):

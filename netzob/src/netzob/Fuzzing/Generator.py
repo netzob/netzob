@@ -63,26 +63,25 @@ class Generator(object, metaclass=abc.ABCMeta):
     NG_dsfmt = 'dsfmt'
 
 
-    def __init__(self, seed=0, values=None):
-        self.values = values
+    def __init__(self, seed=0):
         self.seed = seed
+
+    @abc.abstractmethod
+    def __iter__(self):
+        """The iterator interface."""
+
+    @abc.abstractmethod
+    def __next__(self):
+        """The iterator interface."""
 
     @property
     def seed(self):
+        """The seed used to initialize the generator.
+
+        :type: :class:`int`
+        """
         return self._seed
 
     @seed.setter
     def seed(self, seed):
         self._seed = seed
-
-    @property
-    def values(self):
-        """The list of available values.
-
-        :type: :class:`set`
-        """
-        return self._values
-
-    @values.setter
-    def values(self, values):
-        self._values = values

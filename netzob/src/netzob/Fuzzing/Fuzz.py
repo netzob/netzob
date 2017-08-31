@@ -62,11 +62,11 @@ from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
-from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.AltMutator import AltMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.AggMutator import AggMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator  # noqa: F401
-from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorMode  # noqa: F401
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval  # noqa: F401
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Mutators.StringMutator import StringMutator
 from netzob.Fuzzing.Mutators.TimestampMutator import TimestampMutator
@@ -82,15 +82,9 @@ class Fuzz(object):
     We can apply fuzzing on symbols, fields, variables and types
     through the :meth:`set <.Fuzz.set>` method.
 
-    By default, types have an associated mutator (e.g. :class:`String
-    <netzob.Model.Vocabulary.Types.String.String>` type is associated
-    by default to the :class:`StringMutator
-    <netzob.Model.Fuzzing.StringMutator.StringMutator>`).
-    The :meth:`set <.Fuzz.set>` method changes the default behavior.
-
     The Fuzz constructor expects some parameters:
 
-    :param counterMax: The max number of values that the mutator would produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent).
+    :param counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent).
     :type counterMax: :class:`int` or :class:`float`, defaults to :attr:`COUNTER_MAX_DEFAULT`
 
 
@@ -191,7 +185,7 @@ class Fuzz(object):
     >>> f_data2 = Field(name="data2", domain=int8(4))
     >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
     >>> fuzz.set(symbol, interval=MutatorInterval.FULL_INTERVAL)
-    >>> fuzz.set(f_data2, MutatorMode.NONE)
+    >>> fuzz.unset(f_data2)
     >>> symbol.specialize(fuzz=fuzz)
     b'D\x04'
 
@@ -234,6 +228,7 @@ class Fuzz(object):
     >>> symbol.specialize(fuzz=fuzz)
     Traceback (most recent call last):
     Exception: Max mutation counter reached
+    >>> fuzz = Fuzz()  # This is needed to restore globalCounterMax default value for unit test purpose
 
     """
 
@@ -242,8 +237,9 @@ class Fuzz(object):
 
     # Initialize mapping of types with their mutators
     @staticmethod
-    def initializeMappings():
+    def _initializeMappings():
         Fuzz.mappingFieldsMutators = {}
+
         Fuzz.mappingTypesMutators = {}
         Fuzz.mappingTypesMutators[Integer] = (IntegerMutator, {})
         Fuzz.mappingTypesMutators[String] = (StringMutator, {})
@@ -262,23 +258,21 @@ class Fuzz(object):
         self.counterMax = counterMax
 
         # Initialize mapping between Types and default Mutators with default configuration
-        Fuzz.initializeMappings()
+        Fuzz._initializeMappings()
         self.mappingTypesMutators = Fuzz.mappingTypesMutators
 
         # Initialize mapping between Field/Symbols and Mutators
         self.mappingFieldsMutators = Fuzz.mappingFieldsMutators
 
-    def set(self, key, value=None, **kwargs):
+    def set(self, key, **kwargs):
         r"""The method :meth:`set <.Fuzz.set>` specifies the fuzzing
         strategy for a symbol, a field, a variable or a type.
 
         The :meth:`set <.Fuzz.set>` method expects some parameters:
 
-        :param key: the targeted object (either a symbol, a field, a
-                    variable or a type).
-        :param value: the fuzzing strategy (see below for available
-                      strategies).
-        :param kwargs: some context dependent parameters.
+        :param key: The targeted object (either a symbol, a field, a
+                    variable or a type) (required).
+        :param kwargs: Some context dependent parameters (see below) (optional).
         :type key: :class:`Field
                    <netzob.Model.Vocabulary.Field.Field>`,
                    or :class:`Symbol
@@ -288,18 +282,70 @@ class Fuzz(object):
                    or :class:`AbstractType
                    <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
 
-        The fuzzing strategy is defined by a fuzzing mode and a
-        mutator. The fuzzing mode can be:
+        Each type have 4 common parameters, described in the following table:
 
-        * ``MutatorMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied on it.
-        * ``MutatorMode.GENERATE``: in this mode, the fuzzing component directly produces a random message.
+        .. tabularcolumns:: |p{3cm}|p{10cm}|
 
-        By default, the ``MutatorMode.GENERATE`` mode is used.
+        ==========  =============================================================
+          Option                          Description
+        ==========  =============================================================
+        mode        The fuzzing strategy, which can be either :attr:`MUTATE` or :attr:`GENERATE` (see below).
 
-        It is also possible to define a specific mutator for the
-        targeted object. The default mutator depends on the data type
-        of the fuzzed field. It is possible to specify a different
-        behavior for a mutator by passing parameters in ``kwargs``.
+                    Default value is :attr:`GENERATE`.
+
+        generator   The underlying generator (:class:`iter`) used to produce pseudo-random or deterministic values.
+
+                    Default generator is :attr:`NG_mt19937` from the :class:`randomstate` module.
+
+        seed        An integer (:class:`int`) used to initialize the underlying generator.
+
+                    Default value is :attr:`SEED_DEFAULT` = 10.
+
+        counterMax  An integer (:class:`int`) used to limit the number of mutations.
+
+                    Defaults value is :attr:`COUNTER_MAX_DEFAULT` = 65536.
+        ==========  =============================================================
+
+        The fuzzing strategy can be:
+
+        * ``MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied on it.
+        * ``GENERATE``: in this mode, the fuzzing component directly produces a random message.
+
+        Each type have specific parameters, described in the following table:
+
+        .. tabularcolumns:: |p{2cm}|p{3cm}|p{8cm}|
+
+        ==========  =============  =================================================
+           Type        Option                      Description   
+        ==========  =============  =================================================
+        Integer     interval       The scope of values to generate.
+
+                                   * If set to :attr:`DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
+                                   * If set to :attr:`FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
+                                   * If it is a tuple of integers (min, max), the values will be generate between min and max.
+
+                                   Default value is :attr:`DEFAULT_INTERVAL`.
+
+        ..          bitsize        The size in bits of the memory on which the generated values have to be encoded.
+                                   It is only used with a determinist generator.
+
+                                   Default value is `None`, which indicates to use the unit size set in the field domain.
+
+        String      endchar        
+        ..          interval
+        ..          lengthBitSize
+        ..          naughtStrings
+        Raw 
+        HexaString
+        BitArray
+        Timestamp
+        IPv4
+        Alt
+        Agg
+        Repeat
+        ==========  =============  =================================================
+
+
 
         """
 
@@ -317,23 +363,72 @@ class Fuzz(object):
 
         elif isinstance(key, (AbstractField, AbstractVariable)):
 
-            self.mappingFieldsMutators[key] = (value, kwargs)
+            self.mappingFieldsMutators[key] = kwargs
             self._normalize_mappingFieldsMutators()
 
         else:
             raise TypeError("Unsupported type for key: '{}'".format(type(key)))
 
+    def unset(self, key):
+        r"""The method :meth:`unset <.Fuzz.set>` deactivates the fuzzing for a
+        symbol, a field or a variable. It is not possible to unset the
+        fuzzing on a type.
+
+        The :meth:`unset <.Fuzz.set>` method expects some parameters:
+
+        :param key: The targeted object (either a symbol, a field or a
+                    variable) (required).
+        :type key: :class:`Field
+                   <netzob.Model.Vocabulary.Field.Field>`,
+                   or :class:`Symbol
+                   <netzob.Model.Vocabulary.Symbol.Symbol>`,
+                   or :class:`AbstractVariable
+                   <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+
+        """
+
+        keys_to_remove = []
+        # Handle case where k is a Variable -> nothing to do
+        if isinstance(key, AbstractVariable):
+            keys_to_remove.append(key)
+
+        # Handle case where k is a Field containing sub-Fields -> we retrieve all its field variables
+        elif isinstance(key, Field) and len(key.fields) > 0:
+            subfields = key.fields
+            keys_to_remove.append(key)
+            for f in subfields:
+                keys_to_remove.append(f.domain)
+
+        # Handle case where k is a Field -> retrieve the associated variable
+        elif isinstance(key, Field):
+            keys_to_remove.append(key.domain)
+
+        # Handle case where k is a Symbol -> we retrieve all its field variables
+        elif isinstance(key, Symbol):
+            subfields = key.getLeafFields(includePseudoFields=True)
+            keys_to_remove.append(key)
+            for f in subfields:
+                keys_to_remove.append(f.domain)
+        else:
+            raise Exception("Key must be a Symbol, a Field or a Variable"
+                            ", but not a '{}'".format(type(key)))
+
+        # Update keys
+        for old_key in keys_to_remove:
+            if old_key in self.mappingFieldsMutators.keys():
+                self.mappingFieldsMutators.pop(old_key)
+
     def get(self, key):
         if isinstance(key, type):
             # We return the associated mutator class
             if key in self.mappingTypesMutators:
-                return self.mappingTypesMutators[key][0]
+                return self.mappingTypesMutators[key]
             else:
                 return None
         elif isinstance(key, (AbstractField, AbstractVariable)) or isinstance(key, str):
             # We return the associated mutator instance
             if key in self.mappingFieldsMutators:
-                return self.mappingFieldsMutators[key][0]
+                return self.mappingFieldsMutators[key]
             else:
                 return None
         else:
@@ -392,16 +487,13 @@ class Fuzz(object):
         for k, v in self.mappingFieldsMutators.items():
             new_keys[k] = v
             if isinstance(k, AbstractVariableNode):
-                if not isinstance(v, tuple):
-                    raise TypeError("Value should be a tuple. Got: '{}'".format(v))
-                (v_m, v_kwargs) = v
-                new_keys.update(self._propagateMutation(k, v_m))
+                new_keys.update(self._propagateMutation(k, v))
         self.mappingFieldsMutators.update(new_keys)
 
         # Second loop to normalize fuzzing values, after handling complex domains (that may have added news keys:values)
         self._normalizeValues()
 
-    def _normalizeKeys(self, ):
+    def _normalizeKeys(self):
         # Normalize fuzzing keys
         new_keys = {}
         keys_to_remove = []
@@ -443,44 +535,21 @@ class Fuzz(object):
             self.mappingFieldsMutators.pop(old_key)
         self.mappingFieldsMutators.update(new_keys)
 
-    def _normalizeValues(self, ):
+    def _normalizeValues(self):
         # Normalize fuzzing values
         keys_to_update = {}
         keys_to_remove = []
 
         from netzob.Fuzzing.Mutator import Mutator
         for k, v in self.mappingFieldsMutators.items():
-            if not isinstance(v, tuple):
-                raise TypeError("Value should be a tuple. Got: '{}'".format(v))
-            (v_m, v_kwargs) = v
-
-            # # If the value is a Mutator class -> we instanciate it
-            # if inspect.isclass(v_m) and issubclass(v_m, Mutator):
-            #     # We instanciate the mutator
-            #     v_m_instance = v_m(domain=k, **v_kwargs)
-            #     v_m_instance.counterMax = self.counterMax
-            #     # We replace the mutator class by the mutate instance in the main dict
-            #     keys_to_update[k] = (v_m_instance, {})
 
             # If the value is already a Mutator instance -> we do nothing
-            if isinstance(v_m, Mutator):
+            if isinstance(v, Mutator):
                 pass
-
-            # If the value is a mutation mode specifying that the fuzzing is not needed on this object -> we remove the associated key object
-            elif v_m == MutatorMode.NONE:
-                keys_to_remove.append(k)
-
-            # If the value is another mutation mode, or None -> we instanciate the default Mutator according to the type of the object
-            elif v_m in [None, MutatorMode.GENERATE, MutatorMode.MUTATE]:
-                mut_inst = Fuzz._retrieveDefaultMutator(domain=k, mapping=Fuzz.mappingTypesMutators, **v_kwargs)
-                mut_inst.counterMax = self.counterMax
-                mut_inst.mode = v_m if v_m is not None else MutatorMode.GENERATE
-                keys_to_update[k] = (mut_inst, {})
-
+            # Else, we instanciate the default Mutator according to the type of the object
             else:
-                raise Exception("Fuzz's value '{} (type: {})' must be a "
-                                "Mutator instance or Mutator.(GENERATE|MUTATE"
-                                "|NONE)".format(v, type(v)))
+                mut_inst = Fuzz._retrieveDefaultMutator(domain=k, mapping=Fuzz.mappingTypesMutators, **v)
+                keys_to_update[k] = mut_inst
 
         # Update keys
         for old_key in keys_to_remove:
@@ -501,9 +570,7 @@ class Fuzz(object):
             # We check if the variable is not already present in the variables to mutate
             if variable.children[0] not in self.mappingFieldsMutators.keys():
                 mut_inst = Fuzz._retrieveDefaultMutator(domain=variable.children[0], mapping=mutator.mappingTypesMutators)
-                mut_inst.counterMax = self.counterMax
-                mut_inst.mode = mutator.mode
-                tmp_new_keys[variable.children[0]] = (mut_inst, {})
+                tmp_new_keys[variable.children[0]] = mut_inst
 
                 # Propagate mutation to the child if it is a complex domain
                 if isinstance(variable.children[0], AbstractVariableNode):
@@ -515,9 +582,7 @@ class Fuzz(object):
                 # We check if the variable is not already present in the variables to mutate
                 if child not in self.mappingFieldsMutators.keys():
                     mut_inst = Fuzz._retrieveDefaultMutator(domain=child, mapping=mutator.mappingTypesMutators)
-                    mut_inst.counterMax = self.counterMax
-                    mut_inst.mode = mutator.mode
-                    tmp_new_keys[child] = (mut_inst, {})
+                    tmp_new_keys[child] = mut_inst
 
                     # Propagate mutation to the child if it is a complex domain
                     if isinstance(child, AbstractVariableNode):
@@ -529,12 +594,21 @@ class Fuzz(object):
                 # We check if the variable is not already present in the variables to mutate
                 if child not in self.mappingFieldsMutators.keys():
                     mut_inst = Fuzz._retrieveDefaultMutator(domain=child, mapping=mutator.mappingTypesMutators)
-                    mut_inst.counterMax = self.counterMax
-                    mut_inst.mode = mutator.mode
-                    tmp_new_keys[child] = (mut_inst, {})
+                    tmp_new_keys[child] = mut_inst
 
                     # Propagate mutation to the child if it is a complex domain
                     if isinstance(child, AbstractVariableNode):
                         tmp_new_keys.update(self._propagateMutation(child, mut_inst))
 
         return tmp_new_keys
+
+
+    ## PROPERTIES ##
+
+    @property
+    def counterMax(self):
+        return Mutator.globalCounterMax
+
+    @counterMax.setter
+    def counterMax(self, counterMax):
+        Mutator.globalCounterMax = counterMax

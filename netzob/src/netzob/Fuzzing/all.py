@@ -37,7 +37,7 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from netzob.Fuzzing.Fuzz import Fuzz
-from netzob.Fuzzing.Mutator import Mutator
-from netzob.Fuzzing.Mutators.all import *
-from netzob.Fuzzing.Generator import Generator
-from netzob.Fuzzing.Generators.all import *
+# from netzob.Fuzzing.Mutator import Mutator
+# from netzob.Fuzzing.Mutators.all import *
+# from netzob.Fuzzing.Generator import Generator
+# from netzob.Fuzzing.Generators.all import *

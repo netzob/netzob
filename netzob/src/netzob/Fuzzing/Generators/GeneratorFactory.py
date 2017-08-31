@@ -78,13 +78,13 @@ class GeneratorFactory(object):
     >>> type(g)
     <class 'netzob.Fuzzing.Generators.DeterministGenerator.DeterministGenerator'>
     >>> next(g)
-    -8193
+    8193
 
     >>> g = GeneratorFactory.buildGenerator('determinist', seed=0, minValue=10, maxValue=20, signed=True)
     >>> type(g)
     <class 'netzob.Fuzzing.Generators.DeterministGenerator.DeterministGenerator'>
     >>> next(g)
-    -8193
+    8193
 
     >>> from itertools import cycle
     >>> g = GeneratorFactory.buildGenerator(cycle(range(4, 12)))
