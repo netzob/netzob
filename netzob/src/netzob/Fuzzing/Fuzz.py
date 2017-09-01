@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import inspect
 from typing import Dict, Union  # noqa: F401
 
 # +---------------------------------------------------------------------------+
@@ -46,7 +45,6 @@ from typing import Dict, Union  # noqa: F401
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
@@ -62,7 +60,7 @@ from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.Mutators.AltMutator import AltMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.AggMutator import AggMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator  # noqa: F401
@@ -232,7 +230,7 @@ class Fuzz(object):
 
     """
 
-    mappingTypesMutators = {}   # type: Dict[AbstractType, (DomainMutator, dict)]
+    mappingTypesMutators = {}   # type: Dict[AbstractType, Union[DomainMutator, dict]]
     mappingFieldsMutators = {}  # type: Dict[Field, DomainMutator]
 
     # Initialize mapping of types with their mutators
@@ -252,7 +250,7 @@ class Fuzz(object):
         Fuzz.mappingTypesMutators[Alt] = (AltMutator, {})
         Fuzz.mappingTypesMutators[Agg] = (AggMutator, {})
 
-    def __init__(self, counterMax = Mutator.COUNTER_MAX_DEFAULT):  # type: Union[int, float]
+    def __init__(self, counterMax=Mutator.COUNTER_MAX_DEFAULT):  # type: Union[int, float]
 
         # Initialize variables from parameters
         self.counterMax = counterMax
