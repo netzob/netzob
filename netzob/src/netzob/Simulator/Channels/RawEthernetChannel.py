@@ -64,14 +64,11 @@ class RawEthernetChannel(AbstractChannel):
 
     :param remoteMac: The remote MAC address to connect to.
     :param localMac: The local MAC address.
-    :param upperProtocol: The protocol following Ethernet in the stack.
-                          Default value is IPv4 (0x0800)
     :param interface: The network interface to use. It is linked with
                       the local MAC address to use (`localMac` parameter).
                       Default value is 'lo'.
     :type remoteMac: :class:`str`, required
     :type localMac: :class:`str`, required
-    :type upperProtocol: :class:`int`, optional
     :type interface: :class:`str`, optional
 
     >>> from binascii import hexlify
@@ -90,12 +87,10 @@ class RawEthernetChannel(AbstractChannel):
     def __init__(self,
                  remoteMac,
                  localMac,
-                 upperProtocol=0x0800,
                  interface="lo"):
         super(RawEthernetChannel, self).__init__()
         self.remoteMac = remoteMac
         self.localMac = localMac
-        self.upperProtocol = upperProtocol
         self.interface = interface
         self.__socket = None
 
@@ -108,7 +103,7 @@ class RawEthernetChannel(AbstractChannel):
     def initHeader(self):
         eth_dst = Field(name='eth.dst', domain=Raw(self.macToBitarray(self.remoteMac)))
         eth_src = Field(name='eth.src', domain=Raw(self.macToBitarray(self.localMac)))
-        eth_type = Field(name='eth.type', domain=uint16be(self.upperProtocol))
+        eth_type = Field(name='eth.type', domain=uint16be())
         eth_payload = Field(name='eth.payload', domain=Raw())
         self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
                                                             eth_src,
@@ -181,6 +176,26 @@ class RawEthernetChannel(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
+    def write(self, data, upperProtocol=0x0800, rate=None, duration=None):
+        """Write to the communication channel the specified data.
+
+        :param data: The data to write on the channel.
+        :param rate: This specifies the bandwidth in octets to respect during
+                     traffic emission (should be used with duration= parameter).
+        :param upperProtocol: The protocol following Ethernet in the stack.
+                              Default value is IPv4 (0x0800)
+        :param duration: This tells how much seconds the symbol is continuously
+                         written on the channel.
+        :type data: :class:`bytes`, required
+        :type upperProtocol: :class:`int`, optional
+        :type rate: :class:`int`, optional
+        :type duration: :class:`int`, optional
+        :return: The amount of written data, in bytes.
+        :rtype: :class:`int`
+        """
+        self._setProtocol(upperProtocol)
+        return super().write(data, rate=rate, duration=duration)
+
     def writePacket(self, data):
         """Write on the communication channel the specified data
 
@@ -222,6 +237,13 @@ class RawEthernetChannel(AbstractChannel):
         binary = "0" * (48 - binLength) + binary
         return bitarray(binary)
 
+    @typeCheck(int)
+    def _setProtocol(self, upperProtocol):
+        if upperProtocol < 0 or upperProtocol > 0xffff:
+            raise TypeError("Upper protocol should be between 0 and 0xffff")
+
+        self.header_presets['eth.type'] = upperProtocol
+
     # Properties
 
     @property
@@ -253,24 +275,6 @@ class RawEthernetChannel(AbstractChannel):
         if localMac is None:
             raise TypeError("localMac cannot be None")
         self.__localMac = localMac
-
-    @property
-    def upperProtocol(self):
-        """Upper protocol (two bytes form)
-
-        :type: :class:`bytes`
-        """
-        return self.__upperProtocol
-
-    @upperProtocol.setter
-    @typeCheck(int)
-    def upperProtocol(self, upperProtocol):
-        if upperProtocol is None:
-            raise TypeError("Upper protocol cannot be None")
-
-        if upperProtocol < 0 or upperProtocol > 0xffff:
-            raise TypeError("Upper protocol should be between 0 and 0xffff")
-        self.__upperProtocol = upperProtocol
 
     @property
     def interface(self):
@@ -329,9 +333,6 @@ class RawEthernetChannelBuilder(ChannelBuilder):
 
     def set_dst_addr(self, value):
         self.attrs['remoteMac'] = value
-
-    def set_protocol(self, value):
-        self.attrs['upperProtocol'] = value
 
     def set_interface(self, value):
         self.attrs['interface'] = value
