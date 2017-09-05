@@ -366,19 +366,15 @@ class Symbol(AbstractField):
                         specialization. Values in this dictionary will
                         override any field definition, constraints or
                         relationship dependencies.
-        :param fuzz: A dictionary of keys:values used for fuzzing
-                     purpose during the specialization process. This
-                     parameter is handled in the same way as the
-                     ``presets`` parameter (i.e. a mutator can be
-                     defined for each field we want to fuzz). Values
-                     in this dictionary will override any field
+        :param fuzz: A fuzzing configuration used during the specialization process. Values
+                     in this configuration will override any field
                      definition, constraints, relationship
                      dependencies or parameterized fields. See
-                     :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`
+                     :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
                      purpose.
         :type presets: :class:`dict`, optional
-        :type fuzz: :class:`dict`, optional
+        :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
 
         >>> # Symbol definition
         >>> from netzob.all import *
@@ -388,15 +384,10 @@ class Symbol(AbstractField):
         >>> symbol = Symbol(fields=[f1, f2, f3])
         >>>
         >>> # Specify the preset fields
-        >>> presetValues = {f1: bitarray('1111111111111111')}        
-        >>>
-        >>> # Specify the fuzzed fields
-        >>> fuzz = Fuzz()
-        >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-        >>> fuzz.set(f2, IntegerMutator, interval=(20, 42)) # doctest: +SKIP
+        >>> presetValues = {f1: bitarray('1111111111111111')}
         >>>
         >>> # Count the expected number of unique produced messages
-        >>> symbol.specialize_count(presets=presetValues, fuzz=fuzz) # doctest: +SKIP
+        >>> symbol.specialize_count(presets=presetValues) # doctest: +SKIP
         279
 
         """

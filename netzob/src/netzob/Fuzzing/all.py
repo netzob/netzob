@@ -37,3 +37,5 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from netzob.Fuzzing.Fuzz import Fuzz
+from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
+from netzob.Fuzzing.Mutators.DomainMutator import MutatorInterval

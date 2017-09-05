@@ -64,7 +64,7 @@ from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.Mutators.AltMutator import AltMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.AggMutator import AggMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator  # noqa: F401
-from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval  # noqa: F401
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Mutators.StringMutator import StringMutator
 from netzob.Fuzzing.Mutators.TimestampMutator import TimestampMutator
