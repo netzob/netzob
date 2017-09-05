@@ -362,7 +362,7 @@ class Field(AbstractField):
                 "The specialization of the field {0} returned no result.".
                 format(self.name))
 
-        return specializingPath.getDataAssignedToVariable(self.domain).tobytes()
+        return specializingPath.getData(self.domain).tobytes()
 
     @property
     def domain(self):
