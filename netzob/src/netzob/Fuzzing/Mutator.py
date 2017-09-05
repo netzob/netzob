@@ -62,7 +62,7 @@ class Mutator(metaclass=abc.ABCMeta):
     The Mutator constructor expects some parameters:
 
     :param seed: The initial seed value of the mutator. Default value is :attr:`SEED_DEFAULT` = 10.
-    :param counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent). Defaults value is :attr:`COUNTER_MAX_DEFAULT` = 65536.
+    :param counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent). Default value is :attr:`COUNTER_MAX_DEFAULT` = 65536.
     :type seed: :class:`int`
     :type counterMax: :class:`int` or :class:`float`
 
@@ -75,7 +75,7 @@ class Mutator(metaclass=abc.ABCMeta):
     :var counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent).
     :vartype mode: :class:`MutatorMode`
     :vartype generator: :class:`iter`
-    :vartype seed: :class:`str`
+    :vartype seed: :class:`int`
     :vartype counterMax: :class:`int` or :class:`float`
 
     """

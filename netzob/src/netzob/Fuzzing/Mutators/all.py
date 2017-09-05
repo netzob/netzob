@@ -37,13 +37,3 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from netzob.Fuzzing.Mutators.DomainMutator import MutatorInterval
-
-# from netzob.Fuzzing.Mutators.AggMutator import AggMutator
-# from netzob.Fuzzing.Mutators.AltMutator import AltMutator
-# from netzob.Fuzzing.Mutators.AutomataMutator import AutomataMutator
-# from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
-# from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-# from netzob.Fuzzing.Mutators.IPv4Mutator import IPv4Mutator
-# from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator
-# from netzob.Fuzzing.Mutators.StringMutator import StringMutator
-# from netzob.Fuzzing.Mutators.TimestampMutator import TimestampMutator
