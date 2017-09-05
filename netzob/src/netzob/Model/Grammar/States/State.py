@@ -58,8 +58,21 @@ class State(AbstractState):
 
     The State constructor expects some parameters:
 
-    :param name: The name of the state. The default value is `None`.
+    :param name: The name of the state. If `None`, it is set to 'State'.
     :type name: :class:`str`, optional
+
+
+    The State class provides the following public variables:
+
+    :var name: The name of the state. The default value is 'State'.
+    :var active: Represents the current execution status of the state.
+                 If a state is active, it means none of its transitions has yet
+                 been fully executed and also this state is the current one.
+    :var transitions: The current value of the data.
+    :vartype name: :class:`str`
+    :vartype active: :class:`bool`
+    :vartype transitions: :class:`list` of :class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`
+
 
     The following example shows the definition of a state `s0` and a state `s1`:
 
@@ -226,7 +239,7 @@ class State(AbstractState):
         return nextState
 
     def __pickNextTransition(self):
-        """Returns the next transion by considering the priority
+        """Returns the next transition by considering the priority
         and a random choice.
 
         It can return None.
@@ -265,9 +278,9 @@ class State(AbstractState):
         of transition which starts on the current state.
 
         :param transition: the transition to remove
-        :type transition: :class:`AbstractTransition <netzob.Model.Grammar.Transitions.AbstractTransition>`
-        :raise: TypeError if param is not an Abstractransition and a ValueError if the transition
-        is not registered
+        :type transition: :class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`
+        :raise: TypeError if param is not a Transition and a ValueError if the transition
+                is not registered
 
         """
         if transition not in self.__transitions:

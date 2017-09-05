@@ -51,12 +51,21 @@ class Automata(object):
 
     :param initialState: The initial state of the automaton.
     :param vocabulary: The list of permitted symbols for every transitions of the automaton.
-    :type initialState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`, required
+    :type initialState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type vocabulary: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
 
     The underlying structure of the automaton in the form of an SMMDT
     (i.e. Stochastic Mealy Machine with Deterministic Transitions),
     which is a Mealy machine (cf. https://en.wikipedia.org/wiki/Mealy_machine).
+
+
+    The Automata class provides the following public variables:
+
+    :var initialState: The initial state of the automaton.
+    :var vocabulary: The list of permitted symbols for every transitions of the automaton.
+    :vartype initialState: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype vocabulary: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+
 
     The following example shows the definition of an automaton with
     three states `s0`, `s1`, `s2`, an opening transition between the
@@ -287,7 +296,7 @@ class Automata(object):
     @staticmethod
     @typeCheck(list, list)
     def generatePTAAutomata(abstractSessions, symbolList):
-        """Generate 
+        """Generate an automata according to the observed sequence of messages/symbols
 
         >>> from netzob.all import *
         >>> symbolSYN = Symbol([Field(String("SYN"))], name="Symbol_SYN")

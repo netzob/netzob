@@ -64,7 +64,6 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
     """
 
-
     def __init__(self,
                  _type,
                  startState,

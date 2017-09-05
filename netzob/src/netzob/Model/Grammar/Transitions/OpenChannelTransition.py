@@ -59,10 +59,28 @@ class OpenChannelTransition(AbstractTransition):
     :param endState: The end state of the transition
     :param _id: The unique identifier of the transition. The default value is a randomly generated UUID.
     :param name: The name of the transition. The default value is `None`
-    :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`, required
-    :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`, required
+    :type startState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
+    :type endState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type _id: :class:`uuid.UUID`, optional
     :type name: :class:`str`, optional
+
+
+    The OpenChannelTransition class provides the following public variables:
+
+    :var startState: The initial state of the transition.
+    :var endState: The end state of the transition.
+    :var active: Represents the current execution status of the transition.
+                 If a transition is active, it means it did not yet finish to execute it.
+    :var name: The name of the transition. The default value is `None`.
+    :var id: The unique identifier of the transition.
+    :var description: description of the transition. If not explicitly set,
+                      its value is 'OpenChannelTransition'
+    :vartype startState: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype endState: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype active: :class:`bool`
+    :vartype name: :class:`str`
+    :vartype id: :class:`uuid.UUID`
+    :vartype description: :class:`str`
 
 
     The following example shows the creation of an

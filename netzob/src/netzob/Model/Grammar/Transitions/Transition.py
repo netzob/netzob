@@ -61,17 +61,42 @@ class Transition(AbstractTransition):
     The Transition constructor expects some parameters:
 
     :param startState: The initial state of the transition.
-    :param endState: The end state of the transition
-    :param inputSymbol: The input symbol which triggers the execution of the transition. The default value is `None`
-    :param outputSymbols: A list of output symbols that can be generated when the current transition is executed. The default value is `None`
+    :param endState: The end state of the transition.
+    :param inputSymbol: The input symbol which triggers the execution of the transition. The default value is `None`.
+    :param outputSymbols: A list of output symbols that can be generated when the current transition is executed. The default value is `None`.
     :param _id: The unique identifier of the transition. The default value is a randomly generated UUID.
-    :param name: The name of the transition. The default value is `None`
-    :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`, required
-    :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`, required
+    :param name: The name of the transition. The default value is `None`.
+    :type startState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
+    :type endState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type inputSymbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, optional
     :type outputSymbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, optional
     :type _id: :class:`uuid.UUID`, optional
     :type name: :class:`str`, optional
+
+
+    The Transition class provides the following public variables:
+
+    :var startState: The initial state of the transition.
+    :var endState: The end state of the transition.
+    :var active: Represents the current execution status of the transition.
+                 If a transition is active, it means it did not yet finish to execute it.
+    :var name: The name of the transition. The default value is `None`.
+    :var inputSymbol: The input symbol is the symbol which triggers the execution
+                      of the transition.
+    :var outputSymbols: Output symbols that can be generated when
+                        the current transition is executed.
+    :var id: The unique identifier of the transition.
+    :var description: description of the transition. If not explicitly set,
+                      it is generated from the input and output symbols
+    :vartype startState: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype endState: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype active: :class:`bool`
+    :vartype name: :class:`str`
+    :vartype inputSymbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+    :vartype outputSymbols: :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+    :vartype id: :class:`uuid.UUID`
+    :vartype description: :class:`str`
+
 
     The following example shows the definition of a transition `t` between
     two states `s0` and `s1`:
