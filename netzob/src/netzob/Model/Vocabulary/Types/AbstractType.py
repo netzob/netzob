@@ -144,7 +144,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     module :class:`bitarray.bitarray` is used, thus allowing to
     specify objects at the bit granularity. As an example, the
     following code show how to access the internal representation of
-    the value of an Integer object::
+    the value of an Integer object:
 
     >>> from netzob.all import *
     >>> i = Integer(20)

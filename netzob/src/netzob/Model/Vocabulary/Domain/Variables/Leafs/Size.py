@@ -93,6 +93,16 @@ class Size(AbstractRelationVariableLeaf):
     :type name: :class:`str`, optional
 
 
+    The Size class provides the following public variables:
+
+    :var dataType: The type of the data.
+    :var factor: Defines the multiplication factor to apply on the targeted length.
+    :var offset: Defines the offset to apply on the computed length.
+    :vartype dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
+    :vartype factor: :type: :class:`float`
+    :vartype offset: :type: :class:`int`
+
+
     The following example shows how to define a size field with a
     Raw dataType:
 
@@ -327,11 +337,12 @@ class Size(AbstractRelationVariableLeaf):
 
     @property
     def dataType(self):
-        """The datatype used to encode the result of the computed size.
+        """
+        Property (getter/setter).
+        The datatype used to encode the result of the computed size.
 
         :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
         """
-
         return self.__dataType
 
     @dataType.setter
@@ -347,7 +358,13 @@ class Size(AbstractRelationVariableLeaf):
 
     @property
     def factor(self):
-        """Defines the multiplication factor to apply on the targeted length (in bits)"""
+        """
+        Property (getter/setter).
+        Defines the multiplication factor to apply on the targeted length
+        (in bits).
+
+        :type: :class:`float`
+        """
         return self.__factor
 
     @factor.setter
@@ -359,8 +376,13 @@ class Size(AbstractRelationVariableLeaf):
 
     @property
     def offset(self):
-        """Defines the offset to apply on the computed length
-        computed size = (factor*size(targetField)+offset)"""
+        """
+        Property (getter/setter).
+        Defines the offset to apply on the computed length.
+        computed size = (factor*size(targetField)+offset)
+
+        :type: :class:`int`
+        """
         return self.__offset
 
     @offset.setter
@@ -370,7 +392,6 @@ class Size(AbstractRelationVariableLeaf):
             raise TypeError(
                 "Offset cannot be None, use 0 if no offset should be applied.")
         self.__offset = offset
-
 
     def _test(self):
         r"""

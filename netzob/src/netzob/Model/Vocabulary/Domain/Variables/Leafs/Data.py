@@ -78,6 +78,14 @@ class Data(AbstractVariableLeaf):
     :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
+    The Data class provides the following public variables:
+
+    :var currentValue: The current value of the data.
+    :var dataType: The type of the data.
+    :vartype currentValue: :class:`bitarray.bitarray`
+    :vartype dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
+
+
     The following example shows the definition of the Data `pseudo`
     with a type String and a default value `"hello"`. This means that
     this Data object accepts any string, and the current value
@@ -312,7 +320,9 @@ class Data(AbstractVariableLeaf):
 
     @property
     def currentValue(self):
-        """The current value of the data.
+        """
+        Property (getter/setter).
+        The current value of the data.
 
         :type: :class:`bitarray.bitarray`
         """
@@ -332,7 +342,9 @@ class Data(AbstractVariableLeaf):
 
     @property
     def dataType(self):
-        """The type of the data.
+        """
+        Property (getter/setter).
+        The type of the data.
 
         :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
         """

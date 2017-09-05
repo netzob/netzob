@@ -74,6 +74,18 @@ class Value(AbstractRelationVariableLeaf):
     :type operation: :class:`Callable <collections.abc.Callable>`, optional
 
 
+    The Value class provides the following public variables:
+
+    :var factor: Defines the multiplication factor to apply on the targeted length.
+    :var offset: Defines the offset to apply on the computed length.
+    :var operation: Defines the operation to be performed on the found value.
+                    This operation takes the form of a python function that accepts
+                    a single parameter of BitArray type and returns a BitArray.
+    :vartype factor: :type: :class:`float`
+    :vartype offset: :type: :class:`int`
+    :vartype operation: :class:`Callable <collections.abc.Callable>`
+
+
     **Callback prototype**
 
     A callback function can be used to specify a complex
@@ -266,7 +278,13 @@ class Value(AbstractRelationVariableLeaf):
 
     @property
     def factor(self):
-        """Defines the multiplication factor to apply on the targeted length (in bits)"""
+        """
+        Property (getter/setter).
+        Defines the multiplication factor to apply on the targeted length
+        (in bits).
+
+        :type: :class:`float`
+        """
         return self.__factor
 
     @factor.setter
@@ -278,8 +296,13 @@ class Value(AbstractRelationVariableLeaf):
 
     @property
     def offset(self):
-        """Defines the offset to apply on the computed length
-        computed size = (factor*size(targetField)+offset)"""
+        """
+        Property (getter/setter).
+        Defines the offset to apply on the computed length.
+        computed size = (factor*size(targetField)+offset)
+
+        :type: :class:`int`
+        """
         return self.__offset
 
     @offset.setter
@@ -292,8 +315,14 @@ class Value(AbstractRelationVariableLeaf):
 
     @property
     def operation(self):
-        """Defines the operation to be performed on the found value. This operation takes the form
-        of a python function that accepts a single parameter of BitArray type and returns a BitArray."""
+        """
+        Property (getter/setter).
+        Defines the operation to be performed on the found value.
+        This operation takes the form of a python function that accepts
+        a single parameter of BitArray type and returns a BitArray.
+
+        :type: :class:`Callable <collections.abc.Callable>`
+        """
         return self.__operation
 
     @operation.setter
@@ -301,7 +330,6 @@ class Value(AbstractRelationVariableLeaf):
         if operation is not None and not callable(operation):
             raise TypeError("Operation must be a function")
         self.__operation = operation
-
 
     def _test(self):
         """
