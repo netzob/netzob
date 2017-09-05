@@ -131,17 +131,17 @@ class Alt(AbstractVariableNode):
         if len(self.children) == 0:
             raise Exception("Cannot parse data if ALT has no children")
 
-        dataToParse = parsingPath.getDataAssignedToVariable(self)
+        dataToParse = parsingPath.getData(self)
         self._logger.debug("Parse '{}' with '{}'".format(dataToParse.tobytes(), self))
 
         parserPaths = [parsingPath]
-        parsingPath.assignDataToVariable(dataToParse.copy(), self.children[0])
+        parsingPath.assignData(dataToParse.copy(), self.children[0])
 
         # create a path for each child
         if len(self.children) > 1:
             for child in self.children[1:]:
                 newParsingPath = parsingPath.duplicate()
-                newParsingPath.assignDataToVariable(dataToParse.copy(), child)
+                newParsingPath.assignData(dataToParse.copy(), child)
                 parserPaths.append(newParsingPath)
 
         # parse each child according to its definition
@@ -154,7 +154,7 @@ class Alt(AbstractVariableNode):
             for childParsingPath in childParsingPaths:
                 childParsingPath.addResult(
                     self,
-                    childParsingPath.getDataAssignedToVariable(child))
+                    childParsingPath.getData(child))
                 yield childParsingPath
 
     @typeCheck(SpecializingPath)
@@ -198,7 +198,7 @@ class Alt(AbstractVariableNode):
             self._logger.debug("Path {} on child {} succeed ({}).".format(
                 newSpecializingPath, child, self.id))
             for childSpecializingPath in childSpecializingPaths:
-                value = childSpecializingPath.getDataAssignedToVariable(child)
+                value = childSpecializingPath.getData(child)
                 self._logger.debug("Generated value for {}: {} ({})".format(self, value, self.id))
                 childSpecializingPath.addResult(self, value)
 

@@ -240,10 +240,7 @@ class Size(AbstractRelationVariableLeaf):
                  factor=1./8,
                  offset=0,
                  name=None):
-        super(Size, self).__init__(self.__class__.__name__, targets=targets, name=name)
-        if dataType is None:
-            dataType = Raw(nbBytes=1)
-        self.dataType = dataType
+        super(Size, self).__init__(self.__class__.__name__, dataType=dataType, targets=targets, name=name)
         self.factor = factor
         self.offset = offset
 
@@ -285,7 +282,7 @@ class Size(AbstractRelationVariableLeaf):
                             raise Exception("The following targeted variable must have a fixed size: {0}".format(variable.name))
 
                 # Else, retrieve its value if it exists
-                if parsingPath.isDataAvailableForVariable(variable):
+                if parsingPath.hasData(variable):
                     remainingVariables.append(variable)
                 else:
                     self._logger.debug("Cannot compute the relation, because the following target variable has no value: '{0}'".format(variable))
@@ -301,7 +298,7 @@ class Size(AbstractRelationVariableLeaf):
             if variable is self:
                 value = self.dataType.generate()
             else:
-                value = parsingPath.getDataAssignedToVariable(variable)
+                value = parsingPath.getData(variable)
 
             if value is None:
                 break

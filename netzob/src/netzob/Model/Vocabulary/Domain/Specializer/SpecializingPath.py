@@ -46,13 +46,11 @@ from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 class SpecializingPath(GenericPath):
     def __init__(self,
                  memory,
-                 dataAssignedToField=None,
                  dataAssignedToVariable=None,
                  variablesCallbacks=None,
                  ok=None):
         super(SpecializingPath, self).__init__(
             memory,
-            dataAssignedToField=dataAssignedToField,
             dataAssignedToVariable=dataAssignedToVariable,
             variablesCallbacks=variablesCallbacks)
 
@@ -62,10 +60,6 @@ class SpecializingPath(GenericPath):
             self.__ok = ok
 
     def duplicate(self):
-        dField = {}
-        for key, value in list(self._dataAssignedToField.items()):
-            dField[key] = value.copy()
-
         dVariable = {}
         for key, value in list(self._dataAssignedToVariable.items()):
             dVariable[key] = value.copy()
@@ -74,7 +68,6 @@ class SpecializingPath(GenericPath):
 
         result = SpecializingPath(
             memory=self.memory.duplicate(),
-            dataAssignedToField=dField,
             dataAssignedToVariable=dVariable,
             variablesCallbacks=fCall,
             ok=self.ok)

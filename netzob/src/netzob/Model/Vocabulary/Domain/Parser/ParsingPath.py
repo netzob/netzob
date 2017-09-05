@@ -54,14 +54,12 @@ class ParsingPath(GenericPath):
     def __init__(self,
                  dataToParse,
                  memory,
-                 dataAssignedToField=None,
                  dataAssignedToVariable=None,
                  variablesCallbacks=None,
                  ok=None,
                  parsedData=None):
         super(ParsingPath, self).__init__(
             memory,
-            dataAssignedToField=dataAssignedToField,
             dataAssignedToVariable=dataAssignedToVariable,
             variablesCallbacks=variablesCallbacks)
         self.originalDataToParse = dataToParse.copy()
@@ -74,10 +72,6 @@ class ParsingPath(GenericPath):
         return "ParsingPath ({}, ok={})".format(id(self), self.__ok)
 
     def duplicate(self):
-        dField = {}
-        for key, value in list(self._dataAssignedToField.items()):
-            dField[key] = value.copy()
-
         dVariable = {}
         for key, value in list(self._dataAssignedToVariable.items()):
             dVariable[key] = value.copy()
@@ -87,7 +81,6 @@ class ParsingPath(GenericPath):
         result = ParsingPath(
             self.originalDataToParse,
             memory=self.memory.duplicate(),
-            dataAssignedToField=dField,
             dataAssignedToVariable=dVariable,
             variablesCallbacks=fCall,
             ok=self.ok)

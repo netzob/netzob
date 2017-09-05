@@ -32,6 +32,7 @@
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Value import Value
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding import Padding
 
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.all import *
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Hashes.all import *

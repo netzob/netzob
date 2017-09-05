@@ -167,7 +167,7 @@ class Data(AbstractVariableLeaf):
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
 
-        content = parsingPath.getDataAssignedToVariable(self)
+        content = parsingPath.getData(self)
 
         self._logger.debug("DomainCMP {0} with {1}".format(content, self.dataType))
 
@@ -209,7 +209,7 @@ class Data(AbstractVariableLeaf):
                 "Data '{0}' has no value defined in its definition domain".
                 format(self))
 
-        content = parsingPath.getDataAssignedToVariable(self)
+        content = parsingPath.getData(self)
         if content is None:
             raise Exception("No data assigned to the variable")
 
@@ -229,7 +229,7 @@ class Data(AbstractVariableLeaf):
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
 
-        content = parsingPath.getDataAssignedToVariable(self)
+        content = parsingPath.getData(self)
         actualSize = len(content)
 
         self._logger.debug("Learn '{0}' with {1}".format(content.tobytes(),self.dataType))

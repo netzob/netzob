@@ -220,7 +220,7 @@ class MessageParser(object):
         # building a new parsing path
         currentParsingPath = ParsingPath(bitArrayToParse.copy(),
                                          self.memory.duplicate())
-        currentParsingPath.assignDataToVariable(bitArrayToParse.copy(), fields[0].domain)
+        currentParsingPath.assignData(bitArrayToParse.copy(), fields[0].domain)
 
         # field iterator
         i_current_field = 0
@@ -240,8 +240,8 @@ class MessageParser(object):
 
             result = []
             for field in fields:
-                if parsingResult.isDataAvailableForVariable(field.domain):
-                    field_data = parsingResult.getDataAssignedToVariable(field.domain)
+                if parsingResult.hasData(field.domain):
+                    field_data = parsingResult.getData(field.domain)
                 else:
                     msg = "The parsed data do not match with the field '{}'".format(field.name)
                     self._logger.debug(msg)
@@ -272,14 +272,14 @@ class MessageParser(object):
             carnivorous_parsing = False
 
         fp = FieldParser(currentField, carnivorous_parsing)
-        value_before_parsing = parsingPath.getDataAssignedToVariable(
+        value_before_parsing = parsingPath.getData(
             currentField.domain).copy()
 
         for newParsingPath in fp.parse(parsingPath):
 
             try:
-                if newParsingPath.isDataAvailableForVariable(currentField.domain):
-                    value_after_parsing = newParsingPath.getDataAssignedToVariable(currentField.domain)
+                if newParsingPath.hasData(currentField.domain):
+                    value_after_parsing = newParsingPath.getData(currentField.domain)
                 else:
                     msg = "The parsed data do not match with the field '{}'".format(currentField.name)
                     self._logger.debug(msg)
@@ -289,7 +289,7 @@ class MessageParser(object):
                     value_after_parsing):].copy()
 
                 if i_current_field < len(fields) - 1:
-                    newParsingPath.assignDataToVariable(
+                    newParsingPath.assignData(
                         remainingValue, fields[i_current_field + 1].domain)
 
                     if must_consume_everything is False:

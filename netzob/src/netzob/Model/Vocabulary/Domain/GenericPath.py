@@ -49,19 +49,19 @@ from random import shuffle
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
 @NetzobLogger
 class GenericPath(object):
-    """This class is the parent class of both abstraction paths and
-    specialization paths"""
+    """This class allows access to variables data during both abstraction
+    and specialization.
+
+    """
 
     def __init__(self,
                  memory=None,
-                 dataAssignedToField=None,
                  dataAssignedToVariable=None,
                  variablesCallbacks=None):
         self.name = str(uuid.uuid4())
@@ -72,11 +72,6 @@ class GenericPath(object):
         else:
             self._variablesCallbacks = []
 
-        if dataAssignedToField is None:
-            self._dataAssignedToField = {}
-        else:
-            self._dataAssignedToField = dataAssignedToField
-
         if dataAssignedToVariable is None:
             self._dataAssignedToVariable = {}
         else:
@@ -86,37 +81,35 @@ class GenericPath(object):
         """This method can be used to register the bitarray obtained after having parsed a variable
 
         >>> from netzob.all import *
-        >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         >>> path = GenericPath()
         >>> var = Data(dataType=String())
-        >>> print(path.isDataAvailableForVariable(var))
+        >>> print(path.hasData(var))
         False
-        >>> path.addResult(var, TypeConverter.convert("test", String, BitArray))
-        >>> print(path.isDataAvailableForVariable(var))
+        >>> path.addResult(var, String("test").value)
+        >>> print(path.hasData(var))
         True
-        >>> print(path.getDataAssignedToVariable(var))
+        >>> print(path.getData(var))
         bitarray('01110100011001010111001101110100')
 
         """
 
-        self.assignDataToVariable(result, variable)
+        self.assignData(result, variable)
 
         if not self._triggerVariablesCallbacks(variable):
             pass
             #raise Exception("Impossible to assign this result to the variable (CB has failed)")
 
     @typeCheck(AbstractVariable)
-    def getDataAssignedToVariable(self, variable):
-        """Return the data that is assigned to the specified varibale
+    def getData(self, variable):
+        """Return the data that is assigned to the specified variable.
 
         >>> from netzob.all import *
-        >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         >>> path = GenericPath()
         >>> v1 = Data(dataType=String(nbChars=(5, 10)), name="netzob")
-        >>> print(path.isDataAvailableForVariable(v1))
+        >>> print(path.hasData(v1))
         False
-        >>> path.assignDataToVariable(TypeConverter.convert("kurt", String, BitArray), v1)
-        >>> print(path.getDataAssignedToVariable(v1))
+        >>> path.assignData(String("kurt").value, v1)
+        >>> print(path.getData(v1))
         bitarray('01101011011101010111001001110100')
 
         """
@@ -132,7 +125,11 @@ class GenericPath(object):
             "No data is assigned to variable '{0}'".format(variable.name))
 
     @typeCheck(AbstractVariable)
-    def isDataAvailableForVariable(self, variable):
+    def hasData(self, variable):
+        """Return True if a data has been assigned to the specified variable.
+
+        """
+        
         if variable is None:
             raise Exception("Variable cannot be None")
         if variable.id in self._dataAssignedToVariable:
@@ -142,7 +139,11 @@ class GenericPath(object):
         return False
 
     @typeCheck(bitarray, AbstractVariable)
-    def assignDataToVariable(self, data, variable):
+    def assignData(self, data, variable):
+        """Assign a data to the specified variable.
+
+        """
+
         if data is None:
             raise Exception("Data cannot be None")
         if variable is None:
@@ -151,7 +152,7 @@ class GenericPath(object):
         self._dataAssignedToVariable[variable.id] = data
 
     @typeCheck(AbstractVariable)
-    def removeAssignedDataToVariable(self, variable):
+    def removeData(self, variable):
         self._logger.debug("Remove assigned data to variable: {}".format(variable))
         if variable is None:
             raise Exception("Variable cannot be None")
@@ -159,7 +160,7 @@ class GenericPath(object):
         del self._dataAssignedToVariable[variable.id]
 
     @typeCheck(AbstractVariable)
-    def removeAssignedDataToVariableAndChildren(self, variable):
+    def removeDataRecursively(self, variable):
         self._logger.debug("Remove assigned data to variable (and its children): {}".format(variable))
         if variable is None:
             raise Exception("Variable cannot be None")
@@ -172,7 +173,7 @@ class GenericPath(object):
 
         if hasattr(variable, 'children'):
             for child in variable.children:
-                self.removeAssignedDataToVariableAndChildren(child)
+                self.removeDataRecursively(child)
 
     def registerVariablesCallBack(self, targetVariables, currentVariable, parsingCB=True):
         if targetVariables is None:
@@ -220,7 +221,7 @@ class GenericPath(object):
 
                 variablesHaveValue = True
                 for v in targetVariables:
-                    if not self.isDataAvailableForVariable(v):
+                    if not self.hasData(v):
                         variablesHaveValue = False
                 if variablesHaveValue:
                     self._logger.debug("Found a callback that must be able to trigger (all its target variables are set)")

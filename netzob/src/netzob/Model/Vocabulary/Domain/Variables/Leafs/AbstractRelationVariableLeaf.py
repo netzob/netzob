@@ -176,7 +176,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 )
             expectedSize = maxValue
 
-        content = parsingPath.getDataAssignedToVariable(self)
+        content = parsingPath.getData(self)
         if content is None:
             raise Exception("No data assigned.")
 
@@ -224,7 +224,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 )
             expectedSize = maxValue
 
-        content = parsingPath.getDataAssignedToVariable(self)
+        content = parsingPath.getData(self)
         if content is None:
             raise Exception("No data assigned.")
 
@@ -273,7 +273,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         hasValue = True
         errorMessage = ""
         for variable in self.targets:
-            if variable is not self and not parsingPath.isDataAvailableForVariable(variable):
+            if variable is not self and not parsingPath.hasData(variable):
                 errorMessage = "The following variable has no value: '{0}'".format(variable)
                 self._logger.debug(errorMessage)
                 hasValue = False
@@ -289,7 +289,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 size = random.randint(variable.dataType.size[0], variable.dataType.size[1])
                 value = TypeConverter.convert(b"\x00" * int(size / 8), Raw, BitArray)
             else:
-                value = parsingPath.getDataAssignedToVariable(variable)
+                value = parsingPath.getData(variable)
 
             if value is None:
                 raise Exception("Cannot generate value for variable: '{}'".format(variable.name))

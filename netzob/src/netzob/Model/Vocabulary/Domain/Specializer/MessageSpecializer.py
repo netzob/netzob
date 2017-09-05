@@ -216,14 +216,14 @@ class MessageSpecializer(object):
                         continue
 
                     if d is None:
-                        d = retainedPath.getDataAssignedToVariable(
+                        d = retainedPath.getData(
                             child.domain).copy()
                     else:
-                        d += retainedPath.getDataAssignedToVariable(
+                        d += retainedPath.getData(
                             child.domain).copy()
 
             else:
-                d = retainedPath.getDataAssignedToVariable(field.domain)
+                d = retainedPath.getData(field.domain)
 
             if generatedContent is None:
                 generatedContent = d.copy()

@@ -167,7 +167,7 @@ class AbstractVariableLeaf(AbstractVariable):
                 self._logger.warn("No data generated for the field: '{}'".format(self.field))
             else:
                 # We only consider the first specialized path, as it is the usual behavior of Netzob (see MessageSpecializer)
-                generatedData = newParsingPaths[0].getDataAssignedToVariable(self)
+                generatedData = newParsingPaths[0].getData(self)
 
                 # Retrieve the mutator
                 mutator = fuzz.get(self)
@@ -176,7 +176,7 @@ class AbstractVariableLeaf(AbstractVariable):
                 mutated_value = mutator.mutate(generatedData)
 
                 # Replace the legitimate value with the mutated value
-                newParsingPaths[0].assignDataToVariable(mutated_value, self)
+                newParsingPaths[0].assignData(mutated_value, self)
 
         return newParsingPaths
 

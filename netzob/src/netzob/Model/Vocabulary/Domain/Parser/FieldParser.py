@@ -62,9 +62,9 @@ class FieldParser():
     >>> content = TypeConverter.convert("toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToVariable(content, f1.domain)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\n'.join([TypeConverter.convert(result.getDataAssignedToVariable(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto
     tot
     to
@@ -74,27 +74,27 @@ class FieldParser():
     >>> content = TypeConverter.convert("toto.txt", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToVariable(content, f1.domain)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\n'.join([TypeConverter.convert(result.getDataAssignedToVariable(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto.txt
     
     >>> f1 = Field(name="f1", domain=Agg([String("toto"), String(" "), String("tata")]))
     >>> content = TypeConverter.convert("toto tata", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToVariable(content, f1.domain)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\n'.join([TypeConverter.convert(result.getDataAssignedToVariable(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto tata
 
     >>> f1 = Field(name="f1", domain=Alt([String("toto"), ("tata")]))
     >>> content = TypeConverter.convert("toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToVariable(content, f1.domain)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\n'.join([TypeConverter.convert(result.getDataAssignedToVariable(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto
 
     # # Let's illustrate that our parser support multiple results
@@ -103,9 +103,9 @@ class FieldParser():
     >>> content = TypeConverter.convert("toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToVariable(content, f1.domain)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\n'.join([TypeConverter.convert(result.getDataAssignedToVariable(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto
     to
 
@@ -115,9 +115,9 @@ class FieldParser():
     >>> content = TypeConverter.convert("tototo", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToVariable(content, f1.domain)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\n'.join([TypeConverter.convert(result.getDataAssignedToVariable(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto
     tototo
     tototo
@@ -126,9 +126,9 @@ class FieldParser():
     >>> content = TypeConverter.convert("helloword.txt", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToVariable(content, f1.domain)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\n'.join([TypeConverter.convert(result.getDataAssignedToVariable(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     helloword.txt
 
     >>> f1 = Field(name="f1", domain=Agg([String(nbChars=(1,10)), String(".txt")]))
@@ -136,7 +136,7 @@ class FieldParser():
     >>> parser = FieldParser(f1)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToVariable(content, f1.domain)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
     >>> next(parsingPaths)
     Traceback (most recent call last):
@@ -200,13 +200,13 @@ class FieldParser():
                 format(self.field.name))
 
         # check we have something to parse
-        data = parsingPath.getDataAssignedToVariable(self.field.domain)
+        data = parsingPath.getData(self.field.domain)
 
         self._logger.debug("Parse '{}' with field '{}' specifications".
                            format(data.tobytes(), self.field.name))
 
         # we assign this data to the field's variable
-        parsingPath.assignDataToVariable(data.copy(), self.field.domain)
+        parsingPath.assignData(data.copy(), self.field.domain)
 
         # we create a first VariableParser and uses it to parse the domain
         variableParser = VariableParser(domain)

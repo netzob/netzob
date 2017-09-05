@@ -205,7 +205,7 @@ class Value(AbstractRelationVariableLeaf):
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
 
-        content = parsingPath.getDataAssignedToVariable(self)
+        content = parsingPath.getData(self)
         if content is None:
             raise Exception("No data assigned.")
 
@@ -258,10 +258,10 @@ class Value(AbstractRelationVariableLeaf):
         if variable is None:
             raise Exception("No dependency field specified.")
 
-        if not parsingPath.isDataAvailableForVariable(variable):
+        if not parsingPath.hasData(variable):
             return None
         else:
-            return self._applyOperation(parsingPath.getDataAssignedToVariable(variable))
+            return self._applyOperation(parsingPath.getData(variable))
 
     def _applyOperation(self, data):
         """This method can be used to apply the specified operation function to the data parameter.

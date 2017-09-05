@@ -150,12 +150,12 @@ class Agg(AbstractVariableNode):
     def parse(self, parsingPath, carnivorous=False):
         """Parse the content with the definition domain of the aggregate.
         """
-        dataToParse = parsingPath.getDataAssignedToVariable(self).copy()
+        dataToParse = parsingPath.getData(self).copy()
         self._logger.debug("Parse '{}' as {} with parser path '{}'".format(
             dataToParse.tobytes(), self, parsingPath))
 
         # initialy, there is a unique path to test (the provided one)
-        parsingPath.assignDataToVariable(dataToParse.copy(), self.children[0])
+        parsingPath.assignData(dataToParse.copy(), self.children[0])
         parsingPaths = [parsingPath]
 
         # we parse all the children with the parserPaths produced by previous children
@@ -171,18 +171,18 @@ class Agg(AbstractVariableNode):
             for parsingPath in parsingPaths:
                 self._logger.debug(
                     "Parse {0} with {1}".format(current_child.id, parsingPath))
-                value_before_parsing = parsingPath.getDataAssignedToVariable(
+                value_before_parsing = parsingPath.getData(
                     current_child).copy()
                 childParsingPaths = current_child.parse(
                     parsingPath, carnivorous=carnivorous)
 
                 for childParsingPath in childParsingPaths:
-                    value_after_parsing = childParsingPath.getDataAssignedToVariable(
+                    value_after_parsing = childParsingPath.getData(
                         current_child).copy()
                     remainingValue = value_before_parsing[len(
                         value_after_parsing):].copy()
                     if next_child is not None:
-                        childParsingPath.assignDataToVariable(
+                        childParsingPath.assignData(
                             remainingValue, next_child)
 
                     # at least one child path managed to parse, we save the valid paths it produced
@@ -202,10 +202,10 @@ class Agg(AbstractVariableNode):
             parsedData = None
             for child in self.children:
                 if parsedData is None:
-                    parsedData = parsingPath.getDataAssignedToVariable(
+                    parsedData = parsingPath.getData(
                         child).copy()
                 else:
-                    parsedData = parsedData + parsingPath.getDataAssignedToVariable(
+                    parsedData = parsedData + parsingPath.getData(
                         child).copy()
 
             self._logger.debug("Data successfuly parsed with {}: '{}'".format(self, parsedData.tobytes()))
@@ -247,9 +247,9 @@ class Agg(AbstractVariableNode):
             value = None
             for child in self.children:
                 if value is None:
-                    value = specializingPath.getDataAssignedToVariable(child)
+                    value = specializingPath.getData(child)
                 else:
-                    value = value + specializingPath.getDataAssignedToVariable(child)
+                    value = value + specializingPath.getData(child)
 
             self._logger.debug("Generated value for {}: {}".format(self, value))
             specializingPath.addResult(self, value)
