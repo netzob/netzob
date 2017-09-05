@@ -84,7 +84,7 @@ class Size(AbstractRelationVariableLeaf):
     :param offset: Specify that an offset value should be added to
                    the final size value (after applying the factor
                    parameter). The default value is 0.
-    :param name: The name of the Value variable. If None, the name
+    :param name: The name of the variable. If None, the name
                  will be generated.
     :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, optional
