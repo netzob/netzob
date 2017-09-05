@@ -1,0 +1,112 @@
+stages:
+  - lint
+  - build
+  - test
+  - deploy
+
+
+#################
+### templates ###
+#################
+.fetch_deps_template: &fetch_deps_definition |
+  eval $(ssh-agent -s)
+  ssh-add <(echo "$GITHUB_SSH_PRIVATE_KEY")
+  mkdir -p ~/.ssh
+  echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  python3 -m pip install --force-reinstall numpy Cython
+
+.apt_sys_deps_template: &apt_sys_deps_definition |
+  apt-get update -y
+  apt-get install --no-install-recommends -y python3{,-dev,-setuptools,-pip} openssh-client git build-essential lib{pcap,ssl,ffi}-dev locales
+  echo 'fr_FR.UTF-8 UTF-8' >> /etc/locale.gen
+  locale-gen
+
+.python_script_template: &python_script_definition |
+  cd netzob
+  LANG=fr_FR.UTF-8 python3 -m pip install --force-reinstall -r requirements.txt
+  python3 setup.py sdist
+  python3 setup.py bdist
+  [ "$SSH_AGENT_PID" -gt 0 ] && kill "$SSH_AGENT_PID"
+
+#################
+####  jobs  #####
+#################
+flake8:
+  image: hoto/flake8
+  stage: lint
+  allow_failure: true
+  script:
+    - flake8 --ignore=E3,E5,W2,W3 netzob/src/netzob/
+  tags:
+    - docker
+
+build:host:
+  stage: build
+  script: !join
+    - *fetch_deps_definition
+    - *python_script_definition
+  after_script:
+    - 'pkill ssh-agent || true'
+  artifacts:
+    paths:
+      - netzob/build/
+      - netzob/dist/
+  tags:
+    - ubuntu
+
+build:full:
+  stage: build
+  image: ubuntu:16.04
+  only:
+    - "^(master|develop)$"
+  script: !join
+    - *apt_sys_deps_definition
+    - *fetch_deps_definition
+    - *python_script_definition
+  after_script:
+    - 'pkill ssh-agent || true'
+  tags:
+    - docker
+
+test:host:
+  stage: test
+  script:
+    - cd netzob
+    - sudo coverage3 run setup.py test
+    - coverage3 html --include=src/netzob/*
+  artifacts:
+    paths:
+      - netzob/htmlcov
+  tags:
+    - ubuntu
+
+deploy:
+  stage: deploy
+  only:
+    - master
+    - develop
+  script:
+    - cd netzob
+    - sudo python3 -m pip install -r requirements.txt
+    - sudo python3 -m pip install .
+  after_script:
+    - 'sudo find -uid 0 -delete || true'
+  dependencies:
+    - build:host
+  tags:
+    - ubuntu
+
+deploy-htmlcov:
+  stage: deploy
+  only:
+    - master
+    - develop
+  script:
+    - cd netzob
+    - sudo rm -rf /var/www/html/netzob-coverage
+    - sudo install -d /var/www/html/netzob-coverage
+    - sudo cp -r htmlcov/* /var/www/html/netzob-coverage/
+  dependencies:
+    - test:host
+  tags:
+    - ubuntu
