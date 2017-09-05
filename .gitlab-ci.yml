@@ -24,8 +24,7 @@ stages:
 .python_script_template: &python_script_definition |
   cd netzob
   LANG=fr_FR.UTF-8 python3 -m pip install --force-reinstall -r requirements.txt
-  python3 setup.py sdist
-  python3 setup.py bdist
+  python3 setup.py develop --user
   [ "$SSH_AGENT_PID" -gt 0 ] && kill "$SSH_AGENT_PID"
 
 #################
