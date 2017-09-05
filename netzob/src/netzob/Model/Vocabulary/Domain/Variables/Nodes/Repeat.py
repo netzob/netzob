@@ -78,16 +78,16 @@ class Repeat(AbstractVariableNode):
     The callback function that can be used in the ``nbRepeat``
     parameter has the following prototype:
 
-    ``def cbk_nbRepeat(nb_repeat, data, remaining=None, parsed_structure=None, child=None:``
+    ``def cbk_nbRepeat(nb_repeat, data, remaining=None, parsed_structure=None, child=None)``
 
     Where:
 
     * ``nb_repeat`` is an :class:`int` that corresponds
       to the amount of time the child element has been parsed or specialize.
     * ``data`` is a :class:`bitarray` that corresponds to the already parsed or specialized data.
-    * ``remaining`` is a :class:`bitarray` that corresponds to the remaining data to be parsed. Only set is parsing mode. In specialization mode, this parameter will have a `None` value. This parameter can therefore be used to identify the current mode.
-    * ``parsed_structure`` is a data structure that allows access to the values of the parsed :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` elements. Only set is parsing mode. In specialization mode, this parameter will have a `None` value.
-    * ``child`` is an :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` that corresponds to the repeated element. Only set is parsing mode. In specialization mode, this parameter will have a `None` value.
+    * ``remaining`` is a :class:`bitarray` that corresponds to the remaining data to be parsed. Only set in parsing mode. In specialization mode, this parameter will have a `None` value. This parameter can therefore be used to identify the current mode.
+    * ``parsed_structure`` is a data structure that allows access to the values of the parsed :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` elements. Only set in parsing mode. In specialization mode, this parameter will have a `None` value.
+    * ``child`` is an :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` that corresponds to the repeated element. Only set in parsing mode. In specialization mode, this parameter will have a `None` value.
 
     The ``child`` parameter allows access to the root of a tree structure. The ``child`` :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` can have children. Access to :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` values is done through the ``parsed_structure``, thanks to its methods ``hasData`` and ``getData``:
 
