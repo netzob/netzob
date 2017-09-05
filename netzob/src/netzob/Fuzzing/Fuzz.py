@@ -163,7 +163,7 @@ class Fuzz(object):
     b'DEt'
 
 
-    **Fuzzing of a whole symbol, and covering all fields storage spaces with default mutator per types**
+    **Fuzzing of a whole symbol, and covering all fields storage spaces with default fuzzing strategy per types**
 
     >>> from netzob.all import *
     >>> fuzz = Fuzz()
@@ -188,7 +188,7 @@ class Fuzz(object):
     b'D\x04'
 
 
-    **Fuzzing of a field with default mutator, and covering field storage space**
+    **Fuzzing of a field with default fuzzing strategy, and covering field storage space**
 
     >>> from netzob.all import *
     >>> fuzz = Fuzz()
@@ -200,7 +200,7 @@ class Fuzz(object):
     b'\x02D'
 
 
-    **Fuzzing and changing the default Mutator configuration for types**
+    **Fuzzing and changing the default fuzzing strategy for types**
 
     >>> from netzob.all import *
     >>> fuzz = Fuzz()
@@ -287,9 +287,12 @@ class Fuzz(object):
         ==========  =============================================================
           Option                          Description
         ==========  =============================================================
-        mode        The fuzzing strategy, which can be either :attr:`MUTATE` or :attr:`GENERATE` (see below).
+        mode        The fuzzing strategy, which can be either:
 
-                    Default value is :attr:`GENERATE`.
+                    * ``MutatorMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied on it.
+                    * ``MutatorMode.GENERATE``: in this mode, the fuzzing component directly produces a random message.
+
+                    Default value is :attr:`MutatorMode.GENERATE`.
 
         generator   The underlying generator (:class:`iter`) used to produce pseudo-random or deterministic values.
 
@@ -304,11 +307,6 @@ class Fuzz(object):
                     Defaults value is :attr:`COUNTER_MAX_DEFAULT` = 65536.
         ==========  =============================================================
 
-        The fuzzing strategy can be:
-
-        * ``MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied on it.
-        * ``GENERATE``: in this mode, the fuzzing component directly produces a random message.
-
         Each type have specific parameters, described in the following table:
 
         .. tabularcolumns:: |p{2cm}|p{3cm}|p{8cm}|
@@ -318,11 +316,11 @@ class Fuzz(object):
         ==========  =============  =================================================
         Integer     interval       The scope of values to generate.
 
-                                   * If set to :attr:`DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
-                                   * If set to :attr:`FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
+                                   * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
+                                   * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
                                    * If it is a tuple of integers (min, max), the values will be generate between min and max.
 
-                                   Default value is :attr:`DEFAULT_INTERVAL`.
+                                   Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
         ..          bitsize        The size in bits of the memory on which the generated values have to be encoded.
                                    It is only used with a determinist generator.
@@ -342,8 +340,6 @@ class Fuzz(object):
         Agg
         Repeat
         ==========  =============  =================================================
-
-
 
         """
 
