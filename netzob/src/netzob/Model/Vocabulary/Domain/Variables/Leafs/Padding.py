@@ -356,8 +356,3 @@ class Padding(AbstractRelationVariableLeaf):
             raise TypeError(
                 "Offset cannot be None, use 0 if no offset should be applied.")
         self.__offset = offset
-
-
-    def _test(self):
-        r"""
-        """
