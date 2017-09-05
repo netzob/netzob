@@ -78,12 +78,21 @@ class Repeat(AbstractVariableNode):
     The callback function that can be used in the ``nbRepeat``
     parameter has the following prototype:
 
-    ``def cbk_nbRepeat(current_nb_repetitions):``
+    ``def cbk_nbRepeat(nb_repeat, data, remaining=None, parsed_structure=None, child=None:``
 
     Where:
 
-    * ``current_nb_repetitions`` is an :class:`int` that corresponds
-      to the amount of time the child element has been parsed.
+    * ``nb_repeat`` is an :class:`int` that corresponds
+      to the amount of time the child element has been parsed or specialize.
+    * ``data`` is a :class:`bitarray` that corresponds to the already parsed or specialized data.
+    * ``remaining`` is a :class:`bitarray` that corresponds to the remaining data to be parsed. Only set is parsing mode. In specialization mode, this parameter will have a `None` value. This parameter can therefore be used to identify the current mode.
+    * ``parsed_structure`` is a data structure that allows access to the values of the parsed :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` elements. Only set is parsing mode. In specialization mode, this parameter will have a `None` value.
+    * ``child`` is an :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` that corresponds to the repeated element. Only set is parsing mode. In specialization mode, this parameter will have a `None` value.
+
+    The ``child`` parameter allows access to the root of a tree structure. The ``child`` :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` can have children. Access to :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` values is done through the ``parsed_structure``, thanks to its methods ``hasData`` and ``getData``:
+
+    * ``parsed_structure.hasData(child)`` will return a :class:`bool` telling if a data has been parsed for the child :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+    * ``parsed_structure.getData(child)`` will return a :class:`bitarray` that corresponds to the value parsed by the child :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
     The callback function is called each time the child element is
     seen.
@@ -156,14 +165,32 @@ class Repeat(AbstractVariableNode):
     The following example shows how to create a Repeat variable whose
     number of repetitions is handled by calling a callback function
     which returns a boolean telling if the expected number of
-    repetitions is reached:
+    repetitions is reached. Here, in parsing mode, the repeat stops
+    when the byte `b'B'` is encountered. In specialization mode, the
+    repeat stops at the first iteration.
 
-    >>> def cbk(current_nb_repetitions):
-    ...     if len(current_nb_repetitions) == 5:
-    ...         return True
+    >>> from netzob.all import *
+    >>> def cbk(nb_repeat, data, remaining=None, parsed_structure=None, child=None):
+    ...     if remaining is not None:
+    ...         print("in cbk: nb_repeat:{} -- data:{} -- remaining:{}".format(nb_repeat, data.tobytes(), remaining.tobytes()))
+    ...         if parsed_structure.hasData(child) and parsed_structure.getData(child).tobytes() == b'B':
+    ...             return True
+    ...         else:
+    ...             return False
     ...     else:
-    ...         return False
-    >>> f1 = Field(Repeat(String("john"), nbRepeat=cbk)) # doctest: +SKIP
+    ...         return True
+    >>> f1 = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=cbk), name="f1")
+    >>> f2 = Field(String("C"), name="f2")
+    >>> s = Symbol([f1, f2])
+    >>> d = s.specialize()
+    >>> d == b'AC' or d == b'BC'
+    True
+    >>> data = "AABC"
+    >>> Symbol.abstract(data, [s])
+    in cbk: nb_repeat:1 -- data:b'A' -- remaining:b'ABC'
+    in cbk: nb_repeat:2 -- data:b'AA' -- remaining:b'BC'
+    in cbk: nb_repeat:3 -- data:b'AAB' -- remaining:b'C'
+    (Symbol, OrderedDict([('f1', b'AAB'), ('f2', b'C')]))
 
 
     .. ifconfig:: scope in ('netzob')
@@ -176,10 +203,6 @@ class Repeat(AbstractVariableNode):
        >>> f1 = Field(Repeat(String("john"), nbRepeat=(0,3)), name="f1")
        >>> f2 = Field(String("kurt"), name="f2")
        >>> s = Symbol([f1, f2])
-
-       >>> data = "johnjohnkurt"
-       >>> Symbol.abstract(data, [s])
-       (Symbol, OrderedDict([('f1', b'johnjohn'), ('f2', b'kurt')]))
 
        >>> data = "johnkurt"
        >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
@@ -227,6 +250,8 @@ class Repeat(AbstractVariableNode):
 
     """
 
+    MAX_REPEAT = 1000
+
     def __init__(self, child, nbRepeat, delimiter=None, svas=None):
         super(Repeat, self).__init__(self.__class__.__name__, [child], svas=svas)
         self.nbRepeat = nbRepeat
@@ -241,22 +266,26 @@ class Repeat(AbstractVariableNode):
             raise Exception("Parsing path cannot be None")
 
         # retrieve the data to parse
-        dataToParse = parsingPath.getDataAssignedToVariable(self).copy()
+        dataToParse = parsingPath.getData(self).copy()
 
         self._logger.debug("Parse '{}' as {} with parser path '{}'".format(
             dataToParse.tobytes(), self, parsingPath))
 
         # remove any data assigned to this variable
-        parsingPath.removeAssignedDataToVariable(self)
+        parsingPath.removeData(self)
 
-        min_nb_repeat = self.nbRepeat[0] - 1
-        max_nb_repeat = self.nbRepeat[1] - 1
+        if callable(self.nbRepeat):
+            min_nb_repeat = Repeat.MAX_REPEAT - 1
+            max_nb_repeat = Repeat.MAX_REPEAT
+        else:
+            min_nb_repeat = self.nbRepeat[0] - 1
+            max_nb_repeat = self.nbRepeat[1] - 1
 
         for nb_repeat in range(max_nb_repeat, min_nb_repeat, -1):
 
             # initiate a new parsing path based on the current one
             newParsingPath = parsingPath.duplicate()
-            newParsingPath.assignDataToVariable(dataToParse.copy(),self.children[0])
+            newParsingPath.assignData(dataToParse.copy(),self.children[0])
             newParsingPaths = [newParsingPath]
 
             # deal with the case where no repetition is accepted
@@ -271,29 +300,30 @@ class Repeat(AbstractVariableNode):
                 for newParsingPath in newParsingPaths:
                     for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
 
-                        if childParsingPath.isDataAvailableForVariable(self):
-                            newResult = childParsingPath.getDataAssignedToVariable(self).copy()
-                            newResult = newResult + childParsingPath.getDataAssignedToVariable(self.children[0])
+                        if childParsingPath.hasData(self):
+                            newResult = childParsingPath.getData(self).copy()
+                            newResult = newResult + childParsingPath.getData(self.children[0])
                         else:
-                            newResult = childParsingPath.getDataAssignedToVariable(self.children[0])
+                            newResult = childParsingPath.getData(self.children[0])
 
                         childParsingPath.addResult(self, newResult)
-                        childParsingPath.assignDataToVariable(dataToParse.copy()[len(newResult):], self.children[0])
+                        remainingDataToParse = dataToParse.copy()[len(newResult):]
 
-                        # apply delimiter
-                        if self.delimiter is not None:
-                            if i_repeat < nb_repeat - 1:
+                        if callable(self.nbRepeat):
+                            break_repeat = self.nbRepeat(i_repeat + 1, newResult, remainingDataToParse, childParsingPath, self.children[0])
+
+                        childParsingPath.assignData(remainingDataToParse, self.children[0])
+
+                        # apply delimiter if necessary
+                        if not break_repeat and self.delimiter is not None and i_repeat < nb_repeat - 1:
                                 # check the delimiter is available
-                                toParse = childParsingPath.getDataAssignedToVariable(self.children[0]).copy()
+                                toParse = childParsingPath.getData(self.children[0]).copy()
                                 if toParse[:len(self.delimiter)] == self.delimiter:
-                                    newResult = childParsingPath.getDataAssignedToVariable(
+                                    newResult = childParsingPath.getData(
                                         self).copy() + self.delimiter
                                     childParsingPath.addResult(self, newResult)
-                                    childParsingPath.assignDataToVariable(dataToParse.copy()[len(newResult):], self.children[0])
+                                    childParsingPath.assignData(dataToParse.copy()[len(newResult):], self.children[0])
                                     tmp_result.append(childParsingPath)
-                            else:
-                                tmp_result.append(childParsingPath)
-
                         else:
                             tmp_result.append(childParsingPath)
 
@@ -329,34 +359,45 @@ class Repeat(AbstractVariableNode):
 
         # Else, randomly chose the child
         else:
-            i_repeat = random.randint(self.nbRepeat[0], self.nbRepeat[1])
+            if callable(self.nbRepeat):
+                i_repeat = Repeat.MAX_REPEAT
+            else:
+                i_repeat = random.randint(self.nbRepeat[0], self.nbRepeat[1])
 
         newSpecializingPaths = [originalSpecializingPath.duplicate()]
 
         for i in range(i_repeat):
+            break_repeat = False
             childSpecializingPaths = []
             for newSpecializingPath in newSpecializingPaths:
 
                 child = self.children[0]
                 for path in child.specialize(newSpecializingPath, fuzz=fuzz):
-                    if path.isDataAvailableForVariable(self):
+                    if path.hasData(self):
 
-                        newResult = path.getDataAssignedToVariable(self).copy()
+                        newResult = path.getData(self).copy()
                         if self.delimiter is not None:
                             newResult = newResult + self.delimiter
-                        newResult = newResult + path.getDataAssignedToVariable(child)
+                        newResult = newResult + path.getData(child)
 
                     else:
-                        newResult = path.getDataAssignedToVariable(child)
+                        newResult = path.getData(child)
 
                     path.addResult(self, newResult)
 
                     # We forget the assigned data to the child variable and its children
-                    path.removeAssignedDataToVariableAndChildren(child)
+                    path.removeDataRecursively(child)
 
                     childSpecializingPaths.append(path)
 
+                    if callable(self.nbRepeat):
+                        break_repeat = self.nbRepeat(i + 1, newResult)
+
             newSpecializingPaths = childSpecializingPaths
+
+            if break_repeat:
+                break
+
         specializingPaths.extend(newSpecializingPaths)
 
         # lets shuffle this ( :) ) >>> by default we only consider the first valid parsing path.
@@ -372,7 +413,6 @@ class Repeat(AbstractVariableNode):
     def nbRepeat(self, nbRepeat):
         if nbRepeat is None:
             raise Exception("NB Repeat cannot be None")
-        MAX_REPEAT = 1000
 
         if isinstance(nbRepeat, int):
             nbRepeat = (nbRepeat, nbRepeat)
@@ -393,12 +433,17 @@ class Repeat(AbstractVariableNode):
             if maxNbRepeat is not None and maxNbRepeat < minNbRepeat:
                 raise ValueError(
                     "Maximum must be greater or equals to the minimum")
-            if maxNbRepeat is not None and maxNbRepeat > MAX_REPEAT:
+            if maxNbRepeat is not None and maxNbRepeat > Repeat.MAX_REPEAT:
                 raise ValueError(
                     "Maximum nbRepeat supported for a variable is {0}.".format(
-                        MAX_REPEAT))
+                        Repeat.MAX_REPEAT))
+            self.__nbRepeat = (minNbRepeat, maxNbRepeat)
+        elif callable(nbRepeat):
+            self.__nbRepeat = nbRepeat
+        else:
+            raise TypeError(
+                "nbRepeat is of wrong type: '{}'.".format(nbRepeat))
 
-        self.__nbRepeat = (minNbRepeat, maxNbRepeat)
 
     @property
     def delimiter(self):
