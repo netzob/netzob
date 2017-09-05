@@ -63,7 +63,7 @@ class ChannelDownException(Exception):
 
 
 class ChannelInterface(object, metaclass=abc.ABCMeta):
-    """The AbstractChannel interface specifies the methods to implement in
+    """The ChannelInterface class specifies the methods to implement in
     order to create a new communication channel.
 
     The following methods have to be implemented:
@@ -188,18 +188,21 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         self.writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 
     def write(self, data, rate=None, duration=None):
-        """Write to the communication channel the specified data.
+        """Write to the communication channel the specified data, either one
+        time, either in loop according to the `rate` and `duration`
+        parameter.
 
         :param data: The data to write on the channel.
         :param rate: This specifies the bandwidth in octets to respect during
                      traffic emission (should be used with duration= parameter).
-        :param duration: This tells how much seconds the symbol is continuously
+        :param duration: This tells how much seconds the data is continuously
                          written on the channel.
         :type data: :class:`bytes`, required
         :type rate: :class:`int`, optional
         :type duration: :class:`int`, optional
         :return: The amount of written data, in bytes.
         :rtype: :class:`int`
+
         """
 
         if ((self.writeCounterMax > 0) and
