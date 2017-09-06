@@ -64,6 +64,9 @@ class AbstractVariableNode(AbstractVariable):
         # Then, call the parent init
         super(AbstractVariableNode, self).__init__(varType, svas=svas)
 
+    def isnode(self):
+        return True
+
     @property
     def children(self):
         """Sorted typed list of children attached to the variable node.

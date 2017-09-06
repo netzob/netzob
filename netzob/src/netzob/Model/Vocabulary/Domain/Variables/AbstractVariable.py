@@ -89,6 +89,11 @@ class AbstractVariable(object):
         """Specializes the current variable."""
         raise NotImplementedError("Method specialize() is not implemented")
 
+    @abc.abstractmethod
+    def isnode(self):
+        """Tells if the current variable is a node variable, which means it as children."""
+        raise NotImplementedError("Method isnode() is not implemented")
+    
     #+---------------------------------------------------------------------------+
     #| Special Functions                                                         |
     #+---------------------------------------------------------------------------+

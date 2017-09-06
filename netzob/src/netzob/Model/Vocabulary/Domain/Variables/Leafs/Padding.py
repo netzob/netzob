@@ -75,12 +75,10 @@ class Padding(AbstractRelationVariableLeaf):
                    will be computed so that the whole structure aligns
                    to this value. This typically corresponds to a
                    block size in cryptography.
-    :param factor: Specify that the initial padding value (always
-                   expressed in bits) should be divided by this
+    :param factor: Specify that the length of the targeted structure should be divided by this
                    factor. The default value is 1.. For example, to express a length in bytes,
                    the factor should be ``1./8``, whereas to express a length in bits, the factor should be ``1.``.
-    :param offset: Specify that an offset value should be added to
-                   the final padding value (after applying the factor
+    :param offset: Specify that an offset value should be added to the length of the targeted structure (after applying the factor
                    parameter). The default value is 0.
     :param name: The name of the variable. If None, the name
                  will be generated.

@@ -171,14 +171,16 @@ class Repeat(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> def cbk(nb_repeat, data, remaining=None, parsed_structure=None, child=None):
-    ...     if remaining is not None:
+    ...     if remaining is not None:  # This means we are in parsing mode
     ...         print("in cbk: nb_repeat:{} -- data:{} -- remaining:{}".format(nb_repeat, data.tobytes(), remaining.tobytes()))
-    ...         if parsed_structure.hasData(child) and parsed_structure.getData(child).tobytes() == b'B':
-    ...             return True
-    ...         else:
-    ...             return False
-    ...     else:
-    ...         return True
+    ...         
+    ...         # We check the value of the second children of the child
+    ...         if child.isnode() and len(child.children) > 1:
+    ...             second_subchild = child.children[1]
+    ...             if parsed_structure.hasData(second_subchild) and parsed_structure.getData(second_subchild).tobytes() == b'B':
+    ...                 return True
+    ...         return False
+    ...     return True
     >>> f1 = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=cbk), name="f1")
     >>> f2 = Field(String("C"), name="f2")
     >>> s = Symbol([f1, f2])

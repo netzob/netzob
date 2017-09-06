@@ -63,6 +63,9 @@ class AbstractVariableLeaf(AbstractVariable):
         super(AbstractVariableLeaf, self).__init__(
             varType, name=name, svas=svas)
 
+    def isnode(self):
+        return False
+
     def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """@toto TO BE DOCUMENTED"""
 
