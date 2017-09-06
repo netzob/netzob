@@ -24,7 +24,8 @@ stages:
 .python_script_template: &python_script_definition |
   cd netzob
   LANG=fr_FR.UTF-8 python3 -m pip install --force-reinstall -r requirements.txt
-  sudo python3 setup.py install
+  python3 setup.py sdist
+  python3 setup.py bdist
   [ "$SSH_AGENT_PID" -gt 0 ] && kill "$SSH_AGENT_PID"
 
 #################
@@ -57,7 +58,8 @@ build:full:
   stage: build
   image: ubuntu:16.04
   only:
-    - "^(master|develop)$"
+    - master
+    - develop
   script: !join
     - *apt_sys_deps_definition
     - *fetch_deps_definition
@@ -71,10 +73,9 @@ test:host:
   stage: test
   script:
     - cd netzob
-    - sudo coverage3 run setup.py test
+    - cp build/lib.*/netzob/_lib*.so src/netzob/
+    - coverage3 run setup.py test
     - coverage3 html --include=src/netzob/*
-  after_script:
-    - 'sudo find -uid 0 -delete || true'
   artifacts:
     paths:
       - netzob/htmlcov
