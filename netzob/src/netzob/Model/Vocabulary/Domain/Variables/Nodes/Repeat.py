@@ -174,7 +174,7 @@ class Repeat(AbstractVariableNode):
     ...     if remaining is not None:  # This means we are in parsing mode
     ...         print("in cbk: nb_repeat:{} -- data:{} -- remaining:{}".format(nb_repeat, data.tobytes(), remaining.tobytes()))
     ...         
-    ...         # We check the value of the second children of the child
+    ...         # We check the value of the second child of the parameter child
     ...         if child.isnode() and len(child.children) > 1:
     ...             second_subchild = child.children[1]
     ...             if parsed_structure.hasData(second_subchild) and parsed_structure.getData(second_subchild).tobytes() == b'B':
