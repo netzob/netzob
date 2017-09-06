@@ -34,6 +34,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+import random
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -50,7 +51,7 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 
 @NetzobLogger
 class Agg(AbstractVariableNode):
-    """The Agg class is a node variable that represents a concatenation of variables.
+    r"""The Agg class is a node variable that represents a concatenation of variables.
 
     An Aggregate node concatenates the values that are accepted by
     its children nodes. It can be used to specify a succession of
@@ -141,10 +142,32 @@ class Agg(AbstractVariableNode):
     >>> s.specialize()
     b'hello john'
 
+
+    **Optional last variable**
+
+    This example shows the specialization and parsing of an aggregate
+    with an optional last variable*:
+
+    >>> from netzob.all import *
+    >>> a = Agg([int8(2), int8(3)], last_optional=True)
+    >>> f = Field(a)
+    >>> res = f.specialize()
+    >>> res == b'\x02' or res == b'\x02\x03'
+    True
+    >>> d = b'\x02\x03'
+    >>> Field.abstract(d, [f])
+    (Field, OrderedDict([('Field', b'\x02\x03')]))
+
+    >>> d = b'\x02'
+    >>> Field.abstract(d, [f])
+    (Field, OrderedDict([('Field', b'\x02')]))
+
     """
 
-    def __init__(self, children=None, svas=None):
+    def __init__(self, children=None, last_optional=False, svas=None):
         super(Agg, self).__init__(self.__class__.__name__, children, svas=svas)
+
+        self._last_optional = last_optional
 
     @typeCheck(ParsingPath)
     def parse(self, parsingPath, carnivorous=False):
@@ -159,7 +182,13 @@ class Agg(AbstractVariableNode):
         parsingPaths = [parsingPath]
 
         # we parse all the children with the parserPaths produced by previous children
+        all_parsed = False
         for i_child in range(len(self.children)):
+
+            # Handle optional field situation, where all data may have already been parsed before the last field
+            if all_parsed == True:
+                break
+
             current_child = self.children[i_child]
             if i_child < len(self.children) - 1:
                 next_child = self.children[i_child + 1]
@@ -181,9 +210,15 @@ class Agg(AbstractVariableNode):
                         current_child).copy()
                     remainingValue = value_before_parsing[len(
                         value_after_parsing):].copy()
+
                     if next_child is not None:
-                        childParsingPath.assignData(
-                            remainingValue, next_child)
+                        # Handle optional field
+                        if len(remainingValue) == 0 and i_child == len(self.children) - 2 and self._last_optional:
+                            all_parsed = True
+                        # Else send the remaining data to the last field
+                        else:
+                            childParsingPath.assignData(
+                                remainingValue, next_child)
 
                     # at least one child path managed to parse, we save the valid paths it produced
                     self._logger.debug(
@@ -201,12 +236,12 @@ class Agg(AbstractVariableNode):
         for parsingPath in parsingPaths:
             parsedData = None
             for child in self.children:
-                if parsedData is None:
-                    parsedData = parsingPath.getData(
-                        child).copy()
-                else:
-                    parsedData = parsedData + parsingPath.getData(
-                        child).copy()
+                if parsingPath.hasData(child):
+                    child_data = parsingPath.getData(child).copy()
+                    if parsedData is None:
+                        parsedData = child_data
+                    else:
+                        parsedData = parsedData + child_data
 
             self._logger.debug("Data successfuly parsed with {}: '{}'".format(self, parsedData.tobytes()))
             parsingPath.addResult(self, parsedData)
@@ -220,10 +255,18 @@ class Agg(AbstractVariableNode):
         specializingPaths = [originalSpecializingPath]
 
         # we parse all the children with the specializerPaths produced by previous children
-        for child in self.children:
+        for idx, child in enumerate(self.children):
             newSpecializingPaths = []
 
             self._logger.debug("Specializing AGG child with {0} paths".format(len(specializingPaths)))
+
+            if len(self.children) - 1 == idx and self._last_optional:
+                self._logger.debug("Last child is optional")
+
+                # Randomely select if we are going to specialize the last child
+                specialize_last_child = random.choice([True, False])
+                if not specialize_last_child:
+                    break
 
             for specializingPath in specializingPaths:
                 self._logger.debug("Specialize {0} with {1}".format(child, specializingPath))
@@ -246,10 +289,12 @@ class Agg(AbstractVariableNode):
         for specializingPath in specializingPaths:
             value = None
             for child in self.children:
-                if value is None:
-                    value = specializingPath.getData(child)
-                else:
-                    value = value + specializingPath.getData(child)
+                if specializingPath.hasData(child):
+                    child_data = specializingPath.getData(child)
+                    if value is None:
+                        value = child_data
+                    else:
+                        value = value + child_data
 
             self._logger.debug("Generated value for {}: {}".format(self, value))
             specializingPath.addResult(self, value)
