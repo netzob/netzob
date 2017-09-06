@@ -183,16 +183,16 @@ class Repeat(AbstractVariableNode):
     ...     return True
     >>> f1 = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=cbk), name="f1")
     >>> f2 = Field(String("C"), name="f2")
-    >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> f = Field([f1, f2])
+    >>> d = f.specialize()
     >>> d == b'AC' or d == b'BC'
     True
     >>> data = "AABC"
-    >>> Symbol.abstract(data, [s])
+    >>> Field.abstract(data, [f])
     in cbk: nb_repeat:1 -- data:b'A' -- remaining:b'ABC'
     in cbk: nb_repeat:2 -- data:b'AA' -- remaining:b'BC'
     in cbk: nb_repeat:3 -- data:b'AAB' -- remaining:b'C'
-    (Symbol, OrderedDict([('f1', b'AAB'), ('f2', b'C')]))
+    (Field, OrderedDict([('f1', b'AAB'), ('f2', b'C')]))
 
 
     .. ifconfig:: scope in ('netzob')
