@@ -61,9 +61,11 @@ class Agg(AbstractVariableNode):
 
     :param children: The sequence of variable elements contained in
                      the aggregate.
+    :param last_optional: A flag indicating if the last element of the children is optional or not.
     :param svas: The SVAS strategy defining how the Aggregate
                  behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type children: a :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+    :type last_optional: :class:`bool`
     :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
