@@ -73,6 +73,8 @@ test:host:
     - cd netzob
     - sudo coverage3 run setup.py test
     - coverage3 html --include=src/netzob/*
+  after_script:
+    - 'sudo find -uid 0 -delete || true'
   artifacts:
     paths:
       - netzob/htmlcov
