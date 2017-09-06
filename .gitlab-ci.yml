@@ -75,6 +75,7 @@ test:host:
     - cd netzob
     - cp build/lib.*/netzob/_lib*.so src/netzob/
     - coverage3 run setup.py test
+    - coverage3 report --include=src/netzob/*
     - coverage3 html --include=src/netzob/*
   artifacts:
     paths:
