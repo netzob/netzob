@@ -230,6 +230,7 @@ def getSuite():
         # IPChannel.__module__,  ## Does not work on Travis CI as raw socket are not supported
         # RawIPChannel.__module__,  ## Does not work on Travis CI as raw socket are not supported
         # RawEthernetChannel.__module__,  ## Does not work on Travis CI as raw socket are not supported
+        DebugChannel.__module__,
 
         # Modules related to the import
         # -----------------------------

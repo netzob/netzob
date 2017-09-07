@@ -139,7 +139,6 @@ class DebugChannelBuilder(ChannelBuilder):
     This builder is used to create an
     :class:`~netzob.Simulator.Channel.DebugChannel.DebugChannel` instance
 
-    >>> import socket
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> chan = DebugChannelBuilder().set("stream", "stderr").build()
     >>> assert isinstance(chan, DebugChannel)
