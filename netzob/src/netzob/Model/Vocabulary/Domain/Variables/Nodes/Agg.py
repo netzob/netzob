@@ -57,7 +57,7 @@ class SELF(object):
 class Agg(AbstractVariableNode):
     r"""The Agg class is a node variable that represents a concatenation of variables.
 
-    An Aggregate node concatenates the values that are accepted by
+    An aggregate node concatenates the values that are accepted by
     its children nodes. It can be used to specify a succession of
     tokens.
 
@@ -73,9 +73,9 @@ class Agg(AbstractVariableNode):
     :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
-    The Agg class supports modelling of direct recursions. To do so,
-    the flag ``SELF`` is available, and should be only used on the
-    last position of the aggregate (see example below).
+    The Agg class supports modelling of direct recursions on the
+    right. To do so, the flag ``SELF`` is available, and should only
+    be used in the last position of the aggregate (see example below).
 
 
     **Aggregate examples**
@@ -94,9 +94,8 @@ class Agg(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> from bitarray import bitarray
-    >>> f0 = Field(Agg([BitArray('01101001'), BitArray(nbBits=3), BitArray(nbBits=5)]))
-    >>> s = Symbol(fields=[f0])
-    >>> t = s.specialize()
+    >>> f = Field(Agg([BitArray('01101001'), BitArray(nbBits=3), BitArray(nbBits=5)]))
+    >>> t = f.specialize()
     >>> len(t)
     2
 
@@ -128,18 +127,18 @@ class Agg(AbstractVariableNode):
     >>> v2 = String(".txt")
     >>> f0 = Field(Agg([v1, v2]), name="f0")
     >>> f1 = Field(String("!"), name="f1")
-    >>> s = Symbol([f0, f1])
+    >>> f = Field([f0, f1])
     >>> data = "john.txt!"
-    >>> Symbol.abstract(data, [s])
-    (Symbol, OrderedDict([('f0', b'john.txt'), ('f1', b'!')]))
+    >>> Field.abstract(data, [f])
+    (Field, OrderedDict([('f0', b'john.txt'), ('f1', b'!')]))
 
     In the following example, an Aggregate variable is defined. A
     message that does not correspond to the expected model is then
-    parsed, thus the returned symbol is unknown:
+    parsed, thus the returned field is unknown:
 
     >>> data = "johntxt!"
-    >>> Symbol.abstract(data, [s])
-    (Unknown Symbol 'johntxt!', OrderedDict())
+    >>> Field.abstract(data, [f])
+    (Unknown message 'johntxt!', OrderedDict())
 
 
     **Specialization of aggregate variables**
@@ -151,8 +150,7 @@ class Agg(AbstractVariableNode):
     >>> d1 = String("hello")
     >>> d2 = String(" john")
     >>> f = Field(Agg([d1, d2]))
-    >>> s = Symbol(fields=[f])
-    >>> s.specialize()
+    >>> f.specialize()
     b'hello john'
 
 

@@ -68,7 +68,7 @@ class UnknownSymbol(Symbol):
     >>> from netzob.all import *
     >>> u = UnknownSymbol()
     >>> u.name
-    "Unknown Symbol ''"
+    "Unknown message ''"
 
 
     .. ifconfig:: scope in ('netzob')
@@ -77,7 +77,7 @@ class UnknownSymbol(Symbol):
        >>> msg = RawMessage("hello")
        >>> u = UnknownSymbol(msg)
        >>> u.name
-       "Unknown Symbol 'hello'"
+       "Unknown message 'hello'"
 
     """
 
@@ -90,7 +90,7 @@ class UnknownSymbol(Symbol):
 
         super(UnknownSymbol, self).__init__(
             fields=None,
-            name="Unknown Symbol {}".format(name_suffix),
+            name="Unknown message {}".format(name_suffix),
             messages=[self.message])
 
     def __repr__(self):

@@ -114,7 +114,7 @@ class Alt(AbstractVariableNode):
 
        >>> data = "nothing"
        >>> Symbol.abstract(data, [s])
-       (Unknown Symbol 'nothing', OrderedDict())
+       (Unknown message 'nothing', OrderedDict())
 
     """
 

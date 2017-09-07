@@ -107,7 +107,7 @@ class SVAS(Enum):
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> Symbol.abstract("kurt", [s], memory=m)
-      (Unknown Symbol 'kurt', OrderedDict())
+      (Unknown message 'kurt', OrderedDict())
 
       The following example shows the **specialization of a constant
       data**:
@@ -173,7 +173,7 @@ class SVAS(Enum):
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> Symbol.abstract("kurt", [s], memory=m)
-      (Unknown Symbol 'kurt', OrderedDict())
+      (Unknown message 'kurt', OrderedDict())
 
 
       The following examples show the **specialization of a persistent

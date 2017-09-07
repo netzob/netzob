@@ -176,7 +176,7 @@ class Size(AbstractRelationVariableLeaf):
        >>> s  = Symbol(fields=[f0, f1, f2])
        >>> data = b"john;\x03"
        >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
-       (Unknown Symbol b'john;\x03', OrderedDict())
+       (Unknown message b'john;\x03', OrderedDict())
 
     In the following example, a size field is declared before the
     targeted field:
@@ -204,7 +204,7 @@ class Size(AbstractRelationVariableLeaf):
        >>> s  = Symbol(fields=[f0, f1, f2])
        >>> data = b"\x03;john"
        >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
-       (Unknown Symbol b'\x03;john', OrderedDict())
+       (Unknown message b'\x03;john', OrderedDict())
 
 
     **Size field with fields and variables as target**
