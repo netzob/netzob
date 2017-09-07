@@ -69,9 +69,16 @@ class Agg(AbstractVariableNode):
     :param svas: The SVAS strategy defining how the Aggregate
                  behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type children: a :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
-    :type last_optional: :class:`bool`
+    :type last_optional: :class:`bool`, optional
     :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
+
+    The Agg class supports modelling of direct recursions. To do so,
+    the flag ``SELF`` is available, and should be only used on the
+    last position of the aggregate (see example below).
+
+
+    **Aggregate examples**
 
     For example, the following code represents a field that
     accepts values that are made of a String of 3 to 20 random
@@ -169,7 +176,13 @@ class Agg(AbstractVariableNode):
     (Field, OrderedDict([('Field', b'\x02')]))
 
 
-    **Modeling indirect imbrication**
+    **Modelling indirect imbrication**
+
+    The following example shows how to specify a field with a
+    structure (``v2``) that can contain another structure (``v0``),
+    through a tierce structure (``v1``). The flag ``last_optional`` is
+    used to indicate that the specialization or parsing of the last
+    element of the aggregates ``v1`` and ``v2`` is optional.
 
     >>> from netzob.all import *
     >>> v0 = Agg(["?", int8(4)])
@@ -188,7 +201,13 @@ class Agg(AbstractVariableNode):
     True
 
 
-    **Modeling indirect recursion**
+    **Modelling indirect recursion**
+
+    The following example shows how to specify a field with a
+    structure (``v2``) that contains another structure (``v1``), which
+    can itself contains the first structure (``v2``). The flag
+    ``last_optional`` is used to indicate that the specialization or
+    parsing of the last element of the aggregate ``v2`` is optional.
 
     >>> from netzob.all import *    
     >>> v1 = Agg([])
@@ -205,7 +224,12 @@ class Agg(AbstractVariableNode):
     True
 
 
-    **Modeling direct recursion**
+    **Modelling direct recursion**
+
+    The following example shows how to specify a field with a
+    structure (``v``) that can optionally contain itself. To model
+    such recursive structure, the ``SELF`` flag has to be used in the
+    last position of the aggregate.
 
     >>> from netzob.all import *
     >>> v = Agg([int8(interval=(1, 5)), SELF], last_optional=True)
