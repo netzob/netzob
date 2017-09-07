@@ -60,7 +60,8 @@ from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
-from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Mutators.AltMutator import AltMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.AggMutator import AggMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator  # noqa: F401
@@ -84,149 +85,6 @@ class Fuzz(object):
 
     :param counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent).
     :type counterMax: :class:`int` or :class:`float`, defaults to :attr:`COUNTER_MAX_DEFAULT`
-
-
-    The following examples show the different usages of the fuzzing
-    component.
-
-    **Basic fuzzing example**
-
-    >>> from netzob.all import *
-    >>> fuzz = Fuzz()
-    >>> f_data = Field(domain=int8())
-    >>> symbol = Symbol(fields=[f_data])
-    >>> fuzz.set(f_data)
-    >>> symbol.specialize(fuzz=fuzz)
-    b'D'
-
-
-    **Fuzzing example of a field that contains an integer**
-
-    >>> from netzob.all import *
-    >>> fuzz = Fuzz()
-    >>> f_data = Field(name="data", domain=int16(interval=(1, 4)))
-    >>> symbol = Symbol(name="sym", fields=[f_data])
-    >>> fuzz.set(f_data, interval=(20, 32000))
-    >>> symbol.specialize(fuzz=fuzz)
-    b'`n'
-
-
-    **Fuzzing example of a field that contains a size relationship with another field**
-
-    >>> from netzob.all import *
-    >>> fuzz = Fuzz()
-    >>> f_data = Field(name="data", domain=int16(3))
-    >>> f_size = Field(name="size", domain=Size([f_data], Integer(unitSize=UnitSize.SIZE_16)))
-    >>> symbol = Symbol(name="sym", fields=[f_data, f_size])
-    >>> fuzz.set(f_size, interval=(20, 32000))
-    >>> symbol.specialize(fuzz=fuzz)
-    b'\x00\x03`n'
-
-
-    **Fuzzing example in mutation mode of a field that contains an integer**
-
-    >>> from netzob.all import *
-    >>> fuzz = Fuzz()
-    >>> f_data = Field(name="data", domain=int16(2))
-    >>> symbol = Symbol(name="sym", fields=[f_data])
-    >>> fuzz.set(f_data, mode=MutatorMode.MUTATE, interval=(20, 32000))
-    >>> res = symbol.specialize(fuzz=fuzz)
-    >>> res != b'\x00\x02'
-    True
-
-
-    **Multiple fuzzing call on the same symbol**
-
-    >>> from netzob.all import *
-    >>> fuzz = Fuzz()
-    >>> f_data = Field(name="data", domain=int16(2))
-    >>> symbol = Symbol(name="sym", fields=[f_data])
-    >>> fuzz.set(f_data, interval=(20, 30000))
-    >>> nbFuzz = 1000
-    >>> result = set()
-    >>> for i in range(nbFuzz):
-    ...     result.add(symbol.specialize(fuzz=fuzz))
-    >>> len(result) == 980
-    True
-
-
-    **Fuzzing of a field that contains sub-fields**
-
-    >>> from netzob.all import *
-    >>> fuzz = Fuzz()
-    >>> f_data1 = Field(name="data1", domain=int8())
-    >>> f_data2 = Field(name="data2", domain=int16())
-    >>> f_parent = Field(name="parent", domain=[f_data1, f_data2])
-    >>> symbol = Symbol(name="sym", fields=[f_parent])
-    >>> fuzz.set(f_parent)
-    >>> symbol.specialize(fuzz=fuzz)
-    b'DEt'
-
-
-    **Fuzzing of a whole symbol, and covering all fields storage spaces with default fuzzing strategy per types**
-
-    >>> from netzob.all import *
-    >>> fuzz = Fuzz()
-    >>> f_data1 = Field(name="data1", domain=int8(interval=(2, 4)))
-    >>> f_data2 = Field(name="data2", domain=int8(interval=(5, 8)))
-    >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-    >>> fuzz.set(symbol, interval=MutatorInterval.FULL_INTERVAL)
-    >>> symbol.specialize(fuzz=fuzz)
-    b'DD'
-
-
-    **Fuzzing of a whole symbol except one field, and covering all fields storage spaces**
-
-    >>> from netzob.all import *
-    >>> fuzz = Fuzz()
-    >>> f_data1 = Field(name="data1", domain=int8(2))
-    >>> f_data2 = Field(name="data2", domain=int8(4))
-    >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-    >>> fuzz.set(symbol, interval=MutatorInterval.FULL_INTERVAL)
-    >>> fuzz.unset(f_data2)
-    >>> symbol.specialize(fuzz=fuzz)
-    b'D\x04'
-
-
-    **Fuzzing of a field with default fuzzing strategy, and covering field storage space**
-
-    >>> from netzob.all import *
-    >>> fuzz = Fuzz()
-    >>> f_data1 = Field(name="data1", domain=int8(2))
-    >>> f_data2 = Field(name="data2", domain=int8(4))
-    >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-    >>> fuzz.set(f_data2, interval=MutatorInterval.FULL_INTERVAL)
-    >>> symbol.specialize(fuzz=fuzz)
-    b'\x02D'
-
-
-    **Fuzzing and changing the default fuzzing strategy for types**
-
-    >>> from netzob.all import *
-    >>> fuzz = Fuzz()
-    >>> f_data1 = Field(name="data1", domain=int8(2))
-    >>> f_data2 = Field(name="data2", domain=int8(4))
-    >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-    >>> fuzz.set(Integer, seed=142)
-    >>> fuzz.set(f_data2)
-    >>> symbol.specialize(fuzz=fuzz)
-    b'\x02\x04'
-
-
-    **Fuzzing configuration with a maximum number of mutations**
-
-    >>> from netzob.all import *
-    >>> fuzz = Fuzz(counterMax=1)
-    >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
-    ...                                       int8(interval=(5, 8))]))
-    >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt)
-    >>> symbol.specialize(fuzz=fuzz)
-    b'\x07'
-    >>> symbol.specialize(fuzz=fuzz)
-    Traceback (most recent call last):
-    Exception: Max mutation counter reached
-    >>> fuzz = Fuzz()  # This is needed to restore globalCounterMax default value for unit test purpose
 
     """
 
@@ -262,7 +120,13 @@ class Fuzz(object):
         # Initialize mapping between Field/Symbols and Mutators
         self.mappingFieldsMutators = Fuzz.mappingFieldsMutators
 
-    def set(self, key, **kwargs):
+    def set(self,
+            key,
+            mode=MutatorMode.GENERATE,
+            generator=Generator.NG_mt19937,
+            seed=Mutator.SEED_DEFAULT,
+            counterMax=Mutator.COUNTER_MAX_DEFAULT,
+            **kwargs):
         r"""The method :meth:`set <.Fuzz.set>` specifies the fuzzing
         strategy for a symbol, a field, a variable or a type.
 
@@ -270,79 +134,354 @@ class Fuzz(object):
 
         :param key: The targeted object (either a symbol, a field, a
                     variable or a type) (required).
-        :param kwargs: Some context dependent parameters (see below) (optional).
+        :param mode: The fuzzing strategy, which can be either:
+
+                     * ``MutatorMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied on it.
+                     * ``MutatorMode.GENERATE``: in this mode, the fuzzing component directly produces a random message.
+
+                     Default value is :attr:`MutatorMode.GENERATE`.
+
+        :param generator: The underlying generator used to produce
+                          pseudo-random or deterministic
+                          values.
+
+                          Default generator is :attr:`Generator.NG_mt19937` from the :class:`randomstate` module.
+
+        :param seed: An integer used to initialize the underlying
+                     generator.
+
+                     Default value is :attr:`Mutator.SEED_DEFAULT` = 10.
+
+        :param counterMax: An integer used to limit the number of
+                           mutations.
+
+                           Defaults value is :attr:`Mutator.COUNTER_MAX_DEFAULT` = 65536.
+
+        :param kwargs: Some context dependent parameters (see below).
         :type key: :class:`Field
                    <netzob.Model.Vocabulary.Field.Field>`,
                    or :class:`Symbol
                    <netzob.Model.Vocabulary.Symbol.Symbol>`,
-                   or :class:`AbstractVariable
+                   or :class:`Variable
                    <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`,
                    or :class:`AbstractType
-                   <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
+                   <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`, required
+        :type mode: :class:`Enum`, optional
+        :type generator: :class:`iter`, optional
+        :type seed: :class:`int`, optional
+        :type counterMax: :class:`int`, optional
+        :type kwargs: :class:`dict`, optional
 
-        Each type have 4 common parameters, described in the following table:
+        The parameter ``kwargs`` is used to provide specific options
+        depending on the targeted object type. Available options are
+        described in the following table:
+
+        Integer options:
 
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
-        ==========  =============================================================
-          Option                          Description
-        ==========  =============================================================
-        mode        The fuzzing strategy, which can be either:
+        ====================  =================================================
+               Option                           Description   
+        ====================  =================================================
+        interval              The scope of values to generate.
 
-                    * ``MutatorMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied on it.
-                    * ``MutatorMode.GENERATE``: in this mode, the fuzzing component directly produces a random message.
+                              * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
+                              * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
+                              * If it is a tuple of integers (min, max), the values will be generate between min and max.
 
-                    Default value is :attr:`MutatorMode.GENERATE`.
+                              Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
-        generator   The underlying generator (:class:`iter`) used to produce pseudo-random or deterministic values.
+        bitsize               The :class:`int` size in bits of the memory on which the generated values have to be encoded.
+                              It is only used with a determinist generator.
 
-                    Default generator is :attr:`NG_mt19937` from the :class:`randomstate` module.
+                              Default value is `None`, which indicates to use the unit size set in the field domain.
+        ====================  =================================================
 
-        seed        An integer (:class:`int`) used to initialize the underlying generator.
+        String options:
 
-                    Default value is :attr:`SEED_DEFAULT` = 10.
+        .. tabularcolumns:: |p{3cm}|p{10cm}|
 
-        counterMax  An integer (:class:`int`) used to limit the number of mutations.
+        ====================  =================================================
+               Option                           Description   
+        ====================  =================================================
+        endchar               The :class:`str` character(s) which will end the string. This terminal symbol will be mutated by truncating its value if defined on several bytes.
 
-                    Defaults value is :attr:`COUNTER_MAX_DEFAULT` = 65536.
-        ==========  =============================================================
+                              Default value is :attr:`DEFAULT_END_CHAR`. It is used to set the eos parameter of :class:`String <netzob.Model.Vocabulary.Types.String>`.
+        interval              The :class:`int` interval of string length to generate. If set to (min, max), the values will be generated between min and max.
 
-        Each type have specific parameters, described in the following table:
+                              Default value is **(None, None)**.
+        lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded.
 
-        .. tabularcolumns:: |p{2cm}|p{3cm}|p{8cm}|
+                              Default value is `UnitSize.SIZE_8`.
+        naughtStrings         The :class:`list` of potentially dangerous :class:`str` elements.
 
-        ==========  =============  =================================================
-           Type        Option                      Description   
-        ==========  =============  =================================================
-        Integer     interval       The scope of values to generate.
+                              Default value is :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS`.
+        ====================  =================================================
 
-                                   * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
-                                   * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
-                                   * If it is a tuple of integers (min, max), the values will be generate between min and max.
 
-                                   Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+        Raw options:
 
-        ..          bitsize        The size in bits of the memory on which the generated values have to be encoded.
-                                   It is only used with a determinist generator.
+        .. tabularcolumns:: |p{3cm}|p{10cm}|
 
-                                   Default value is `None`, which indicates to use the unit size set in the field domain.
+        ====================  =================================================
+               Option                           Description   
+        ====================  =================================================
+        TODO
+        ====================  =================================================
 
-        String      endchar        
-        ..          interval
-        ..          lengthBitSize
-        ..          naughtStrings
-        Raw 
-        HexaString
-        BitArray
-        Timestamp
-        IPv4
-        Alt
-        Agg
-        Repeat
-        ==========  =============  =================================================
+
+        HexaString options:
+
+        .. tabularcolumns:: |p{3cm}|p{10cm}|
+
+        ====================  =================================================
+               Option                           Description   
+        ====================  =================================================
+        TODO
+        ====================  =================================================
+
+
+        BitArray options:
+
+        .. tabularcolumns:: |p{3cm}|p{10cm}|
+
+        ====================  =================================================
+               Option                           Description   
+        ====================  =================================================
+        interval              The scope of values to generate.
+
+                              * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
+                              * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
+                              * If it is a tuple of integers (min, max), the values will be generate between min and max.
+
+                              Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+
+        lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded.
+
+                              Default value is `UnitSize.SIZE_8`.
+        ====================  =================================================
+
+
+        Timestamp options:
+
+        .. tabularcolumns:: |p{3cm}|p{10cm}|
+
+        ====================  =================================================
+               Option                           Description   
+        ====================  =================================================
+        *No option*
+        ====================  =================================================
+
+
+        IPv4 options:
+
+        .. tabularcolumns:: |p{3cm}|p{10cm}|
+
+        ====================  =================================================
+               Option                           Description   
+        ====================  =================================================
+        *No option*
+        ====================  =================================================
+
+
+        Alt options:
+
+        .. tabularcolumns:: |p{4cm}|p{10cm}|
+
+        ====================  =================================================
+               Option                           Description   
+        ====================  =================================================
+        mutateChild           If :const:`True`, the children variables will also be fuzzed.
+
+                              Default value is :const:`False`.
+        mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with their default mutators.
+
+                              Default value is ``{}``.
+        maxDepth              An :class:`int` used to limit the recursive calls to the mutator.
+
+                              Default value is ``AltMutator.DEFAULT_MAX_DEPTH = 20``
+        ====================  =================================================
+
+
+        Agg options:
+
+        .. tabularcolumns:: |p{4cm}|p{10cm}|
+
+        ====================  =================================================
+               Option                           Description   
+        ====================  =================================================
+        mutateChild           If :const:`True`, the children variables will also be fuzzed.
+
+                              Default value is :const:`False`.
+        mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with their default mutators.
+
+                              Default value is ``{}``.
+        ====================  =================================================
+
+
+        Repeat options:
+
+        .. tabularcolumns:: |p{4cm}|p{10cm}|
+
+        ====================  =================================================
+               Option                           Description   
+        ====================  =================================================
+        mutateChild           If :const:`True`, the children variables will also be fuzzed.
+
+                              Default value is :const:`False`.
+        mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with their default mutators.
+
+                              Default value is ``{}``.
+        interval              The scope of values to generate.
+
+                              * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
+                              * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
+                              * If it is a tuple of integers (min, max), the values will be generate between min and max.
+
+                              Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+
+        lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded.
+
+                              Default value is `UnitSize.SIZE_8`.
+        ====================  =================================================
+
+
+        The following examples show the different usages of the fuzzing
+        component.
+
+        **Basic fuzzing example**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f_data = Field(domain=int8())
+        >>> symbol = Symbol(fields=[f_data])
+        >>> fuzz.set(f_data)
+        >>> symbol.specialize(fuzz=fuzz)
+        b'D'
+
+
+        **Fuzzing example of a field that contains an integer**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f_data = Field(name="data", domain=int16(interval=(1, 4)))
+        >>> symbol = Symbol(name="sym", fields=[f_data])
+        >>> fuzz.set(f_data, interval=(20, 32000))
+        >>> symbol.specialize(fuzz=fuzz)
+        b'`n'
+
+
+        **Fuzzing example of a field that contains a size relationship with another field**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f_data = Field(name="data", domain=int16(3))
+        >>> f_size = Field(name="size", domain=Size([f_data], Integer(unitSize=UnitSize.SIZE_16)))
+        >>> symbol = Symbol(name="sym", fields=[f_data, f_size])
+        >>> fuzz.set(f_size, interval=(20, 32000))
+        >>> symbol.specialize(fuzz=fuzz)
+        b'\x00\x03`n'
+
+
+        **Fuzzing example in mutation mode of a field that contains an integer**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f_data = Field(name="data", domain=int16(2))
+        >>> symbol = Symbol(name="sym", fields=[f_data])
+        >>> fuzz.set(f_data, mode=MutatorMode.MUTATE, interval=(20, 32000))
+        >>> res = symbol.specialize(fuzz=fuzz)
+        >>> res != b'\x00\x02'
+        True
+
+
+        **Multiple fuzzing call on the same symbol**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f_data = Field(name="data", domain=int16(2))
+        >>> symbol = Symbol(name="sym", fields=[f_data])
+        >>> fuzz.set(f_data, interval=(20, 30000))
+        >>> nbFuzz = 1000
+        >>> result = set()
+        >>> for i in range(nbFuzz):
+        ...     result.add(symbol.specialize(fuzz=fuzz))
+        >>> len(result) == 980
+        True
+
+
+        **Fuzzing of a field that contains sub-fields**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f_data1 = Field(name="data1", domain=int8())
+        >>> f_data2 = Field(name="data2", domain=int16())
+        >>> f_parent = Field(name="parent", domain=[f_data1, f_data2])
+        >>> symbol = Symbol(name="sym", fields=[f_parent])
+        >>> fuzz.set(f_parent)
+        >>> symbol.specialize(fuzz=fuzz)
+        b'DEt'
+
+
+        **Fuzzing of a whole symbol, and covering all fields storage spaces with default fuzzing strategy per types**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f_data1 = Field(name="data1", domain=int8(interval=(2, 4)))
+        >>> f_data2 = Field(name="data2", domain=int8(interval=(5, 8)))
+        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>> fuzz.set(symbol, interval=MutatorInterval.FULL_INTERVAL)
+        >>> symbol.specialize(fuzz=fuzz)
+        b'DD'
+
+
+        **Fuzzing of a field with default fuzzing strategy, and covering field storage space**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f_data1 = Field(name="data1", domain=int8(2))
+        >>> f_data2 = Field(name="data2", domain=int8(4))
+        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>> fuzz.set(f_data2, interval=MutatorInterval.FULL_INTERVAL)
+        >>> symbol.specialize(fuzz=fuzz)
+        b'\x02D'
+
+
+        **Fuzzing and changing the default fuzzing strategy for types**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f_data1 = Field(name="data1", domain=int8(2))
+        >>> f_data2 = Field(name="data2", domain=int8(4))
+        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>> fuzz.set(Integer, seed=142)
+        >>> fuzz.set(f_data2)
+        >>> symbol.specialize(fuzz=fuzz)
+        b'\x02\x04'
+
+
+        **Fuzzing configuration with a maximum number of mutations**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz(counterMax=1)
+        >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
+        ...                                       int8(interval=(5, 8))]))
+        >>> symbol = Symbol(name="sym", fields=[f_alt])
+        >>> fuzz.set(f_alt)
+        >>> symbol.specialize(fuzz=fuzz)
+        b'\x07'
+        >>> symbol.specialize(fuzz=fuzz)
+        Traceback (most recent call last):
+        Exception: Max mutation counter reached
+        >>> fuzz = Fuzz()  # This is needed to restore globalCounterMax default value for unit test purpose
+
 
         """
 
+        # Update kwargs with the first 4 parameters. This kwargs will be passed to Mutator constructors
+        kwargs.update({'mode':mode, 'generator':generator, 'seed':seed, 'counterMax':counterMax})
+
+        # Case where target key is an AbstractType
         if isinstance(key, type):
 
             # Update default Mutator parameters for the associated type
@@ -355,6 +494,7 @@ class Fuzz(object):
             else:
                 raise TypeError("Unsupported type for key: '{}'".format(type(key)))
 
+        # Case where target key is an AbstractField or AbstractVariable
         elif isinstance(key, (AbstractField, AbstractVariable)):
 
             self.mappingFieldsMutators[key] = kwargs
@@ -378,6 +518,20 @@ class Fuzz(object):
                    <netzob.Model.Vocabulary.Symbol.Symbol>`,
                    or :class:`AbstractVariable
                    <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+
+
+        Example of fuzzing of a whole symbol except one field:
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f_data1 = Field(name="data1", domain=int8(2))
+        >>> f_data2 = Field(name="data2", domain=int8(4))
+        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>> fuzz.set(symbol, interval=MutatorInterval.FULL_INTERVAL)
+        >>> fuzz.unset(f_data2)
+        >>> symbol.specialize(fuzz=fuzz)
+        b'D\x04'
+
 
         """
 

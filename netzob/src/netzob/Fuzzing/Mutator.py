@@ -54,6 +54,7 @@ class MutatorMode(Enum):
     """Mutator Fuzzing modes"""
     MUTATE   = 1  #: Fuzzing by mutation of a legitimate value
     GENERATE = 2  #: Fuzzing by generation
+    __repr__ = Enum.__str__
 
 
 class Mutator(metaclass=abc.ABCMeta):
