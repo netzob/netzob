@@ -62,7 +62,7 @@ class TCPClient(AbstractChannel):
     :param remoteIP: The remote IP address to connect to.
     :param remotePort: The remote IP port.
     :param localIP: The local IP address. Default value is the local
-                    IP address corresponding to the interface that
+                    IP address corresponding to the network interface that
                     will be used to send the packet.
     :param localPort: The local IP port. Default value in a random
                     valid integer chosen by the kernel.

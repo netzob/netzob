@@ -73,17 +73,13 @@ class RawIPChannel(AbstractChannel):
 
     :param remoteIP: The remote IP address to connect to.
     :param localIP: The local IP address. Default value is the local
-                    IP address corresponding to the interface that
+                    IP address corresponding to the network interface that
                     will be used to send the packet.
     :param upperProtocol: The protocol following IP in the stack.
                           Default value is :attr:`socket.IPPROTO_TCP` (6).
-    :param interface: The network interface to use. This value is linked with
-                      the local IP address to use (:attr:`localIP` parameter).
-                      Default value is :const:`'eth0'`.
     :type remoteIP: :class:`str`, required
     :type localIP: :class:`str`, optional
     :type upperProtocol: :class:`int`, optional
-    :type interface: :class:`str`, optional
 
 
     The following code shows the use of a :class:`RawIPChannel <netzob.Simulator.Channels.RawIPChannel.RawIPChannel>`
@@ -102,15 +98,13 @@ class RawIPChannel(AbstractChannel):
     def __init__(self,
                  remoteIP,
                  localIP=None,
-                 upperProtocol=socket.IPPROTO_TCP,
-                 interface="eth0"):
+                 upperProtocol=socket.IPPROTO_TCP):
         super(RawIPChannel, self).__init__()
         self.remoteIP = remoteIP
         if localIP is None:
             localIP = NetUtils.getLocalIP(remoteIP)
         self.localIP = localIP
         self.upperProtocol = upperProtocol
-        self.interface = interface
         self.__socket = None
 
         # Header initialization
@@ -325,22 +319,6 @@ class RawIPChannel(AbstractChannel):
         self.__upperProtocol = upperProtocol
 
     @property
-    def interface(self):
-        """Interface such as eth0, lo.
-
-        :type: :class:`str`
-        """
-        return self.__interface
-
-    @interface.setter
-    @typeCheck(str)
-    def interface(self, interface):
-        if interface is None:
-            raise TypeError("Interface cannot be None")
-
-        self.__interface = interface
-
-    @property
     def timeout(self):
         """The default timeout of the channel for opening connection and
         waiting for a message. Default value is 5.0 seconds. To
@@ -368,8 +346,7 @@ class RawIPChannelBuilder(ChannelBuilder):
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(dst_addr="1.2.3.4",
     ...                   src_addr="4.3.2.1",
-    ...                   protocol=socket.IPPROTO_TCP,
-    ...                   interface="eth0")
+    ...                   protocol=socket.IPPROTO_TCP)
     >>> chan = RawIPChannelBuilder().set_map(netinfo.getDict()).build()
     >>> assert isinstance(chan, RawIPChannel)
     """
@@ -385,6 +362,3 @@ class RawIPChannelBuilder(ChannelBuilder):
 
     def set_protocol(self, value):
         self.attrs['upperProtocol'] = value
-
-    def set_interface(self, value):
-        self.attrs['interface'] = value

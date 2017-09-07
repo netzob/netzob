@@ -64,9 +64,6 @@ class IPChannel(AbstractChannel):
                     will be used to send the packet.
     :param upperProtocol: The protocol following the IP header.
                           Default value is socket.IPPROTO_TCP.
-    :param interface: The network interface to use. It is linked with
-                      the local IP address to use (`localIP` parameter).
-                      Default value is 'eth0'.
     :param timeout: The default timeout of the channel for opening
                     connection and waiting for a message. Default value
                     is 5.0 seconds. To specify no timeout, None value is
@@ -74,7 +71,6 @@ class IPChannel(AbstractChannel):
     :type remoteIP: :class:`str`, required
     :type localIP: :class:`str`, optional
     :type upperProtocol: :class:`int`, optional
-    :type interface: :class:`str`, optional
     :type timeout: :class:`float`, optional
 
 
@@ -93,13 +89,11 @@ class IPChannel(AbstractChannel):
     def __init__(self,
                  remoteIP,
                  localIP=None,
-                 upperProtocol=socket.IPPROTO_TCP,
-                 interface="eth0"):
+                 upperProtocol=socket.IPPROTO_TCP):
         super(IPChannel, self).__init__()
         self.remoteIP = remoteIP
         self.localIP = localIP
         self.upperProtocol = upperProtocol
-        self.interface = interface
         self.__socket = None
 
     @staticmethod
@@ -245,22 +239,6 @@ class IPChannel(AbstractChannel):
         self.__upperProtocol = upperProtocol
 
     @property
-    def interface(self):
-        """Interface such as eth0, lo.
-
-        :type: :class:`str`
-        """
-        return self.__interface
-
-    @interface.setter
-    @typeCheck(str)
-    def interface(self, interface):
-        if interface is None:
-            raise TypeError("Interface cannot be None")
-
-        self.__interface = interface
-
-    @property
     def timeout(self):
         """The default timeout of the channel for opening connection and
         waiting for a message. Default value is 5.0 seconds. To
@@ -288,8 +266,7 @@ class IPChannelBuilder(ChannelBuilder):
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(dst_addr="1.2.3.4",
     ...                   src_addr="4.3.2.1",
-    ...                   protocol=socket.IPPROTO_TCP,
-    ...                   interface="eth0")
+    ...                   protocol=socket.IPPROTO_TCP)
     >>> chan = IPChannelBuilder().set_map(netinfo.getDict()).build()
     >>> assert isinstance(chan, IPChannel)
     """
@@ -305,6 +282,3 @@ class IPChannelBuilder(ChannelBuilder):
 
     def set_protocol(self, value):
         self.attrs['upperProtocol'] = value
-
-    def set_interface(self, value):
-        self.attrs['interface'] = value

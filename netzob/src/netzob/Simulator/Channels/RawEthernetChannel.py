@@ -64,12 +64,8 @@ class RawEthernetChannel(AbstractChannel):
 
     :param remoteMac: The remote MAC address to connect to.
     :param localMac: The local MAC address.
-    :param interface: The network interface to use. It is linked with
-                      the local MAC address to use (`localMac` parameter).
-                      Default value is 'lo'.
     :type remoteMac: :class:`str`, required
     :type localMac: :class:`str`, required
-    :type interface: :class:`str`, optional
 
     >>> from binascii import hexlify
     >>> client = RawEthernetChannel("00:01:02:03:04:05", localMac="00:06:07:08:09:10")
@@ -86,15 +82,15 @@ class RawEthernetChannel(AbstractChannel):
     @typeCheck(str, str)
     def __init__(self,
                  remoteMac,
-                 localMac,
-                 interface="lo"):
+                 localMac):
         super(RawEthernetChannel, self).__init__()
         self.remoteMac = remoteMac
         self.localMac = localMac
-        self.interface = interface
         self.__socket = None
 
         self.initHeader()
+
+        #TODO: retrieve the network interface from the local MAC
 
     @staticmethod
     def getBuilder():
@@ -278,19 +274,11 @@ class RawEthernetChannel(AbstractChannel):
 
     @property
     def interface(self):
-        """Interface such as eth0, lo.
+        """Interface such as eth0, lo, determined with the local MAC address.
 
         :type: :class:`str`
         """
         return self.__interface
-
-    @interface.setter
-    @typeCheck(str)
-    def interface(self, interface):
-        if interface is None:
-            raise TypeError("Interface cannot be None")
-
-        self.__interface = interface
 
     @property
     def timeout(self):
@@ -333,6 +321,3 @@ class RawEthernetChannelBuilder(ChannelBuilder):
 
     def set_dst_addr(self, value):
         self.attrs['remoteMac'] = value
-
-    def set_interface(self, value):
-        self.attrs['interface'] = value
