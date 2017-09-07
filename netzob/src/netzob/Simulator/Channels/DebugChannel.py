@@ -63,7 +63,7 @@ class DebugChannel(AbstractChannel):
     The following code shows the use of an DebugChannel channel:
 
     >>> from netzob.all import *
-    >>> client = DebugChannel("stderr")
+    >>> client = DebugChannel("/dev/null")
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> with client:
     ...     client.write(symbol.specialize())
