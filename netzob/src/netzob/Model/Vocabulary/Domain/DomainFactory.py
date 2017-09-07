@@ -43,7 +43,7 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
-from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg, SELF
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
@@ -151,8 +151,14 @@ class DomainFactory(object):
         if isinstance(domain, Agg):
             normalized_children = []
             for child in domain.children:
-                normalized_children.append(DomainFactory.normalizeDomain(child))
-            domain.children = normalized_children
+                if type(child) == type and child == SELF:
+                    normalized_children.append(child)
+                else:
+                    try:
+                        normalized_children.append(DomainFactory.normalizeDomain(child))
+                    except RecursionError as e:
+                        pass
+                domain.children = normalized_children
         else:
             raise TypeError(
                 "Impossible to normalize the provided domain as an aggregate.")

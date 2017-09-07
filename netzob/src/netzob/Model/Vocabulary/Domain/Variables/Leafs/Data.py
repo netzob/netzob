@@ -311,7 +311,7 @@ class Data(AbstractVariableLeaf):
 
         newValue = self.dataType.generate()
 
-        self._logger.debug("Generated value for {}: {}".format(self, newValue))
+        self._logger.debug("Generated value for {}: {}".format(self, newValue.tobytes()))
 
         variableSpecializerPath.memory.memorize(self, newValue)
 

@@ -161,6 +161,8 @@ class GenericPath(object):
 
     @typeCheck(AbstractVariable)
     def removeDataRecursively(self, variable):
+        from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import SELF
+
         self._logger.debug("Remove assigned data to variable (and its children): {}".format(variable))
         if variable is None:
             raise Exception("Variable cannot be None")
@@ -173,7 +175,11 @@ class GenericPath(object):
 
         if hasattr(variable, 'children'):
             for child in variable.children:
-                self.removeDataRecursively(child)
+                # We check if we reach the recursive pattern 'SELF' (in such case, no propagation is needed)
+                if type(child) == type and child == SELF:
+                    pass
+                else:
+                    self.removeDataRecursively(child)
 
     def registerVariablesCallBack(self, targetVariables, currentVariable, parsingCB=True):
         if targetVariables is None:

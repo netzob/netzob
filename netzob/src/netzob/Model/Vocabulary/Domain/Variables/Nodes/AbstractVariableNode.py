@@ -80,9 +80,18 @@ class AbstractVariableNode(AbstractVariable):
     @children.setter
     def children(self, children):
         from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
+        from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import SELF
         self._children = []
-        for child in children:
-            normalizedChild = DomainFactory.normalizeDomain(child)
+        for idx, child in enumerate(children):
+            if type(child) == type and child == SELF:
+
+                # We only support recursivity on the last element (i.e. right recursivity)
+                if idx + 1 != len(children):
+                    raise ValueError("SELF can only be set at the last position of an Agg")
+
+                normalizedChild = child
+            else:
+                normalizedChild = DomainFactory.normalizeDomain(child)
             self._children.append(normalizedChild)
 
     def str_structure(self, deepness=0):
@@ -107,4 +116,7 @@ class AbstractVariableNode(AbstractVariable):
     def field(self, field):
         self.__field = field
         for child in self.children:
-            child.field = field
+            try:
+                child.field = field
+            except RecursionError as e:
+                pass

@@ -48,6 +48,10 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
+# Class used to denote current variable, in order to handle self recursivity
+class SELF(object):
+    pass
+
 
 @NetzobLogger
 class Agg(AbstractVariableNode):
@@ -164,6 +168,60 @@ class Agg(AbstractVariableNode):
     >>> Field.abstract(d, [f])
     (Field, OrderedDict([('Field', b'\x02')]))
 
+
+    **Modeling indirect imbrication**
+
+    >>> from netzob.all import *
+    >>> v0 = Agg(["?", int8(4)])
+    >>> v1 = Agg(["!", int8(3), v0], last_optional=True)
+    >>> v2 = Agg([int8(2), v1], last_optional=True)
+    >>> f = Field(v2)
+    >>>
+    >>> # Test specialization
+    >>> res = f.specialize()
+    >>> res == b'\x02' or res == b'\x02!\x03' or res == b'\x02!\x03?\x04'
+    True
+    >>>
+    >>> # Test parsing
+    >>> (res_object, res_data) = Field.abstract(res, [f])
+    >>> res_object == f
+    True
+
+
+    **Modeling indirect recursion**
+
+    >>> from netzob.all import *    
+    >>> v1 = Agg([])
+    >>> v2 = Agg([int8(interval=(1, 3)), v1], last_optional=True)
+    >>> v1.children = ["!", v2]
+    >>> f = Field(v2)
+    >>> res = f.specialize()
+    >>> res  # doctest: +SKIP
+    b'\x03!\x03!\x03!\x03'
+    >>>
+    >>> # Test parsing
+    >>> (res_object, res_data) = Field.abstract(res, [f])
+    >>> res_object == f  # doctest: +SKIP
+    True
+
+
+    **Modeling direct recursion**
+
+    >>> from netzob.all import *
+    >>> v = Agg([int8(interval=(1, 5)), SELF], last_optional=True)
+    >>> f = Field(v)
+    >>>
+    >>> # Test specialization
+    >>> res = f.specialize()
+    >>> res  # doctest: +SKIP
+    b'\x02\x04\x01'
+    >>>
+    >>> # Test parsing
+    >>> (res_object, res_data) = Field.abstract(res, [f])
+    >>> res_object == f  # doctest: +SKIP
+    True
+
+
     """
 
     def __init__(self, children=None, last_optional=False, svas=None):
@@ -255,6 +313,7 @@ class Agg(AbstractVariableNode):
 
         # initialy, there is a unique path to specialize (the provided one)
         specializingPaths = [originalSpecializingPath]
+        specialize_last_child = True
 
         # we parse all the children with the specializerPaths produced by previous children
         for idx, child in enumerate(self.children):
@@ -267,13 +326,20 @@ class Agg(AbstractVariableNode):
 
                 # Randomely select if we are going to specialize the last child
                 specialize_last_child = random.choice([True, False])
-                if not specialize_last_child:
+                if specialize_last_child:
+                    self._logger.debug("Last child is optional, and this option is taken")
+                else:
+                    self._logger.debug("Last child is optional, and this option is not taken")
                     break
 
             for specializingPath in specializingPaths:
                 self._logger.debug("Specialize {0} with {1}".format(child, specializingPath))
 
-                childSpecializingPaths = child.specialize(specializingPath, fuzz=fuzz)
+                if type(child) == type and child == SELF:
+                    # Nothing to specialize in this case (the recursive specialization is done later)
+                    childSpecializingPaths = [specializingPath]
+                else:
+                    childSpecializingPaths = child.specialize(specializingPath, fuzz=fuzz)
 
                 if len(childSpecializingPaths) > 0:
                     # at least one child path managed to specialize, we save the valid paths it produced
@@ -288,9 +354,15 @@ class Agg(AbstractVariableNode):
             self._logger.debug("Children {0} didn't apply to any of the specializer path we have, we stop Agg specializer".format(child))
             return []  # return no valid paths
 
+        # Retrieve specialized data
         for specializingPath in specializingPaths:
             value = None
-            for child in self.children:
+            for idx, child in enumerate(self.children):
+
+                if type(child) == type and child == SELF:
+                    # Nothing to retrieve in this case (the recursive specialization is done later)
+                    continue
+
                 if specializingPath.hasData(child):
                     child_data = specializingPath.getData(child)
                     if value is None:
@@ -298,8 +370,23 @@ class Agg(AbstractVariableNode):
                     else:
                         value = value + child_data
 
-            self._logger.debug("Generated value for {}: {}".format(self, value))
+            self._logger.debug("Generated value for {}: {}".format(self, value.tobytes()))
+
+
+            # Handle recursive mode
+            if type(child) == type and child == SELF and specialize_last_child:
+                childSpecializingPaths = self.specialize(specializingPath, fuzz=fuzz)
+
+                if len(childSpecializingPaths) > 0:
+                    specializingPath = childSpecializingPaths[0]
+                    if specializingPath.hasData(self):
+                        current_value = specializingPath.getData(self)
+                        value =  value + current_value
+                        self._logger.debug("Cumulative generated value for {}: {}".format(self, value.tobytes()))
+
+            # Final Agg value
             specializingPath.addResult(self, value)
 
+            
         # ok we managed to parse all the children, and it produced some valid specializer paths. We return them
         return specializingPaths

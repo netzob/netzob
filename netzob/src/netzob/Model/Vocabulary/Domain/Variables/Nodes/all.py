@@ -29,5 +29,5 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
-from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg, SELF
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
