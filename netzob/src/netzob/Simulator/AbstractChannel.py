@@ -100,7 +100,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         if self.isOpen:
             raise RuntimeError(
                 "The channel is already open, cannot open it again")
-        self.timeout = timeout
+        self.__timeout = timeout
 
     @abc.abstractmethod
     def close(self):
@@ -179,13 +179,13 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         :param maxValue: the new max value
         :type maxValue: :class:`int`
         """
-        self.writeCounterMax = maxValue
+        self.__writeCounterMax = maxValue
 
     def clearSendLimit(self):
         """Reset the writing counters.
         """
-        self.writeCounter = 0
-        self.writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
+        self.__writeCounter = 0
+        self.__writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 
     def write(self, data, rate=None, duration=None):
         """Write to the communication channel the specified data, either one
@@ -205,10 +205,10 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
 
         """
 
-        if ((self.writeCounterMax > 0) and
-           (self.writeCounter > self.writeCounterMax)):
+        if ((self.__writeCounterMax > 0) and
+           (self.__writeCounter > self.__writeCounterMax)):
             raise Exception("Max write counter reached ({})"
-                            .format(self.writeCounterMax))
+                            .format(self.__writeCounterMax))
 
         rate_text = "unlimited"
         rate_unlimited = True
@@ -216,7 +216,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
             rate_text = "{} ko/s".format(round(rate / 1024, 2))
             rate_unlimited = False
 
-        self.writeCounter += 1
+        self.__writeCounter += 1
         len_data = 0
         if duration is None:
             len_data = self.writePacket(data)
@@ -261,8 +261,8 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         self._isOpened = False
         self.header = None  # A Symbol corresponding to the protocol header
         self.header_presets = {}  # A dict used to parameterize the header Symbol
-        self.writeCounter = 0
-        self.writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
+        self.__writeCounter = 0
+        self.__writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 
     def __enter__(self):
         """Enter the runtime channel context.

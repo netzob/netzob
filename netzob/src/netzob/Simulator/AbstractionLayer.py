@@ -65,16 +65,32 @@ class AbstractionLayer(object):
 
     The AbstractionLayer constructor expects some parameters:
 
-    :param channel: The underlying communication channel (such as IPChannel, UDPClient...).
-    :param symbols: The list of permitted symbols during translation from/to concrete messages.
-    :param memory: A memory used to store variable values during
-                   specialization and abstraction of successive
-                   symbols, especially to handle inter-symbol
-                   relationships. If None, a temporary memory is
+    :param channel: The underlying communication channel (such as IPChannel,
+                    UDPClient...).
+    :param symbols: The list of permitted symbols during translation from/to
+                    concrete messages.
+    :param memory: A memory used to store variable values during specialization
+                   and abstraction of successive symbols, especially to handle
+                   inter-symbol relationships. If None, a locale memory is
                    created by default and used internally.
     :type channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`, required
     :type symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`, required
     :type memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`, optional
+
+
+    The AbstractionLayer class provides the following public variables:
+
+    :var channel: The underlying communication channel (such as IPChannel,
+                  UDPClient...).
+    :var symbols: The list of permitted symbols during translation from/to
+                  concrete messages.
+    :var memory: A memory used to store variable values during specialization
+                 and abstraction of successive symbols, especially to handle
+                 inter-symbol relationships. If None, a locale memory is
+                 created by default and used internally.
+    :vartype channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`
+    :vartype symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`
+    :vartype memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`
 
 
     **Usage example of the abstraction layer**

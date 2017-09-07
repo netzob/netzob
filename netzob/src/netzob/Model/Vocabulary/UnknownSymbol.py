@@ -58,6 +58,13 @@ class UnknownSymbol(Symbol):
     :param message: The raw message that cannot be abstracted into a symbol.
     :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`, optional
 
+
+    The UnknownSymbol class provides the following public variable:
+
+    :var message: The raw message that cannot be abstracted into a symbol.
+    :vartype message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+
+
     >>> from netzob.all import *
     >>> u = UnknownSymbol()
     >>> u.name

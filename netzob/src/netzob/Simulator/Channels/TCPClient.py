@@ -71,6 +71,23 @@ class TCPClient(AbstractChannel):
     :type localIP: :class:`str`, optional
     :type localPort: :class:`int`, optional
 
+
+    Adding to AbstractChannel variables, the TCPClient class provides the
+    following public variables:
+
+    :var remoteIP: The remote IP address to connect to.
+    :var remotePort: The remote IP port.
+    :var localIP: The local IP address. Default value is the local
+                    IP address corresponding to the network interface that
+                    will be used to send the packet.
+    :var localPort: The local IP port. Default value in a random
+                    valid integer chosen by the kernel.
+    :vartype remoteIP: :class:`str`
+    :vartype remotePort: :class:`int`
+    :vartype localIP: :class:`str`
+    :vartype localPort: :class:`int`
+
+
     The following code shows the use of a TCPClient channel:
 
     >>> from netzob.all import *
@@ -262,24 +279,6 @@ class TCPClient(AbstractChannel):
     @typeCheck(int)
     def localPort(self, localPort):
         self.__localPort = localPort
-
-    @property
-    def timeout(self):
-        """The default timeout of the channel for opening connection and
-        waiting for a message. Default value is 5.0 seconds. To
-        specify no timeout, None value is expected.
-
-        :rtype: :class:`float` or None
-        """
-        return self.__timeout
-
-    @timeout.setter
-    @typeCheck((int, float))
-    def timeout(self, timeout):
-        """
-        :type timeout: :class:`float`, optional
-        """
-        self.__timeout = float(timeout)
 
 
 class TCPClientBuilder(ChannelBuilder):

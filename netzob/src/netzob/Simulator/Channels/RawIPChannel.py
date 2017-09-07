@@ -82,6 +82,20 @@ class RawIPChannel(AbstractChannel):
     :type upperProtocol: :class:`int`, optional
 
 
+    Adding to AbstractChannel variables, the RawIPChannel class provides the
+    following public variables:
+
+    :var remoteIP: The remote IP address to connect to.
+    :var localIP: The local IP address. Default value is the local
+                    IP address corresponding to the interface that
+                    will be used to send the packet.
+    :var upperProtocol: The protocol following the IP header.
+                          Default value is socket.IPPROTO_TCP.
+    :vartype remoteIP: :class:`str`
+    :vartype localIP: :class:`str`
+    :vartype upperProtocol: :class:`int`
+
+
     The following code shows the use of a :class:`RawIPChannel <netzob.Simulator.Channels.RawIPChannel.RawIPChannel>`
     channel:
 
@@ -317,24 +331,6 @@ class RawIPChannel(AbstractChannel):
             raise TypeError("Upper protocol cannot be None")
 
         self.__upperProtocol = upperProtocol
-
-    @property
-    def timeout(self):
-        """The default timeout of the channel for opening connection and
-        waiting for a message. Default value is 5.0 seconds. To
-        specify no timeout, None value is expected.
-
-        :rtype: :class:`float` or None
-        """
-        return self.__timeout
-
-    @timeout.setter
-    @typeCheck((int, float))
-    def timeout(self, timeout):
-        """
-        :type timeout: :class:`float`, optional
-        """
-        self.__timeout = float(timeout)
 
 
 class RawIPChannelBuilder(ChannelBuilder):

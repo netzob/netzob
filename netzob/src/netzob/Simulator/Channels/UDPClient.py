@@ -72,6 +72,22 @@ class UDPClient(AbstractChannel):
     :type localPort: :class:`int`, optional
 
 
+    Adding to AbstractChannel variables, the UDPClient class provides the
+    following public variables:
+
+    :var remoteIP: The remote IP address to connect to.
+    :var remotePort: The remote IP port.
+    :var localIP: The local IP address. Default value is the local
+                    IP address corresponding to the network interface that
+                    will be used to send the packet.
+    :var localPort: The local IP port. Default value in a random
+                      valid integer chosen by the kernel.
+    :vartype remoteIP: :class:`str`
+    :vartype remotePort: :class:`int`
+    :vartype localIP: :class:`str`
+    :vartype localPort: :class:`int`
+
+
     The following code shows the use of a UDPClient channel:
 
     >>> from netzob.all import *

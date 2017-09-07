@@ -64,14 +64,23 @@ class IPChannel(AbstractChannel):
                     will be used to send the packet.
     :param upperProtocol: The protocol following the IP header.
                           Default value is socket.IPPROTO_TCP.
-    :param timeout: The default timeout of the channel for opening
-                    connection and waiting for a message. Default value
-                    is 5.0 seconds. To specify no timeout, None value is
-                    expected.
     :type remoteIP: :class:`str`, required
     :type localIP: :class:`str`, optional
     :type upperProtocol: :class:`int`, optional
-    :type timeout: :class:`float`, optional
+
+
+    Adding to AbstractChannel variables, the IPChannel class provides the
+    following public variables:
+
+    :var remoteIP: The remote IP address to connect to.
+    :var localIP: The local IP address. Default value is the local
+                    IP address corresponding to the interface that
+                    will be used to send the packet.
+    :var upperProtocol: The protocol following the IP header.
+                          Default value is socket.IPPROTO_TCP.
+    :vartype remoteIP: :class:`str`
+    :vartype localIP: :class:`str`
+    :vartype upperProtocol: :class:`int`
 
 
     The following code shows the use of an IPChannel channel:
@@ -237,24 +246,6 @@ class IPChannel(AbstractChannel):
             raise TypeError("Upper protocol cannot be None")
 
         self.__upperProtocol = upperProtocol
-
-    @property
-    def timeout(self):
-        """The default timeout of the channel for opening connection and
-        waiting for a message. Default value is 5.0 seconds. To
-        specify no timeout, None value is expected.
-
-        :rtype: :class:`float` or None
-        """
-        return self.__timeout
-
-    @timeout.setter
-    @typeCheck((int, float))
-    def timeout(self, timeout):
-        """
-        :type timeout: :class:`float`, optional
-        """
-        self.__timeout = float(timeout)
 
 
 class IPChannelBuilder(ChannelBuilder):

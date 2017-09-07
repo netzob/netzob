@@ -67,6 +67,19 @@ class RawEthernetChannel(AbstractChannel):
     :type remoteMac: :class:`str`, required
     :type localMac: :class:`str`, required
 
+
+    Adding to AbstractChannel variables, the RawEthernetChannel class provides
+    the following public variables:
+
+    :var remoteMac: The remote MAC address to connect to.
+    :var localMac: The local MAC address.
+    :var interface: The network Interface name such as 'eth0', 'lo', determined
+                    with the local MAC address. Read only variable.
+    :vartype remoteMac: :class:`str`
+    :vartype localMac: :class:`str`
+    :vartype interface: :class:`str`
+
+
     >>> from binascii import hexlify
     >>> client = RawEthernetChannel("00:01:02:03:04:05", localMac="00:06:07:08:09:10")
     >>> client.open()
@@ -279,24 +292,6 @@ class RawEthernetChannel(AbstractChannel):
         :type: :class:`str`
         """
         return self.__interface
-
-    @property
-    def timeout(self):
-        """The default timeout of the channel for opening connection and
-        waiting for a message. Default value is 5.0 seconds. To
-        specify no timeout, None value is expected.
-
-        :rtype: :class:`float` or None
-        """
-        return self.__timeout
-
-    @timeout.setter
-    @typeCheck((int, float))
-    def timeout(self, timeout):
-        """
-        :type timeout: :class:`float`, optional
-        """
-        self.__timeout = float(timeout)
 
 
 class RawEthernetChannelBuilder(ChannelBuilder):

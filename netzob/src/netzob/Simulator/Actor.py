@@ -70,6 +70,21 @@ class Actor(threading.Thread):
     :type initiator: :class:`bool`, optional
 
 
+    The Actor class provides the following public variables:
+
+    :var automata: The automaton the actor will visit.
+    :var abstractionLayer: The underlying abstraction layer used to abstract
+                             and specialize symbols.
+    :var initiator: If True, indicates that the actor initiates the
+                      communication and emits the input symbol.
+                      If False, indicates that the actor waits for another
+                      peer to initiate the connection. Default value is
+                      :const:`True`.
+    :vartype automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
+    :vartype abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
+    :vartype initiator: :class:`bool`
+
+
     **Example with a common automaton for a client and a server**
 
     For instance we can create two very simple network Actors which

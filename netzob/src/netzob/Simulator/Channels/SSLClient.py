@@ -86,6 +86,36 @@ class SSLClient(AbstractChannel):
     :type server_cert_file: :class:`str`, optional
     :type alpn_protocols: :class:`list`, optional
 
+
+    Adding to AbstractChannel variables, the RawIPChannel class provides the
+    following public variables:
+
+    :var remoteIP: The remote IP address to connect to.
+    :var remotePort: The remote IP port.
+    :var localIP: The local IP address. Default value is the local
+                    IP address corresponding to the network interface that
+                    will be used to send the packet.
+    :var localPort: The local IP port. Default value in a random
+                     valid integer chosen by the kernel.
+    :var server_cert_file: The path to a single file in PEM format
+                             containing the certificate as well as any
+                             number of CA certificates needed to
+                             establish the certificate's
+                             authenticity. Default value is None,
+                             meaning that no verification is made on
+                             the certificate given by the peer.
+    :var alpn_protocols: Specify which protocols the socket should
+                           advertise during the SSL/TLS handshake. It
+                           should be a list of strings, like
+                           ['http/1.1', 'spdy/2'], ordered by
+                           preference. Default value is None.
+    :vartype remoteIP: :class:`str`
+    :vartype remotePort: :class:`int`
+    :vartype localIP: :class:`str`
+    :vartype localPort: :class:`int`
+    :vartype server_cert_file: :class:`str`
+    :vartype alpn_protocols: :class:`list`
+
     """
 
     def __init__(self,
@@ -276,24 +306,6 @@ class SSLClient(AbstractChannel):
     @typeCheck(int)
     def localPort(self, localPort):
         self.__localPort = localPort
-
-    @property
-    def timeout(self):
-        """The default timeout of the channel for opening connection and
-        waiting for a message. Default value is 5.0 seconds. To
-        specify no timeout, None value is expected.
-
-        :rtype: :class:`float` or None
-        """
-        return self.__timeout
-
-    @timeout.setter
-    @typeCheck((int, float))
-    def timeout(self, timeout):
-        """
-        :type timeout: :class:`float`, optional
-        """
-        self.__timeout = float(timeout)
 
 
 class SSLClientBuilder(ChannelBuilder):

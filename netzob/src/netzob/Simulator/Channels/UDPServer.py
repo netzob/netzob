@@ -66,6 +66,15 @@ class UDPServer(AbstractChannel):
     :type localPort: :class:`int`, required
 
 
+    Adding to AbstractChannel variables, the UDPClient class provides the
+    following public variables:
+
+    :var localIP: The local IP address.
+    :var localPort: The local IP port.
+    :vartype localIP: :class:`str`
+    :vartype localPort: :class:`int`
+
+
     The following code shows the use of a UDPServer channel:
 
     >>> from netzob.all import *
@@ -209,24 +218,6 @@ class UDPServer(AbstractChannel):
             raise ValueError("ListeningPort must be > 0 and <= 65535")
 
         self.__localPort = localPort
-
-    @property
-    def timeout(self):
-        """The default timeout of the channel for opening connection and
-        waiting for a message. Default value is 5.0 seconds. To
-        specify no timeout, None value is expected.
-
-        :rtype: :class:`float` or None
-        """
-        return self.__timeout
-
-    @timeout.setter
-    @typeCheck((int, float))
-    def timeout(self, timeout):
-        """
-        :type timeout: :class:`float`, optional
-        """
-        self.__timeout = float(timeout)
 
 
 class UDPServerBuilder(ChannelBuilder):
