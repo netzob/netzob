@@ -86,7 +86,7 @@ class IPChannel(AbstractChannel):
     The following code shows the use of an IPChannel channel:
 
     >>> from netzob.all import *
-    >>> client = IPChannel(remoteIP='127.0.0.1')
+    >>> client = IPChannel(remoteIP='127.0.0.1', timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
@@ -98,8 +98,9 @@ class IPChannel(AbstractChannel):
     def __init__(self,
                  remoteIP,
                  localIP=None,
-                 upperProtocol=socket.IPPROTO_TCP):
-        super(IPChannel, self).__init__()
+                 upperProtocol=socket.IPPROTO_TCP,
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        super(IPChannel, self).__init__(timeout=timeout)
         self.remoteIP = remoteIP
         self.localIP = localIP
         self.upperProtocol = upperProtocol

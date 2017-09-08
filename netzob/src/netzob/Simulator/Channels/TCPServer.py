@@ -79,7 +79,7 @@ class TCPServer(AbstractChannel):
 
     >>> from netzob.all import *
     >>> import time
-    >>> server = TCPServer(localIP='127.0.0.1', localPort=9999)
+    >>> server = TCPServer(localIP='127.0.0.1', localPort=9999, timeout=1.)
 
     The following code shows a complete example of a communication
     between a client and a server in TCP:
@@ -93,11 +93,11 @@ class TCPServer(AbstractChannel):
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
     >>> automata = Automata(s0, [symbol])
 
-    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8886)
+    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8886, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8886)
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8886, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
 
@@ -110,8 +110,12 @@ class TCPServer(AbstractChannel):
 
     """
 
-    def __init__(self, localIP, localPort):
-        super(TCPServer, self).__init__()
+    def __init__(self,
+                 localIP,
+                 localPort,
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT
+                 ):
+        super(TCPServer, self).__init__(timeout=timeout)
         self.localIP = localIP
         self.localPort = localPort
         self.__socket = None

@@ -281,7 +281,8 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
 
     ## Internal methods ##
 
-    def __init__(self, _id=None):
+    def __init__(self, _id=None, timeout=ChannelInterface.DEFAULT_TIMEOUT):
+        super().__init__(timeout=timeout)
         self.id = uuid.uuid4() if _id is None else _id
         self._isOpened = False
         self.header = None  # A Symbol corresponding to the protocol header

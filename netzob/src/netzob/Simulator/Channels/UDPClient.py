@@ -92,7 +92,7 @@ class UDPClient(AbstractChannel):
 
     >>> from netzob.all import *
     >>> import time
-    >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999)
+    >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999, timeout=1.)
     >>> client.open()
     >>> client.close()
 
@@ -105,11 +105,11 @@ class UDPClient(AbstractChannel):
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
     >>> automata = Automata(s0, [symbol])
 
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8883)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8883, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8883)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8883, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
 
@@ -127,8 +127,9 @@ class UDPClient(AbstractChannel):
                  remoteIP,
                  remotePort,
                  localIP=None,
-                 localPort=None):
-        super(UDPClient, self).__init__()
+                 localPort=None,
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        super(UDPClient, self).__init__(timeout=timeout)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP

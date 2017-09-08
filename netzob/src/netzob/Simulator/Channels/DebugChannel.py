@@ -77,9 +77,10 @@ class DebugChannel(AbstractChannel):
 
     @typeCheck((str, io.IOBase))
     def __init__(self,
-                 stream  # type: Union[str, io.IOBase]
+                 stream,  # type: Union[str, io.IOBase]
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT
                  ):
-        super(DebugChannel, self).__init__()
+        super(DebugChannel, self).__init__(timeout=timeout)
         self._stream = self.STREAM_MAP.get(stream, stream)
 
     @staticmethod

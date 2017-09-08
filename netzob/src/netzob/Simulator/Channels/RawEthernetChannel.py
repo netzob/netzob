@@ -81,7 +81,9 @@ class RawEthernetChannel(AbstractChannel):
 
 
     >>> from binascii import hexlify
-    >>> client = RawEthernetChannel("00:01:02:03:04:05", localMac="00:06:07:08:09:10")
+    >>> client = RawEthernetChannel("00:01:02:03:04:05",
+    ...                             localMac="00:06:07:08:09:10",
+    ...                             timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("ABC")])
     >>> client.write(symbol.specialize())
@@ -95,8 +97,9 @@ class RawEthernetChannel(AbstractChannel):
     @typeCheck(str, str)
     def __init__(self,
                  remoteMac,
-                 localMac):
-        super(RawEthernetChannel, self).__init__()
+                 localMac,
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        super(RawEthernetChannel, self).__init__(timeout=timeout)
         self.remoteMac = remoteMac
         self.localMac = localMac
         self.__socket = None

@@ -100,7 +100,7 @@ class RawIPChannel(AbstractChannel):
     channel:
 
     >>> from netzob.all import *
-    >>> client = RawIPChannel(remoteIP='127.0.0.1')
+    >>> client = RawIPChannel(remoteIP='127.0.0.1', timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
@@ -112,8 +112,9 @@ class RawIPChannel(AbstractChannel):
     def __init__(self,
                  remoteIP,
                  localIP=None,
-                 upperProtocol=socket.IPPROTO_TCP):
-        super(RawIPChannel, self).__init__()
+                 upperProtocol=socket.IPPROTO_TCP,
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        super(RawIPChannel, self).__init__(timeout=timeout)
         self.remoteIP = remoteIP
         if localIP is None:
             localIP = NetUtils.getLocalIP(remoteIP)

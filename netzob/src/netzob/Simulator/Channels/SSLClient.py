@@ -124,8 +124,9 @@ class SSLClient(AbstractChannel):
                  localIP=None,
                  localPort=None,
                  server_cert_file=None,
-                 alpn_protocols=None):
-        super(SSLClient, self).__init__()
+                 alpn_protocols=None,
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        super(SSLClient, self).__init__(timeout=timeout)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP

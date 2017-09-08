@@ -92,7 +92,7 @@ class TCPClient(AbstractChannel):
 
     >>> from netzob.all import *
     >>> import time
-    >>> client = TCPClient(remoteIP='127.0.0.1', remotePort=9999)
+    >>> client = TCPClient(remoteIP='127.0.0.1', remotePort=9999, timeout=1.)
 
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> s0 = State()
@@ -103,11 +103,11 @@ class TCPClient(AbstractChannel):
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
     >>> automata = Automata(s0, [symbol])
 
-    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8885)
+    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8885, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885)
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
 
@@ -124,8 +124,9 @@ class TCPClient(AbstractChannel):
                  remoteIP,
                  remotePort,
                  localIP=None,
-                 localPort=None):
-        super(TCPClient, self).__init__()
+                 localPort=None,
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        super(TCPClient, self).__init__(timeout=timeout)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP
