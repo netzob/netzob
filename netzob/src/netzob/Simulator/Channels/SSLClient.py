@@ -123,6 +123,10 @@ class SSLClient(AbstractChannel):
 
     """
 
+    ## Class attributes ##
+
+    FAMILIES = ["tcp"]
+
     def __init__(self,
                  remoteIP,
                  remotePort,

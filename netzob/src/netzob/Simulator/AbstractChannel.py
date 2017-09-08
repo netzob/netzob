@@ -46,7 +46,7 @@ import arpreq
 import binascii
 from fcntl import ioctl
 import subprocess
-from typing import Type  # noqa: F401
+from typing import List, Type  # noqa: F401
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -74,7 +74,15 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
     * :meth:`writePacket`
     * :meth:`sendReceive`
 
+    To associate a channel into a group a similar channels, class should
+    declare a list of compatible families. An empty list of families means that
+    the channel is similar to all possible families.
+
     """
+
+    ## Class attributes ##
+
+    FAMILIES = []  # type: List[str]
 
 
     ## Class internal attributes ##

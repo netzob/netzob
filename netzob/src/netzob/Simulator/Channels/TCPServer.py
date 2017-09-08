@@ -114,6 +114,11 @@ class TCPServer(AbstractChannel):
 
     """
 
+    ## Class attributes ##
+
+    FAMILIES = ["tcp"]
+
+
     def __init__(self,
                  localIP,
                  localPort,

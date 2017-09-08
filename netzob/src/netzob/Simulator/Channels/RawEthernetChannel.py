@@ -92,7 +92,10 @@ class RawEthernetChannel(AbstractChannel):
 
     """
 
+    ## Class attributes ##
+
     ETH_P_ALL = 3
+    FAMILIES = ["ethernet"]
 
     @typeCheck(str, str)
     def __init__(self,

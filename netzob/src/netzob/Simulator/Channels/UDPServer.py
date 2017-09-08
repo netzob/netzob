@@ -116,6 +116,10 @@ class UDPServer(AbstractChannel):
 
     """
 
+    ## Class attributes ##
+
+    FAMILIES = ["udp"]
+
     @typeCheck(str, int)
     def __init__(self,
                  localIP,

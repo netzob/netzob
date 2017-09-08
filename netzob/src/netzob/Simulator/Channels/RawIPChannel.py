@@ -108,6 +108,10 @@ class RawIPChannel(AbstractChannel):
 
     """
 
+    ## Class attributes ##
+
+    FAMILIES = ["ip"]
+
     @typeCheck(str, int)
     def __init__(self,
                  remoteIP,
