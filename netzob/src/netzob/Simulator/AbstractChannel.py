@@ -136,6 +136,25 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         """
 
 
+    @property
+    def timeout(self):
+        """The default timeout of the channel for opening connection and
+        waiting for a message. Default value is DEFAULT_TIMEOUT seconds
+        (float). To specify no timeout, None value is expected.
+
+        :rtype: :class:`float` or None
+        """
+        return self.__timeout
+
+    @timeout.setter
+    @typeCheck((int, float))
+    def timeout(self, timeout):
+        """
+        :type timeout: :class:`float`, optional
+        """
+        self.__timeout = float(timeout)
+
+
 class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     """A communication channel is an element allowing to establish a
     connection to or from a remote device.
@@ -310,24 +329,6 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         if _id is None:
             raise TypeError("ID cannot be None")
         self.__id = _id
-
-    @property
-    def timeout(self):
-        """The default timeout of the channel for opening connection and
-        waiting for a message. Default value is DEFAULT_TIMEOUT seconds
-        (float). To specify no timeout, None value is expected.
-
-        :rtype: :class:`float` or None
-        """
-        return self.__timeout
-
-    @timeout.setter
-    @typeCheck((int, float))
-    def timeout(self, timeout):
-        """
-        :type timeout: :class:`float`, optional
-        """
-        self.__timeout = float(timeout)
 
 
 ## Utilitary methods ##
