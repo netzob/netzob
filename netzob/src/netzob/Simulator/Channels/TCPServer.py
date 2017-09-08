@@ -75,38 +75,42 @@ class TCPServer(AbstractChannel):
     :vartype localPort: :class:`int`
 
 
-    The following code shows the use of a TCPServer channel:
+    The following code shows the creation of a TCPServer channel:
 
     >>> from netzob.all import *
-    >>> import time
     >>> server = TCPServer(localIP='127.0.0.1', localPort=9999, timeout=1.)
 
-    The following code shows a complete example of a communication
-    between a client and a server in TCP:
 
-    >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> s0 = State()
-    >>> s1 = State()
-    >>> s2 = State()
-    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
-    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
-    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
-    >>> automata = Automata(s0, [symbol])
+    .. ifconfig:: scope in ('netzob')
 
-    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8886, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
+       The following code shows a complete example of a communication
+       between a client and a server in TCP:
 
-    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8886, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+       >>> from netzob.all import *
+       >>> import time
+       >>> symbol = Symbol([Field("Hello everyone!")])
+       >>> s0 = State()
+       >>> s1 = State()
+       >>> s2 = State()
+       >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
+       >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
+       >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
+       >>> automata = Automata(s0, [symbol])
 
-    >>> server.start()
-    >>> client.start()
+       >>> channel = TCPServer(localIP="127.0.0.1", localPort=8886, timeout=1.)
+       >>> abstractionLayer = AbstractionLayer(channel, [symbol])
+       >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
 
-    >>> time.sleep(1)
-    >>> client.stop()
-    >>> server.stop()
+       >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8886, timeout=1.)
+       >>> abstractionLayer = AbstractionLayer(channel, [symbol])
+       >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+
+       >>> server.start()
+       >>> client.start()
+
+       >>> time.sleep(1)
+       >>> client.stop()
+       >>> server.stop()
 
     """
 

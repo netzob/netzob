@@ -78,37 +78,41 @@ class UDPServer(AbstractChannel):
     The following code shows the use of a UDPServer channel:
 
     >>> from netzob.all import *
-    >>> import time
     >>> server = UDPServer(localIP='127.0.0.1', localPort=9999, timeout=1.)
     >>> server.open()
     >>> server.close()
 
-    The following code shows a complete example of a communication
-    between a client and a server in UDP:
 
-    >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> s0 = State()
-    >>> s1 = State()
-    >>> s2 = State()
-    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
-    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
-    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
-    >>> automata = Automata(s0, [symbol])
-    >>>
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8884, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
-    >>>
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8884, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
-    >>>
-    >>> server.start()
-    >>> client.start()
-    >>>
-    >>> time.sleep(1)
-    >>> client.stop()
-    >>> server.stop()
+    .. ifconfig:: scope in ('netzob')
+
+       The following code shows a complete example of a communication
+       between a client and a server in UDP:
+
+       >>> from netzob.all import *
+       >>> import time
+       >>> symbol = Symbol([Field("Hello everyone!")])
+       >>> s0 = State()
+       >>> s1 = State()
+       >>> s2 = State()
+       >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
+       >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
+       >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
+       >>> automata = Automata(s0, [symbol])
+       >>>
+       >>> channel = UDPServer(localIP="127.0.0.1", localPort=8884, timeout=1.)
+       >>> abstractionLayer = AbstractionLayer(channel, [symbol])
+       >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
+       >>>
+       >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8884, timeout=1.)
+       >>> abstractionLayer = AbstractionLayer(channel, [symbol])
+       >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+       >>>
+       >>> server.start()
+       >>> client.start()
+       >>>
+       >>> time.sleep(1)
+       >>> client.stop()
+       >>> server.stop()
 
     """
 

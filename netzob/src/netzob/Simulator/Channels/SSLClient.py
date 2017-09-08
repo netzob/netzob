@@ -86,8 +86,7 @@ class SSLClient(AbstractChannel):
     :type server_cert_file: :class:`str`, optional
     :type alpn_protocols: :class:`list`, optional
 
-
-    Adding to AbstractChannel variables, the RawIPChannel class provides the
+    Adding to AbstractChannel public variables, the SSLClient class provides the
     following public variables:
 
     :var remoteIP: The remote IP address to connect to.
@@ -115,6 +114,12 @@ class SSLClient(AbstractChannel):
     :vartype localPort: :class:`int`
     :vartype server_cert_file: :class:`str`
     :vartype alpn_protocols: :class:`list`
+
+
+    The following code shows the creation of a SSLClient channel:
+
+    >>> from netzob.all import *
+    >>> server = SSLClient(remoteIP='127.0.0.1', remotePort=9999)
 
     """
 
