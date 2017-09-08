@@ -171,8 +171,7 @@ class Protocol(object):
         if len(symbols) > 0:
             self.definition[Protocol.SYMBOLS] = symbols
         else:
-            raise Exception("List of symbols for {} protocol is empty."
-                            .format(s.name))
+            raise Exception("No symbol defined in '{}'.".format(path))
 
     def _initializeAutomata(self, path):
         """Parse an automata from a ZDL file.
