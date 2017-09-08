@@ -94,6 +94,12 @@ class ChannelBuilder(object):
             self.set(key, value)
         return self
 
+    def set_timeout(self, value):
+        """
+        Default setter of timeout attribute
+        """
+        self.attrs['timeout'] = value
+
     def build(self):
         """
         Generate the final object instance

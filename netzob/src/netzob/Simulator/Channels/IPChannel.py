@@ -109,14 +109,13 @@ class IPChannel(AbstractChannel):
     def getBuilder():
         return IPChannelBuilder
 
-    def open(self, timeout=5.):
+    def open(self, timeout=None):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
 
         :param timeout: The default timeout of the channel for opening
                         connection and waiting for a message. Default value
-                        is 5.0 seconds. To specify no timeout, None value is
-                        expected.
+                        is blocking (None).
         :type timeout: :class:`float`, optional
         :raise: RuntimeError if the channel is already opened
 
@@ -127,7 +126,7 @@ class IPChannel(AbstractChannel):
         self.__socket = socket.socket(socket.AF_INET,
                                       socket.SOCK_RAW,
                                       self.upperProtocol)
-        self.__socket.settimeout(timeout)
+        self.__socket.settimeout(timeout or self.timeout)
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2**30)
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
         self.__socket.bind((self.localIP, self.upperProtocol))

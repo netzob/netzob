@@ -124,13 +124,12 @@ class UDPServer(AbstractChannel):
     def getBuilder():
         return UDPServerBuilder
 
-    def open(self, timeout=5.):
+    def open(self, timeout=None):
         """Open the communication channel. This will open a UDP socket
         that listen for incoming messages.
         :param timeout: The default timeout of the channel for opening
                         connection and waiting for a message. Default value
-                        is 5.0 seconds. To specify no timeout, None value is
-                        expected.
+                        is blocking (None).
         :type timeout: :class:`float`, optional
         :raise: RuntimeError if the channel is already opened
         """
@@ -140,7 +139,7 @@ class UDPServer(AbstractChannel):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(timeout)
+        self.__socket.settimeout(self.timeout)
         self.__socket.bind((self.localIP, self.localPort))
         self.isOpen = True
 

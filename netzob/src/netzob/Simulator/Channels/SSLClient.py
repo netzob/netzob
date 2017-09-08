@@ -139,13 +139,12 @@ class SSLClient(AbstractChannel):
     def getBuilder():
         return SSLClientBuilder
 
-    def open(self, timeout=5.):
+    def open(self, timeout=None):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
         :param timeout: The default timeout of the channel for opening
                         connection and waiting for a message. Default value
-                        is 5.0 seconds. To specify no timeout, None value is
-                        expected.
+                        is blocking (None).
         :type timeout: :class:`float`, optional
         :raise: RuntimeError if the channel is already opened
         """
@@ -155,7 +154,7 @@ class SSLClient(AbstractChannel):
         self.__socket = socket.socket()
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(timeout)
+        self.__socket.settimeout(timeout or self.timeout)
 
         if self.localIP is not None and self.localPort is not None:
             self.__socket.bind((self.localIP, self.localPort))
@@ -175,7 +174,7 @@ class SSLClient(AbstractChannel):
 
         # lets wrap the socket to create the ssl tunnel
         self.__ssl_socket = context.wrap_socket(self.__socket)
-        self.__ssl_socket.settimeout(timeout)
+        self.__ssl_socket.settimeout(timeout or self.timeout)
 
         self._logger.debug("Connect to the SSL server to {0}:{1}".format(
             self.remoteIP, self.remotePort))

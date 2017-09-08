@@ -119,14 +119,13 @@ class RawEthernetChannel(AbstractChannel):
                                                             eth_type,
                                                             eth_payload])
 
-    def open(self, timeout=5.):
+    def open(self, timeout=None):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
 
         :param timeout: The default timeout of the channel for opening
                         connection and waiting for a message. Default value
-                        is 5.0 seconds. To specify no timeout, None value is
-                        expected.
+                        is blocking (None).
         :type timeout: :class:`float`, optional
         :raise: RuntimeError if the channel is already opened
 
@@ -138,7 +137,7 @@ class RawEthernetChannel(AbstractChannel):
             socket.AF_PACKET,
             socket.SOCK_RAW,
             socket.htons(RawEthernetChannel.ETH_P_ALL))
-        self.__socket.settimeout(timeout)
+        self.__socket.settimeout(timeout or self.timeout)
         self.__socket.bind((self.interface, RawEthernetChannel.ETH_P_ALL))
         self.isOpen = True
 

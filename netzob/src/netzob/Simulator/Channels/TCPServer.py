@@ -121,13 +121,12 @@ class TCPServer(AbstractChannel):
     def getBuilder():
         return TCPServerBuilder
 
-    def open(self, timeout=5.):
+    def open(self, timeout=None):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
         :param timeout: The default timeout of the channel for opening
                         connection and waiting for a message. Default value
-                        is 5.0 seconds. To specify no timeout, None value is
-                        expected.
+                        is blocking (None).
         :type timeout: :class:`float`, optional
         :raise: RuntimeError if the channel is already opened
         """
@@ -136,7 +135,7 @@ class TCPServer(AbstractChannel):
 
         self.__socket = socket.socket()
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Reuse the connection
-        self.__socket.settimeout(timeout)
+        self.__socket.settimeout(timeout or self.timeout)
         self._logger.debug("Bind the TCP server to {0}:{1}".format(
             self.localIP, self.localPort))
         self.__socket.bind((self.localIP, self.localPort))
