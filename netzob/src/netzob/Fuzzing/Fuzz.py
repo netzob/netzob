@@ -83,8 +83,21 @@ class Fuzz(object):
 
     The Fuzz constructor expects some parameters:
 
-    :param counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be use to represent a ratio in percent).
-    :type counterMax: :class:`int` or :class:`float`, defaults to :attr:`COUNTER_MAX_DEFAULT`
+    :param counterMax: The max number of mutations to produce (a :class:`int`
+                       should be used to represent an absolute value, whereas a
+                       :class:`float` should be use to represent a ratio in
+                       percent).
+    :type counterMax: :class:`int` or :class:`float`, defaults to
+                      :attr:`COUNTER_MAX_DEFAULT`
+
+
+    The Fuzz class provides the following public variables:
+
+    :var counterMax: The max number of mutations to produce (a :class:`int`
+                       should be used to represent an absolute value, whereas a
+                       :class:`float` should be use to represent a ratio in
+                       percent).
+    :vartype counterMax: :class:`int` or :class:`float`
 
     """
 
@@ -113,7 +126,8 @@ class Fuzz(object):
         # Initialize variables from parameters
         self.counterMax = counterMax
 
-        # Initialize mapping between Types and default Mutators with default configuration
+        # Initialize mapping between Types and default Mutators with default
+        # configuration
         Fuzz._initializeMappings()
         self.mappingTypesMutators = Fuzz.mappingTypesMutators
 
@@ -157,7 +171,8 @@ class Fuzz(object):
 
                            Defaults value is :attr:`Mutator.COUNTER_MAX_DEFAULT` = 65536.
 
-        :param kwargs: Some context dependent parameters (see below).
+        :param kwargs: Some context dependent parameters (see below)
+                       (optional).
         :type key: :class:`Field
                    <netzob.Model.Vocabulary.Field.Field>`,
                    or :class:`Symbol
