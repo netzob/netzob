@@ -117,7 +117,7 @@ class Memory(object):
         :param variable: The variable for which we want to memorize a value.
         :param value: The value to memorize.
         :type variable: :class:`Variable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
-        :type value: :class:`bitarray <bitarray.bitarray>`, required
+        :type value: :class:`bitarray <bitarray>`, required
 
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")
@@ -158,7 +158,7 @@ class Memory(object):
         :param variable: The variable for which we want to retrieve the value in memory.
         :type variable: :class:`Variable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
         :return: The value in memory.
-        :rtype: :class:`bitarray <bitarray.bitarray>`
+        :rtype: :class:`bitarray <bitarray>`
 
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")

@@ -144,7 +144,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     **Internal representation of Type objects**
 
     Regarding the internal representation of variables, the Python
-    module :class:`bitarray.bitarray` is used, thus allowing to
+    module :class:`bitarray` is used, thus allowing to
     specify objects at the bit granularity. As an example, the
     following code show how to access the internal representation of
     the value of an Integer object:
@@ -549,7 +549,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """The current value of the instance. This value is represented
         under the bitarray format.
 
-        :type: :class:`bitarray.bitarray`
+        :type: :class:`bitarray`
         """
 
         return self.__value

@@ -324,7 +324,7 @@ class Data(AbstractVariableLeaf):
         Property (getter/setter).
         The current value of the data.
 
-        :type: :class:`bitarray.bitarray`
+        :type: :class:`bitarray`
         """
         if self.__currentValue is not None:
             return self.__currentValue.copy()

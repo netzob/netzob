@@ -136,7 +136,7 @@ class Mutator(metaclass=abc.ABCMeta):
         If the currentCounter reached counterMax, :meth:`mutate` returns None.
 
         :param data: The data to mutate.
-        :type data: :class:`bitarray.bitarray`
+        :type data: :class:`bitarray`
         :return: a generated content represented with bytes
         :rtype: :class:`bytes`
 

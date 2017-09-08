@@ -159,6 +159,23 @@ class Fuzz(object):
                           pseudo-random or deterministic
                           values.
 
+                          Available generators from :class:`randomstate` module are:
+
+                          * Generator.NG_mt19937 = 'mt19937'
+                          * Generator.NG_mlfg_1279_861 = 'mlfg_1279_861'
+                          * Generator.NG_mrg32k3a = 'mrg32k3a'
+                          * Generator.NG_pcg32 = 'pcg32'
+                          * Generator.NG_pcg64 = 'pcg64'
+                          * Generator.NG_xorshift128 = 'xorshift128'
+                          * Generator.NG_xoroshiro128plus = 'xoroshiro128plus'
+                          * Generator.NG_xorshift1024 = 'xorshift1024'
+                          * Generator.NG_dsfmt = 'dsfmt'
+
+                          A deterministic is also available
+                          (DeterministGenerator.NG_determinist), and
+                          may be used in case where a domain has an
+                          interval.
+
                           Default generator is :attr:`Generator.NG_mt19937` from the :class:`randomstate` module.
 
         :param seed: An integer used to initialize the underlying
