@@ -103,7 +103,7 @@ class AutomataMutator(Mutator):
     >>> assert isinstance(mutatedAutomata, Automata)  # doctest: +SKIP
 
     >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> visitor = Actor(automata=mutatedAutomata, initiator=True, abstractionLayer=abstractionLayer)  # doctest: +SKIP
 

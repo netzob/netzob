@@ -119,11 +119,11 @@ class Actor(threading.Thread):
     >>> automata = Automata(s0, symbolList)
     >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> alice = Actor(automata = automata, abstractionLayer=abstractionLayer, initiator = False)
     >>>
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> bob = Actor(automata = automata, abstractionLayer=abstractionLayer)
     >>>
@@ -182,12 +182,12 @@ class Actor(threading.Thread):
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
     >>> # Create Bob actor (a client)
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> bob = Actor(automata = bob_automata, abstractionLayer=abstractionLayer)
     >>>
     >>> # Create Alice actor (a server)
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> alice = Actor(automata = alice_automata, abstractionLayer=abstractionLayer, initiator = False)
     >>>
@@ -238,11 +238,11 @@ class Actor(threading.Thread):
     >>> s1.cbk_pickNextTransition = cbk_function
     >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> alice = Actor(automata = automata, abstractionLayer=abstractionLayer, initiator = False)
     >>>
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> bob = Actor(automata = automata, abstractionLayer=abstractionLayer)
     >>>
@@ -295,11 +295,11 @@ class Actor(threading.Thread):
     >>> mainTransition.cbk_pickOutputSymbol = cbk_function
     >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> alice = Actor(automata = automata, abstractionLayer=abstractionLayer, initiator = False)
     >>>
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> bob = Actor(automata = automata, abstractionLayer=abstractionLayer)
     >>>

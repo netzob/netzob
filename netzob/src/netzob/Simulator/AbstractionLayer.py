@@ -101,10 +101,10 @@ class AbstractionLayer(object):
 
     >>> from netzob.all import *
     >>> symbol = Symbol([Field(b"Hello Kurt !")], name = "Symbol_Hello")
-    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889)
+    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889, timeout=1.)
     >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol])
     >>> abstractionLayerIn.openChannel()
-    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889)
+    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889, timeout=1.)
     >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbol])
     >>> abstractionLayerOut.openChannel()
     >>> abstractionLayerOut.writeSymbol(symbol)
@@ -125,10 +125,10 @@ class AbstractionLayer(object):
     >>> symbolflow = Symbol([Field(b"Hello Kurt !Whats up ?")], name = "Symbol Flow")
     >>> symbol1 = Symbol([Field(b"Hello Kurt !")], name = "Symbol_Hello")
     >>> symbol2 = Symbol([Field(b"Whats up ?")], name = "Symbol_WUP")
-    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889)
+    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889, timeout=1.)
     >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol1, symbol2])
     >>> abstractionLayerIn.openChannel()
-    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889)
+    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889, timeout=1.)
     >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbolflow])
     >>> abstractionLayerOut.openChannel()
     >>> abstractionLayerOut.writeSymbol(symbolflow)
@@ -157,10 +157,10 @@ class AbstractionLayer(object):
     >>> symbol = Symbol(fields=[f7, f8, f9], name="Symbol_Hello")
     >>>
     >>> # Creation of channels with dedicated abstraction layer
-    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889)
+    >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889, timeout=1.)
     >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol], memory1)
     >>> abstractionLayerIn.openChannel()
-    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889)
+    >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889, timeout=1.)
     >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbol], memory1)
     >>> abstractionLayerOut.openChannel()
     >>>
