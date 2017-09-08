@@ -108,34 +108,37 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     :param value: The current value of the type instance.
     :param size: The size in bits that this value takes.
     :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_*. If None, the value is the default one.
+
+      The following unit sizes are available:
+
+      * UnitSize.SIZE_1
+      * UnitSize.SIZE_4
+      * UnitSize.SIZE_8 (default value)
+      * UnitSize.SIZE_16
+      * UnitSize.SIZE_24
+      * UnitSize.SIZE_32
+      * UnitSize.SIZE_64
+
     :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one.
+
+      The following endianness are available:
+
+      * Endianness.BIG (default value)
+      * Endianness.LITTLE
+
     :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. If None, the value is the default one.
+
+      The following signs are available:
+
+      * Sign.SIGNED (default value)
+      * Sign.UNSIGNED
+
     :type typeName: :class:`str`, optional
-    :type value: :class:`bitarray.bitarray`, required
+    :type value: :class:`bitarray`, required
     :type size: a tuple with the min and the max size specified as :class:`int`, optional
     :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
     :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
-    :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign`, optional
-
-    The following unit sizes are available:
-
-    * UnitSize.SIZE_1
-    * UnitSize.SIZE_4
-    * UnitSize.SIZE_8 (default value)
-    * UnitSize.SIZE_16
-    * UnitSize.SIZE_24
-    * UnitSize.SIZE_32
-    * UnitSize.SIZE_64
-
-    The following endianness are available:
-
-    * Endianness.BIG (default value)
-    * Endianness.LITTLE
-
-    The following signs are available:
-
-    * Sign.SIGNED (default value)
-    * Sign.UNSIGNED
+    :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
 
 
     **Internal representation of Type objects**
@@ -348,7 +351,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                          Sign.SIGNED or
                          Sign.UNSIGNED. If None, the
                          value is the default one (Sign.SIGNED).
-        :type typeClass: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, required
+        :type typeClass: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`, required
         :type dst_unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
         :type dst_endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
         :type dst_sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
@@ -395,19 +398,20 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     def generate(self, generationStrategy=None):
         """Generates a random data that respects the current data type.
-        This is the minimal generation strategy, some types extends this.
+
+        :return: The value produced.
+        :rtype: :class:`bitarray`
+
 
         >>> from netzob.all import *
         >>> a = String(nbChars=20)
         >>> l = a.generate()
         >>> len(l)
         160
-
         >>> a = HexaString(nbBytes=20)
         >>> l = a.generate()
         >>> len(l)
         160
-
         >>> a = HexaString(b"aabbccdd")
         >>> a.generate()
         bitarray('10101010101110111100110011011101')

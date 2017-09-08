@@ -52,7 +52,7 @@ class MD5(AbstractHash):
     The constructor expects some parameters:
 
     :param targets: The targeted fields of the relationship.
-    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
+    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`, required
 
     The following example shows how to create a hash relation with
     another field:

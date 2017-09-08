@@ -80,7 +80,7 @@ class IPv4(AbstractType):
                Instead of a tuple, an integer can be used to represent both min and max value.
     :var network: A constraint over the network the parsed data belongs to this network or not.
     :vartype typeName: :class:`str`
-    :vartype value: :class:`bitarray.bitarray`
+    :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype network: :class:`str` or :class:`netaddr.IPNetwork`
 
@@ -98,14 +98,11 @@ class IPv4(AbstractType):
 
        >>> f1 = Field("IP=", name="magic")
        >>> f2 = Field(IPv4(), name="ip4")
-
        >>> raw_data = ip.value.tobytes()
        >>> Symbol.abstract(raw_data, [f2])
        (ip4, OrderedDict([('ip4', b'\xc0\xa8\x00\n')]))
        >>> raw_data = f1.specialize() + raw_data
        >>> Symbol.abstract(raw_data, [f1, f2])  # doctest: +SKIP
-
-
        >>> s = Symbol(fields=[f1,f2])
        >>> msgs = [RawMessage(s.specialize()) for x in range(10)]
        >>> len(msgs)
@@ -115,6 +112,7 @@ class IPv4(AbstractType):
     of IP addresses, through the `network=` parameter, as shown on the
     following example:
 
+    >>> from netzob.all import *
     >>> ip = IPv4(network="10.10.10.0/24")
     >>> len(ip.generate().tobytes())
     4

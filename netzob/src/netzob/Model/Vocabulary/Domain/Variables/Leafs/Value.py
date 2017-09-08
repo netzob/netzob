@@ -76,13 +76,9 @@ class Value(AbstractRelationVariableLeaf):
 
     The Value class provides the following public variables:
 
-    :var factor: Defines the multiplication factor to apply on the targeted length.
-    :var offset: Defines the offset to apply on the computed length.
     :var operation: Defines the operation to be performed on the found value.
                     This operation takes the form of a python function that accepts
                     a single parameter of BitArray type and returns a BitArray.
-    :vartype factor: :type: :class:`float`
-    :vartype offset: :type: :class:`int`
     :vartype operation: :class:`Callable <collections.abc.Callable>`
 
 
@@ -139,6 +135,7 @@ class Value(AbstractRelationVariableLeaf):
     The following example shows the specialization process of a Value
     field whose target is a variable:
 
+    >>> from netzob.all import *
     >>> d = Data(String("john"))
     >>> f1 = Field(domain=d, name="f1")
     >>> f2 = Field(String(";"), name="f2")
@@ -154,6 +151,7 @@ class Value(AbstractRelationVariableLeaf):
     The following examples show the specialization process of Value
     objects:
 
+    >>> from netzob.all import *
     >>> f1 = Field(String("john"), name="f1")
     >>> f2 = Field(String(";"), name="f2")
     >>> f3 = Field(Value(f1), name="f3")
@@ -162,6 +160,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f.specialize()
     b'john;john!'
 
+    >>> from netzob.all import *
     >>> f3 = Field(String("john"), name="f3")
     >>> f2 = Field(String(";"), name="f2")
     >>> f1 = Field(Value(f3), name="f1")
@@ -180,6 +179,7 @@ class Value(AbstractRelationVariableLeaf):
     bitarray object of the targeted field value. The ``cbk`` function
     returns a bitarray object.
 
+    >>> from netzob.all import *
     >>> def cbk(data):
     ...    ret = data.copy()
     ...    ret.reverse()
@@ -275,43 +275,6 @@ class Value(AbstractRelationVariableLeaf):
     def __str__(self):
         """The str method."""
         return "Value({0})".format(str(self.targets[0].name))
-
-    @property
-    def factor(self):
-        """
-        Property (getter/setter).
-        Defines the multiplication factor to apply on the targeted length
-        (in bits).
-
-        :type: :class:`float`
-        """
-        return self.__factor
-
-    @factor.setter
-    @typeCheck(float)
-    def factor(self, factor):
-        if factor is None:
-            raise TypeError("Factor cannot be None, use 1.0 for the identity.")
-        self.__factor = factor
-
-    @property
-    def offset(self):
-        """
-        Property (getter/setter).
-        Defines the offset to apply on the computed length.
-        computed size = (factor*size(targetField)+offset)
-
-        :type: :class:`int`
-        """
-        return self.__offset
-
-    @offset.setter
-    @typeCheck(int)
-    def offset(self, offset):
-        if offset is None:
-            raise TypeError(
-                "Offset cannot be None, use 0 if no offset should be applied.")
-        self.__offset = offset
 
     @property
     def operation(self):

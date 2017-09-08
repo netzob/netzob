@@ -53,7 +53,7 @@ class CRC16(AbstractChecksum):
     The constructor expects some parameters:
 
     :param targets: The targeted fields of the relationship.
-    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
+    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`, required
 
 
     The following example shows how to create a checksum relationship

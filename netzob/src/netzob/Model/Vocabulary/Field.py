@@ -75,7 +75,7 @@ class Field(AbstractField):
                           internally to help for the computation
                           of the value of another field, but does
                           not directly produce data.
-    :type domain: a :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`, optional
+    :type domain: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`, optional
     :type name: :class:`str`, optional
     :type isPseudoField: :class:`bool`, optional
 
@@ -141,6 +141,7 @@ class Field(AbstractField):
     express the same field content (i.e. an Integer with a constant
     value of 10):
 
+    >>> from netzob.all import *
     >>> f = Field(Data(Integer(10)))
     >>> f = Field(Integer(10))
     >>> f = Field(10)
@@ -160,6 +161,7 @@ class Field(AbstractField):
        and `20`, 2) a repetition of the string `a`, and 3) an aggregate
        (or concatenation) of the strings `aa` and `bb`:
 
+       >>> from netzob.all import *
        >>> f = Field(Alt([10, 20]))
        >>> f = Field(Repeat("a", nbRepeat=(4,8)))
        >>> f = Field(Agg(["aa", "bb"]))
@@ -213,6 +215,7 @@ class Field(AbstractField):
        :class:`Base64EncodingFunction <netzob.Model.Vocabulary.Functions.EncodingFunctions.Base64EncodingFunction.Base64EncodingFunction>`
        function to automatically decode base64 strings in the `f1` field:
 
+       >>> from netzob.all import *
        >>> m1 = "hello YWxs"
        >>> m2 = "hello bXkgbG9yZA=="
        >>> m3 = "hello d29ybGQ="

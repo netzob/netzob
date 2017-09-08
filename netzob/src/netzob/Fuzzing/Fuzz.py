@@ -531,7 +531,7 @@ class Fuzz(object):
                    <netzob.Model.Vocabulary.Field.Field>`,
                    or :class:`Symbol
                    <netzob.Model.Vocabulary.Symbol.Symbol>`,
-                   or :class:`AbstractVariable
+                   or :class:`Variable
                    <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
 

@@ -93,6 +93,7 @@ class Symbol(AbstractField):
     The Symbol class may be used to model a protocol from scratch, by
     specifying its structure in terms of fields:
 
+    >>> from netzob.all import *
     >>> f0 = Field("aaaa")
     >>> f1 = Field(" # ")
     >>> f2 = Field("bbbbbb")
@@ -156,6 +157,7 @@ class Symbol(AbstractField):
     associated symbol through the
     :meth:`~netzob.Model.Vocabulary.Symbol.abstract` method:
 
+    >>> from netzob.all import *
     >>> f0 = Field("aaaa")
     >>> f1 = Field(" # ")
     >>> f2 = Field("bbbbbb")
@@ -270,6 +272,7 @@ class Symbol(AbstractField):
         header is made of one named field containing a destination
         port, and a named field containing a payload:
 
+        >>> from netzob.all import *
         >>> f_dport = Field(name="udp.dport", domain=Integer(unitSize=UnitSize.SIZE_8))
         >>> f_payload = Field(name="udp.payload", domain=Raw(nbBytes=2))
         >>> symbol_udp = Symbol(name="udp", fields=[f_dport, f_payload])
@@ -278,18 +281,21 @@ class Symbol(AbstractField):
         parameterized **values** during specialization of the fields
         ``udp_dport`` and ``udp_payload``:
 
+        >>> from netzob.all import *
         >>> presets = {}
         >>> presets["udp.dport"] = 11              # udp.dport expects an int or an Integer
         >>> presets["udp.payload"] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
         >>> symbol_udp.specialize(presets=presets)
         b'\x0b\xaa\xbb'
 
+        >>> from netzob.all import *
         >>> presets = {}
         >>> presets["udp.dport"] = Integer(11)        # udp.dport expects an int or an Integer
         >>> presets["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
         >>> symbol_udp.specialize(presets=presets)
         b'\x0b\xaa\xbb'
 
+        >>> from netzob.all import *
         >>> presets = {}
         >>> presets["udp.dport"] = bitarray('00001011', endian='big')
         >>> presets["udp.payload"] = bitarray('1010101010111011', endian='big')
@@ -305,12 +311,14 @@ class Symbol(AbstractField):
         parameterized **keys** during specialization of the fields
         ``udp_dport`` and ``udp_payload``:
 
+        >>> from netzob.all import *
         >>> presets = {}
         >>> presets[f_dport] = 11
         >>> presets[f_payload] = b"\xaa\xbb"
         >>> symbol_udp.specialize(presets=presets)
         b'\x0b\xaa\xbb'
 
+        >>> from netzob.all import *
         >>> presets = {}
         >>> presets["udp.dport"] = 11
         >>> presets["udp.payload"] = b"\xaa\xbb"
@@ -375,6 +383,8 @@ class Symbol(AbstractField):
                      purpose.
         :type presets: :class:`dict`, optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
+        :return: The number of unique values the symbol specialization can produce.
+        :rtype: a :class:`int`
 
         >>> # Symbol definition
         >>> from netzob.all import *

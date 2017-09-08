@@ -72,8 +72,8 @@ class Data(AbstractVariableLeaf):
     :param svas: The SVAS strategy defining how the Data value is
                  used during abstraction and specialization process.
                  The default strategy is SVAS.EPHEMERAL.
-    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`, required
-    :type originalValue: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
+    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`, required
+    :type originalValue: :class:`bitarray`, optional
     :type name: :class:`str`, optional
     :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
@@ -82,7 +82,7 @@ class Data(AbstractVariableLeaf):
 
     :var currentValue: The current value of the data.
     :var dataType: The type of the data.
-    :vartype currentValue: :class:`bitarray.bitarray`
+    :vartype currentValue: :class:`bitarray`
     :vartype dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
 
 

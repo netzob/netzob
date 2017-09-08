@@ -55,7 +55,7 @@ class HMAC_MD5(AbstractHMAC):
 
     :param targets: The targeted fields of the relationship.
     :param key: The cryptographic key used in the hmac computation.
-    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
+    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`, required
     :type key: :class:`bytes`, required
 
     The following example shows how to create a HMAC relation with

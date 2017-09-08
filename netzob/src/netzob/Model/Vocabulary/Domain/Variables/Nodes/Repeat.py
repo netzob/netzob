@@ -63,13 +63,13 @@ class Repeat(AbstractVariableNode):
     :param delimiter: The delimiter used to separate the repeated element.
     :param svas: The SVAS strategy defining how the Alternate
                  behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
-    :type child: :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type nbRepeat: an :class:`int` or a :class:`tuple` of :class:`int` or
                     a Python variable containing an :class:`int` or a
                     :class:`Field
                     <netzob.Model.Vocabulary.Field.Field>` or a
                     :class:`func` method, optional
-    :type delimiter: :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray>`, optional
+    :type delimiter: :class:`bitarray`, optional
     :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
@@ -117,6 +117,7 @@ class Repeat(AbstractVariableNode):
     We can specify a delimiter between each repeated element, as
     depicted in the following example:
 
+    >>> from netzob.all import *
     >>> delimiter = bitarray(endian='big')
     >>> delimiter.frombytes(b"-")
     >>> f = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=(2, 4),
@@ -130,6 +131,7 @@ class Repeat(AbstractVariableNode):
     The following example shows how to create a Repeat variable whose
     number of repetitions is limited by an integer:
 
+    >>> from netzob.all import *
     >>> f1 = Field(Repeat(String("john"), nbRepeat=3))
 
 
@@ -138,6 +140,7 @@ class Repeat(AbstractVariableNode):
     The following example shows how to create a Repeat variable whose
     number of repetitions is limited by an interval of integers:
 
+    >>> from netzob.all import *
     >>> f1 = Field(Repeat(String("john"), nbRepeat=(2,5)))
 
 
@@ -147,6 +150,7 @@ class Repeat(AbstractVariableNode):
     number of repetitions is limited by a Python integer
     variable. Such variable is typically managed by the calling script:
 
+    >>> from netzob.all import *
     >>> var = 3
     >>> f1 = Field(Repeat(String("john"), nbRepeat=var))
 
@@ -156,6 +160,7 @@ class Repeat(AbstractVariableNode):
     The following example shows how to create a Repeat variable whose
     number of repetitions is limited by the value of another field:
 
+    >>> from netzob.all import *
     >>> f_end = Field(Integer(interval=(2, 5)))
     >>> f1 = Field(Repeat(String("john"), nbRepeat=f_end)) # doctest: +SKIP
 
@@ -205,11 +210,9 @@ class Repeat(AbstractVariableNode):
        >>> f1 = Field(Repeat(String("john"), nbRepeat=(0,3)), name="f1")
        >>> f2 = Field(String("kurt"), name="f2")
        >>> s = Symbol([f1, f2])
-
        >>> data = "johnkurt"
        >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
        (Symbol, OrderedDict([('f1', b'john'), ('f2', b'kurt')]))
-
        >>> data = "kurt"
        >>> Symbol.abstract(data, [s])
        (Symbol, OrderedDict([('f1', b''), ('f2', b'kurt')]))
@@ -224,7 +227,6 @@ class Repeat(AbstractVariableNode):
        >>> s = Symbol([f1])
        >>> s.specialize()
        b'johnjohn'
-
        >>> from netzob.all import *
        >>> delimiter = bitarray(endian='big')
        >>> delimiter.frombytes(b";")

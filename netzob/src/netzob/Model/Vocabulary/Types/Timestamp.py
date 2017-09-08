@@ -90,7 +90,7 @@ class Timestamp(AbstractType):
                   milliseconds, nanoseconds). The default value is
                   UNITY_SECOND.
     :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). The default value is UnitSize.SIZE_32.
-    :type value: :class:`bitarray.bitarray` or :class:`int`, optional
+    :type value: :class:`bitarray` or :class:`int`, optional
     :type epoch: :class:`Epoch <netzob.Model.Vocabulary.Types.Timestamp.Epoch`, optional
     :type unity: :class:`Unity <netzob.Model.Vocabulary.Types.Timestamp.Unity`, optional
     :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
@@ -109,7 +109,7 @@ class Timestamp(AbstractType):
     :var unity: This specifies the unity of the timestamp (seconds,
                 milliseconds, nanoseconds).
     :vartype typeName: :class:`str`
-    :vartype value: :class:`bitarray.bitarray`
+    :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
     :vartype epoch: :class:`Epoch <netzob.Model.Vocabulary.Types.Timestamp.Epoch`

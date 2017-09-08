@@ -83,7 +83,7 @@ class Padding(AbstractRelationVariableLeaf):
     :param name: The name of the variable. If None, the name
                  will be generated.
     :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
-    :type data: a :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>` or a :class:`callable`, required
+    :type data: a :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>` or a :class:`callable`, required
     :type modulo: :class:`int`, required
     :type factor: :class:`float`, optional
     :type offset: :class:`int`, optional

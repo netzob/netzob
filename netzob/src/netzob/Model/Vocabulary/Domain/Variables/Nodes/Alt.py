@@ -64,7 +64,7 @@ class Alt(AbstractVariableNode):
                      alternative.
     :param svas: The SVAS strategy defining how the Alternate
                  behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
-    :type children: a :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+    :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
@@ -80,6 +80,7 @@ class Alt(AbstractVariableNode):
 
     **Examples of Alt internal attribute access**
 
+    >>> from netzob.all import *
     >>> domain = Alt([Raw(), String()])
     >>> domain.varType
     'Alt'

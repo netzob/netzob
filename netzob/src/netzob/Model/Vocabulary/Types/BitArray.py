@@ -61,7 +61,7 @@ class BitArray(AbstractType):
 
     :param value: The current value of the type instance.
     :param nbBits: The size in bits that this value can take.
-    :type value: :class:`bitarray.bitarray`, optional
+    :type value: :class:`bitarray`, optional
     :type nbBits: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
 
@@ -74,7 +74,7 @@ class BitArray(AbstractType):
                Instead of a tuple, an integer can be used to represent both min and max value.
     :var constants: A list of named constant used to access the bitarray internal elements.
     :vartype typeName: :class:`str`
-    :vartype value: :class:`bitarray.bitarray`
+    :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype constants: a :class:`list` of :class:`str`
 
@@ -93,18 +93,22 @@ class BitArray(AbstractType):
     bits, 64 bits and then a bitarray whith a variable size between 13
     and 128 bits:
 
+    >>> from netzob.all import *
     >>> b = BitArray(nbBits=1)
     >>> len(b.generate())
     1
 
+    >>> from netzob.all import *
     >>> b = BitArray(nbBits=47)
     >>> len(b.generate())
     47
 
+    >>> from netzob.all import *
     >>> b = BitArray(nbBits=64)
     >>> len(b.generate())
     64
 
+    >>> from netzob.all import *
     >>> b = BitArray(nbBits=(13, 128))
     >>> 13 <= len(b.generate()) <= 128
     True
@@ -117,12 +121,14 @@ class BitArray(AbstractType):
     automatically accessible by predefined named constants ('item_0'
     and 'item_1'):
 
+    >>> from netzob.all import *
     >>> b = BitArray('00')
     >>> b.constants
     ['item_0', 'item_1']
 
     Bitarray element names can be changed:
 
+    >>> from netzob.all import *
     >>> b.constants[0] = 'Urgent flag'
     >>> b.constants[1] = 'Data flag'
     >>> b.constants
@@ -130,15 +136,16 @@ class BitArray(AbstractType):
 
     Bitarray element can be accessed in read or write mode:
 
+    >>> from netzob.all import *
     >>> b['Urgent flag']
     False
-
     >>> b['Urgent flag'] = True
     >>> b['Urgent flag']
     True
 
     Bitarray element can be used with binary operators:
 
+    >>> from netzob.all import *
     >>> b['Urgent flag'] |= b['Data flag']
     >>> b['Urgent flag']
     True

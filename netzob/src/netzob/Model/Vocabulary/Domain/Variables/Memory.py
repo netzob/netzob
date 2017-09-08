@@ -116,7 +116,7 @@ class Memory(object):
 
         :param variable: The variable for which we want to memorize a value.
         :param value: The value to memorize.
-        :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
+        :type variable: :class:`Variable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
         :type value: :class:`bitarray <bitarray.bitarray>`, required
 
         >>> from netzob.all import *
@@ -134,7 +134,7 @@ class Memory(object):
         """Returns true if the memory contains a value for the provided variable.
 
         :param variable: The variable to look for in the memory.
-        :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
+        :type variable: :class:`Variable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
         :return: ``True`` if the memory contains a value for the variable.
         :rtype: :class:`bool`
 
@@ -156,7 +156,7 @@ class Memory(object):
         """Returns the value memorized for the provided variable.
 
         :param variable: The variable for which we want to retrieve the value in memory.
-        :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
+        :type variable: :class:`Variable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
         :return: The value in memory.
         :rtype: :class:`bitarray <bitarray.bitarray>`
 
@@ -175,7 +175,7 @@ class Memory(object):
         """Forgets any memorized value of the provided variable
 
         :param variable: The variable for which we want to forget the value in memory.
-        :type variable: :class:`AbstractVariable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
+        :type variable: :class:`Variable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
 
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")

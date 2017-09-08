@@ -60,7 +60,7 @@ class Raw(AbstractType):
     :param value: The current value of the type instance.
     :param nbBytes: The size in bytes that this value can take.
     :param alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.
-    :type value: :class:`bitarray.bitarray` or :class:`bytes`, optional
+    :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
     :type alphabet: a :class:`list` of :class:`bytes`, optional
 
@@ -74,7 +74,7 @@ class Raw(AbstractType):
                   Instead of a tuple, an integer can be used to represent both min and max value.
     :var alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.
     :vartype typeName: :class:`str`
-    :vartype value: :class:`bitarray.bitarray`
+    :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype alphabet: a :class:`list` of :class:`bytes`
 
@@ -84,6 +84,7 @@ class Raw(AbstractType):
     value:
 
     >>> from netzob.all import *
+    >>> from netzob.all import *
     >>> r = Raw(nbBytes=6)
     >>> len(r.generate().tobytes())
     6
@@ -91,12 +92,14 @@ class Raw(AbstractType):
     It is possible to define a range regarding the valid size of the
     raw object:
 
+    >>> from netzob.all import *
     >>> r = Raw(nbBytes=(2, 20))
     >>> 2 <= len(r.generate().tobytes()) <= 20
     True
 
     The following example shows the specification of a raw constant:
 
+    >>> from netzob.all import *
     >>> r = Raw(b'\x01\x02\x03')
     >>> print(r)
     Raw=b'\x01\x02\x03' ((None, None))
@@ -104,6 +107,7 @@ class Raw(AbstractType):
     The alphabet optional argument can be used to limit the bytes that
     can participate in the domain value:
 
+    >>> from netzob.all import *
     >>> r = Raw(nbBytes=100, alphabet=[b"t", b"o"])
     >>> data = r.generate().tobytes()
     >>> data_set = set(data)

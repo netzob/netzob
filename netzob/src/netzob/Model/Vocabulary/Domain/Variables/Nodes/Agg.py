@@ -68,7 +68,7 @@ class Agg(AbstractVariableNode):
     :param last_optional: A flag indicating if the last element of the children is optional or not.
     :param svas: The SVAS strategy defining how the Aggregate
                  behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
-    :type children: a :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+    :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type last_optional: :class:`bool`, optional
     :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
@@ -93,7 +93,6 @@ class Agg(AbstractVariableNode):
     variables:
 
     >>> from netzob.all import *
-    >>> from bitarray import bitarray
     >>> f = Field(Agg([BitArray('01101001'), BitArray(nbBits=3), BitArray(nbBits=5)]))
     >>> t = f.specialize()
     >>> len(t)
@@ -102,6 +101,7 @@ class Agg(AbstractVariableNode):
 
     **Examples of Agg internal attribute access**
 
+    >>> from netzob.all import *
     >>> domain = Agg([Raw(), String()])
     >>> domain.varType
     'Agg'
@@ -136,6 +136,12 @@ class Agg(AbstractVariableNode):
     message that does not correspond to the expected model is then
     parsed, thus the returned field is unknown:
 
+    >>> from netzob.all import *
+    >>> v1 = String(nbChars=(1, 10))
+    >>> v2 = String(".txt")
+    >>> f0 = Field(Agg([v1, v2]), name="f0")
+    >>> f1 = Field(String("!"), name="f1")
+    >>> f = Field([f0, f1])
     >>> data = "johntxt!"
     >>> Field.abstract(data, [f])
     (Unknown message 'johntxt!', OrderedDict())
@@ -168,7 +174,6 @@ class Agg(AbstractVariableNode):
     >>> d = b'\x02\x03'
     >>> Field.abstract(d, [f])
     (Field, OrderedDict([('Field', b'\x02\x03')]))
-
     >>> d = b'\x02'
     >>> Field.abstract(d, [f])
     (Field, OrderedDict([('Field', b'\x02')]))

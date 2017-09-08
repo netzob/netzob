@@ -720,8 +720,10 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """Returns a string which denotes the current symbol/field definition
         using a tree display.
 
-        :param deepness: Parameter used to specify th number of indentations.
+        :param deepness: Parameter used to specify the number of indentations.
         :type deepness: :class:`int`, required
+        :return: The current symbol/field represented as a string.
+        :rtype: :class:`str`
 
         >>> from netzob.all import *
         >>> f1 = Field(String(), name="field1")
@@ -736,7 +738,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
              |--   Data (Integer=None ((10, 100)))
         |--  field3
              |--   Data (Raw=None ((112, 112)))
-
         >>> print(f1.str_structure())
         field1
         |--   Data (String=None ((None, None)))

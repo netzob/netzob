@@ -62,7 +62,7 @@ class HexaString(AbstractType):
 
     :param value: The current value of the type instance.
     :param nbBytes: The size in bytes that this value can take.
-    :type value: :class:`bitarray.bitarray` or :class:`bytes`, optional
+    :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
 
@@ -74,7 +74,7 @@ class HexaString(AbstractType):
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max value.
     :vartype typeName: :class:`str`
-    :vartype value: :class:`bitarray.bitarray`
+    :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
 
 

@@ -62,9 +62,32 @@ class Integer(AbstractType):
     :param value: The current value of the type instance.
     :param interval: The interval of permitted values for the Integer. This information is used to compute the size of the Integer.
     :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). The default value is UnitSize.SIZE_8.
+
+      The following unit sizes are available:
+
+      * UnitSize.SIZE_1
+      * UnitSize.SIZE_4
+      * UnitSize.SIZE_8 (default unit size)
+      * UnitSize.SIZE_16
+      * UnitSize.SIZE_24
+      * UnitSize.SIZE_32
+      * UnitSize.SIZE_64
+
     :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
+
+      The following endianness are available:
+
+      * Endianness.BIG (default endianness)
+      * Endianness.LITTLE
+
     :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. The default value is Sign.SIGNED.
-    :type value: :class:`bitarray.bitarray` or :class:`int`, optional
+
+      The following signs are available:
+
+      * Sign.SIGNED (default sign)
+      * Sign.UNSIGNED
+
+    :type value: :class:`bitarray` or :class:`int`, optional
     :type interval: an :class:`int` or a tuple with the min and the max values specified as :class:`int`, optional
     :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
     :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
@@ -82,32 +105,12 @@ class Integer(AbstractType):
     :var endianness: The endianness of the current value.
     :var sign: The sign of the current value.
     :vartype typeName: :class:`str`
-    :vartype value: :class:`bitarray.bitarray`
+    :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype unitSize: :class:`str`
     :vartype endianness: :class:`str`
     :vartype sign: :class:`str`
 
-
-    The following unit sizes are available:
-
-    * UnitSize.SIZE_1
-    * UnitSize.SIZE_4
-    * UnitSize.SIZE_8 (default unit size)
-    * UnitSize.SIZE_16
-    * UnitSize.SIZE_24
-    * UnitSize.SIZE_32
-    * UnitSize.SIZE_64
-
-    The following endianness are available:
-
-    * Endianness.BIG (default endianness)
-    * Endianness.LITTLE
-
-    The following signs are available:
-
-    * Sign.SIGNED (default sign)
-    * Sign.UNSIGNED
 
     **Examples of Integer object instantiations**
 
@@ -124,6 +127,7 @@ class Integer(AbstractType):
     sequences of 32 bits and with a default value of 12 (thus
     producing ``\x00\x00\x00\x0c``):
 
+    >>> from netzob.all import *
     >>> i = Integer(value=12, unitSize=UnitSize.SIZE_32)
     >>> i.generate().tobytes()
     b'\x00\x00\x00\x0c'
@@ -132,6 +136,7 @@ class Integer(AbstractType):
     sequences of 32 bits in little endian with a default value of 12
     (thus producing ``\x0c\x00\x00\x00``):
 
+    >>> from netzob.all import *
     >>> i = Integer(value=12, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)
     >>> i.generate().tobytes()
     b'\x0c\x00\x00\x00'
@@ -140,6 +145,7 @@ class Integer(AbstractType):
     encoded in sequences of 16 bits with a default value of -12 (thus
     producing ``\xff\xf4``):
 
+    >>> from netzob.all import *
     >>> i = Integer(value=-12, sign=Sign.SIGNED, unitSize=UnitSize.SIZE_16)
     >>> i.generate().tobytes()
     b'\xff\xf4'
@@ -154,6 +160,7 @@ class Integer(AbstractType):
     For example, a *16-bit little-endian unsigned* Integer is classically defined
     like this:
 
+    >>> from netzob.all import *
     >>> i = Integer(42,
     ...             unitSize=UnitSize.SIZE_16,
     ...             sign=Sign.UNSIGNED,
@@ -161,11 +168,13 @@ class Integer(AbstractType):
 
     Could also be called in an equivalent form:
 
+    >>> from netzob.all import *
     >>> i = uint16le(42)
 
     There is an equivalence between these two integers, for every
     internal value of the type:
 
+    >>> from netzob.all import *
     >>> i1 = Integer(42,
     ...              unitSize=UnitSize.SIZE_16,
     ...              sign=Sign.UNSIGNED,
@@ -179,6 +188,7 @@ class Integer(AbstractType):
     But a comparison between two specific integers of different kind will
     always fail, even if their values look equivalent:
 
+    >>> from netzob.all import *
     >>> i1 = uint16le(42)
     >>> i2 = uint32le(42)
     >>> i1 == i2
@@ -187,6 +197,7 @@ class Integer(AbstractType):
     And even when the concrete value seems identical, the integer
     objects are not:
 
+    >>> from netzob.all import *
     >>> i1 = uint16le(42)
     >>> i2 = int16le(42)
     >>> i1, i2
@@ -204,6 +215,7 @@ class Integer(AbstractType):
     examples, we create a 16 bits little endian, a 16 bits big endian,
     a 32 bits little endian and a 32 bits big endian:
 
+    >>> from netzob.all import *
     >>> int16le(1234).value.tobytes()
     b'\xd2\x04'
     >>> int16be(1234).value.tobytes()
@@ -219,10 +231,12 @@ class Integer(AbstractType):
     The following examples show the representation of Integer objects
     with and without default value.
 
+    >>> from netzob.all import *
     >>> i = int16le(value=12)
     >>> str(i)
     'Integer=12 ((None, None))'
 
+    >>> from netzob.all import *
     >>> i = int16le()
     >>> str(i)
     'Integer=None ((-32768, 32767))'
@@ -233,10 +247,12 @@ class Integer(AbstractType):
     The following examples show the encoding of Integer objects with
     and without default value.
 
+    >>> from netzob.all import *
     >>> i = int32le(value=12)
     >>> repr(i)
     '12'
 
+    >>> from netzob.all import *
     >>> i = int32le()
     >>> repr(i)
     'None'

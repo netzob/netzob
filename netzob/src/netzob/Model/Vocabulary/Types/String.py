@@ -71,7 +71,7 @@ class String(AbstractType):
                 to other fields containing the permitted terminal
                 values. Default value is an empty list, meaning there
                 is no terminal character.
-    :type value: :class:`bitarray.bitarray` or :class:`str`, optional
+    :type value: :class:`bitarray` or :class:`str`, optional
     :type nbChars: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
     :type encoding: :class:`str`, optional
     :type eos: a :class:`list` of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, optional
@@ -90,7 +90,7 @@ class String(AbstractType):
               to other fields containing the permitted terminal
               values.
     :vartype typeName: :class:`str`
-    :vartype value: :class:`bitarray.bitarray`
+    :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype encoding: :class:`str`
     :type eos: a :class:`list` of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`
