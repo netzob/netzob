@@ -84,8 +84,8 @@ class Fuzz(object):
     The Fuzz constructor expects some parameters:
 
     :param counterMax: The max number of mutations to produce (a :class:`int`
-                       should be used to represent an absolute value, whereas a
-                       :class:`float` should be use to represent a ratio in
+                       should be used to represent an absolute value, whereas
+                       a :class:`float` should be use to represent a ratio in
                        percent).
     :type counterMax: :class:`int` or :class:`float`, defaults to
                       :attr:`COUNTER_MAX_DEFAULT`
@@ -196,7 +196,7 @@ class Fuzz(object):
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
         ====================  =================================================
-               Option                           Description   
+               Option                           Description
         ====================  =================================================
         interval              The scope of values to generate.
 
@@ -217,7 +217,7 @@ class Fuzz(object):
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
         ====================  =================================================
-               Option                           Description   
+               Option                           Description
         ====================  =================================================
         endchar               The :class:`str` character(s) which will end the string. This terminal symbol will be mutated by truncating its value if defined on several bytes.
 
@@ -239,7 +239,7 @@ class Fuzz(object):
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
         ====================  =================================================
-               Option                           Description   
+               Option                           Description
         ====================  =================================================
         TODO
         ====================  =================================================
@@ -250,7 +250,7 @@ class Fuzz(object):
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
         ====================  =================================================
-               Option                           Description   
+               Option                           Description
         ====================  =================================================
         TODO
         ====================  =================================================
@@ -261,7 +261,7 @@ class Fuzz(object):
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
         ====================  =================================================
-               Option                           Description   
+               Option                           Description
         ====================  =================================================
         interval              The scope of values to generate.
 
@@ -282,7 +282,7 @@ class Fuzz(object):
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
         ====================  =================================================
-               Option                           Description   
+               Option                           Description
         ====================  =================================================
         *No option*
         ====================  =================================================
@@ -293,7 +293,7 @@ class Fuzz(object):
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
         ====================  =================================================
-               Option                           Description   
+               Option                           Description
         ====================  =================================================
         *No option*
         ====================  =================================================
@@ -304,7 +304,7 @@ class Fuzz(object):
         .. tabularcolumns:: |p{4cm}|p{10cm}|
 
         ====================  =================================================
-               Option                           Description   
+               Option                           Description
         ====================  =================================================
         mutateChild           If :const:`True`, the children variables will also be fuzzed.
 
@@ -323,7 +323,7 @@ class Fuzz(object):
         .. tabularcolumns:: |p{4cm}|p{10cm}|
 
         ====================  =================================================
-               Option                           Description   
+               Option                           Description
         ====================  =================================================
         mutateChild           If :const:`True`, the children variables will also be fuzzed.
 
@@ -339,7 +339,7 @@ class Fuzz(object):
         .. tabularcolumns:: |p{4cm}|p{10cm}|
 
         ====================  =================================================
-               Option                           Description   
+               Option                           Description
         ====================  =================================================
         mutateChild           If :const:`True`, the children variables will also be fuzzed.
 
