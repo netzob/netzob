@@ -82,6 +82,15 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
     DEFAULT_WRITE_COUNTER_MAX = -1
     DEFAULT_TIMEOUT = None
 
+    def __init__(self, timeout=DEFAULT_TIMEOUT):
+        """
+        :param timeout: The default timeout of the channel for global
+                        connection. Default value is blocking (None).
+        :type timeout: :class:`float`, optional
+
+        """
+        self.timeout = timeout
+
 
     ## Interface methods ##
 
@@ -133,7 +142,6 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
 
         """
 
-
     @property
     def timeout(self):
         """The default timeout of the channel for opening connection and
@@ -145,12 +153,12 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         return self._timeout
 
     @timeout.setter
-    @typeCheck((int, float))
+    @typeCheck((int, float, type(None)))
     def timeout(self, timeout):
         """
         :type timeout: :class:`float`, optional
         """
-        self._timeout = float(timeout)
+        self._timeout = None if timeout is None else float(timeout)
 
 
 class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
