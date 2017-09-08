@@ -152,7 +152,7 @@ class TCPClient(AbstractChannel):
         self.__socket = socket.socket()
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(self.timeout)
+        self.__socket.settimeout(timeout)
         if self.localIP is not None and self.localPort is not None:
             self.__socket.bind((self.localIP, self.localPort))
         self._logger.debug("Connect to the TCP server to {0}:{1}".format(

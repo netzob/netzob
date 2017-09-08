@@ -127,7 +127,7 @@ class IPChannel(AbstractChannel):
         self.__socket = socket.socket(socket.AF_INET,
                                       socket.SOCK_RAW,
                                       self.upperProtocol)
-        self.__socket.settimeout(self.timeout)
+        self.__socket.settimeout(timeout)
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2**30)
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
         self.__socket.bind((self.localIP, self.upperProtocol))

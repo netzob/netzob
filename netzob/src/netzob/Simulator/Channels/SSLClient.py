@@ -155,7 +155,7 @@ class SSLClient(AbstractChannel):
         self.__socket = socket.socket()
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(self.timeout)
+        self.__socket.settimeout(timeout)
 
         if self.localIP is not None and self.localPort is not None:
             self.__socket.bind((self.localIP, self.localPort))
@@ -175,7 +175,7 @@ class SSLClient(AbstractChannel):
 
         # lets wrap the socket to create the ssl tunnel
         self.__ssl_socket = context.wrap_socket(self.__socket)
-        self.__ssl_socket.settimeout(self.timeout)
+        self.__ssl_socket.settimeout(timeout)
 
         self._logger.debug("Connect to the SSL server to {0}:{1}".format(
             self.remoteIP, self.remotePort))

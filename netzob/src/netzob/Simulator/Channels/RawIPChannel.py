@@ -141,7 +141,7 @@ class RawIPChannel(AbstractChannel):
         super().open(timeout=timeout)
 
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, self.upperProtocol)
-        self.__socket.settimeout(self.timeout)
+        self.__socket.settimeout(timeout)
         self.__socket.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
         self.__socket.bind((self.localIP, self.upperProtocol))
         self.isOpen = True

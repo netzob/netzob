@@ -140,7 +140,7 @@ class UDPServer(AbstractChannel):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(self.timeout)
+        self.__socket.settimeout(timeout)
         self.__socket.bind((self.localIP, self.localPort))
         self.isOpen = True
 

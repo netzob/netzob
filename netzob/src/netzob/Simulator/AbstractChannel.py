@@ -56,7 +56,7 @@ from typing import Type
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Simulator.ChannelBuilder import ChannelBuilder
+
 
 class ChannelDownException(Exception):
     pass
@@ -100,7 +100,6 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         if self.isOpen:
             raise RuntimeError(
                 "The channel is already open, cannot open it again")
-        self.__timeout = timeout
 
     @abc.abstractmethod
     def close(self):
@@ -136,25 +135,6 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         """
 
 
-    @property
-    def timeout(self):
-        """The default timeout of the channel for opening connection and
-        waiting for a message. Default value is DEFAULT_TIMEOUT seconds
-        (float). To specify no timeout, None value is expected.
-
-        :rtype: :class:`float` or None
-        """
-        return self.__timeout
-
-    @timeout.setter
-    @typeCheck((int, float))
-    def timeout(self, timeout):
-        """
-        :type timeout: :class:`float`, optional
-        """
-        self.__timeout = float(timeout)
-
-
 class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     """A communication channel is an element allowing to establish a
     connection to or from a remote device.
@@ -164,14 +144,11 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     A communication channel provides the following public variables:
 
     :var isOpen: The status of the communication channel.
-    :var timeout: The default timeout in seconds for opening a connection and
-                  waiting for a message.
     :var header: A Symbol that permits to access to the protocol header.
     :var header_presets: A dictionary of keys:values used to preset
                         (parameterize) the header fields during symbol
                         specialization. See :meth:`Symbol.specialize <netzob.Model.Vocabulary.Symbol.Symbol.specialize>` for more information.
     :vartype isOpen: :class:`bool`
-    :vartype timeout: :class:`int`
     :vartype header: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
     :vartype header_presets: :class:`dict`, optional
 

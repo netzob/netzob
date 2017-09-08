@@ -138,7 +138,7 @@ class RawEthernetChannel(AbstractChannel):
             socket.AF_PACKET,
             socket.SOCK_RAW,
             socket.htons(RawEthernetChannel.ETH_P_ALL))
-        self.__socket.settimeout(self.timeout)
+        self.__socket.settimeout(timeout)
         self.__socket.bind((self.interface, RawEthernetChannel.ETH_P_ALL))
         self.isOpen = True
 

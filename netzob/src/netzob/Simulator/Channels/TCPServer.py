@@ -136,7 +136,7 @@ class TCPServer(AbstractChannel):
 
         self.__socket = socket.socket()
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Reuse the connection
-        self.__socket.settimeout(self.timeout)
+        self.__socket.settimeout(timeout)
         self._logger.debug("Bind the TCP server to {0}:{1}".format(
             self.localIP, self.localPort))
         self.__socket.bind((self.localIP, self.localPort))
