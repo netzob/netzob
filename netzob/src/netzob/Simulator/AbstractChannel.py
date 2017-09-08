@@ -80,7 +80,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
     ## Class internal attributes ##
 
     DEFAULT_WRITE_COUNTER_MAX = -1
-    DEFAULT_TIMEOUT = 5.
+    DEFAULT_TIMEOUT = None
 
 
     ## Interface methods ##
@@ -92,15 +92,13 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
 
         :param timeout: The default timeout of the channel for opening
                         connection and waiting for a message. Default value
-                        is 5.0 seconds. To specify no timeout, None value is
-                        expected.
+                        is blocking (None).
         :type timeout: :class:`float`, optional
 
         """
         if self.isOpen:
             raise RuntimeError(
                 "The channel is already open, cannot open it again")
-        self.__timeout = timeout
 
     @abc.abstractmethod
     def close(self):

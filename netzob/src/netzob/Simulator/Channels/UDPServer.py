@@ -124,7 +124,7 @@ class UDPServer(AbstractChannel):
     def getBuilder():
         return UDPServerBuilder
 
-    def open(self, timeout=None):
+    def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel. This will open a UDP socket
         that listen for incoming messages.
         :param timeout: The default timeout of the channel for opening

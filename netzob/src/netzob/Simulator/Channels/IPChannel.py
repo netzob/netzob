@@ -109,7 +109,7 @@ class IPChannel(AbstractChannel):
     def getBuilder():
         return IPChannelBuilder
 
-    def open(self, timeout=None):
+    def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
 

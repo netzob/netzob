@@ -128,7 +128,7 @@ class RawIPChannel(AbstractChannel):
     def getBuilder():
         return RawIPChannelBuilder
 
-    def open(self, timeout=None):
+    def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel.
         :param timeout: The default timeout of the channel for opening
                         connection and waiting for a message. Default value
