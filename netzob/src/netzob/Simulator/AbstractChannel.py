@@ -68,21 +68,30 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
 
     The following methods have to be implemented:
 
-    * :meth:`open`
-    * :meth:`close`
-    * :meth:`read`
-    * :meth:`writePacket`
-    * :meth:`sendReceive`
+    * :meth:`~.open`
+    * :meth:`~.close`
+    * :meth:`~.read`
+    * :meth:`~.writePacket`
+    * :meth:`~.sendReceive`
 
-    To associate a channel into a group a similar channels, class should
+    To associate a channel into a group a *similar* channels, class should
     declare a list of compatible families. An empty list of families means that
-    the channel is similar to all possible families.
+    the channel is *similar* to all possible families.
 
     """
 
     ## Class attributes ##
 
     FAMILIES = []  # type: List[str]
+    """
+    **Class attribute**.
+
+    :class:`~typing.List` of families.
+    This attribute should be superseded in child classes.
+    An empty list means that the channel is *similar* to all possible families.
+
+    :type: :class:`List[str]`
+    """
 
 
     ## Class internal attributes ##
