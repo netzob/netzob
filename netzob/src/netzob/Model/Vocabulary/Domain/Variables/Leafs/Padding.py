@@ -70,15 +70,18 @@ class Padding(AbstractRelationVariableLeaf):
     :param targets: The targeted fields of the relationship.
     :param data: Specify that the produced value should be represented
                  according to this data. A callback function,
-                 returning the padding value, can be used here
+                 returning the padding value, can be used here.
     :param modulo: Specify the expected modulo size. The padding value
                    will be computed so that the whole structure aligns
                    to this value. This typically corresponds to a
                    block size in cryptography.
-    :param factor: Specify that the length of the targeted structure should be divided by this
-                   factor. The default value is 1.. For example, to express a length in bytes,
-                   the factor should be ``1./8``, whereas to express a length in bits, the factor should be ``1.``.
-    :param offset: Specify that an offset value should be added to the length of the targeted structure (after applying the factor
+    :param factor: Specify that the length of the targeted structure should be
+                   divided by this factor. The default value is 1.0.
+                   For example, to express a length in bytes, the factor should
+                   be ``1.0/8``, whereas to express a length in bits, the
+                   factor should be ``1.0``.
+    :param offset: Specify that an offset value should be added to the length
+                   of the targeted structure (after applying the factor
                    parameter). The default value is 0.
     :param name: The name of the variable. If None, the name
                  will be generated.
@@ -128,7 +131,7 @@ class Padding(AbstractRelationVariableLeaf):
 
     The following code illustrates a padding with the use of the
     ``offset`` parameter, where the targeted field sizes is decremented by
-    8 when computing the padding value length
+    8 when computing the padding value length.
 
     >>> from netzob.all import *
     >>> f0 = Field(Raw(nbBytes=10))
@@ -143,7 +146,7 @@ class Padding(AbstractRelationVariableLeaf):
 
     The following code illustrates a padding with the use of the
     ``factor`` parameter, where the targeted field sizes is divided by 2
-    before computing the padding value length
+    before computing the padding value length.
 
     >>> from netzob.all import *
     >>> f0 = Field(Raw(nbBytes=10))
