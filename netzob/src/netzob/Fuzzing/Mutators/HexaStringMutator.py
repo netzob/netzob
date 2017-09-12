@@ -45,6 +45,7 @@
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
+from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
@@ -65,6 +66,7 @@ class HexaStringMutator(DomainMutator):
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param lengthBitSize: The size in bits of the memory on which the generated
         length will be encoded.
+        Default value is UnitSize.SIZE_8.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type mode: :class:`int`, optional
@@ -74,22 +76,24 @@ class HexaStringMutator(DomainMutator):
     in [0, 30] interval:
 
     >>> from netzob.all import *
-    >>> fieldRaw = Field(Raw())
-    >>> mutator = HexaStringMutator(fieldRaw.domain)
+    >>> from netzob.Fuzzing.Mutators.HexaStringMutator import HexaStringMutator
+    >>> fieldHexa = Field(HexaString(nbBytes=2))
+    >>> mutator = HexaStringMutator(fieldHexa.domain, lengthBitSize=UnitSize.SIZE_4)
     >>> mutator.generate()
-    bitarray('110001010111010000000101010011111010001000110110101111111011000001111111100111010011100110001100001100101011010011000010101100010010101101001010000101101001110110101111011100111111010000010000000000010000001010000011000111101101000000000111100111001100110')
+    'c574054fa236bfb'
 
     >>> from netzob.all import *
-    >>> fieldRaw = Field(Raw())
-    >>> mutator = HexaStringMutator(fieldRaw.domain, seed=19)
+    >>> from netzob.Fuzzing.Mutators.HexaStringMutator import HexaStringMutator
+    >>> fieldHexa = Field(HexaString(nbBytes=2))
+    >>> mutator = HexaStringMutator(fieldHexa.domain, seed=19, lengthBitSize=UnitSize.SIZE_4)
     >>> mutator.generate()
-    bitarray('000110001111011111000010111000000011111100110111001000110101110001010100110110010001010100111111101011000000011011001110011111001111101110010011101000101011101000110111010001101000110010001100100010111010100100111011111011000001110100011101011111111110100')
+    '18f7c2e03f37235'
 
     """
 
     DEFAULT_MIN_LENGTH = 4
     DEFAULT_MAX_LENGTH = 80
-    DATA_TYPE = BitArray
+    DATA_TYPE = HexaString
 
     def __init__(self,
                  domain,
@@ -120,8 +124,8 @@ class HexaStringMutator(DomainMutator):
                 all(isinstance(_, int) for _ in size)):
             # Handle desired interval according to the storage space of the
             # domain dataType
-            minLength = max(minLength, self.domain.dataType.size[0])
-            maxLength = min(maxLength, self.domain.dataType.size[1])
+            minLength = int(self.domain.dataType.size[0] / 8)  # nb bits to nb bytes
+            maxLength = int(self.domain.dataType.size[1] / 8)  # nb bits to nb bytes
         if minLength is None or maxLength is None:
             minLength = self.DEFAULT_MIN_LENGTH
             maxLength = self.DEFAULT_MAX_LENGTH
@@ -159,7 +163,7 @@ class HexaStringMutator(DomainMutator):
             return valueBytes.hex()
         while True:
             valueInt = int(next(self.generator) * 65535)
-            valueBytes += valueInt.to_bytes(2)
+            valueBytes += valueInt.to_bytes(2, byteorder='big')
             if len(valueBytes) >= length:
                 break
         return valueBytes.hex()[:length]
