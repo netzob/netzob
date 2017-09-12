@@ -162,8 +162,9 @@ class RawMutator(DomainMutator):
         if length == 0:
             return valueBytes
         while True:
-            valueInt = int(next(self.generator) * 65535)
-            valueBytes += valueInt.to_bytes(2, byteorder='big')
+            spanBytes = 2  # generate a 2-bytes value
+            valueInt = int(next(self.generator) * (2 ** (8 * spanBytes) - 1))
+            valueBytes += valueInt.to_bytes(spanBytes, byteorder='big')
             if len(valueBytes) >= length:
                 break
         return valueBytes[:length]
