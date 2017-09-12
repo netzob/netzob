@@ -62,15 +62,17 @@ from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Generator import Generator
-from netzob.Fuzzing.Mutators.AltMutator import AltMutator  # noqa: F401
-from netzob.Fuzzing.Mutators.AggMutator import AggMutator  # noqa: F401
-from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator  # noqa: F401
+from netzob.Fuzzing.Mutators.AltMutator import AltMutator
+from netzob.Fuzzing.Mutators.AggMutator import AggMutator
+from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator  # noqa: F401
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Mutators.StringMutator import StringMutator
 from netzob.Fuzzing.Mutators.TimestampMutator import TimestampMutator
 from netzob.Fuzzing.Mutators.IPv4Mutator import IPv4Mutator
 from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
+from netzob.Fuzzing.Mutators.RawMutator import RawMutator
+from netzob.Fuzzing.Mutators.HexaStringMutator import HexaStringMutator
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 
@@ -112,8 +114,8 @@ class Fuzz(object):
         Fuzz.mappingTypesMutators = {}
         Fuzz.mappingTypesMutators[Integer] = (IntegerMutator, {})
         Fuzz.mappingTypesMutators[String] = (StringMutator, {})
-        Fuzz.mappingTypesMutators[HexaString] = (IntegerMutator, {})
-        Fuzz.mappingTypesMutators[Raw] = (IntegerMutator, {})
+        Fuzz.mappingTypesMutators[HexaString] = (HexaStringMutator, {})
+        Fuzz.mappingTypesMutators[Raw] = (RawMutator, {})
         Fuzz.mappingTypesMutators[BitArray] = (BitArrayMutator, {})
         Fuzz.mappingTypesMutators[IPv4] = (IPv4Mutator, {})
         Fuzz.mappingTypesMutators[Timestamp] = (TimestampMutator, {})
@@ -258,7 +260,9 @@ class Fuzz(object):
         ====================  =================================================
                Option                           Description
         ====================  =================================================
-        TODO
+        lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded.
+
+                              Default value is `UnitSize.SIZE_8`. Max value is `UnitSize.SIZE_32`
         ====================  =================================================
 
 
@@ -269,7 +273,9 @@ class Fuzz(object):
         ====================  =================================================
                Option                           Description
         ====================  =================================================
-        TODO
+        lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded.
+
+                              Default value is `UnitSize.SIZE_8`. Max value is `UnitSize.SIZE_32`
         ====================  =================================================
 
 
@@ -290,7 +296,7 @@ class Fuzz(object):
 
         lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded.
 
-                              Default value is `UnitSize.SIZE_8`.
+                              Default value is `UnitSize.SIZE_8`. Max value is `UnitSize.SIZE_32`
         ====================  =================================================
 
 
@@ -374,7 +380,7 @@ class Fuzz(object):
 
         lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded.
 
-                              Default value is `UnitSize.SIZE_8`.
+                              Default value is `UnitSize.SIZE_8`. Max value is `UnitSize.SIZE_32`
         ====================  =================================================
 
 

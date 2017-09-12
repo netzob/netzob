@@ -35,8 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-from typing import Tuple  # noqa: F401
-from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -46,24 +44,18 @@ from bitarray import bitarray
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
-from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
-from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.Types.Integer import uint16le
-from netzob.Model.Vocabulary.Types.Integer import Integer
-from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.AbstractType import Sign, UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 
 
-class BitArrayMutator(DomainMutator):
-    """The binary sequence mutator, using pseudo-random generator.
+class RawMutator(DomainMutator):
+    """The raw mutator, using pseudo-random generator.
     The generated sequence shall not be longer than 2^32 bits.
 
-    The BitArrayMutator constructor expects some parameters:
+    The RawMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
     :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`,
@@ -71,29 +63,25 @@ class BitArrayMutator(DomainMutator):
         If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`,
         :meth:`mutate` will be used to produce the value (not used yet).
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
-    :param length: The scope of sequence length to generate. If set to
-        (min, max), the values will be generated between min and max.
-        Default value is **(None, None)**.
     :param lengthBitSize: The size in bits of the memory on which the generated
         length will be encoded.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type mode: :class:`int`, optional
-    :type length: :class:`tuple`, optional
     :type lengthBitSize: :class:`int`, optional
 
     The following example shows how to generate a binary sequence with a length
     in [0, 30] interval:
 
     >>> from netzob.all import *
-    >>> fieldBits = Field(BitArray())
-    >>> mutator = BitArrayMutator(fieldBits.domain)
+    >>> fieldRaw = Field(Raw())
+    >>> mutator = RawMutator(fieldRaw.domain)
     >>> mutator.generate()
     bitarray('110001010111010000000101010011111010001000110110101111111011000001111111100111010011100110001100001100101011010011000010101100010010101101001010000101101001110110101111011100111111010000010000000000010000001010000011000111101101000000000111100111001100110')
 
     >>> from netzob.all import *
-    >>> fieldBits = Field(BitArray())
-    >>> mutator = BitArrayMutator(fieldBits.domain, interval=(0,30), seed=19)
+    >>> fieldRaw = Field(Raw())
+    >>> mutator = RawMutator(fieldRaw.domain, seed=19)
     >>> mutator.generate()
     bitarray('000110001111011111000010111000000011111100110111001000110101110001010100110110010001010100111111101011000000011011001110011111001111101110010011101000101011101000110111010001101000110010001100100010111010100100111011111011000001110100011101011111111110100')
 
@@ -109,7 +97,6 @@ class BitArrayMutator(DomainMutator):
                  generator=Generator.NG_mt19937,
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
-                 interval=MutatorInterval.DEFAULT_INTERVAL,
                  lengthBitSize=UnitSize.SIZE_8):
 
         # Call parent init
@@ -120,17 +107,14 @@ class BitArrayMutator(DomainMutator):
                          counterMax=counterMax)
 
         # Initialize generator
-        self.initializeGenerator(interval, lengthBitSize)
+        self.initializeGenerator(lengthBitSize)
 
-    def initializeGenerator(self, interval, lengthBitSize):
+    def initializeGenerator(self, lengthBitSize):
 
         minLength = None
         maxLength = None
 
         # Check min, max interval
-        if (isinstance(interval, tuple) and len(interval) == 2 and
-                all(isinstance(_, int) for _ in interval)):
-            minLength, maxLength = interval
         size = self.domain.dataType.size
         if (isinstance(size, tuple) and len(size) == 2 and
                 all(isinstance(_, int) for _ in size)):
@@ -158,24 +142,24 @@ class BitArrayMutator(DomainMutator):
         self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
 
     def generate(self):
-        """This is the fuzz generation method of the binary sequence field.
+        """This is the fuzz generation method of the raw field.
         It uses lengthMutator to get a sequence length, then a PRNG to produce
         the value.
 
-        :return: a generated content represented with a bit array
-        :rtype: :class:`bitarray`
+        :return: A generated content represented with bytes.
+        :rtype: :class:`bytes`
         """
         # Call parent generate() method
         super().generate()
 
         length = next(self.lengthGenerator)
 
-        valueBits = bitarray()
+        valueBytes = bytes()
         if length == 0:
-            return valueBits
+            return valueBytes
         while True:
             valueInt = int(next(self.generator) * 65535)
-            valueBits += Integer(valueInt, unitSize=UnitSize.SIZE_16, sign=Sign.UNSIGNED).value
-            if len(valueBits) >= length:
+            valueBytes += valueInt.to_bytes(2)
+            if len(valueBytes) >= length:
                 break
-        return valueBits[:length]
+        return valueBytes[:length]
