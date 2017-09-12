@@ -80,8 +80,8 @@ class Padding(AbstractRelationVariableLeaf):
                    For example, to express a length in bytes, the factor should
                    be ``1.0/8``, whereas to express a length in bits, the
                    factor should be ``1.0``.
-    :param offset: Specify that an offset value in bits should be added to the
-                   length of the targeted structure (after applying the factor
+    :param offset: Specify a value in bits that should be added to the length
+                   of the targeted structure (after applying the factor
                    parameter). The default value is 0.
     :param name: The name of the variable. If None, the name
                  will be generated.
