@@ -247,9 +247,23 @@ class Fuzz(object):
         lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded.
 
                               Default value is `UnitSize.SIZE_8`.
-        naughtStrings         The :class:`list` of potentially dangerous :class:`str` elements.
+        naughtyStrings        The :class:`list` of potentially dangerous :class:`str` elements.
 
-                              Default value is :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS`.
+                              Default value is :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS`:
+
+                              .. code-block:: python
+
+                                  DEFAULT_NAUGHTY_STRINGS = [
+                                        'System("ls -al /")',
+                                        '`ls -al /`',
+                                        'Kernel.exec("ls -al /")',
+                                        'Kernel.exit(1)',
+                                        '%x("ls -al /")',
+                                        '<img \\x00src=x onerror="alert(1)">',
+                                        '$ENV{"HOME"}',
+                                        '%d',
+                                        '%s']
+
         ====================  =================================================
 
 
