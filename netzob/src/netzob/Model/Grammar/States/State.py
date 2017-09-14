@@ -317,6 +317,13 @@ class State(AbstractState):
 
     def _test(self):
         """
+        >>> from netzob.all import *
+        >>> s0 = State()
+        >>> s0.name
+        'State'
+        >>> s1 = State(name="S1")
+        >>> s1.name
+        'S1'
         >>> t = Transition(s0, s1, None, None)
         >>> t.startState.name
         'State'
