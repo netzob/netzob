@@ -63,15 +63,13 @@ class Transition(AbstractTransition):
 
     :param startState: The initial state of the transition.
     :param endState: The end state of the transition.
-    :param inputSymbol: The input symbol which triggers the execution of the transition. The default value is `None`, which mean that no symbol is expected in a server context, and no symbol is sent in a client context.
-    :param outputSymbols: A list of output symbols that can be generated when the current transition is executed. The default value is `None`.
-    :param _id: The unique identifier of the transition. The default value is a randomly generated UUID.
+    :param inputSymbol: The input symbol which triggers the execution of the transition. The default value is `None`, which mean that no symbol is expected in a server context, and no symbol is sent in a client context. Internally, `None` symbol will be replaced by an :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
+    :param outputSymbols: A list of output symbols that can be generated when the current transition is executed. The default value is `None`, which mean that no symbol will be sent in a server context, and no symbol is expected in a client context. Internally, `None` symbol will be replaced by an :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
     :param name: The name of the transition. The default value is `None`.
     :type startState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type endState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type inputSymbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, optional
     :type outputSymbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, optional
-    :type _id: :class:`uuid.UUID`, optional
     :type name: :class:`str`, optional
 
 
@@ -89,6 +87,8 @@ class Transition(AbstractTransition):
     :var id: The unique identifier of the transition.
     :var description: description of the transition. If not explicitly set,
                       it is generated from the input and output symbols
+    :var inputSymbolReactionTime: the timeout value in seconds to wait for the input value (only used in a server context).
+    :var outputSymbolReactionTimes: a :class:`dict` containing, for each output symbol, the timeout value in seconds to wait for the output value (only used in a client context).
     :vartype startState: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype endState: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype active: :class:`bool`
@@ -97,7 +97,8 @@ class Transition(AbstractTransition):
     :vartype outputSymbols: :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
     :vartype id: :class:`uuid.UUID`
     :vartype description: :class:`str`
-
+    :var inputSymbolReactionTime: the timeout value in seconds to wait for the input value (only used in a server context).
+    :var outputSymbolReactionTimes: a :class:`dict` where keys are :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>` and values are :class:`float`
 
     The following example shows the definition of a transition `t` between
     two states `s0` and `s1`:
@@ -143,6 +144,7 @@ class Transition(AbstractTransition):
         self.inputSymbol = inputSymbol
         self.outputSymbols = outputSymbols
         self.outputSymbolProbabilities = {}  # TODO: not yet implemented
+        self.inputSymbolReactionTime = None
         self.outputSymbolReactionTimes = {}  # TODO: not yet implemented
 
     @typeCheck(AbstractionLayer)
@@ -176,15 +178,15 @@ class Transition(AbstractTransition):
 
         # If a callback is defined, we can change or modify the selected symbol
         self._logger.debug("Test if a callback function is defined at transition '{}'".format(self.name))
-        if self.cbk_modifySymbol is not None:
+        for cbk in self.cbk_modify_symbol:
             self._logger.debug("A callback function is defined at transition '{}'".format(self.name))
-            (symbol_to_send, symbol_presets) = self.cbk_modifySymbol([symbol_to_send],
-                                                                     symbol_to_send,
-                                                                     self.startState,
-                                                                     abstractionLayer.last_sent_symbol,
-                                                                     abstractionLayer.last_sent_message,
-                                                                     abstractionLayer.last_received_symbol,
-                                                                     abstractionLayer.last_received_message)
+            (symbol_to_send, symbol_presets) = cbk([symbol_to_send],
+                                                   symbol_to_send,
+                                                   self.startState,
+                                                   abstractionLayer.last_sent_symbol,
+                                                   abstractionLayer.last_sent_message,
+                                                   abstractionLayer.last_received_symbol,
+                                                   abstractionLayer.last_received_message)
         else:
             self._logger.debug("No callback function is defined at transition '{}'".format(self.name))            
 
@@ -328,15 +330,15 @@ class Transition(AbstractTransition):
 
         # Potentialy modify the selected symbol if a callback is defined
         self._logger.debug("Test if a callback function is defined at transition '{}'".format(self.name))
-        if self.cbk_modifySymbol is not None:
+        for cbk in self.cbk_modify_symbol:
             self._logger.debug("A callback function is executed at transition '{}'".format(self.name))
-            (symbol_to_send, symbol_presets) = self.cbk_modifySymbol(self.outputSymbols,
-                                                                     symbol_to_send,
-                                                                     self.startState,
-                                                                     abstractionLayer.last_sent_symbol,
-                                                                     abstractionLayer.last_sent_message,
-                                                                     abstractionLayer.last_received_symbol,
-                                                                     abstractionLayer.last_received_message)
+            (symbol_to_send, symbol_presets) = cbk(self.outputSymbols,
+                                                   symbol_to_send,
+                                                   self.startState,
+                                                   abstractionLayer.last_sent_symbol,
+                                                   abstractionLayer.last_sent_message,
+                                                   abstractionLayer.last_received_symbol,
+                                                   abstractionLayer.last_received_message)
         else:
             self._logger.debug("No callback function is defined at transition '{}'".format(self.name))
 

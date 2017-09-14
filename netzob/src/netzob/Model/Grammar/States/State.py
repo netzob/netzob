@@ -67,13 +67,18 @@ class State(AbstractState):
     The State class provides the following public variables:
 
     :var name: The name of the state. The default value is 'State'.
-    :var active: Represents the current execution status of the state.
-                 If a state is active, it means none of its transitions has yet
-                 been fully executed and also this state is the current one.
+    :var active: Tells that the current position of the actor in the automaton is this state.
+                 If a state is active, it also means none of its transitions has yet
+                 been fully initiated.
     :var transitions: The current value of the data.
     :vartype name: :class:`str`
     :vartype active: :class:`bool`
     :vartype transitions: :class:`list` of :class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`
+
+
+    A state may have different available transitions to other
+    states. When a transition is selected, it is possible to modify it
+    by adding callbacks through the method :meth:`add_cbk_modify_transition` (see below).
 
 
     The following example shows the definition of a state `s0` and a state `s1`:
@@ -82,26 +87,9 @@ class State(AbstractState):
     >>> s0 = State()
     >>> s0.name
     'State'
-
     >>> s1 = State(name="S1")
     >>> s1.name
     'S1'
-
-    The following example shows the definition of a transition `t`
-    between a state `s0` and a state `s1`:
-
-    >>> t = Transition(s0, s1, None, None)
-    >>> t.startState.name
-    'State'
-    >>> t.endState.name
-    'S1'
-    >>> len(s0.transitions)
-    1
-    >>> s0.transitions[0].startState.name
-    'State'
-    >>> s0.transitions[0].endState.name
-    'S1'
-
 
     """
 
@@ -240,10 +228,16 @@ class State(AbstractState):
         # execute an external program that may change the selected
         # transition
         self._logger.debug("Test if a callback function is defined at state '{}'".format(self.name))
-        if self.cbk_modifyTransition is not None:
+        for cbk in self.cbk_modify_transition:
             self._logger.debug("A callback function is defined at state '{}'".format(self.name))
             availableTransitions = self.transitions
-            nextTransition = self.cbk_modifyTransition(availableTransitions, nextTransition)
+            nextTransition = cbk(availableTransitions,
+                                 nextTransition,
+                                 self,
+                                 abstractionLayer.last_sent_symbol,
+                                 abstractionLayer.last_sent_message,
+                                 abstractionLayer.last_received_symbol,
+                                 abstractionLayer.last_received_message)
         else:
             self._logger.debug("No callback function is defined at state '{}'".format(self.name))
 
@@ -288,9 +282,15 @@ class State(AbstractState):
         # execute an external program that may change the selected
         # transition
         self._logger.debug("Test if a callback function is defined at state '{}'".format(self.name))
-        if self.cbk_modifyTransition is not None:
+        for cbk in self.cbk_modify_transition:
             self._logger.debug("A callback function is defined at state '{}'".format(self.name))
-            nextTransition = self.cbk_modifyTransition(availableTransitions, nextTransition)
+            nextTransition = cbk(availableTransitions,
+                                 nextTransition,
+                                 self,
+                                 abstractionLayer.last_sent_symbol,
+                                 abstractionLayer.last_sent_message,
+                                 abstractionLayer.last_received_symbol,
+                                 abstractionLayer.last_received_message)
         else:
             self._logger.debug("No callback function is defined at state '{}'".format(self.name))
 
@@ -314,3 +314,18 @@ class State(AbstractState):
     @property
     def transitions(self):
         return self.__transitions
+
+    def _test(self):
+        """
+        >>> t = Transition(s0, s1, None, None)
+        >>> t.startState.name
+        'State'
+        >>> t.endState.name
+        'S1'
+        >>> len(s0.transitions)
+        1
+        >>> s0.transitions[0].startState.name
+        'State'
+        >>> s0.transitions[0].endState.name
+        'S1'
+        """

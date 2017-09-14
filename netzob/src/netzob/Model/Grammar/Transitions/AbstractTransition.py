@@ -86,7 +86,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         self.priority = priority
         self._description = description
         self.active = False
-        self.__cbk_modifySymbol = None
+        self.cbk_modify_symbol = []
 
     def __str__(self):
         return str(self.name)
@@ -239,20 +239,19 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         self._description = description
 
 
-    @property
-    def cbk_modifySymbol(self):
+    def add_cbk_modify_symbol(self, cbk_method):
         """Function called during transition execution, to help
         choosing/modifying the output symbol to send.
 
         The callable function should have the following prototype:
 
-        ``def cbk_modifySymbol(available_symbols,
-                               current_symbol,
-                               current_state,
-                               last_sent_symbol,
-                               last_sent_message,
-                               last_received_symbol,
-                               last_received_message):``
+        ``def cbk_method(available_symbols,
+                         current_symbol,
+                         current_state,
+                         last_sent_symbol,
+                         last_sent_message,
+                         last_received_symbol,
+                         last_received_message):``
 
         Where:
 
@@ -261,10 +260,12 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
           <netzob.Model.Vocabulary.Symbol.Symbol>`) to send.
         * ``current_symbol`` is currently selected symbol that will be sent.
         * ``current_state`` is the current state in the automaton.
-        * ``last_sent_symbol`` corresponds to the last sent symbol on the abstraction layer, and thus permits to create relationships with the previously sent symbol.
-        * ``last_sent_message`` corresponds to the last sent message on the abstraction layer, and thus permits to create relationships with the previously sent message.
-        * ``last_received_symbol`` corresponds to the last received symbol on the abstraction layer, and thus permits to create relationships with the previously received symbol.
-        * ``last_received_message`` corresponds to the last sent symbol on the abstraction layer, and this permits to create relationships with the previously received message.
+        * ``last_sent_symbol`` corresponds to the last sent symbol (:class:`Symbol
+          <netzob.Model.Vocabulary.Symbol.Symbol>`) on the abstraction layer, and thus permits to create relationships with the previously sent symbol.
+        * ``last_sent_message`` corresponds to the last sent message (:class:`bitarray`) on the abstraction layer, and thus permits to create relationships with the previously sent message.
+        * ``last_received_symbol`` corresponds to the last received symbol (:class:`Symbol
+          <netzob.Model.Vocabulary.Symbol.Symbol>`) on the abstraction layer, and thus permits to create relationships with the previously received symbol.
+        * ``last_received_message`` corresponds to the last received message (:class:`bitarray`) on the abstraction layer, and this permits to create relationships with the previously received message.
 
         The callback function should return a tuple (symbol, presets)
         whose meaning is as follows:
@@ -283,13 +284,9 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                         more information).
 
         :type: :class:`func`
-        :raise: TypeError if cbk_modifySymbol is not a callable function
+        :raise: :class:`TypeError` if ``cbk_method`` is not a callable function
 
         """
-        return self.__cbk_modifySymbol
-
-    @cbk_modifySymbol.setter
-    def cbk_modifySymbol(self, cbk_modifySymbol):
-        if not callable(cbk_modifySymbol):
-            raise TypeError("'cbk_modifySymbol' should be a callable function")
-        self.__cbk_modifySymbol = cbk_modifySymbol
+        if not callable(cbk_method):
+            raise TypeError("'cbk_method' should be a callable function")
+        self.cbk_modify_symbol.append(cbk_method)

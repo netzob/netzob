@@ -61,10 +61,12 @@ class Actor(threading.Thread):
     :param abstractionLayer: The underlying abstraction layer used to abstract
                              and specialize symbols.
     :param initiator: If True, indicates that the actor initiates the
-                      communication and emits the input symbol.
-                      If False, indicates that the actor waits for another
-                      peer to initiate the connection. Default value is
-                      :const:`True`.
+                      communication and emits the input symbol.  If
+                      False, indicates that the actor waits for
+                      another peer to initiate the connection. Default
+                      value is :const:`True`. The value can be change
+                      during a communication, in order to reverse the
+                      way the actors communicate together.
     :param name: The name of the actor.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
                     required
@@ -77,12 +79,14 @@ class Actor(threading.Thread):
 
     :var automata: The automaton the actor will visit.
     :var abstractionLayer: The underlying abstraction layer used to abstract
-                             and specialize symbols.
+                           and specialize symbols.
     :var initiator: If True, indicates that the actor initiates the
-                      communication and emits the input symbol.
-                      If False, indicates that the actor waits for another
-                      peer to initiate the connection. Default value is
-                      :const:`True`.
+                    communication and emits the input symbol.
+                    If False, indicates that the actor waits for another
+                    peer to initiate the connection. Default value is
+                    :const:`True`. The value can be change
+                    during a communication, in order to reverse the
+                    way the actors communicate together.
     :var name: The name of the actor.
     :vartype automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
     :vartype abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
@@ -251,7 +255,7 @@ class Actor(threading.Thread):
     ...                                  outputSymbols=[symbol1], name="hello")
     >>>
     >>> # Apply the callback on the main transition
-    >>> bob_mainTransition.cbk_modifySymbol = cbk_modifySymbol
+    >>> bob_mainTransition.add_cbk_modify_symbol(cbk_modifySymbol)
     >>>
     >>> bob_closeTransition = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
     >>> bob_automata = Automata(bob_s0, symbolList)
@@ -366,7 +370,7 @@ class Actor(threading.Thread):
     ...                                   outputSymbols=[symbol1], name="T1")
     >>>
     >>> # Apply the callback on the main transition
-    >>> alice_mainTransition.cbk_modifySymbol = cbk_modifySymbol
+    >>> alice_mainTransition.add_cbk_modify_symbol(cbk_modifySymbol)
     >>>
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
@@ -380,10 +384,16 @@ class Actor(threading.Thread):
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> alice = Actor(automata = alice_automata, abstractionLayer=abstractionLayer, initiator = False)
     >>>
-    >>> alice.start()
-    >>> bob.start()  # doctest: +SKIP
+    >>> alice.start()  # doctest: +SKIP
+    >>> bob.start()
     >>>
     >>> time.sleep(1)  # doctest: +SKIP
+    Current state: 'S1'
+    [+] Last received symbol: 'Symbol' with message: 'b'\x00''
+    [+] Sending symbol 'Symbol' with presets: '{Field: b'\x01'}'
+    Current state: 'S1'
+    [+] Last received symbol: 'Symbol' with message: 'b'\x00''
+    [+] Sending symbol 'Symbol' with presets: '{Field: b'\x01'}'
     >>>
     >>> bob.stop()
     >>> alice.stop()
@@ -398,7 +408,7 @@ class Actor(threading.Thread):
     >>> import time
     >>>
     >>> # Creation of a callback function that returns a new transition
-    >>> def cbk_modifyTransition(availableTransitions, nextTransition):
+    >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state, last_sent_symbol, last_sent_message, last_received_symbol, last_received_message):
     ...
     ...     # Just printing some data accessible within the callback
     ...     print("In cbk_modifyTransition()")
@@ -445,8 +455,8 @@ class Actor(threading.Thread):
     >>> bob_closeTransition = CloseChannelTransition(startState=bob_s3, endState=bob_s4, name="Close")
     >>>
     >>> # Apply the callback on the main states, which is the main state
-    >>> bob_s1.cbk_modifyTransition = cbk_modifyTransition
-    >>> bob_s2.cbk_modifyTransition = cbk_modifyTransition
+    >>> bob_s1.add_cbk_modify_transition(cbk_modifyTransition)
+    >>> bob_s2.add_cbk_modify_transition(cbk_modifyTransition)
     >>>
     >>> bob_closeTransition = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
     >>> bob_automata = Automata(bob_s0, symbolList)
@@ -499,7 +509,7 @@ class Actor(threading.Thread):
     >>> import time
     >>>
     >>> # Creation of a callback function that returns a new transition
-    >>> def cbk_modifyTransition(availableTransitions, nextTransition):
+    >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state, last_sent_symbol, last_sent_message, last_received_symbol, last_received_message):
     ...
     ...     # Just printing some data accessible within the callback
     ...     print("In cbk_modifyTransition()")
@@ -556,8 +566,8 @@ class Actor(threading.Thread):
     >>> alice_closeTransition = CloseChannelTransition(startState=alice_s3, endState=alice_s4, name="Close")
     >>>
     >>> # Apply the callback on the main states, which is the main state
-    >>> alice_s1.cbk_modifyTransition = cbk_modifyTransition
-    >>> alice_s2.cbk_modifyTransition = cbk_modifyTransition
+    >>> alice_s1.add_cbk_modify_transition(cbk_modifyTransition)
+    >>> alice_s2.add_cbk_modify_transition(cbk_modifyTransition)
     >>>
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
@@ -592,76 +602,70 @@ class Actor(threading.Thread):
     >>> alice.stop()
 
 
-    # **Transition with no input symbol**
+    **Transition with no input symbol**
 
-    # >>> from netzob.all import *
-    # >>> import time
-    # >>> def cbk_modifySymbol(available_symbols, current_symbol, current_state, last_sent_symbol, last_sent_message, last_received_symbol, last_received_message):
-    # ...
-    # ...    # Just printing some data accessible within the callback
-    # ...    print("Current state: '{}'".format(current_state))
-    # ...    print("[+] Current symbol: '{}'".format(current_symbol.name))
-    # ...    return (current_symbol, {})
-    # >>>
-    # >>> # First we create the symbols
-    # >>> symbol = Symbol(name="Hello", fields=[Field("hello")])
-    # >>> symbolList = [symbol]
-    # >>>
-    # >>> # Create the grammar
-    # >>> bob_s0 = State(name="S0")
-    # >>> bob_s1 = State(name="S1")
-    # >>> bob_s2 = State(name="S2")
-    # >>> bob_s3 = State(name="S3")
-    # >>> bob_s4 = State(name="S4")
-    # >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
-    # >>> bob_firstTransition = Transition(startState=bob_s1,
-    # ...                                  endState=bob_s2,
-    # ...                                  inputSymbol=symbol,
-    # ...                                  outputSymbols=symbolList, name="Init")
-    # >>> bob_mainTransition = Transition(startState=bob_s2,
-    # ...                                 endState=bob_s3,
-    # ...                                 inputSymbol=None,
-    # ...                                 outputSymbols=symbolList, name="Hello")
-    # >>> bob_closeTransition = CloseChannelTransition(startState=bob_s3, endState=bob_s4, name="Close")
-    # >>> bob_automata = Automata(bob_s0, symbolList)
-    # >>> #bob_mainTransition.cbk_modifySymbol = cbk_modifySymbol
-    # >>>
-    # >>> alice_s0 = State(name="S0")
-    # >>> alice_s1 = State(name="S1")
-    # >>> alice_s2 = State(name="S2")
-    # >>> alice_s3 = State(name="S3")
-    # >>> alice_s4 = State(name="S4")
-    # >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
-    # >>> alice_firstTransition = Transition(startState=alice_s1,
-    # ...                                    endState=alice_s2,
-    # ...                                    inputSymbol=symbol,
-    # ...                                    outputSymbols=symbolList, name="Hello")
-    # >>> alice_mainTransition = Transition(startState=alice_s2,
-    # ...                                   endState=alice_s3,
-    # ...                                   inputSymbol=None,
-    # ...                                   outputSymbols=symbolList, name="Hello")
-    # >>> alice_closeTransition = CloseChannelTransition(startState=alice_s3, endState=alice_s4, name="Close")
-    # >>> alice_automata = Automata(alice_s0, symbolList)
-    # >>> #alice_mainTransition.cbk_modifySymbol = cbk_modifySymbol
-    # >>>
-    # >>> # Create actors: Alice (a server) and Bob (a client)
-    # >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    # >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    # >>> abstractionLayer.timeout = 0.5
-    # >>> alice = Actor(automata = alice_automata, abstractionLayer=abstractionLayer, initiator = False, name="Alice")
-    # >>>
-    # >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    # >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    # >>> abstractionLayer.timeout = 0.5
-    # >>> bob = Actor(automata = bob_automata, abstractionLayer=abstractionLayer, name="Bob")
-    # >>>
-    # >>> alice.start()
-    # >>> bob.start()
-    # >>>
-    # >>> time.sleep(2)
-    # >>>
-    # >>> bob.stop()
-    # >>> alice.stop()
+    The following example shows how to specify no input symbol, for
+    both the client and the server, at the state ``s1``. This permits
+    to automatically transit to the next state ``s2``.
+
+    >>> from netzob.all import *
+    >>> # First we create the symbols
+    >>> symbol = Symbol(name="Hello", fields=[Field("hello")])
+    >>> symbolList = [symbol]
+    >>>
+    >>> # Create the grammar
+    >>> bob_s0 = State(name="S0")
+    >>> bob_s1 = State(name="S1")
+    >>> bob_s2 = State(name="S2")
+    >>> bob_s3 = State(name="S3")
+    >>> bob_s4 = State(name="S4")
+    >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+    >>> bob_firstTransition = Transition(startState=bob_s1,
+    ...                                  endState=bob_s2,
+    ...                                  inputSymbol=symbol,
+    ...                                  outputSymbols=symbolList, name="Init")
+    >>> bob_mainTransition = Transition(startState=bob_s2,
+    ...                                 endState=bob_s3,
+    ...                                 inputSymbol=None,
+    ...                                 outputSymbols=symbolList, name="Hello")
+    >>> bob_closeTransition = CloseChannelTransition(startState=bob_s3, endState=bob_s4, name="Close")
+    >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> alice_s0 = State(name="S0")
+    >>> alice_s1 = State(name="S1")
+    >>> alice_s2 = State(name="S2")
+    >>> alice_s3 = State(name="S3")
+    >>> alice_s4 = State(name="S4")
+    >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+    >>> alice_firstTransition = Transition(startState=alice_s1,
+    ...                                    endState=alice_s2,
+    ...                                    inputSymbol=symbol,
+    ...                                    outputSymbols=symbolList, name="Hello")
+    >>> alice_mainTransition = Transition(startState=alice_s2,
+    ...                                   endState=alice_s3,
+    ...                                   inputSymbol=None,
+    ...                                   outputSymbols=symbolList, name="Hello")
+    >>> alice_closeTransition = CloseChannelTransition(startState=alice_s3, endState=alice_s4, name="Close")
+    >>> alice_automata = Automata(alice_s0, symbolList)
+    >>>
+    >>> # Create actors: Alice (a server) and Bob (a client)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> abstractionLayer.timeout = 0.5
+    >>> alice = Actor(automata = alice_automata, abstractionLayer=abstractionLayer, initiator = False, name="Alice")
+    >>>
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> abstractionLayer.timeout = 0.5
+    >>> bob = Actor(automata = bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>>
+    >>> alice.start()
+    >>> bob.start()
+    >>>
+    >>> time.sleep(2)
+    >>>
+    >>> bob.stop()
+    >>> alice.stop()
 
 
     """

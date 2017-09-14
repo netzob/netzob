@@ -63,7 +63,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         self.__id = uuid.uuid4()
         self.name = name
         self.active = False
-        self.__cbk_modifyTransition = None
+        self.cbk_modify_transition = []
 
     def __str__(self):
         return str(self.name)
@@ -130,14 +130,19 @@ class AbstractState(object, metaclass=abc.ABCMeta):
             raise TypeError("The active info cannot be None")
         self.__active = active
 
-    @property
-    def cbk_modifyTransition(self):
-        """Function called during state execution to help choosing/modifying
-        the next transition.
+    def add_cbk_modify_transition(self, cbk_method):
+        """Add a function called during state execution to help
+        choosing/modifying the next transition.
 
-        The callable function should have the following prototype: 
+        The callable function should have the following prototype:
 
-        ``def cbk_function(availableTransitions, nextTransition):``
+        ``def cbk_method(availableTransitions,
+                         nextTransition,
+                         current_state,
+                         last_sent_symbol,
+                         last_sent_message,
+                         last_received_symbol,
+                         last_received_message):``
 
         Where:
 
@@ -146,19 +151,23 @@ class AbstractState(object, metaclass=abc.ABCMeta):
           <netzob.Model.Grammar.Transitions.Transition.Transition>`)
           from the current state.
         * ``nextTransition`` corresponds to the currently selected transition.
+        * ``current_state`` is the current state in the automaton.
+        * ``last_sent_symbol`` corresponds to the last sent symbol (:class:`Symbol
+          <netzob.Model.Vocabulary.Symbol.Symbol>`) on the abstraction layer, and thus permits to create relationships with the previously sent symbol.
+        * ``last_sent_message`` corresponds to the last sent message (:class:`bitarray`) on the abstraction layer, and thus permits to create relationships with the previously sent message.
+        * ``last_received_symbol`` corresponds to the last received symbol (:class:`Symbol
+          <netzob.Model.Vocabulary.Symbol.Symbol>`) on the abstraction layer, and thus permits to create relationships with the previously received symbol.
+        * ``last_received_message`` corresponds to the last received message (:class:`bitarray`) on the abstraction layer, and thus permits to create relationships with the previously received message.
 
         The callback function should return a transition (which could
         be the original transition or another one in the available
         transitions).
 
         :type: :class:`func`
-        :raise: TypeError if cbk_modifyTransition is not a callable function
+        :raise: :class:`TypeError` if ``cbk_method`` is not a callable function
 
         """
-        return self.__cbk_modifyTransition
 
-    @cbk_modifyTransition.setter
-    def cbk_modifyTransition(self, cbk_modifyTransition):
-        if not callable(cbk_modifyTransition):
+        if not callable(cbk_method):
             raise TypeError("'cbk_modifyTransition' should be a callable function")
-        self.__cbk_modifyTransition = cbk_modifyTransition
+        self.cbk_modify_transition.append(cbk_method)

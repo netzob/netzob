@@ -56,12 +56,10 @@ class OpenChannelTransition(AbstractTransition):
     The OpenChannelTransition expects some parameters:
 
     :param startState: The initial state of the transition.
-    :param endState: The end state of the transition
-    :param _id: The unique identifier of the transition. The default value is a randomly generated UUID.
-    :param name: The name of the transition. The default value is `None`
+    :param endState: The end state of the transition.
+    :param name: The name of the transition. The default value is `None`.
     :type startState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type endState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
-    :type _id: :class:`uuid.UUID`, optional
     :type name: :class:`str`, optional
 
 

@@ -168,7 +168,6 @@ class Automata(object):
         >>> outputSymbol = Symbol()
         >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=inputSymbol, outputSymbols=[outputSymbol], name="hello")
         >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
-
         >>> # Create the automata
         >>> automata = Automata(s0, [inputSymbol, outputSymbol])
         >>> for state in automata.getAllStates():
@@ -177,8 +176,8 @@ class Automata(object):
         State 1
         State 2
 
-        :return: a list containing all the discovered states.
-        :rtype: a :class:`list`
+        :return: A list containing all the discovered states.
+        :rtype: a :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`
         """
 
         states = []
