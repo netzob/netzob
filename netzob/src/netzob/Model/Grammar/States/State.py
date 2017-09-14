@@ -36,6 +36,7 @@
 #+---------------------------------------------------------------------------+
 import random
 import traceback
+import socket
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -50,6 +51,7 @@ from netzob.Model.Grammar.Transitions.Transition import Transition
 from netzob.Model.Grammar.States.AbstractState import AbstractState
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
 from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition
+from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 
 
 @NetzobLogger
@@ -133,8 +135,7 @@ class State(AbstractState):
         # Execute picked transition as an initiator
         try:
             nextState = nextTransition.executeAsInitiator(abstractionLayer)
-            self._logger.debug("Transition '{0}' leads to state: {1}.".format(
-                str(nextTransition), str(nextState)))
+            self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
         except Exception as e:
             self.active = False
             raise e
@@ -164,15 +165,13 @@ class State(AbstractState):
         if abstractionLayer is None:
             raise TypeError("AbstractionLayer cannot be None")
 
-        self._logger.debug(
-            "Execute state {0} as a non-initiator".format(self.name))
+        self._logger.debug("Execute state {0} as a non-initiator".format(self.name))
 
         self.active = True
 
         # if no transition exists we quit
         if len(self.transitions) == 0:
-            self._logger.warn(
-                "The current state has no transitions available.")
+            self._logger.warn("The current state has no transitions available.")
             self.active = False
             raise Exception("No transition available for this state.")
 
@@ -203,37 +202,58 @@ class State(AbstractState):
 
         # Else, we wait to receive a symbol
         try:
-            (receivedSymbol, receivedMessage) = abstractionLayer.readSymbol()
-            if receivedSymbol is None:
-                raise Exception(
-                    "The abstraction layer returned a None received symbol")
-            self._logger.debug("Input symbol: " + str(receivedSymbol.name))
+            (received_symbol, received_message) = abstractionLayer.readSymbol()
+            if received_symbol is None:
+                raise Exception("The abstraction layer returned a None received symbol")
+            self._logger.debug("Input symbol: " + str(received_symbol.name))
 
             # Find the transition which accepts the received symbol as an input symbol
             nextTransition = None
             for transition in self.transitions:
-                if transition.type == Transition.TYPE and transition.inputSymbol.id == receivedSymbol.id:
+                if transition.type == Transition.TYPE and transition.inputSymbol.id == received_symbol.id:
                     nextTransition = transition
                     break
 
-            if nextTransition is None:
-                self._logger.debug(
-                    "The received symbol did not match any of the registered transition, we stay in place."
-                )
-                nextState = self
+        except socket.timeout:
+            self._logger.debug("Timeout on abstractionLayer.readSymbol()")
+
+            # Check if there is a transition with an EmptySymbol as input symbol
+            self._logger.debug("Check if a transition expects an EmptySymbol as input symbol")
+            nextTransition = None
+            for transition in self.transitions:
+                if isinstance(transition.inputSymbol, EmptySymbol):
+                    self._logger.debug("The transition '{}' expects an EmptySymbol as input symbol ".format(transition.name))
+                    nextTransition = transition
+                    break
             else:
-                nextState = nextTransition.executeAsNotInitiator(
-                    abstractionLayer)
-                self._logger.debug("Transition '{0}' leads to state: {1}.".
-                                   format(str(nextTransition), str(nextState)))
+                self._logger.debug("Not transition expects an EmptySymbol as input symbol")
+                self.active = False
+                return None
 
         except Exception as e:
-            self._logger.warning(
-                "An exception occured when receiving a symbol from the abstraction layer."
-            )
+            self._logger.warning("An exception occured when receiving a symbol from the abstraction layer.")
             self.active = False
-            self._logger.warning(traceback.format_exc())
+            #self._logger.warning(traceback.format_exc())
             raise e
+
+        # If a callback function is defined, we call it in order to
+        # execute an external program that may change the selected
+        # transition
+        self._logger.debug("Test if a callback function is defined at state '{}'".format(self.name))
+        if self.cbk_modifyTransition is not None:
+            self._logger.debug("A callback function is defined at state '{}'".format(self.name))
+            availableTransitions = self.transitions
+            nextTransition = self.cbk_modifyTransition(availableTransitions, nextTransition)
+        else:
+            self._logger.debug("No callback function is defined at state '{}'".format(self.name))
+
+        # Execute the retained transition
+        if nextTransition is None:
+            self._logger.debug("The received symbol did not match any of the registered transition, we stay in place.")
+            nextState = self
+        else:
+            nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
+            self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
 
         self.active = False
         return nextState
@@ -250,7 +270,7 @@ class State(AbstractState):
         if len(self.transitions) == 0:
             return None
 
-        # create a dictionnary to host the possible transition
+        # create a dictionnary to host the available transition
         prioritizedTransitions = dict()
         for transition in self.transitions:
             if transition.priority in list(prioritizedTransitions.keys()):
@@ -258,19 +278,23 @@ class State(AbstractState):
             else:
                 prioritizedTransitions[transition.priority] = [transition]
 
-        possibleTransitions = prioritizedTransitions[sorted(
-            prioritizedTransitions.keys())[0]]
+        availableTransitions = prioritizedTransitions[sorted(prioritizedTransitions.keys())[0]]
 
-        idRandom = random.randint(0, len(possibleTransitions) - 1)
+        # Randomely select the next transition
+        idRandom = random.randint(0, len(availableTransitions) - 1)
+        nextTransition = availableTransitions[idRandom]
 
         # If a callback function is defined, we call it in order to
         # execute an external program that may change the selected
         # transition
-        if self.cbk_pickNextTransition is not None:
-            self._logger.debug("A callback function is executed at state '{}'".format(self.name))
-            idRandom = self.cbk_pickNextTransition(possibleTransitions, idRandom)
+        self._logger.debug("Test if a callback function is defined at state '{}'".format(self.name))
+        if self.cbk_modifyTransition is not None:
+            self._logger.debug("A callback function is defined at state '{}'".format(self.name))
+            nextTransition = self.cbk_modifyTransition(availableTransitions, nextTransition)
+        else:
+            self._logger.debug("No callback function is defined at state '{}'".format(self.name))
 
-        return possibleTransitions[idRandom]
+        return nextTransition
 
     @typeCheck(AbstractTransition)
     def removeTransition(self, transition):
@@ -284,9 +308,7 @@ class State(AbstractState):
 
         """
         if transition not in self.__transitions:
-            raise ValueError(
-                "The transition is not associated to the current state so cannot be removed."
-            )
+            raise ValueError("The transition is not associated to the current state so cannot be removed.")
         self.__transitions.remove(transition)
 
     @property

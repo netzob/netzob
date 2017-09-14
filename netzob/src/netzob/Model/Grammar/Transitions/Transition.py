@@ -37,6 +37,7 @@
 import uuid
 import time
 import random
+import socket
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -62,7 +63,7 @@ class Transition(AbstractTransition):
 
     :param startState: The initial state of the transition.
     :param endState: The end state of the transition.
-    :param inputSymbol: The input symbol which triggers the execution of the transition. The default value is `None`.
+    :param inputSymbol: The input symbol which triggers the execution of the transition. The default value is `None`, which mean that no symbol is expected in a server context, and no symbol is sent in a client context.
     :param outputSymbols: A list of output symbols that can be generated when the current transition is executed. The default value is `None`.
     :param _id: The unique identifier of the transition. The default value is a randomly generated UUID.
     :param name: The name of the transition. The default value is `None`.
@@ -134,8 +135,7 @@ class Transition(AbstractTransition):
                  outputSymbols=None,
                  _id=None,
                  name=None):
-        super(Transition, self).__init__(
-            Transition.TYPE, startState, endState, _id, name, priority=10)
+        super(Transition, self).__init__(Transition.TYPE, startState, endState, _id, name, priority=10)
 
         if outputSymbols is None:
             outputSymbols = []
@@ -170,28 +170,58 @@ class Transition(AbstractTransition):
 
         self.active = True
 
+        # Retrieve the symbol to send
+        symbol_to_send = self.inputSymbol
+        symbol_presets = {}
+
+        # If a callback is defined, we can change or modify the selected symbol
+        self._logger.debug("Test if a callback function is defined at transition '{}'".format(self.name))
+        if self.cbk_modifySymbol is not None:
+            self._logger.debug("A callback function is defined at transition '{}'".format(self.name))
+            (symbol_to_send, symbol_presets) = self.cbk_modifySymbol([symbol_to_send],
+                                                                     symbol_to_send,
+                                                                     self.startState,
+                                                                     abstractionLayer.last_sent_symbol,
+                                                                     abstractionLayer.last_sent_message,
+                                                                     abstractionLayer.last_received_symbol,
+                                                                     abstractionLayer.last_received_message)
+        else:
+            self._logger.debug("No callback function is defined at transition '{}'".format(self.name))            
+
+        # Write a symbol on the channel
         try:
-            # Write the input symbol on the channel
-            abstractionLayer.writeSymbol(self.inputSymbol)
-
-            # Waits for the reception of a symbol
-            (receivedSymbol, receivedMessage) = abstractionLayer.readSymbol()
-
+            abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
+        except socket.timeout:
+            self._logger.debug("Timeout on abstractionLayer.readSymbol()")
+            self.active = False
+            raise
         except Exception as e:
             self.active = False
-            self._logger.warning(
-                "An error occured while executing the transition {} as an initiator: {}".
-                format(self.name, e))
-            raise e
+            errorMessage = "An error occured while executing the transition {} as an initiator: {}".format(self.name, e)
+            self._logger.warning(errorMessage)
+            raise Exception(errorMessage)
+
+        # Waits for the reception of a symbol
+        try:
+            (received_symbol, received_message) = abstractionLayer.readSymbol()
+        except socket.timeout:
+            self._logger.debug("Timeout on abstractionLayer.readSymbol()")
+            self.active = False
+            raise
+        except Exception as e:
+            self.active = False
+            errorMessage = "An error occured while executing the transition {} as an initiator: {}".format(self.name, e)
+            self._logger.warning(errorMessage)
+            raise Exception(errorMessage)
 
         # Computes the next state following the received symbol
-        # if its an expected one, it returns the endState of the transition
-        # if not it raises an exception
+        #   - if its an expected one, it returns the endState of the transition
+        #   - if not it raises an exception
         for outputSymbol in self.outputSymbols:
             self._logger.debug("Possible output symbol: '{0}' (id={1}).".
                                format(outputSymbol.name, outputSymbol.id))
 
-        if receivedSymbol in self.outputSymbols:
+        if received_symbol in self.outputSymbols:
             self.active = False
             return self.endState
         else:
@@ -220,25 +250,33 @@ class Transition(AbstractTransition):
         self.active = True
 
         # Pick the output symbol to emit
-        pickedSymbol = self.__pickOutputSymbol()
-        if pickedSymbol is None:
-            self._logger.debug(
-                "No output symbol to send, we pick an EmptySymbol as output symbol."
-            )
-            pickedSymbol = EmptySymbol()
+        (symbol_to_send, symbol_presets) = self.__pickOutputSymbol(abstractionLayer)
+        if symbol_to_send is None:
+            self._logger.debug("No output symbol to send, we pick an EmptySymbol as output symbol.")
+            symbol_to_send = EmptySymbol()
 
         # Sleep before emiting the symbol (if equired)
-        if pickedSymbol in list(self.outputSymbolReactionTimes.keys()):
-            time.sleep(self.outputSymbolReactionTimes[pickedSymbol])
+        if symbol_to_send in list(self.outputSymbolReactionTimes.keys()):
+            time.sleep(self.outputSymbolReactionTimes[symbol_to_send])
 
         # Emit the symbol
-        abstractionLayer.writeSymbol(pickedSymbol)
+        try:
+            abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
+        except socket.timeout:
+            self._logger.debug("Timeout on abstractionLayer.writeSymbol()")
+            self.active = False
+            return None
+        except Exception as e:
+            self._logger.warning("An exception occured when sending a symbol from the abstraction layer: '{}'".format(e))
+            self.active = False
+            #self._logger.warning(traceback.format_exc())
+            raise e
 
         # Return the endState
         self.active = False
         return self.endState
 
-    def __pickOutputSymbol(self):
+    def __pickOutputSymbol(self, abstractionLayer):
         """Picks the output symbol to emit following their probability.
 
         It computes the probability of symbols which don't explicitly have one by
@@ -248,10 +286,7 @@ class Transition(AbstractTransition):
         :rtype: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         """
 
-        if self.cbk_pickOutputSymbol is not None:
-            self._logger.debug("A callback function is executed at transition '{}'".format(self.name))
-            return self.cbk_pickOutputSymbol(self.outputSymbols)
-
+        # Randomly select an output symbol
         outputSymbolsWithProbability = dict()
         nbSymbolWithNoExplicitProbability = 0
         totalProbability = 0
@@ -287,9 +322,28 @@ class Transition(AbstractTransition):
             for outputSymbolsWithNoProbability in inner
         ]
 
-        return random.choice(distribution)
+        # Random selection of the symbol
+        symbol_to_send = random.choice(distribution)
+        symbol_presets = {}
 
-    # Properties
+        # Potentialy modify the selected symbol if a callback is defined
+        self._logger.debug("Test if a callback function is defined at transition '{}'".format(self.name))
+        if self.cbk_modifySymbol is not None:
+            self._logger.debug("A callback function is executed at transition '{}'".format(self.name))
+            (symbol_to_send, symbol_presets) = self.cbk_modifySymbol(self.outputSymbols,
+                                                                     symbol_to_send,
+                                                                     self.startState,
+                                                                     abstractionLayer.last_sent_symbol,
+                                                                     abstractionLayer.last_sent_message,
+                                                                     abstractionLayer.last_received_symbol,
+                                                                     abstractionLayer.last_received_message)
+        else:
+            self._logger.debug("No callback function is defined at transition '{}'".format(self.name))
+
+        return (symbol_to_send, symbol_presets)
+
+
+    ## Properties
 
     @property
     def inputSymbol(self):
@@ -297,7 +351,6 @@ class Transition(AbstractTransition):
         of the transition.
 
         :type: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-        :raise: TypeError if not valid
         """
         return self.__inputSymbol
 

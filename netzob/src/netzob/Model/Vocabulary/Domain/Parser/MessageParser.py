@@ -234,7 +234,7 @@ class MessageParser(object):
         for parsingResult in parsingResults:
             if parsingResult.ok is False:
                 self._logger.debug("Parsing status: {}".format(parsingResult.ok))
-                msg = "PAN The parsed data do not match with the field '{}'".format(field.name)
+                msg = "The parsed data do not match with the field '{}'".format(field.name)
                 self._logger.debug(msg)
                 raise InvalidParsingPathException(msg)
 

@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import threading
+import traceback
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -50,7 +51,7 @@ from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
 @NetzobLogger
 class Actor(threading.Thread):
-    """An actor is an instance of a traffic generator which, given a
+    r"""An actor is an instance of a traffic generator which, given a
     grammar and a vocabulary, can visit the underlying automaton, and
     generate and parse messages from a specified abstraction layer.
 
@@ -64,10 +65,12 @@ class Actor(threading.Thread):
                       If False, indicates that the actor waits for another
                       peer to initiate the connection. Default value is
                       :const:`True`.
+    :param name: The name of the actor.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
                     required
     :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`, required
     :type initiator: :class:`bool`, optional
+    :type name: :class:`str`, optional
 
 
     The Actor class provides the following public variables:
@@ -80,9 +83,11 @@ class Actor(threading.Thread):
                       If False, indicates that the actor waits for another
                       peer to initiate the connection. Default value is
                       :const:`True`.
+    :var name: The name of the actor.
     :vartype automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
     :vartype abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
     :vartype initiator: :class:`bool`
+    :vartype name: :class:`str`
 
 
     **Example with a common automaton for a client and a server**
@@ -130,7 +135,7 @@ class Actor(threading.Thread):
     >>> alice.start()
     >>> bob.start()
     >>>
-    >>> time.sleep(2)
+    >>> time.sleep(1)
     >>>
     >>> bob.stop()
     >>> alice.stop()
@@ -194,136 +199,483 @@ class Actor(threading.Thread):
     >>> alice.start()
     >>> bob.start()
     >>>
-    >>> time.sleep(2)
+    >>> time.sleep(1)
     >>>
     >>> bob.stop()
     >>> alice.stop()
 
 
-    **Executing external code when reaching a new state**
+    **Modification of the emitted symbol by a client through a callback**
 
-    The following example shows how to define a callback function that
-    will be executed when the actor reaches a specific state. This
-    callback function is then able to execute arbitrary code and
-    change the picked output transition from the current state.
-
-    >>> # Creation of a callback function that returns the last transition of the list
-    >>> cbk_executed = False  # Variable used only for testing purpose
-    >>> def cbk_function(possibleTransitions, selectedTransitionIndex):
-    ...    global cbk_executed
-    ...    cbk_executed = True
-    ...    return len(possibleTransitions) - 1
+    The following example shows how to modify the symbol that is sent
+    by the client to the server, through a callback method.
 
     >>> from netzob.all import *
     >>> import time
     >>>
-    >>> # First we create the symbols
-    >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
-    >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
-    >>> symbolList = [aliceSymbol, bobSymbol]
+    >>> # Creation of a callback function that returns a new transition
+    >>> def cbk_modifySymbol(available_symbols, current_symbol, current_state, last_sent_symbol, last_sent_message, last_received_symbol, last_received_message):
+    ...
+    ...    # Just printing some data accessible within the callback
+    ...    print("Current state: '{}'".format(current_state))
+    ...    print("[+] Last received symbol: '{}' with message: '{}'".format(last_received_symbol.name if last_received_symbol is not None else None, last_received_message))
+    ...    presets = {}
+    ...    
+    ...    # Building the output symbol by incrementing the value of the last received symbol
+    ...    if last_received_symbol is not None and last_received_message is not None:
+    ...        (dummy, structured_data) = Symbol.abstract(last_received_message, [last_received_symbol])
+    ...        field_data = structured_data[last_received_symbol.fields[0].name]
+    ...        field_data_int = int.from_bytes(field_data, byteorder='big')
+    ...        field_data = int(field_data_int + 1).to_bytes(length=1, byteorder='big')
+    ...        presets[current_symbol.fields[0]] = field_data
+    ...    else:
+    ...        presets[current_symbol.fields[0]] = b'\x02'
+    ...
+    ...    print("[+] Sending symbol '{}' with presets: '{}'".format(current_symbol.name, presets))
+    ...    return (current_symbol, presets)
     >>>
-    >>> # Create the grammar
-    >>> s0 = State(name="S0")
-    >>> s1 = State(name="S1")
-    >>> s2 = State(name="S2")
-    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
-    >>> mainTransition = Transition(startState=s1,
-    ...                             endState=s1,
-    ...                             inputSymbol=aliceSymbol,
-    ...                             outputSymbols=[bobSymbol], name="hello")
-    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
-    >>> automata = Automata(s0, symbolList)
+    >>> # We create the symbols
+    >>> symbol1 = Symbol(fields=[Field(Raw(nbBytes=1))])
+    >>> symbol2 = Symbol(fields=[Field(Raw(b'\x00'))])
+    >>> symbolList = [symbol1, symbol2]
     >>>
-    >>> # We set the callback function on state s1
-    >>> s1.cbk_pickNextTransition = cbk_function
+    >>> # Create Bob's automaton
+    >>> bob_s0 = State(name="S0")
+    >>> bob_s1 = State(name="S1")
+    >>> bob_s2 = State(name="S2")
+    >>> bob_s3 = State(name="S3")
+    >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+    >>> bob_mainTransition = Transition(startState=bob_s1,
+    ...                                  endState=bob_s1,
+    ...                                  inputSymbol=symbol1,
+    ...                                  outputSymbols=[symbol1], name="hello")
     >>>
-    >>> # Create actors: Alice (a server) and Bob (a client)
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata = automata, abstractionLayer=abstractionLayer, initiator = False)
+    >>> # Apply the callback on the main transition
+    >>> bob_mainTransition.cbk_modifySymbol = cbk_modifySymbol
     >>>
+    >>> bob_closeTransition = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
+    >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> # Create Alice's automaton
+    >>> alice_s0 = State(name="S0")
+    >>> alice_s1 = State(name="S1")
+    >>> alice_s2 = State(name="S2")
+    >>> alice_s3 = State(name="S3")
+    >>> alice_s4 = State(name="S4")
+    >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+    >>> alice_transition1 = Transition(startState=alice_s1,
+    ...                                endState=alice_s2,
+    ...                                inputSymbol=symbol1,
+    ...                                outputSymbols=[symbol2], name="T1")
+    >>> alice_transition2 = Transition(startState=alice_s2,
+    ...                                endState=alice_s3,
+    ...                                inputSymbol=symbol1,
+    ...                                outputSymbols=[symbol2], name="T2")
+    >>> alice_closeTransition = CloseChannelTransition(startState=alice_s3, endState=alice_s4, name="Close")
+    >>> alice_automata = Automata(alice_s0, symbolList)
+    >>>
+    >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata = automata, abstractionLayer=abstractionLayer)
+    >>> bob = Actor(automata = bob_automata, abstractionLayer=abstractionLayer)
+    >>>
+    >>> # Create Alice actor (a server)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> alice = Actor(automata = alice_automata, abstractionLayer=abstractionLayer, initiator = False)
     >>>
     >>> alice.start()
-    >>> bob.start()
+    >>> bob.start()  # doctest: +SKIP
     >>>
-    >>> time.sleep(2)
+    >>> time.sleep(1)  # doctest: +SKIP
+    Current state: 'S1'
+    [+] Last received symbol: 'None' with message: 'None'
+    [+] Sending symbol 'Symbol' with presets: '{Field: b'\x02'}'
+    Current state: 'S1'
+    [+] Last received symbol: 'Symbol' with message: 'b'\x00''
+    [+] Sending symbol 'Symbol' with presets: '{Field: b'\x01'}'
+    Current state: 'S1'
+    [+] Last received symbol: 'Symbol' with message: 'b'\x00''
+    [+] Sending symbol 'Symbol' with presets: '{Field: b'\x01'}'
     >>>
     >>> bob.stop()
     >>> alice.stop()
-    >>>
-    >>> cbk_executed == True
-    True
 
-    **Executing external code when reaching a new state**
 
-    The following example shows how to define a callback function that
-    will be executed when the actor picks a specific transition. This
-    callback function is then able to execute arbitrary code and
-    change the picked output symbol.
+    **Modification of the emitted symbol by a server through a callback**
 
-    >>> # Creation of a callback function that returns the available symbol of the list
-    >>> cbk_executed = False  # Variable used only for testing purpose
-    >>> def cbk_function(possibleSymbols):
-    ...    global cbk_executed
-    ...    cbk_executed = True
-    ...    return len(possibleSymbols) - 1
+    The following example shows how to modify the symbol that is sent
+    by the server in response to a client request, through a callback
+    method.
 
     >>> from netzob.all import *
     >>> import time
     >>>
-    >>> # First we create the symbols
-    >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
-    >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
-    >>> symbolList = [aliceSymbol, bobSymbol]
+    >>> # Creation of a callback function that returns a new symbol
+    >>> def cbk_modifySymbol(available_symbols, current_symbol, current_state, last_sent_symbol, last_sent_message, last_received_symbol, last_received_message):
+    ...
+    ...    # Just printing some data accessible within the callback
+    ...    print("Current state: '{}'".format(current_state))
+    ...    print("[+] Last received symbol: '{}' with message: '{}'".format(last_received_symbol.name if last_received_symbol is not None else None, last_received_message))
+    ...    presets = {}
+    ...    
+    ...    # Building the output symbol by incrementing the value of the last received symbol
+    ...    if last_received_symbol is not None and last_received_message is not None:
+    ...        (dummy, structured_data) = Symbol.abstract(last_received_message, [last_received_symbol])
+    ...        field_data = structured_data[last_received_symbol.fields[0].name]
+    ...        field_data_int = int.from_bytes(field_data, byteorder='big')
+    ...        field_data = int(field_data_int + 1).to_bytes(length=1, byteorder='big')
+    ...        presets[current_symbol.fields[0]] = field_data
+    ...    else:
+    ...        presets[current_symbol.fields[0]] = b'\x02'
+    ...
+    ...    print("[+] Sending symbol '{}' with presets: '{}'".format(current_symbol.name, presets))
+    ...    return (current_symbol, presets)
     >>>
-    >>> # Create the grammar
-    >>> s0 = State(name="S0")
-    >>> s1 = State(name="S1")
-    >>> s2 = State(name="S2")
-    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
-    >>> mainTransition = Transition(startState=s1,
-    ...                             endState=s1,
-    ...                             inputSymbol=aliceSymbol,
-    ...                             outputSymbols=[bobSymbol], name="hello")
-    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
-    >>> automata = Automata(s0, symbolList)
+    >>> # We create the symbols
+    >>> symbol1 = Symbol(fields=[Field(Raw(nbBytes=1))])
+    >>> symbol2 = Symbol(fields=[Field(Raw(b'\x00'))])
+    >>> symbolList = [symbol1, symbol2]
     >>>
-    >>> # We set the callback function on transition mainTransition
-    >>> mainTransition.cbk_pickOutputSymbol = cbk_function
+    >>> # Create Bob's automaton
+    >>> bob_s0 = State(name="S0")
+    >>> bob_s1 = State(name="S1")
+    >>> bob_s2 = State(name="S2")
+    >>> bob_s3 = State(name="S3")
+    >>> bob_s4 = State(name="S4")
+    >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+    >>> bob_transition1 = Transition(startState=bob_s1,
+    ...                              endState=bob_s2,
+    ...                              inputSymbol=symbol2,
+    ...                              outputSymbols=[symbol1], name="hello")
+    >>> bob_transition2 = Transition(startState=bob_s2,
+    ...                              endState=bob_s3,
+    ...                              inputSymbol=symbol2,
+    ...                              outputSymbols=[symbol1], name="hello")
+    >>> bob_closeTransition = CloseChannelTransition(startState=bob_s3, endState=bob_s4, name="Close")
+    >>> bob_automata = Automata(bob_s0, symbolList)
     >>>
-    >>> # Create actors: Alice (a server) and Bob (a client)
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata = automata, abstractionLayer=abstractionLayer, initiator = False)
+    >>> # Create Alice's automaton
+    >>> alice_s0 = State(name="S0")
+    >>> alice_s1 = State(name="S1")
+    >>> alice_s2 = State(name="S2")
+    >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+    >>> alice_mainTransition = Transition(startState=alice_s1,
+    ...                                   endState=alice_s1,
+    ...                                   inputSymbol=symbol1,
+    ...                                   outputSymbols=[symbol1], name="T1")
     >>>
+    >>> # Apply the callback on the main transition
+    >>> alice_mainTransition.cbk_modifySymbol = cbk_modifySymbol
+    >>>
+    >>> alice_automata = Automata(alice_s0, symbolList)
+    >>>
+    >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata = automata, abstractionLayer=abstractionLayer)
+    >>> bob = Actor(automata = bob_automata, abstractionLayer=abstractionLayer)
+    >>>
+    >>> # Create Alice actor (a server)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> alice = Actor(automata = alice_automata, abstractionLayer=abstractionLayer, initiator = False)
+    >>>
+    >>> alice.start()
+    >>> bob.start()  # doctest: +SKIP
+    >>>
+    >>> time.sleep(1)  # doctest: +SKIP
+    >>>
+    >>> bob.stop()
+    >>> alice.stop()
+
+
+    **Modification of the selected transition by a client through a callback**
+
+    The following example shows how to modify the selected transition
+    of a client in its automaton, through a callback method.
+
+    >>> from netzob.all import *
+    >>> import time
+    >>>
+    >>> # Creation of a callback function that returns a new transition
+    >>> def cbk_modifyTransition(availableTransitions, nextTransition):
+    ...
+    ...     # Just printing some data accessible within the callback
+    ...     print("In cbk_modifyTransition()")
+    ...     print("[+] Current state: '{}'".format(nextTransition.startState))
+    ...     print("[+] Available transitions: '{}'".format(availableTransitions))
+    ...     print("[+] Selected transition: '{}' with nextState: '{}'".format(nextTransition, nextTransition.endState))
+    ...
+    ...     # Modify the selected transition so that we change the next state
+    ...     if nextTransition.endState == nextTransition.startState:
+    ...         print("[+] Next state is similar as the current state. We change this behavior by picking another transition")
+    ...         availableTransitions.remove(nextTransition)
+    ...         if len(availableTransitions) > 0:
+    ...             nextTransition = random.choice(availableTransitions)
+    ...             print("[+] Changed transition: '{}' with nextState: '{}'".format(nextTransition, nextTransition.endState))
+    ...     return nextTransition
+    >>>
+    >>> # We create the symbols
+    >>> symbol1 = Symbol(fields=[Field(Raw(nbBytes=1))])
+    >>> symbolList = [symbol1]
+    >>>
+    >>> # Create Bob's automaton
+    >>> bob_s0 = State(name="S0")
+    >>> bob_s1 = State(name="S1")
+    >>> bob_s2 = State(name="S2")
+    >>> bob_s3 = State(name="S3")
+    >>> bob_s4 = State(name="S4")
+    >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+    >>> bob_transition1 = Transition(startState=bob_s1,
+    ...                              endState=bob_s1,
+    ...                              inputSymbol=symbol1,
+    ...                              outputSymbols=[symbol1], name="T1")
+    >>> bob_transition2 = Transition(startState=bob_s1,
+    ...                              endState=bob_s2,
+    ...                              inputSymbol=symbol1,
+    ...                              outputSymbols=[symbol1], name="T2")
+    >>> bob_transition3 = Transition(startState=bob_s2,
+    ...                              endState=bob_s2,
+    ...                              inputSymbol=symbol1,
+    ...                              outputSymbols=[symbol1], name="T3")
+    >>> bob_transition4 = Transition(startState=bob_s2,
+    ...                              endState=bob_s3,
+    ...                              inputSymbol=symbol1,
+    ...                              outputSymbols=[symbol1], name="T4")
+    >>> bob_closeTransition = CloseChannelTransition(startState=bob_s3, endState=bob_s4, name="Close")
+    >>>
+    >>> # Apply the callback on the main states, which is the main state
+    >>> bob_s1.cbk_modifyTransition = cbk_modifyTransition
+    >>> bob_s2.cbk_modifyTransition = cbk_modifyTransition
+    >>>
+    >>> bob_closeTransition = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
+    >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> # Create Alice's automaton
+    >>> alice_s0 = State(name="S0")
+    >>> alice_s1 = State(name="S1")
+    >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+    >>> alice_mainTransition = Transition(startState=alice_s1,
+    ...                                    endState=alice_s1,
+    ...                                    inputSymbol=symbol1,
+    ...                                    outputSymbols=symbolList, name="T1")
+    >>> alice_automata = Automata(alice_s0, symbolList)
+    >>>
+    >>> # Create Bob actor (a client)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> bob = Actor(automata = bob_automata, abstractionLayer=abstractionLayer)
+    >>>
+    >>> # Create Alice actor (a server)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> alice = Actor(automata = alice_automata, abstractionLayer=abstractionLayer, initiator = False)
+    >>>
+    >>> alice.start()
+    >>> bob.start()  # doctest: +SKIP
+    >>>
+    >>> time.sleep(1)  # doctest: +SKIP
+    In cbk_modifyTransition()
+    [+] Current state: 'S1'
+    [+] Available transitions: '[T1, T2]'
+    [+] Selected transition: 'T2' with nextState: 'S2'
+    In cbk_modifyTransition()
+    [+] Current state: 'S2'
+    [+] Available transitions: '[T3, T4]'
+    [+] Selected transition: 'T3' with nextState: 'S2'
+    [+] Next state is similar as the current state. We change this behavior by picking another transition
+    [+] Changed transition: 'T4' with nextState: 'S3'
+    >>>
+    >>> bob.stop()
+    >>> alice.stop()
+
+
+    **Modification of the current transition of a server through a callback**
+
+    The following example shows how to modify the current transition
+    of a server in its automaton, through a callback method.
+
+    >>> from netzob.all import *
+    >>> import time
+    >>>
+    >>> # Creation of a callback function that returns a new transition
+    >>> def cbk_modifyTransition(availableTransitions, nextTransition):
+    ...
+    ...     # Just printing some data accessible within the callback
+    ...     print("In cbk_modifyTransition()")
+    ...     print("[+] Current state: '{}'".format(nextTransition.startState))
+    ...     print("[+] Available transitions: '{}'".format(availableTransitions))
+    ...     print("[+] Selected transition: '{}' with nextState: '{}'".format(nextTransition, nextTransition.endState))
+    ...
+    ...     # Modify the selected transition so that we change the next state
+    ...     if nextTransition.endState == nextTransition.startState:
+    ...         print("[+] Next state is similar as the current state. We change this behavior by picking another transition")
+    ...         availableTransitions.remove(nextTransition)
+    ...         if len(availableTransitions) > 0:
+    ...             nextTransition = random.choice(availableTransitions)
+    ...             print("[+] Changed transition: '{}' with nextState: '{}'".format(nextTransition, nextTransition.endState))
+    ...     return nextTransition
+    >>>
+    >>> # We create the symbols
+    >>> symbol1 = Symbol(fields=[Field(Raw(nbBytes=1))])
+    >>> symbolList = [symbol1]
+    >>>
+    >>> # Create Bob's automaton
+    >>> bob_s0 = State(name="S0")
+    >>> bob_s1 = State(name="S1")
+    >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+    >>> bob_mainTransition = Transition(startState=bob_s1,
+    ...                                    endState=bob_s1,
+    ...                                    inputSymbol=symbol1,
+    ...                                    outputSymbols=symbolList, name="T1")
+    >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> # Create Alice's automaton
+    >>> alice_s0 = State(name="S0")
+    >>> alice_s1 = State(name="S1")
+    >>> alice_s2 = State(name="S2")
+    >>> alice_s3 = State(name="S3")
+    >>> alice_s4 = State(name="S4")
+    >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+    >>> alice_transition1 = Transition(startState=alice_s1,
+    ...                              endState=alice_s1,
+    ...                              inputSymbol=symbol1,
+    ...                              outputSymbols=[symbol1], name="T1")
+    >>> alice_transition2 = Transition(startState=alice_s1,
+    ...                              endState=alice_s2,
+    ...                              inputSymbol=symbol1,
+    ...                              outputSymbols=[symbol1], name="T2")
+    >>> alice_transition3 = Transition(startState=alice_s2,
+    ...                              endState=alice_s2,
+    ...                              inputSymbol=symbol1,
+    ...                              outputSymbols=[symbol1], name="T3")
+    >>> alice_transition4 = Transition(startState=alice_s2,
+    ...                              endState=alice_s3,
+    ...                              inputSymbol=symbol1,
+    ...                              outputSymbols=[symbol1], name="T4")
+    >>> alice_closeTransition = CloseChannelTransition(startState=alice_s3, endState=alice_s4, name="Close")
+    >>>
+    >>> # Apply the callback on the main states, which is the main state
+    >>> alice_s1.cbk_modifyTransition = cbk_modifyTransition
+    >>> alice_s2.cbk_modifyTransition = cbk_modifyTransition
+    >>>
+    >>> alice_automata = Automata(alice_s0, symbolList)
+    >>>
+    >>> # Create Bob actor (a server)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> bob = Actor(automata = bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>>
+    >>> # Create Alice actor (a client)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> alice = Actor(automata = alice_automata, abstractionLayer=abstractionLayer, initiator = False, name="Alice")
     >>>
     >>> alice.start()
     >>> bob.start()
     >>>
-    >>> time.sleep(2)
+    >>> time.sleep(1)
+    In cbk_modifyTransition()
+    [+] Current state: 'S1'
+    [+] Available transitions: '[T1, T2]'
+    [+] Selected transition: 'T1' with nextState: 'S1'
+    [+] Next state is similar as the current state. We change this behavior by picking another transition
+    [+] Changed transition: 'T2' with nextState: 'S2'
+    In cbk_modifyTransition()
+    [+] Current state: 'S2'
+    [+] Available transitions: '[T3, T4]'
+    [+] Selected transition: 'T3' with nextState: 'S2'
+    [+] Next state is similar as the current state. We change this behavior by picking another transition
+    [+] Changed transition: 'T4' with nextState: 'S3'
     >>>
     >>> bob.stop()
     >>> alice.stop()
-    >>>
-    >>> cbk_executed == True
-    True
+
+
+    # **Transition with no input symbol**
+
+    # >>> from netzob.all import *
+    # >>> import time
+    # >>> def cbk_modifySymbol(available_symbols, current_symbol, current_state, last_sent_symbol, last_sent_message, last_received_symbol, last_received_message):
+    # ...
+    # ...    # Just printing some data accessible within the callback
+    # ...    print("Current state: '{}'".format(current_state))
+    # ...    print("[+] Current symbol: '{}'".format(current_symbol.name))
+    # ...    return (current_symbol, {})
+    # >>>
+    # >>> # First we create the symbols
+    # >>> symbol = Symbol(name="Hello", fields=[Field("hello")])
+    # >>> symbolList = [symbol]
+    # >>>
+    # >>> # Create the grammar
+    # >>> bob_s0 = State(name="S0")
+    # >>> bob_s1 = State(name="S1")
+    # >>> bob_s2 = State(name="S2")
+    # >>> bob_s3 = State(name="S3")
+    # >>> bob_s4 = State(name="S4")
+    # >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+    # >>> bob_firstTransition = Transition(startState=bob_s1,
+    # ...                                  endState=bob_s2,
+    # ...                                  inputSymbol=symbol,
+    # ...                                  outputSymbols=symbolList, name="Init")
+    # >>> bob_mainTransition = Transition(startState=bob_s2,
+    # ...                                 endState=bob_s3,
+    # ...                                 inputSymbol=None,
+    # ...                                 outputSymbols=symbolList, name="Hello")
+    # >>> bob_closeTransition = CloseChannelTransition(startState=bob_s3, endState=bob_s4, name="Close")
+    # >>> bob_automata = Automata(bob_s0, symbolList)
+    # >>> #bob_mainTransition.cbk_modifySymbol = cbk_modifySymbol
+    # >>>
+    # >>> alice_s0 = State(name="S0")
+    # >>> alice_s1 = State(name="S1")
+    # >>> alice_s2 = State(name="S2")
+    # >>> alice_s3 = State(name="S3")
+    # >>> alice_s4 = State(name="S4")
+    # >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+    # >>> alice_firstTransition = Transition(startState=alice_s1,
+    # ...                                    endState=alice_s2,
+    # ...                                    inputSymbol=symbol,
+    # ...                                    outputSymbols=symbolList, name="Hello")
+    # >>> alice_mainTransition = Transition(startState=alice_s2,
+    # ...                                   endState=alice_s3,
+    # ...                                   inputSymbol=None,
+    # ...                                   outputSymbols=symbolList, name="Hello")
+    # >>> alice_closeTransition = CloseChannelTransition(startState=alice_s3, endState=alice_s4, name="Close")
+    # >>> alice_automata = Automata(alice_s0, symbolList)
+    # >>> #alice_mainTransition.cbk_modifySymbol = cbk_modifySymbol
+    # >>>
+    # >>> # Create actors: Alice (a server) and Bob (a client)
+    # >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+    # >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    # >>> abstractionLayer.timeout = 0.5
+    # >>> alice = Actor(automata = alice_automata, abstractionLayer=abstractionLayer, initiator = False, name="Alice")
+    # >>>
+    # >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+    # >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    # >>> abstractionLayer.timeout = 0.5
+    # >>> bob = Actor(automata = bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    # >>>
+    # >>> alice.start()
+    # >>> bob.start()
+    # >>>
+    # >>> time.sleep(2)
+    # >>>
+    # >>> bob.stop()
+    # >>> alice.stop()
+
 
     """
 
     def __init__(self,
                  automata,          # type: Automata
                  abstractionLayer,  # type: AbstractionLayer
-                 initiator=True     # type: bool
+                 initiator=True,    # type: bool
+                 name="Actor",      # type: str
                  ):
         super(Actor, self).__init__()
         self.automata = automata
         self.initiator = initiator
+        self.name = name
         self.abstractionLayer = abstractionLayer
         self.__stopEvent = threading.Event()
 
@@ -333,29 +685,23 @@ class Actor(threading.Thread):
         currentState = self.automata.initialState
         while not self.__stopEvent.isSet():
             try:
-                self._logger.debug("Current state: {0}.".format(currentState))
+                self._logger.debug("Current state for actor '{}': '{}'.".format(self.name, currentState))
                 if self.initiator:
-                    currentState = currentState.executeAsInitiator(
-                        self.abstractionLayer)
+                    currentState = currentState.executeAsInitiator(self.abstractionLayer)
                 else:
-                    currentState = currentState.executeAsNotInitiator(
-                        self.abstractionLayer)
+                    currentState = currentState.executeAsNotInitiator(self.abstractionLayer)
 
                 if currentState is None:
-                    self._logger.warning(
-                        "The execution of transition did not returned a state")
+                    self._logger.debug("The execution of transition did not returned a state, for actor '{}'".format(self.name))
                     self.stop()
 
             except Exception as e:
-                self._logger.warning(
-                    "Exception raised when on the execution of state {0}.".
-                    format(currentState.name))
-                self._logger.warning("Exception error: {0}".format(str(e)))
-
+                self._logger.warning("Exception raised for actor '{}' when on the execution of state {}.".format(self.name, currentState.name))
+                self._logger.warning("Exception error for actor '{}': {}".format(self.name, str(e)))
+                #self._logger.warning(traceback.format_exc())
                 self.stop()
 
-        self._logger.debug(
-            "Actor {0} has finished to execute".format(self.name))
+        self._logger.debug("Actor '{}' has finished to execute".format(self.name))
 
     def stop(self):
         """Stop the visit of the automaton.

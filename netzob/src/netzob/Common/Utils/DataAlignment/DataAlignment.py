@@ -130,13 +130,14 @@ class DataAlignment(object):
 
     """
 
-    def __init__(self, data, field, depth=None, encoded=True, styled=False, memory=None):
+    def __init__(self, data, field, depth=None, encoded=True, styled=False, memory=None, messageParser=None):
         self.data = data
         self.field = field
         self.depth = depth
         self.encoded = encoded
         self.styled = styled
         self.memory = memory
+        self.messageParser = messageParser
 
     def execute(self):
         """Execute the alignment of data following specified field
@@ -158,10 +159,9 @@ class DataAlignment(object):
         targetedFieldLeafFields = rootLeafFields
 
         result.headers = [str(field.name) for field in targetedFieldLeafFields]
-        from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
+
         for d in self.data:
-            mp = MessageParser(memory=self.memory)
-            alignedMsg = next(mp.parseRaw(d, targetedFieldLeafFields))
+            alignedMsg = next(self.messageParser.parseRaw(d, targetedFieldLeafFields))
 
             alignedEncodedMsg = []
             for ifield, currentField in enumerate(targetedFieldLeafFields):
@@ -187,7 +187,7 @@ class DataAlignment(object):
     # Static method
     @staticmethod
     @typeCheck(str, AbstractField, int)
-    def align(data, field, depth=None, encoded=True, memory=None):
+    def align(data, field, depth=None, encoded=True, memory=None, messageParser=None):
         """Execute an alignment of specified data with provided field.
         Data must be provided as a list of hexastring.
 
@@ -197,16 +197,18 @@ class DataAlignment(object):
         :param encoded: set to True if you want the returned result to follow the encoding functions
         :param memory: A memory used to store variable values during
                        specialization and abstraction of sequence of symbols.
+        :param messageParser: The underlying message parser class instance to use.
         :type data: :class:`list`
         :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :type depth: :class:`int`.
         :type encoded: :class:`boolean`
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory>`
+        :type messageParser: :class:`MessageParser <netzob.Model.Vocabulary.Domain.Parser.MessageParser.MessageParser>`
         :return: the aligned data
         :rtype: :class:`MatrixList <netzob.Common.Utils.MatrixList.MatrixList>`
         """
 
-        dAlignment = DataAlignment(data, field, depth, encoded=encoded, memory=memory)
+        dAlignment = DataAlignment(data, field, depth, encoded=encoded, memory=memory, messageParser=messageParser)
         return dAlignment.execute()
 
     # Properties
@@ -316,3 +318,19 @@ class DataAlignment(object):
     @memory.setter
     def memory(self, memory):
         self.__memory = memory
+
+    @property
+    def messageParser(self):
+        """The messageParser used to parse the data.
+
+        :type: :class:`netzob.Model.Vocabulary.Domain.Parser.MessageParser.MessageParser`
+        """
+        return self.__messageParser
+
+    @messageParser.setter
+    def messageParser(self, messageParser):
+        if messageParser is not None:
+            self.__messageParser = messageParser
+        else:
+            from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
+            self.__messageParser = MessageParser(memory=self.memory)

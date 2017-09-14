@@ -36,6 +36,8 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import time
+from collections import OrderedDict
+import socket
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -55,6 +57,7 @@ from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
+from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 
 
 @NetzobLogger
@@ -109,10 +112,10 @@ class AbstractionLayer(object):
     >>> abstractionLayerOut.openChannel()
     >>> abstractionLayerOut.writeSymbol(symbol)
     12
-    >>> (receivedSymbol, receivedMessage) = abstractionLayerIn.readSymbol()
-    >>> receivedSymbol.name
+    >>> (received_symbol, received_data) = abstractionLayerIn.readSymbol()
+    >>> received_symbol.name
     'Symbol_Hello'
-    >>> receivedMessage
+    >>> received_data
     b'Hello Kurt !'
 
 
@@ -133,12 +136,12 @@ class AbstractionLayer(object):
     >>> abstractionLayerOut.openChannel()
     >>> abstractionLayerOut.writeSymbol(symbolflow)
     22
-    >>> (receivedSymbols, receivedMessage) = abstractionLayerIn.readSymbols()
-    >>> receivedSymbols
+    >>> (received_symbols, received_data) = abstractionLayerIn.readSymbols()
+    >>> received_symbols
     [Symbol_Hello, Symbol_WUP]
 
 
-    **Memory usage with the abstraction layer**
+    **Relationships between the environment and the produced messages**
 
     The following example shows how to define a relationship between a
     message to send and an environment variable, then how to leverage this
@@ -167,10 +170,10 @@ class AbstractionLayer(object):
     >>> # Sending of a symbol containing a data coming from the environment
     >>> abstractionLayerOut.writeSymbol(symbol)
     11
-    >>> (receivedSymbol, receivedMessage) = abstractionLayerIn.readSymbol()
-    >>> receivedSymbol.name
+    >>> (received_symbol, received_data) = abstractionLayerIn.readSymbol()
+    >>> received_symbol.name
     'Symbol_Hello'
-    >>> receivedMessage
+    >>> received_data
     b'master>John'
 
     """
@@ -185,6 +188,12 @@ class AbstractionLayer(object):
         self.specializer = MessageSpecializer(memory=self.memory)
         self.parser = MessageParser(memory=self.memory)
         self.flow_parser = FlowParser(memory=self.memory)
+
+        # Variables used to keep track of the last sent and received symbols and associated messages
+        self.last_sent_symbol = None
+        self.last_sent_message = None
+        self.last_received_symbol = None
+        self.last_received_message = None
 
     @typeCheck(Symbol)
     def writeSymbol(self, symbol, rate=None, duration=None, presets=None, fuzz=None):
@@ -220,8 +229,7 @@ class AbstractionLayer(object):
         """
 
         if symbol is None:
-            raise TypeError(
-                "The symbol to write on the channel cannot be None")
+            raise TypeError("The symbol to write on the channel cannot be None")
 
         len_data = 0
         if duration is None:
@@ -288,8 +296,12 @@ class AbstractionLayer(object):
 
         """
 
-        self._logger.debug("Specializing symbol '{0}' (id={1}).".format(
-            symbol.name, symbol.id))
+        len_data = 0
+        if isinstance(symbol, EmptySymbol):
+            self._logger.debug("Symbol to write is an EmptySymbol. So nothing to do.".format(symbol.name))
+            return len_data
+
+        self._logger.debug("Specializing symbol '{0}' (id={1}).".format(symbol.name, symbol.id))
 
         self.specializer.presets = presets
         self.specializer.fuzz = fuzz
@@ -301,8 +313,21 @@ class AbstractionLayer(object):
         self.parser.memory = self.memory
         data = dataBin.tobytes()
 
-        len_data = self.channel.write(data)
-        self._logger.debug("Writing {} octets to commnunication channel done..".format(len_data))
+        self._logger.debug("Writing the following data to the commnunication channel: '{}'".format(data))
+        self._logger.debug("Writing the following symbol to the commnunication channel: '{}'".format(symbol.name))
+
+        try:
+            len_data = self.channel.write(data)
+        except socket.timeout:
+            self._logger.debug("Timeout on channel.write(...)")
+            raise
+        except Exception as e:
+            self._logger.warn("Exception on channel.write(...): '{}'".format(e))
+            raise
+
+        self.last_sent_symbol = symbol
+        self.last_sent_message = data
+
         return len_data
 
     @typeCheck(int)
@@ -359,22 +384,32 @@ class AbstractionLayer(object):
         """
 
         self._logger.debug("Reading data from communication channel...")
-        data = self.channel.read()
-        self._logger.debug("Received : {}".format(repr(data)))
+
+        try:
+            data = self.channel.read()
+        except socket.timeout:
+            self._logger.debug("Timeout on channel.read()")
+            raise
+        except Exception as e:
+            self._logger.warn("Exception on channel.read(): '{}'".format(e))
+            raise
+
+        self._logger.debug("Received: {}".format(repr(data)))
 
         symbol = None
 
-        # if we read some bytes, we try to abstract them
+        # if we read some bytes, we try to abstract them in a symbol
         if len(data) > 0:
-            for potential in self.symbols:
+            for potentialSymbol in self.symbols:
                 try:
-                    self.parser.parseMessage(RawMessage(data), potential)
-                    symbol = potential
+                    DataAlignment.align([data], potentialSymbol, encoded=False, messageParser=self.parser)
+
+                    symbol = potentialSymbol
                     self.memory = self.parser.memory
                     self.specializer.memory = self.memory
                     break
-                except Exception:
-                    symbol = None
+                except Exception as e:
+                    self._logger.debug(e)
 
         if symbol is None and len(data) > 0:
             msg = RawMessage(data)
@@ -382,6 +417,11 @@ class AbstractionLayer(object):
         elif symbol is None and len(data) == 0:
             symbol = EmptySymbol()
 
+        self.last_received_symbol = symbol
+        self.last_received_message = data
+
+        self._logger.debug("Receiving the following data from the commnunication channel: '{}'".format(data))
+        self._logger.debug("Receiving the following symbol from the commnunication channel: '{}'".format(symbol.name))
         return (symbol, data)
 
     def openChannel(self):

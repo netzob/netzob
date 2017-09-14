@@ -63,7 +63,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         self.__id = uuid.uuid4()
         self.name = name
         self.active = False
-        self.__cbk_pickNextTransition = None
+        self.__cbk_modifyTransition = None
 
     def __str__(self):
         return str(self.name)
@@ -131,38 +131,34 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         self.__active = active
 
     @property
-    def cbk_pickNextTransition(self):
-        """Function called during state execution to help choosing the next
-        transition.
-
-        If a callback function is defined, we call it in order to
-        execute an external program that may change the selected
-        transition.
+    def cbk_modifyTransition(self):
+        """Function called during state execution to help choosing/modifying
+        the next transition.
 
         The callable function should have the following prototype: 
 
-        ``def cbk_function(possibleTransitions, selectedTransitionIndex):``
+        ``def cbk_function(availableTransitions, nextTransition):``
 
         Where:
 
-        * ``possibleTransitions`` corresponds to the :class:`list` of
-          possible transitions (:class:`Transition
+        * ``availableTransitions`` corresponds to the :class:`list` of
+          available transitions (:class:`Transition
           <netzob.Model.Grammar.Transitions.Transition.Transition>`)
           from the current state.
-        * ``selectedTransitionIndex`` corresponds to the original selected transition index.
+        * ``nextTransition`` corresponds to the currently selected transition.
 
-        The callback function should return an integer corresponding
-        to the selected transition (that could have changed by the
-        executed program).
+        The callback function should return a transition (which could
+        be the original transition or another one in the available
+        transitions).
 
         :type: :class:`func`
-        :raise: TypeError if cbk_pickNextTransition is not a callable function
+        :raise: TypeError if cbk_modifyTransition is not a callable function
 
         """
-        return self.__cbk_pickNextTransition
+        return self.__cbk_modifyTransition
 
-    @cbk_pickNextTransition.setter
-    def cbk_pickNextTransition(self, cbk_pickNextTransition):
-        if not callable(cbk_pickNextTransition):
-            raise TypeError("'cbk_pickNextTransition' should be a callable function")
-        self.__cbk_pickNextTransition = cbk_pickNextTransition
+    @cbk_modifyTransition.setter
+    def cbk_modifyTransition(self, cbk_modifyTransition):
+        if not callable(cbk_modifyTransition):
+            raise TypeError("'cbk_modifyTransition' should be a callable function")
+        self.__cbk_modifyTransition = cbk_modifyTransition
