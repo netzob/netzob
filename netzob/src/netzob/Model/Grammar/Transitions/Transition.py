@@ -64,7 +64,7 @@ class Transition(AbstractTransition):
     :param startState: The initial state of the transition.
     :param endState: The end state of the transition.
     :param inputSymbol: The input symbol which triggers the execution of the transition. The default value is `None`, which mean that no symbol is expected in a server context, and no symbol is sent in a client context. Internally, `None` symbol will be replaced by an :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
-    :param outputSymbols: A list of output symbols that can be generated when the current transition is executed. The default value is `None`, which mean that no symbol will be sent in a server context, and no symbol is expected in a client context. Internally, `None` symbol will be replaced by an :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
+    :param outputSymbols: A list of output symbols that can be expected when the current transition is executed. The default value is `None`, which mean that no symbol will be sent in a server context, and no symbol is expected in a client context. Internally, `None` symbol will be replaced by an :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
     :param name: The name of the transition. The default value is `None`.
     :type startState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type endState: :class:`State <netzob.Model.Grammar.States.State.State>`, required

@@ -126,7 +126,7 @@ class State(AbstractState):
             self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
         except Exception as e:
             self.active = False
-            raise e
+            raise
 
         if nextState is None:
             self.active = False
@@ -222,7 +222,7 @@ class State(AbstractState):
             self._logger.warning("An exception occured when receiving a symbol from the abstraction layer.")
             self.active = False
             #self._logger.warning(traceback.format_exc())
-            raise e
+            raise
 
         # If a callback function is defined, we call it in order to
         # execute an external program that may change the selected
@@ -315,24 +315,25 @@ class State(AbstractState):
     def transitions(self):
         return self.__transitions
 
-    def _test(self):
-        """
-        >>> from netzob.all import *
-        >>> s0 = State()
-        >>> s0.name
-        'State'
-        >>> s1 = State(name="S1")
-        >>> s1.name
-        'S1'
-        >>> t = Transition(s0, s1, None, None)
-        >>> t.startState.name
-        'State'
-        >>> t.endState.name
-        'S1'
-        >>> len(s0.transitions)
-        1
-        >>> s0.transitions[0].startState.name
-        'State'
-        >>> s0.transitions[0].endState.name
-        'S1'
-        """
+
+def _test():
+    """
+    >>> from netzob.all import *
+    >>> s0 = State()
+    >>> s0.name
+    'State'
+    >>> s1 = State(name="S1")
+    >>> s1.name
+    'S1'
+    >>> t = Transition(s0, s1, None, None)
+    >>> t.startState.name
+    'State'
+    >>> t.endState.name
+    'S1'
+    >>> len(s0.transitions)
+    1
+    >>> s0.transitions[0].startState.name
+    'State'
+    >>> s0.transitions[0].endState.name
+    'S1'
+    """
