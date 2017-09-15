@@ -245,46 +245,65 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
         The callable function should have the following prototype:
 
-        ``def cbk_method(available_symbols,
+        .. code-block:: python
+
+          def cbk_method(available_symbols,
                          current_symbol,
                          current_state,
                          last_sent_symbol,
                          last_sent_message,
                          last_received_symbol,
-                         last_received_message):``
+                         last_received_message):
 
         Where:
 
-        * ``possibleSymbols`` corresponds to the :class:`list` of
-          possible Symbols (:class:`Symbol
-          <netzob.Model.Vocabulary.Symbol.Symbol>`) to send.
-        * ``current_symbol`` is currently selected symbol that will be sent.
-        * ``current_state`` is the current state in the automaton.
-        * ``last_sent_symbol`` corresponds to the last sent symbol (:class:`Symbol
-          <netzob.Model.Vocabulary.Symbol.Symbol>`) on the abstraction layer, and thus permits to create relationships with the previously sent symbol.
-        * ``last_sent_message`` corresponds to the last sent message (:class:`bitarray`) on the abstraction layer, and thus permits to create relationships with the previously sent message.
-        * ``last_received_symbol`` corresponds to the last received symbol (:class:`Symbol
-          <netzob.Model.Vocabulary.Symbol.Symbol>`) on the abstraction layer, and thus permits to create relationships with the previously received symbol.
-        * ``last_received_message`` corresponds to the last received message (:class:`bitarray`) on the abstraction layer, and this permits to create relationships with the previously received message.
+          :attr:`possibleSymbols`
+            Corresponds to the :class:`list` of possible Symbols
+            (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`) to send.
+
+          :attr:`current_symbol`
+            Currently selected symbol that will be sent.
+
+          :attr:`current_state`
+            Current state in the automaton.
+
+          :attr:`last_sent_symbol`
+            Last sent symbol (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`)
+            on the abstraction layer, and thus permits to create relationships
+            with the previously sent symbol.
+
+          :attr:`last_sent_message`
+            Last sent message (:class:`bitarray`) on the abstraction layer, and
+            thus permits to create relationships with the previously sent message.
+
+          :attr:`last_received_symbol`
+            Last received symbol
+            (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`) on the
+            abstraction layer, and thus permits to create relationships with
+            the previously received symbol.
+
+          :attr:`last_received_message`
+            Last received message (:class:`bitarray`) on the abstraction layer,
+            and this permits to create relationships with
+            received message.
 
         The callback function should return a tuple (symbol, presets)
         whose meaning is as follows:
 
-        * ``symbol`` (:class:`Symbol
-          <netzob.Model.Vocabulary.Symbol.Symbol>`) is the symbol that
-          will be sent. This could be the same as the
-          ``current_symbol`` or another one.
-        * ``presets`` is a :class:`dict` of keys:values used to preset
-                        (parameterize) fields during symbol
-                        specialization. Values in this dictionary will
-                        override any field definition, constraints or
-                        relationship dependencies (see
-                        :meth:`specialize` in the class :class:`Symbol
-                        <netzob.Model.vocabulary.Symbol.Symbol>`, for
-                        more information).
+          :attr:`symbol`
+            The symbol (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`)
+            that will be sent. This could be the same as the
+            :attr:`current_symbol` or another one.
+
+          :attr:`presets`
+            A :class:`dict` of keys:values used to preset (parameterize) fields
+            during symbol specialization. Values in this dictionary will
+            override any field definition, constraints or relationship
+            dependencies (see :meth:`~netzob.Model.Vocabulary.Symbol.Symbol.specialize`,
+            for more information).
 
         :type: :class:`func`
-        :raise: :class:`TypeError` if ``cbk_method`` is not a callable function
+        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
         """
         if not callable(cbk_method):

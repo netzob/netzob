@@ -214,7 +214,7 @@ class State(AbstractState):
                     nextTransition = transition
                     break
             else:
-                self._logger.debug("Not transition expects an EmptySymbol as input symbol")
+                self._logger.debug("No transition expects an EmptySymbol as input symbol")
                 self.active = False
                 return None
 
@@ -274,9 +274,8 @@ class State(AbstractState):
 
         availableTransitions = prioritizedTransitions[sorted(prioritizedTransitions.keys())[0]]
 
-        # Randomely select the next transition
-        idRandom = random.randint(0, len(availableTransitions) - 1)
-        nextTransition = availableTransitions[idRandom]
+        # Randomly select the next transition
+        nextTransition = random.choice(availableTransitions)
 
         # If a callback function is defined, we call it in order to
         # execute an external program that may change the selected
