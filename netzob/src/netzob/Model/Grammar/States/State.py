@@ -113,7 +113,7 @@ class State(AbstractState):
         self.active = True
 
         # Pick the next transition
-        nextTransition = self.__pickNextTransition()
+        nextTransition = self.__pickNextTransition(abstractionLayer)
         self._logger.debug("Next transition: {0}.".format(nextTransition))
 
         if nextTransition is None:
@@ -252,7 +252,7 @@ class State(AbstractState):
         self.active = False
         return nextState
 
-    def __pickNextTransition(self):
+    def __pickNextTransition(self, abstractionLayer):
         """Returns the next transition by considering the priority
         and a random choice.
 
