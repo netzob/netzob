@@ -79,8 +79,8 @@ class Size(AbstractRelationVariableLeaf):
                      value is Raw(nbBytes=1).
     :param factor: Specify that the initial size value (always
                    expressed in bits) should be divided by this
-                   factor. The default value is 1./8. For example, to express a size in bytes,
-                   the factor should be ``1./8``, whereas to express a size in bits, the factor should be ``1.``.
+                   factor. The default value is ``1.0/8``. For example, to express a size in bytes,
+                   the factor should be ``1.0/8``, whereas to express a size in bits, the factor should be ``1.0``.
     :param offset: Specify that an offset value should be added to
                    the final size value (after applying the factor
                    parameter). The default value is 0.
