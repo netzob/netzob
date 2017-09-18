@@ -204,7 +204,7 @@ class Agg(AbstractVariableNode):
     True
 
 
-    **Modelling indirect recursion**
+    **Modelling indirect recursion, simple example**
 
     The following example shows how to specify a field with a
     structure (``v2``) that contains another structure (``v1``), which
@@ -212,7 +212,7 @@ class Agg(AbstractVariableNode):
     ``last_optional`` is used to indicate that the specialization or
     parsing of the last element of the aggregate ``v2`` is optional.
 
-    >>> from netzob.all import *    
+    >>> from netzob.all import *
     >>> v1 = Agg([])
     >>> v2 = Agg([int8(interval=(1, 3)), v1], last_optional=True)
     >>> v1.children = ["!", v2]
@@ -227,7 +227,55 @@ class Agg(AbstractVariableNode):
     True
 
 
-    **Modelling direct recursion**
+    **Modelling indirect recursion, more complex example**
+
+    The following syntax provides a way to parse and specialize a subset of
+    mathematical expressions including pair group of parentheses, digits from 0
+    to 9 and two arithmetic operators ('+' and '*').
+
+    .. productionlist::
+       num: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9
+       operator: "+" | "*"
+       operation: left right
+       left: subop ")"
+       subop: "(" operation
+
+    The following examples **should** be compatible with these expressions::
+
+        1 + 2
+        1 + 2 + 3
+        1 + (2 + 3)
+        (1 + 2) + 3
+        (1 + 2) + 3 + 4
+        1 + (2 * 3) + (4 * 5)
+        1 + (2 * (3 + 4)) + 5
+        1 + ((2 * 3) * 4) * 5
+
+    These last expressions **should not** be compatible with these expressions::
+
+        1
+        1 ** 2
+        1 * (2 * 3
+        1 *
+
+    This example of indirect recursion introduces a recursion of the
+    `operation` statement, called in the `subop` statement.
+
+    >>> from netzob.all import *
+    >>> num = Alt("0123456789")
+    >>> operator = Alt([" + ", " * "])
+    >>> operation = Agg([], last_optional=True)
+    >>> subop = Agg(["(", operation])
+    >>> subop = Agg([subop, ")"])
+    >>> left = Alt([num, subop])
+    >>> right = Agg([operator, operation])
+    >>> operation.children += [left, right]
+    >>> sym = Symbol([Field(operation)])  # doctest: +SKIP
+    >>> sym.specialize()  # doctest: +SKIP
+    b'((((4 * 8 * 4) + 5 + 9 + 0) * 7 * 0 + (4 + 9 + (3 * 4 + 2) * 0) * 9) + 4 * 7)'
+
+
+    **Modelling direct recursion, simple example**
 
     The following example shows how to specify a field with a
     structure (``v``) that can optionally contain itself. To model
@@ -248,6 +296,45 @@ class Agg(AbstractVariableNode):
     >>> res_object == f  # doctest: +SKIP
     True
 
+    **Modelling direct recursion, more complex example**
+
+    This example describes a modelling of a pair group of parentheses
+    (``'('`` and ``')'``), around a single character (``'+'``).
+    The BNF syntax of this model would be:
+
+    .. productionlist::
+       parentheses: "(" [ parentheses | "+" ] ")"
+
+    .. warning::
+       This syntax introduces a recursivity in the middle of the `left`
+       statement, which **is not supported**. Instead, this syntax could be
+       adapted to move the recursivity to the right.
+
+    .. productionlist::
+       parentheses: left right
+       left: "(" [ parentheses | "+" ]
+       right: ")"
+
+    The following models describe this issue and provide a workaround.
+
+    **BAD way**
+
+    >>> from netzob.all import *
+    >>> parentheses = Agg(["(", Alt([SELF, "+"]), ")"])
+    Traceback (most recent call last):
+    ValueError: SELF can only be set at the last position of an Agg
+
+    **GOOD way**
+
+    >>> from netzob.all import *
+    >>> parentheses = Agg([])
+    >>> left = Agg(["(", Alt([parentheses, "+"])])
+    >>> right = ")"
+    >>> parentheses.children += [left, right]
+    >>>
+    >>> symbol = Symbol([Field(parentheses)])
+    >>> symbol.specialize()  # doctest: +SKIP
+    b'(((+)))'
 
     """
 
