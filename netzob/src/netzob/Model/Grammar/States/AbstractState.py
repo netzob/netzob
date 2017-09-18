@@ -150,7 +150,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
           :attr:`availableTransitions`
             Corresponds to the :class:`list` of available transitions
-            (:class:`~netzob.Model.Grammar.Transitions.Transition.Transition>`)
+            (:class:`~netzob.Model.Grammar.Transitions.Transition.Transition`)
             starting from the current state.
 
           :attr:`nextTransition`

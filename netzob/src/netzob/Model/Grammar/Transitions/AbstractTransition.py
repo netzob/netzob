@@ -58,8 +58,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     :param _id: The unique identifier of the transition.
     :param str name: The name of the transition
     :param int priority: the priority of the transition
-    :type startState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
-    :type endState: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
+    :type startState: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
+    :type endState: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
     :type _id: :class:`uuid.UUID`
 
     """
@@ -128,7 +128,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         """
         The start state of the transition.
 
-        When modifying the startState, it removes itself from previous start state
+        When modifying the startState, it removes itself from previous start
+        state.
 
         >>> from netzob.all import *
         >>> s0 = State(name="S0")
@@ -143,7 +144,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         >>> len(s0.transitions)
         0
 
-        :type: :class:`AbstractState <netzob.Model.Grammar.State.AbstractState.AbstractState>`
+        :type: :class:`~netzob.Model.Grammar.State.AbstractState.AbstractState`
         :raise: TypeError if type of param is not valid
         """
         return self.__startState
@@ -169,7 +170,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         >>> t.endState.name
         S1
 
-        :type: :class:`AbstractState <netzob.Model.Grammar.State.AbstractState.AbstractState>`
+        :type: :class:`~netzob.Model.Grammar.State.AbstractState.AbstractState`
         :raise: TypeError if type of param is not valid
         """
         return self.__endState
@@ -183,7 +184,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         """The priority of the transition. The lower its its
         the highest priority it gets.
         For instance, an open and close channel transition are both declared
-        with a priority of 0 whereas per default a transition has a priority of 10.
+        with a priority of 0 whereas per default a transition has a priority
+        of 10.
 
         >>> from netzob.all import *
         >>> s0 = State(name="Start")
@@ -238,7 +240,6 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     def description(self, description):
         self._description = description
 
-
     def add_cbk_modify_symbol(self, cbk_method):
         """Function called during transition execution, to help
         choosing/modifying the output symbol to send.
@@ -257,7 +258,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
         Where:
 
-          :attr:`possibleSymbols`
+          :attr:`available_symbols`
             Corresponds to the :class:`list` of possible Symbols
             (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`) to send.
 
@@ -274,7 +275,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
           :attr:`last_sent_message`
             Last sent message (:class:`bitarray`) on the abstraction layer, and
-            thus permits to create relationships with the previously sent message.
+            thus permits to create relationships with the previously sent
+            message.
 
           :attr:`last_received_symbol`
             Last received symbol

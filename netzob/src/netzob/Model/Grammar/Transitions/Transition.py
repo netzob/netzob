@@ -63,13 +63,25 @@ class Transition(AbstractTransition):
 
     :param startState: The initial state of the transition.
     :param endState: The end state of the transition.
-    :param inputSymbol: The input symbol which triggers the execution of the transition. The default value is `None`, which mean that no symbol is expected in a server context, and no symbol is sent in a client context. Internally, `None` symbol will be replaced by an :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
-    :param outputSymbols: A list of output symbols that can be expected when the current transition is executed. The default value is `None`, which mean that no symbol will be sent in a server context, and no symbol is expected in a client context. Internally, `None` symbol will be replaced by an :class:`EmptySymbol <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
+    :param inputSymbol: The input symbol which triggers the execution of the
+                        transition.
+                        The default value is `None`, which mean that no symbol
+                        is expected in a server context, and no symbol is sent
+                        in a client context. Internally,
+                        `None` symbol will be replaced by an
+                        :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
+    :param outputSymbols: A list of output symbols that can be expected when
+                          the current transition is executed.
+                          The default value is `None`, which mean that no
+                          symbol will be sent in a server context, and no
+                          symbol is expected in a client context.
+                          Internally, `None` symbol will be replaced by an
+                          :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param name: The name of the transition. The default value is `None`.
-    :type startState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
-    :type endState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
-    :type inputSymbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, optional
-    :type outputSymbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, optional
+    :type startState: :class:`~netzob.Model.Grammar.States.State.State`, required
+    :type endState: :class:`~netzob.Model.Grammar.States.State.State`, required
+    :type inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, optional
+    :type outputSymbols: a :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, optional
     :type name: :class:`str`, optional
 
 
@@ -78,27 +90,32 @@ class Transition(AbstractTransition):
     :var startState: The initial state of the transition.
     :var endState: The end state of the transition.
     :var active: Represents the current execution status of the transition.
-                 If a transition is active, it means it did not yet finish to execute it.
+                 If a transition is active, it means it did not yet finish to
+                 execute it.
     :var name: The name of the transition. The default value is `None`.
-    :var inputSymbol: The input symbol is the symbol which triggers the execution
-                      of the transition.
+    :var inputSymbol: The input symbol is the symbol which triggers the
+                      execution of the transition.
     :var outputSymbols: Output symbols that can be generated when
                         the current transition is executed.
     :var id: The unique identifier of the transition.
     :var description: description of the transition. If not explicitly set,
                       it is generated from the input and output symbols
-    :var inputSymbolReactionTime: the timeout value in seconds to wait for the input value (only used in a server context).
-    :var outputSymbolReactionTimes: a :class:`dict` containing, for each output symbol, the timeout value in seconds to wait for the output value (only used in a client context).
-    :vartype startState: :class:`State <netzob.Model.Grammar.States.State.State>`
-    :vartype endState: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :var inputSymbolReactionTime: The timeout value in seconds to wait for the
+                                  input value (only used in a server context).
+    :var outputSymbolReactionTimes: A :class:`dict` containing, for each output
+                                    symbol, the timeout value in seconds to
+                                    wait for the output value (only used in a
+                                    client context).
+    :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
+    :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype active: :class:`bool`
     :vartype name: :class:`str`
-    :vartype inputSymbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-    :vartype outputSymbols: :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+    :vartype inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+    :vartype outputSymbols: :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype id: :class:`uuid.UUID`
     :vartype description: :class:`str`
-    :var inputSymbolReactionTime: the timeout value in seconds to wait for the input value (only used in a server context).
-    :var outputSymbolReactionTimes: a :class:`dict` where keys are :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>` and values are :class:`float`
+    :vartype inputSymbolReactionTime: :class:`float`
+    :vartype outputSymbolReactionTimes: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
 
     The following example shows the definition of a transition `t` between
     two states `s0` and `s1`:
@@ -136,7 +153,12 @@ class Transition(AbstractTransition):
                  outputSymbols=None,
                  _id=None,
                  name=None):
-        super(Transition, self).__init__(Transition.TYPE, startState, endState, _id, name, priority=10)
+        super(Transition, self).__init__(Transition.TYPE,
+                                         startState,
+                                         endState,
+                                         _id,
+                                         name,
+                                         priority=10)
 
         if outputSymbols is None:
             outputSymbols = []
@@ -151,11 +173,13 @@ class Transition(AbstractTransition):
     def executeAsInitiator(self, abstractionLayer):
         """Execute the current transition as an initiator.
 
-        :param abstractionLayer: The abstraction layer which provides access to the channel.
-        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
+        :param abstractionLayer: The abstraction layer which provides access
+                                 to the channel.
+        :type abstractionLayer: :class:`~netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: The end state of the transition if no exception is raised.
-        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
-        :raise: TypeError if parameter are not valid and Exception if an error occurs whil executing the transition.
+        :rtype: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :raise: TypeError if parameter are not valid and Exception if an error
+                occurs while executing the transition.
 
         Being an initiator means it will send the input symbol
         attached to the transition and then wait for the reception of
@@ -188,7 +212,7 @@ class Transition(AbstractTransition):
                                                    abstractionLayer.last_received_symbol,
                                                    abstractionLayer.last_received_message)
         else:
-            self._logger.debug("No callback function is defined at transition '{}'".format(self.name))            
+            self._logger.debug("No callback function is defined at transition '{}'".format(self.name))
 
         # Write a symbol on the channel
         try:
@@ -237,13 +261,15 @@ class Transition(AbstractTransition):
     def executeAsNotInitiator(self, abstractionLayer):
         """Execute the current transition as a not initiator.
 
-        :param abstractionLayer: The abstraction layer which provides access to the channel.
-        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
+        :param abstractionLayer: The abstraction layer which provides access to
+                                 the channel.
+        :type abstractionLayer: :class:`~netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: The end state of the transition if not exception is raised.
-        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
+        :rtype: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
 
-        Being not an initiator means the startState has already received the input symbol which made it
-        choose this transition. We only have to pick an output symbol and emit it.
+        Being not an initiator means the startState has already received the
+        input symbol which made it choose this transition.
+        We only have to pick an output symbol and emit it.
 
         """
         if abstractionLayer is None:
@@ -271,7 +297,7 @@ class Transition(AbstractTransition):
         except Exception as e:
             self._logger.warning("An exception occured when sending a symbol from the abstraction layer: '{}'".format(e))
             self.active = False
-            #self._logger.warning(traceback.format_exc())
+            # self._logger.warning(traceback.format_exc())
             raise e
 
         # Return the endState
@@ -281,8 +307,8 @@ class Transition(AbstractTransition):
     def __pickOutputSymbol(self, abstractionLayer):
         """Picks the output symbol to emit following their probability.
 
-        It computes the probability of symbols which don't explicitly have one by
-        spliting the remaining available probability given by others.
+        It computes the probability of symbols which don't explicitly have one
+        by splitting the remaining available probability given by others.
 
         :return: the output symbol following their probability.
         :rtype: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
