@@ -630,11 +630,9 @@ class Actor(threading.Thread):
     >>> # First, we create the symbols
     >>> helloAlice = Symbol(name="HelloAlice", fields=[Field("hello alice")])
     >>> helloBob = Symbol(name="HelloBob", fields=[Field("hello bob")])
-    >>> question = Symbol(name="BobQuestion", fields=[Field("how are you ?")])
-    >>> answer = Symbol(name="AliceAnswer", fields=[Field("fine !")])
     >>> bye = Symbol(name="Bye", fields=[Field("bye")])
-    >>> bobSymbols = [helloAlice, question]
-    >>> aliceSymbols = [helloBob, answer]
+    >>> bobSymbols = [helloAlice]
+    >>> aliceSymbols = [helloBob]
     >>> allSymbols = bobSymbols + aliceSymbols + [bye]
     >>>
     >>> # Create the grammar
