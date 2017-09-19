@@ -621,7 +621,7 @@ class Actor(threading.Thread):
     :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inputSymbol`)
     in transition betwen ``S2`` and ``S3`` to expect a message from Alice.
 
-    This sequence temporarily put Bob in receiving mode only, until this
+    This sequence temporarily puts Bob in receiving mode only, until this
     transition is active.
 
     >>> import time
