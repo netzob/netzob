@@ -204,6 +204,69 @@ class Agg(AbstractVariableNode):
     True
 
 
+    **Modelling direct recursion, simple example**
+
+    The following example shows how to specify a field with a
+    structure (``v``) that can optionally contain itself. To model
+    such recursive structure, the ``SELF`` flag has to be used in the
+    last position of the aggregate.
+
+    >>> from netzob.all import *
+    >>> v = Agg([int8(interval=(1, 5)), SELF], last_optional=True)
+    >>> f = Field(v)
+    >>>
+    >>> # Test specialization
+    >>> res = f.specialize()
+    >>> res  # doctest: +SKIP
+    b'\x02\x04\x01'
+    >>>
+    >>> # Test parsing
+    >>> (res_object, res_data) = Field.abstract(res, [f])
+    >>> res_object == f  # doctest: +SKIP
+    True
+
+    **Modelling direct recursion, more complex example**
+
+    This example introduces a recursion in the middle of an expression by
+    modelling a pair group of parentheses (``'('`` and ``')'``), around a
+    single character (``'+'``).
+    The BNF syntax of this model would be:
+
+    .. productionlist::
+       parentheses: "(" [ parentheses | "+" ] ")"
+
+    .. warning::
+       This syntax introduces a recursivity in the middle of the `left`
+       statement, which **is not supported**. Instead, this syntax could be
+       adapted to move the recursivity to the right.
+
+    .. productionlist::
+       parentheses: left right
+       left: "(" [ parentheses | "+" ]
+       right: ")"
+
+    The following models describe this issue and provide a workaround.
+
+    **BAD way**
+
+    >>> from netzob.all import *
+    >>> parentheses = Agg(["(", Alt([SELF, "+"]), ")"])
+    Traceback (most recent call last):
+    ValueError: SELF can only be set at the last position of an Agg
+
+    **GOOD way**
+
+    >>> from netzob.all import *
+    >>> parentheses = Agg([])
+    >>> left = Agg(["(", Alt([parentheses, "+"])])
+    >>> right = ")"
+    >>> parentheses.children += [left, right]
+    >>>
+    >>> symbol = Symbol([Field(parentheses)])
+    >>> symbol.specialize()  # doctest: +SKIP
+    b'(((+)))'
+
+
     **Modelling indirect recursion, simple example**
 
     The following example shows how to specify a field with a
@@ -273,68 +336,6 @@ class Agg(AbstractVariableNode):
     >>> sym = Symbol([Field(operation)])  # doctest: +SKIP
     >>> sym.specialize()  # doctest: +SKIP
     b'((((4 * 8 * 4) + 5 + 9 + 0) * 7 * 0 + (4 + 9 + (3 * 4 + 2) * 0) * 9) + 4 * 7)'
-
-
-    **Modelling direct recursion, simple example**
-
-    The following example shows how to specify a field with a
-    structure (``v``) that can optionally contain itself. To model
-    such recursive structure, the ``SELF`` flag has to be used in the
-    last position of the aggregate.
-
-    >>> from netzob.all import *
-    >>> v = Agg([int8(interval=(1, 5)), SELF], last_optional=True)
-    >>> f = Field(v)
-    >>>
-    >>> # Test specialization
-    >>> res = f.specialize()
-    >>> res  # doctest: +SKIP
-    b'\x02\x04\x01'
-    >>>
-    >>> # Test parsing
-    >>> (res_object, res_data) = Field.abstract(res, [f])
-    >>> res_object == f  # doctest: +SKIP
-    True
-
-    **Modelling direct recursion, more complex example**
-
-    This example describes a modelling of a pair group of parentheses
-    (``'('`` and ``')'``), around a single character (``'+'``).
-    The BNF syntax of this model would be:
-
-    .. productionlist::
-       parentheses: "(" [ parentheses | "+" ] ")"
-
-    .. warning::
-       This syntax introduces a recursivity in the middle of the `left`
-       statement, which **is not supported**. Instead, this syntax could be
-       adapted to move the recursivity to the right.
-
-    .. productionlist::
-       parentheses: left right
-       left: "(" [ parentheses | "+" ]
-       right: ")"
-
-    The following models describe this issue and provide a workaround.
-
-    **BAD way**
-
-    >>> from netzob.all import *
-    >>> parentheses = Agg(["(", Alt([SELF, "+"]), ")"])
-    Traceback (most recent call last):
-    ValueError: SELF can only be set at the last position of an Agg
-
-    **GOOD way**
-
-    >>> from netzob.all import *
-    >>> parentheses = Agg([])
-    >>> left = Agg(["(", Alt([parentheses, "+"])])
-    >>> right = ")"
-    >>> parentheses.children += [left, right]
-    >>>
-    >>> symbol = Symbol([Field(parentheses)])
-    >>> symbol.specialize()  # doctest: +SKIP
-    b'(((+)))'
 
     """
 
