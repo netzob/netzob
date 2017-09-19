@@ -615,55 +615,75 @@ class Actor(threading.Thread):
     **Transition with no input symbol**
 
     The following example shows how to specify no input symbol, for
-    both the client and the server, at the state ``s1``. This permits
-    to automatically transit to the next state ``s2``.
+    both a sender (bob) and a receiver (alice), at the state ``S1``.
+    This example permits to automatically transit to the next state ``S2``.
+    Thus, Bob do not need to send a message (using
+    :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inputSymbol`)
+    in transition betwen ``S2`` and ``S3`` to expect a message from Alice.
 
+    This sequence temporarily put Bob in receiving mode only, until this
+    transition is active.
+
+    >>> import time
     >>> from netzob.all import *
-    >>> # First we create the symbols
-    >>> symbol = Symbol(name="Hello", fields=[Field("hello")])
-    >>> symbolList = [symbol]
+    >>>
+    >>> # First, we create the symbols
+    >>> helloAlice = Symbol(name="HelloAlice", fields=[Field("hello alice")])
+    >>> helloBob = Symbol(name="HelloBob", fields=[Field("hello bob")])
+    >>> question = Symbol(name="BobQuestion", fields=[Field("how are you ?")])
+    >>> answer = Symbol(name="AliceAnswer", fields=[Field("fine !")])
+    >>> bye = Symbol(name="Bye", fields=[Field("bye")])
+    >>> bobSymbols = [helloAlice, question]
+    >>> aliceSymbols = [helloBob, answer]
+    >>> allSymbols = bobSymbols + aliceSymbols + [bye]
     >>>
     >>> # Create the grammar
+    >>> # Bob
     >>> bob_s0 = State(name="S0")
     >>> bob_s1 = State(name="S1")
     >>> bob_s2 = State(name="S2")
     >>> bob_s3 = State(name="S3")
     >>> bob_s4 = State(name="S4")
-    >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
-    >>> bob_firstTransition = Transition(startState=bob_s1, endState=bob_s2,
-    ...                                  inputSymbol=symbol, outputSymbols=symbolList,
-    ...                                  name="Init")
-    >>> bob_mainTransition = Transition(startState=bob_s2, endState=bob_s3,
-    ...                                 inputSymbol=None, outputSymbols=symbolList,
-    ...                                 name="Hello")
-    >>> bob_closeTransition = CloseChannelTransition(startState=bob_s3, endState=bob_s4, name="Close")
-    >>> bob_automata = Automata(bob_s0, symbolList)
+    >>> OpenChannelTransition(bob_s0, bob_s1, name="Open")
+    Open
+    >>> Transition(bob_s1, bob_s2, inputSymbol=helloAlice, outputSymbols=[helloBob], name="Hello")
+    Hello
+    >>> Transition(bob_s2, bob_s3, inputSymbol=None, outputSymbols=[bye], name="Wait for bye")
+    Wait for bye
+    >>> CloseChannelTransition(bob_s3, bob_s4, name="Close")
+    Close
+    >>> bob_automata = Automata(bob_s0, allSymbols)
     >>>
+    >>> # Alice
     >>> alice_s0 = State(name="S0")
     >>> alice_s1 = State(name="S1")
     >>> alice_s2 = State(name="S2")
     >>> alice_s3 = State(name="S3")
     >>> alice_s4 = State(name="S4")
-    >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
-    >>> alice_firstTransition = Transition(startState=alice_s1, endState=alice_s2,
-    ...                                    inputSymbol=symbol, outputSymbols=symbolList,
-    ...                                    name="Hello")
-    >>> alice_mainTransition = Transition(startState=alice_s2,endState=alice_s3,
-    ...                                   inputSymbol=None, outputSymbols=symbolList,
-    ...                                   name="Hello")
-    >>> alice_closeTransition = CloseChannelTransition(startState=alice_s3, endState=alice_s4, name="Close")
-    >>> alice_automata = Automata(alice_s0, symbolList)
+    >>> OpenChannelTransition(alice_s0, alice_s1, name="Open")
+    Open
+    >>> Transition(alice_s1, alice_s2, inputSymbol=helloAlice, outputSymbols=[helloBob], name="Hello")
+    Hello
+    >>> Transition(alice_s2, alice_s3, inputSymbol=None, outputSymbols=[bye], name="Bye")
+    Bye
+    >>> CloseChannelTransition(alice_s3, alice_s4, name="Close")
+    Close
+    >>> alice_automata = Automata(alice_s0, allSymbols)
     >>>
-    >>> # Create actors: Alice (a server) and Bob (a client)
+    >>> # Create actors: Alice (a UDP server) and Bob (a UDP client)
+    >>> # Alice
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> abstractionLayer.timeout = 0.5
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>> abstractionLayer = AbstractionLayer(channel, allSymbols)
+    >>> abstractionLayer.timeout = .5
+    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer,
+    ...               initiator=False, name="Alice")
     >>>
+    >>> # Bob
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> abstractionLayer.timeout = 0.5
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> abstractionLayer = AbstractionLayer(channel, allSymbols)
+    >>> abstractionLayer.timeout = .5
+    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer,
+    ...             initiator=True, name="Bob")
     >>>
     >>> alice.start()
     >>> bob.start()
