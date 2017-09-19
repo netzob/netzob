@@ -209,9 +209,9 @@ class Agg(AbstractVariableNode):
 
        The library can handle both direct and indirect recursion. However,
        there is a limitation requiring to use a recursing variable on the
-       **right side of a statement**. Any other behaviour could lead to
+       **right side of a statement**. Any other behavior could lead to
        infinite recursion during the loading of the model.
-       To help understanding what syntax should be prefered, here is a list of
+       To help understanding what syntax should be preferred, here is a list of
        commented BNF syntaxes.
 
        *invalid syntaxes:*
