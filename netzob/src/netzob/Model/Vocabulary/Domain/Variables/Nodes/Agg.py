@@ -204,6 +204,35 @@ class Agg(AbstractVariableNode):
     True
 
 
+    .. warning::
+       **Important note about recursion**
+
+       The library can handle both direct and indirect recursion. However,
+       there is a limitation requiring to use a recursing variable on the
+       **right side of a statement**. Any other behaviour could lead to
+       infinite recursion during the loading of the model.
+       To help understanding what syntax should be prefered, here is a list of
+       commented BNF syntaxes.
+
+       *invalid syntaxes:*
+
+       .. productionlist::
+          A: [ A ], integer     (* recursion on the left side *)
+          B: "(", B | ".", ")"  (* recursion on the middle *)
+
+       *valid adaptations from above examples*:
+
+       .. productionlist::
+          A: integer, [ integer ]* (* recursion is replaced by a repeat approach *)
+          B: B', ")"               (* split the statement to transform a direct recursion ... *)
+          B': "(", B | "."          (* ... into an indirect recursion on the right side *)
+
+       *valid recursion examples*:
+
+       .. productionlist::
+          C: ".", C*       (* a string with one or more dot characters *)
+          D: [ D | "." ]*  (* a string with zero or more dot characters *)
+
     **Modelling direct recursion, simple example**
 
     The following example shows how to specify a field with a
@@ -235,10 +264,9 @@ class Agg(AbstractVariableNode):
     .. productionlist::
        parentheses: "(" [ parentheses | "+" ] ")"
 
-    .. warning::
-       This syntax introduces a recursivity in the middle of the `left`
-       statement, which **is not supported**. Instead, this syntax could be
-       adapted to move the recursivity to the right.
+    This syntax introduces a recursivity in the middle of the `left` statement,
+    which **is not supported**. Instead, this syntax could be adapted to move
+    the recursivity to the right.
 
     .. productionlist::
        parentheses: left right
