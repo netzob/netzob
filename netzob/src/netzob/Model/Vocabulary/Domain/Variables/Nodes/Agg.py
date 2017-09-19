@@ -262,15 +262,15 @@ class Agg(AbstractVariableNode):
     The BNF syntax of this model would be:
 
     .. productionlist::
-       parentheses: "(" [ parentheses | "+" ] ")"
+       parentheses: "(", parentheses | "+" , ")"
 
     This syntax introduces a recursivity in the middle of the `left` statement,
     which **is not supported**. Instead, this syntax could be adapted to move
     the recursivity to the right.
 
     .. productionlist::
-       parentheses: left right
-       left: "(" [ parentheses | "+" ]
+       parentheses: left, right
+       left: "(", parentheses | "+"
        right: ")"
 
     The following models describe this issue and provide a workaround.
@@ -327,9 +327,9 @@ class Agg(AbstractVariableNode):
     .. productionlist::
        num: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9
        operator: "+" | "*"
-       operation: left right
-       left: subop ")"
-       subop: "(" operation
+       operation: left, right
+       left: subop, ")"
+       subop: "(", operation
 
     The following examples **should** be compatible with these expressions::
 
