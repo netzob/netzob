@@ -212,7 +212,7 @@ class Agg(AbstractVariableNode):
        **right side of a statement**. Any other behavior could lead to
        infinite recursion during the loading of the model.
        To help understanding what syntax should be preferred, here is a list of
-       commented BNF syntaxes.
+       annotated BNF syntaxes.
 
        *invalid syntaxes:*
 
