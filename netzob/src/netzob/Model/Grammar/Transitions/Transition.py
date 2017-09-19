@@ -66,15 +66,15 @@ class Transition(AbstractTransition):
     :param inputSymbol: The input symbol which triggers the execution of the
                         transition.
                         The default value is `None`, which mean that no symbol
-                        is expected in a server context, and no symbol is sent
-                        in a client context. Internally,
+                        is expected in a receiving context, and no symbol is sent
+                        in a sending context. Internally,
                         `None` symbol will be replaced by an
                         :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param outputSymbols: A list of output symbols that can be expected when
                           the current transition is executed.
                           The default value is `None`, which mean that no
-                          symbol will be sent in a server context, and no
-                          symbol is expected in a client context.
+                          symbol will be sent in a receiving context, and no
+                          symbol is expected in a sending context.
                           Internally, `None` symbol will be replaced by an
                           :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param name: The name of the transition. The default value is `None`.
@@ -101,11 +101,11 @@ class Transition(AbstractTransition):
     :var description: description of the transition. If not explicitly set,
                       it is generated from the input and output symbols
     :var inputSymbolReactionTime: The timeout value in seconds to wait for the
-                                  input value (only used in a server context).
+                                  input value (only used in a receiving context).
     :var outputSymbolReactionTimes: A :class:`dict` containing, for each output
                                     symbol, the timeout value in seconds to
                                     wait for the output value (only used in a
-                                    client context).
+                                    sending context).
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype active: :class:`bool`
