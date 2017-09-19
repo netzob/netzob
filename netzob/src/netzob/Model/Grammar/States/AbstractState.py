@@ -154,7 +154,8 @@ class AbstractState(object, metaclass=abc.ABCMeta):
             starting from the current state.
 
           :attr:`nextTransition`
-            Corresponds to the currently selected transition.
+            Currently selected transition, either the initial transition or
+            the transition returned by the previous callback.
 
           :attr:`current_state`
             Current state in the automaton.

@@ -263,7 +263,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
             (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`) to send.
 
           :attr:`current_symbol`
-            Currently selected symbol that will be sent.
+            Currently selected symbol that will be sent, either the initial
+            symbol or the symbol returned by the previous callback.
 
           :attr:`current_state`
             Current state in the automaton.
