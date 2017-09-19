@@ -217,21 +217,29 @@ class Agg(AbstractVariableNode):
        *invalid syntaxes:*
 
        .. productionlist::
-          A: [ A ], integer     (* recursion on the left side *)
-          B: "(", B | ".", ")"  (* recursion on the middle *)
+          A: (* recursion on the left side *)
+           : [ A ], integer
+          B: "(", B | ".", ")"
+           : (* recursion on the middle *)
 
        *valid adaptations from above examples*:
 
        .. productionlist::
-          A: integer, [ integer ]* (* recursion is replaced by a repeat approach *)
-          B: B', ")"               (* split the statement to transform a direct recursion ... *)
-          B': "(", B | "."          (* ... into an indirect recursion on the right side *)
+          A: (* recursion is replaced by a repeat approach *)
+           : integer, [ integer ]*
+          B: (* split the statement ... *)
+           : B', ")"
+          B': (* to transform a direct recursion into an
+            : indirect recursion on the right side *)
+            : "(", B | "."
 
        *valid recursion examples*:
 
        .. productionlist::
-          C: ".", C*       (* a string with one or more dot characters *)
-          D: [ D | "." ]*  (* a string with zero or more dot characters *)
+          C: (* a string with one or more dot characters *)
+           : ".", C*
+          D: (* a string with zero or more dot characters *)
+           : [ D | "." ]*
 
     **Modelling direct recursion, simple example**
 
