@@ -83,6 +83,14 @@ class Transition(AbstractTransition):
     :type inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, optional
     :type outputSymbols: a :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, optional
     :type name: :class:`str`, optional
+    :param inputSymbolReactionTime: The timeout value in seconds to wait for the
+                                    input value (only used in a receiving context).
+    :param outputSymbolReactionTimes: A :class:`dict` containing, for each output
+                                      symbol, the timeout value in seconds to
+                                      wait for the output value (only used in a
+                                      sending context).
+    :type inputSymbolReactionTime: :class:`float`
+    :type outputSymbolReactionTimes: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}, optional
 
 
     The Transition class provides the following public variables:
