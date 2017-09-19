@@ -265,9 +265,9 @@ class Agg(AbstractVariableNode):
     >>> num = Alt("0123456789")
     >>> operator = Alt([" + ", " * "])
     >>> operation = Agg([], last_optional=True)
-    >>> subop = Agg(["(", operation])
-    >>> subop = Agg([subop, ")"])
-    >>> left = Alt([num, subop])
+    >>> subop1 = Agg(["(", operation])
+    >>> subop2 = Agg([subop1, ")"])
+    >>> left = Alt([num, subop2])
     >>> right = Agg([operator, operation])
     >>> operation.children += [left, right]
     >>> sym = Symbol([Field(operation)])  # doctest: +SKIP
