@@ -134,6 +134,18 @@ class DebugChannel(AbstractChannel):
         self.write(data)
         return self.read()
 
+    def checkReceived(self,
+                      predicate  # type: Callable[[bytes], bool]
+                      ):         # type: bool
+        """
+        Method used to simulate the validation of an input data that could not
+        be retrieved.
+
+        :param predicate: the function used to validate the received data
+        :type predicate: Callable[[bytes], bool]
+        """
+        return True
+
 
 class DebugChannelBuilder(ChannelBuilder):
     """

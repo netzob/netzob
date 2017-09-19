@@ -46,7 +46,7 @@ import arpreq
 import binascii
 from fcntl import ioctl
 import subprocess
-from typing import List, Type  # noqa: F401
+from typing import Callable, List, Type  # noqa: F401
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -295,6 +295,21 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
                                                                                                                                round(t_elapsed, 2)))
         return len_data
 
+    def checkReceived(self,
+                      predicate  # type: Callable[[bytes], bool]
+                      ):         # type: bool
+        """
+        Method used to delegate the validation of the received data into
+        a callback
+
+        :param predicate: the function used to validate the received data
+        :type predicate: Callable[[bytes], bool]
+        """
+        if not callable(predicate):
+            raise ValueError("The predicate attribute must be a callable "
+                             "expecting a single bytes attribute, not '{}'"
+                             .format(type(predicate).__name__))
+        return predicate(self.read())
 
     ## Internal methods ##
 
