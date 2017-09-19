@@ -152,7 +152,10 @@ class Transition(AbstractTransition):
                  inputSymbol=None,
                  outputSymbols=None,
                  _id=None,
-                 name=None):
+                 name=None,
+                 inputSymbolReactionTime=None,   # type: float
+                 outputSymbolReactionTimes=None  # type: Dict[Symbol,float]
+                 ):
         super(Transition, self).__init__(Transition.TYPE,
                                          startState,
                                          endState,
@@ -162,12 +165,18 @@ class Transition(AbstractTransition):
 
         if outputSymbols is None:
             outputSymbols = []
+        if outputSymbolReactionTimes is None:
+            outputSymbolReactionTimes = {}
+        elif not isinstance(outputSymbolReactionTimes, dict):
+            raise TypeError("outputSymbolReactionTimes should be a dict of "
+                            "Symbol and float, not {}"
+                            .format(type(outputSymbolReactionTimes).__name__))
 
         self.inputSymbol = inputSymbol
         self.outputSymbols = outputSymbols
         self.outputSymbolProbabilities = {}  # TODO: not yet implemented
-        self.inputSymbolReactionTime = None
-        self.outputSymbolReactionTimes = {}  # TODO: not yet implemented
+        self.inputSymbolReactionTime = inputSymbolReactionTime
+        self.outputSymbolReactionTimes = outputSymbolReactionTimes  # TODO: not yet implemented
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer):
