@@ -296,20 +296,23 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         return len_data
 
     def checkReceived(self,
-                      predicate  # type: Callable[[bytes], bool]
-                      ):         # type: bool
+                      predicate,  # type: Callable[[bytes], bool]
+                      *args, **kwargs
+                      ):          # type: bool
         """
         Method used to delegate the validation of the received data into
         a callback
 
         :param predicate: the function used to validate the received data
+        :param args: positional arguments passed to :attr:`predicate`
+        :param kwargs: named arguments passed to :attr:`predicate`
         :type predicate: Callable[[bytes], bool]
         """
         if not callable(predicate):
             raise ValueError("The predicate attribute must be a callable "
                              "expecting a single bytes attribute, not '{}'"
                              .format(type(predicate).__name__))
-        return predicate(self.read())
+        return predicate(self.read(), *args, **kwargs)
 
     ## Internal methods ##
 

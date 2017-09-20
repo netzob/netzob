@@ -135,8 +135,9 @@ class DebugChannel(AbstractChannel):
         return self.read()
 
     def checkReceived(self,
-                      predicate  # type: Callable[[bytes], bool]
-                      ):         # type: bool
+                      predicate,  # type: Callable[[bytes], bool]
+                      *args, **kwargs
+                      ):          # type: bool
         """
         Method used to simulate the validation of an input data that could not
         be retrieved.
