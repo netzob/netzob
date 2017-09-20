@@ -83,7 +83,7 @@ class Mutator(metaclass=abc.ABCMeta):
 
     # Class constants
     SEED_DEFAULT = 10  #: the default seed value
-    COUNTER_MAX_DEFAULT = 2 << 16  #: the default max counter value (65536)
+    COUNTER_MAX_DEFAULT = 2 ** 16  #: the default max counter value (65536)
 
 
     # Class variables
