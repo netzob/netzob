@@ -73,7 +73,7 @@ class Agg(AbstractVariableNode):
     :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
-    The Agg class supports modelling of direct recursions on the
+    The Agg class supports modeling of direct recursions on the
     right. To do so, the flag ``SELF`` is available, and should only
     be used in the last position of the aggregate (see example below).
 
@@ -179,7 +179,7 @@ class Agg(AbstractVariableNode):
     (Field, OrderedDict([('Field', b'\x02')]))
 
 
-    **Modelling indirect imbrication**
+    **Modeling indirect imbrication**
 
     The following example shows how to specify a field with a
     structure (``v2``) that can contain another structure (``v0``),
@@ -241,7 +241,7 @@ class Agg(AbstractVariableNode):
           D: (* a string with zero or more dot characters *)
            : [ D | "." ]*
 
-    **Modelling direct recursion, simple example**
+    **Modeling direct recursion, simple example**
 
     The following example shows how to specify a field with a
     structure (``v``) that can optionally contain itself. To model
@@ -262,7 +262,7 @@ class Agg(AbstractVariableNode):
     >>> res_object == f  # doctest: +SKIP
     True
 
-    **Modelling direct recursion, more complex example**
+    **Modeling direct recursion, more complex example**
 
     This example introduces a recursion in the middle of an expression by
     modelling a pair group of parentheses (``'('`` and ``')'``), around a
@@ -303,7 +303,7 @@ class Agg(AbstractVariableNode):
     b'(((+)))'
 
 
-    **Modelling indirect recursion, simple example**
+    **Modeling indirect recursion, simple example**
 
     The following example shows how to specify a field with a
     structure (``v2``) that contains another structure (``v1``), which
@@ -326,7 +326,7 @@ class Agg(AbstractVariableNode):
     True
 
 
-    **Modelling indirect recursion, more complex example**
+    **Modeling indirect recursion, more complex example**
 
     The following syntax provides a way to parse and specialize a subset of
     mathematical expressions including pair group of parentheses, digits from 0
