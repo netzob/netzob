@@ -205,6 +205,16 @@ class Automata(object):
                     states.append(currentState)
         return states
 
+    def getState(self, stateName):
+        """Returns the State object of the given name.
+
+        :param stateName: The name of the State object
+        :type stateName: :class:`str`
+        :return: The State object with stateName as name.
+        :rtype: :class:`State <netzob.Model.Grammar.States.State.State>`
+        :raise: :class:`KeyError` if the name is not found.
+        """
+
     @staticmethod
     @typeCheck(list, list)
     def generateChainedStatesAutomata(abstractSession, symbolList):
