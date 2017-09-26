@@ -214,6 +214,7 @@ class Automata(object):
         :rtype: :class:`State <netzob.Model.Grammar.States.State.State>`
         :raise: :class:`KeyError` if the name is not found.
         """
+        raise NotImplementedError
 
     @staticmethod
     @typeCheck(list, list)
