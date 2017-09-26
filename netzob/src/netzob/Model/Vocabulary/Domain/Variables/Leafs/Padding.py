@@ -301,7 +301,8 @@ class Padding(AbstractRelationVariableLeaf):
             else:
                 raise TypeError("Callback parameter is not callable.")
         else:
-            length_to_pad = self.modulo - (size % self.modulo)
+            mod = size % self.modulo
+            length_to_pad = self.modulo - mod if mod > 0 else 0
             while len(padding_value) < length_to_pad:
                 padding_value.extend(self.dataType.generate())
 
