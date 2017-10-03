@@ -101,15 +101,17 @@ class RawEthernetChannel(AbstractChannel):
     def __init__(self,
                  remoteMac,
                  localMac,
+                 interface,
                  timeout=AbstractChannel.DEFAULT_TIMEOUT):
         super(RawEthernetChannel, self).__init__(timeout=timeout)
         self.remoteMac = remoteMac
         self.localMac = localMac
+        self.__interface = interface
         self.__socket = None
 
-        self.initHeader()
+        self.__useEthernetHeader = False
 
-        #TODO: retrieve the network interface from the local MAC
+        self.initHeader()
 
     @staticmethod
     def getBuilder():
@@ -220,8 +222,11 @@ class RawEthernetChannel(AbstractChannel):
         if self.__socket is None:
             raise Exception("socket is not available")
 
-        self.header_presets["eth.payload"] = data
-        packet = self.header.specialize(presets=self.header_presets)
+        if self.__useEthernetHeader:
+            self.header_presets["eth.payload"] = data
+            packet = self.header.specialize(presets=self.header_presets)
+        else:
+            packet = data
         len_data = self.__socket.sendto(packet, (self.interface,
                                                  RawEthernetChannel.ETH_P_ALL))
         return len_data
@@ -298,6 +303,20 @@ class RawEthernetChannel(AbstractChannel):
         """
         return self.__interface
 
+    @property
+    def useEthernetHeader(self):
+        """Defines if the channel has to prepare the Ethernet header fields
+        before sending a data.
+
+        :type: :class:`bool`
+        """
+        return self.__useEthernetHeader
+
+    @useEthernetHeader.setter
+    @typeCheck(bool)
+    def useEthernetHeader(self, useEthernetHeader):
+        self.__useEthernetHeader = useEthernetHeader
+
 
 class RawEthernetChannelBuilder(ChannelBuilder):
     """
@@ -321,3 +340,6 @@ class RawEthernetChannelBuilder(ChannelBuilder):
 
     def set_dst_addr(self, value):
         self.attrs['remoteMac'] = value
+
+    def set_interface(self, value):
+        self.attrs['interface'] = value
