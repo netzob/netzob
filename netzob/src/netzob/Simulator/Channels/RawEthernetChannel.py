@@ -62,8 +62,10 @@ class RawEthernetChannel(AbstractChannel):
 
     The RawEthernetChannel constructor expects some parameters:
 
+    :param interface: The local network interface name (such as 'eth0', 'lo').
     :param remoteMac: The remote MAC address to connect to.
     :param localMac: The local MAC address.
+    :type interface: :class:`str`, required
     :type remoteMac: :class:`str`, required
     :type localMac: :class:`str`, required
 
@@ -75,15 +77,21 @@ class RawEthernetChannel(AbstractChannel):
     :var localMac: The local MAC address.
     :var interface: The network Interface name such as 'eth0', 'lo', determined
                     with the local MAC address. Read only variable.
+    :var useEthernetHeader: Defines if the channel prepares the Ethernet header
+                            fields (`True`) or if they are set in the data to
+                            send (`False`).
+                            Default value is `True`.
     :vartype remoteMac: :class:`str`
     :vartype localMac: :class:`str`
     :vartype interface: :class:`str`
+    :vartype useEthernetHeader: :class:`bool`
 
 
+    >>> from netzob.all import *
     >>> from binascii import hexlify
-    >>> client = RawEthernetChannel("00:01:02:03:04:05",
-    ...                             localMac="00:06:07:08:09:10",
-    ...                             timeout=1.)
+    >>> client = RawEthernetChannel(interface="lo",
+    ...                             remoteMac="00:01:02:03:04:05",
+    ...                             localMac="00:06:07:08:09:10")
     >>> client.open()
     >>> symbol = Symbol([Field("ABC")])
     >>> client.write(symbol.specialize())
@@ -96,20 +104,23 @@ class RawEthernetChannel(AbstractChannel):
 
     ETH_P_ALL = 3
     FAMILIES = ["ethernet"]
+    DEFAULT_TIMEOUT = 1.
 
     @typeCheck(str, str)
     def __init__(self,
-                 remoteMac,
-                 localMac,
-                 timeout=AbstractChannel.DEFAULT_TIMEOUT):
+                 interface,
+                 remoteMac=None,
+                 localMac=None,
+                 timeout=DEFAULT_TIMEOUT):
         super(RawEthernetChannel, self).__init__(timeout=timeout)
         self.remoteMac = remoteMac
         self.localMac = localMac
+        self.__interface = interface
         self.__socket = None
 
-        self.initHeader()
+        self.__useEthernetHeader = True
 
-        #TODO: retrieve the network interface from the local MAC
+        self.initHeader()
 
     @staticmethod
     def getBuilder():
@@ -220,8 +231,11 @@ class RawEthernetChannel(AbstractChannel):
         if self.__socket is None:
             raise Exception("socket is not available")
 
-        self.header_presets["eth.payload"] = data
-        packet = self.header.specialize(presets=self.header_presets)
+        if self.__useEthernetHeader:
+            self.header_presets["eth.payload"] = data
+            packet = self.header.specialize(presets=self.header_presets)
+        else:
+            packet = data
         len_data = self.__socket.sendto(packet, (self.interface,
                                                  RawEthernetChannel.ETH_P_ALL))
         return len_data
@@ -292,11 +306,25 @@ class RawEthernetChannel(AbstractChannel):
 
     @property
     def interface(self):
-        """Interface such as eth0, lo, determined with the local MAC address.
+        """Local network interface name (such as 'eth0', 'lo').
 
         :type: :class:`str`
         """
         return self.__interface
+
+    @property
+    def useEthernetHeader(self):
+        """Defines if the channel prepares the Ethernet header fields (`True`)
+        or if they are set in the data to send (`False`).
+
+        :type: :class:`bool`
+        """
+        return self.__useEthernetHeader
+
+    @useEthernetHeader.setter
+    @typeCheck(bool)
+    def useEthernetHeader(self, useEthernetHeader):
+        self.__useEthernetHeader = useEthernetHeader
 
 
 class RawEthernetChannelBuilder(ChannelBuilder):
@@ -321,3 +349,6 @@ class RawEthernetChannelBuilder(ChannelBuilder):
 
     def set_dst_addr(self, value):
         self.attrs['remoteMac'] = value
+
+    def set_interface(self, value):
+        self.attrs['interface'] = value
