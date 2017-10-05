@@ -77,14 +77,9 @@ class RawEthernetChannel(AbstractChannel):
     :var localMac: The local MAC address.
     :var interface: The network Interface name such as 'eth0', 'lo', determined
                     with the local MAC address. Read only variable.
-    :var useEthernetHeader: Defines if the channel prepares the Ethernet header
-                            fields (`True`) or if they are set in the data to
-                            send (`False`).
-                            Default value is `True`.
     :vartype remoteMac: :class:`str`
     :vartype localMac: :class:`str`
     :vartype interface: :class:`str`
-    :vartype useEthernetHeader: :class:`bool`
 
 
     >>> from netzob.all import *
@@ -264,6 +259,15 @@ class RawEthernetChannel(AbstractChannel):
         binary = "0" * (48 - binLength) + binary
         return bitarray(binary)
 
+    @typeCheck(bool)
+    def useEthernetHeader(self, useEthernetHeader):
+        """Defines if the channel prepares the Ethernet header fields
+        (``True``) or if they are set in the data to send (``False``).
+
+        :type useEthernetHeader: bool
+        """
+        self.__useEthernetHeader = useEthernetHeader
+
     @typeCheck(int)
     def _setProtocol(self, upperProtocol):
         if upperProtocol < 0 or upperProtocol > 0xffff:
@@ -310,20 +314,6 @@ class RawEthernetChannel(AbstractChannel):
         :type: :class:`str`
         """
         return self.__interface
-
-    @property
-    def useEthernetHeader(self):
-        """Defines if the channel prepares the Ethernet header fields (`True`)
-        or if they are set in the data to send (`False`).
-
-        :type: :class:`bool`
-        """
-        return self.__useEthernetHeader
-
-    @useEthernetHeader.setter
-    @typeCheck(bool)
-    def useEthernetHeader(self, useEthernetHeader):
-        self.__useEthernetHeader = useEthernetHeader
 
 
 class RawEthernetChannelBuilder(ChannelBuilder):
