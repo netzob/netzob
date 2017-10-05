@@ -190,8 +190,7 @@ class AbstractionLayer(object):
 
         """
 
-        self._logger.debug("Specializing symbol '{0}' (id={1}).".format(
-            symbol.name, symbol.id))
+        self._logger.debug("Specializing symbol '{0}' (id={1}).".format(symbol.name, symbol.id))
 
         self.specializer.presets = presets
         dataBin = self.specializer.specializeSymbol(symbol).generatedContent

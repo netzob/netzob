@@ -75,6 +75,8 @@ from netzob.Inference.Vocabulary import EntropyMeasurement
 from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
 from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAutomataFactory
 
+from netzob.Inference.Grammar.ProcessWrappers import ProcessWrapper
+from netzob.Inference.Grammar.ProcessWrappers import NetworkProcessWrapper
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -165,6 +167,8 @@ def getSuite():
         Transition.__module__,
         AbstractionLayer.__module__,
         Automata.__module__,
+        ProcessWrapper,
+        NetworkProcessWrapper,
         
         # Modules related to the protocol simulation
         # ------------------------------------------
@@ -183,8 +187,8 @@ def getSuite():
 
         # Other
         # -----
-        # # # JSONSerializator.__module__,
-        # # # TCPServer.__module__,
+        # # JSONSerializator.__module__,
+        # # TCPServer.__module__,
 
     ]
 

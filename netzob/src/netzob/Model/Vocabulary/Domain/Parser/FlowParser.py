@@ -184,13 +184,12 @@ class FlowParser(object):
         data_to_parse_raw = message.data
         data_to_parse_bitarray = TypeConverter.convert(data_to_parse_raw, Raw,
                                                        BitArray)
-
         for result in self._parseFlow_internal(data_to_parse_bitarray, symbols,
                                                self.memory):
             return result
 
         raise InvalidParsingPathException(
-            "No parsing path returned while parsing '{}'".format(
+            "No parsing path returned while parsing {}".format(
                 repr(data_to_parse_raw)))
 
     def _parseFlow_internal(self, data_to_parse_bitarray, symbols, memory):
