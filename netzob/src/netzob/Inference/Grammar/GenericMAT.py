@@ -93,7 +93,10 @@ class GenericMAT(ActiveKnowledgeBase):
     def start_target(self):
         """This method opens the channel"""
 
-        self.stop_target()
+        try:
+            self.stop_target()
+        except Exception:
+            pass
 
         self.process_wrapper.start()
 
