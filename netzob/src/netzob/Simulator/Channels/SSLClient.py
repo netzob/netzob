@@ -139,9 +139,11 @@ class SSLClient(AbstractChannel):
             while not finish:
                 try:
                     recv = self.__ssl_socket.recv(reading_seg_size)
-                except ssl.SSLError:
+                except Exception as e:
                     # says we received nothing (timeout issue)
                     recv = b""
+                    self._logger.error(e)
+                    
                 if recv is None or len(recv) == 0:
                     finish = True
                 else:
