@@ -104,14 +104,13 @@ class RawEthernetChannel(AbstractChannel):
 
     ETH_P_ALL = 3
     FAMILIES = ["ethernet"]
-    DEFAULT_TIMEOUT = 1.
 
     @typeCheck(str, str)
     def __init__(self,
                  interface,
                  remoteMac=None,
                  localMac=None,
-                 timeout=DEFAULT_TIMEOUT):
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT):
         super(RawEthernetChannel, self).__init__(timeout=timeout)
         self.remoteMac = remoteMac
         self.localMac = localMac
