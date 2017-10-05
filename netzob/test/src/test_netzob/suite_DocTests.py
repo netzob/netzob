@@ -51,6 +51,7 @@ from netzob.Inference.Vocabulary.FormatOperations import ClusterByAlignment
 from netzob.Inference.Vocabulary.FormatOperations import ClusterBySize
 from netzob.Inference.Vocabulary.FormatOperations import FindKeyFields
 from netzob.Common.Utils import SortedTypedList
+from netzob.Common.Utils import MessageCells
 
 from netzob.Inference.Vocabulary.Search import SearchTask
 from netzob.Inference.Vocabulary.Search import SearchResult
@@ -74,6 +75,8 @@ from netzob.Inference.Vocabulary import EntropyMeasurement
 from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
 from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAutomataFactory
 
+from netzob.Inference.Grammar.ProcessWrappers import ProcessWrapper
+from netzob.Inference.Grammar.ProcessWrappers import NetworkProcessWrapper
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -125,6 +128,7 @@ def getSuite():
         Format.__module__,
         Session.__module__,
         SortedTypedList,
+        MessageCells,
         ApplicativeData.__module__,
         DomainEncodingFunction.__module__,
         TypeEncodingFunction.__module__,
@@ -163,6 +167,8 @@ def getSuite():
         Transition.__module__,
         AbstractionLayer.__module__,
         Automata.__module__,
+        ProcessWrapper,
+        NetworkProcessWrapper,
         
         # Modules related to the protocol simulation
         # ------------------------------------------
@@ -181,8 +187,8 @@ def getSuite():
 
         # Other
         # -----
-        # # # JSONSerializator.__module__,
-        # # # TCPServer.__module__,
+        # # JSONSerializator.__module__,
+        # # TCPServer.__module__,
 
     ]
 

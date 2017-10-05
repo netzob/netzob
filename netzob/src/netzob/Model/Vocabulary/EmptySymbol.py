@@ -80,6 +80,9 @@ class EmptySymbol(Symbol):
     def __str__(self):
         return "Empty Symbol"
 
+    def __hash__(self):
+        return hash(frozenset(self.name))    
+
     @property
     def receptionTimeout(self):
         """This timeout represent how many milliseconds of no activity

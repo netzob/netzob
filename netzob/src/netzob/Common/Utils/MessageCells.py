@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
@@ -25,55 +25,57 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
-#| Standard library imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| File contributors :                                                       |
+#|       - Georges Bossert <gbossert (a) miskin.fr>                          |
+#+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
-#| Related third party imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
+from collections import OrderedDict
 
-#+----------------------------------------------
-#| Local application imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Common.Utils.Decorators import typeCheck
 
 
 @NetzobLogger
-class ObservationTable(object):
-    """Implementation of an Observation Table (OT) as described by Angluin in "Learning Regular Sets from Queries and Counterexamples"""
+class MessageCells(OrderedDict):
+    """
+    This data structure overwrites the notion of OrderedDict to support additionnal attributes
+    such as 'headers'. This data structure has been created for the `AbstractField.getMessageCells` method
 
-    def __init__(self, alphabet):
-        self.alphabet = alphabet
+    >>> from netzob.all import *
+    >>> m = MessageCells()
+    >>> m[1] = "a"
+    >>> m[2] = "b"
+    >>> m[1] = m[2]
+    >>> list(m.items())
+    [(1, 'b'), (2, 'b')]
+    >>> m.fields = [Field(name="f1"), Field(name="f2")]
+    >>> [f.name for f in m.fields]
+    ['f1', 'f2']
 
-        self.__shortPrefixRows = list()
-        self.__longPrefixRows = list()
-        self.__allRows = list()
-        self.__allRowContents = list()
-        self.__canonicalRows = list()
-        self.__rowContentIds = dict()
-        self.__rowMapp = dict()
+    """
 
-        self.__numRows = 0
-        self.__suffixes = list()
-
-    def initialize(self, initialSuffixes, mqOracle):
-        if len(self.__allRows) > 0:
-            raise Exception(
-                "Called initialize, but there are already rows present")
-
-        len(initialSuffixes)
-        self.__suffixes.extend(initialSuffixes)
-
-        numLps = len(self.alphabet)
-        1 + numLps
-
+    def __init__(self):
+        super().__init__()
+        self.fields = []
 
     @property
-    def alphabet(self):
-        return self.__alphabet
+    def fields(self):
+        """Fields that participate in the message cells columns"""
+        return self.__fields
 
-    @alphabet.setter
-    def alphabet(self, alphabet):
-        self.__alphabet = alphabet
+    @fields.setter
+    def fields(self, fields):
+        self.__fields = []
+        for f in fields:
+            self.__fields.append(f)
+            

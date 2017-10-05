@@ -225,17 +225,15 @@ man_pages = [
 
 # -- Options for apidoc generation in rtfd.org----------------------------------
 
-# Mocking system dependencies
-from mock import Mock as MagicMock
+from unittest.mock import MagicMock
 
 class Mock(MagicMock):
     @classmethod
     def __getattr__(cls, name):
-            return Mock()
+            return MagicMock()
 
-MOCK_MODULES = ['pcapy']
+MOCK_MODULES = ['pcapy', 'numpy']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
