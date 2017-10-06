@@ -187,17 +187,18 @@ class Repeat(AbstractVariableNode):
     ...         return False
     ...     return True
     >>> f1 = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=cbk), name="f1")
-    >>> f2 = Field(String("C"), name="f2")
-    >>> f = Field([f1, f2])
+    >>> f2 = Field(String("B"), name="f2")
+    >>> f3 = Field(String("C"), name="f3")
+    >>> f = Field([f1, f2, f3])
     >>> d = f.specialize()
-    >>> d == b'AC' or d == b'BC'
+    >>> d == b'ABC' or d == b'BBC'
     True
     >>> data = "AABC"
     >>> Field.abstract(data, [f])
     in cbk: nb_repeat:1 -- data:b'A' -- remaining:b'ABC'
     in cbk: nb_repeat:2 -- data:b'AA' -- remaining:b'BC'
     in cbk: nb_repeat:3 -- data:b'AAB' -- remaining:b'C'
-    (Field, OrderedDict([('f1', b'AAB'), ('f2', b'C')]))
+    (Field, OrderedDict([('f1', b'AA'), ('f2', b'B'), ('f3', b'C')]))
 
 
     .. ifconfig:: scope in ('netzob')
@@ -283,7 +284,7 @@ class Repeat(AbstractVariableNode):
             max_nb_repeat = Repeat.MAX_REPEAT
         else:
             min_nb_repeat = self.nbRepeat[0] - 1
-            max_nb_repeat = self.nbRepeat[1] - 1
+            max_nb_repeat = self.nbRepeat[1]
 
         for nb_repeat in range(max_nb_repeat, min_nb_repeat, -1):
 
@@ -310,7 +311,6 @@ class Repeat(AbstractVariableNode):
                         else:
                             newResult = childParsingPath.getData(self.children[0])
 
-                        childParsingPath.addResult(self, newResult)
                         remainingDataToParse = dataToParse.copy()[len(newResult):]
 
                         if callable(self.nbRepeat):
@@ -319,9 +319,21 @@ class Repeat(AbstractVariableNode):
                                                          remainingDataToParse,
                                                          childParsingPath,
                                                          self.children[0])
+
                             if break_repeat:
-                                newParsingPath.addResult(self, bitarray())
-                                yield newParsingPath
+                                # If the callback returns True for the 1st
+                                # repetition (i_repeat=0), it is equivalent to
+                                # nbRepeat=0 : the path also has no data (for
+                                # example an optional field is not present).
+                                # Else if i_repeat > 0, a data was already set
+                                # to the path which has not to be overwritten
+                                # with an empty bitarray.
+                                if not newParsingPath.hasData(self):
+                                    newParsingPath.addResult(self, bitarray())
+                                    tmp_result.append(newParsingPath)
+                                break
+
+                        childParsingPath.addResult(self, newResult)
 
                         childParsingPath.assignData(remainingDataToParse, self.children[0])
 
@@ -341,10 +353,10 @@ class Repeat(AbstractVariableNode):
                         if len(dataToParse) == len(newResult):
                             break_repeat = True
 
-                newParsingPaths = tmp_result
-
                 if break_repeat:
                     break
+
+                newParsingPaths = tmp_result
 
             for result in newParsingPaths:
                 yield result
