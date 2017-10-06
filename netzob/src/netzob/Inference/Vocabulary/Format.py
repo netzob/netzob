@@ -371,6 +371,85 @@ class Format(object):
 
     @staticmethod
     @typeCheck(list)
+    def clusterBySource(messages):
+        """Regroup messages sent by the same source
+
+        >>> import operator
+        >>> from netzob.all import *
+        >>> messages = [RawMessage("hello berlin", source="user"), RawMessage("hello paris", source="master")]
+        >>> messages.extend([RawMessage("hello madrid", source="master"), RawMessage("hello world", source="user")])
+        >>> symbols = Format.clusterBySource(messages)
+        >>> print(len(symbols))
+        2
+        >>> for symbol in sorted(symbols, key=operator.attrgetter("name")):
+        ...     print("{}:".format(symbol.name))
+        ...     print(symbol)
+        Symbol-master:
+        Field         
+        --------------
+        'hello paris' 
+        'hello madrid'
+        --------------
+        Symbol-user:
+        Field         
+        --------------
+        'hello berlin'
+        'hello world' 
+        --------------
+
+        """
+
+        clusters = dict()
+        for message in messages:
+            if message.source in clusters.keys():
+                clusters[message.source].messages.append(message)
+            else:
+                clusters[message.source] = Symbol(name="Symbol-{}".format(message.source), messages = [message])
+
+        return list(clusters.values())
+
+    @staticmethod
+    @typeCheck(list)
+    def clusterByDestination(messages):
+        """Regroup messages sent to the same destination
+
+        >>> import operator
+        >>> from netzob.all import *
+        >>> messages = [RawMessage("hello berlin", destination="user"), RawMessage("hello paris", destination="master")]
+        >>> messages.extend([RawMessage("hello madrid", destination="master"), RawMessage("hello world", destination="user")])
+        >>> symbols = Format.clusterByDestination(messages)
+        >>> print(len(symbols))
+        2
+        >>> for symbol in sorted(symbols, key=operator.attrgetter("name")):
+        ...     print("{}:".format(symbol.name))
+        ...     print(symbol)
+        Symbol-master:
+        Field         
+        --------------
+        'hello paris' 
+        'hello madrid'
+        --------------
+        Symbol-user:
+        Field         
+        --------------
+        'hello berlin'
+        'hello world' 
+        --------------
+
+        """
+
+        clusters = dict()
+        for message in messages:
+            if message.destination in clusters.keys():
+                clusters[message.destination].messages.append(message)
+            else:
+                clusters[message.destination] = Symbol(name="Symbol-{}".format(message.destination), messages = [message])
+
+        return list(clusters.values())
+
+
+    @staticmethod
+    @typeCheck(list)
     def clusterByApplicativeData(messages):
         """Regroup messages having the same applicative data in their content.
 
