@@ -361,8 +361,6 @@ class Repeat(AbstractVariableNode):
                 if break_repeat:
                     break
 
-                # newParsingPaths = tmp_result
-
             for result in newParsingPaths:
                 yield result
 
