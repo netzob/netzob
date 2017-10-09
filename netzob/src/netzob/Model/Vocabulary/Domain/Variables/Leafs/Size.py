@@ -270,20 +270,19 @@ class Size(AbstractRelationVariableLeaf):
             if variable == self:
                 remainingVariables.append(variable)
             else:
-
-                # Retrieve the size of the targeted variable, if it not a Data and has a fixed size
-                if not isinstance(variable, Data):
-                    if hasattr(variable, "dataType"):
-                        minSize, maxSize = variable.dataType.size
-                        if maxSize is not None and minSize == maxSize:
-                            size += minSize
-                            continue
-                        else:
-                            raise Exception("The following targeted variable must have a fixed size: {0}".format(variable.name))
-
-                # Else, retrieve its value if it exists
+                # Try to retrieve its value if it exists
                 if parsingPath.hasData(variable):
                     remainingVariables.append(variable)
+
+                # Else, retrieve the size of the targeted variable, if it not a Data and has a fixed size
+                elif hasattr(variable, "dataType"):
+                    minSize, maxSize = variable.dataType.size
+                    if maxSize is not None and minSize == maxSize:
+                        size += minSize
+                        continue
+                    else:
+                        raise Exception("The following targeted variable must have a fixed size: {0}".format(variable.name))
+
                 else:
                     self._logger.debug("Cannot compute the relation, because the following target variable has no value: '{0}'".format(variable))
                     hasNeededData = False
