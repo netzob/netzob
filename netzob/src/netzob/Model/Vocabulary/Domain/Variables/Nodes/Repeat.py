@@ -301,6 +301,7 @@ class Repeat(AbstractVariableNode):
             # check we can apply nb_repeat times the child
             for i_repeat in range(nb_repeat):
                 tmp_result = []
+                lastResultIsValidPath = True
                 break_repeat = False
                 for newParsingPath in newParsingPaths:
                     for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
@@ -331,6 +332,7 @@ class Repeat(AbstractVariableNode):
                                 if not newParsingPath.hasData(self):
                                     newParsingPath.addResult(self, bitarray())
                                     tmp_result.append(newParsingPath)
+                                lastResultIsValidPath = False
                                 break
 
                         childParsingPath.addResult(self, newResult)
@@ -353,10 +355,13 @@ class Repeat(AbstractVariableNode):
                         if len(dataToParse) == len(newResult):
                             break_repeat = True
 
+                if lastResultIsValidPath:
+                    newParsingPaths = tmp_result
+
                 if break_repeat:
                     break
 
-                newParsingPaths = tmp_result
+                # newParsingPaths = tmp_result
 
             for result in newParsingPaths:
                 yield result
