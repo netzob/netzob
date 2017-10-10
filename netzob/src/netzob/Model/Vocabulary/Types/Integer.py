@@ -101,6 +101,16 @@ class Integer(AbstractType):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
             interval = value
+            if value <= math.pow(2,8)/2-1 and value >= -math.pow(2,8)/2:
+                unitSize=AbstractType.UNITSIZE_8
+            elif value <= math.pow(2,16)/2-1 and value >= -math.pow(2,16)/2: 
+                unitSize=AbstractType.UNITSIZE_16
+            elif value <= math.pow(2,32)/2-1 and value >= -math.pow(2,32)/2: 
+                unitSize=AbstractType.UNITSIZE_32
+            elif value <= math.pow(2,64)/2-1 and value >= -math.pow(2,64)/2: 
+                unitSize=AbstractType.UNITSIZE_64
+            else:
+                raise ValueError("value out of range")
             value = TypeConverter.convert(
                 value,
                 Integer,
@@ -147,12 +157,13 @@ class Integer(AbstractType):
         # the interval is a single value
         # bspec = ⌊log2(n)⌋ + 1 (+1 for signed)
         val = abs(val)
-        if sign == AbstractType.SIGN_UNSIGNED:
-            return math.floor(
-                (math.floor(math.log(val, 2)) + 1) / int(unitSize)) + 1
-        else:
-            return math.floor(
-                (math.floor(math.log(val, 2)) + 2) / int(unitSize)) + 1
+        if val != 0:
+            if sign == AbstractType.SIGN_UNSIGNED:
+                return math.floor(
+                    (math.floor(math.log(val, 2)) + 1) / int(unitSize)) + 1
+            else:
+                return math.floor(
+                    (math.floor(math.log(val, 2)) + 2) / int(unitSize)) + 1
 
     def canParse(self,
                  data,

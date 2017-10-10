@@ -383,6 +383,7 @@ class ASCII(AbstractType):
             if ordElt >= 0x20 and ordElt <= 0x7e:  # means between ' ' and '~'
                 res += chr(ordElt)
             else:
-                res += "."
+#                res += "."
+                raise ValueError('bytevalue {0}, is not ASCII encodable'.format(hex(ordElt)))
 
         return res
