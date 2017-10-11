@@ -46,6 +46,8 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
@@ -256,40 +258,59 @@ class Size(AbstractRelationVariableLeaf):
     def __hash__(self):
         return hash(self.__key())
 
-    @typeCheck(GenericPath)
-    def computeExpectedValue(self, parsingPath):
-        self._logger.debug("Compute expected value for Size variable")
-
-        # first checks the pointed fields all have a value
-        hasNeededData = True
+    def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables):
+        """
+        Compute the total size of targets
+        """
         size = 0
-        remainingVariables = []
 
-        for variable in self.targets:
+        for variable in targets:
 
             if variable == self:
                 remainingVariables.append(variable)
             else:
+                found = True
                 # Try to retrieve its value if it exists
                 if parsingPath.hasData(variable):
                     remainingVariables.append(variable)
 
-                # Else, retrieve the size of the targeted variable, if it not a Data and has a fixed size
+                elif isinstance(variable, AbstractVariableNode):
+                    if isinstance(variable, Agg):
+                        size += self.__computeExpectedValue_stage1(
+                            variable.children, parsingPath, remainingVariables)
+                    else:
+                        found = False
+
+                # Else, retrieve the size of the targeted variable, if it not
+                # a Data and has a fixed size
                 elif hasattr(variable, "dataType"):
                     minSize, maxSize = variable.dataType.size
                     if maxSize is not None and minSize == maxSize:
                         size += minSize
-                        continue
+                    elif variable.dataType.value is not None:
+                        size += len(variable.dataType.value)
+                    elif isinstance(variable.dataType, Integer):
+                        size += variable.dataType.unitSize.value
                     else:
-                        raise Exception("The following targeted variable must have a fixed size: {0}".format(variable.name))
+                        found = False
 
-                else:
-                    self._logger.debug("Cannot compute the relation, because the following target variable has no value: '{0}'".format(variable))
-                    hasNeededData = False
-                    break
+                if found:
+                    continue
 
-        if not hasNeededData:
-            raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
+                self._logger.debug("Cannot compute the relation, because "
+                                   "the following target variable has "
+                                   "no value: '{}'".format(variable))
+                raise Exception("Expected value cannot be computed, some "
+                                "dependencies are missing for domain {0}"
+                                .format(self))
+
+        return size
+
+    def __computeExpectedValue_stage2(self, parsingPath, remainingVariables):
+        """
+        Compute the size of remainingv variables
+        """
+        size = 0
 
         for variable in remainingVariables:
 
@@ -305,10 +326,19 @@ class Size(AbstractRelationVariableLeaf):
             # Retrieve length of variable value
             size += len(value)
 
+        return size
+
+    @typeCheck(GenericPath)
+    def computeExpectedValue(self, parsingPath):
+        self._logger.debug("Compute expected value for Size variable")
+
+        # first checks the pointed fields all have a value
+        remainingVariables = []
+
+        size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables)
+        size += self.__computeExpectedValue_stage2(parsingPath, remainingVariables)
         size = int(size * self.factor + self.offset)
-        size_raw = TypeConverter.convert(size,
-                                         Integer,
-                                         Raw,
+        size_raw = TypeConverter.convert(size, Integer, Raw,
                                          src_unitSize=self.dataType.unitSize,
                                          dst_unitSize=self.dataType.unitSize,
                                          src_sign=self.dataType.sign,
