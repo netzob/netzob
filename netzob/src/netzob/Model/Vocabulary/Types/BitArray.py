@@ -172,6 +172,7 @@ class BitArray(AbstractType):
         # When value is not None, we can access each element of the bitarray with named constants
         if value is not None:
             self.constants = ["item_{}".format(_) for _ in range(len(value))]
+            self.size = (len(value),) * 2
 
     def __getitem__(self, key):
         if isinstance(key, int):
