@@ -102,8 +102,9 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     def normalize_targets(self):
         # Normalize targets (so that targets now only contain variables)
         new_targets = []
+
         if self.targets is None:
-            new_targets = []
+            pass
 
         elif isinstance(self.targets, AbstractField):
             leafFields = self.targets.getLeafFields()
@@ -361,9 +362,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
     @targets.setter
     def targets(self, targets):
-        if isinstance(targets, AbstractField):
-            targets = [targets]
-        elif isinstance(targets, AbstractVariable):
+        if isinstance(targets, (AbstractField, AbstractVariable)):
             targets = [targets]
         self.__targets = targets
 

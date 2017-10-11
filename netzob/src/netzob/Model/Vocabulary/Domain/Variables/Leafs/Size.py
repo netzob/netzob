@@ -427,10 +427,10 @@ class Size(AbstractRelationVariableLeaf):
         >>> from netzob.all import *
         >>> # Fields
         >>> ip_ver      = Field(name='Version', domain=BitArray(value=bitarray('0100')))
-        >>> ip_ihl      = Field(name='Header length', domain=BitArray('0000'))
+        >>> ip_ihl      = Field(name='Header length', domain=bitarray('0000'))
         >>> ip_tos      = Field(name='TOS', domain=Data(dataType=BitArray(nbBits=8),
         ...                     originalValue=bitarray('00000000'), svas=SVAS.PERSISTENT))
-        >>> ip_tot_len  = Field(name='Total length', domain=BitArray('0000000000000000'))
+        >>> ip_tot_len  = Field(name='Total length', domain=bitarray('0000000000000000'))
         >>> ip_id       = Field(name='Identification number', domain=BitArray(nbBits=16))
         >>> ip_flags    = Field(name='Flags', domain=Data(dataType=BitArray(nbBits=3),
         ...                     originalValue=bitarray('000'), svas=SVAS.PERSISTENT))
@@ -439,14 +439,11 @@ class Size(AbstractRelationVariableLeaf):
         ...                     originalValue=bitarray('0000000000000'), svas=SVAS.PERSISTENT))
         >>> ip_ttl      = Field(name='TTL', domain=Data(dataType=BitArray(nbBits=8),
         ...                     originalValue=bitarray('10000000'), svas=SVAS.PERSISTENT))
-        >>> ip_proto    = Field(name='Protocol',
-        ...                     domain=Integer(value=6, unitSize=UnitSize.SIZE_8,
-        ...                                    endianness=Endianness.BIG,
-        ...                                    sign=Sign.UNSIGNED))
-        >>> ip_checksum = Field(name='Checksum', domain=BitArray('0000000000000000'))
+        >>> ip_proto    = Field(name='Protocol', domain=uint8be(6))
+        >>> ip_checksum = Field(name='Checksum', domain=bitarray('0000000000000000'))
         >>> ip_saddr    = Field(name='Source address', domain=IPv4("127.0.0.1"))
         >>> ip_daddr    = Field(name='Destination address', domain=IPv4("127.0.0.1"))
-        >>> ip_payload  = Field(name='Payload', domain=BitArray('0000000000000000'))
+        >>> ip_payload  = Field(name='Payload', domain=bitarray('0000000000000000'))
         >>> # Domains
         >>> ip_ihl.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags,
         ...                       ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr],
@@ -460,14 +457,14 @@ class Size(AbstractRelationVariableLeaf):
         ...    ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off,
         ...    ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload])
         >>> data = packet.specialize()
-        >>> repr(hex(data[0]))
-        ... # This corresponds to the first octect of the IP layer. '5' means 5*32 bits,
+        >>> hex(data[0])
+        ... # This corresponds to the first byte of the IP layer. '5' means 5*32 bits,
         ... # which is the size of the default IP header.
-        "'0x45'"
-        >>> repr(hex(data[3]))
-        ... # This corresponds to the third octect of the IP layer. '0x16' means 22 octets,
+        '0x45'
+        >>> hex(data[3])
+        ... # This corresponds to the third byte of the IP layer. '0x16' means 22 octets,
         ... # which is the size of the default IP header + 2 octets of payload.
-        "'0x16'"
+        '0x16'
 
         The following examples show the specialization process of a Size
         field:
