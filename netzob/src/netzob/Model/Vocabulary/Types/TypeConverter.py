@@ -97,9 +97,9 @@ class TypeConverter(object):
         2816
         >>> TypeConverter.convert(11, Integer, Raw)
         b'\\x0b'
-        >>> TypeConverter.convert(b'\\xa0\\x0b', Raw, Integer)
+        >>> TypeConverter.convert(b'\\xa0\\x0b', Raw, Integer, dst_sign=AbstractType.SIGN_SIGNED)
         -24565
-        >>> TypeConverter.convert(-24565, Integer, Raw)
+        >>> TypeConverter.convert(-24565, Integer, Raw, src_sign=AbstractType.SIGN_SIGNED)
         b'\\xa0\\x0b'
         >>> TypeConverter.convert(0, Integer, Raw)
         b'\\x00'

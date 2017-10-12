@@ -321,7 +321,7 @@ class IPv4(AbstractType):
     def encode(data,
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
-               sign=AbstractType.defaultSign()):
+               sign=AbstractType.SIGN_UNSIGNED):
         """Encodes the specified data into an IPAddress object
 
         :param data: the data to encode into an IPAddress
@@ -337,11 +337,11 @@ class IPv4(AbstractType):
                 pass
         try:
 
-            structFormat = ">"
+            structFormat = "<"
             if endianness == AbstractType.ENDIAN_BIG:
                 structFormat = ">"
 
-            if not sign == AbstractType.SIGN_SIGNED:
+            if sign is AbstractType.SIGN_SIGNED:
                 structFormat += "bbbb"
             else:
                 structFormat += "BBBB"

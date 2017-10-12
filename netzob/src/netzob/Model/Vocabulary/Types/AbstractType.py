@@ -158,7 +158,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :return: the default sign
         :rtype: str
         """
-        return AbstractType.SIGN_SIGNED
+        return AbstractType.SIGN_UNSIGNED
 
     def __init__(self,
                  typeName,
