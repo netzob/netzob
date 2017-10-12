@@ -106,7 +106,7 @@ class TypeConverter(object):
         >>> TypeConverter.convert(b'\\x00\\x00\\x00', Raw, Integer)
         Traceback (most recent call last):
         ...
-        TypeError: Unsupported UnitSize. Valid UnitSizes are 8,16,32 and 64 bits
+        TypeError: Unsupported autodetected Integer target UnitSize. Valid UnitSizes are 8, 16, 32 and 64 bits.
 
         You can also play with the unitSize to convert multiple ascii in a single high value decimal
 
@@ -171,66 +171,57 @@ class TypeConverter(object):
                         dst_unitSize, dst_endianness, dst_sign)
         else:
             # Convert from source to raw
-            if sourceType is Integer and src_unitSize is None and src_sign is AbstractType.SIGN_SIGNED:
-                if data <= math.pow(2,8)/2-1 and data >= -math.pow(2,8)/2:
-                    src_unitSize=AbstractType.UNITSIZE_8
-                elif data <= math.pow(2,16)/2-1 and data >= -math.pow(2,16)/2: 
-                    src_unitSize=AbstractType.UNITSIZE_16
-                elif data <= math.pow(2,32)/2-1 and data >= -math.pow(2,32)/2: 
-                    src_unitSize=AbstractType.UNITSIZE_32
-                elif data <= math.pow(2,64)/2-1 and data >= -math.pow(2,64)/2: 
-                    src_unitSize=AbstractType.UNITSIZE_64
-                else:
-                    raise ValueError("Data Out-of-Range")
-            if sourceType is Integer and src_unitSize is None and src_sign is AbstractType.SIGN_UNSIGNED:
-                if data <= math.pow(2,8)-1 and data >= 0:
-                    src_unitSize=AbstractType.UNITSIZE_8
-                elif data <= math.pow(2,16)-1 and data >= 0:
-                    src_unitSize=AbstractType.UNITSIZE_16
-                elif data <= math.pow(2,32)-1 and data >= 0:
-                    src_unitSize=AbstractType.UNITSIZE_32
-                elif data <= math.pow(2,64)-1 and data >= 0:
-                    src_unitSize=AbstractType.UNITSIZE_64
-                else:
-                    raise ValueError("Data Out-of-Range")
+            if sourceType is not Raw:
+                if sourceType is Integer and src_unitSize is None:
+                    if src_sign is AbstractType.SIGN_SIGNED:
+                        if -0x80 <= data <= 0x7f:
+                            src_unitSize=AbstractType.UNITSIZE_8
+                        elif -0x8000 <= data <= 0x7fff:
+                            src_unitSize=AbstractType.UNITSIZE_16
+                        elif -0x80000000 <= data <= 0x7fffffff:
+                            src_unitSize=AbstractType.UNITSIZE_32
+                        elif -0x8000000000000000 <= data <= 0x7fffffffffffffff:
+                            src_unitSize=AbstractType.UNITSIZE_64
+                        else:
+                            raise ValueError("Source data is out of signed 64bit Integer range.")
+                    if src_sign is AbstractType.SIGN_UNSIGNED:
+                        if 0x00 <= data <= 0xff:
+                            src_unitSize=AbstractType.UNITSIZE_8
+                        elif 0x00 <= data <= 0xffff:
+                            src_unitSize=AbstractType.UNITSIZE_16
+                        elif 0x00 <= data <= 0xffffffff:
+                            src_unitSize=AbstractType.UNITSIZE_32
+                        elif 0x00 <= data <= 0xffffffffffffffff:
+                            src_unitSize=AbstractType.UNITSIZE_64
+                        else:
+                            raise ValueError("Source data is out of unsigned 64bit Integer range.")
                 binData = sourceType.decode(
-			data, 
-			unitSize=src_unitSize, 
-			endianness=src_endianness, 
-			sign=src_sign)
-            elif sourceType is not Raw:
-                binData = sourceType.decode(
-			data, 
-			unitSize=src_unitSize, 
-			endianness=src_endianness, 
-			sign=src_sign)
+                    data,
+                    unitSize=src_unitSize,
+                    endianness=src_endianness,
+                    sign=src_sign)
             else:
                 binData = data
 
             # Convert from raw to Destination
-            if destinationType is Integer and dst_unitSize is None:
-                nbUnits = len(binData)
-                if nbUnits == 8: 
-                    dst_unitSize = AbstractType.UNITSIZE_64
-                elif nbUnits == 4:
-                    dst_unitSize = AbstractType.UNITSIZE_32
-                elif nbUnits == 2:
-                    dst_unitSize = AbstractType.UNITSIZE_16
-                elif nbUnits == 1:
-                    dst_unitSize = AbstractType.UNITSIZE_8
-                else:
-                    raise TypeError("Unsupported UnitSize. Valid UnitSizes are 8,16,32 and 64 bits")
+            if destinationType is not Raw:
+                if destinationType is Integer and dst_unitSize is None:
+                    nbUnits = len(binData)
+                    if nbUnits == 8:
+                        dst_unitSize = AbstractType.UNITSIZE_64
+                    elif nbUnits == 4:
+                        dst_unitSize = AbstractType.UNITSIZE_32
+                    elif nbUnits == 2:
+                        dst_unitSize = AbstractType.UNITSIZE_16
+                    elif nbUnits == 1:
+                        dst_unitSize = AbstractType.UNITSIZE_8
+                    else:
+                        raise TypeError("Unsupported autodetected Integer target UnitSize. Valid UnitSizes are 8, 16, 32 and 64 bits.")
                 outputData = destinationType.encode(
-			binData, 
-			unitSize=dst_unitSize, 
-			endianness=dst_endianness, 
-			sign=dst_sign)
-            elif destinationType is not Raw:
-                outputData = destinationType.encode(
-			binData, 
-			unitSize=dst_unitSize, 
-			endianness=dst_endianness, 
-			sign=dst_sign)
+                    binData,
+                    unitSize=dst_unitSize,
+                    endianness=dst_endianness,
+                    sign=dst_sign)
             else:
                 outputData = binData
 
