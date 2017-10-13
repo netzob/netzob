@@ -422,6 +422,10 @@ class Integer(AbstractType):
 
         # Else, compare with expected size
         if self.size is not None and isinstance(self.size, Iterable) and len(self.size) == 2:
+
+            if len(data) != self.unitSize.value:
+                return False
+
             minSize = min(self.size)
             maxSize = max(self.size)
 
