@@ -257,8 +257,9 @@ class FieldSplitAligned(object):
                     Raw(TypeConverter.convert(entryVal, HexaString, Raw)))
             step1Fields.append(newField)
 
-        for f in step1Fields:
-            f.encodingFunctions = list(field.encodingFunctions.values())
+        for idx,f in enumerate(step1Fields):
+            f.encodingFunctions = field.encodingFunctions.values()
+            f.name = "Field%02d" %idx
 
         field.fields = step1Fields
 
