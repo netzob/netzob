@@ -31,3 +31,4 @@
 
 #from Serialization import *
 #from netzob.Common.Utils.Serializer import Serializer
+from netzob.Common.Utils.Cpicklizer import Cpicklizer
