@@ -236,8 +236,6 @@ class GenericPath(object):
 
             if callBackToExecute is not None:
                 moreCallBackFound = True
-                i_cbk = self._variablesCallbacks.index(callBackToExecute)
-                self._variablesCallbacks.pop(i_cbk)
                 (targetVariables, currentVariable, parsingCB) = callBackToExecute
                 if parsingCB:
                     resultingPaths = currentVariable.parse(self, acceptCallBack=False)
