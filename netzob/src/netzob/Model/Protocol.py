@@ -46,6 +46,7 @@ from os.path import join
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Model.Symbols import Symbols
 from netzob.Model.Grammar.Automata import Automata
 
 
@@ -159,14 +160,7 @@ class Protocol(object):
             # Load module from source ZDL file
             modLoaded = imp.load_source("format", path)
 
-        symbols = {}
-        # Built dictionary of symbols
-        for s in modLoaded.symbols:
-            if s.name in self.symbols:
-                raise Exception("Multiple symbols have the same name: {}. "
-                                "Symbol name should be unique."
-                                .format(s.name))
-            symbols[s.name] = s
+        symbols = Symbols(modLoaded.symbols)
 
         if len(symbols) > 0:
             self.definition[Protocol.SYMBOLS] = symbols
