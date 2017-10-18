@@ -237,7 +237,7 @@ class IPv4(AbstractType):
         >>> ip.canParse("::")
         False
         >>> ip.canParse("0.0.0.0")
-        False
+        True
         >>> ip.canParse(b"\1\2\3\4")
         True
 
@@ -283,7 +283,7 @@ class IPv4(AbstractType):
         try:
             ip = IPv4.encode(
                 data, unitSize=unitSize, endianness=endianness, sign=sign)
-            if ip is None or ip.version != 4 or ip.is_netmask():
+            if ip is None or ip.version != 4:
                 return False
         except:
             return False
@@ -379,7 +379,7 @@ class IPv4(AbstractType):
         if isinstance(data, (str, bytes, int)):
             try:
                 ip = IPAddress(data)
-                if ip is not None and ip.version == 4 and not ip.is_netmask():
+                if ip is not None and ip.version == 4:
                     return ip
             except:
                 pass
@@ -397,7 +397,7 @@ class IPv4(AbstractType):
             strIP = '.'.join(quads)
 
             ip = IPAddress(strIP)
-            if ip is not None and ip.version == 4 and not ip.is_netmask():
+            if ip is not None and ip.version == 4:
                 return ip
         except Exception as e:
             raise TypeError("Impossible to encode {0} into an IPv4 data ({1})".
