@@ -242,7 +242,6 @@ class GenericPath(object):
                 else:
                     resultingPaths = currentVariable.specialize(self, acceptCallBack=True)
                 if len(resultingPaths) == 0:
-                    self._variablesCallbacks.insert(i_cbk, callBackToExecute)
                     return False
 
         return True
