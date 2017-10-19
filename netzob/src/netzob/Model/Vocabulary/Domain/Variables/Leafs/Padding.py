@@ -261,6 +261,9 @@ class Padding(AbstractRelationVariableLeaf):
                         if maxSize is not None and minSize == maxSize:
                             size += minSize
                             continue
+                        elif isinstance(variable.dataType, Integer):
+                            size += variable.dataType.unitSize.value
+                            continue
                         else:
                             raise Exception("The following targeted variable must have a fixed size: {0}".format(variable.name))
 

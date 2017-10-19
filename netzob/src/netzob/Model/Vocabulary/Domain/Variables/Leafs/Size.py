@@ -59,6 +59,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding import Padding
 
 
 @NetzobLogger
@@ -285,7 +286,9 @@ class Size(AbstractRelationVariableLeaf):
                 # a Data and has a fixed size
                 elif hasattr(variable, "dataType"):
                     minSize, maxSize = variable.dataType.size
-                    if maxSize is not None and minSize == maxSize:
+                    if isinstance(variable, Padding):
+                        remainingVariables.append(variable)
+                    elif maxSize is not None and minSize == maxSize:
                         size += minSize
                     elif variable.dataType.value is not None:
                         size += len(variable.dataType.value)
@@ -336,7 +339,7 @@ class Size(AbstractRelationVariableLeaf):
         remainingVariables = []
 
         size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables)
-        size += self.__computeExpectedValue_stage2(parsingPath, remainingVariables)
+        size = self.__computeExpectedValue_stage2(parsingPath, remainingVariables)
         size = int(size * self.factor + self.offset)
         size_raw = TypeConverter.convert(size, Integer, Raw,
                                          src_unitSize=self.dataType.unitSize,

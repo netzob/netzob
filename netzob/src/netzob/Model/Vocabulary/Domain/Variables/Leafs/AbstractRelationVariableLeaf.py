@@ -334,6 +334,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             self._logger.debug(
                 "Cannot specialize since no value is available for the relation dependencies, we create a callback function in case it can be computed later: {0}".
                 format(e))
+            print(e)
             pendingValue = TypeConverter.convert("PENDING VALUE", String,
                                                  BitArray)
             variableSpecializerPath.addResult(self, pendingValue)
