@@ -213,6 +213,9 @@ class GenericPath(object):
 
             for (targetVariables, currentVariable, parsingCB) in self._variablesCallbacks:
 
+                if triggeringVariable == currentVariable:
+                    break
+
                 found = False
                 for v in targetVariables:
                     if not isinstance(v, AbstractVariable):
