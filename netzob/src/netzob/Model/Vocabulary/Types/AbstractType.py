@@ -109,7 +109,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     :param size: The size in bits that this value takes.
     :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_*. If None, the value is the default one.
 
-      The following unit sizes are available:
+    .. note::
+       :attr:`value` and :attr:`size` attributes are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
+    The following unit sizes are available:
 
       * UnitSize.SIZE_1
       * UnitSize.SIZE_4

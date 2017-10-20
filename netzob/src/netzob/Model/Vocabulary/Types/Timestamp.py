@@ -95,6 +95,10 @@ class Timestamp(AbstractType):
     :type unity: :class:`Unity <netzob.Model.Vocabulary.Types.Timestamp.Unity`, optional
     :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
 
+    .. note::
+       :attr:`value` and :attr:`unitSize` attributes are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
 
     The Timestamp class provides the following public variables:
 

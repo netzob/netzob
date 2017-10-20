@@ -70,6 +70,9 @@ class IPv4(AbstractType):
     :type network: :class:`str` or :class:`netaddr.IPNetwork`, optional
     :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
 
+    .. note::
+       :attr:`value` and :attr:`network` attributes are mutually exclusive.
+
 
     The IPv4 class provides the following public variables:
 

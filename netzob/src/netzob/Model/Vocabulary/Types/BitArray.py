@@ -64,6 +64,10 @@ class BitArray(AbstractType):
     :type value: :class:`bitarray`, optional
     :type nbBits: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
+    .. note::
+       :attr:`value` and :attr:`nbBits` attributes are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
 
     The BitArray class provides the following public variables:
 

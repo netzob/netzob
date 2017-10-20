@@ -64,6 +64,10 @@ class Raw(AbstractType):
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
     :type alphabet: a :class:`list` of :class:`bytes`, optional
 
+    .. note::
+       :attr:`value` and :attr:`nbBytes` attributes are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
 
     The Raw class provides the following public variables:
 

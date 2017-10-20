@@ -63,7 +63,11 @@ class Integer(AbstractType):
     :param interval: The interval of permitted values for the Integer. This information is used to compute the size of the Integer.
     :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). The default value is UnitSize.SIZE_8.
 
-      The following unit sizes are available:
+    .. note::
+       :attr:`value` and :attr:`interval` attributes are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
+    The following unit sizes are available:
 
       * UnitSize.SIZE_1
       * UnitSize.SIZE_4

@@ -65,6 +65,10 @@ class HexaString(AbstractType):
     :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
+    .. note::
+       :attr:`value` and :attr:`nbBytes` attributes are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
 
     The HexaString class provides the following public variables:
 

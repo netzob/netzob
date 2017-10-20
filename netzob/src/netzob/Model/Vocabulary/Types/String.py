@@ -76,6 +76,10 @@ class String(AbstractType):
     :type encoding: :class:`str`, optional
     :type eos: a :class:`list` of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, optional
 
+    .. note::
+       :attr:`value` and :attr:`nbChars` attributes are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
 
     The String class provides the following public variables:
 
