@@ -76,7 +76,7 @@ class Field(AbstractField):
                           of the value of another field, but does
                           not directly produce data.
     :type domain: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-                  or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`, optional
+                  or a :class:`list` of :class:`~netzob.Model.Vocabulary.Field.Field`, optional
     :type name: :class:`str`, optional
     :type isPseudoField: :class:`bool`, optional
 
@@ -89,9 +89,9 @@ class Field(AbstractField):
                  set of values the field accepts).
     :var fields: The sorted list of sub-fields.
                  This variable should be used only if sub-field domains have basic
-                 types (for example :class:`Integer <netzob.Model.Vocabulary.Types.Integer.Integer>`
-                 or :class:`Raw <netzob.Model.Vocabulary.Types.Raw.Raw>`).
-                 More generally, preferably use :class:`Agg <netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg.Agg>`.
+                 types (for example :class:`~netzob.Model.Vocabulary.Types.Integer.Integer`
+                 or :class:`~netzob.Model.Vocabulary.Types.Raw.Raw`).
+                 More generally, preferably use :class:`~netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg.Agg`.
     :var parent: The parent element.
     :var isPseudoField: A flag indicating if the field is a
                         pseudo field, meaning it is used
