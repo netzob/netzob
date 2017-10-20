@@ -361,8 +361,8 @@ class Symbol(AbstractField):
         if spePath is not None:
             return spePath.generatedContent.tobytes()
 
-    @typeCheck(Memory, object)
-    def specialize_count(self, presets=None, fuzz=None):
+    @typeCheck(Memory, object, (int, float))
+    def specialize_count(self, presets=None, fuzz=None, timeout=None):
         r"""The method :meth:`specialize_count` computes the expected number of unique
         produced messages, considering the initial symbol model, the
         preset fields and the fuzzed fields.
@@ -381,10 +381,18 @@ class Symbol(AbstractField):
                      :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
                      purpose.
+        :param timeout: The computation time beyond which :const:`-1` is returned
         :type presets: :class:`dict`, optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
+        :type timeout: :class:`float` or :class:`int` in seconds
         :return: The number of unique values the symbol specialization can produce.
         :rtype: a :class:`int`
+
+        .. note::
+           The theorical value returned by :meth:`~specialize_count` may be huge
+           and hard to compute considering the number of variables involved.
+           Beyond :attr:`timeout` the computation would return the special
+           value :const:`-1` indicating a too large value to compute.
 
         >>> # Symbol definition
         >>> from netzob.all import *
