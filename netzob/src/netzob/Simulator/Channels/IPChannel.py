@@ -64,9 +64,12 @@ class IPChannel(AbstractChannel):
                     will be used to send the packet.
     :param upperProtocol: The protocol following the IP header.
                           Default value is socket.IPPROTO_TCP.
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
     :type remoteIP: :class:`str`, required
     :type localIP: :class:`str`, optional
     :type upperProtocol: :class:`int`, optional
+    :type timeout: :class:`float`, optional
 
 
     Adding to AbstractChannel variables, the IPChannel class provides the

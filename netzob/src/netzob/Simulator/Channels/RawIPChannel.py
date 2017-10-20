@@ -77,9 +77,12 @@ class RawIPChannel(AbstractChannel):
                     will be used to send the packet.
     :param upperProtocol: The protocol following IP in the stack.
                           Default value is :attr:`socket.IPPROTO_TCP` (6).
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
     :type remoteIP: :class:`str`, required
     :type localIP: :class:`str`, optional
     :type upperProtocol: :class:`int`, optional
+    :type timeout: :class:`float`, optional
 
 
     Adding to AbstractChannel variables, the RawIPChannel class provides the

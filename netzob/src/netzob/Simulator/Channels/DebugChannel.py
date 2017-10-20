@@ -57,7 +57,10 @@ class DebugChannel(AbstractChannel):
     The DebugChannel constructor expects some parameters:
 
     :param stream: The output stream
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
     :type stream: :class:`str` or a file-like object, required
+    :type timeout: :class:`float`, optional
 
 
     The following code shows the use of an DebugChannel channel:

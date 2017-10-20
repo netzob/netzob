@@ -65,9 +65,12 @@ class RawEthernetChannel(AbstractChannel):
     :param interface: The local network interface name (such as 'eth0', 'lo').
     :param remoteMac: The remote MAC address to connect to.
     :param localMac: The local MAC address.
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
     :type interface: :class:`str`, required
     :type remoteMac: :class:`str`, required
     :type localMac: :class:`str`, required
+    :type timeout: :class:`float`, optional
 
 
     Adding to AbstractChannel variables, the RawEthernetChannel class provides

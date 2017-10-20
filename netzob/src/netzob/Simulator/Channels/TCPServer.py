@@ -62,8 +62,11 @@ class TCPServer(AbstractChannel):
 
     :param localIP: The local IP address.
     :param localPort: The local IP port.
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
     :type localIP: :class:`str`, required
     :type localPort: :class:`int`, required
+    :type timeout: :class:`float`, optional
 
 
     Adding to AbstractChannel variables, the TCPServer class provides the

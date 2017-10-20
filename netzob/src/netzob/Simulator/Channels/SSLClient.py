@@ -79,12 +79,15 @@ class SSLClient(AbstractChannel):
                            should be a list of strings, like
                            ['http/1.1', 'spdy/2'], ordered by
                            preference. Default value is None.
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
     :type remoteIP: :class:`str`, required
     :type remotePort: :class:`int`, required
     :type localIP: :class:`str`, optional
     :type localPort: :class:`int`, optional
     :type server_cert_file: :class:`str`, optional
     :type alpn_protocols: :class:`list`, optional
+    :type timeout: :class:`float`, optional
 
     Adding to AbstractChannel public variables, the SSLClient class provides the
     following public variables:

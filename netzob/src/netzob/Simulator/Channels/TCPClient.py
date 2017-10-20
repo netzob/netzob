@@ -66,10 +66,13 @@ class TCPClient(AbstractChannel):
                     will be used to send the packet.
     :param localPort: The local IP port. Default value in a random
                     valid integer chosen by the kernel.
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
     :type remoteIP: :class:`str`, required
     :type remotePort: :class:`int`, required
     :type localIP: :class:`str`, optional
     :type localPort: :class:`int`, optional
+    :type timeout: :class:`float`, optional
 
 
     Adding to AbstractChannel variables, the TCPClient class provides the
