@@ -339,7 +339,7 @@ class Size(AbstractRelationVariableLeaf):
         remainingVariables = []
 
         size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables)
-        size = self.__computeExpectedValue_stage2(parsingPath, remainingVariables)
+        size += self.__computeExpectedValue_stage2(parsingPath, remainingVariables)
         size = int(size * self.factor + self.offset)
         size_raw = TypeConverter.convert(size, Integer, Raw,
                                          src_unitSize=self.dataType.unitSize,
