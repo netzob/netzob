@@ -281,8 +281,8 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
         if not hasValue:
             raise Exception(
-                "Expected value cannot be computed, some dependencies are missing for domain {0}. Error: '{}'".
-                format(self, errorMessage))
+                "Expected value cannot be computed, some dependencies are "
+                "missing for domain {}. Error: '{}'".format(self, errorMessage))
 
         values = []
         for variable in self.targets:
