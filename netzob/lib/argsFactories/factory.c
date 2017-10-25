@@ -166,12 +166,12 @@ void parseMessage(PyObject * item, t_message * message) {
   /**
      message->mask will be allocated (no value in it yet) to contain at least ... ?
   */
-  message->mask = calloc(message->len,sizeof(unsigned char));
+  message->mask = calloc(message->len,sizeof(unsigned char*));
 
   /**
      message->semanticTags contains the list of tags attached to each half-byte of the alignment
   */
-  message->semanticTags = calloc(message->len, sizeof(t_semanticTag));
+  message->semanticTags = calloc(message->len, sizeof(t_semanticTag *));
 
   // retrieve the list of tags
   PyObject* listOfSemanticTags = PyObject_GetAttrString(item, "semanticTags");
