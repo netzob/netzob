@@ -242,7 +242,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
     def add_cbk_modify_symbol(self, cbk_method):
         """Function called during transition execution, to help
-        choosing/modifying the output symbol to send.
+        choosing/modifying the output symbol to send (in a server
+        context) or the input symbol to send (in a client context).
 
         The callable function should have the following prototype:
 

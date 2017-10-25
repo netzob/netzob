@@ -131,8 +131,9 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         self.__active = active
 
     def add_cbk_modify_transition(self, cbk_method):
-        """Add a function called during state execution to help
-        choosing/modifying the next transition.
+        """Add a function called during state execution to help choosing the
+        next transition (in a client context) or modifying the current
+        transition (in a server context).
 
         The callable function should have the following prototype:
 

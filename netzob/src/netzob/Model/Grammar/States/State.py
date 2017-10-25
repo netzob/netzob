@@ -76,11 +76,6 @@ class State(AbstractState):
     :vartype transitions: :class:`list` of :class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`
 
 
-    A state may have different available transitions to other
-    states. When a transition is selected, it is possible to modify it
-    by adding callbacks through the method :meth:`add_cbk_modify_transition` (see below).
-
-
     The following example shows the definition of a state `s0` and a state `s1`:
 
     >>> from netzob.all import *

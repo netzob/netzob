@@ -60,9 +60,9 @@ class Actor(threading.Thread):
     :param automata: The automaton the actor will visit.
     :param abstractionLayer: The underlying abstraction layer used to abstract
                              and specialize symbols.
-    :param initiator: If True, indicates that the actor initiates the
+    :param initiator: If True, indicates that the actor is a client, and thus initiates the
                       communication and emits the input symbol.  If
-                      False, indicates that the actor waits for
+                      False, indicates that the actor is a server, and thus waits for
                       another peer to initiate the connection. Default
                       value is :const:`True`. The value can be change
                       during a communication, in order to reverse the
