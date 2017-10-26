@@ -239,6 +239,9 @@ class Padding(AbstractRelationVariableLeaf):
     def __hash__(self):
         return hash(self.__key())
 
+    def compareValues(self, content, expectedSize, computedValue):
+        return len(content) >= len(computedValue)
+
     @typeCheck(GenericPath)
     def computeExpectedValue(self, parsingPath):
         self._logger.debug("Compute expected value for Padding variable")

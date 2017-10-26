@@ -203,6 +203,9 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             raise Exception("VariableParserPath cannot be None")
         return []
 
+    def compareValues(self, content, expectedSize, computedValue):
+        return content[:expectedSize] == computedValue
+
     @typeCheck(ParsingPath)
     def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """This method participates in the abstraction process.
@@ -234,10 +237,10 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         expectedValue = None
         try:
             expectedValue = self.computeExpectedValue(parsingPath)
-            if possibleValue[:len(expectedValue)] == expectedValue:
+            if self.compareValues(content, expectedSize, expectedValue):
                 self._logger.debug("The target variables contain the expected value '{}'".format(expectedValue.tobytes()))
                 parsingPath.ok = True
-                parsingPath.addResult(self, expectedValue.copy())
+                parsingPath.addResult(self, content[:len(expectedValue)])
                 results.append(parsingPath)
             else:
                 msg = "The current variable data '{}' do not contain the expected value '{}'".format(possibleValue.tobytes(), expectedValue.tobytes())
@@ -332,7 +335,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 raise Exception("Target value is not defined currently")
         except Exception as e:
             self._logger.debug(
-                "Cannot specialize since no value is available for the relation dependencies, we create a callback function in case it can be computed later: {0}".
+                "Value not available in the relation dependencies, a callback function is created to compute later: {}".
                 format(e))
             pendingValue = TypeConverter.convert("PENDING VALUE", String,
                                                  BitArray)
