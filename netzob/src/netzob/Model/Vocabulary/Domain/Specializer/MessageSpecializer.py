@@ -323,6 +323,11 @@ class MessageSpecializer(object):
                         if isinstance(v, bitarray):
                             new_keys[f] = v
                             old_keys.append(k)
+                        elif isinstance(v, bytes):
+                            valbits = bitarray(endian='big')
+                            valbits.frombytes(v)
+                            new_keys[f] = valbits
+                            old_keys.append(k)
                         elif hasattr(f.domain, "dataType"):
                             if isinstance(v, AbstractType):
                                 new_keys[f] = v.value
