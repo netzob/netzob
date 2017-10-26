@@ -127,6 +127,7 @@ class GenericPath(object):
     @typeCheck(AbstractVariable)
     def hasData(self, variable):
         """Return True if a data has been assigned to the specified variable.
+        """
 
         if variable is None:
             raise Exception("Variable cannot be None")
@@ -195,9 +196,9 @@ class GenericPath(object):
 
         moreCallBackFound = True
 
-        # Try n-times to trigger callbacks in different orders as there can have deadlocks
-        # between mutually linked domain definitions
-        for i in range(10):
+        # Try n-times to trigger callbacks in different orders as there can
+        # have deadlocks between mutually linked domain definitions
+        for _ in range(10):
             if moreCallBackFound is False:
                 break
 
