@@ -97,7 +97,6 @@ class GenericPath(object):
 
         if not self._triggerVariablesCallbacks(variable):
             pass
-            #raise Exception("Impossible to assign this result to the variable (CB has failed)")
 
     @typeCheck(AbstractVariable)
     def getData(self, variable):
@@ -122,14 +121,13 @@ class GenericPath(object):
             return self.memory.getValue(variable)
 
         raise Exception(
-            "No data is assigned to variable '{0}'".format(variable.name))
+            "No data assigned to variable '{}' {}".format(variable.name,
+                                                          variable.field))
 
     @typeCheck(AbstractVariable)
     def hasData(self, variable):
         """Return True if a data has been assigned to the specified variable.
 
-        """
-        
         if variable is None:
             raise Exception("Variable cannot be None")
         if variable.id in self._dataAssignedToVariable:
@@ -212,6 +210,7 @@ class GenericPath(object):
             shuffle(self._variablesCallbacks)
 
             for (targetVariables, currentVariable, parsingCB) in self._variablesCallbacks:
+                # print("currentVariable={}".format(currentVariable))
 
                 if triggeringVariable == currentVariable:
                     break
