@@ -211,7 +211,6 @@ class GenericPath(object):
             shuffle(self._variablesCallbacks)
 
             for (targetVariables, currentVariable, parsingCB) in self._variablesCallbacks:
-                # print("currentVariable={}".format(currentVariable))
 
                 if triggeringVariable == currentVariable:
                     break

@@ -262,10 +262,10 @@ class Symbol(AbstractField):
         <netzob.Model.Vocabulary.Field.Field>` objects or strings
         containing field accessors when field names are used (such as
         in ``f = Field(name="udp.dport")``). Values are either
-        expressed as :class:`BitArray
-        <netzob.Model.Vocabulary.Types.BitArray.BitArray>` (as it is
-        the internal type for variables in the Netzob library) or in
-        the type of the overridden field variable.
+        expressed as :class:`bitarray <bitarray.bitarray>` (as it is
+        the internal type for variables in the Netzob library), as
+        :class:`bytes' or in the type of the overridden field
+        variable.
 
         The following code shows the definition of a simplified UDP
         header that will be later used as base example. This UDP
