@@ -20,10 +20,12 @@ stages:
   apt-get install --no-install-recommends -y python3{,-dev,-setuptools,-pip} openssh-client git build-essential lib{pcap,ssl,ffi}-dev locales
   echo 'fr_FR.UTF-8 UTF-8' >> /etc/locale.gen
   locale-gen
+  export LANG=fr_FR.UTF-8
 
 .python_script_template: &python_script_definition |
   cd netzob
-  LANG=fr_FR.UTF-8 python3 -m pip install --force-reinstall -r requirements.txt
+  python3 -m pip install wheel
+  python3 -m pip install --force-reinstall -r requirements.txt
   python3 setup.py sdist
   python3 setup.py bdist
   [ "$SSH_AGENT_PID" -gt 0 ] && kill "$SSH_AGENT_PID"
