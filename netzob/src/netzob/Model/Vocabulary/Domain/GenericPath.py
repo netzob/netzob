@@ -86,6 +86,7 @@ class GenericPath(object):
         >>> print(path.hasData(var))
         False
         >>> path.addResult(var, String("test").value)
+        True
         >>> print(path.hasData(var))
         True
         >>> print(path.getData(var))
@@ -95,8 +96,7 @@ class GenericPath(object):
 
         self.assignData(result, variable)
 
-        if not self._triggerVariablesCallbacks(variable):
-            pass
+        return self._triggerVariablesCallbacks(variable)
 
     @typeCheck(AbstractVariable)
     def getData(self, variable):

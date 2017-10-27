@@ -246,13 +246,17 @@ class Data(AbstractVariableLeaf):
                 format(len(content), minSize))
         else:
             for size in range(min(maxSize, len(content)), minSize - 1, -1):
+                self._logger.debug("Try to parse {}/{} bits".format(size, maxSize))
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
                     newParsingPath = parsingPath.duplicate()
-                    newParsingPath.addResult(self, content[:size].copy())
-                    newParsingPath.memory.memorize(self, content[:size].copy())
-                    yield newParsingPath
+                    addresult_succeed = newParsingPath.addResult(self, content[:size].copy())
+                    if addresult_succeed:
+                        newParsingPath.memory.memorize(self, content[:size].copy())
+                        yield newParsingPath
+                    else:
+                        self._logger.debug("Parsed data does not respect a relation")
 
     @typeCheck(SpecializingPath)
     def use(self, variableSpecializerPath, acceptCallBack=True):

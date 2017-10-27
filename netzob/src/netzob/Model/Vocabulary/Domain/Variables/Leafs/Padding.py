@@ -257,7 +257,7 @@ class Padding(AbstractRelationVariableLeaf):
                 pass
             else:
 
-                # Retrieve the size of the targeted variable, if it not a Data and has a fixed size
+                # Retrieve the size of the targeted variable, if it is not a Data and has a fixed size
                 if not isinstance(variable, Data):
                     if hasattr(variable, "dataType"):
                         minSize, maxSize = variable.dataType.size
@@ -365,3 +365,20 @@ class Padding(AbstractRelationVariableLeaf):
             raise TypeError(
                 "Offset cannot be None, use 0 if no offset should be applied.")
         self.__offset = offset
+
+
+def _test():
+    r"""
+    >>> from netzob.all import *
+
+    >>> f_data = Field(Raw(nbBytes=(0, 8)), "payload")
+    >>> f_size = Field(Size([f_data], dataType=uint8(), factor=1/8), "size")
+    >>> f_pad = Field(Padding([f_size, f_data], data=Raw(b"\x00"), modulo=8*16), "padding")
+    >>>
+    >>> s = Symbol([f_size, f_data, f_pad])
+    >>> data = s.specialize()
+    >>>
+    >>> (abstractedSymbol, structured_data) = Symbol.abstract(data, [s])
+    >>> ord(structured_data['size']) == len(structured_data['payload'])
+    True
+    """
