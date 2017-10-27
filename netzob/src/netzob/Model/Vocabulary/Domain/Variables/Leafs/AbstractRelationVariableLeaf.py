@@ -181,7 +181,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         if content is None:
             raise Exception("No data assigned.")
 
-        possibleValue = content[:expectedValue]
+        possibleValue = content[:expectedSize]
         self._logger.debug("Possible value of relation field: {0}".
                            format(possibleValue))
 
@@ -278,7 +278,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         errorMessage = ""
         for variable in self.targets:
             if variable is not self and not parsingPath.hasData(variable):
-                errorMessage = "The following variable has no value: '{0}'".format(variable)
+                errorMessage = "The following variable has no value: '{}' {}".format(variable, variable.field)
                 self._logger.debug(errorMessage)
                 hasValue = False
 
