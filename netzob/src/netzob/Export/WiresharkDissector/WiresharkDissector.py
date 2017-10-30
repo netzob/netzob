@@ -49,6 +49,7 @@ from netzob.Model.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
 from netzob.Export.WiresharkDissector.WiresharkFilter import WiresharkFilterFactory
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Domain.Variables.Leafs import AbstractVariableLeaf
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.ASCII import ASCII
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
@@ -59,11 +60,23 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 @NetzobLogger
 class WiresharkDissector(object):
-    """
-        Usage: >>> WiresharkDissector.dissectSymbols(symbols,'outputFilenane')
+    """ Usage: >>> WiresharkDissector.dissectSymbols(symbols,'outputFilename')
         or for single symbols
-        Usage: >>> WiresharkDissector.dissectSymbol(symbol,'outputFilenane')
+        Usage: >>> WiresharkDissector.dissectSymbol(symbol,'outputFilename')
+
+        >>> from netzob.all import *
+        >>> messages = PCAPImporter.readFile("./test/resources/pcaps/target_src_v1_session1.pcap").values()
+        >>> symbols = Format.clusterByAlignment(messages)
+        # Symbols need different Names in Wireshark
+        >>> symbols[0].name = "Symbol_A"
+        >>> symbols[1].name = "Symbol_B"
+        >>> symbols[2].name = "Symbol_C"
+        >>> WiresharkDissector.dissectSymbols(symbols,'./test/resources/test.lua')
+        >>> f = open("./test/resources/test.lua",'r')
+        >>> print(len(f.readlines()))
+        204
     """
+
     def __init__(self):
         pass
 
@@ -98,7 +111,7 @@ class WiresharkDissector(object):
         # Returns all local values as dict
         return locals()
 
-    @typeCheck(AbstractField)
+    @typeCheck(list)
     def __findShortestUniqueIdentifier(self, symbols):
         '''
         Finds the shortest substrings of a Symbol to identify it from other symbols.
@@ -147,13 +160,13 @@ class WiresharkDissector(object):
             shortestUniqueIndetifer.append(msg_list)
         return shortestUniqueIndetifer
 
-    @typeCheck(AbstractVariableLeaf)
+    @typeCheck(AbstractVariableLeaf, str)
     def __getDataRepresentation(self, domain, dataType=None):
         '''
         Concatenates a string containing a valid LUA function call for a casting / data-representation function
         :param domain: Data or a Size Object:
         :type  netzob.Model.Vocabulary.Domain.Variables.Leafs.Data.Data
-        :param dataType: a string containg the LUA function for casting. This is used in case its a size Field and
+        :param dataType: a string containing the LUA function for casting. This is used in case its a size Field and
         one wants to force the data-representation to be int and not raw
         :return: Sting: representing the Data-representation for the buffer in LUA
         :rtype string
@@ -283,7 +296,7 @@ class WiresharkDissector(object):
                     .format(target_nr=target_nr, prefix=field.name, data_rep=data_representation)
                 buf << "idx = idx + size_{}".format(target_nr)
 
-    @typeCheck(AbstractField)
+    @typeCheck(list)
     def __writeHeuristicDissector(self,symbols):
         """
         Writes a heuristic dissector to determin from the first n Bytes of a message which Symbol / message type it is.
@@ -331,7 +344,7 @@ class WiresharkDissector(object):
 
         return (heur_dissector_name, buf.getvalue())
 
-    @typeCheck(AbstractField, str)
+    @typeCheck(list, str)
     def __writeDissectorRegistration(self, symbols, dissector_name):
         """
         Writes the LUA Code for registering the passed dissector_name in Wireshark. Binds the dissector to a specified
@@ -478,22 +491,6 @@ class WiresharkDissector(object):
                         .format(data_rep=data_rep)
                     buf << "idx = idx + remaining_len"
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        # Register dissector function to specific filter criterion
-        filter_ = WiresharkFilterFactory.getFilter(sym)
-        luatype = self.__getLuaTableType(filter_.pytype)
-        for expr in filter_.getExpressions():
-            buf << """if not pcall(DissectorTable.get, "{0}") then
-          DissectorTable.new("{0}", "Netzob-generated table", {type})
-        end
-        DissectorTable.get("{0}"):add({1}, {class_var})
-        """.format(*expr, type=luatype, **ctx)
-
->>>>>>> ae8a03b... Added new Wireshark Dissector module. It was ported from version 0.4.2
-=======
->>>>>>> 0b0b8a9... Removed redundant code from implementation
         return buf.getvalue()
 
 
@@ -525,10 +522,10 @@ class WiresharkDissector(object):
                     text_based = False
                     break
             if text_based:
-                print('Text Dissector')
+                #print('Text Dissector')
                 symbol_dissector = symbol_dissector + dissector.__dessect_text(sym) + '\n\n\n'
             else:
-                print('Binary Dissector')
+                #print('Binary Dissector')
                 symbol_dissector = symbol_dissector + dissector.__dessect_raw(sym) + '\n\n\n'
 
         # If there is more than one symbol a heuristic is needed to determ which symbol is used for the dissection
