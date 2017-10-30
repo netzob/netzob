@@ -61,7 +61,7 @@ from netzob.Model.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
 
 @NetzobLogger
 class PCAPImporter(object):
-    """PCAP importer to read pcaps and extract messages out of them.
+    r"""PCAP importer to read pcaps and extract messages out of them.
     We recommend to use static methods such as
     - PCAPImporter.readFiles(...)
     - PCAPimporter.readFile(...)
@@ -88,12 +88,12 @@ class PCAPImporter(object):
     b'RESdecrypt#\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00abcdef'
     b'CMDbye#\\x00\\x00\\x00\\x00'
     b'RESbye#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
-    
+
     PCAP Files with unsupported Layers on OSI Layer 2 can be imported as RawMessages if the importLayer is 1
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/atm_capture1.pcap", importLayer=1).values()
-    >>> print(repr(messages[0].data))
-    b'E\x00\x00T\x17\x82\x00\x00@\x01U\xd3\xc0\xa8F\x01\xc0\xa8F\x02\x08\x00\xfa`Of\x00\x009\xd9\x121\x00\x08w#\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./01234567'
-
+    >>> pprint(repr(messages[0].data[:-25]))
+    b'E\x00\x00T\x17\x82\x00\x00@\x01U\xd3\xc0\xa8F\x01\xc0\xa8F\x02\x08\x00\xfa`Of\x00\x009\xd9\x121\x00\x08w#\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e'
+    
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=2).values()
     >>> print(repr(messages[0].data))
     b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08\\x00E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
@@ -210,12 +210,11 @@ class PCAPImporter(object):
         """Internal callback executed on each packet when parsing the pcap"""
         (secs, usecs) = header.getts()
         epoch = secs + (usecs / 1000000.0)
-        #self._logger.debug('ImportLayer = '+ str(self.importLayer))
+        self._logger.debug('ImportLayer = '+ str(self.importLayer))
         if self.importLayer == 1:
             if len(payload) == 0:
                 return
             # Build the RawMessage
-            # TODO source and destination of RawMessage is unclear
             rawMessage = RawMessage(payload, epoch, source=None, destination=None)
 
             self.messages.add(rawMessage)
