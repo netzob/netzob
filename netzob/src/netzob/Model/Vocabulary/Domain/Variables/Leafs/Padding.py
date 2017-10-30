@@ -45,6 +45,7 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.String import String
@@ -54,6 +55,8 @@ from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
@@ -242,50 +245,43 @@ class Padding(AbstractRelationVariableLeaf):
     def compareValues(self, content, expectedSize, computedValue):
         return len(content) >= len(computedValue)
 
-    @typeCheck(GenericPath)
-    def computeExpectedValue(self, parsingPath):
-        self._logger.debug("Compute expected value for Padding variable")
-
-        # first checks the pointed fields all have a value
-        hasNeededData = True
+    def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables):
+        """
+        Compute the total size of targets
+        """
         size = 0
-        remainingVariables = []
 
-        for variable in self.targets:
+        for variable in targets:
 
-            if variable == self:
-                pass
-            else:
-
-                # Retrieve the size of the targeted variable, if it is not a Data and has a fixed size
-                if not isinstance(variable, Data):
-                    if hasattr(variable, "dataType"):
-                        minSize, maxSize = variable.dataType.size
-                        if maxSize is not None and minSize == maxSize:
-                            size += minSize
-                            continue
-                        elif isinstance(variable.dataType, Integer):
-                            size += variable.dataType.unitSize.value
-                            continue
-                        else:
-                            raise Exception("The following targeted variable must have a fixed size: {0}".format(variable.name))
-
-                # Else, retrieve its value if it exists
-                if parsingPath.hasData(variable):
+            # variable is a leaf
+            if isinstance(variable, AbstractVariableLeaf):
+                try:
+                    size += variable.getFixedBitSize()
+                except ValueError:
                     remainingVariables.append(variable)
-                else:
-                    self._logger.debug("Cannot compute the relation, because the following target variable has no value: '{0}'".format(variable))
-                    hasNeededData = False
-                    break
 
-        if not hasNeededData:
-            raise Exception("Expected value cannot be computed, some dependencies are missing for domain {0}".format(self))
+            # variable is a node
+            elif isinstance(variable, AbstractVariableNode):
+                if isinstance(variable, Agg):
+                    size += self.__computeExpectedValue_stage1(
+                        variable.children, parsingPath, remainingVariables)
+
+            else:
+                remainingVariables.append(variable)
+
+        return size
+
+    def __computeExpectedValue_stage2(self, parsingPath, remainingVariables):
+        """
+        Compute the size of remaining variables
+        """
+        size = 0
 
         for variable in remainingVariables:
 
             # Retrieve variable value
             if variable is self:
-                pass
+                value = self.dataType.generate()
             else:
                 value = parsingPath.getData(variable)
 
@@ -295,7 +291,17 @@ class Padding(AbstractRelationVariableLeaf):
             # Retrieve length of variable value
             size += len(value)
 
-        # Compute current size of the structure targeted by the Padding
+        return size
+
+    @typeCheck(GenericPath)
+    def computeExpectedValue(self, parsingPath):
+        self._logger.debug("Compute expected value for Padding variable")
+
+        # first checks the pointed fields all have a value
+        remainingVariables = []
+
+        size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables)
+        size += self.__computeExpectedValue_stage2(parsingPath, remainingVariables)
         size = int(size * self.factor + self.offset)
 
         # Compute the padding value according to the current size
