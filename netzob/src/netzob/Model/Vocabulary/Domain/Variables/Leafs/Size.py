@@ -44,7 +44,9 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding import Padding
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
@@ -261,51 +263,40 @@ class Size(AbstractRelationVariableLeaf):
 
         for variable in targets:
 
-            if variable == self:
+            if parsingPath.hasData(variable) or variable is self:
                 remainingVariables.append(variable)
-            else:
-                found = True
-                # Try to retrieve its value if it exists
-                if parsingPath.hasData(variable):
+
+            # variable is a leaf
+            elif isinstance(variable, AbstractVariableLeaf):
+                try:
+                    size += variable.getFixedBitSize()
+                except ValueError:
                     remainingVariables.append(variable)
 
-                elif isinstance(variable, AbstractVariableNode):
-                    if isinstance(variable, Agg):
-                        size += self.__computeExpectedValue_stage1(
-                            variable.children, parsingPath, remainingVariables)
-                    else:
-                        found = False
+            # variable is a node
+            elif isinstance(variable, AbstractVariableNode):
+                if isinstance(variable, Agg):
+                    size += self.__computeExpectedValue_stage1(
+                        variable.children, parsingPath, remainingVariables)
+                else:
+                    break
 
-                # Else, retrieve the size of the targeted variable, if it not
-                # a Data and has a fixed size
-                elif hasattr(variable, "dataType"):
-                    minSize, maxSize = variable.dataType.size
-                    if isinstance(variable, Padding):
-                        remainingVariables.append(variable)
-                    elif maxSize is not None and minSize == maxSize:
-                        size += minSize
-                    elif variable.dataType.value is not None:
-                        size += len(variable.dataType.value)
-                    elif isinstance(variable.dataType, Integer):
-                        size += variable.dataType.unitSize.value
-                    else:
-                        found = False
+            else:
+                remainingVariables.append(variable)
 
-                if found:
-                    continue
+        else:
+            return size
 
-                self._logger.debug("Cannot compute the relation, because "
-                                   "the following target variable has "
-                                   "no value: '{}'".format(variable))
-                raise Exception("Expected value cannot be computed, some "
-                                "dependencies are missing for domain {0}"
-                                .format(self))
-
-        return size
+        self._logger.debug("Cannot compute the relation, because "
+                           "the following target variable has "
+                           "no value: '{}'".format(variable))
+        raise Exception("Expected value cannot be computed, some "
+                        "dependencies are missing for domain {0}"
+                        .format(self))
 
     def __computeExpectedValue_stage2(self, parsingPath, remainingVariables):
         """
-        Compute the size of remainingv variables
+        Compute the size of remaining variables
         """
         size = 0
 
