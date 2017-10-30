@@ -36,7 +36,6 @@
 # +---------------------------------------------------------------------------+
 import random
 import os
-import unittest
 from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
@@ -57,9 +56,9 @@ class Raw(AbstractType):
 
     The Raw constructor expects some parameters:
 
-    :param value: The current value of the type instance.
-    :param nbBytes: The size in bytes that this value can take.
-    :param alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.
+    :param value: The current value of the type instance. The default value is None.
+    :param nbBytes: The size in bytes that this value can take. The default value is None.
+    :param alphabet: The alphabet can be used to limit the bytes that can participate in the domain value. The default value is None.
     :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
     :type alphabet: a :class:`list` of :class:`bytes`, optional
@@ -143,7 +142,7 @@ class Raw(AbstractType):
             nbBits = (None, None)
 
         self.alphabet = alphabet
-        
+
         super(Raw, self).__init__(
             self.__class__.__name__,
             value,
@@ -331,10 +330,10 @@ class Raw(AbstractType):
 
         (minBits, maxBits) = self.size
         if minBits is not None:
-            if len(rawData) < (minBits/8):
+            if len(rawData) < (minBits / 8):
                 return False
         if maxBits is not None:
-            if len(rawData) > (maxBits/8):
+            if len(rawData) > (maxBits / 8):
                 return False
 
         if self.alphabet is not None:

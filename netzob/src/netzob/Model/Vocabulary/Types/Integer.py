@@ -35,9 +35,8 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import struct
-import math
 import random
-import unittest
+
 from bitarray import bitarray
 from typing import Iterable
 
@@ -59,9 +58,9 @@ class Integer(AbstractType):
 
     The Integer constructor expects some parameters:
 
-    :param value: The current value of the type instance.
-    :param interval: The interval of permitted values for the Integer. This information is used to compute the size of the Integer.
-    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). The default value is UnitSize.SIZE_8.
+    :param value: The current value of the type instance, optional. The default value is None.
+    :param interval: The interval of permitted values for the Integer, optional. This information is used to compute the size of the Integer. The default value is None.
+    :param unitSize: The unitsize of the current value, optional. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). The default value is UnitSize.SIZE_8.
 
     .. note::
        :attr:`value` and :attr:`interval` attributes are mutually exclusive.
@@ -560,7 +559,7 @@ class Integer(AbstractType):
 
         nbWords = int(len(data) * 8 / int(unitSize.value))
 
-        # Check whether the input data matches unitSize. If not take 
+        # Check whether the input data matches unitSize. If not take
         # precautions to able to pad it with null bytes later.
         padding_nullbytes = 0
         rest = (len(data) * 8) % int(unitSize.value)
@@ -668,7 +667,6 @@ class Integer(AbstractType):
         else:
             raise Exception("Cannot generate integer value, as nor constant value or interval is defined")
 
-
     def _test(self):
         r"""
         Examples of Integer internal attribute access
@@ -720,30 +718,30 @@ def getMaxStorageValue(unitSize, sign):
         return int((2**unitSize.value) / 2) - 1
 
 
-int8be   = partialclass(Integer,
-                        unitSize=UnitSize.SIZE_8,
-                        sign=Sign.SIGNED,
-                        endianness=Endianness.BIG)
-int8le   = partialclass(Integer,
-                        unitSize=UnitSize.SIZE_8,
-                        sign=Sign.SIGNED,
-                        endianness=Endianness.LITTLE)
-uint8be  = partialclass(Integer,
-                        unitSize=UnitSize.SIZE_8,
-                        sign=Sign.UNSIGNED,
-                        endianness=Endianness.BIG)
-uint8le  = partialclass(Integer,
-                        unitSize=UnitSize.SIZE_8,
-                        sign=Sign.UNSIGNED,
-                        endianness=Endianness.LITTLE)
-int16be  = partialclass(Integer,
-                        unitSize=UnitSize.SIZE_16,
-                        sign=Sign.SIGNED,
-                        endianness=Endianness.BIG)
-int16le  = partialclass(Integer,
-                        unitSize=UnitSize.SIZE_16,
-                        sign=Sign.SIGNED,
-                        endianness=Endianness.LITTLE)
+int8be = partialclass(Integer,
+                      unitSize=UnitSize.SIZE_8,
+                      sign=Sign.SIGNED,
+                      endianness=Endianness.BIG)
+int8le = partialclass(Integer,
+                      unitSize=UnitSize.SIZE_8,
+                      sign=Sign.SIGNED,
+                      endianness=Endianness.LITTLE)
+uint8be = partialclass(Integer,
+                       unitSize=UnitSize.SIZE_8,
+                       sign=Sign.UNSIGNED,
+                       endianness=Endianness.BIG)
+uint8le = partialclass(Integer,
+                       unitSize=UnitSize.SIZE_8,
+                       sign=Sign.UNSIGNED,
+                       endianness=Endianness.LITTLE)
+int16be = partialclass(Integer,
+                       unitSize=UnitSize.SIZE_16,
+                       sign=Sign.SIGNED,
+                       endianness=Endianness.BIG)
+int16le = partialclass(Integer,
+                       unitSize=UnitSize.SIZE_16,
+                       sign=Sign.SIGNED,
+                       endianness=Endianness.LITTLE)
 uint16be = partialclass(Integer,
                         unitSize=UnitSize.SIZE_16,
                         sign=Sign.UNSIGNED,
@@ -752,14 +750,14 @@ uint16le = partialclass(Integer,
                         unitSize=UnitSize.SIZE_16,
                         sign=Sign.UNSIGNED,
                         endianness=Endianness.LITTLE)
-int32be  = partialclass(Integer,
-                        unitSize=UnitSize.SIZE_32,
-                        sign=Sign.SIGNED,
-                        endianness=Endianness.BIG)
-int32le  = partialclass(Integer,
-                        unitSize=UnitSize.SIZE_32,
-                        sign=Sign.SIGNED,
-                        endianness=Endianness.LITTLE)
+int32be = partialclass(Integer,
+                       unitSize=UnitSize.SIZE_32,
+                       sign=Sign.SIGNED,
+                       endianness=Endianness.BIG)
+int32le = partialclass(Integer,
+                       unitSize=UnitSize.SIZE_32,
+                       sign=Sign.SIGNED,
+                       endianness=Endianness.LITTLE)
 uint32be = partialclass(Integer,
                         unitSize=UnitSize.SIZE_32,
                         sign=Sign.UNSIGNED,
@@ -768,14 +766,14 @@ uint32le = partialclass(Integer,
                         unitSize=UnitSize.SIZE_32,
                         sign=Sign.UNSIGNED,
                         endianness=Endianness.LITTLE)
-int64be  = partialclass(Integer,
-                        unitSize=UnitSize.SIZE_64,
-                        sign=Sign.SIGNED,
-                        endianness=Endianness.BIG)
-int64le  = partialclass(Integer,
-                        unitSize=UnitSize.SIZE_64,
-                        sign=Sign.SIGNED,
-                        endianness=Endianness.LITTLE)
+int64be = partialclass(Integer,
+                       unitSize=UnitSize.SIZE_64,
+                       sign=Sign.SIGNED,
+                       endianness=Endianness.BIG)
+int64le = partialclass(Integer,
+                       unitSize=UnitSize.SIZE_64,
+                       sign=Sign.SIGNED,
+                       endianness=Endianness.LITTLE)
 uint64be = partialclass(Integer,
                         unitSize=UnitSize.SIZE_64,
                         sign=Sign.UNSIGNED,

@@ -48,6 +48,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
+
 # Class used to denote current variable, in order to handle self recursivity
 class SELF(object):
     pass
@@ -64,8 +65,8 @@ class Agg(AbstractVariableNode):
     The Agg constructor expects some parameters:
 
     :param children: The sequence of variable elements contained in
-                     the aggregate.
-    :param last_optional: A flag indicating if the last element of the children is optional or not.
+                     the aggregate. The default value is None.
+    :param last_optional: A flag indicating if the last element of the children is optional or not. The default value is False.
     :param svas: The SVAS strategy defining how the Aggregate
                  behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
@@ -397,7 +398,7 @@ class Agg(AbstractVariableNode):
         for i_child in range(len(self.children)):
 
             # Handle optional field situation, where all data may have already been parsed before the last field
-            if all_parsed == True:
+            if all_parsed is True:
                 break
 
             current_child = self.children[i_child]
@@ -523,7 +524,6 @@ class Agg(AbstractVariableNode):
 
             self._logger.debug("Generated value for {}: {}".format(self, value.tobytes()))
 
-
             # Handle recursive mode
             if type(child) == type and child == SELF and specialize_last_child:
                 childSpecializingPaths = self.specialize(specializingPath, fuzz=fuzz)
@@ -532,12 +532,11 @@ class Agg(AbstractVariableNode):
                     specializingPath = childSpecializingPaths[0]
                     if specializingPath.hasData(self):
                         current_value = specializingPath.getData(self)
-                        value =  value + current_value
+                        value = value + current_value
                         self._logger.debug("Cumulative generated value for {}: {}".format(self, value.tobytes()))
 
             # Final Agg value
             specializingPath.addResult(self, value)
 
-            
         # ok we managed to parse all the children, and it produced some valid specializer paths. We return them
         return specializingPaths

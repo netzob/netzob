@@ -36,7 +36,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import time
-from collections import OrderedDict
 import socket
 
 #+---------------------------------------------------------------------------+
@@ -53,8 +52,6 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
 from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
 from netzob.Model.Vocabulary.Domain.Parser.FlowParser import FlowParser
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
@@ -212,6 +209,7 @@ class AbstractionLayer(object):
                         symbol. The expected content of this dict is
                         specified in :meth:`Symbol.specialize \
                         <netzob.Model.Vocabulary.Symbol.Symbol.specialize>`.
+                        Default is None.
         :param fuzz: A fuzzing configuration used during the specialization process. Values
                      in this configuration will override any field
                      definition, constraints, relationship
@@ -219,6 +217,7 @@ class AbstractionLayer(object):
                      :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
                      purpose.
+                     Default is None.
         :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
         :type rate: :class:`int`, optional
         :type duration: :class:`int`, optional
@@ -307,7 +306,7 @@ class AbstractionLayer(object):
         self.specializer.fuzz = fuzz
         dataBin = self.specializer.specializeSymbol(symbol).generatedContent
         self.specializer.presets = None  # This is needed, in order to avoid applying the preset configuration on an already preseted symbol
-                                         # Regarding the fuzz attribute, as its behavior is different from preset, we don't have to set it to None
+        # Regarding the fuzz attribute, as its behavior is different from preset, we don't have to set it to None
 
         self.memory = self.specializer.memory
         self.parser.memory = self.memory

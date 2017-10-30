@@ -478,6 +478,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :param fields: a list of fields targeted during the abstraction process
         :param memory: A memory used to store variable values during
                        specialization and abstraction of sequence of symbols.
+                       The default value is None.
         :type data: :class:`bytes`, required
         :type fields: :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional

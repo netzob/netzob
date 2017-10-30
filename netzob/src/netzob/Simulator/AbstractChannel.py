@@ -80,7 +80,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
 
     """
 
-    ## Class attributes ##
+    # Class attributes ##
 
     FAMILIES = []  # type: List[str]
     """
@@ -93,8 +93,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
     :type: :class:`List[str]`
     """
 
-
-    ## Class internal attributes ##
+    # Class internal attributes #
 
     DEFAULT_WRITE_COUNTER_MAX = -1
     DEFAULT_TIMEOUT = None
@@ -108,8 +107,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         """
         self.timeout = timeout
 
-
-    ## Interface methods ##
+    # Interface methods ##
 
     @abc.abstractmethod
     def open(self, timeout=DEFAULT_TIMEOUT):
@@ -153,7 +151,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         response and return the received data.
 
         :param data: The data to write on the channel.
-        :type data: :class:`bytes`
+        :type data: :class:`bytes`, required
         :return: The received data.
         :rtype: :class:`bytes`
 
@@ -200,7 +198,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
 
     """
 
-    ## Abstract methods ##
+    # Abstract methods ##
 
     @abc.abstractstaticmethod
     def getBuilder():  # type: Type[ChannelBuilder]
@@ -208,7 +206,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         Provide the builder specific to an :class:`AbstractChannel`
         """
 
-    ## Public API methods ##
+    # Public API methods ##
 
     def setSendLimit(self, maxValue):
         """Change the max number of writings.
@@ -219,7 +217,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         If maxValue is -1, the sending limit is deactivated.
 
         :param maxValue: the new max value
-        :type maxValue: :class:`int`
+        :type maxValue: :class:`int`, required
         """
         self.__writeCounterMax = maxValue
 
@@ -306,7 +304,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         :param predicate: the function used to validate the received data
         :param args: positional arguments passed to :attr:`predicate`
         :param kwargs: named arguments passed to :attr:`predicate`
-        :type predicate: Callable[[bytes], bool]
+        :type predicate: Callable[[bytes], bool], required
         """
         if not callable(predicate):
             raise ValueError("The predicate attribute must be a callable "
@@ -314,7 +312,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
                              .format(type(predicate).__name__))
         return predicate(self.read(), *args, **kwargs)
 
-    ## Internal methods ##
+    # Internal methods ##
 
     def __init__(self, _id=None, timeout=ChannelInterface.DEFAULT_TIMEOUT):
         super().__init__(timeout=timeout)
@@ -336,8 +334,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         """
         self.close()
 
-
-    ## Properties ##
+    # Properties ##
 
     @property
     def isOpen(self):
@@ -373,7 +370,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         self.__id = _id
 
 
-## Utilitary methods ##
+# Utilitary methods ##
 
 class NetUtils(object):
     """A utilitary class that provides static methods to handle network
@@ -466,4 +463,3 @@ class NetUtils(object):
         localIPAddress = s.getsockname()[0]
         s.close()
         return localIPAddress
-

@@ -209,7 +209,7 @@ class Automata(object):
         """Returns the State object of the given name.
 
         :param stateName: The name of the State object
-        :type stateName: :class:`str`
+        :type stateName: :class:`str`, required
         :return: The State object with stateName as name.
         :rtype: :class:`State <netzob.Model.Grammar.States.State.State>`
         :raise: :class:`KeyError` if the name is not found.

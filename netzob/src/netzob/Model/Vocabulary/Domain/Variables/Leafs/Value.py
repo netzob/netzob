@@ -38,18 +38,12 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.String import String
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 
@@ -68,7 +62,7 @@ class Value(AbstractRelationVariableLeaf):
     :param name: The name of the variable. If None, the name
                      will be generated.
     :param operation: An optional transformation operation to be
-                      applied on the targeted field value, through a callback.
+                      applied on the targeted field value, through a callback. The default is None.
     :type target: :class:`Field <netzob.Model.Vocabulary.Field>`, required
     :type name: :class:`str`, optional
     :type operation: :class:`Callable <collections.abc.Callable>`, optional
@@ -311,4 +305,3 @@ class Value(AbstractRelationVariableLeaf):
         (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
 
         """
-

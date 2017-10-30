@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import uuid
 import time
 import random
 import socket
@@ -110,10 +109,11 @@ class Transition(AbstractTransition):
                       it is generated from the input and output symbols
     :var inputSymbolReactionTime: The timeout value in seconds to wait for the
                                   input value (only used in a receiving context).
+                                  Default value is None (blocking).
     :var outputSymbolReactionTimes: A :class:`dict` containing, for each output
                                     symbol, the timeout value in seconds to
                                     wait for the output value (only used in a
-                                    sending context).
+                                    sending context). Default value is None (blocking).
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype active: :class:`bool`
@@ -270,7 +270,7 @@ class Transition(AbstractTransition):
         else:
             self.active = False
             errorMessage = "Received symbol '{}' was unexpected.".format(
-                receivedSymbol.name)
+                received_symbol.name)
             self._logger.warning(errorMessage)
             raise Exception(errorMessage)
 
@@ -387,8 +387,7 @@ class Transition(AbstractTransition):
 
         return (symbol_to_send, symbol_presets)
 
-
-    ## Properties
+    # Properties
 
     @property
     def inputSymbol(self):

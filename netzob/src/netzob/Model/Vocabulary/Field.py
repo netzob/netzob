@@ -46,7 +46,6 @@
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 
@@ -74,7 +73,7 @@ class Field(AbstractField):
                           pseudo field, meaning it is used
                           internally to help for the computation
                           of the value of another field, but does
-                          not directly produce data.
+                          not directly produce data. The default value is False.
     :type domain: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
                   or a :class:`list` of :class:`~netzob.Model.Vocabulary.Field.Field`, optional
     :type name: :class:`str`, optional

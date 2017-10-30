@@ -39,7 +39,6 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -48,17 +47,12 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.String import String
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.Integer import Integer
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
-from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
-from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding import Padding
 
 
@@ -240,7 +234,7 @@ class Size(AbstractRelationVariableLeaf):
     def __init__(self,
                  targets,
                  dataType=None,
-                 factor=1./8,
+                 factor=1. / 8,
                  offset=0,
                  name=None):
         super(Size, self).__init__(self.__class__.__name__, dataType=dataType, targets=targets, name=name)

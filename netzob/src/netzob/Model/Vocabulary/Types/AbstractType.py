@@ -104,9 +104,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     The constructor for an AbstractType expects some parameters:
 
-    :param typeName: The name of the type (we highly recommand the use of __class__.__name__).
-    :param value: The current value of the type instance.
-    :param size: The size in bits that this value takes.
+    :param typeName: The name of the type (we highly recommand the use of __class__.__name__), required.
+    :param value: The current value of the type instance, required.
+    :param size: The (min, max) size in bits that this value takes, optional. The default is (None, None).
     :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_*. If None, the value is the default one.
 
     .. note::
@@ -276,8 +276,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         # If 'value' is defined, 'size' should not
         if value is not None:
-            if not( isinstance(size, tuple) and len(size) == 2 and size[0] is None and size[1] is None ):
-                raise Exception("'value' and 'size' parameter cannot be defined at the same time for a type: value={}, size={}".format(value, size))
+            if not(isinstance(size, tuple) and len(size) == 2 and size[0] is None and size[1] is None):
+                raise Exception("'value' and 'size' parameters cannot be defined at the same time for a type: value={}, size={}".format(value, size))
 
         self.value = value
         self.size = size
@@ -737,7 +737,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def unitSize(self, unitSize):
         if unitSize is None:
             raise TypeError("UnitSize cannot be None")
-        if not unitSize in AbstractType.supportedUnitSizes():
+        if unitSize not in AbstractType.supportedUnitSizes():
             raise TypeError(
                 "Specified UnitSize is not supported, please refer to the list in AbstractType.supportedUnitSize()."
             )
@@ -759,7 +759,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def endianness(self, endianness):
         if endianness is None:
             raise TypeError("Endianness cannot be None")
-        if not endianness in AbstractType.supportedEndianness():
+        if endianness not in AbstractType.supportedEndianness():
             raise TypeError(
                 "Specified Endianness is not supported, please refer to the list in AbstractType.supportedEndianness()."
             )
@@ -784,7 +784,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def sign(self, sign):
         if sign is None:
             raise TypeError("Sign cannot be None")
-        if not sign in AbstractType.supportedSign():
+        if sign not in AbstractType.supportedSign():
             raise TypeError(
                 "Specified Sign is not supported, please refer to the list in AbstractType.supportedSign()."
             )

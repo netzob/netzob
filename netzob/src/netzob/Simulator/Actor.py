@@ -35,7 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import threading
-import traceback
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -87,7 +86,7 @@ class Actor(threading.Thread):
                     :const:`True`. The value can be change
                     during a communication, in order to reverse the
                     way the actors communicate together.
-    :var name: The name of the actor.
+    :var name: The name of the actor. Default value is 'Actor'.
     :vartype automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
     :vartype abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
     :vartype initiator: :class:`bool`
@@ -227,7 +226,7 @@ class Actor(threading.Thread):
     ...    print("[+] Last received symbol: '{}' with message: '{}'"
     ...          .format(last_received_symbol_name, last_received_message))
     ...    presets = {}
-    ...    
+    ...
     ...    # Building the output symbol by incrementing the value of the last
     ...    # received symbol
     ...    if last_received_symbol is not None and last_received_message is not None:
@@ -333,7 +332,7 @@ class Actor(threading.Thread):
     ...    print("[+] Last received symbol: '{}' with message: '{}'"
     ...          .format(last_received_symbol_name, last_received_message))
     ...    presets = {}
-    ...    
+    ...
     ...    # Building the output symbol by incrementing the value of the last received symbol
     ...    if last_received_symbol is not None and last_received_message is not None:
     ...        (dummy, structured_data) = Symbol.abstract(last_received_message,

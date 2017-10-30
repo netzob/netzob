@@ -46,9 +46,7 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
-from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.String import String
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 class HexaString(AbstractType):
@@ -60,8 +58,8 @@ class HexaString(AbstractType):
 
     The HexaString constructor expects some parameters:
 
-    :param value: The current value of the type instance.
-    :param nbBytes: The size in bytes that this value can take.
+    :param value: The current value of the type instance. The default value is None.
+    :param nbBytes: The size in bytes that this value can take. The default value is (None, None).
     :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
@@ -101,7 +99,6 @@ class HexaString(AbstractType):
     6
 
     """
-
 
     def __init__(self,
                  value=None,

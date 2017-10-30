@@ -73,7 +73,7 @@ from netzob.Fuzzing.Mutators.IPv4Mutator import IPv4Mutator
 from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
 from netzob.Fuzzing.Mutators.RawMutator import RawMutator
 from netzob.Fuzzing.Mutators.HexaStringMutator import HexaStringMutator
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
 
 
 @NetzobLogger
@@ -99,7 +99,7 @@ class Fuzz(object):
                        should be used to represent an absolute value, whereas a
                        :class:`float` should be use to represent a ratio in
                        percent).
-    :vartype counterMax: :class:`int` or :class:`float`
+    :vartype counterMax: :class:`int` or :class:`float`, optional
 
     """
 
@@ -531,7 +531,7 @@ class Fuzz(object):
         """
 
         # Update kwargs with the first 4 parameters. This kwargs will be passed to Mutator constructors
-        kwargs.update({'mode':mode, 'generator':generator, 'seed':seed, 'counterMax':counterMax})
+        kwargs.update({'mode': mode, 'generator': generator, 'seed': seed, 'counterMax': counterMax})
 
         # Case where target key is an AbstractType
         if isinstance(key, type):
@@ -802,8 +802,7 @@ class Fuzz(object):
 
         return tmp_new_keys
 
-
-    ## PROPERTIES ##
+    # PROPERTIES ##
 
     @property
     def counterMax(self):

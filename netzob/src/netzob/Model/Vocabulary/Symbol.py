@@ -49,8 +49,6 @@ from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
-from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
 
 class Symbol(AbstractField):
@@ -213,14 +211,14 @@ class Symbol(AbstractField):
                         (parameterize) fields during symbol
                         specialization. Values in this dictionary will
                         override any field definition, constraints or
-                        relationship dependencies.
+                        relationship dependencies. The default value is None.
         :param fuzz: A fuzzing configuration used during the specialization process. Values
                      in this configuration will override any field
                      definition, constraints, relationship
                      dependencies or parameterized fields. See
                      :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
-                     purpose.
+                     purpose. The default value is None.
         :param memory: A memory used to store variable values during
                        specialization and abstraction of successive
                        symbols, especially to handle inter-symbol
@@ -373,15 +371,16 @@ class Symbol(AbstractField):
                         (parameterize) fields during symbol
                         specialization. Values in this dictionary will
                         override any field definition, constraints or
-                        relationship dependencies.
+                        relationship dependencies. The default value is None.
         :param fuzz: A fuzzing configuration used during the specialization process. Values
                      in this configuration will override any field
                      definition, constraints, relationship
                      dependencies or parameterized fields. See
                      :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
-                     purpose.
-        :param timeout: The computation time beyond which :const:`-1` is returned
+                     purpose. The default value is None.
+        :param timeout: The computation time beyond which :const:`-1` is returned. 
+                        Default value is None (no time limit).
         :type presets: :class:`dict`, optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :type timeout: :class:`float` or :class:`int` in seconds

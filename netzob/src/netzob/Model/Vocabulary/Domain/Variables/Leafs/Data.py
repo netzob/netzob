@@ -48,7 +48,6 @@ from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import 
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
@@ -66,7 +65,7 @@ class Data(AbstractVariableLeaf):
     :param dataType: The type of the data (for example Integer,
                      Raw, String, ...).
     :param originalValue: The original value of the data (can be
-                          None, which is the default behavior).
+                          None, which is the default behavior). The default value is None.
     :param name: The name of the data (if None, the name will
                  be generated).
     :param svas: The SVAS strategy defining how the Data value is
@@ -232,7 +231,8 @@ class Data(AbstractVariableLeaf):
         content = parsingPath.getData(self)
         actualSize = len(content)
 
-        self._logger.debug("Learn '{0}' with {1}".format(content.tobytes(),self.dataType))
+        self._logger.debug("Learn '{0}' with {1}".format(content.tobytes(),
+                                                         self.dataType))
 
         (minSize, maxSize) = self.dataType.size
         if minSize is None:

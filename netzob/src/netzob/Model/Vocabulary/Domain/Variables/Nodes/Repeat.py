@@ -60,7 +60,7 @@ class Repeat(AbstractVariableNode):
 
     :param child: The variable element that will be repeated.
     :param nbRepeat: The number of repetitions of the element. This value can be a fixed integer, a tuple of integers defining the minimum and maximum of permitted repetitions, a constant from the calling script, a value present in another field, or can be identified by calling a callback function. In the latter case, the callback function should return a boolean telling if the expected number of repetitions is reached. Those use cases are described below.
-    :param delimiter: The delimiter used to separate the repeated element.
+    :param delimiter: The delimiter used to separate the repeated element. The default is None.
     :param svas: The SVAS strategy defining how the Alternate
                  behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
@@ -68,7 +68,7 @@ class Repeat(AbstractVariableNode):
                     a Python variable containing an :class:`int` or a
                     :class:`Field
                     <netzob.Model.Vocabulary.Field.Field>` or a
-                    :class:`func` method, optional
+                    :class:`func` method, required
     :type delimiter: :class:`bitarray`, optional
     :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
@@ -178,7 +178,7 @@ class Repeat(AbstractVariableNode):
     >>> def cbk(nb_repeat, data, remaining=None, parsed_structure=None, child=None):
     ...     if remaining is not None:  # This means we are in parsing mode
     ...         print("in cbk: nb_repeat:{} -- data:{} -- remaining:{}".format(nb_repeat, data.tobytes(), remaining.tobytes()))
-    ...         
+    ...
     ...         # We check the value of the second child of the parameter child
     ...         if child.isnode() and len(child.children) > 1:
     ...             second_subchild = child.children[1]
@@ -290,7 +290,8 @@ class Repeat(AbstractVariableNode):
 
             # initiate a new parsing path based on the current one
             newParsingPath = parsingPath.duplicate()
-            newParsingPath.assignData(dataToParse.copy(),self.children[0])
+            newParsingPath.assignData(dataToParse.copy(),
+                                      self.children[0])
             newParsingPaths = [newParsingPath]
 
             # deal with the case where no repetition is accepted
@@ -469,7 +470,6 @@ class Repeat(AbstractVariableNode):
         else:
             raise TypeError(
                 "nbRepeat is of wrong type: '{}'.".format(nbRepeat))
-
 
     @property
     def delimiter(self):

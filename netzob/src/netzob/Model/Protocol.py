@@ -57,7 +57,7 @@ class Protocol(object):
     The Protocol constructor expects some parameters:
 
     :param name: The name of the protocol.
-    :param path_zdl: The directory path containing the .zdl files of the format messages and the automaton.
+    :param path_zdl: The directory path containing the .zdl files of the format messages and the automaton. Default is None.
     :type name: an :class:`str`, required
     :type path_zdl: an :class:`str`, optional
 
@@ -116,7 +116,7 @@ class Protocol(object):
       fd.close()
 
     And then in a shell::
- 
+
       $ dot -Tpng -o /tmp/dotcode.png /tmp/dotcode.dot
       $ xdg-open /tmp/dotcode.png
 

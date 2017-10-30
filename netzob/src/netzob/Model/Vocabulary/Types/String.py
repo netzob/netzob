@@ -37,7 +37,6 @@
 import random
 import string
 import collections
-import unittest
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -47,7 +46,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 
 
@@ -62,8 +61,8 @@ class String(AbstractType):
 
     The String constructor expects some parameters:
 
-    :param value: The current value of the type instance.
-    :param nbChars: The amount of permitted String characters.
+    :param value: The current value of the type instance. The default value is None.
+    :param nbChars: The amount of permitted String characters. The default value is (None, None).
     :param encoding: The encoding of the string, such as 'ascii' or
                     'utf-8'. Default value is 'utf-8'.
     :param eos: A list defining the potential terminal characters for
@@ -174,7 +173,7 @@ class String(AbstractType):
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
         self.encoding = encoding
-        self.eos = eos # TODO(fgy): to implement
+        self.eos = eos  # TODO(fgy): to implement
 
         # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):
@@ -450,10 +449,10 @@ class String(AbstractType):
 
         (minChar, maxChar) = self.size
         if minChar is not None:
-            if len(rawData) < (minChar/8):
+            if len(rawData) < (minChar / 8):
                 return False
         if maxChar is not None:
-            if len(rawData) > (maxChar/8):
+            if len(rawData) > (maxChar / 8):
                 return False
 
         return True
@@ -544,7 +543,6 @@ class String(AbstractType):
         if encoding is None:
             raise TypeError("Encoding cannot be None")
         self.__encoding = encoding
-
 
     def _test(self):
         """

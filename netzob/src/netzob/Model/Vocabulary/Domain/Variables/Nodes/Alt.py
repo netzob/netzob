@@ -61,7 +61,7 @@ class Alt(AbstractVariableNode):
     The Alt constructor expects some parameters:
 
     :param children: The set of variable elements permitted in the
-                     alternative.
+                     alternative. The default is None.
     :param svas: The SVAS strategy defining how the Alternate
                  behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional

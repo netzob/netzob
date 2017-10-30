@@ -56,6 +56,7 @@ class UnknownSymbol(Symbol):
     The UnknownSymbol constructor expects some parameters:
 
     :param message: The raw message that cannot be abstracted into a symbol.
+                    Default value is None.
     :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`, optional
 
 

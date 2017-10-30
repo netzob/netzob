@@ -36,7 +36,6 @@
 # +---------------------------------------------------------------------------+
 import random
 import unittest
-from collections import OrderedDict
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -47,7 +46,7 @@ from bitarray import bitarray
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 @NetzobLogger
@@ -59,8 +58,8 @@ class BitArray(AbstractType):
 
     The BitArray constructor expects some parameters:
 
-    :param value: The current value of the type instance.
-    :param nbBits: The size in bits that this value can take.
+    :param value: The current value of the type instance. The default value is None.
+    :param nbBits: The size in bits that this value can take. The default value is (None, None).
     :type value: :class:`bitarray`, optional
     :type nbBits: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
@@ -85,7 +84,7 @@ class BitArray(AbstractType):
     The following example show how to define a BitArray
     containing a fixed constant.
 
-    >>> from netzob.all import *  
+    >>> from netzob.all import *
     >>> b = BitArray('00001111')
     >>> b.generate().tobytes()
     b'\x0f'
@@ -119,7 +118,7 @@ class BitArray(AbstractType):
 
 
     **Accessing bitarray elements by named constant**
-    
+
     In the following example, we define a bitarray with two
     elements. As this bitarray has a fixed length, element are
     automatically accessible by predefined named constants ('item_0'
@@ -360,7 +359,7 @@ class __TestBitArray(unittest.TestCase):
     def test_abstraction_arbitrary_values(self):
         from netzob.all import Field, Symbol
         domains = [
-            BitArray(nbBits=8), # BitArray(bitarray("00001111" "1")), BitArray(nbBits=7),
+            BitArray(nbBits=8),  # BitArray(bitarray("00001111" "1")), BitArray(nbBits=7),
         ]
         symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
         data = b''.join(f.specialize() for f in symbol.fields)
