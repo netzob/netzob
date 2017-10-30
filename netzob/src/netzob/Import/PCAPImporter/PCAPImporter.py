@@ -74,20 +74,20 @@ class PCAPImporter(object):
 
     >>> for m in messages:
     ...    print(repr(m.data))
-    b'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
-    b'RESidentify#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
-    b'CMDinfo#\\x00\\x00\\x00\\x00'
-    b'RESinfo#\\x00\\x00\\x00\\x00\\x04\\x00\\x00\\x00info'
-    b'CMDstats#\\x00\\x00\\x00\\x00'
-    b'RESstats#\\x00\\x00\\x00\\x00\\x05\\x00\\x00\\x00stats'
-    b'CMDauthentify#\\n\\x00\\x00\\x00aStrongPwd'
-    b'RESauthentify#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
-    b'CMDencrypt#\\x06\\x00\\x00\\x00abcdef'
-    b"RESencrypt#\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00$ !&'$"
-    b"CMDdecrypt#\\x06\\x00\\x00\\x00$ !&'$"
-    b'RESdecrypt#\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00abcdef'
-    b'CMDbye#\\x00\\x00\\x00\\x00'
-    b'RESbye#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
+    b'CMDidentify#\x07\x00\x00\x00Roberto'
+    b'RESidentify#\x00\x00\x00\x00\x00\x00\x00\x00'
+    b'CMDinfo#\x00\x00\x00\x00'
+    b'RESinfo#\x00\x00\x00\x00\x04\x00\x00\x00info'
+    b'CMDstats#\x00\x00\x00\x00'
+    b'RESstats#\x00\x00\x00\x00\x05\x00\x00\x00stats'
+    b'CMDauthentify#\n\x00\x00\x00aStrongPwd'
+    b'RESauthentify#\x00\x00\x00\x00\x00\x00\x00\x00'
+    b'CMDencrypt#\x06\x00\x00\x00abcdef'
+    b"RESencrypt#\x00\x00\x00\x00\x06\x00\x00\x00$ !&'$"
+    b"CMDdecrypt#\x06\x00\x00\x00$ !&'$"
+    b'RESdecrypt#\x00\x00\x00\x00\x06\x00\x00\x00abcdef'
+    b'CMDbye#\x00\x00\x00\x00'
+    b'RESbye#\x00\x00\x00\x00\x00\x00\x00\x00'
 
     PCAP Files with unsupported Layers on OSI Layer 2 can be imported as RawMessages if the importLayer is 1
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/atm_capture1.pcap", importLayer=1).values()
@@ -96,23 +96,23 @@ class PCAPImporter(object):
     
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=2).values()
     >>> print(repr(messages[0].data))
-    b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08\\x00E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00E\x00\x003\xdc\x11@\x00@\x11`\xa6\x7f\x00\x00\x01\x7f\x00\x00\x01\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=3).values()
     >>> print(repr(messages[0].data))
-    b'E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'E\x00\x003\xdc\x11@\x00@\x11`\xa6\x7f\x00\x00\x01\x7f\x00\x00\x01\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=4).values()
     >>> print(repr(messages[0].data))
-    b'\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=5).values()
     >>> print(repr(messages[0].data))
-    b'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'CMDidentify#\x07\x00\x00\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_http.pcap", importLayer=5, bpfFilter="tcp").values()
     >>> print(repr(messages[0].data))
-    b'GET / HTTP/1.1\\r\\nHost: www.free.fr\\r\\nUser-Agent: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\\r\\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\\r\\nAccept-Language: en-US,en;q=0.5\\r\\nAccept-Encoding: gzip, deflate\\r\\nConnection: keep-alive\\r\\n\\r\\n'
+    b'GET / HTTP/1.1\r\nHost: www.free.fr\r\nUser-Agent: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: en-US,en;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\n\r\n'
 
     Parameter `mergePacketsInFlow` can be use to merge consecutive messages that share the same source and destination (mimic a TCP flow). In practice, this parameter was introduced for L5 network messages to support TCP flows but it can be use for any level of network messages.
 
