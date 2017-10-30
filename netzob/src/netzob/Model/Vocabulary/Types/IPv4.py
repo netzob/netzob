@@ -406,6 +406,11 @@ class IPv4(AbstractType):
             raise TypeError("Impossible to encode {0} into an IPv4 data ({1})".
                             format(data, e))
 
+    def getFixedBitSize(self):
+        self._logger.debug("Determine the deterministic size of the value of "
+                           "the type")
+        return self.unitSize.value
+
 
 class __TestIPv4(unittest.TestCase):
     """

@@ -320,6 +320,12 @@ class Padding(AbstractRelationVariableLeaf):
         return "Padding({0}) - Type:{1}".format(
             str([v.name for v in self.targets]), self.dataType)
 
+    def getFixedBitSize(self):
+        self._logger.debug("Determine the deterministic size of the value of "
+                           "the padding variable")
+        raise ValueError("Cannot determine a deterministic size of a padding "
+                         "variable")
+
     @property
     def dataType(self):
         """The datatype used to encode the result of the computed size.

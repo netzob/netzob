@@ -191,3 +191,12 @@ class AbstractVariableLeaf(AbstractVariable):
         tab.append("|--   ")
         tab.append("{0}".format(self))
         return ''.join(tab)
+
+    def getFixedBitSize(self):
+        self._logger.debug("Determine the deterministic size of the value of "
+                           "the leaf variable")
+
+        if not hasattr(self, 'dataType'):
+            return super().getFixedBitSize()
+
+        return self.dataType.getFixedBitSize()

@@ -667,6 +667,11 @@ class Integer(AbstractType):
         else:
             raise Exception("Cannot generate integer value, as nor constant value or interval is defined")
 
+    def getFixedBitSize(self):
+        self._logger.debug("Determine the deterministic size of the value of "
+                           "the type")
+        return self.unitSize.value
+
     def _test(self):
         r"""
         Examples of Integer internal attribute access

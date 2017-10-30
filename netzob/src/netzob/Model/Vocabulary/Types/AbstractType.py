@@ -686,6 +686,24 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         return Data(dataType=self, originalValue=self.value, svas=svas)
 
+    def getFixedBitSize(self):
+        """Provide the length of a theorical value that would be generated.
+        It is not the length of an effective value but a prediction of its
+        length in case this latter is fixed.
+
+        :return: the theorical length of a value generated from this type
+        :rtype: int
+        :raise: ValueError in case the length is dynamic or could not be predicted
+        """
+        self._logger.debug("Determine the deterministic size of the value of "
+                           "the type")
+        if self.value:
+            return len(self.value)
+        elif any(self.size) and self.size[0] == self.size[1]:
+            return self.size[0]
+        raise ValueError("Cannot determine a fixed size for type '{}'"
+                         .format(self))
+
     @property
     def id(self):
         """Unique identifier of the type.
