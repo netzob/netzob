@@ -212,7 +212,7 @@ class Value(AbstractRelationVariableLeaf):
         if expectedValue is None:
 
             # lets compute what could be the possible value
-            variable = self.targets[0]
+            variable = self.target
             (minSizeDep, maxSizeDep) = variable.dataType.size
             if minSizeDep > len(content):
                 self._logger.debug(
@@ -248,7 +248,7 @@ class Value(AbstractRelationVariableLeaf):
     def computeExpectedValue(self, parsingPath):
         self._logger.debug("Compute expected value for Value field")
 
-        variable = self.targets[0]
+        variable = self.target
         if variable is None:
             raise Exception("No dependency field specified.")
 
@@ -268,7 +268,7 @@ class Value(AbstractRelationVariableLeaf):
 
     def __str__(self):
         """The str method."""
-        return "Value({0})".format(str(self.targets[0].name))
+        return "Value({0})".format(str(self.target.name))
 
     @property
     def operation(self):
@@ -287,6 +287,10 @@ class Value(AbstractRelationVariableLeaf):
         if operation is not None and not callable(operation):
             raise TypeError("Operation must be a function")
         self.__operation = operation
+
+    @property
+    def target(self):
+        return self.targets[0]
 
     def _test(self):
         """

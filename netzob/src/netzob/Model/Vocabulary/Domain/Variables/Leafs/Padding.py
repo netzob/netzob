@@ -47,19 +47,10 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.String import String
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.Integer import Integer
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
-from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
-from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 
 
 @NetzobLogger
@@ -236,7 +227,7 @@ class Padding(AbstractRelationVariableLeaf):
     def __eq__(x, y):
         try:
             return x.__key() == y.__key()
-        except:
+        except Exception:
             return False
 
     def __hash__(self):
