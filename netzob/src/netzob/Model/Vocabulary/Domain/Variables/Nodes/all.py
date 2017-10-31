@@ -31,3 +31,4 @@
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg, SELF
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Optional import Optional, Opt
