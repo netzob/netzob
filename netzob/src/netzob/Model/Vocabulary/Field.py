@@ -175,7 +175,9 @@ class Field(AbstractField):
 
     A field can have its value related to the content of another
     field. Such relationships may be specified through specific domain
-    objects, such as Size or Value classes.
+    objects, such as
+    :class:`Size <netzob.Model.Vocabulary.Domain.Variables.Leafs.Size.Size>` or
+    :class:`Value <netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value>` classes.
 
     The following example describes a size relationship with a String
     field:
