@@ -97,15 +97,12 @@ class GenericPath(object):
         """
 
         self.assignData(result, variable)
-
-        if variable.id in self._pendingValueVariables:
-            del self._pendingValueVariables[variable.id]
+        self._pendingValueVariables.pop(variable.id, None)
 
         return self._triggerVariablesCallbacks(variable)
 
+    @typeCheck(AbstractVariable)
     def setPendingValueVariable(self, variable):
-        if variable is None:
-            raise Exception("Variable cannot be None")
         self._pendingValueVariables[variable.id] = True
 
     @typeCheck(AbstractVariable)
@@ -200,13 +197,9 @@ class GenericPath(object):
             raise Exception(
                 "At least one target variable must be defined in the callback")
 
-        addCallback = True
-        for cb in self._variablesCallbacks:
-            if cb == (targetVariables, currentVariable, parsingCB):
-                addCallback = False
-                break
-        if addCallback:
-            self._variablesCallbacks.append((targetVariables, currentVariable, parsingCB))
+        newCB = (targetVariables, currentVariable, parsingCB)
+        if newCB not in self._variablesCallbacks:
+            self._variablesCallbacks.append(newCB)
 
     def _triggerVariablesCallbacks(self, triggeringVariable):
 
