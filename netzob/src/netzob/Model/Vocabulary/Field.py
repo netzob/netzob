@@ -137,15 +137,6 @@ class Field(AbstractField):
             domain = Raw(None)
         self.domain = domain
         self.isPseudoField = isPseudoField
-<<<<<<< HEAD
-=======
-        self._length = length
-        try:
-            if self.domain.currentValue is not None:
-                self._length = len(self.domain.currentValue)
-        except:
-            self._length = length
->>>>>>> a39ca26... New Feature: XML-Handler:
 
     def specialize(self):
         """Specialize the current field to build a raw data that
@@ -234,20 +225,6 @@ class Field(AbstractField):
         return messages
 
     @property
-    def length(self):
-        """
-        Length of the Field Property Getter
-        :return: Length as int
-        """
-        return self._length
-
-    @length.setter
-    @typeCheck(int)
-    def length(self, length):
-        if length is None and isinstance(length, int):
-            self._length = length
-
-    @property
     def isPseudoField(self):
         """Flag describing if current field is a isPseudoField.
 
@@ -268,8 +245,6 @@ class Field(AbstractField):
         # Save the Properties inherited from  Abstract Field
         AbstractField.XMLProperties(currentField, xmlField, symbol_namespace, common_namespace)
 
-        if currentField.length is not None:
-            xmlField.set("length", str(currentField.length))
         if currentField.isPseudoField is not None:
             xmlField.set("isPseudoField", str(currentField.isPseudoField))
 
@@ -286,10 +261,6 @@ class Field(AbstractField):
     @staticmethod
     def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
 
-        if xmlroot.get('length') is not None:
-            attributes['length'] = int(xmlroot.get('length'))
-        else:
-            attributes['length'] = None
 
         attributes['isPseudoField'] = xmlroot.get('isPseudoField', 'False') == 'True'
 
@@ -376,7 +347,7 @@ class Field(AbstractField):
         field = None
 
         if 'domain' in a.keys() and 'name' in a.keys():
-            field = Field(domain=a['domain'], name=a['name'], isPseudoField=a['isPseudoField'], length=a['length'])
+            field = Field(domain=a['domain'], name=a['name'], isPseudoField=a['isPseudoField'])
             if 'id' in a.keys():
                 field.id = a['id']
             if 'description' in a.keys():

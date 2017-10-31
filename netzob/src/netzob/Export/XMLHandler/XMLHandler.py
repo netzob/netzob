@@ -50,6 +50,38 @@ COMMON_NAMESPACE = "http://www.netzob.org/common"
 
 @NetzobLogger
 class XMLHandler(object):
+    """ The XML Handler provides methods for persisting a symbol and all included data structures.
+
+        Usage for saving a List of Symbols in a XML-File:
+            XMLHandler.saveToXML(symbols, filepath)
+
+        Usage for loading it back and creating all the Python Objects based on the  provided XML File
+            [symbols[0:-1], sessions[:]] = XMLHandler.loadFromXML(filePath)
+            Returned are a list of all symbols, plus the sessions, which were linked to the messages of the symbols.
+
+        >>> from netzob.all import *
+        >>> messages = PCAPImporter.readFile("./test/resources/pcaps/target_src_v1_session1.pcap").values()
+        >>> symbols = Format.clusterByAlignment(messages)
+        >>> XMLHandler.saveToXML(symbols,'./test/resources/test.xml')
+        >>> f = open("./test/resources/test.xml",'r')
+        >>> print(len(f.readlines()))
+        197
+
+        # Testing if the loaded is the same as before.
+        >>> from netzob.all import *
+        >>> messages = PCAPImporter.readFile("./test/resources/pcaps/target_src_v1_session1.pcap").values()
+        >>> symbols = Format.clusterByAlignment(messages)
+        >>> XMLHandler.saveToXML(symbols,'./test/resources/test.xml')
+        >>> restored = XMLHandler.loadFromXML('./test/resources/test.xml')
+        >>> equal = False
+        >>> if len(restored) == len(symbols):
+        >>>     equal = True
+        >>>     for i in range(len(restored)):
+        >>>         if restored[i] != symbols[i]:
+        >>>             equal = False
+        >>> print(equal)
+        True
+    """
     unresolved_dict = dict()
 
     def __init__(self):

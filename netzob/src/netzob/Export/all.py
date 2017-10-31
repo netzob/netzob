@@ -29,9 +29,5 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-from . import release
+from netzob.Export.XMLHandler.all import *
 
-from netzob.Common.all import *
-from netzob.Inference.all import *
-from netzob.Import.all import *
-from netzob.Export.all import *
