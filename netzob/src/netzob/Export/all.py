@@ -30,4 +30,5 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from netzob.Export.XMLHandler.all import *
+from netzob.Export.WiresharkDissector.all import *
 
