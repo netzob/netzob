@@ -72,6 +72,8 @@ class GenericPath(object):
         else:
             self._variablesCallbacks = []
 
+        self._pendingValueVariables = {}
+
         if dataAssignedToVariable is None:
             self._dataAssignedToVariable = {}
         else:
@@ -96,7 +98,15 @@ class GenericPath(object):
 
         self.assignData(result, variable)
 
+        if variable.id in self._pendingValueVariables:
+            del self._pendingValueVariables[variable.id]
+
         return self._triggerVariablesCallbacks(variable)
+
+    def setPendingValueVariable(self, variable):
+        if variable is None:
+            raise Exception("Variable cannot be None")
+        self._pendingValueVariables[variable.id] = True
 
     @typeCheck(AbstractVariable)
     def getData(self, variable):
@@ -190,7 +200,13 @@ class GenericPath(object):
             raise Exception(
                 "At least one target variable must be defined in the callback")
 
-        self._variablesCallbacks.append((targetVariables, currentVariable, parsingCB))
+        addCallback = True
+        for cb in self._variablesCallbacks:
+            if cb == (targetVariables, currentVariable, parsingCB):
+                addCallback = False
+                break
+        if addCallback:
+            self._variablesCallbacks.append((targetVariables, currentVariable, parsingCB))
 
     def _triggerVariablesCallbacks(self, triggeringVariable):
 
@@ -222,17 +238,8 @@ class GenericPath(object):
                     if v == triggeringVariable:
                         found = True
                         break
-                if found is False:
-                    break
-                # if not triggeringVariable in targetVariables:
-                #     break
-
-                variablesHaveValue = True
-                for v in targetVariables:
-                    if not self.hasData(v):
-                        variablesHaveValue = False
-                if variablesHaveValue:
-                    self._logger.debug("Found a callback that must be able to trigger (all its target variables are set)")
+                if found:
+                    self._logger.debug("Found a callback that should be able to trigger")
                     callBackToExecute = (targetVariables, currentVariable, parsingCB)
                     break
 

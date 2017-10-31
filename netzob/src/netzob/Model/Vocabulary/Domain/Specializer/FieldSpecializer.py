@@ -169,12 +169,20 @@ class FieldSpecializer(object):
                 if child.isPseudoField is True:
                     continue
 
-                childResult = resultPath.getData(
-                    child.domain)
-                if value is None:
-                    value = childResult.copy()
-                else:
-                    value += childResult.copy()
+                try:
+                    childResult = resultPath.getData(child.domain)
+                except Exception as e:
+                    self._logger.debug(
+                        "Value not available in the relation dependencies, a "
+                        "callback function is created to compute later: {}".
+                        format(e))
+                    childResult = None
+
+                if childResult is not None:
+                    if value is None:
+                        value = childResult.copy()
+                    else:
+                        value += childResult.copy()
 
             resultPath.addResult(self.field.domain, value)
 
@@ -200,17 +208,13 @@ class FieldSpecializer(object):
         resultSpecializingPaths = variableSpecializer.specialize(specializingPath)
 
         for resultSpecializingPath in resultSpecializingPaths:
-
-            assignedData = bitarray('')
             if resultSpecializingPath.hasData(self.field.domain):
                 assignedData = resultSpecializingPath.getData(self.field.domain)
-            else:
                 resultSpecializingPath.addResult(self.field.domain, assignedData)
-
-            self._logger.debug(
-                "FieldSpecializer Result: {0}".format(assignedData))
-
-            resultSpecializingPath.addResult(self.field.domain, assignedData)
+                self._logger.debug(
+                   "FieldSpecializer Result: {0}".format(assignedData))
+            else:
+                resultSpecializingPath.setPendingValueVariable(self.field.domain)
 
         return resultSpecializingPaths
 

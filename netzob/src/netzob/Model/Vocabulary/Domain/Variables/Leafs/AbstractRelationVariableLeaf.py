@@ -250,15 +250,12 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             parsingPath.ok = False
         except Exception as e:
             self._logger.debug("The expected value cannot be computed. Reason: '{}'".format(e))
-            # the expected value cannot be computed
             if acceptCallBack:
                 # we add a callback
                 self._addCallBacksOnUndefinedVariables(parsingPath)
                 # register the remaining data
                 parsingPath.addResult(self, possibleValue.copy())
                 results.append(parsingPath)
-            else:
-                raise Exception("No more callback accepted")
 
         return results
 
@@ -298,11 +295,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             if value is None:
                 raise Exception("Cannot generate value for variable: '{}'".format(variable.name))
 
-            if value.tobytes() == TypeConverter.convert("PENDING VALUE", String, BitArray).tobytes():
-                # Handle case where field value is not currently known.
-                raise Exception("Target variable '{}' has a pending value".format(variable.name))
-            else:
-                values.append(value)
+            values.append(value)
 
         # Aggregate all values in a uniq bitarray object
         concatValues = bitarray('')
@@ -337,9 +330,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             self._logger.debug(
                 "Value not available in the relation dependencies, a callback function is created to compute later: {}".
                 format(e))
-            pendingValue = TypeConverter.convert("PENDING VALUE", String,
-                                                 BitArray)
-            variableSpecializerPath.addResult(self, pendingValue)
+            variableSpecializerPath.setPendingValueVariable(self)
 
             if moreCallBackAccepted:
                 #                for field in self.fields:
