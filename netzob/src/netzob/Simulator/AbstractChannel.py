@@ -194,7 +194,9 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     :vartype isOpen: :class:`bool`
     :vartype timeout: :class:`int`
     :vartype header: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-    :vartype header_presets: :class:`dict`, optional
+    :vartype header_presets: :class:`dict` {:class:`str` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`,
+                             :class:`bitarray` or :class:`bytes` or :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`} , optional
+
 
     """
 

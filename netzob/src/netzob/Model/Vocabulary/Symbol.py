@@ -225,7 +225,8 @@ class Symbol(AbstractField):
                        relationships. If None, a temporary memory is
                        created by default and used internally during the scope of the
                        specialization process.
-        :type presets: :class:`dict`, optional
+        :type presets: :class:`dict` {:class:`str` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`,
+                       :class:`bitarray` or :class:`bytes` or :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`} , optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
         :return: The produced content after specializing the symbol.
@@ -245,10 +246,10 @@ class Symbol(AbstractField):
         >>> len(result)
         6
 
-        **Parameterized specialization of field values (`presets=` parameter)**
+        **Parameterized specialization of field values** (:attr:`presets` parameter)
 
         It is possible to preset (parameterize) fields during symbol
-        specialization, through a dict passed in the ``presets=``
+        specialization, through a dict passed in the :attr:`presets`
         parameter of the :meth:`~netzob.Model.Vocabulary.Symbol.specialize`
         method. Values in this dictionary will override any field
         definition, constraints or relationship dependencies.
@@ -262,7 +263,7 @@ class Symbol(AbstractField):
         in ``f = Field(name="udp.dport")``). Values are either
         expressed as :class:`bitarray <bitarray.bitarray>` (as it is
         the internal type for variables in the Netzob library), as
-        :class:`bytes' or in the type of the overridden field
+        :class:`bytes` or in the type of the overridden field
         variable.
 
         The following code shows the definition of a simplified UDP
@@ -381,7 +382,8 @@ class Symbol(AbstractField):
                      purpose. The default value is None.
         :param timeout: The computation time beyond which :const:`-1` is returned. 
                         Default value is None (no time limit).
-        :type presets: :class:`dict`, optional
+        :type presets: :class:`dict` {:class:`str` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`,
+                       :class:`bitarray` or :class:`bytes` or :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`} , optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :type timeout: :class:`float` or :class:`int` in seconds
         :return: The number of unique values the symbol specialization can produce.
