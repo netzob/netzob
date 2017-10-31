@@ -87,7 +87,6 @@ class Raw(AbstractType):
     value:
 
     >>> from netzob.all import *
-    >>> from netzob.all import *
     >>> r = Raw(nbBytes=6)
     >>> len(r.generate().tobytes())
     6
