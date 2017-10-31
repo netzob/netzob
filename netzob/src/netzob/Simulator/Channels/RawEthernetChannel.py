@@ -68,10 +68,10 @@ class RawEthernetChannel(AbstractChannel):
     :param timeout: The default timeout of the channel for global
                     connection. Default value is blocking (None).
     :type interface: :class:`str`, required
-    :type remoteMac: :class:`str`, required
-    :type localMac: :class:`str`, required
+    :type remoteMac: :class:`str` or :class:`netaddr.EUI`, required
+    :type localMac: :class:`str` or :class:`netaddr.EUI`, required
     :type timeout: :class:`float`, optional
-
+    :todo: add support of netaddr.EUI
 
     Adding to AbstractChannel variables, the RawEthernetChannel class provides
     the following public variables:
@@ -106,8 +106,8 @@ class RawEthernetChannel(AbstractChannel):
     @typeCheck(str, str)
     def __init__(self,
                  interface,
-                 remoteMac=None,
-                 localMac=None,
+                 remoteMac,
+                 localMac,
                  timeout=AbstractChannel.DEFAULT_TIMEOUT):
         super(RawEthernetChannel, self).__init__(timeout=timeout)
         self.remoteMac = remoteMac

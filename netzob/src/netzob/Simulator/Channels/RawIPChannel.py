@@ -79,11 +79,11 @@ class RawIPChannel(AbstractChannel):
                           Default value is :attr:`socket.IPPROTO_TCP` (6).
     :param timeout: The default timeout of the channel for global
                     connection. Default value is blocking (None).
-    :type remoteIP: :class:`str`, required
-    :type localIP: :class:`str`, optional
+    :type remoteIP: :class:`str` or :class:`netaddr.IPAddress`, required
+    :type localIP: :class:`str` or :class:`netaddr.IPAddress`, optional
     :type upperProtocol: :class:`int`, optional
     :type timeout: :class:`float`, optional
-
+    :todo: add support of netaddr.IPAddress
 
     Adding to AbstractChannel variables, the RawIPChannel class provides the
     following public variables:
