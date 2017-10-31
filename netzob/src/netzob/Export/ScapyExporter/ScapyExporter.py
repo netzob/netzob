@@ -49,6 +49,9 @@ class ScapyExporter(object):
         """ Scapy Exporter to export the output 
                 of the Inference to a python file which can later be executed in Scapy
         """
+
+        __reFieldLengths = dict()
+
         def __init__(self):
             pass
 
@@ -69,7 +72,9 @@ class ScapyExporter(object):
             """
             if not re.match("[A-Z_][a-zA-Z0-9_]*$",protocolName) or keyword.iskeyword(protocolName):
                 raise NameError ("INVALID ProtocolName. It should be a valid Class Name.")
-            
+
+            self.__recalculateFieldLengths(symbols)
+
             sfilecontents = '' # contents for export file are initally written to this variable 
             sfilecontents += "#! /usr/bin/python" + '\n'
             sfilecontents += "from scapy.all import *" + '\n'
@@ -113,7 +118,40 @@ class ScapyExporter(object):
                         f.write(sfilecontents)
                         f.close()
 
-# To find the size of the Merged Field
+        def __recalculateFieldLengths(self, symbols):
+            """
+            Workaround for inconsistent max field length in field.domain.size
+            
+            Field lengths in
+            [a.domain.dataType.size[1] for a in symbols[i].fields]
+            is not consistent with
+            [len(o.getValues()[0]) * 8 for o in eachSymbol.fields]
+            thus results in "some"^TM eratic values for
+            fl_s = [a.size for a in dissymbol[i].fields_desc]
+            and failure of dissectors
+            so lets set the size max values anew from the real value max lengths
+            (this has "some" performance impact!)
+            
+            Output gets written to self.reFieldLengths[field]
+            
+            :param symbols: The symbol(s) to calculate the length of fields for
+            :return: None
+            """
+            try:
+                symIter = iter(symbols)
+            except TypeError:
+                symIter = [ symbols ]
+
+            print("Recalculate maximum field lengths:", end=' ')
+            for eachSymbol in symIter:
+                print('.', end=' ')
+                fl_n_value = [len(o.getValues()[0]) * 8 for o in eachSymbol.fields]
+                for field, value in zip(eachSymbol.fields, fl_n_value):
+                    self.__reFieldLengths[field] = value
+            print()
+
+
+        # To find the size of the Merged Field
         def aggDomain(self, domain,remaining_domain, size0, size1):
                 """ Parameters have the following meanings
                         domain          --> field.domain
@@ -149,7 +187,7 @@ class ScapyExporter(object):
                         return (size0,size1)
 
 
-# Integer unitSize_8 signed and unsigned type
+        # Integer unitSize_8 signed and unsigned type
         def integer_unitSize_8(self,field):
                 if field.domain.dataType.sign == 'unsigned':
                     return "\t\t\t ByteField(" + "\"" + field.name + "\"," \
@@ -163,7 +201,7 @@ class ScapyExporter(object):
                            + "," + repr(field.domain.dataType.size[1]) + ")," + "\t#size:" \
                            + str(field.domain.dataType.size)
  
-# Integer unitSize_16 signed unsigned and endianness
+        # Integer unitSize_16 signed unsigned and endianness
         def integer_unitSize_16(self,field):
                 if field.domain.dataType.sign == 'signed':
                     return "\t\t\t SignedShortField(" + "\"" + field.name + "\"," \
@@ -187,7 +225,7 @@ class ScapyExporter(object):
                            + "," + repr(field.domain.dataType.size[1]) + ")," + "\t#size:" \
                            + str(field.domain.dataType.size)    
 
-# Integer unitSize_32 signed unsigned and endianness
+        # Integer unitSize_32 signed unsigned and endianness
         def integer_unitSize_32(self,field):
                 if field.domain.dataType.sign == 'unsigned' and field.domain.dataType.endianness == 'little':
                     return "\t\t\t LEIntField(" + "\"" + field.name + "\"," \
@@ -210,7 +248,7 @@ class ScapyExporter(object):
                                    if (field.domain.currentValue) else None)\
                            + "),"+ "\t#size:" +str(field.domain.dataType.size) 
 
-# Integer unitSize_64 signed unsigned and endianness
+        # Integer unitSize_64 signed unsigned and endianness
         def integer_unitSize_64(self,field):
                 if field.domain.dataType.sign == 'unsigned' and field.domain.dataType.endianness == 'little':
                     return "\t\t\t LELongField(" + "\"" + field.name + "\"," \
@@ -230,7 +268,7 @@ class ScapyExporter(object):
                            + str(field.domain.dataType.size)  
      
 
-# Integer dataType
+        # Integer dataType
         def dataType_integer(self, field):
                 switcher = {
                         '8'   : self.integer_unitSize_8,
@@ -240,30 +278,31 @@ class ScapyExporter(object):
                 }
                 return switcher.get(field.domain.dataType.unitSize, self.integer_unitSize_8)(field)
 
-# TimeStamp dataType
+        # TimeStamp dataType
         def dataType_timestamp(self, field):
                 return "\t\t\t TimeStampField(" + "\"" + field.name + "\"," \
                        + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Timestamp) if
                                (field.domain.currentValue) else None)\
                        + "),"+ "\t#size:" +str(field.domain.dataType.size) 
 
-# IPv4 dataType
+        # IPv4 dataType
         def dataType_ipv4(self, field):
                 return "\t\t\t IPField(" + "\"" + field.name + "\"," \
                        + repr(TypeConverter.convert(field.domain.currentValue,BitArray,IPv4) if
                                (field.domain.currentValue) else None)\
                        + "),"+ "\t#size:" +str(field.domain.dataType.size)           
 
-# Raw, BitArray, HexaString and ASCII dataTypes
+        # Raw, BitArray, HexaString and ASCII dataTypes
         def dataType_raw(self, field):
                 return "\t\t\t BitField(" + "\"" + field.name + "\"," \
                        + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer,dst_unitSize=AbstractType.defaultUnitSize())
                                if (field.domain.currentValue) else None) \
-                       + "," + repr(field.domain.dataType.size[1]) + ")," + "\t#size:" \
+                       + "," + str(self.__reFieldLengths[field]) + ")," + "\t#size:" \
                        + str(field.domain.dataType.size)
+                    # replace line -2 by the following one when domain.dataType.size-"bug" is fixed
+                    # + "," + repr(field.domain.dataType.size[1]) + ")," + "\t#size:" \
 
-
-# check dataType of the field
+        # check dataType of the field
         def check_dataType(self,field):
                 # Workaround for empty Netzob fields which erroneously receive a maximum size of 8 bits
                 if max([len(f6v) for f6v in field.getValues()]) == 0:
