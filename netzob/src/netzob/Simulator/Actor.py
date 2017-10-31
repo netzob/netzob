@@ -63,7 +63,7 @@ class Actor(threading.Thread):
                       communication and emits the input symbol.  If
                       False, indicates that the actor is a server, and thus waits for
                       another peer to initiate the connection. Default
-                      value is :const:`True`. The value can be change
+                      value is :const:`True`. The value can be changed
                       during a communication, in order to reverse the
                       way the actors communicate together.
     :param name: The name of the actor.
