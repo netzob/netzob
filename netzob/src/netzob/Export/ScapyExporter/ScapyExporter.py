@@ -36,6 +36,7 @@
 from netzob.Common.all import *
 from netzob.Inference.all import *
 from netzob.Import.all import *
+from netzob.Common.Utils.Decorators import NetzobLogger
 
 # Related third party packages
 import rlcompleter
@@ -45,6 +46,7 @@ import re
 import keyword
 
 #Main class
+@NetzobLogger
 class ScapyExporter(object):
         """ Scapy Exporter to export the output 
                 of the Inference to a python file which can later be executed in Scapy
@@ -142,13 +144,11 @@ class ScapyExporter(object):
             except TypeError:
                 symIter = [ symbols ]
 
-            print("Recalculate maximum field lengths:", end=' ')
+            self._logger.debug("Recalculate maximum field lengths.")
             for eachSymbol in symIter:
-                print('.', end=' ')
                 fl_n_value = [len(o.getValues()[0]) * 8 for o in eachSymbol.fields]
                 for field, value in zip(eachSymbol.fields, fl_n_value):
                     self.__reFieldLengths[field] = value
-            print()
 
 
         # To find the size of the Merged Field
@@ -294,7 +294,7 @@ class ScapyExporter(object):
 
         # Raw, BitArray, HexaString and ASCII dataTypes
         def dataType_raw(self, field):
-                return "\t\t\t BitField(" + "\"" + field.name + "\"," \
+                return "\t\t\t XBitField(" + "\"" + field.name + "\"," \
                        + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer,dst_unitSize=AbstractType.defaultUnitSize())
                                if (field.domain.currentValue) else None) \
                        + "," + str(self.__reFieldLengths[field]) + ")," + "\t#size:" \
