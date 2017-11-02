@@ -274,7 +274,7 @@ class Padding(AbstractRelationVariableLeaf):
 
             # Retrieve variable value
             if variable is self:
-                value = self.dataType.generate()
+                value = bitarray()
             else:
                 value = parsingPath.getData(variable)
 
