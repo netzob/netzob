@@ -212,7 +212,7 @@ class FieldSpecializer(object):
                 assignedData = resultSpecializingPath.getData(self.field.domain)
                 resultSpecializingPath.addResult(self.field.domain, assignedData)
                 self._logger.debug(
-                   "FieldSpecializer Result: {0}".format(assignedData))
+                   "FieldSpecializer Result: {0}".format(assignedData.tobytes()))
             else:
                 resultSpecializingPath.setPendingValueVariable(self.field.domain)
 
