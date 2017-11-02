@@ -249,16 +249,18 @@ class Padding(AbstractRelationVariableLeaf):
                 try:
                     size += variable.getFixedBitSize()
                 except ValueError:
-                    remainingVariables.append(variable)
+                    pass
+                else:
+                    continue
 
             # variable is a node
             elif isinstance(variable, AbstractVariableNode):
                 if isinstance(variable, Agg):
                     size += self.__computeExpectedValue_stage1(
                         variable.children, parsingPath, remainingVariables)
+                    continue
 
-            else:
-                remainingVariables.append(variable)
+            remainingVariables.append(variable)
 
         return size
 
