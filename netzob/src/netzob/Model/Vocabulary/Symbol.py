@@ -211,14 +211,14 @@ class Symbol(AbstractField):
                         (parameterize) fields during symbol
                         specialization. Values in this dictionary will
                         override any field definition, constraints or
-                        relationship dependencies. The default value is None.
+                        relationship dependencies. The default value is :const:`None`.
         :param fuzz: A fuzzing configuration used during the specialization process. Values
                      in this configuration will override any field
                      definition, constraints, relationship
                      dependencies or parameterized fields. See
                      :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
-                     purpose. The default value is None.
+                     purpose. The default value is :const:`None`.
         :param memory: A memory used to store variable values during
                        specialization and abstraction of successive
                        symbols, especially to handle inter-symbol
@@ -374,16 +374,16 @@ class Symbol(AbstractField):
                         (parameterize) fields during symbol
                         specialization. Values in this dictionary will
                         override any field definition, constraints or
-                        relationship dependencies. The default value is None.
+                        relationship dependencies. The default value is :const:`None`.
         :param fuzz: A fuzzing configuration used during the specialization process. Values
                      in this configuration will override any field
                      definition, constraints, relationship
                      dependencies or parameterized fields. See
                      :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
-                     purpose. The default value is None.
-        :param timeout: The computation time beyond which :const:`-1` is returned. 
-                        Default value is None (no time limit).
+                     purpose. The default value is :const:`None`.
+        :param timeout: The computation time beyond which :const:`-1` is returned.
+                        Default value is :const:`None` (no time limit).
         :type presets: ~typing.Dict[~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
                        ~typing.Union[~bitarray.bitarray,bytes,
                        ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
