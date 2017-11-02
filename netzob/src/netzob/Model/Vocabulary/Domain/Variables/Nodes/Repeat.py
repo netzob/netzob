@@ -391,7 +391,11 @@ class Repeat(AbstractVariableNode):
             else:
                 i_repeat = random.randint(self.nbRepeat[0], self.nbRepeat[1])
 
-        newSpecializingPaths = [originalSpecializingPath.duplicate()]
+        newSpecializingPath = originalSpecializingPath.duplicate()
+        newSpecializingPaths = [newSpecializingPath]
+
+        if i_repeat == 0:
+            newSpecializingPath.addResult(self, bitarray())
 
         for i in range(i_repeat):
             break_repeat = False
