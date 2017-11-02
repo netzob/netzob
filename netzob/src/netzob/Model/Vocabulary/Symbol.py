@@ -225,8 +225,10 @@ class Symbol(AbstractField):
                        relationships. If None, a temporary memory is
                        created by default and used internally during the scope of the
                        specialization process.
-        :type presets: :class:`dict` {:class:`str` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`,
-                       :class:`bitarray` or :class:`bytes` or :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`} , optional
+        :type presets: ~typing.Dict[~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
+                       ~typing.Union[~bitarray.bitarray,bytes,
+                       ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
+                       optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
         :return: The produced content after specializing the symbol.
@@ -382,8 +384,10 @@ class Symbol(AbstractField):
                      purpose. The default value is None.
         :param timeout: The computation time beyond which :const:`-1` is returned. 
                         Default value is None (no time limit).
-        :type presets: :class:`dict` {:class:`str` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`,
-                       :class:`bitarray` or :class:`bytes` or :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`} , optional
+        :type presets: ~typing.Dict[~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
+                       ~typing.Union[~bitarray.bitarray,bytes,
+                       ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
+                       optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :type timeout: :class:`float` or :class:`int` in seconds
         :return: The number of unique values the symbol specialization can produce.

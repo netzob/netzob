@@ -83,7 +83,8 @@ class RawIPChannel(AbstractChannel):
     :type localIP: :class:`str` or :class:`netaddr.IPAddress`, optional
     :type upperProtocol: :class:`int`, optional
     :type timeout: :class:`float`, optional
-    :todo: add support of netaddr.IPAddress
+
+    .. todo:: add support of :class:`netaddr.IPAddress`
 
     Adding to AbstractChannel variables, the RawIPChannel class provides the
     following public variables:
@@ -99,7 +100,7 @@ class RawIPChannel(AbstractChannel):
     :vartype upperProtocol: :class:`int`
 
 
-    The following code shows the use of a :class:`RawIPChannel <netzob.Simulator.Channels.RawIPChannel.RawIPChannel>`
+    The following code shows the use of a :class:`~netzob.Simulator.Channels.RawIPChannel.RawIPChannel`
     channel:
 
     >>> from netzob.all import *

@@ -190,12 +190,15 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     :var header: A Symbol that permits to access to the protocol header.
     :var header_presets: A dictionary of keys:values used to preset
                         (parameterize) the header fields during symbol
-                        specialization. See :meth:`Symbol.specialize <netzob.Model.Vocabulary.Symbol.Symbol.specialize>` for more information.
+                        specialization. See :meth:`Symbol.specialize() <netzob.Model.Vocabulary.Symbol.Symbol.specialize>` for more information.
     :vartype isOpen: :class:`bool`
     :vartype timeout: :class:`int`
-    :vartype header: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-    :vartype header_presets: :class:`dict` {:class:`str` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`,
-                             :class:`bitarray` or :class:`bytes` or :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`} , optional
+    :vartype header: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+    :vartype header_presets: ~typing.Dict[
+                             ~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
+                             ~typing.Union[~bitarray.bitarray,bytes,
+                             ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
+                             optional
 
 
     """

@@ -221,8 +221,11 @@ class AbstractionLayer(object):
         :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
         :type rate: :class:`int`, optional
         :type duration: :class:`int`, optional
-        :type presets: :class:`dict` {:class:`str` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`,
-                       :class:`bitarray` or :class:`bytes` or :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`} , optional
+        :type presets: ~typing.Dict[
+                       ~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
+                       ~typing.Union[~bitarray.bitarray,bytes,
+                       ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
+                       optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :raise: :class:`TypeError` if parameter is not valid and Exception if an exception occurs.
 
