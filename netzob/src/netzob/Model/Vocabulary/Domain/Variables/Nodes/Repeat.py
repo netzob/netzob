@@ -35,19 +35,35 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import random
-from bitarray import bitarray
+from typing import Callable, Optional, Tuple, Union
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
+from bitarray import bitarray
+from enum import IntEnum
 
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
+from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+
+
+class RepeatResult(IntEnum):
+    CONTINUE = 0
+    STOP_BEFORE = 1
+    STOP_AFTER = 2
+
+
+nbRepeatCbkType = Callable[[int, bitarray, Optional[bitarray],
+                            Optional[GenericPath], Optional[AbstractVariable]],
+                           RepeatResult]
+nbRepeatType = Union[int, Tuple[int, int], nbRepeatCbkType]
 
 
 @NetzobLogger
@@ -259,7 +275,7 @@ class Repeat(AbstractVariableNode):
 
     def __init__(self, child, nbRepeat, delimiter=None, svas=None):
         super(Repeat, self).__init__(self.__class__.__name__, [child], svas=svas)
-        self.nbRepeat = nbRepeat
+        self.nbRepeat = nbRepeat  # type: nbRepeatType
         self.delimiter = delimiter
 
     @typeCheck(ParsingPath)
@@ -303,7 +319,7 @@ class Repeat(AbstractVariableNode):
             for i_repeat in range(nb_repeat):
                 tmp_result = []
                 lastResultIsValidPath = True
-                break_repeat = False
+                break_repeat = RepeatResult.CONTINUE  # type: RepeatResult
                 for newParsingPath in newParsingPaths:
                     for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
 
@@ -398,35 +414,37 @@ class Repeat(AbstractVariableNode):
             newSpecializingPath.addResult(self, bitarray())
 
         for i in range(i_repeat):
-            break_repeat = False
+            break_repeat = RepeatResult.CONTINUE
             childSpecializingPaths = []
             for newSpecializingPath in newSpecializingPaths:
 
                 child = self.children[0]
                 for path in child.specialize(newSpecializingPath, fuzz=fuzz):
-                    if path.hasData(self):
 
+                    newResult = bitarray()
+                    if path.hasData(self):
                         newResult = path.getData(self).copy()
                         if self.delimiter is not None:
-                            newResult = newResult + self.delimiter
-                        newResult = newResult + path.getData(child)
+                            newResult += self.delimiter
+                    newResult += path.getData(child)
 
+                    if callable(self.nbRepeat):
+                        break_repeat = self.nbRepeat(i + 1, newResult, None,
+                                                     path, child)
+
+                    if break_repeat is RepeatResult.STOP_BEFORE:
+                        path.addResult(self, bitarray())
                     else:
-                        newResult = path.getData(child)
-
-                    path.addResult(self, newResult)
+                        path.addResult(self, newResult)
 
                     # We forget the assigned data to the child variable and its children
                     path.removeDataRecursively(child)
 
                     childSpecializingPaths.append(path)
 
-                    if callable(self.nbRepeat):
-                        break_repeat = self.nbRepeat(i + 1, newResult)
-
             newSpecializingPaths = childSpecializingPaths
 
-            if break_repeat:
+            if break_repeat is not RepeatResult.CONTINUE:
                 break
 
         specializingPaths.extend(newSpecializingPaths)
