@@ -88,7 +88,7 @@ class Memory(object):
        message to send and an environment variable.
 
        >>> from netzob.all import *
-       >>> # Environment variables definition
+       >>> # Environment variable definition
        >>> memory = Memory()
        >>> env1 = Data(String(), name="env1")
        >>> memory.memorize(env1, String("John").value)
@@ -193,7 +193,7 @@ class Memory(object):
     def duplicate(self):
         """Duplicates the current memory in a new memory.
 
-        :return: A new memory containing the same entries than the current memory.
+        :return: A new memory containing the same entries as the current memory.
         :rtype: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
 
         >>> from netzob.all import *

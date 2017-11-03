@@ -212,7 +212,7 @@ class Agg(AbstractVariableNode):
        there is a limitation requiring to use a recursing variable on the
        **right side of a statement**. Any other behavior could lead to
        infinite recursion during the loading of the model.
-       To help understanding what syntax should be preferred, here is a list of
+       To help understand what syntax should be preferred, here is a list of
        annotated BNF syntaxes.
 
        *invalid syntaxes:*
@@ -266,7 +266,7 @@ class Agg(AbstractVariableNode):
     **Modeling direct recursion, more complex example**
 
     This example introduces a recursion in the middle of an expression by
-    modelling a pair group of parentheses (``'('`` and ``')'``), around a
+    modeling a pair group of parentheses (``'('`` and ``')'``), around a
     single character (``'+'``).
     The BNF syntax of this model would be:
 

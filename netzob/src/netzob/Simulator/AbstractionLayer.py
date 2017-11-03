@@ -145,7 +145,7 @@ class AbstractionLayer(object):
     relationship when using the abstraction layer.
 
     >>> from netzob.all import *
-    >>> # Environment variables definition
+    >>> # Environment variable definition
     >>> memory1 = Memory()
     >>> env1 = Data(String(), name="env1")
     >>> memory1.memorize(env1, String("John").value)

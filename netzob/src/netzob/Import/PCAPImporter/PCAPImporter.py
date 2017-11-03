@@ -61,7 +61,7 @@ from netzob.Model.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
 class PCAPImporter(object):
     r"""PCAP importer to read pcaps and extract messages out of them.
 
-    We recommend to use static methods such as
+    We recommend using static methods such as
 
     - PCAPImporter.readFiles(...)
     - PCAPimporter.readFile(...)

@@ -46,7 +46,7 @@ from netzob.Common.NetzobException import NetzobImportException
 @NetzobLogger
 class FileImporter(object):
     r"""An Importer than can extracts messages out of files.
-    We recommend to use static methods such as
+    We recommend using static methods such as
     - FileImporter.readFiles(...)
     - Fileimporter.readFile(...)
     refer to their documentation to have an overview of the required parameters.

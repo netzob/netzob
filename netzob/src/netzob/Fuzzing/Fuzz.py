@@ -87,7 +87,7 @@ class Fuzz(object):
 
     :param counterMax: The max number of mutations to produce (a :class:`int`
                        should be used to represent an absolute value, whereas
-                       a :class:`float` should be use to represent a ratio in
+                       a :class:`float` should be used to represent a ratio in
                        percent).
     :type counterMax: :class:`int` or :class:`float`, defaults to
                       :attr:`COUNTER_MAX_DEFAULT`
@@ -97,7 +97,7 @@ class Fuzz(object):
 
     :var counterMax: The max number of mutations to produce (a :class:`int`
                        should be used to represent an absolute value, whereas a
-                       :class:`float` should be use to represent a ratio in
+                       :class:`float` should be used to represent a ratio in
                        percent).
     :vartype counterMax: :class:`int` or :class:`float`, optional
 
@@ -153,7 +153,7 @@ class Fuzz(object):
                     variable or a type) (required).
         :param mode: The fuzzing strategy, which can be either:
 
-                     * ``MutatorMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied on it.
+                     * ``MutatorMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied to it.
                      * ``MutatorMode.GENERATE``: in this mode, the fuzzing component directly produces a random message.
 
                      Default value is :attr:`MutatorMode.GENERATE`.
@@ -222,7 +222,7 @@ class Fuzz(object):
 
                               * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
                               * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
-                              * If it is a tuple of integers (min, max), the values will be generate between min and max.
+                              * If it is a tuple of integers (min, max), the values will be generated between min and max.
 
                               Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
@@ -305,7 +305,7 @@ class Fuzz(object):
 
                               * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
                               * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
-                              * If it is a tuple of integers (min, max), the values will be generate between min and max.
+                              * If it is a tuple of integers (min, max), the values will be generated between min and max.
 
                               Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
@@ -389,7 +389,7 @@ class Fuzz(object):
 
                               * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
                               * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
-                              * If it is a tuple of integers (min, max), the values will be generate between min and max.
+                              * If it is a tuple of integers (min, max), the values will be generated between min and max.
 
                               Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 

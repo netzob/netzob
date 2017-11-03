@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness,
 
 
 class Integer(AbstractType):
-    r"""The Integer class enables to represent an integer, with the
+    r"""The Integer class makes it possible to represent an integer, with the
     capability to express constraints regarding the sign, the
     endianness and the unit size.
 
@@ -188,7 +188,7 @@ class Integer(AbstractType):
     >>> i1 == i2
     True
 
-    But a comparison between two specific integers of different kind will
+    But a comparison between two specific integers of different kinds will
     always fail, even if their values look equivalent:
 
     >>> from netzob.all import *

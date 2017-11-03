@@ -52,13 +52,13 @@ from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 class AbstractVariable(object):
     """A variable participates in the definition domain of a field.
 
-    This class is abstract and so should not be instanciated directly.
+    This class is abstract and so should not be instantiated directly.
     """
 
     def __init__(self, varType, varId=None, name=None, svas=None):
         """Constructor
 
-        :param varType: the type of the variable. we highly recommend to use the __class_.__name__
+        :param varType: the type of the variable. we highly recommend using the __class_.__name__
         :type varType: :class:`str`
         :keywork varId: the id of the variable
         :type varId: :class:`uuid.UUID`
@@ -95,11 +95,11 @@ class AbstractVariable(object):
         raise NotImplementedError("Method isnode() is not implemented")
 
     def getFixedBitSize(self):
-        """Provide the length of a theorical value that would be generated.
+        """Provide the length of a theoretical value that would be generated.
         It is not the length of an effective value but a prediction of its
         length in case this latter is fixed.
 
-        :return: the theorical length of a value generated from the underlying type
+        :return: the theoretical length of a value generated from the underlying type
         :rtype: int
         :raise: ValueError in case the length is dynamic or could not be predicted
         """

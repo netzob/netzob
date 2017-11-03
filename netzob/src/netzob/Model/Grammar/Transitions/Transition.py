@@ -65,14 +65,14 @@ class Transition(AbstractTransition):
     :param endState: The end state of the transition.
     :param inputSymbol: The input symbol which triggers the execution of the
                         transition.
-                        The default value is `None`, which mean that no symbol
+                        The default value is `None`, which means that no symbol
                         is expected in a receiving context, and no symbol is sent
                         in a sending context. Internally,
                         `None` symbol will be replaced by an
                         :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param outputSymbols: A list of output symbols that can be expected when
                           the current transition is executed.
-                          The default value is `None`, which mean that no
+                          The default value is `None`, which means that no
                           symbol will be sent in a receiving context, and no
                           symbol is expected in a sending context.
                           Internally, `None` symbol will be replaced by an

@@ -272,23 +272,23 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
           :attr:`last_sent_symbol`
             Last sent symbol (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`)
-            on the abstraction layer, and thus permits to create relationships
+            on the abstraction layer, and thus makes it possible to create relationships
             with the previously sent symbol.
 
           :attr:`last_sent_message`
             Last sent message (:class:`bitarray`) on the abstraction layer, and
-            thus permits to create relationships with the previously sent
+            thus makes it possible to create relationships with the previously sent
             message.
 
           :attr:`last_received_symbol`
             Last received symbol
             (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`) on the
-            abstraction layer, and thus permits to create relationships with
+            abstraction layer, and thus makes it possible to create relationships with
             the previously received symbol.
 
           :attr:`last_received_message`
             Last received message (:class:`bitarray`) on the abstraction layer,
-            and this permits to create relationships with
+            and this makes it possible to create relationships with
             received message.
 
         The callback function should return a tuple (symbol, presets)

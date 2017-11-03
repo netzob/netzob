@@ -62,7 +62,7 @@ class Value(AbstractRelationVariableLeaf):
     :param name: The name of the variable. If None, the name
                      will be generated.
     :param operation: An optional transformation operation to be
-                      applied on the targeted field value, through a callback. The default is None.
+                      applied to the targeted field value, through a callback. The default is None.
     :type target: :class:`Field <netzob.Model.Vocabulary.Field>`, required
     :type name: :class:`str`, optional
     :type operation: :class:`Callable <collections.abc.Callable>`, optional

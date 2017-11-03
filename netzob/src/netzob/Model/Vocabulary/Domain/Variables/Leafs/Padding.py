@@ -55,7 +55,7 @@ from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 
 @NetzobLogger
 class Padding(AbstractRelationVariableLeaf):
-    r"""The Padding class is a variable whose content permits to produce a
+    r"""The Padding class is a variable whose content makes it possible to produce a
     padding value that can be used to align a structure to a fixed
     size.
 
@@ -125,7 +125,7 @@ class Padding(AbstractRelationVariableLeaf):
     128
 
     The following code illustrates a padding with the use of the
-    ``offset`` parameter, where the targeted field sizes is decremented by
+    ``offset`` parameter, where the targeted field sizes are decremented by
     8 when computing the padding value length.
 
     >>> from netzob.all import *

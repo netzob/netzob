@@ -64,7 +64,7 @@ from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 @NetzobLogger
 class RawIPChannel(AbstractChannel):
     """A RawIPChannel is a communication channel to send IP
-    payloads. This **channel** is responsible to build the IP header. It is
+    payloads. This **channel** is responsible for building the IP header. It is
     similar to :class:`IPChannel <netzob.Simulator.Channels.IPChannel.IPChannel>`
     channel, except that with :class:`IPChannel` the OS kernel builds the IP header.
     Therefore, with RawIPChannel, we **can** modify or fuzz the IP header fields.

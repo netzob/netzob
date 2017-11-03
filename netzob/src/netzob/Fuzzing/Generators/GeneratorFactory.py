@@ -114,7 +114,7 @@ class GeneratorFactory(object):
         :type generator: str, callable or generator function
         """
 
-        # Check if the generator is already instanciated
+        # Check if the generator is already instantiated
         if isinstance(generator, Generator):
             return generator
 

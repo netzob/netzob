@@ -141,7 +141,7 @@ class Field(AbstractField):
     or to model complex data structures (such has alternatives,
     repetitions or sequences).
 
-    The following examples present the different forms that permit to
+    The following examples present the different forms that make is possible to
     express the same field content (i.e. an Integer with a constant
     value of 10):
 
@@ -214,7 +214,7 @@ class Field(AbstractField):
 
     .. ifconfig:: scope in ('netzob')
 
-       **Encoding functions applied on fields**
+       **Encoding functions applied to fields**
 
        Encoding functions represent functions which apply to modify the
        encoding of a data. The following example shows the use of the

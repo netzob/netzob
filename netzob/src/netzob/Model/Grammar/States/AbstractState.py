@@ -101,7 +101,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         """Optional Name of the state
 
         :type: str
-        :raise: TypeError is not an str
+        :raise: TypeError is not a str
         """
         return self.__name
 
@@ -131,7 +131,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         self.__active = active
 
     def add_cbk_modify_transition(self, cbk_method):
-        """Add a function called during state execution to help choosing the
+        """Add a function called during state execution to help choose the
         next transition (in a client context) or modifying the current
         transition (in a server context).
 
@@ -163,23 +163,23 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
           :attr:`last_sent_symbol`
             Last sent symbol (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`)
-            on the abstraction layer, and thus permits to create relationships
+            on the abstraction layer, and thus makes it possible to create relationships
             with the previously sent symbol.
 
           :attr:`last_sent_message`
             Corresponds to the last sent message (:class:`bitarray`) on the
-            abstraction layer, and thus permits to create relationships with
+            abstraction layer, and thus makes it possible to create relationships with
             the previously sent message.
 
           :attr:`last_received_symbol`
             Corresponds to the last received symbol
             (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`) on the
-            abstraction layer, and thus permits to create relationships with
+            abstraction layer, and thus makes it possible to create relationships with
             the previously received symbol.
 
           :attr:`last_received_message`
             Corresponds to the last received message (:class:`bitarray`) on the
-            abstraction layer, and thus permits to create relationships with
+            abstraction layer, and thus makes it possible to create relationships with
             the previously received message.
 
         The callback function should return a transition (which could

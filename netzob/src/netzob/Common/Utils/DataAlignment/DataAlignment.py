@@ -230,7 +230,7 @@ class DataAlignment(object):
                 val.append(d)
             else:
                 raise Exception(
-                    "Invalid type, data can only be an str or a bytes not {}: {}".
+                    "Invalid type, data can only be a str or a bytes not {}: {}".
                     format(type(data), d))
         self.__data = val
 

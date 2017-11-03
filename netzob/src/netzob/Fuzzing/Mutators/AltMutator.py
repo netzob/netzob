@@ -75,7 +75,7 @@ class AltMutator(DomainMutator):
         Default value is :const:`False`.
     :param mappingTypesMutators: Override the global default mapping of types with their default
         mutators.
-    :param maxDepth: This enables to limit the recursive calls to the mutator.
+    :param maxDepth: This makes it possible to limit the recursive calls to the mutator.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type mode: :class:`int`, optional

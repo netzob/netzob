@@ -376,7 +376,7 @@ class FieldSplitAligned(object):
         for val in values:
             if val is None or not isinstance(val, bytes):
                 raise TypeError(
-                    "At least one value is None or not an str which is not authorized."
+                    "At least one value is None or not a str which is not authorized."
                 )
 
         if semanticTags is None:

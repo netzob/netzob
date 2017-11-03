@@ -51,7 +51,7 @@ class EmptySymbol(Symbol):
     """An empty symbol is a special type of symbol that represents the
     fact of having nothing received or to have nothing to send. An
     EmptySymbol is only produced by the automata, and thus should not
-    be instanciated.
+    be instantiated.
 
     """
 

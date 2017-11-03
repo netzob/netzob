@@ -248,9 +248,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         ' ?' 
         -----
 
-        :keyword encoded: if set to True, encoding functions are applied on returned cells
+        :keyword encoded: if set to True, encoding functions are applied to returned cells
         :type encoded: :class:`bool`
-        :keyword styled: if set to True, visualization functions are applied on returned cells
+        :keyword styled: if set to True, visualization functions are applied to returned cells
         :type styled: :class:`bool`
         :keyword transposed: is set to True, the returned matrix is transposed (1 line for each field)
         :type transposed: :class:`bool`
@@ -335,9 +335,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> print(f5.getValues())
         [b'203f', b'203f', b'203f', b'203f', b'203f', b'203f', b'203f', b'203f', b'203f']
 
-        :keyword encoded: if set to True, encoding functions are applied on returned cells
+        :keyword encoded: if set to True, encoding functions are applied to returned cells
         :type encoded: :class:`bool`
-        :keyword styled: if set to True, visualization functions are applied on returned cells
+        :keyword styled: if set to True, visualization functions are applied to returned cells
         :type styled: :class:`bool`
 
         :return: a list detailling all the values current element takes.

@@ -95,7 +95,7 @@ class Actor(threading.Thread):
 
     **Example with a common automaton for a client and a server**
 
-    For instance we can create two very simple network Actors which
+    For instance, we can create two very simple network Actors which
     communicate together through a TCP channel and exchange their
     names until one stops.
 
@@ -615,10 +615,10 @@ class Actor(threading.Thread):
 
     The following example shows how to specify no input symbol, for
     both a sender (bob) and a receiver (alice), at the state ``S1``.
-    This example permits to automatically transit to the next state ``S2``.
+    This example makes it possible to automatically transit to the next state ``S2``.
     Thus, Bob do not need to send a message (using
     :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inputSymbol`)
-    in transition betwen ``S2`` and ``S3`` to expect a message from Alice.
+    in transition between ``S2`` and ``S3`` to expect a message from Alice.
 
     This sequence temporarily puts Bob in receiving mode only, until this
     transition is active.

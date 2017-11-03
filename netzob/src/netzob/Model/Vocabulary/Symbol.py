@@ -394,7 +394,7 @@ class Symbol(AbstractField):
         :rtype: a :class:`int`
 
         .. note::
-           The theorical value returned by :meth:`~specialize_count` may be huge
+           The theoretical value returned by :meth:`~specialize_count` may be huge
            and hard to compute considering the number of variables involved.
            Beyond :attr:`timeout` the computation would return the special
            value :const:`-1` indicating a too large value to compute.

@@ -105,7 +105,7 @@ class Data(AbstractVariableLeaf):
     .. ifconfig:: scope in ('netzob')
 
        Besides, the Data object is the default Variable when we create a
-       Field without explicitly specifying the Data domain, as shown on
+       Field without explicitly specifying the Data domain, as shown in
        the following example:
 
        >>> from netzob.all import *

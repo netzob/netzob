@@ -93,7 +93,7 @@ class BitArray(AbstractType):
     **Bitarray of fixed and dynamic sizes**
 
     The following example shows how to define a bitarray of 1 bit, 47
-    bits, 64 bits and then a bitarray whith a variable size between 13
+    bits, 64 bits and then a bitarray with a variable size between 13
     and 128 bits:
 
     >>> from netzob.all import *
@@ -120,7 +120,7 @@ class BitArray(AbstractType):
     **Accessing bitarray elements by named constant**
 
     In the following example, we define a bitarray with two
-    elements. As this bitarray has a fixed length, element are
+    elements. As this bitarray has a fixed length, elements are
     automatically accessible by predefined named constants ('item_0'
     and 'item_1'):
 

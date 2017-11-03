@@ -104,7 +104,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     The constructor for an AbstractType expects some parameters:
 
-    :param typeName: The name of the type (we highly recommand the use of __class__.__name__), required.
+    :param typeName: The name of the type (we highly recommend the use of __class__.__name__), required.
     :param value: The current value of the type instance, required.
     :param size: The (min, max) size in bits that this value takes, optional. The default is (None, None).
     :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_*. If None, the value is the default one.
@@ -148,7 +148,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     **Internal representation of Type objects**
 
     Regarding the internal representation of variables, the Python
-    module :class:`bitarray` is used, thus allowing to
+    module :class:`bitarray` is used, thus makes it possible to
     specify objects at the bit granularity. As an example, the
     following code show how to access the internal representation of
     the value of an Integer object:
@@ -687,11 +687,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         return Data(dataType=self, originalValue=self.value, svas=svas)
 
     def getFixedBitSize(self):
-        """Provide the length of a theorical value that would be generated.
+        """Provide the length of a theoretical value that would be generated.
         It is not the length of an effective value but a prediction of its
         length in case this latter is fixed.
 
-        :return: the theorical length of a value generated from this type
+        :return: the theoretical length of a value generated from this type
         :rtype: int
         :raise: ValueError in case the length is dynamic or could not be predicted
         """

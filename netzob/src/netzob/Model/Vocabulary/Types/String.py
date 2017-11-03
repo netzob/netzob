@@ -280,7 +280,7 @@ class String(AbstractType):
     def mutate(self, prefixDescription=None):
         """Generate various mutations of the current String value.
 
-        Mutations are first applied on the String value than, each obtained mutations generates
+        Mutations are first applied to the String value than, each obtained mutations generates
         new bitarray mutations.
         String mutations are:
 
