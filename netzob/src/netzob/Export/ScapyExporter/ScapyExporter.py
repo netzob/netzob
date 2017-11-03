@@ -54,10 +54,15 @@ class ScapyExporter(object):
 
         __reFieldLengths = dict()
 
-        def __init__(self):
-            pass
+        def __init__(self, symbols, protocolName="ProtocolName_from_netzob"):
+            if not re.match("[A-Z_][a-zA-Z0-9_]*$",protocolName) or keyword.iskeyword(protocolName):
+                raise NameError ("INVALID ProtocolName. It should be a valid Class Name.")
+            self._protocolName = protocolName
+            self._symbols = symbols
+            self.__recalculateFieldLengths(symbols)
 
-        def exportToScapy(self, symbols, filename, protocolName="ProtocolName_from_netzob"):
+
+        def exportToScapy(self, filename):
             """ The function walks through all the fields in each of the symbols, checks their dataType (Raw, Integer, ASCII, BitArray, HexaString, TimeStamp, IPv4), field type (constant or variable) and size. Based on this information creates a scapy executable python script.
             Netzob datatype fields has been matched to Scapy fields in the following way:
                 Integer    ---> ByteField, ShortField, SignedShortField, LEShortField, IntField, SignedIntField, LEIntField, LESignedIntField, LongField or LELongField, depending on the unitSize(8,16,32,64), SignedType(Signed or Unsigned) and/or endianness (Big or Little) 
@@ -70,12 +75,17 @@ class ScapyExporter(object):
 
             ProtocolName is the class name in generated scapy script.
         
-            Usage: >>> ScapyExporter().exportToScapy(symbols,'OutputFilename','ProtocolName')
-            """
-            if not re.match("[A-Z_][a-zA-Z0-9_]*$",protocolName) or keyword.iskeyword(protocolName):
-                raise NameError ("INVALID ProtocolName. It should be a valid Class Name.")
+            Usage: ScapyExporter(symbols,'ProtocolName').exportToScapy('OutputFilename')
 
-            self.__recalculateFieldLengths(symbols)
+            >>> m1 = RawMessage("someexamplemessage")
+            >>> fields = [Field("some", name="f0"), Field("example", name="f1"), Field("message", name="f2")]
+            >>> symbol = Symbol(fields, messages=[m1])
+            >>> ScapyExporter(symbol).exportToScapy("scapy_test_protocol.py")
+
+            """
+
+            protocolName = self._protocolName
+            symbols = self._symbols
 
             sfilecontents = '' # contents for export file are initally written to this variable 
             sfilecontents += "#! /usr/bin/python" + '\n'
@@ -83,9 +93,7 @@ class ScapyExporter(object):
             sfilecontents += "from netaddr import IPAddress" + '\n'
             sfilecontents += "from bitarray import bitarray" + '\n\n'
             try:
-                """ checks if the symbols are iterable
-        """
-                iter(symbols)
+                iter(symbols) # checks if the symbols are iterable
                 i=0 # counts number of symbols
                 for syml in symbols:
                         sfilecontents += "# === Start of new PROTOCOL from Symbol" + str(i) + '\n'
@@ -103,7 +111,7 @@ class ScapyExporter(object):
                         f.write(sfilecontents)
                         f.close()
 
-            except TypeError:
+            except TypeError: # if its only one symbol
                 syml = symbols
                 sfilecontents += "# === Start of new PROTOCOL from " + syml.name + '\n'
                 sfilecontents += "class " + protocolName + "_" + syml.name + "(Packet):" + '\n'
