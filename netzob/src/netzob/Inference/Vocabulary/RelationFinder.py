@@ -34,7 +34,7 @@ import math
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
-from netzob import _libRelation
+# from netzob import _libRelation  # type: ignore
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, UnitSize

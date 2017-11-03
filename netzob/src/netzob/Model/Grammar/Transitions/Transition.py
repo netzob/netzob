@@ -37,6 +37,7 @@
 import time
 import random
 import socket
+from typing import Dict  # noqa: F401
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -164,6 +165,7 @@ class Transition(AbstractTransition):
                  inputSymbolReactionTime=None,   # type: float
                  outputSymbolReactionTimes=None  # type: Dict[Symbol,float]
                  ):
+        # type: (...) -> None
         super(Transition, self).__init__(Transition.TYPE,
                                          startState,
                                          endState,

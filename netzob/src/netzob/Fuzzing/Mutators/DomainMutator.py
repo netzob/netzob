@@ -91,8 +91,8 @@ class DomainMutator(Mutator):
     """
 
     # Constants
-    DOMAIN_TYPE = AbstractVariable  # type: Type[AbstractVariable]
-    DATA_TYPE = None
+    DOMAIN_TYPE = None    # type: Type[AbstractVariable]
+    DATA_TYPE = None      # type: Type[AbstractType]
 
     def __init__(self,
                  domain,
@@ -100,6 +100,7 @@ class DomainMutator(Mutator):
                  generator=Generator.NG_mt19937,
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT):
+        # type: (...) -> None
 
         # Call parent init
         super().__init__(mode=mode,
@@ -108,7 +109,7 @@ class DomainMutator(Mutator):
                          counterMax=counterMax)
 
         # Sanity checks on domain parameter
-        if not isinstance(domain, self.DOMAIN_TYPE):
+        if not (self.DOMAIN_TYPE is None or isinstance(domain, self.DOMAIN_TYPE)):
             raise TypeError("Mutator domain should be of type {}. Received object: '{}'"
                             .format(self.DOMAIN_TYPE, domain))
 

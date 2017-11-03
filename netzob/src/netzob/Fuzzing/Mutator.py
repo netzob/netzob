@@ -45,14 +45,13 @@ from enum import Enum
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Grammar.Automata import Automata  # noqa: F401
 from netzob.Fuzzing.Generator import Generator
 
 
 class MutatorMode(Enum):
     """Mutator Fuzzing modes"""
-    MUTATE   = 1  #: Fuzzing by mutation of a legitimate value
+    MUTATE = 1  #: Fuzzing by mutation of a legitimate value
     GENERATE = 2  #: Fuzzing by generation
     __repr__ = Enum.__str__
 
@@ -85,16 +84,15 @@ class Mutator(metaclass=abc.ABCMeta):
     SEED_DEFAULT = 10  #: the default seed value
     COUNTER_MAX_DEFAULT = 2 ** 16  #: the default max counter value (65536)
 
-
     # Class variables
     globalCounterMax = COUNTER_MAX_DEFAULT
-
 
     def __init__(self,
                  mode=MutatorMode.GENERATE,  # type: MutatorMode
                  generator=Generator.NG_mt19937,
                  seed=SEED_DEFAULT,
                  counterMax=COUNTER_MAX_DEFAULT):
+        # type: (...) -> None
 
         # Public variables linked with parameters
         self.mode = mode
@@ -106,7 +104,7 @@ class Mutator(metaclass=abc.ABCMeta):
         self.currentCounter = 0
         self.currentState = 0
 
-    ## API methods
+    # API methods
 
     def generate(self):
         """This is the fuzz generation method of the field domain. It has to
@@ -126,7 +124,6 @@ class Mutator(metaclass=abc.ABCMeta):
 
         self.currentCounter += 1
 
-
     @abc.abstractmethod
     def mutate(self, data):
         """This is the mutation method of the field domain. It has to be
@@ -142,9 +139,8 @@ class Mutator(metaclass=abc.ABCMeta):
 
         :meth:`mutate` is an *abstract method* and must be inherited.
         """
-        
 
-    ## Properties
+    # Properties
 
     @property
     def mode(self):

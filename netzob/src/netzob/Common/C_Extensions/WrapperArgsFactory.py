@@ -31,7 +31,7 @@
 from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.NetzobException import NetzobException
-from netzob import _libScoreComputation
+# from netzob import _libScoreComputation  # type: ignore
 
 
 class WrapperArgsFactory(object):

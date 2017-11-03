@@ -46,7 +46,7 @@ import arpreq
 import binascii
 from fcntl import ioctl
 import subprocess
-from typing import Callable, List, Type  # noqa: F401
+from typing import Any, Callable, List, Type  # noqa: F401
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -56,7 +56,7 @@ from typing import Callable, List, Type  # noqa: F401
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Simulator.ChannelBuilder import ChannelBuilder
+from netzob.Simulator.ChannelBuilder import ChannelBuilder  # noqa: F401
 
 
 class ChannelDownException(Exception):
@@ -300,7 +300,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         return len_data
 
     def checkReceived(self,
-                      predicate,  # type: Callable[[bytes], bool]
+                      predicate,  # type: Callable[..., bool]
                       *args, **kwargs):
         # type: (...) -> bool
         """

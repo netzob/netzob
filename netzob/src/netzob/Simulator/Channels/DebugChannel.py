@@ -84,6 +84,7 @@ class DebugChannel(AbstractChannel):
                  stream,  # type: Union[str, io.IOBase]
                  timeout=AbstractChannel.DEFAULT_TIMEOUT
                  ):
+        # type: (...) -> None
         super(DebugChannel, self).__init__(timeout=timeout)
         self._stream = self.STREAM_MAP.get(stream, stream)
 
@@ -139,7 +140,7 @@ class DebugChannel(AbstractChannel):
         return self.read()
 
     def checkReceived(self,
-                      predicate,  # type: Callable[[bytes], bool]
+                      predicate,  # type: Callable[..., bool]
                       *args, **kwargs):
         # type: (...) -> bool
         """

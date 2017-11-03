@@ -50,7 +50,7 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Inference.Vocabulary.Search.SearchEngine import SearchEngine
-from netzob import _libNeedleman
+from netzob import _libNeedleman  # type: ignore
 
 
 @NetzobLogger

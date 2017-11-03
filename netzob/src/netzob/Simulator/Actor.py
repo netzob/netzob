@@ -699,6 +699,7 @@ class Actor(threading.Thread):
                  initiator=True,    # type: bool
                  name="Actor",      # type: str
                  ):
+        # type: (...) -> None
         super(Actor, self).__init__()
         self.automata = automata
         self.initiator = initiator

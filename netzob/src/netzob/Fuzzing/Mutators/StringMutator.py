@@ -129,6 +129,7 @@ class StringMutator(DomainMutator):
                  interval=(None, None),       # type: Tuple[int, int]
                  lengthBitSize=UnitSize.SIZE_8,
                  naughtyStrings=None):
+        # type: (...) -> None
 
         # Call parent init
         super().__init__(domain,

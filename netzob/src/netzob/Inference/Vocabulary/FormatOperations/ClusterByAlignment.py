@@ -51,7 +51,7 @@ from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
 # +---------------------------------------------------------------------------+
 # | C Imports
 # +---------------------------------------------------------------------------+
-from netzob import _libScoreComputation
+from netzob import _libScoreComputation  # type: ignore
 
 
 @NetzobLogger

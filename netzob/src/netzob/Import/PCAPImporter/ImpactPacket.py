@@ -374,8 +374,8 @@ class Header(PacketBuffer, ProtocolLayer):
         list(filter(lambda c: c not in string.whitespace,
                     string.printable))) + ' '
 
-    ethertype = None
-    protocol = None
+    ethertype = None            # type: int
+    protocol = None             # type: int
 
     def __init__(self, length=None):
         PacketBuffer.__init__(self, length)
