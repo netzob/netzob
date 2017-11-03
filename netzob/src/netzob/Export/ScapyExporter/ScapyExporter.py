@@ -52,14 +52,26 @@ class ScapyExporter(object):
                 of the Inference to a python file which can later be executed in Scapy
         """
 
+        _symbols = None
         __reFieldLengths = dict()
 
         def __init__(self, symbols, protocolName="ProtocolName_from_netzob"):
+            """
+            Initializes the exporter with the list of symbols to be processed and the protocol name for the output.
+            :param symbols: one or list of Symbol
+            :param protocolName: name of the protocol for the output
+            :type protocolName str
+            """
             if not re.match("[A-Z_][a-zA-Z0-9_]*$",protocolName) or keyword.iskeyword(protocolName):
                 raise NameError ("INVALID ProtocolName. It should be a valid Class Name.")
             self._protocolName = protocolName
-            self._symbols = symbols
-            self.__recalculateFieldLengths(symbols)
+
+            try:
+                iter(symbols) # checks if the symbols are iterable
+                self._symbols = symbols
+            except TypeError:  # if its only one symbol
+                self._symbols = [ symbols ]
+            self.__recalculateFieldLengths()
 
 
         def exportToScapy(self, filename):
@@ -80,7 +92,33 @@ class ScapyExporter(object):
             >>> m1 = RawMessage("someexamplemessage")
             >>> fields = [Field("some", name="f0"), Field("example", name="f1"), Field("message", name="f2")]
             >>> symbol = Symbol(fields, messages=[m1])
+
+            Export one symbol...
             >>> ScapyExporter(symbol).exportToScapy("scapy_test_protocol.py")
+            >>> import scapy_test_protocol
+            >>> sem = scapy_test_protocol.ProtocolName_from_netzob_Symbol0()
+            >>> sem.show()
+            ###[ ProtocolName_from_netzob ]###
+              f0        = 0x656d6f73
+              f1        = 0x656c706d617865
+              f2        = 0x6567617373656d
+
+            ... or a list of symbols.
+            >>> ScapyExporter([symbol]).exportToScapy("scapy_test_protocol.py")
+            >>> sem = scapy_test_protocol.ProtocolName_from_netzob_Symbol0(f1=0xcaffee)
+            >>> sem.show()
+            ###[ ProtocolName_from_netzob ]###
+              f0        = 0x656d6f73
+              f1        = 0xcaffee
+              f2        = 0x6567617373656d
+
+            >>> bytes(sem)
+            b'emos\\x00\\x00\\x00\\x00\\xca\\xff\\xeeegassem'
+
+            === NOTE: ===
+            The last check results in a message with wrong endian due to type conversion inconsistency for Integer
+            solved by PR #124. Toghether with that PR the correct output looks like:
+            b'some\\x00\\x00\\x00\\x00\\xca\\xff\\xeemessage'
 
             """
 
@@ -92,43 +130,28 @@ class ScapyExporter(object):
             sfilecontents += "from scapy.all import *" + '\n'
             sfilecontents += "from netaddr import IPAddress" + '\n'
             sfilecontents += "from bitarray import bitarray" + '\n\n'
-            try:
-                iter(symbols) # checks if the symbols are iterable
-                i=0 # counts number of symbols
-                for syml in symbols:
-                        sfilecontents += "# === Start of new PROTOCOL from Symbol" + str(i) + '\n'
-                        sfilecontents += "class " + protocolName + "_" + syml.name + str(i) + "(Packet):" + '\n'
-                        sfilecontents += "\tname = \"" + protocolName  + "\"" +'\n'
-                        sfilecontents += "\tfields_desc = [ " + '\n'
-                        for field in syml.fields:
-                                try:
-                                        sfilecontents += self.check_dataType(field) + '\n'
-                                except AttributeError:
-                                        sfilecontents += "\t\t\t BitField(" + "\"" + field.name + "\","+repr(None)+ "," + repr(self.aggDomain(field.domain,[],1000,0)[1])+")," + "\t#size:" + str(self.aggDomain(field.domain,[],1000,0)) + '\n'
-                        sfilecontents += "\n\t\t ]" + '\n'
-                        i=i+1
-                with open(filename,'w') as f:
-                        f.write(sfilecontents)
-                        f.close()
 
-            except TypeError: # if its only one symbol
-                syml = symbols
-                sfilecontents += "# === Start of new PROTOCOL from " + syml.name + '\n'
-                sfilecontents += "class " + protocolName + "_" + syml.name + "(Packet):" + '\n'
-                sfilecontents += "\tname = \"" + protocolName + "\""  + '\n'
-                sfilecontents += "\tfields_desc = [ " + '\n'
+            for i in range(0,len(symbols)):
+                syml = symbols[i]
+                sfilecontents += "# === Start of new PROTOCOL from Symbol{}\n".format(syml.name)
+                sfilecontents += "class {}_{}{:d} (Packet):\n".format(protocolName, syml.name, i)
+                sfilecontents += "\tname = \"{}\"\n".format(protocolName)
+                sfilecontents += "\tfields_desc = [ \n"
                 for field in syml.fields:
-                        try:
-                                sfilecontents += self.check_dataType(field) + '\n'
-                        except AttributeError:
-                                sfilecontents += "\t\t\t BitField(" + "\"" + field.name + "\","+repr(None)+ "," + repr(self.aggDomain(field.domain,[],1000,0))+")," + "\t#size:" + str(self.aggDomain(field.domain,[],1000,0))
-                        sfilecontents += '\n'
-                sfilecontents += "\n\t\t ]" + '\n'
-                with open(filename,'w') as f:
-                        f.write(sfilecontents)
-                        f.close()
+                    try:
+                       sfilecontents += self.check_dataType(field) + '\n'
+                    except AttributeError:
+                       sfilecontents += "\t\t\t BitField(" + "\"" + field.name + "\","+repr(None)+ "," \
+                                        + repr(self._aggDomain(field.domain)[1]) + ")," \
+                                        + "\t#size:" + str(self._aggDomain(field.domain)) + '\n'
 
-        def __recalculateFieldLengths(self, symbols):
+                sfilecontents += "\t\t ]" + '\n'
+
+            with open(filename,'w') as f:
+                    f.write(sfilecontents)
+                    f.close()
+
+        def __recalculateFieldLengths(self):
             """
             Workaround for inconsistent max field length in field.domain.size
             
@@ -142,15 +165,14 @@ class ScapyExporter(object):
             so lets set the size max values anew from the real value max lengths
             (this has "some" performance impact!)
             
-            Output gets written to self.reFieldLengths[field]
-            
-            :param symbols: The symbol(s) to calculate the length of fields for
+            Output gets written to self.__reFieldLengths[field]
+
             :return: None
             """
             try:
-                symIter = iter(symbols)
+                symIter = iter(self._symbols)
             except TypeError:
-                symIter = [ symbols ]
+                symIter = [ self._symbols ]
 
             self._logger.debug("Recalculate maximum field lengths.")
             for eachSymbol in symIter:
@@ -159,58 +181,97 @@ class ScapyExporter(object):
                     self.__reFieldLengths[field] = value
 
 
-        # To find the size of the Merged Field
-        def aggDomain(self, domain,remaining_domain, size0, size1):
-                """ Parameters have the following meanings
-                        domain          --> field.domain
-                        remaining_domain    --> specially used in Nested children in Aggregate domain
-                        size0           --> minimum size of the field, initially set to 1000
-                        size1           --> maximum size of the field, initially set to 0
-                    Function returns the size of the merged field, considering all possible combinations. Possible combinations in aggregate field can be
-                        i)   Field contains only two children(children0 and children1), no grand-children present
-                        ii)  Field contains Grand-children but only through Children0 or Children1, not both 
-                        iii) Field contains grand-children from both children (children0 and children1)     
+        def _aggDomain(self, domain):
+            """
+            To find the size of the Merged Field.
+
+            Parameters have the following meanings
+            :param domain: value of field.domain
+            :return The size of the merged field including the size of all of its children
+
+            >>> m1 = RawMessage("someexamplemessage")
+            >>> fields = [ \
+                    Field("some", name="f0"), \
+                    Field( Agg([ Agg ([ Raw("ex"), Raw("ample") ]), Raw("message") ]), name="f1") \
+                ]
+            >>> symbol = Symbol(fields, messages=[m1])
+            >>> se = ScapyExporter(symbol)
+            >>> se.exportToScapy("scapy_test_agg.py")
+            >>> se._aggDomain(fields[1].domain)
+            (0, 112)
+
+            >>> ofields = [ \
+                    Field( Agg([ Raw("some"), Agg ([ Raw("ex"), Raw("ample") ]),  ]), name="f0"), \
+                    Field("message", name="f1"), \
+                ]
+            >>> se._aggDomain(ofields[0].domain)
+            (0, 88)
+
+
+            """
+
+            if not isinstance(domain, Agg):
+                return domain.dataType.size
+
+            lsize = self._aggDomain(domain.children[0])
+            rsize = self._aggDomain(domain.children[1])
+
+            return ( lsize[0] + rsize[0], lsize[1] + rsize[1])
+
+        @staticmethod
+        def _integer_unitSize_8(field):
+            """
+            :param field: The field
+            :type field Field
+            :return: Scapy field definition for Integer unitSize_8 signed and unsigned type
+            :returns str
+
+            >>> fields = [ \
+                   Field( Integer(180, unitSize=AbstractType.UNITSIZE_8, sign=AbstractType.SIGN_UNSIGNED), name="int8_unsigned"), \
+                   Field( Integer(-3, unitSize=AbstractType.UNITSIZE_8, sign=AbstractType.SIGN_SIGNED), name="int8_signed") \
+                ]
+            >>> ScapyExporter._integer_unitSize_8(fields[0])
+            '\\t\\t\\t ByteField("int8_unsigned",-76),\\t#size:(16, 16)'
+            >>> ScapyExporter._integer_unitSize_8(fields[1])
+            '\\t\\t\\t BitField("int8_signed",-3,8),\\t#size:(8, 8)'
+
+            """
+            if field.domain.dataType.sign == 'unsigned':
+                return "\t\t\t ByteField(" + "\"" + field.name + "\"," \
+                        + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer)
+                               if (field.domain.currentValue) else None)\
+                       + "),"+ "\t#size:" +str(field.domain.dataType.size)
+            else:
+                return "\t\t\t BitField(" + "\"" + field.name + "\"," \
+                       +  repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer,dst_unitSize=AbstractType.defaultUnitSize())
+                               if (field.domain.currentValue) else None) \
+                       + "," + repr(field.domain.dataType.size[1]) + ")," + "\t#size:" \
+                       + str(field.domain.dataType.size)
+
+        @staticmethod
+        def _integer_unitSize_16(field):
                 """
-                if str(domain.children[1]) == 'Agg' and str(domain.children[0]) != 'Agg':
-                        sizefield1 = list(domain.children[0].dataType.size)
-                        size0 = min(sizefield1[0],size0)
-                        size1 = size1 + sizefield1[1]
-                        return self.aggDomain(domain.children[1], remaining_domain,size0, size1)
-                elif str(domain.children[0]) == 'Agg' and str(domain.children[1]) != 'Agg':
-                        sizefield = list(domain.children[1].dataType.size)
-                        size0 = min(sizefield[0],size0)
-                        size1 = size1 + sizefield[1]
-                        return self.aggDomain(domain.children[0],remaining_domain,size0,size1)
-                elif str(domain.children[0]) == 'Agg' and str(domain.children[1]) == 'Agg':
-                        remaining_domain.append(domain.children[1])
-                        return self.aggDomain(domain.children[0],remaining_domain,size0,size1)
-                else:
-                        sizefield0 = list(domain.children[0].dataType.size)
-                        sizefield1 = list(domain.children[1].dataType.size)
-                        size0 = min(size0,sizefield0[0],sizefield1[0])
-                        size1 = size1 + sizefield0[1] + sizefield1[1]
-                if(remaining_domain):
-                        return self.aggDomain(remaining_domain.pop(),remaining_domain,size0,size1)  
-                else:
-                        return (size0,size1)
+                :param field: The field
+                :type field Field
+                :return: Scapy field definition for Integer unitSize_16 signed, unsigned and both endianness'
+                :returns str
 
+                >>> fields = [ \
+                       Field( Integer(1800, unitSize=AbstractType.UNITSIZE_16, sign=AbstractType.SIGN_UNSIGNED), name="int16_u_be"), \
+                       Field( Integer(-300, unitSize=AbstractType.UNITSIZE_16, sign=AbstractType.SIGN_SIGNED), name="int16_s_be"), \
+                       Field( Integer(1800, unitSize=AbstractType.UNITSIZE_16, sign=AbstractType.SIGN_UNSIGNED, endianness=AbstractType.ENDIAN_LITTLE), name="int16_u_le"), \
+                       Field( Integer(-300, unitSize=AbstractType.UNITSIZE_16, sign=AbstractType.SIGN_SIGNED, endianness=AbstractType.ENDIAN_LITTLE), name="int16_s_le") \
+                    ]
+                >>> ScapyExporter._integer_unitSize_16(fields[0])
+                '\\t\\t\\t ShortField("int16_u_be",2055),\\t#size:(16, 16)'
+                >>> ScapyExporter._integer_unitSize_16(fields[1])
+                '\\t\\t\\t SignedShortField("int16_s_be",-11266),\\t#size:(16, 16)'
+                >>> ScapyExporter._integer_unitSize_16(fields[2])
+                '\\t\\t\\t LEShortField("int16_u_le",1800),\\t#size:(16, 16)'
+                >>> ScapyExporter._integer_unitSize_16(fields[3])
+                '\\t\\t\\t SignedShortField("int16_s_le",-556),\\t#size:(16, 16)'
 
-        # Integer unitSize_8 signed and unsigned type
-        def integer_unitSize_8(self,field):
-                if field.domain.dataType.sign == 'unsigned':
-                    return "\t\t\t ByteField(" + "\"" + field.name + "\"," \
-                            + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer)
-                                   if (field.domain.currentValue) else None)\
-                           + "),"+ "\t#size:" +str(field.domain.dataType.size)
-                else:
-                    return "\t\t\t BitField(" + "\"" + field.name + "\"," \
-                           +  repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer,dst_unitSize=AbstractType.defaultUnitSize())
-                                   if (field.domain.currentValue) else None) \
-                           + "," + repr(field.domain.dataType.size[1]) + ")," + "\t#size:" \
-                           + str(field.domain.dataType.size)
- 
-        # Integer unitSize_16 signed unsigned and endianness
-        def integer_unitSize_16(self,field):
+                """
                 if field.domain.dataType.sign == 'signed':
                     return "\t\t\t SignedShortField(" + "\"" + field.name + "\"," \
                            + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer)
@@ -279,12 +340,12 @@ class ScapyExporter(object):
         # Integer dataType
         def dataType_integer(self, field):
                 switcher = {
-                        '8'   : self.integer_unitSize_8,
-                        '16'  : self.integer_unitSize_16,                
+                        '8'   : self._integer_unitSize_8,
+                        '16'  : self._integer_unitSize_16,
                         '32'  : self.integer_unitSize_32,
                         '64'  : self.integer_unitSize_64
                 }
-                return switcher.get(field.domain.dataType.unitSize, self.integer_unitSize_8)(field)
+                return switcher.get(field.domain.dataType.unitSize, self._integer_unitSize_8)(field)
 
         # TimeStamp dataType
         def dataType_timestamp(self, field):
