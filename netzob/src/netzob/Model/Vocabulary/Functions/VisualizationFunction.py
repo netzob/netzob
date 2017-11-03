@@ -40,7 +40,8 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -62,3 +63,48 @@ class VisualizationFunction(object):
                        ") doesn't define 'getTags' !")
         raise NotImplementedError("The function class (" + self.getType() +
                                   ") doesn't define 'getTags' !")
+
+    def XMLProperties(currentFunction, xmlVisuFunction, symbol_namespace, common_namespace):
+        # Save the Properties
+        if currentFunction.TYPE is not None:
+            xmlVisuFunction.set("TYPE", str(currentFunction.TYPE))
+        if currentFunction.start is not None:
+            xmlVisuFunction.set("start", str(currentFunction.start))
+        if currentFunction.end is not None:
+            xmlVisuFunction.set("end", str(currentFunction.end))
+        if currentFunction.id is not None:
+            xmlVisuFunction.set("id", str(currentFunction.id.hex))
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlVisuFunction = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}VisualizationFunction")
+
+        VisualizationFunction.XMLProperties(self, xmlVisuFunction, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        if xmlroot.get('TYPE') is not None:
+            attributes['TYPE'] = str(xmlroot.get('TYPE'))
+        if xmlroot.get('start') is not None:
+            attributes['start'] = int(xmlroot.get('start'))
+        if xmlroot.get('end') is not None:
+            attributes['end'] = int(xmlroot.get('end'))
+        if xmlroot.get('id') is not None:
+            attributes['id'] = uuid.UUID(hex=str(xmlroot.get('id')))
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = VisualizationFunction.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        VisuFunc = None
+
+        if 'start' in a.keys() and 'end' in a.keys():
+            VisuFunc = VisualizationFunction(start=a['start'], end=a['end'])
+            if 'id' in a.keys():
+                VisuFunc.id = a['id']
+            # This is not possible and necessary
+            # if 'TYPE' in a.keys():
+            #     VisuFunc.TYPE = a['TYPE']
+        return VisuFunc

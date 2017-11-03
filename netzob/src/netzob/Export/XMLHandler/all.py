@@ -29,6 +29,4 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-from netzob.Export.XMLHandler.all import *
-from netzob.Export.WiresharkDissector.all import *
-
+from netzob.Export.XMLHandler.XMLHandler import *

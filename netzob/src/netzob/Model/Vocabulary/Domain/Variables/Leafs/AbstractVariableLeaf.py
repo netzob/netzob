@@ -39,7 +39,8 @@ import abc
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
@@ -147,3 +148,30 @@ class AbstractVariableLeaf(AbstractVariable):
         tab.append("|--   ")
         tab.append("{0}".format(self))
         return ''.join(tab)
+
+    def XMLProperties(currentNode, xmlAbsVarLeaf, symbol_namespace, common_namespace):
+        AbstractVariable.XMLProperties(currentNode, xmlAbsVarLeaf, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlAbsVarLeaf = etree.SubElement(xmlroot, "{" + symbol_namespace + "}abstractVariableLeaf")
+
+        AbstractVariableLeaf.XMLProperties(self, xmlAbsVarLeaf, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        AbstractVariable.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = AbstractVariableLeaf.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        absVarLeaf = None
+
+        if 'varType' in a.keys() and 'id' in a.keys():
+            absVarLeaf = AbstractVariableLeaf(varType=a['varType'], name=a['name'], svas=a['svas'])
+            if 'id' in a.keys():
+                absVarLeaf.id = a['id']
+        return absVarLeaf

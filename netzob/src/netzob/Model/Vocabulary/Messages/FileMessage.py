@@ -32,7 +32,8 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -110,3 +111,61 @@ class FileMessage(AbstractMessage):
             raise ValueError("File_number_message must be >= 0")
         
         self.__file_message_number = _file_message_number
+
+    def XMLProperties(currentMessage, xmlFileMsg, symbol_namespace, common_namespace):
+        if currentMessage.file_path is not None:
+            xmlFileMsg.set("file_path", str(currentMessage.file_path))
+        if currentMessage.file_message_number is not None:
+            xmlFileMsg.set("file_message_number", str(currentMessage.file_message_number))
+
+        # Save the Properties inherited from  AbstractMessage
+        AbstractMessage.XMLProperties(currentMessage, xmlFileMsg, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlFileMsg = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}FileMessage")
+
+        FileMessage.XMLProperties(self, xmlFileMsg, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+        if xmlroot.get('file_path') is not None:
+            attributes['file_path'] = str(xmlroot.get('file_path'))
+        else:
+            attributes['file_path'] = None
+        if xmlroot.get('file_message_number') is not None:
+            attributes['file_message_number'] = int(xmlroot.get('file_message_number', 0))
+
+        AbstractMessage.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+        a = FileMessage.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        fileMessage = None
+        if 'data' in a.keys():
+            fileMessage = FileMessage(data=a['data'], file_path=a['file_path'], file_message_number=a['file_message_number'])
+
+            if 'date' in a.keys():
+                fileMessage.date = a['date']
+            if 'source' in a.keys():
+                fileMessage.source = a['source']
+            if 'destination' in a.keys():
+                fileMessage.destination = a['destination']
+            if 'messageType' in a.keys():
+                fileMessage.messageType = a['messageType']
+            if 'id' in a.keys():
+                fileMessage.id = a['id']
+            if 'metadata' in a.keys():
+                fileMessage.metadata = a['metadata']
+            if 'semanticTags' in a.keys():
+                fileMessage.description = a['semanticTags']
+            if 'visualizationFunctions' in a.keys():
+                fileMessage.visualizationFunctions = a['visualizationFunctions']
+            if 'session' in a.keys():
+                from netzob.Export.XMLHandler.XMLHandler import XMLHandler
+                unresolved = {a['session']: fileMessage}
+                XMLHandler.add_to_unresolved_dict('session', unresolved)
+        return fileMessage
+

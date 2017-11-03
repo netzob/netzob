@@ -33,7 +33,8 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -117,3 +118,96 @@ class ApplicativeData(object):
         :rtype: str
         """
         return "Applicative Data: {0}={1})".format(self.name, self.value)
+
+    def XMLProperties(currentAppData, xmlSession, symbol_namespace, common_namespace):
+        # Save the properties
+
+        if currentAppData.id is not None:
+            xmlSession.set("id", str(currentAppData.id.hex))
+        if currentAppData.name is not None:
+            xmlSession.set("name", str(currentAppData.name))
+
+        # Save the value
+        if currentAppData.value is not None:
+            xmlValue= etree.SubElement(xmlSession, "{" + symbol_namespace + "}value")
+            currentAppData.value.saveToXML(xmlValue, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlSession = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}applicativeData")
+        ApplicativeData.XMLProperties(self, xmlSession, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        if xmlroot.get('id') is not None:
+            attributes['id'] = uuid.UUID(hex=str(xmlroot.get('id')))
+        if xmlroot.get('name') is not None:
+            attributes['name'] = str(xmlroot.get('name'))
+        else:
+            attributes['name'] = None
+
+        value = None
+        if xmlroot.find("{" + symbol_namespace + "}value") is not None:
+            xmlVale = xmlroot.find("{" + symbol_namespace + "}value")
+            if xmlVale.find("{" + symbol_namespace + "}raw") is not None:
+                xmlRaw = xmlVale.find("{" + symbol_namespace + "}raw")
+                from netzob.Model.Vocabulary.Types.Raw import Raw
+                raw = Raw.loadFromXML(xmlRaw, symbol_namespace, common_namespace)
+                if raw is not None:
+                    value = raw
+            elif xmlVale.find("{" + symbol_namespace + "}ascii") is not None:
+                xmlASCII = xmlVale.find("{" + symbol_namespace + "}ascii")
+                from netzob.Model.Vocabulary.Types.ASCII import ASCII
+                ascii = ASCII.loadFromXML(xmlASCII, symbol_namespace, common_namespace)
+                if ascii is not None:
+                    value = ascii
+            elif xmlVale.find("{" + symbol_namespace + "}bitarray") is not None:
+                xmlBitarray = xmlVale.find("{" + symbol_namespace + "}bitarray")
+                from netzob.Model.Vocabulary.Types.BitArray import BitArray
+                bitarray = BitArray.loadFromXML(xmlBitarray, symbol_namespace, common_namespace)
+                if bitarray is not None:
+                    value = bitarray
+            elif xmlVale.find("{" + symbol_namespace + "}hexaString") is not None:
+                xmlHexaString = xmlVale.find("{" + symbol_namespace + "}hexaString")
+                from netzob.Model.Vocabulary.Types.HexaString import HexaString
+                hexastring = HexaString.loadFromXML(xmlHexaString, symbol_namespace, common_namespace)
+                if hexastring is not None:
+                    value = hexastring
+            elif xmlVale.find("{" + symbol_namespace + "}integer") is not None:
+                xmlInteger = xmlVale.find("{" + symbol_namespace + "}integer")
+                from netzob.Model.Vocabulary.Types.Integer import Integer
+                integer = Integer.loadFromXML(xmlInteger, symbol_namespace, common_namespace)
+                if integer is not None:
+                    value = integer
+            elif xmlVale.find("{" + symbol_namespace + "}ipv4") is not None:
+                xmlIPv4 = xmlVale.find("{" + symbol_namespace + "}ipv4")
+                from netzob.Model.Vocabulary.Types.IPv4 import IPv4
+                ipv4 = IPv4.loadFromXML(xmlIPv4, symbol_namespace, common_namespace)
+                if ipv4 is not None:
+                    value = ipv4
+            elif xmlVale.find("{" + symbol_namespace + "}Timestamp") is not None:
+                xmlTimestamp = xmlVale.find("{" + symbol_namespace + "}Timestamp")
+                from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
+                timestamp = Timestamp.loadFromXML(xmlTimestamp, symbol_namespace, common_namespace)
+                if timestamp is not None:
+                    value = timestamp
+            elif xmlVale.find("{" + symbol_namespace + "}abstractType") is not None:
+                xmlAbstractType = xmlVale.find("{" + symbol_namespace + "}abstractType")
+                from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+                abstractType = AbstractType.loadFromXML(xmlAbstractType, symbol_namespace, common_namespace)
+                if abstractType is not None:
+                    value = abstractType
+        attributes['value'] = value
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = ApplicativeData.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        appData = None
+
+        if 'id' in a.keys():
+            appData = ApplicativeData(_id=a['id'], value=a['value'], name=a['name'])
+        return appData

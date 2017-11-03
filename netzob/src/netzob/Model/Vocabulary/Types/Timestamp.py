@@ -40,7 +40,8 @@ from datetime import datetime, timedelta
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
 from bitarray import bitarray
-
+from lxml import etree
+from lxml.etree import ElementTree
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
@@ -306,3 +307,52 @@ class Timestamp(AbstractType):
         if epoch is None:
             raise Exception("Epoch cannot be None")
         self.__epoch = epoch
+
+    def XMLProperties(currentType, xmlTimestamp, symbol_namespace, common_namespace):
+        AbstractType.XMLProperties(currentType, xmlTimestamp, symbol_namespace, common_namespace)
+
+        # Save Properties
+        if currentType.epoch is not None:
+            xmlDate= etree.SubElement(xmlTimestamp, "{" + symbol_namespace + "}epoch")
+            xmlDate.set("year", str(currentType.epoch.year))
+            xmlDate.set("month", str(currentType.epoch.month))
+            xmlDate.set("day", str(currentType.epoch.day))
+        if currentType.unity is not None:
+            xmlTimestamp.set("unity", str(currentType.unity))
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlTimestamp = etree.SubElement(xmlroot, "{" + symbol_namespace + "}Timestamp")
+
+        Timestamp.XMLProperties(self, xmlTimestamp, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        AbstractType.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        if xmlroot.get('unity') is not None:
+            attributes['unity'] = int(xmlroot.get('unity'))
+        else:
+            attributes['unity'] = 1
+        if xmlroot.find('epoch') is not None:
+            xmlEpoch = xmlroot.find('epoch')
+            y = int(xmlEpoch.get('year'))
+            m = int(xmlEpoch.get('month'))
+            d = int(xmlEpoch.get('day'))
+            attributes['epoch'] = datetime(y,m,d)
+        else:
+            attributes['epoch'] = datetime(1970, 1, 1)
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = Timestamp.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        timestamp = Timestamp(value=a['value'], unitSize=a['unitSize'], endianness=a['endianness'],
+                    sign=a['sign'], epoch=a['epoch'], unity=a['unity'])
+
+        if 'id' in a.keys():
+            timestamp.id = a['id']
+        return timestamp

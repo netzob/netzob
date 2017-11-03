@@ -40,7 +40,8 @@
 # | Related third party imports                                               |
 # +---------------------------------------------------------------------------+
 from bitarray import bitarray
-
+from lxml import etree
+from lxml.etree import ElementTree
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
@@ -212,3 +213,86 @@ class Symbol(AbstractField):
 
     def __repr__(self):
         return self.name
+
+    def XMLProperties(currentSymbol, xmlSymbol, symbol_namespace, common_namespace):
+        # Save the messages
+        if currentSymbol.messages is not None and len(currentSymbol.messages) > 0:
+            xmlMessages = etree.SubElement(xmlSymbol, "{" + symbol_namespace + "}messages")
+            for message in currentSymbol.messages:
+                message.saveToXML(xmlMessages, symbol_namespace, common_namespace)
+
+        # Save the Properties inherited from  Abstract Field
+        AbstractField.XMLProperties(currentSymbol, xmlSymbol, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlSymbol = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}symbol")
+
+        Symbol.XMLProperties(self, xmlSymbol, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        messages = []
+        if xmlroot.find("{" + symbol_namespace + "}messages") is not None:
+            xmlMessages = xmlroot.find("{" + symbol_namespace + "}messages")
+            for xmlRaw in xmlMessages.findall("{" + symbol_namespace + "}RawMessage"):
+                from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
+                raw = RawMessage.loadFromXML(xmlRaw, symbol_namespace, common_namespace)
+                if raw is not None:
+                    messages.append(raw)
+            for xmlFile in xmlMessages.findall("{" + symbol_namespace + "}FileMessage"):
+                from netzob.Model.Vocabulary.Messages.FileMessage import FileMessage
+                file = FileMessage.loadFromXML(xmlFile, symbol_namespace, common_namespace)
+                if file is not None:
+                    messages.append(file)
+            for xmlL2 in xmlMessages.findall("{" + symbol_namespace + "}L2NetworkMessage"):
+                from netzob.Model.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
+                l2Msg = L2NetworkMessage.loadFromXML(xmlL2, symbol_namespace, common_namespace)
+                if l2Msg is not None:
+                    messages.append(l2Msg)
+            for xmlL3 in xmlMessages.findall("{" + symbol_namespace + "}L3NetworkMessage"):
+                from netzob.Model.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage
+                l3Msg = L3NetworkMessage.loadFromXML(xmlL3, symbol_namespace, common_namespace)
+                if l3Msg is not None:
+                    messages.append(l3Msg)
+            for xmlL4 in xmlMessages.findall("{" + symbol_namespace + "}L4NetworkMessage"):
+                from netzob.Model.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
+                l4Msg = L4NetworkMessage.loadFromXML(xmlL4, symbol_namespace, common_namespace)
+                if l4Msg is not None:
+                    messages.append(l4Msg)
+            for xmlAbs in xmlMessages.findall("{" + symbol_namespace + "}AbstractMessage"):
+                from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
+                absMsg = AbstractMessage.loadFromXML(xmlAbs, symbol_namespace, common_namespace)
+                if absMsg is not None:
+                    messages.append(absMsg)
+        attributes['messages'] = messages
+
+        AbstractField.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = Symbol.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        symbol = None
+
+        if 'name' in a.keys():
+            symbol = Symbol(fields=a['fields'], messages=a['messages'], name=a['name'])
+            if 'id' in a.keys():
+                symbol.id = a['id']
+            if 'description' in a.keys():
+                symbol.description = a['description']
+            if 'encodingFunctions' in a.keys():
+                symbol.encodingFunctions = a['encodingFunctions']
+            if 'visualizationFunctions' in a.keys():
+                symbol.visualizationFunctions = a['visualizationFunctions']
+            # if 'transformationFunctions' in a.keys():
+            #     symbol.transformationFunctions = a['transformationFunctions']
+
+        return symbol
+
+
+
+

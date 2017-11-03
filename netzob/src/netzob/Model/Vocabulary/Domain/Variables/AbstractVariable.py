@@ -40,6 +40,8 @@ import uuid
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
+from lxml import etree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -298,3 +300,47 @@ class AbstractVariable(object):
     #     self.__fathers = []
     #     for father in fathers:
     #         self.__fathers.append(father)
+
+    def XMLProperties(currentNode, xmlAbsVar, symbol_namespace, common_namespace):
+        if currentNode.id is not None:
+            xmlAbsVar.set("id", str(currentNode.id.hex))
+        if currentNode.varType is not None:
+            xmlAbsVar.set("varType", str(currentNode.varType))
+        if currentNode.name is not None:
+            xmlAbsVar.set("name", str(currentNode.name))
+        if currentNode.svas is not None:
+            xmlAbsVar.set("svas", str(currentNode.svas))
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlAbsVar = etree.SubElement(xmlroot, "{" + symbol_namespace + "}abstractVariable")
+
+        AbstractVariable.XMLProperties(self, xmlAbsVar, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        if xmlroot.get('varType') is not None:
+            attributes['varType'] = str(xmlroot.get('varType'))
+        if xmlroot.get('id') is not None:
+            s = str(xmlroot.get('id'))
+            attributes['id'] = uuid.UUID(hex=str(xmlroot.get('id')))
+        if xmlroot.get('name') is not None:
+            attributes['name'] = str(xmlroot.get('name'))
+        else:
+            attributes['name'] = None
+        if xmlroot.get('svas') is not None:
+            attributes['svas'] = str(xmlroot.get('svas'))
+        else:
+            attributes['svas'] = None
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = AbstractVariable.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        absVar = None
+
+        if 'varType' in a.keys() and 'id' in a.keys():
+            absVar = AbstractVariable(varType=a['varType'], varId=a['id'], name=a['name'], svas=a['svas'])
+        return absVar

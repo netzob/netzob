@@ -44,7 +44,8 @@ import collections
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -672,3 +673,73 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                 "Specified Sign is not supported, please refer to the list in AbstractType.supportedSign()."
             )
         self.__sign = sign
+
+    def XMLProperties(currentType, xmlAbsType, symbol_namespace, common_namespace):
+        if currentType.value is not None:
+            xmlAbsType.set("value", str(currentType.value)[10:-2])
+        if currentType.size is not None:
+            xmlAbsType.set("size_1", str(currentType.size[0]))
+        if currentType.size is not None and len(currentType.size) == 2:
+            xmlAbsType.set("size_2", str(currentType.size[1]))
+        if currentType.id is not None:
+            xmlAbsType.set("id", str(currentType.id.hex))
+        if currentType.typeName is not None:
+            xmlAbsType.set("typeName", str(currentType.typeName))
+        if currentType.unitSize is not None:
+            xmlAbsType.set("unitSize", str(currentType.unitSize))
+        if currentType.endianness is not None:
+            xmlAbsType.set("endianness", str(currentType.endianness))
+        if currentType.sign is not None:
+            xmlAbsType.set("sign", str(currentType.sign))
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlAbsType = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}abstractType")
+
+        AbstractType.XMLProperties(self, xmlAbsType, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        if xmlroot.get('typeName') is not None:
+            attributes['typeName'] = str(xmlroot.get('typeName'))
+        if xmlroot.get('value') is not None:
+            attributes['value'] = bitarray(str(xmlroot.get('value')))
+        else:
+            attributes['value'] = None
+        if xmlroot.get('size_1') is not None:
+            size = int(xmlroot.get('size_1'))
+            if xmlroot.get('size_2') is not None:
+                size = (size, int(xmlroot.get('size_2')))
+            attributes['size'] = size
+        else:
+            attributes['size'] = (None, None)
+        if xmlroot.get('unitSize') is not None:
+            attributes['unitSize'] = str(xmlroot.get('unitSize'))
+        else:
+            attributes['unitSize'] = None
+        if xmlroot.get('endianness') is not None:
+            attributes['endianness'] = str(xmlroot.get('endianness'))
+        else:
+            attributes['endianness'] = None
+        if xmlroot.get('sign') is not None:
+            attributes['sign'] = str(xmlroot.get('sign'))
+        else:
+            attributes['sign'] = None
+        if xmlroot.get('id') is not None:
+            attributes['id'] = uuid.UUID(hex=str(xmlroot.get('id')))
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = AbstractType.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        absType = None
+
+        if 'typeName' in a.keys() and 'value' in a.keys():
+            absType = AbstractType(typeName=a['typeName'], value=a['value'], size=a['size'], unitSize=a['unitSize'],
+                                   endianness=a['endianness'], sign=a['sign'])
+
+            if 'id' in a.keys():
+                absType.id = a['id']
+        return absType

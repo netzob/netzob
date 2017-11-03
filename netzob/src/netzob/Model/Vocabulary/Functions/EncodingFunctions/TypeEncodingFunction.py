@@ -38,7 +38,8 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -199,3 +200,52 @@ class TypeEncodingFunction(EncodingFunction):
                 "This sign is not supported, please refer to the list of supported type in AbstractType.supportedSign()"
             )
         self.__sign = sign
+
+    def XMLProperties(currentFunction, xmlTypeEncodingFunction, symbol_namespace, common_namespace):
+        # Save the Properties
+        if currentFunction.type is not None:
+            type_nr = AbstractType.supportedTypes().index(currentFunction.type)
+            xmlTypeEncodingFunction.set("type", str(type_nr))
+        if currentFunction.unitSize is not None:
+            xmlTypeEncodingFunction.set("unitSize", str(currentFunction.unitSize))
+        if currentFunction.endianness is not None:
+            xmlTypeEncodingFunction.set("endianness", str(currentFunction.endianness))
+        if currentFunction.sign is not None:
+            xmlTypeEncodingFunction.set("sign", str(currentFunction.sign))
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlTypeEncodingFunction = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}TypeEncodingFunction")
+
+        TypeEncodingFunction.XMLProperties(self, xmlTypeEncodingFunction, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        if xmlroot.get('type') is not None:
+            attributes['type'] = AbstractType.supportedTypes()[int(xmlroot.get('type'))]
+        if xmlroot.get('unitSize') is not None:
+            attributes['unitSize'] = str(xmlroot.get('unitSize'))
+        else:
+            attributes['unitSize'] = None
+        if xmlroot.get('endianness') is not None:
+            attributes['endianness'] = str(xmlroot.get('endianness'))
+        else:
+            attributes['endianness'] = None
+        if xmlroot.get('sign') is not None:
+            attributes['sign'] = str(xmlroot.get('sign'))
+        else:
+            attributes['sign'] = None
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = TypeEncodingFunction.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        typeEnc = None
+
+        if 'type' in a.keys():
+            typeEnc = TypeEncodingFunction(_type=a['type'], unitSize=a['unitSize'], endianness=a['endianness'],
+                                           sign=a['sign'])
+        return typeEnc
+

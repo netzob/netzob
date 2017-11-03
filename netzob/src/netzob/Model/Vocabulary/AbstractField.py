@@ -40,10 +40,12 @@ import abc
 import logging
 from collections import OrderedDict
 
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -916,3 +918,121 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
     def restoreFromMemento(self, memento):
         pass
+
+    def XMLProperties(currentAbsField, xmlAbsField, symbol_namespace, common_namespace):
+        if currentAbsField.id is not None:
+            xmlAbsField.set("id", str(currentAbsField.id.hex))
+        if currentAbsField.name is not None:
+            xmlAbsField.set("name", str(currentAbsField.name))
+        if currentAbsField.description is not None:
+            xmlAbsField.set("description", str(currentAbsField.description))
+
+        # Save the field
+        if currentAbsField.fields is not None and len(currentAbsField.fields):
+            xmlFields = etree.SubElement(xmlAbsField, "{" + symbol_namespace + "}fields")
+            for field in currentAbsField.fields:
+                field.saveToXML(xmlFields, symbol_namespace, common_namespace)
+
+        # Save the EncodingFunctions
+        if currentAbsField.encodingFunctions is not None and len(currentAbsField.encodingFunctions) > 0:
+            xmlEncFunctions = etree.SubElement(xmlAbsField, "{" + symbol_namespace + "}encodingFunctions")
+            for encFunc in currentAbsField.encodingFunctions.values():
+                encFunc.saveToXML(xmlEncFunctions, symbol_namespace, common_namespace)
+
+        # Save the VisualisationFunctions
+        if currentAbsField.visualizationFunctions is not None and len(currentAbsField.visualizationFunctions) > 0:
+            xmlVisuFunctions = etree.SubElement(xmlAbsField, "{" + symbol_namespace + "}visualizationFunctions")
+            for visuFunc in currentAbsField.visualizationFunctions:
+                visuFunc.saveToXML(xmlVisuFunctions, symbol_namespace, common_namespace)
+
+        # Save the TransformationFunctions
+        # TODO: No way to persist this kind of Function. Find a way
+        # if currentAbsField.transformationFunctions is not None and len(currentAbsField.transformationFunctions) > 0:
+        #     xmlTransFunctions = etree.SubElement(xmlAbsField, "{" + symbol_namespace + "}transformationFunctions")
+        #     for transFunction in currentAbsField.transformationFunctions:
+        #         transFunction.saveToXML(xmlTransFunctions, symbol_namespace, common_namespace)
+
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlAbsField = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}abstractField")
+
+        AbstractField.XMLProperties(self, xmlAbsField, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        if xmlroot.get('id') is not None:
+            attributes['id'] = uuid.UUID(hex=str(xmlroot.get('id')))
+        if xmlroot.get('name') is not None:
+            attributes['name'] = str(xmlroot.get('name'))
+        else:
+            attributes['name'] = None
+        if xmlroot.get('description') is not None:
+            attributes['description'] = str(xmlroot.get('description'))
+
+        fields = []
+        from netzob.Model.Vocabulary.Field import Field
+        if xmlroot.find("{" + symbol_namespace + "}fields") is not None:
+            xmlFields = xmlroot.find("{" + symbol_namespace + "}fields")
+            for xmlField in xmlFields.findall("{" + symbol_namespace + "}field"):
+                field = Field.loadFromXML(xmlField, symbol_namespace, common_namespace)
+                if field is not None:
+                    fields.append(field)
+        attributes['fields'] = fields
+
+        encodingFunctions = []
+        if xmlroot.find("{" + symbol_namespace + "}encodingFunctions") is not None:
+            xmlEncodingFunctions = xmlroot.find("{" + symbol_namespace + "}encodingFunctions")
+            for xmlZLib in xmlEncodingFunctions.findall("{" + symbol_namespace + "}ZLibEncodingFunction"):
+                from netzob.Model.Vocabulary.Functions.EncodingFunctions.ZLibEncodingFunction import ZLibEncodingFunction
+                zlibEnc = ZLibEncodingFunction.loadFromXML(xmlZLib, symbol_namespace, common_namespace)
+                if zlibEnc is not None:
+                    encodingFunctions.append(zlibEnc)
+            for xmlTypeEnc in xmlEncodingFunctions.findall("{" + symbol_namespace + "}TypeEncodingFunction"):
+                from netzob.Model.Vocabulary.Functions.EncodingFunctions.TypeEncodingFunction import TypeEncodingFunction
+                typeEnc = TypeEncodingFunction.loadFromXML(xmlTypeEnc, symbol_namespace, common_namespace)
+                if typeEnc is not None:
+                    encodingFunctions.append(typeEnc)
+            for xmlBase64Enc in xmlEncodingFunctions.findall("{" + symbol_namespace + "}Base64EncodingFunction"):
+                from netzob.Model.Vocabulary.Functions.EncodingFunctions.Base64EncodingFunction import Base64EncodingFunction
+                Base64Enc = Base64EncodingFunction.loadFromXML(xmlBase64Enc, symbol_namespace, common_namespace)
+                if Base64Enc is not None:
+                    encodingFunctions.append(Base64Enc)
+        attributes['encodingFunctions'] = encodingFunctions
+
+        visualizationFunctions = []
+        if xmlroot.find("{" + symbol_namespace + "}visualizationFunctions") is not None:
+            xmlEncodingFunctions = xmlroot.find("{" + symbol_namespace + "}encodingFunctions")
+            for xmlVisu in xmlEncodingFunctions.findall("{" + symbol_namespace + "}HighlightFunction"):
+                from netzob.Model.Vocabulary.Functions.VisualizationFunctions.HighlightFunction import HighlightFunction
+                visoFunc = HighlightFunction.loadFromXML(xmlVisu, symbol_namespace, common_namespace)
+                if visoFunc is not None:
+                    visualizationFunctions.append(visoFunc)
+        attributes['visualizationFunctions'] = visualizationFunctions
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = AbstractField.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        absField = None
+
+        if 'name' in a.keys():
+            absField = AbstractField(name=a['name'])
+            if 'id' in a.keys():
+                absField.id = a['id']
+            if 'description' in a.keys():
+                absField.description = a['description']
+            if 'fields' in a.keys():
+                absField.fields = a['fields']
+            if 'encodingFunctions' in a.keys():
+                absField.encodingFunctions = a['encodingFunctions']
+            if 'visualizationFunctions' in a.keys():
+                absField.visualizationFunctions = a['visualizationFunctions']
+            # if 'transformationFunctions' in a.keys():
+            #     absField.description = a['transformationFunctions']
+
+        return absField
+

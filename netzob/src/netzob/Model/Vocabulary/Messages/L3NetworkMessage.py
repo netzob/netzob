@@ -29,7 +29,8 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import binascii
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -125,3 +126,74 @@ class L3NetworkMessage(L2NetworkMessage):
         :type: str
         """
         return self.__l3DestinationAddress
+
+    def XMLProperties(currentMessage, xmlL3Message, symbol_namespace, common_namespace):
+        if currentMessage.l3Protocol is not None:
+            xmlL3Message.set("l3Protocol", str(currentMessage.l3Protocol))
+        if currentMessage.l3SourceAddress is not None:
+            xmlL3Message.set("l3SourceAddress", str(currentMessage.l3SourceAddress))
+        if currentMessage.l3DestinationAddress is not None:
+            xmlL3Message.set("l3DestinationAddress", str(currentMessage.l3DestinationAddress))
+
+        # Save the Properties inherited from  L2NetworkMessage
+        L2NetworkMessage.XMLProperties(currentMessage, xmlL3Message, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlL3Message = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}L3NetworkMessage")
+
+        L3NetworkMessage.XMLProperties(self, xmlL3Message, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+        if xmlroot.get('l3Protocol') is not None:
+            attributes['l3Protocol'] = str(xmlroot.get('l3Protocol'))
+        else:
+            attributes['l3Protocol'] = None
+        if xmlroot.get('l3SourceAddress') is not None:
+            attributes['l3SourceAddress'] = str(xmlroot.get('l3SourceAddress'))
+        else:
+            attributes['l3SourceAddress'] = None
+        if xmlroot.get('l3DestinationAddress') is not None:
+            attributes['l3DestinationAddress'] = str(xmlroot.get('l3DestinationAddress'))
+        else:
+            attributes['l3DestinationAddress'] = None
+
+        L2NetworkMessage.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+        a = L3NetworkMessage.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        l3msg = None
+        if 'data' in a.keys():
+            l3msg = L3NetworkMessage(data=a['data'], date=a['date'],
+                                     l2Protocol=a['l2Protocol'],
+                                     l2SourceAddress=a['l2SourceAddress'],
+                                     l2DestinationAddress=a['l2DestinationAddress'],
+                                     l3Protocol=a['l3Protocol'],
+                                     l3SourceAddress=a['l3SourceAddress'],
+                                     l3DestinationAddress=a['l3DestinationAddress'])
+
+            # This might be not correct
+            # if 'source' in a.keys():
+            #     l3msg.source = a['source']
+            # if 'destination' in a.keys():
+            #     l3msg.destination = a['destination']
+
+            if 'messageType' in a.keys():
+                l3msg.messageType = a['messageType']
+            if 'id' in a.keys():
+                l3msg.id = a['id']
+            if 'metadata' in a.keys():
+                l3msg.metadata = a['metadata']
+            if 'semanticTags' in a.keys():
+                l3msg.description = a['semanticTags']
+            if 'visualizationFunctions' in a.keys():
+                l3msg.visualizationFunctions = a['visualizationFunctions']
+            if 'session' in a.keys():
+                from netzob.Export.XMLHandler.XMLHandler import XMLHandler
+                unresolved = {a['session']: l3msg}
+                XMLHandler.add_to_unresolved_dict('session', unresolved)
+        return l3msg

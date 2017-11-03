@@ -39,7 +39,8 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -239,3 +240,135 @@ class Field(AbstractField):
         if isPseudoField is None:
             isPseudoField = False
         self.__isPseudoField = isPseudoField
+
+    def XMLProperties(currentField, xmlField, symbol_namespace, common_namespace):
+        # Save the Properties inherited from  Abstract Field
+        AbstractField.XMLProperties(currentField, xmlField, symbol_namespace, common_namespace)
+
+        if currentField.isPseudoField is not None:
+            xmlField.set("isPseudoField", str(currentField.isPseudoField))
+
+        # Save the Domain
+        if currentField is not None:
+            xmlDomain = etree.SubElement(xmlField, "{" + symbol_namespace + "}domain")
+            currentField.domain.saveToXML(xmlDomain, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlField = etree.SubElement(xmlroot, "{" + symbol_namespace + "}field")
+
+        Field.XMLProperties(self, xmlField, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+
+        attributes['isPseudoField'] = xmlroot.get('isPseudoField', 'False') == 'True'
+
+        domain = None
+        if xmlroot.find("{" + symbol_namespace + "}domain") is not None:
+            xmlDomain = xmlroot.find("{" + symbol_namespace + "}domain")
+            if xmlDomain.find("{" + symbol_namespace + "}data") is not None:
+                xmlData = xmlDomain.find("{" + symbol_namespace + "}data")
+                from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
+                data = Data.loadFromXML(xmlData, symbol_namespace, common_namespace)
+                if data is not None:
+                    domain = data
+            elif xmlDomain.find("{" + symbol_namespace + "}value") is not None:
+                xmlValue = xmlDomain.find("{" + symbol_namespace + "}value")
+                from netzob.Model.Vocabulary.Domain.Variables.Leafs.Value import Value
+                value = Value.loadFromXML(xmlValue, symbol_namespace, common_namespace)
+                if value is not None:
+                    domain = value
+            elif xmlDomain.find("{" + symbol_namespace + "}size") is not None:
+                xmlSize = xmlDomain.find("{" + symbol_namespace + "}size")
+                from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
+                size = Size.loadFromXML(xmlSize, symbol_namespace, common_namespace)
+                if size is not None:
+                    domain = size
+            elif xmlDomain.find("{" + symbol_namespace + "}checksum") is not None:
+                xmlChecksum = xmlDomain.find("{" + symbol_namespace + "}checksum")
+                from netzob.Model.Vocabulary.Domain.Variables.Leafs.InternetChecksum import InternetChecksum
+                checksum = InternetChecksum.loadFromXML(xmlChecksum, symbol_namespace, common_namespace)
+                if checksum is not None:
+                    domain = checksum
+            elif xmlDomain.find("{" + symbol_namespace + "}aggregation") is not None:
+                xmlAgg = xmlDomain.find("{" + symbol_namespace + "}aggregation")
+                from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+                agg = Agg.loadFromXML(xmlAgg, symbol_namespace, common_namespace)
+                if agg is not None:
+                    domain = agg
+            elif xmlDomain.find("{" + symbol_namespace + "}alternative") is not None:
+                xmlAlt= xmlDomain.find("{" + symbol_namespace + "}alternative")
+                from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
+                alt = Alt.loadFromXML(xmlAlt, symbol_namespace, common_namespace)
+                if alt is not None:
+                    domain = alt
+            elif xmlDomain.find("{" + symbol_namespace + "}repeat") is not None:
+                xmlRepeat = xmlDomain.find("{" + symbol_namespace + "}repeat")
+                from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+                repeat = Repeat.loadFromXML(xmlRepeat, symbol_namespace, common_namespace)
+                if repeat is not None:
+                    domain = repeat
+            elif xmlDomain.find("{" + symbol_namespace + "}abstractRelationVariableLeaf") is not None:
+                xmlabsRelVarLeaf = xmlDomain.find("{" + symbol_namespace + "}abstractRelationVariableLeaf")
+                from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
+                absRelVarLeaf = AbstractRelationVariableLeaf.loadFromXML(xmlabsRelVarLeaf, symbol_namespace, common_namespace)
+                if absRelVarLeaf is not None:
+                    domain = absRelVarLeaf
+            elif xmlDomain.find("{" + symbol_namespace + "}abstractVariableLeaf") is not None:
+                xmlabsVarLeaf = xmlDomain.find("{" + symbol_namespace + "}abstractVariableLeaf")
+                from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
+                absVarLeaf = AbstractVariableLeaf.loadFromXML(xmlabsVarLeaf, symbol_namespace, common_namespace)
+                if absVarLeaf is not None:
+                    domain = absVarLeaf
+            elif xmlDomain.find("{" + symbol_namespace + "}abstractVariableNode") is not None:
+                xmlabstractVariableNode = xmlDomain.find("{" + symbol_namespace + "}abstractVariableNode")
+                from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
+                abstractVariableNode = AbstractVariableNode.loadFromXML(xmlabstractVariableNode, symbol_namespace, common_namespace)
+                if abstractVariableNode is not None:
+                    domain = abstractVariableNode
+            elif xmlDomain.find("{" + symbol_namespace + "}abstractVariable") is not None:
+                xmlabstractVariable = xmlDomain.find("{" + symbol_namespace + "}abstractVariable")
+                from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+                abstractVariable = AbstractVariable.loadFromXML(xmlabstractVariable, symbol_namespace, common_namespace)
+                if abstractVariable is not None:
+                    domain = abstractVariable
+        attributes['domain'] = domain
+
+        AbstractField.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = Field.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        field = None
+
+        if 'domain' in a.keys() and 'name' in a.keys():
+            field = Field(domain=a['domain'], name=a['name'], isPseudoField=a['isPseudoField'])
+            if 'id' in a.keys():
+                field.id = a['id']
+            if 'description' in a.keys():
+                field.description = a['description']
+            if 'fields' in a.keys():
+                field.fields = a['fields']
+            if 'encodingFunctions' in a.keys():
+                field.encodingFunctions = a['encodingFunctions']
+            if 'visualizationFunctions' in a.keys():
+                field.visualizationFunctions = a['visualizationFunctions']
+            # if 'transformationFunctions' in a.keys():
+            #     field.transformationFunctions = a['transformationFunctions']
+
+        return field
+
+
+
+
+
+
+
+
+
+

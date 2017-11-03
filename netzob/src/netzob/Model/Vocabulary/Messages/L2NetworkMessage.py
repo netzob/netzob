@@ -30,13 +30,13 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import binascii
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
-
 
 class L2NetworkMessage(RawMessage):
     """Definition of a layer 2 network message.
@@ -109,3 +109,69 @@ class L2NetworkMessage(RawMessage):
     @typeCheck(str)
     def l2DestinationAddress(self, l2DestinationAddress):
         self.__l2DestinationAddress = l2DestinationAddress
+
+    def XMLProperties(currentMessage, xmlL2Message, symbol_namespace, common_namespace):
+        if currentMessage.l2Protocol is not None:
+            xmlL2Message.set("l2Protocol", str(currentMessage.l2Protocol))
+        if currentMessage.l2SourceAddress is not None:
+            xmlL2Message.set("l2SourceAddress", str(currentMessage.l2SourceAddress))
+        if currentMessage.l2DestinationAddress is not None:
+            xmlL2Message.set("l2DestinationAddress", str(currentMessage.l2DestinationAddress))
+
+        # Save the Properties inherited from  RawMessage
+        RawMessage.XMLProperties(currentMessage, xmlL2Message, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlL2Message = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}L2NetworkMessage")
+
+        L2NetworkMessage.XMLProperties(self, xmlL2Message, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+        if xmlroot.get('l2Protocol') is not None:
+            attributes['l2Protocol'] = str(xmlroot.get('l2Protocol'))
+        else:
+            attributes['l2Protocol'] = None
+
+        if xmlroot.get('l2SourceAddress') is not None:
+            attributes['l2SourceAddress'] = str(xmlroot.get('l2SourceAddress'))
+        else:
+            attributes['l2SourceAddress'] = None
+
+        if xmlroot.get('l2DestinationAddress') is not None:
+            attributes['l2DestinationAddress'] = str(xmlroot.get('l2DestinationAddress'))
+        else:
+            attributes['l2DestinationAddress'] = None
+
+        RawMessage.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+        a = L2NetworkMessage.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        l2msg = None
+        if 'data' in a.keys():
+            l2msg = L2NetworkMessage(data=a['data'], date=a['date'], l2Protocol=a['l2Protocol'],
+                                     l2SourceAddress=a['l2SourceAddress'], l2DestinationAddress=a['l2DestinationAddress'])
+
+            if 'source' in a.keys():
+                l2msg.source = a['source']
+            if 'destination' in a.keys():
+                l2msg.destination = a['destination']
+            if 'messageType' in a.keys():
+                l2msg.messageType = a['messageType']
+            if 'id' in a.keys():
+                l2msg.id = a['id']
+            if 'metadata' in a.keys():
+                l2msg.metadata = a['metadata']
+            if 'semanticTags' in a.keys():
+                l2msg.description = a['semanticTags']
+            if 'visualizationFunctions' in a.keys():
+                l2msg.visualizationFunctions = a['visualizationFunctions']
+            if 'session' in a.keys():
+                from netzob.Export.XMLHandler.XMLHandler import XMLHandler
+                unresolved = {a['session']: l2msg}
+                XMLHandler.add_to_unresolved_dict('session', unresolved)
+        return l2msg

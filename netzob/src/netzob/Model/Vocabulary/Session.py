@@ -34,7 +34,8 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -130,6 +131,7 @@ class Session(object):
     def messages(self, messages):
         if messages is None:
             messages = []
+            self.clearMessages()
 
         # First it checks the specified messages are all AbstractMessages
         for msg in messages:
@@ -138,7 +140,6 @@ class Session(object):
                     "Cannot add messages of type {0} in the session, only AbstractMessages are allowed.".
                     format(type(msg)))
 
-        self.clearMessages()
         for message in messages:
             self.__messages.add(message)
             message.session = self
@@ -327,3 +328,76 @@ class Session(object):
             (symbol, structured_message) = AbstractField.abstract(message.data, symbolList)
             abstractSession.append((message.source, message.destination, symbol))
         return abstractSession
+
+
+    def XMLProperties(currentSession, xmlSession, symbol_namespace, common_namespace):
+        # Save the properties
+        if currentSession.id is not None:
+            xmlSession.set("id", str(currentSession.id.hex))
+        if currentSession.name is not None:
+            xmlSession.set("name", str(currentSession.name))
+
+        if currentSession.messages is not None and len(currentSession.messages) > 0:
+            xmlMessages = etree.SubElement(xmlSession, "{" + symbol_namespace + "}messages")
+            for message in currentSession.messages.values():
+                if message is not None:
+                    xmlMessage = etree.SubElement(xmlMessages, "{" + symbol_namespace + "}message-ref")
+                    xmlMessage.set('id', str(message.id.hex))
+
+        if currentSession.applicativeData is not None and len(currentSession.applicativeData) > 0:
+            xmlappData = etree.SubElement(xmlSession, "{" + symbol_namespace + "}applicativeData-List")
+            for appData in currentSession.applicativeData:
+                appData.saveToXML(xmlappData, symbol_namespace, common_namespace)
+
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlSession = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}session")
+
+        Session.XMLProperties(self, xmlSession, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        if xmlroot.get('id') is not None:
+            attributes['id'] = uuid.UUID(hex=str(xmlroot.get('id')))
+        if xmlroot.get('name') is not None:
+            attributes['name'] = str(xmlroot.get('name'))
+        else:
+            attributes['name'] = None
+
+        messages = []
+        if xmlroot.find("{" + symbol_namespace + "}messages") is not None:
+            xmlMessages = xmlroot.find("{" + symbol_namespace + "}messages")
+            for xmlRef in xmlMessages.findall("{" + symbol_namespace + "}message-ref"):
+                ref = uuid.UUID(hex=str(xmlRef.get('id')))
+                if ref is not None:
+                    messages.append(ref)
+        attributes['messages'] = messages
+
+        applicativeData = []
+        if xmlroot.find("{" + symbol_namespace + "}applicativeData-List") is not None:
+            xmlapplicativeData = xmlroot.find("{" + symbol_namespace + "}applicativeData-List")
+            for xmlappData in xmlapplicativeData.findall("{" + symbol_namespace + "}applicativeData"):
+                appData = ApplicativeData.loadFromXML(xmlappData, symbol_namespace, common_namespace)
+                if appData is not None:
+                    applicativeData.append(appData)
+        attributes['applicativeData'] = applicativeData
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = Session.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        session = None
+
+        if 'id' in a.keys():
+            session = Session(_id=a['id'], messages=list(), name=a['name'], applicativeData=a['applicativeData'])
+        if 'messages' in a.keys():
+            from netzob.Export.XMLHandler.XMLHandler import XMLHandler
+            unresolved = dict()
+            for ref in a['messages']:
+                unresolved[ref] = session
+            XMLHandler.add_to_unresolved_dict('messages', unresolved)
+        return session

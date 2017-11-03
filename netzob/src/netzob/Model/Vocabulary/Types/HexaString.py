@@ -40,7 +40,8 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -197,3 +198,36 @@ class HexaString(AbstractType):
             raise TypeError("data cannot be None")
 
         return binascii.hexlify(data)
+
+    def XMLProperties(currentType, xmlHexaString, symbol_namespace, common_namespace):
+        AbstractType.XMLProperties(currentType, xmlHexaString, symbol_namespace, common_namespace)
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlHexaString = etree.SubElement(xmlroot, "{" + symbol_namespace + "}hexaString")
+
+        HexaString.XMLProperties(self, xmlHexaString, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        AbstractType.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = HexaString.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        hexaString = HexaString(value=a['value'], size=a['size'])
+
+        if 'unitSize' in a.keys():
+            hexaString.unitSize = a['unitSize']
+        if 'endianness' in a.keys():
+            hexaString.endianness = a['endianness']
+        if 'sign' in a.keys():
+            hexaString.sign = a['sign']
+        if 'id' in a.keys():
+            hexaString.id = a['id']
+        return hexaString
+
+

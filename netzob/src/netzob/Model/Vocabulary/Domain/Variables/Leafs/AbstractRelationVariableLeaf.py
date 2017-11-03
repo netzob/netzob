@@ -35,11 +35,12 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-
+import  uuid
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -81,3 +82,57 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         self.__fieldDependencies = []
         for f in fields:
             self.__fieldDependencies.extend(f.getLeafFields())
+
+    def XMLProperties(currentNode, xmlAbsRelLeaf, symbol_namespace, common_namespace):
+        AbstractVariableLeaf.XMLProperties(currentNode, xmlAbsRelLeaf, symbol_namespace, common_namespace)
+
+        # Save fieldDependencies: Problem is it is a List of References to an Objekt.
+        # Bypass it with the uuid to search for later in the Loading Process
+        if currentNode.fieldDependencies is not None and len(currentNode.fieldDependencies) > 0:
+            xmlfieldDependencies = etree.SubElement(xmlAbsRelLeaf, "{" + symbol_namespace + "}fieldDependencies")
+            for field in currentNode.fieldDependencies:
+                xmlFieldRef = etree.SubElement(xmlfieldDependencies, "{" + symbol_namespace + "}field-reference")
+                xmlFieldRef.set("id", str(field.id.hex))
+
+    def saveToXML(self, xmlroot, symbol_namespace, common_namespace):
+        xmlAbsRelLeaf = etree.SubElement(xmlroot, "{" + symbol_namespace + "}abstractRelationVariableLeaf")
+
+        AbstractRelationVariableLeaf.XMLProperties(self, xmlAbsRelLeaf, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        fieldDependencies = []
+        if xmlroot.find("{" + symbol_namespace + "}fieldDependencies") is not None:
+            xmlDependencies = xmlroot.find("{" + symbol_namespace + "}fieldDependencies")
+            for xmlRef in xmlDependencies.findall("{" + symbol_namespace + "}field-reference"):
+                ref = uuid.UUID(hex=str(xmlRef.get('id')))
+                if ref is not None:
+                    fieldDependencies.append(ref)
+        attributes['fieldDependencies'] = fieldDependencies
+
+        AbstractVariableLeaf.restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes)
+
+        return attributes
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = AbstractRelationVariableLeaf.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        absRelVarLeaf = None
+
+        if 'varType' in a.keys():
+            absRelVarLeaf = AbstractRelationVariableLeaf(varType=a['varType'], name=a['name'],
+                                                         fieldDependencies=list())
+            if 'id' in a.keys():
+                absRelVarLeaf.id = a['id']
+            if 'svas' in a.keys():
+                absRelVarLeaf.svas = a['svas']
+            if 'fieldDependencies' in a.keys():
+                from netzob.Export.XMLHandler.XMLHandler import XMLHandler
+                unresolved = dict()
+                for ref in a['fieldDependencies']:
+                    unresolved[ref] = absRelVarLeaf
+                XMLHandler.add_to_unresolved_dict('fieldDependencies', unresolved)
+        return absRelVarLeaf

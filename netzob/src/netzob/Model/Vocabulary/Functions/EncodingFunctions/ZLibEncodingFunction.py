@@ -38,7 +38,8 @@ import zlib
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml import etree
+from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
@@ -142,4 +143,38 @@ class ZLibEncodingFunction(EncodingFunction):
         if _compression_level < 0 or _compression_level > 9:
             raise ValueError("Compression level must be positive and inferior to 10")
         self.__compression_level = _compression_level
-        
+
+    def XMLProperties(currentFunction, xmlZLibEncodingFunction, symbol_namespace, common_namespace):
+        # Save the Properties
+        if currentFunction.compress_data is not None:
+            xmlZLibEncodingFunction.set("compress_data", str(currentFunction.compress_data))
+        if currentFunction.compression_level is not None:
+            xmlZLibEncodingFunction.set("compression_level", str(currentFunction.compression_level))
+
+    def saveToXML(self, xmlRoot, symbol_namespace, common_namespace):
+        xmlZLibEncodingFunction = etree.SubElement(xmlRoot, "{" + symbol_namespace + "}ZLibEncodingFunction")
+
+        ZLibEncodingFunction.XMLProperties(self, xmlZLibEncodingFunction, symbol_namespace, common_namespace)
+
+    @staticmethod
+    def restoreFromXML(xmlroot, symbol_namespace, common_namespace, attributes):
+
+        if xmlroot.get('compress_data') is not None:
+            attributes['compress_data'] = str(xmlroot.get('compress_data')) == 'True'
+        else:
+            attributes['compress_data'] = True
+        if xmlroot.get('compression_level') is not None:
+            attributes['compression_level'] = int(xmlroot.get('compression_level'))
+        else:
+            attributes['compression_level'] = 6
+
+    @staticmethod
+    def loadFromXML(xmlroot, symbol_namespace, common_namespace):
+
+        a = ZLibEncodingFunction.restoreFromXML(xmlroot, symbol_namespace, common_namespace, dict())
+
+        ZLibEnc = None
+
+        if 'compress_data' in a.keys() and 'compression_level' in a.keys():
+            ZLibEnc = ZLibEncodingFunction(compress_data=a['compress_data'], compression_level=a['compression_level'])
+        return ZLibEnc
