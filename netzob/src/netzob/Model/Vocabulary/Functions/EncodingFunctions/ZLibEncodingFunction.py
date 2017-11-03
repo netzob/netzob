@@ -127,7 +127,7 @@ class ZLibEncodingFunction(EncodingFunction):
     def compress_data(self):
         return self.__compress_data
     
-    @compress_data.setter
+    @compress_data.setter  # type: ignore
     @typeCheck(bool)        
     def compress_data(self, _compress_data):
         self.__compress_data = _compress_data
@@ -136,7 +136,7 @@ class ZLibEncodingFunction(EncodingFunction):
     def compression_level(self):
         return self.__compression_level
     
-    @compression_level.setter
+    @compression_level.setter  # type: ignore
     @typeCheck(int)        
     def compression_level(self, _compression_level):
         if _compression_level < 0 or _compression_level > 9:

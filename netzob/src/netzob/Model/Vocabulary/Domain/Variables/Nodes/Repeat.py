@@ -440,7 +440,7 @@ class Repeat(AbstractVariableNode):
     def nbRepeat(self):
         return self.__nbRepeat
 
-    @nbRepeat.setter
+    @nbRepeat.setter  # type: ignore
     def nbRepeat(self, nbRepeat):
         if nbRepeat is None:
             raise Exception("NB Repeat cannot be None")
@@ -479,7 +479,7 @@ class Repeat(AbstractVariableNode):
     def delimiter(self):
         return self.__delimiter
 
-    @delimiter.setter
+    @delimiter.setter  # type: ignore
     @typeCheck(bitarray)
     def delimiter(self, delimiter):
         self.__delimiter = delimiter

@@ -128,7 +128,7 @@ class Base64EncodingFunction(EncodingFunction):
     def encode_data(self):
         return self.__encode_data
     
-    @encode_data.setter
+    @encode_data.setter  # type: ignore
     @typeCheck(bool)        
     def encode_data(self, _encode_data):
         self.__encode_data = _encode_data

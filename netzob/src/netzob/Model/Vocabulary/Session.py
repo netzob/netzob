@@ -103,7 +103,7 @@ class Session(object):
         """
         return self.__id
 
-    @id.setter
+    @id.setter  # type: ignore
     @typeCheck(uuid.UUID)
     def id(self, _id):
         if _id is None:
@@ -126,7 +126,7 @@ class Session(object):
 
         self.__messages.clear()
 
-    @messages.setter
+    @messages.setter  # type: ignore
     def messages(self, messages):
         if messages is None:
             messages = []
@@ -169,7 +169,7 @@ class Session(object):
         while (len(self.__applicativeData) > 0):
             self.__applicativeData.pop()
 
-    @applicativeData.setter
+    @applicativeData.setter  # type: ignore
     def applicativeData(self, applicativeData):
         for app in applicativeData:
             if not isinstance(app, ApplicativeData):
@@ -184,7 +184,7 @@ class Session(object):
     def name(self):
         return self.__name
 
-    @name.setter
+    @name.setter  # type: ignore
     @typeCheck(str)
     def name(self, _name):
         if _name is None:

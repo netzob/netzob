@@ -77,7 +77,7 @@ class L3NetworkMessage(L2NetworkMessage):
         """
         return self.__l3Protocol
 
-    @l3Protocol.setter
+    @l3Protocol.setter  # type: ignore
     @typeCheck(str)
     def l3Protocol(self, l3Protocol):
         self.__l3Protocol = l3Protocol
@@ -90,7 +90,7 @@ class L3NetworkMessage(L2NetworkMessage):
         """
         return self.__l3SourceAddress
 
-    @l3SourceAddress.setter
+    @l3SourceAddress.setter  # type: ignore
     @typeCheck(str)
     def l3SourceAddress(self, l3SourceAddress):
         self.__l3SourceAddress = l3SourceAddress
@@ -103,7 +103,7 @@ class L3NetworkMessage(L2NetworkMessage):
         """
         return self.__l3DestinationAddress
 
-    @l3DestinationAddress.setter
+    @l3DestinationAddress.setter  # type: ignore
     @typeCheck(str)
     def l3DestinationAddress(self, l3DestinationAddress):
         self.__l3DestinationAddress = l3DestinationAddress

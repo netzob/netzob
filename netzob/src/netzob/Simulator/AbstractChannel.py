@@ -168,7 +168,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         """
         return self._timeout
 
-    @timeout.setter
+    @timeout.setter  # type: ignore
     @typeCheck((int, float, type(None)))
     def timeout(self, timeout):
         """
@@ -345,7 +345,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     @property
     def isOpen(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         Returns ``True`` if the communication channel is open.
 
         :return: The status of the communication channel.
@@ -353,7 +353,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         """
         return self._isOpened
 
-    @isOpen.setter
+    @isOpen.setter  # type: ignore
     @typeCheck(bool)
     def isOpen(self, isOpen):
         self._isOpened = isOpen
@@ -361,14 +361,14 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     @property
     def id(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         The unique identifier of the channel.
 
         :type: :class:`uuid.UUID`
         """
         return self.__id
 
-    @id.setter
+    @id.setter  # type: ignore
     @typeCheck(uuid.UUID)
     def id(self, _id):
         if _id is None:

@@ -253,7 +253,7 @@ class GenericPath(object):
         """Returns the name of the path (mostly for debug purposes)"""
         return self.__name
 
-    @name.setter
+    @name.setter  # type: ignore
     @typeCheck(str)
     def name(self, name):
         if name is None:
@@ -264,7 +264,7 @@ class GenericPath(object):
     def memory(self):
         return self.__memory
 
-    @memory.setter
+    @memory.setter  # type: ignore
     @typeCheck(Memory)
     def memory(self, memory):
         self.__memory = memory

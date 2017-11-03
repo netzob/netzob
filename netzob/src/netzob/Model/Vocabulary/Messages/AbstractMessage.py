@@ -231,7 +231,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__id
 
-    @id.setter
+    @id.setter  # type: ignore
     @typeCheck(uuid.UUID)
     def id(self, _id):
         if _id is None:
@@ -247,7 +247,7 @@ class AbstractMessage(SortableObject):
 
         return self.__data
 
-    @data.setter
+    @data.setter  # type: ignore
     def data(self, data):
         self.__data = data
 
@@ -261,7 +261,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__date
 
-    @date.setter
+    @date.setter  # type: ignore
     @typeCheck(float)
     def date(self, date):
         if date is None:
@@ -277,7 +277,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__source
 
-    @source.setter
+    @source.setter  # type: ignore
     @typeCheck(str)
     def source(self, source):
         self.__source = source
@@ -291,7 +291,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__destination
 
-    @destination.setter
+    @destination.setter  # type: ignore
     @typeCheck(str)
     def destination(self, destination):
         self.__destination = destination
@@ -304,7 +304,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__metadata
 
-    @metadata.setter
+    @metadata.setter  # type: ignore
     @typeCheck(dict)
     def metadata(self, metadata):
         if metadata is None:
@@ -324,7 +324,7 @@ class AbstractMessage(SortableObject):
 
         return self.__visualizationFunctions
 
-    @visualizationFunctions.setter
+    @visualizationFunctions.setter  # type: ignore
     def visualizationFunctions(self, visualizationFunctions):
         self.clearVisualizationFunctions()
         self.visualizationFunctions.extend(visualizationFunctions)
@@ -338,7 +338,7 @@ class AbstractMessage(SortableObject):
 
         return self.__messageType
 
-    @messageType.setter
+    @messageType.setter  # type: ignore
     @typeCheck(str)
     def messageType(self, messageType):
         if messageType is None:
@@ -354,7 +354,7 @@ class AbstractMessage(SortableObject):
 
         return self.__session
 
-    @session.setter
+    @session.setter  # type: ignore
     def session(self, session):
         self.__session = session
         
@@ -390,7 +390,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__semanticTags
 
-    @semanticTags.setter
+    @semanticTags.setter  # type: ignore
     @typeCheck(dict)
     def semanticTags(self, semanticTags):
         if semanticTags is None:

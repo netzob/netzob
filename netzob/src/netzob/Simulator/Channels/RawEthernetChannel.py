@@ -288,7 +288,7 @@ class RawEthernetChannel(AbstractChannel):
         """
         return self.__remoteMac
 
-    @remoteMac.setter
+    @remoteMac.setter  # type: ignore
     @typeCheck(str)
     def remoteMac(self, remoteMac):
         if remoteMac is None:
@@ -303,7 +303,7 @@ class RawEthernetChannel(AbstractChannel):
         """
         return self.__localMac
 
-    @localMac.setter
+    @localMac.setter  # type: ignore
     @typeCheck(str)
     def localMac(self, localMac):
         if localMac is None:

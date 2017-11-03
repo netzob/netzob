@@ -127,7 +127,7 @@ class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     def key(self):
         return self.__key
 
-    @key.setter
+    @key.setter  # type: ignore
     @typeCheck(bytes)
     def key(self, key):
         if key is None:

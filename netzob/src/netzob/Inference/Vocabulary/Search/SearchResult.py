@@ -87,7 +87,7 @@ class SearchResult(object):
     def target(self):
         return self.__target
 
-    @target.setter
+    @target.setter  # type: ignore
     @typeCheck(bitarray)
     def target(self, target):
         if target is None:
@@ -98,7 +98,7 @@ class SearchResult(object):
     def searchTask(self):
         return self.__searchTask
 
-    @searchTask.setter
+    @searchTask.setter  # type: ignore
     @typeCheck(SearchTask)
     def searchTask(self, searchTask):
         if searchTask is None:
@@ -109,7 +109,7 @@ class SearchResult(object):
     def ranges(self):
         return self.__ranges
 
-    @ranges.setter
+    @ranges.setter  # type: ignore
     @typeCheck(list)
     def ranges(self, ranges):
         if ranges is None:

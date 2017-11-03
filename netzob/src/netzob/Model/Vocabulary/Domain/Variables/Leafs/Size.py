@@ -350,14 +350,14 @@ class Size(AbstractRelationVariableLeaf):
     @property
     def dataType(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         The datatype used to encode the result of the computed size.
 
         :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
         """
         return self.__dataType
 
-    @dataType.setter
+    @dataType.setter  # type: ignore
     @typeCheck(AbstractType)
     def dataType(self, dataType):
         if dataType is None:
@@ -371,7 +371,7 @@ class Size(AbstractRelationVariableLeaf):
     @property
     def factor(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         Defines the multiplication factor to apply on the targeted length
         (in bits).
 
@@ -379,7 +379,7 @@ class Size(AbstractRelationVariableLeaf):
         """
         return self.__factor
 
-    @factor.setter
+    @factor.setter  # type: ignore
     @typeCheck(float)
     def factor(self, factor):
         if factor is None:
@@ -389,7 +389,7 @@ class Size(AbstractRelationVariableLeaf):
     @property
     def offset(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         Defines the offset to apply on the computed length.
         computed size = (factor*size(targetField)+offset)
 
@@ -397,7 +397,7 @@ class Size(AbstractRelationVariableLeaf):
         """
         return self.__offset
 
-    @offset.setter
+    @offset.setter  # type: ignore
     @typeCheck(int)
     def offset(self, offset):
         if offset is None:

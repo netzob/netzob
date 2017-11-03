@@ -89,7 +89,7 @@ class SearchTask(object):
 
         return self.__data
 
-    @data.setter
+    @data.setter  # type: ignore
     @typeCheck(bitarray)
     def data(self, data):
         if data is None:
@@ -105,7 +105,7 @@ class SearchTask(object):
         """
         return self.__description
 
-    @description.setter
+    @description.setter  # type: ignore
     @typeCheck(str)
     def description(self, description):
         if description is None:
@@ -120,7 +120,7 @@ class SearchTask(object):
         """
         return self.__properties
 
-    @properties.setter
+    @properties.setter  # type: ignore
     @typeCheck(dict)
     def properties(self, properties):
         if properties is not None:

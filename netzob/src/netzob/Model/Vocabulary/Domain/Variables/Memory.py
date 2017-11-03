@@ -237,7 +237,7 @@ class Memory(object):
         """
         return self.__memory
 
-    @memory.setter
+    @memory.setter  # type: ignore
     def memory(self, memory):
         self.__memory = dict()
         for k, v in list(memory.items()):

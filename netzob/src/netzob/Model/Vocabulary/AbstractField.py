@@ -809,7 +809,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         return self.__id
 
-    @id.setter
+    @id.setter  # type: ignore
     @typeCheck(uuid.UUID)
     def id(self, id):
         if id is None:
@@ -826,7 +826,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         return self.__name
 
-    @name.setter
+    @name.setter  # type: ignore
     @typeCheck(str)
     def name(self, name):
         self.__name = name
@@ -841,7 +841,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         return self.__description
 
-    @description.setter
+    @description.setter  # type: ignore
     @typeCheck(str)
     def description(self, description):
         self.__description = description
@@ -859,7 +859,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """
         return self.__encodingFunctions
 
-    @encodingFunctions.setter
+    @encodingFunctions.setter  # type: ignore
     def encodingFunctions(self, encodingFunctions):
         self.clearEncodingFunctions()
         for encodingFunction in encodingFunctions:
@@ -882,7 +882,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         return self.__visualizationFunctions
 
-    @visualizationFunctions.setter
+    @visualizationFunctions.setter  # type: ignore
     def visualizationFunctions(self, visualizationFunctions):
         self.clearVisualizationFunctions()
         self.visualizationFunctions.extend(visualizationFunctions)
@@ -899,7 +899,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         return self.__transformationFunctions
 
-    @transformationFunctions.setter
+    @transformationFunctions.setter  # type: ignore
     def transformationFunctions(self, transformationFunctions):
         self.clearTransformationFunctions()
         self.transformationFunctions.extend(transformationFunctions)
@@ -910,7 +910,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         return self.__fields
 
-    @fields.setter
+    @fields.setter  # type: ignore
     def fields(self, fields):
         from netzob.Model.Vocabulary.Field import Field
         # First it checks the specified children are abstractField
@@ -939,7 +939,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         return self.__parent
 
-    @parent.setter
+    @parent.setter  # type: ignore
     def parent(self, parent):
         if not isinstance(parent, AbstractField):
             raise TypeError(

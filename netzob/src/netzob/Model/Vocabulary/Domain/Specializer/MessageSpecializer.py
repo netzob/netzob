@@ -248,7 +248,7 @@ class MessageSpecializer(object):
         """
         return self.__memory
 
-    @memory.setter
+    @memory.setter  # type: ignore
     @typeCheck(Memory)
     def memory(self, memory):
         if memory is None:
@@ -266,7 +266,7 @@ class MessageSpecializer(object):
 
         return self.__presets
 
-    @presets.setter
+    @presets.setter  # type: ignore
     def presets(self, presets):
         if presets is None:
             presets = dict()

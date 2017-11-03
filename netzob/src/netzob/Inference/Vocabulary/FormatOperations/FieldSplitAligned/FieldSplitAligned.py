@@ -708,7 +708,7 @@ class FieldSplitAligned(object):
     def doInternalSlick(self):
         return self.__doInternalSlick
 
-    @doInternalSlick.setter
+    @doInternalSlick.setter  # type: ignore
     @typeCheck(bool)
     def doInternalSlick(self, doInternalSlick):
         if doInternalSlick is None:
@@ -719,7 +719,7 @@ class FieldSplitAligned(object):
     def unitSize(self):
         return self.__unitSize
 
-    @unitSize.setter
+    @unitSize.setter  # type: ignore
     @typeCheck(UnitSize)
     def unitSize(self, unitSize):
         if unitSize is None:

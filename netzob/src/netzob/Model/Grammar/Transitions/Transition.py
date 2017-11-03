@@ -398,7 +398,7 @@ class Transition(AbstractTransition):
         """
         return self.__inputSymbol
 
-    @inputSymbol.setter
+    @inputSymbol.setter  # type: ignore
     @typeCheck(Symbol)
     def inputSymbol(self, inputSymbol):
         if inputSymbol is None:
@@ -429,7 +429,7 @@ class Transition(AbstractTransition):
         """
         return self.__outputSymbols
 
-    @outputSymbols.setter
+    @outputSymbols.setter  # type: ignore
     def outputSymbols(self, outputSymbols):
         if outputSymbols is None:
             self.__outputSymbols = []

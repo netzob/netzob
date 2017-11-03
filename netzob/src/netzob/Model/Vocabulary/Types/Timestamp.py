@@ -374,7 +374,7 @@ class Timestamp(AbstractType):
         """Initial date expressed in UTC from which timestamp is measured"""
         return self.__epoch
 
-    @epoch.setter
+    @epoch.setter  # type: ignore
     def epoch(self, epoch):
         if epoch is None:
             raise Exception("Epoch cannot be None")

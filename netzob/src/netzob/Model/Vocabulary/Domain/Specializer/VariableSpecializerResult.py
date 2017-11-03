@@ -69,7 +69,7 @@ class VariableSpecializerResult():
     def result(self):
         return self.__result
 
-    @result.setter
+    @result.setter  # type: ignore
     @typeCheck(bool)
     def result(self, result):
         if result is None:
@@ -84,7 +84,7 @@ class VariableSpecializerResult():
         """
         return self.__variable
 
-    @variable.setter
+    @variable.setter  # type: ignore
     @typeCheck(AbstractVariable)
     def variable(self, variable):
         if variable is None:
@@ -100,6 +100,6 @@ class VariableSpecializerResult():
         """
         return self.__generatedContent
 
-    @generatedContent.setter
+    @generatedContent.setter  # type: ignore
     def generatedContent(self, generatedContent):
         self.__generatedContent = generatedContent

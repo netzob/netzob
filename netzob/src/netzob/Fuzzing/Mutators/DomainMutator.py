@@ -153,7 +153,7 @@ class DomainMutator(Mutator):
     def domain(self):
         return self._domain
 
-    @domain.setter
+    @domain.setter  # type: ignore
     def domain(self, domain):
         self._domain = domain
 

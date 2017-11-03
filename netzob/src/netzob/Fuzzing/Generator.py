@@ -82,6 +82,6 @@ class Generator(object, metaclass=abc.ABCMeta):
         """
         return self._seed
 
-    @seed.setter
+    @seed.setter  # type: ignore
     def seed(self, seed):
         self._seed = seed

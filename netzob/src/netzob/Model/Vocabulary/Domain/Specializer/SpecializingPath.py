@@ -78,6 +78,6 @@ class SpecializingPath(GenericPath):
     def ok(self):
         return self.__ok
 
-    @ok.setter
+    @ok.setter  # type: ignore
     def ok(self, ok):
         self.__ok = ok

@@ -193,7 +193,7 @@ class AltMutator(DomainMutator):
     @property
     def maxDepth(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         Recursivity limit in mutating an :class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>` type.
         When this limit is reached in :meth:`generate` method, an exception is
         raised.
@@ -202,7 +202,7 @@ class AltMutator(DomainMutator):
         """
         return self._maxDepth
 
-    @maxDepth.setter
+    @maxDepth.setter  # type: ignore
     @typeCheck(int)
     def maxDepth(self, maxDepthValue):
         self._maxDepth = maxDepthValue
@@ -218,7 +218,7 @@ class AltMutator(DomainMutator):
         """
         return self._mutateChild
 
-    @mutateChild.setter
+    @mutateChild.setter  # type: ignore
     @typeCheck(bool)
     def mutateChild(self, mutateChild):
         self._mutateChild = mutateChild
@@ -231,7 +231,7 @@ class AltMutator(DomainMutator):
         """
         return self._mappingTypesMutators
 
-    @mappingTypesMutators.setter
+    @mappingTypesMutators.setter  # type: ignore
     @typeCheck(dict)
     def mappingTypesMutators(self, mappingTypesMutators):
         """Override the global default mapping of types with their default

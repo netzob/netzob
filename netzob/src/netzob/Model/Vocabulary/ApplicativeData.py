@@ -73,7 +73,7 @@ class ApplicativeData(object):
         """
         return self.__name
 
-    @name.setter
+    @name.setter  # type: ignore
     @typeCheck(str)
     def name(self, name):
         if name is None:
@@ -88,7 +88,7 @@ class ApplicativeData(object):
         """
         return self.__id
 
-    @id.setter
+    @id.setter  # type: ignore
     @typeCheck(uuid.UUID)
     def id(self, _id):
         if _id is None:
@@ -103,7 +103,7 @@ class ApplicativeData(object):
         """
         return self.__value
 
-    @value.setter
+    @value.setter  # type: ignore
     def value(self, value):
         if value is None:
             raise TypeError("Value cannot be None")

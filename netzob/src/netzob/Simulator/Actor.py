@@ -756,7 +756,7 @@ class Actor(threading.Thread):
     def automata(self):
         return self.__automata
 
-    @automata.setter
+    @automata.setter  # type: ignore
     @typeCheck(Automata)
     def automata(self, automata):
         if automata is None:
@@ -767,7 +767,7 @@ class Actor(threading.Thread):
     def initiator(self):
         return self.__initiator
 
-    @initiator.setter
+    @initiator.setter  # type: ignore
     @typeCheck(bool)
     def initiator(self, initiator):
         if initiator is None:
@@ -778,7 +778,7 @@ class Actor(threading.Thread):
     def abstractionLayer(self):
         return self.__abstractionLayer
 
-    @abstractionLayer.setter
+    @abstractionLayer.setter  # type: ignore
     @typeCheck(AbstractionLayer)
     def abstractionLayer(self, abstractionLayer):
         if abstractionLayer is None:

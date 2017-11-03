@@ -139,7 +139,7 @@ class TypeEncodingFunction(EncodingFunction):
     def type(self):
         return self.__type
 
-    @type.setter
+    @type.setter  # type: ignore
     def type(self, _type):
         if _type is None:
             raise TypeError("Type cannot be None")
@@ -153,7 +153,7 @@ class TypeEncodingFunction(EncodingFunction):
     def unitSize(self):
         return self.__unitSize
 
-    @unitSize.setter
+    @unitSize.setter  # type: ignore
     def unitSize(self, unitSize):
         if unitSize is None:
             raise TypeError("Unitsize cannot be None.")
@@ -167,7 +167,7 @@ class TypeEncodingFunction(EncodingFunction):
     def endianness(self):
         return self.__endianness
 
-    @endianness.setter
+    @endianness.setter  # type: ignore
     def endianness(self, endianness):
         if endianness is None:
             raise TypeError("Endianness cannot be None.")
@@ -181,7 +181,7 @@ class TypeEncodingFunction(EncodingFunction):
     def sign(self):
         return self.__sign
 
-    @sign.setter
+    @sign.setter  # type: ignore
     def sign(self, sign):
         if sign is None:
             raise TypeError("Sign cannot be None.")

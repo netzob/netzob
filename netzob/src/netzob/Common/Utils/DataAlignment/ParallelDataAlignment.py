@@ -257,7 +257,7 @@ class ParallelDataAlignment(object):
         """
         return self.__field
 
-    @field.setter
+    @field.setter  # type: ignore
     @typeCheck(AbstractField)
     def field(self, field):
         if field is None:
@@ -275,7 +275,7 @@ class ParallelDataAlignment(object):
         """
         return self.__depth
 
-    @depth.setter
+    @depth.setter  # type: ignore
     @typeCheck(int)
     def depth(self, depth):
         if depth is not None and depth < 0:
@@ -296,7 +296,7 @@ class ParallelDataAlignment(object):
         """
         return self.__nbThread
 
-    @nbThread.setter
+    @nbThread.setter  # type: ignore
     @typeCheck(int)
     def nbThread(self, nbThread):
         if nbThread is None:
@@ -316,7 +316,7 @@ class ParallelDataAlignment(object):
         """
         return self.__encoded
 
-    @encoded.setter
+    @encoded.setter  # type: ignore
     @typeCheck(bool)
     def encoded(self, encoded):
         if encoded is None:
@@ -332,7 +332,7 @@ class ParallelDataAlignment(object):
         """
         return self.__styled
 
-    @styled.setter
+    @styled.setter  # type: ignore
     @typeCheck(bool)
     def styled(self, styled):
         if styled is None:

@@ -381,7 +381,7 @@ class FieldSplitStatic(object):
     def unitSize(self):
         return self.__unitSize
 
-    @unitSize.setter
+    @unitSize.setter  # type: ignore
     @typeCheck(UnitSize)
     def unitSize(self, unitSize):
         if unitSize is None:
@@ -398,7 +398,7 @@ class FieldSplitStatic(object):
     def mergeAdjacentStaticFields(self):
         return self.__mergeAdjacentStaticFields
 
-    @mergeAdjacentStaticFields.setter
+    @mergeAdjacentStaticFields.setter  # type: ignore
     @typeCheck(bool)
     def mergeAdjacentStaticFields(self, mergeAdjacentStaticFields):
         if mergeAdjacentStaticFields is None:
@@ -410,7 +410,7 @@ class FieldSplitStatic(object):
     def mergeAdjacentDynamicFields(self):
         return self.__mergeAdjacentDynamicFields
 
-    @mergeAdjacentDynamicFields.setter
+    @mergeAdjacentDynamicFields.setter  # type: ignore
     @typeCheck(bool)
     def mergeAdjacentDynamicFields(self, mergeAdjacentDynamicFields):
         if mergeAdjacentDynamicFields is None:

@@ -264,7 +264,7 @@ class SSLClient(AbstractChannel):
         """
         return self.__remoteIP
 
-    @remoteIP.setter
+    @remoteIP.setter  # type: ignore
     @typeCheck(str)
     def remoteIP(self, remoteIP):
         if remoteIP is None:
@@ -282,7 +282,7 @@ class SSLClient(AbstractChannel):
         """
         return self.__remotePort
 
-    @remotePort.setter
+    @remotePort.setter  # type: ignore
     @typeCheck(int)
     def remotePort(self, remotePort):
         if remotePort is None:
@@ -300,7 +300,7 @@ class SSLClient(AbstractChannel):
         """
         return self.__localIP
 
-    @localIP.setter
+    @localIP.setter  # type: ignore
     @typeCheck(str)
     def localIP(self, localIP):
         self.__localIP = localIP
@@ -314,7 +314,7 @@ class SSLClient(AbstractChannel):
         """
         return self.__localPort
 
-    @localPort.setter
+    @localPort.setter  # type: ignore
     @typeCheck(int)
     def localPort(self, localPort):
         self.__localPort = localPort

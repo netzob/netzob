@@ -134,7 +134,7 @@ class AbstractVariable(object):
     def id(self):
         return self.__id
 
-    @id.setter
+    @id.setter  # type: ignore
     @typeCheck(uuid.UUID)
     def id(self, varId):
         self.__id = varId
@@ -148,7 +148,7 @@ class AbstractVariable(object):
         """
         return self.__varType
 
-    @varType.setter
+    @varType.setter  # type: ignore
     def varType(self, varType):
         raise AttributeError("Not allowed to modify the variable type")
 
@@ -160,7 +160,7 @@ class AbstractVariable(object):
         """
         return self.__name
 
-    @name.setter
+    @name.setter  # type: ignore
     @typeCheck(str)
     def name(self, name):
         if name is None:
@@ -179,7 +179,7 @@ class AbstractVariable(object):
         """
         return self.__svas
 
-    @svas.setter
+    @svas.setter  # type: ignore
     def svas(self, svas):
         if svas is None:
             raise ValueError("svas cannot be None")
@@ -189,6 +189,6 @@ class AbstractVariable(object):
     def field(self):
         return self.__field
 
-    @field.setter
+    @field.setter  # type: ignore
     def field(self, field):
         self.__field = field

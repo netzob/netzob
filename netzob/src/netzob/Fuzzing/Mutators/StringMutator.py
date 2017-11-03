@@ -190,7 +190,7 @@ class StringMutator(DomainMutator):
         """
         return self._naughtyStrings
 
-    @naughtyStrings.setter
+    @naughtyStrings.setter  # type: ignore
     def naughtyStrings(self, naughtyStrings):
         if not isinstance(naughtyStrings, list):
             self._naughtyStrings = StringPaddedGenerator.DEFAULT_NAUGHTY_STRINGS

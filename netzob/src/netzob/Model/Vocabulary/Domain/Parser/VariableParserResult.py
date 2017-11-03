@@ -70,7 +70,7 @@ class VariableParserResult():
     def result(self):
         return self.__result
 
-    @result.setter
+    @result.setter  # type: ignore
     @typeCheck(bool)
     def result(self, result):
         if result is None:
@@ -85,7 +85,7 @@ class VariableParserResult():
         """
         return self.__variable
 
-    @variable.setter
+    @variable.setter  # type: ignore
     @typeCheck(AbstractVariable)
     def variable(self, variable):
         if variable is None:
@@ -101,7 +101,7 @@ class VariableParserResult():
         """
         return self.__consumedData
 
-    @consumedData.setter
+    @consumedData.setter  # type: ignore
     def consumedData(self, consumedData):
         self.__consumedData = consumedData
 
@@ -113,6 +113,6 @@ class VariableParserResult():
         """
         return self.__remainedData
 
-    @remainedData.setter
+    @remainedData.setter  # type: ignore
     def remainedData(self, remainedData):
         self.__remainedData = remainedData

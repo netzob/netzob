@@ -433,7 +433,7 @@ class Symbol(AbstractField):
         """
         return self.__messages
 
-    @messages.setter
+    @messages.setter  # type: ignore
     def messages(self, messages):
         if messages is None:
             messages = []

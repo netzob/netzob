@@ -325,7 +325,7 @@ class Data(AbstractVariableLeaf):
     @property
     def currentValue(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         The current value of the data.
 
         :type: :class:`bitarray`
@@ -335,7 +335,7 @@ class Data(AbstractVariableLeaf):
         else:
             return None
 
-    @currentValue.setter
+    @currentValue.setter  # type: ignore
     @typeCheck(bitarray)
     def currentValue(self, currentValue):
         if currentValue is not None:
@@ -347,14 +347,14 @@ class Data(AbstractVariableLeaf):
     @property
     def dataType(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         The type of the data.
 
         :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
         """
         return self.__dataType
 
-    @dataType.setter
+    @dataType.setter  # type: ignore
     @typeCheck(AbstractType)
     def dataType(self, dataType):
         self.__dataType = dataType

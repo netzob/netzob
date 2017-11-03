@@ -558,7 +558,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         return self.__value
 
-    @value.setter
+    @value.setter  # type: ignore
     @typeCheck(bitarray)
     def value(self, value):
         self.__value = value
@@ -589,7 +589,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
          """
         return self.__size
 
-    @size.setter
+    @size.setter  # type: ignore
     def size(self, size):
 
         if size is None:
@@ -716,7 +716,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         return self.__id
 
-    @id.setter
+    @id.setter  # type: ignore
     @typeCheck(uuid.UUID)
     def id(self, id):
         if id is None:
@@ -733,7 +733,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """
         return self.__typeName
 
-    @typeName.setter
+    @typeName.setter  # type: ignore
     @typeCheck(str)
     def typeName(self, typeName):
         if typeName is None:
@@ -750,7 +750,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """
         return self.__unitSize
 
-    @unitSize.setter
+    @unitSize.setter  # type: ignore
     @typeCheck(UnitSize)
     def unitSize(self, unitSize):
         if unitSize is None:
@@ -772,7 +772,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """
         return self.__endianness
 
-    @endianness.setter
+    @endianness.setter  # type: ignore
     @typeCheck(Endianness)
     def endianness(self, endianness):
         if endianness is None:
@@ -797,7 +797,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """
         return self.__sign
 
-    @sign.setter
+    @sign.setter  # type: ignore
     @typeCheck(Sign)
     def sign(self, sign):
         if sign is None:

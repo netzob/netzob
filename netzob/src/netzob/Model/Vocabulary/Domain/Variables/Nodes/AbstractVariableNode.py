@@ -77,7 +77,7 @@ class AbstractVariableNode(AbstractVariable):
         """
         return self._children
 
-    @children.setter
+    @children.setter  # type: ignore
     def children(self, children):
         from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
         from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import SELF
@@ -112,7 +112,7 @@ class AbstractVariableNode(AbstractVariable):
     def field(self):
         return self.__field
 
-    @field.setter
+    @field.setter  # type: ignore
     def field(self, field):
         self.__field = field
         for child in self.children:

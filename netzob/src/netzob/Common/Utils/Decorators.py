@@ -148,7 +148,7 @@ def typeCheck(*types):
 
     Its enables the following code replace:
     ::
-        @id.setter
+        @id.setter  # type: ignore
         def id(self, id):
             if not isinstance(id, uuid.UUID):
                raise TypeError("Invalid types for argument id, must be an UUID")
@@ -156,7 +156,7 @@ def typeCheck(*types):
 
     with:
     ::
-        @id.setter
+        @id.setter  # type: ignore
         @typeCheck(uuid.UUID)
         def id(self, id):
            self.__id = id

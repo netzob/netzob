@@ -225,7 +225,7 @@ class TCPServer(AbstractChannel):
         """
         return self.__localIP
 
-    @localIP.setter
+    @localIP.setter  # type: ignore
     @typeCheck(str)
     def localIP(self, localIP):
         if localIP is None:
@@ -243,7 +243,7 @@ class TCPServer(AbstractChannel):
         """
         return self.__localPort
 
-    @localPort.setter
+    @localPort.setter  # type: ignore
     @typeCheck(int)
     def localPort(self, localPort):
         if localPort is None:

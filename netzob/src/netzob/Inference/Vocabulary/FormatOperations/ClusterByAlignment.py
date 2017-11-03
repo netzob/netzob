@@ -340,7 +340,7 @@ class ClusterByAlignment(object):
         """
         return self.__minEquivalence
 
-    @minEquivalence.setter
+    @minEquivalence.setter  # type: ignore
     @typeCheck(int)
     def minEquivalence(self, minEquivalence):
         if minEquivalence is None:
@@ -353,7 +353,7 @@ class ClusterByAlignment(object):
         if not active, only final alignment is slicked."""
         return self.__internalSlick
 
-    @internalSlick.setter
+    @internalSlick.setter  # type: ignore
     @typeCheck(bool)
     def internalSlick(self, internalSlick):
         if internalSlick is None:
@@ -364,6 +364,6 @@ class ClusterByAlignment(object):
     def recomputeMatrixThreshold(self):
         return self.__recomputeMatrixThreshold
 
-    @recomputeMatrixThreshold.setter
+    @recomputeMatrixThreshold.setter  # type: ignore
     def recomputeMatrixThreshold(self, recomputeMatrixThreshold):
         self.__recomputeMatrixThreshold = recomputeMatrixThreshold

@@ -381,7 +381,7 @@ class Automata(object):
     def initialState(self):
         return self.__initialState
 
-    @initialState.setter
+    @initialState.setter  # type: ignore
     @typeCheck(State)
     def initialState(self, initialState):
         if initialState is None:
@@ -392,7 +392,7 @@ class Automata(object):
     def vocabulary(self):
         return self.__vocabulary
 
-    @vocabulary.setter
+    @vocabulary.setter  # type: ignore
     @typeCheck(list)
     def vocabulary(self, vocabulary):
         self.__vocabulary = vocabulary

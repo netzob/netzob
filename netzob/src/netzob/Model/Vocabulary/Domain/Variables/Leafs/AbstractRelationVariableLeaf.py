@@ -354,7 +354,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         """
         return self.__targets
 
-    @targets.setter
+    @targets.setter  # type: ignore
     def targets(self, targets):
         if isinstance(targets, (AbstractField, AbstractVariable)):
             targets = [targets]
@@ -369,7 +369,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
         return self.__dataType
 
-    @dataType.setter
+    @dataType.setter  # type: ignore
     @typeCheck(AbstractType)
     def dataType(self, dataType):
         if dataType is None:

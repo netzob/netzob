@@ -161,7 +161,7 @@ class AggMutator(DomainMutator):
         """
         return self._mutateChild
 
-    @mutateChild.setter
+    @mutateChild.setter  # type: ignore
     @typeCheck(bool)
     def mutateChild(self, mutateChild):
         self._mutateChild = mutateChild
@@ -174,7 +174,7 @@ class AggMutator(DomainMutator):
         """
         return self._mappingTypesMutators
 
-    @mappingTypesMutators.setter
+    @mappingTypesMutators.setter  # type: ignore
     @typeCheck(dict)
     def mappingTypesMutators(self, mappingTypesMutators):
         """Override the global default mapping of types with their default

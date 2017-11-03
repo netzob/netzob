@@ -218,7 +218,7 @@ class DataAlignment(object):
         """
         return self.__data
 
-    @data.setter
+    @data.setter  # type: ignore
     def data(self, data):
         if data is None:
             raise Exception("Data cannot be None")
@@ -243,7 +243,7 @@ class DataAlignment(object):
         """
         return self.__field
 
-    @field.setter
+    @field.setter  # type: ignore
     @typeCheck(AbstractField)
     def field(self, field):
         if field is None:
@@ -266,7 +266,7 @@ class DataAlignment(object):
         """
         return self.__depth
 
-    @depth.setter
+    @depth.setter  # type: ignore
     @typeCheck(int)
     def depth(self, depth):
         if depth is not None and depth < 0:
@@ -283,7 +283,7 @@ class DataAlignment(object):
         """
         return self.__encoded
 
-    @encoded.setter
+    @encoded.setter  # type: ignore
     @typeCheck(bool)
     def encoded(self, encoded):
         if encoded is None:
@@ -299,7 +299,7 @@ class DataAlignment(object):
         """
         return self.__styled
 
-    @styled.setter
+    @styled.setter  # type: ignore
     @typeCheck(bool)
     def styled(self, styled):
         if styled is None:
@@ -315,7 +315,7 @@ class DataAlignment(object):
         """
         return self.__memory
 
-    @memory.setter
+    @memory.setter  # type: ignore
     def memory(self, memory):
         self.__memory = memory
 
@@ -327,7 +327,7 @@ class DataAlignment(object):
         """
         return self.__messageParser
 
-    @messageParser.setter
+    @messageParser.setter  # type: ignore
     def messageParser(self, messageParser):
         if messageParser is not None:
             self.__messageParser = messageParser

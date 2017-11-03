@@ -217,7 +217,7 @@ class IPChannel(AbstractChannel):
         """
         return self.__remoteIP
 
-    @remoteIP.setter
+    @remoteIP.setter  # type: ignore
     @typeCheck(str)
     def remoteIP(self, remoteIP):
         if remoteIP is None:
@@ -233,7 +233,7 @@ class IPChannel(AbstractChannel):
         """
         return self.__localIP
 
-    @localIP.setter
+    @localIP.setter  # type: ignore
     @typeCheck(str)
     def localIP(self, localIP):
         self.__localIP = localIP
@@ -246,7 +246,7 @@ class IPChannel(AbstractChannel):
         """
         return self.__upperProtocol
 
-    @upperProtocol.setter
+    @upperProtocol.setter  # type: ignore
     @typeCheck(int)
     def upperProtocol(self, upperProtocol):
         if upperProtocol is None:

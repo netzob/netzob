@@ -810,6 +810,6 @@ class Fuzz(object):
     def counterMax(self):
         return Mutator.globalCounterMax
 
-    @counterMax.setter
+    @counterMax.setter  # type: ignore
     def counterMax(self, counterMax):
         Mutator.globalCounterMax = counterMax

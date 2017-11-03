@@ -232,7 +232,7 @@ class FieldSpecializer(object):
         """
         return self.__arbitraryValue
 
-    @arbitraryValue.setter
+    @arbitraryValue.setter  # type: ignore
     @typeCheck(bitarray)
     def arbitraryValue(self, value):
         self.__arbitraryValue = value

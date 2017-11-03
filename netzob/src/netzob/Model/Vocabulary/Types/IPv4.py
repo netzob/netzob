@@ -337,7 +337,7 @@ class IPv4(AbstractType):
         """A constraint over the network the parsed data belongs to this network or not."""
         return self.__network
 
-    @network.setter
+    @network.setter  # type: ignore
     def network(self, network):
         if network is not None:
             if not self._isValidIPv4Network(network):

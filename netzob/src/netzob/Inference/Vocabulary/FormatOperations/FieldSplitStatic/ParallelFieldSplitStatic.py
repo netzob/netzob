@@ -149,7 +149,7 @@ class ParallelFieldSplitStatic(object):
         """
         return self.__field
 
-    @field.setter
+    @field.setter  # type: ignore
     @typeCheck(AbstractField)
     def field(self, field):
         if field is None:
@@ -168,7 +168,7 @@ class ParallelFieldSplitStatic(object):
         """
         return self.__nbThread
 
-    @nbThread.setter
+    @nbThread.setter  # type: ignore
     @typeCheck(int)
     def nbThread(self, nbThread):
         if nbThread is None:

@@ -105,7 +105,7 @@ class VariableParserPath(object):
     def consumedData(self):
         return self.__consumedData
 
-    @consumedData.setter
+    @consumedData.setter  # type: ignore
     def consumedData(self, consumedData):
         self.__consumedData = consumedData
 
@@ -113,7 +113,7 @@ class VariableParserPath(object):
     def memory(self):
         return self.__memory
 
-    @memory.setter
+    @memory.setter  # type: ignore
     def memory(self, memory):
         if memory is None:
             raise Exception("Memory cannot be None")

@@ -78,7 +78,7 @@ class VariableParser(object):
         """
         return self.__variable
 
-    @variable.setter
+    @variable.setter  # type: ignore
     @typeCheck(AbstractVariable)
     def variable(self, variable):
         if variable is None:

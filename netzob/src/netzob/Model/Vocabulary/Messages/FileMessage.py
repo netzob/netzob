@@ -87,7 +87,7 @@ class FileMessage(AbstractMessage):
         """
         return self.__file_path
 
-    @file_path.setter
+    @file_path.setter  # type: ignore
     @typeCheck(str)
     def file_path(self, _file_path):
         self.__file_path = _file_path
@@ -101,7 +101,7 @@ class FileMessage(AbstractMessage):
 
         return self.__file_message_number
 
-    @file_message_number.setter
+    @file_message_number.setter  # type: ignore
     @typeCheck(int)
     def file_message_number(self, _file_message_number):
         if _file_message_number is None:

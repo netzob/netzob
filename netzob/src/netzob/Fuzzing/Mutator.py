@@ -150,7 +150,7 @@ class Mutator(metaclass=abc.ABCMeta):
     def mode(self):
         return self._mode
 
-    @mode.setter
+    @mode.setter  # type: ignore
     def mode(self, mode):
         # Sanity checks on mutator mode
         if not isinstance(mode, MutatorMode):
@@ -162,7 +162,7 @@ class Mutator(metaclass=abc.ABCMeta):
     def generator(self):
         return self._generator
 
-    @generator.setter
+    @generator.setter  # type: ignore
     def generator(self, generator):
         self._generator = generator
 
@@ -170,7 +170,7 @@ class Mutator(metaclass=abc.ABCMeta):
     def seed(self):
         return self._seed
 
-    @seed.setter
+    @seed.setter  # type: ignore
     def seed(self, seed):
         self._seed = seed
 
@@ -178,7 +178,7 @@ class Mutator(metaclass=abc.ABCMeta):
     def counterMax(self):
         return self._counterMax
 
-    @counterMax.setter
+    @counterMax.setter  # type: ignore
     def counterMax(self, counterMax):
         self._counterMax = counterMax
 
@@ -186,14 +186,14 @@ class Mutator(metaclass=abc.ABCMeta):
     def currentCounter(self):
         return self._currentCounter
 
-    @currentCounter.setter
+    @currentCounter.setter  # type: ignore
     def currentCounter(self, currentCounter):
         self._currentCounter = currentCounter
 
     @property
     def currentState(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         The current state of the pseudo-random mutator.
         The mutator can reproduce a value by using this state.
 
@@ -201,6 +201,6 @@ class Mutator(metaclass=abc.ABCMeta):
         """
         return self._currentState
 
-    @currentState.setter
+    @currentState.setter  # type: ignore
     def currentState(self, currentState):
         self._currentState = currentState

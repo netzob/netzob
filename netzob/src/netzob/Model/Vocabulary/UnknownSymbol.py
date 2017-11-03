@@ -108,7 +108,7 @@ class UnknownSymbol(Symbol):
         """
         return self.__message
 
-    @message.setter
+    @message.setter  # type: ignore
     @typeCheck(AbstractMessage)
     def message(self, message):
         if message is None:

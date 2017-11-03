@@ -190,12 +190,12 @@ class Protocol(object):
         """
         return self.__name
 
-    # Note: name attribute is read-only, that's why no setter is implemented
+    # Note: name attribute is read-only, that's why no.setter  # type: ignore is implemented
 
     @property
     def symbols(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         The dict of defined symbols for the protocol.
 
         :type: a :class:`dict` where keys are symbol string names and values are :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
@@ -208,7 +208,7 @@ class Protocol(object):
         else:
             return {}
 
-    @symbols.setter
+    @symbols.setter  # type: ignore
     @typeCheck(dict)
     def symbols(self, symbols):
         Protocol.definitions[self.name][Protocol.SYMBOLS] = symbols
@@ -216,7 +216,7 @@ class Protocol(object):
     @property
     def automata(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         The Automata defined for the protocol.
 
         :type: an :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
@@ -226,7 +226,7 @@ class Protocol(object):
         else:
             return None
 
-    @automata.setter
+    @automata.setter  # type: ignore
     @typeCheck(Automata)
     def automata(self, automata):
         Protocol.definitions[self.name][Protocol.AUTOMATA] = automata

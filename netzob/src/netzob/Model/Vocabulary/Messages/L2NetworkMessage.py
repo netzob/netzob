@@ -79,7 +79,7 @@ class L2NetworkMessage(RawMessage):
         """
         return self.__l2Protocol
 
-    @l2Protocol.setter
+    @l2Protocol.setter  # type: ignore
     @typeCheck(str)
     def l2Protocol(self, l2Protocol):
         self.__l2Protocol = l2Protocol
@@ -92,7 +92,7 @@ class L2NetworkMessage(RawMessage):
         """
         return self.__l2SourceAddress
 
-    @l2SourceAddress.setter
+    @l2SourceAddress.setter  # type: ignore
     @typeCheck(str)
     def l2SourceAddress(self, l2SourceAddress):
         self.__l2SourceAddress = l2SourceAddress
@@ -105,7 +105,7 @@ class L2NetworkMessage(RawMessage):
         """
         return self.__l2DestinationAddress
 
-    @l2DestinationAddress.setter
+    @l2DestinationAddress.setter  # type: ignore
     @typeCheck(str)
     def l2DestinationAddress(self, l2DestinationAddress):
         self.__l2DestinationAddress = l2DestinationAddress

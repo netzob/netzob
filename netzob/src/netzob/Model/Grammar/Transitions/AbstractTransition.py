@@ -114,7 +114,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         """
         return self.__type
 
-    @type.setter
+    @type.setter  # type: ignore
     @typeCheck(str)
     def type(self, _type):
         if _type is None:
@@ -149,7 +149,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         """
         return self.__startState
 
-    @startState.setter
+    @startState.setter  # type: ignore
     def startState(self, startState):
         if self.__startState is not None:
             self.__startState.removeTransition(self)
@@ -175,7 +175,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         """
         return self.__endState
 
-    @endState.setter
+    @endState.setter  # type: ignore
     def endState(self, endState):
         self.__endState = endState
 
@@ -204,7 +204,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         """
         return self.__priority
 
-    @priority.setter
+    @priority.setter  # type: ignore
     @typeCheck(int)
     def priority(self, priority):
         if priority is None:
@@ -224,7 +224,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         """
         return self.__active
 
-    @active.setter
+    @active.setter  # type: ignore
     @typeCheck(bool)
     def active(self, active):
         if active is None:
@@ -235,7 +235,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     def description(self):
         return self._description
 
-    @description.setter
+    @description.setter  # type: ignore
     @typeCheck(str)
     def description(self, description):
         self._description = description

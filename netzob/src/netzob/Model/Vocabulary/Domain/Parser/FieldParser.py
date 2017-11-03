@@ -222,7 +222,7 @@ class FieldParser():
         """
         return self.__field
 
-    @field.setter
+    @field.setter  # type: ignore
     @typeCheck(Field)
     def field(self, field):
         if field is None:

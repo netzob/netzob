@@ -89,7 +89,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         """
         return self.__id
 
-    @id.setter
+    @id.setter  # type: ignore
     @typeCheck(uuid.UUID)
     def id(self, _id):
         if id is None:
@@ -105,7 +105,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         """
         return self.__name
 
-    @name.setter
+    @name.setter  # type: ignore
     @typeCheck(str)
     def name(self, name):
         if name is None:
@@ -123,7 +123,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         """
         return self.__active
 
-    @active.setter
+    @active.setter  # type: ignore
     @typeCheck(bool)
     def active(self, active):
         if active is None:

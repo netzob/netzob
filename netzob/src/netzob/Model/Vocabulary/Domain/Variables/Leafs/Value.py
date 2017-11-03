@@ -273,7 +273,7 @@ class Value(AbstractRelationVariableLeaf):
     @property
     def operation(self):
         """
-        Property (getter/setter).
+        Property (getter.setter  # type: ignore).
         Defines the operation to be performed on the found value.
         This operation takes the form of a python function that accepts
         a single parameter of BitArray type and returns a BitArray.
@@ -282,7 +282,7 @@ class Value(AbstractRelationVariableLeaf):
         """
         return self.__operation
 
-    @operation.setter
+    @operation.setter  # type: ignore
     def operation(self, operation):
         if operation is not None and not callable(operation):
             raise TypeError("Operation must be a function")

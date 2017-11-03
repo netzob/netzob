@@ -537,7 +537,7 @@ class String(AbstractType):
         """
         return self.__encoding
 
-    @encoding.setter
+    @encoding.setter  # type: ignore
     @typeCheck(str)
     def encoding(self, encoding):
         if encoding is None:

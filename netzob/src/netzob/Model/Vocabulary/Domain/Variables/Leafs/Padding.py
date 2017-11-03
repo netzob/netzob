@@ -334,7 +334,7 @@ class Padding(AbstractRelationVariableLeaf):
 
         return self.__dataType
 
-    @dataType.setter
+    @dataType.setter  # type: ignore
     @typeCheck(AbstractType)
     def dataType(self, dataType):
         if dataType is None:
@@ -350,7 +350,7 @@ class Padding(AbstractRelationVariableLeaf):
         """Defines the multiplication factor to apply on the targeted length (in bits)"""
         return self.__factor
 
-    @factor.setter
+    @factor.setter  # type: ignore
     @typeCheck(float)
     def factor(self, factor):
         if factor is None:
@@ -363,7 +363,7 @@ class Padding(AbstractRelationVariableLeaf):
         computed size = (factor*size(targetField)+offset)"""
         return self.__offset
 
-    @offset.setter
+    @offset.setter  # type: ignore
     @typeCheck(int)
     def offset(self, offset):
         if offset is None:

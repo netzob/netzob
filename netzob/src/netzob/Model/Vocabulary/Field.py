@@ -386,7 +386,7 @@ class Field(AbstractField):
 
         return self.__domain
 
-    @domain.setter
+    @domain.setter  # type: ignore
     def domain(self, domain):
         if domain is None:
             self.__domain = Data(Raw())
@@ -428,7 +428,7 @@ class Field(AbstractField):
 
         return self.__isPseudoField
 
-    @isPseudoField.setter
+    @isPseudoField.setter  # type: ignore
     @typeCheck(bool)
     def isPseudoField(self, isPseudoField):
         if isPseudoField is None:
