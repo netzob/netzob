@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import random
+from typing import Callable, List
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -44,9 +45,13 @@ import random
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
+from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+
+altCbkType = Callable[[GenericPath, List[AbstractVariable]], AbstractVariable]
 
 
 @NetzobLogger
@@ -62,9 +67,11 @@ class Alt(AbstractVariableNode):
 
     :param children: The set of variable elements permitted in the
                      alternative. The default is None.
+    :param callback: The callback function should return an integer used to determine the child index to select.
     :param svas: The SVAS strategy defining how the Alternate
                  behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+    :type callback: callable function taking two positional arguments returning an integer
     :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
@@ -88,6 +95,19 @@ class Alt(AbstractVariableNode):
     Raw=None ((0, 524288))
     >>> print(domain.children[1].dataType)
     String=None ((None, None))
+
+
+    **Example of a deterministic Alt computation**
+
+    >>> def cbk(path, children):
+    ...    return -1
+    >>> f = Field(Alt([String(_) for _ in "abc"], callback=cbk), "alt")
+    >>> sym = Symbol([f])
+    >>> data = sym.specialize()
+    >>> print(data)
+    b'c'
+    >>> Symbol.abstract(data, [sym])
+    (Symbol, OrderedDict([('alt', b'c')]))
 
 
     .. ifconfig:: scope in ('netzob')
@@ -119,8 +139,9 @@ class Alt(AbstractVariableNode):
 
     """
 
-    def __init__(self, children=None, svas=None):
+    def __init__(self, children=None, callback=None, svas=None):
         super(Alt, self).__init__(self.__class__.__name__, children, svas=svas)
+        self.callback = callback  # type: altCbkType
 
     @typeCheck(ParsingPath)
     def parse(self, parsingPath, carnivorous=False):
@@ -185,6 +206,13 @@ class Alt(AbstractVariableNode):
                 raise ValueError("Field position '{}' is bigger than the length of available children '{}'"
                                  .format(generated_value, len(self.children)))
 
+        elif callable(self.callback):
+            i_child = self.callback(specializingPath, self.children)
+            if not isinstance(i_child, int):
+                raise Exception("The Alt callback return value must be the index"
+                                " (int) of the child to select, not '{}'"
+                                .format(i_child))
+            child = self.children[i_child]
         # Else, randomly chose the child
         else:
             child = random.choice(self.children)
