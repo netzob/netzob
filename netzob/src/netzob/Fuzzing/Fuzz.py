@@ -123,7 +123,9 @@ class Fuzz(object):
         Fuzz.mappingTypesMutators[Alt] = (AltMutator, {})
         Fuzz.mappingTypesMutators[Agg] = (AggMutator, {})
 
-    def __init__(self, counterMax=Mutator.COUNTER_MAX_DEFAULT):  # type: Union[int, float]
+    def __init__(self,
+                 counterMax=Mutator.COUNTER_MAX_DEFAULT  # type: Union[int, float]
+                 ):
 
         # Initialize variables from parameters
         self.counterMax = counterMax

@@ -65,9 +65,8 @@ class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     ## Interface methods ##
 
     @abc.abstractmethod
-    def calculate(self,
-                  data  # type: bytes
-                  ):   # type: bytes
+    def calculate(self, data):
+        # type: (bytes) -> bytes
         """This is a computation method that takes a :attr:`data` and returns
         its HMAC value.
 

@@ -56,6 +56,7 @@ from typing import Callable, List, Type  # noqa: F401
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 class ChannelDownException(Exception):
@@ -206,7 +207,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     # Abstract methods ##
 
     @abc.abstractstaticmethod
-    def getBuilder():  # type: Type[ChannelBuilder]
+    def getBuilder():  # type: () -> Type[ChannelBuilder]
         """
         Provide the builder specific to an :class:`AbstractChannel`
         """
@@ -300,8 +301,8 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
 
     def checkReceived(self,
                       predicate,  # type: Callable[[bytes], bool]
-                      *args, **kwargs
-                      ):          # type: bool
+                      *args, **kwargs):
+        # type: (...) -> bool
         """
         Method used to delegate the validation of the received data into
         a callback

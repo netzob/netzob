@@ -36,6 +36,7 @@
 #+---------------------------------------------------------------------------+
 import io
 import sys
+from typing import Callable, Union
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -139,8 +140,8 @@ class DebugChannel(AbstractChannel):
 
     def checkReceived(self,
                       predicate,  # type: Callable[[bytes], bool]
-                      *args, **kwargs
-                      ):          # type: bool
+                      *args, **kwargs):
+        # type: (...) -> bool
         """
         Method used to simulate the validation of an input data that could not
         be retrieved.

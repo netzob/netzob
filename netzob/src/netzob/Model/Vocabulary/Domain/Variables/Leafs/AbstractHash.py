@@ -64,9 +64,8 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     ## Interface methods ##
 
     @abc.abstractmethod
-    def calculate(self,
-                  data  # type: bytes
-                  ):   # type: bytes
+    def calculate(self, data):
+        # type: (bytes) -> bytes
         """This is a computation method that takes a :attr:`data` and returns
         its hash value.
 
@@ -78,7 +77,8 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def getBitSize(self):  # type: int
+    def getBitSize(self):
+        # type: () -> int
         """This method should return the unit size in bits of the produced
         hash (such as ``160`` bits).
 

@@ -141,7 +141,7 @@ class AggMutator(DomainMutator):
 
         # Call parent init
         super().__init__(domain,
-                         mode=mode,  # type: MutatorMode
+                         mode=mode,
                          generator=generator,
                          seed=seed,
                          counterMax=counterMax)

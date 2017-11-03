@@ -59,6 +59,7 @@ from netzob.Model.Vocabulary.Types.Integer import uint16le
 class RecursionException(Exception):
     pass
 
+
 class AltMutator(DomainMutator):
     r"""The alternative mutator.
 
@@ -175,7 +176,7 @@ class AltMutator(DomainMutator):
 
         # Call parent init
         super().__init__(domain,
-                         mode=mode,  # type: MutatorMode
+                         mode=mode,
                          generator=generator,
                          seed=seed,
                          counterMax=counterMax)
