@@ -382,53 +382,96 @@ class ScapyExporter(object):
                            + str(field.domain.dataType.size)  
      
 
-        def _dataType_integer(self, field):
+        @staticmethod
+        def _dataType_integer(field):
                 """
-                select the correct integer dataType for field
+                Select the correct integer dataType for field
                 :param field: The Field
                 :type field Field
-                :returns: str
+                :return: The method for handling the integer type of field
                 """
                 switcher = {
-                        '8'   : self._integer_unitSize_8,
-                        '16'  : self._integer_unitSize_16,
-                        '32'  : self._integer_unitSize_32,
-                        '64'  : self._integer_unitSize_64
+                        '8'   : ScapyExporter._integer_unitSize_8,
+                        '16'  : ScapyExporter._integer_unitSize_16,
+                        '32'  : ScapyExporter._integer_unitSize_32,
+                        '64'  : ScapyExporter._integer_unitSize_64
                 }
-                return switcher.get(field.domain.dataType.unitSize, self._integer_unitSize_8)(field)
+                return switcher.get(field.domain.dataType.unitSize, ScapyExporter._integer_unitSize_8)(field)
 
-        # TimeStamp dataType
-        def _dataType_timestamp(self, field):
+
+        @staticmethod
+        def _dataType_timestamp(field):
+                """
+                :param field: The field
+                :return: Scapy field definition for TimeStamp dataType
+
+                >>> field = Field(Timestamp(1444737333), name="Timestamp")
+                >>> ScapyExporter._dataType_timestamp(field)
+                '\\t\\t\\t TimeStampField("Timestamp",\\'Tue Oct 13 11:55:33 2015\\'),\\t#size:(32, 32)'
+
+                """
                 return "\t\t\t TimeStampField(" + "\"" + field.name + "\"," \
                        + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Timestamp) if
                                (field.domain.currentValue) else None)\
                        + "),"+ "\t#size:" +str(field.domain.dataType.size) 
 
-        # IPv4 dataType
-        def _dataType_ipv4(self, field):
+
+        @staticmethod
+        def _dataType_ipv4(field):
+                """
+                :param field: The field
+                :return: Scapy field definition for IPv4 dataType
+
+                >>> field = Field(IPv4("192.168.23.42"), name="IP-Address")
+                >>> ScapyExporter._dataType_ipv4(field)
+                '\\t\\t\\t IPField("IP-Address",IPAddress(\\'192.168.23.42\\')),\\t#size:(32, 32)'
+
+                """
                 return "\t\t\t IPField(" + "\"" + field.name + "\"," \
                        + repr(TypeConverter.convert(field.domain.currentValue,BitArray,IPv4) if
                                (field.domain.currentValue) else None)\
                        + "),"+ "\t#size:" +str(field.domain.dataType.size)           
 
-        # Raw, BitArray, HexaString and ASCII dataTypes
-        def _dataType_raw(self, field):
-                return "\t\t\t XBitField(" + "\"" + field.name + "\"," \
-                       + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer,dst_unitSize=AbstractType.defaultUnitSize())
-                               if (field.domain.currentValue) else None) \
-                       + "," + str(self.__reFieldLengths[field]) + ")," + "\t#size:" \
-                       + str(field.domain.dataType.size)
-                    # replace line -2 by the following one when domain.dataType.size-"bug" is fixed
-                    # + "," + repr(field.domain.dataType.size[1]) + ")," + "\t#size:" \
 
-        # check dataType of the field
+        def _dataType_raw(self, field):
+                """
+                :param field: The field
+                :return: Scapy field definition for Raw, BitArray, HexaString, and ASCII dataTypes
+
+                >>> m = b"\\x42\\x43\\x44\\x45"
+                >>> field = Field(Raw(m), name="Some Field")
+                >>> se = ScapyExporter( Symbol([field], messages=[RawMessage(m)]) )
+                >>> se._dataType_raw(field)
+                '\\t\\t\\t XBitField("Some Field",1162101570,32),\\t#size:(0, 32)'
+
+                """
+                return "\t\t\t XBitField(\"{}\",{},{:d}),\t#size:{}".format(
+                        field.name,
+                        repr(TypeConverter.convert(field.domain.currentValue, BitArray, Integer,
+                                                   dst_unitSize=AbstractType.defaultUnitSize(),
+                                                   dst_endianness=AbstractType.ENDIAN_LITTLE)
+                             if (field.domain.currentValue) else None),
+                        self.__reFieldLengths[field],
+                        str(field.domain.dataType.size)
+                    )
+                    # replace line -3 by the following one when domain.dataType.size-"bug" is fixed
+                    # repr(field.domain.dataType.size[1])
+
+
         def _check_dataType(self, field):
+                """
+                Check dataType of the field
+                :param field: The field
+                :return: function to handle data type of field
+                """
+
                 # Workaround for empty Netzob fields which erroneously receive a maximum size of 8 bits
                 if max([len(f6v) for f6v in field.getValues()]) == 0:
                     return '' # return an empty string to effectively skip this field
+
                 switcher = {
-                        'Integer'   : self._dataType_integer,
-                        'Timestamp' : self._dataType_timestamp,
-                        'IPv4'      : self._dataType_ipv4
+                        'Integer'   : ScapyExporter._dataType_integer,
+                        'Timestamp' : ScapyExporter._dataType_timestamp,
+                        'IPv4'      : ScapyExporter._dataType_ipv4
                 }
                 return switcher.get(field.domain.dataType.typeName, self._dataType_raw)(field)
