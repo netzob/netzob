@@ -442,7 +442,7 @@ class ScapyExporter(object):
                         field.name,
                         repr(TypeConverter.convert(field.domain.currentValue, BitArray, Integer,
                                                    dst_unitSize=AbstractType.defaultUnitSize(),
-                                                   dst_endianness=AbstractType.ENDIAN_LITTLE)
+                                                   dst_endianness=AbstractType.ENDIAN_BIG)
                              if (field.domain.currentValue) else None),
                         self.__reFieldLengths[field],
                         str(field.domain.dataType.size)

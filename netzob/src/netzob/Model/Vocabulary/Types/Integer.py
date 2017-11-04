@@ -283,13 +283,13 @@ class Integer(AbstractType):
         25
 
         >>> print(Integer.encode(b'\\xcc\\xac\\x9c\\x0c\\x1c\\xacL\\x1c,\\xac', unitSize=AbstractType.UNITSIZE_8, sign=AbstractType.SIGN_SIGNED))
-        -395865088909314208584756
+        -247119785962690400474196
 
         # raw is interpreted as b'\xcc\xac\x00\x9c' by encode and
         # as big endian with unit size 16 as (0x009c << 16) + 0xccac = 10276012
         >>> raw = b'\\xcc\\xac\\x9c'
         >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
-        10276012
+        13413532
 
         >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG))
         13413532
@@ -344,10 +344,10 @@ class Integer(AbstractType):
 
             unpackedWord = struct.unpack(perWordFormat, wordData)[0]
             if endianness == AbstractType.ENDIAN_LITTLE:
-                wordShift = nbWords - i - 1
-            else:
                 wordShift = i
-            unpackedWord = unpackedWord << int(unitSize) * wordShift
+            else:
+                wordShift = nbWords - i - 1
+            unpackedWord = unpackedWord << (int(unitSize) * wordShift)
 
             finalValue = finalValue + unpackedWord
 
