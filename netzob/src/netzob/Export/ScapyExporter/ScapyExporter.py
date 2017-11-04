@@ -99,27 +99,21 @@ class ScapyExporter(object):
             >>> sem = scapy_test_protocol.ProtocolName_from_netzob_Symbol0()
             >>> sem.show()
             ###[ ProtocolName_from_netzob ]###
-              f0        = 0x656d6f73
-              f1        = 0x656c706d617865
-              f2        = 0x6567617373656d
+              f0        = 0x736f6d65
+              f1        = 0x6578616d706c65
+              f2        = 0x6d657373616765
 
             ... or a list of symbols.
             >>> ScapyExporter([symbol]).exportToScapy("scapy_test_protocol.py")
             >>> sem = scapy_test_protocol.ProtocolName_from_netzob_Symbol0(f1=0xcaffee)
             >>> sem.show()
             ###[ ProtocolName_from_netzob ]###
-              f0        = 0x656d6f73
+              f0        = 0x736f6d65
               f1        = 0xcaffee
-              f2        = 0x6567617373656d
+              f2        = 0x6d657373616765
 
             >>> bytes(sem)
-            b'emos\\x00\\x00\\x00\\x00\\xca\\xff\\xeeegassem'
-
-            === NOTE: ===
-            The last check results in a message with wrong endian due to type conversion inconsistency for Integer
-            solved by PR #124. Toghether with that PR the correct output looks like:
             b'some\\x00\\x00\\x00\\x00\\xca\\xff\\xeemessage'
-
             """
 
             protocolName = self._protocolName
@@ -442,8 +436,7 @@ class ScapyExporter(object):
                 >>> field = Field(Raw(m), name="Some Field")
                 >>> se = ScapyExporter( Symbol([field], messages=[RawMessage(m)]) )
                 >>> se._dataType_raw(field)
-                '\\t\\t\\t XBitField("Some Field",1162101570,32),\\t#size:(0, 32)'
-
+                '\\t\\t\\t XBitField("Some Field",1111704645,32),\\t#size:(0, 32)'
                 """
                 return "\t\t\t XBitField(\"{}\",{},{:d}),\t#size:{}".format(
                         field.name,
