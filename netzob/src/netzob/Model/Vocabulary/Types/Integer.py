@@ -283,13 +283,13 @@ class Integer(AbstractType):
         25
 
         >>> print(Integer.encode(b'\\xcc\\xac\\x9c\\x0c\\x1c\\xacL\\x1c,\\xac', unitSize=AbstractType.UNITSIZE_8, sign=AbstractType.SIGN_SIGNED))
-        -395865088909314208584756
+        -247119785962690400474196
 
         # raw is interpreted as b'\xcc\xac\x00\x9c' by encode and
         # as big endian with unit size 16 as (0x009c << 16) + 0xccac = 10276012
         >>> raw = b'\\xcc\\xac\\x9c'
         >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
-        10276012
+        13413532
 
         >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG))
         13413532
@@ -318,47 +318,38 @@ class Integer(AbstractType):
         nbWords = int(len(data) * 8 / int(unitSize))
 
         # Check whether the input data matches unitSize. If not take 
-        # precautions to able to pad it with null bytes later.
+        # precautions to able to pad it with null bytes to statisfy the unitSize.
         padding_nullbytes = 0
         rest = (len(data) * 8) % int(unitSize)
         if rest != 0:
             nbWords += 1
             padding_nullbytes = (int(unitSize) - rest) / 8
+            if endianness == AbstractType.ENDIAN_BIG:
+                data = b'\x00' * int(padding_nullbytes) + data
+            elif endianness == AbstractType.ENDIAN_LITTLE:
+                data += b'\x00' * int(padding_nullbytes)
+            else:
+                raise ValueError(
+                    "Invalid endianness value: {0}".format(endianness))
 
         finalValue = 0
 
-        iWord = 0
         start = 0
         end = nbWords
-        inc = 1
-        if endianness == AbstractType.ENDIAN_BIG:
-            end = 0
-            start = nbWords
-            inc = -1
-
-        for i in range(start, end, inc):
+        for i in range(start, end):
             # Extract the portion that represents the current word
-            startPos = int(iWord * int(unitSize) / 8)
-            endPos = int(iWord * int(unitSize) / 8 + int(unitSize) / 8)
-
+            startPos = i * int(unitSize) // 8
+            endPos = startPos + int(unitSize) // 8
             wordData = data[startPos:endPos]
 
-            # Pad with null bytes to statisfy the unitSize.
-            if padding_nullbytes > 0 and i == (end - inc):
-                if endianness == AbstractType.ENDIAN_BIG:
-                    wordData = b'\x00' * int(padding_nullbytes) + wordData
-                elif endianness == AbstractType.ENDIAN_LITTLE:
-                    wordData += b'\x00' * int(padding_nullbytes)
-                else:
-                    raise ValueError(
-                        "Invalid endianness value: {0}".format(endianness))
-
             unpackedWord = struct.unpack(perWordFormat, wordData)[0]
-            unpackedWord = unpackedWord << int(unitSize) * iWord
+            if endianness == AbstractType.ENDIAN_LITTLE:
+                wordShift = i
+            else:
+                wordShift = nbWords - i - 1
+            unpackedWord = unpackedWord << (int(unitSize) * wordShift)
 
             finalValue = finalValue + unpackedWord
-
-            iWord += 1
 
         return finalValue
 
