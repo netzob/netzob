@@ -72,7 +72,7 @@ class Integer(AbstractType):
     >>> print(dec.size)
     (8, 8)
 
-    >>> dec = Integer(interval=(-120, 10))
+    >>> dec = Integer(interval=(-130, 10), sign=AbstractType.SIGN_SIGNED)
     >>> print(dec.size)
     (16, 16)
 
@@ -101,6 +101,16 @@ class Integer(AbstractType):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
             interval = value
+            if value <= math.pow(2,8)/2-1 and value >= -math.pow(2,8)/2:
+                unitSize=AbstractType.UNITSIZE_8
+            elif value <= math.pow(2,16)/2-1 and value >= -math.pow(2,16)/2: 
+                unitSize=AbstractType.UNITSIZE_16
+            elif value <= math.pow(2,32)/2-1 and value >= -math.pow(2,32)/2: 
+                unitSize=AbstractType.UNITSIZE_32
+            elif value <= math.pow(2,64)/2-1 and value >= -math.pow(2,64)/2: 
+                unitSize=AbstractType.UNITSIZE_64
+            else:
+                raise ValueError("value out of range")
             value = TypeConverter.convert(
                 value,
                 Integer,
@@ -115,6 +125,13 @@ class Integer(AbstractType):
             value = None
 
         if interval is not None:
+            if sign==AbstractType.SIGN_UNSIGNED:
+                if isinstance(interval, int):
+                    if interval < 0: # value handling
+                        raise ValueError("Value with negative values needs signed type.")
+                elif len(interval) == 2: # interval handling
+                    if min(interval) < 0:
+                        raise ValueError("Interval with negative values needs signed type.")
             nbBits = int(
                 self._computeNbUnitSizeForInterval(interval, unitSize,
                                                    sign)) * int(unitSize)
@@ -147,12 +164,13 @@ class Integer(AbstractType):
         # the interval is a single value
         # bspec = ⌊log2(n)⌋ + 1 (+1 for signed)
         val = abs(val)
-        if sign == AbstractType.SIGN_UNSIGNED:
-            return math.floor(
-                (math.floor(math.log(val, 2)) + 1) / int(unitSize)) + 1
-        else:
-            return math.floor(
-                (math.floor(math.log(val, 2)) + 2) / int(unitSize)) + 1
+        if val != 0:
+            if sign == AbstractType.SIGN_UNSIGNED:
+                return math.floor(
+                    (math.floor(math.log(val, 2)) + 1) / int(unitSize)) + 1
+            else:
+                return math.floor(
+                    (math.floor(math.log(val, 2)) + 2) / int(unitSize)) + 1
 
     def canParse(self,
                  data,
@@ -204,7 +222,7 @@ class Integer(AbstractType):
         >>> print(Integer.decode(2000000000000000))
         Traceback (most recent call last):
         ...
-        struct.error: byte format requires -128 <= number <= 127
+        struct.error: ubyte format requires 0 <= number <= 255
 
         >>> print(Integer.decode(2000000000000000, unitSize=AbstractType.UNITSIZE_64))
         b'\\x00\\x07\\x1a\\xfdI\\x8d\\x00\\x00'
@@ -264,12 +282,14 @@ class Integer(AbstractType):
         >>> print(repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)))
         25
 
-        >>> print(Integer.encode(b'\\xcc\\xac\\x9c\\x0c\\x1c\\xacL\\x1c,\\xac', unitSize=AbstractType.UNITSIZE_8))
+        >>> print(Integer.encode(b'\\xcc\\xac\\x9c\\x0c\\x1c\\xacL\\x1c,\\xac', unitSize=AbstractType.UNITSIZE_8, sign=AbstractType.SIGN_SIGNED))
         -395865088909314208584756
 
+        # raw is interpreted as b'\xcc\xac\x00\x9c' by encode and
+        # as big endian with unit size 16 as (0x009c << 16) + 0xccac = 10276012
         >>> raw = b'\\xcc\\xac\\x9c'
         >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
-        10210476
+        10276012
 
         >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG))
         13413532

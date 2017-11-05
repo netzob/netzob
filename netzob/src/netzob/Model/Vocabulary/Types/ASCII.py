@@ -67,10 +67,10 @@ class ASCII(AbstractType):
     >>> raw = cAscii.convertValue(Raw)
     >>> print(repr(raw))
     b'constante value'
-    >>> ip = cAscii.convertValue(IPv4)
+    >>> ip = cAscii.convertValue(IPv4) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    TypeError: Impossible encode b'constante value' into an IPv4 data (unpack requires a bytes object of length 4)
+    TypeError: Impossible encode b'constante value' into an IPv4 data ...
 
     The type can be used to specify constraints over the domain
     >>> a = ASCII(nbChars=10)

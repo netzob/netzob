@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -6,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |
+#| Copyright (C) 2012 AMOSSYS                                                |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -26,9 +25,73 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-# List subpackages to import with the current one
-# see docs.python.org/2/tutorial/modules.html
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
+from io import StringIO
 
-#from Serialization import *
-#from netzob.Common.Utils.Serializer import Serializer
-from netzob.Common.Utils.Cpicklizer import Cpicklizer
+
+class CodeBuffer(StringIO):
+    """
+    StringIO class with indentation capabilities
+    Used to write indent-based blocks of code (Python, LUA...)
+
+    Use like this:
+    > buffer = CodeBuffer()
+    > buffer << "rabbits eats"
+    > with buffer.new_block("carrots, but also"):
+    >   buffer << "hay,"
+    >   buffer << "vegetables,"
+    >   buffer << "and grass."
+    > print buffer
+    < rabbits eats
+    < carrots, but also
+    <   hay,
+    <   vegetables,
+    <   and grass.
+    """
+    INDENT_SIZE = 2
+
+    def __init__(self, *args, **kwargs):
+        StringIO.__init__(self, *args, **kwargs)
+        self._stack = [self.new_block()]
+
+    def __lshift__(self, elm):
+        self._stack[-1].write(elm)
+        return self
+
+    def enter(self, elm):
+        self._stack.append(elm)
+
+    def exit(self):
+        self._stack.pop()
+
+    def write(self, s):
+        indent_s = ' ' * ((len(self._stack) - 1) * self.INDENT_SIZE) + s + '\n'
+        StringIO.write(self, indent_s)
+
+    def new_block(self, data=None):
+        cb = CodeBlock(self)
+        if data is not None:
+            self << data
+        return cb
+
+
+class LUACodeBuffer(CodeBuffer):
+    def exit(self):
+        self << "end"
+        CodeBuffer.exit(self)
+
+
+class CodeBlock(object):
+    def __init__(self, buf):
+        self._buf = buf
+
+    def __enter__(self):
+        return self._buf.enter(self)
+
+    def __exit__(self, exception, data, tb):
+        self._buf.exit()
+
+    def write(self, data):
+        self._buf.write(data)

@@ -333,7 +333,9 @@ class Size(AbstractRelationVariableLeaf):
                                          src_unitSize=self.dataType.unitSize,
                                          dst_unitSize=self.dataType.unitSize,
                                          src_sign=self.dataType.sign,
-                                         dst_sign=self.dataType.sign)
+                                         dst_sign=self.dataType.sign,
+                                         src_endianness=self.dataType.endianness,
+                                         dst_endianness=self.dataType.endianness)
         b = TypeConverter.convert(size_raw, Raw, BitArray)
 
         # add heading '0'

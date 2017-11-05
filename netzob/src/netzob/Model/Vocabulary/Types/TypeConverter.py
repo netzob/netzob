@@ -28,6 +28,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+import math
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -38,6 +39,7 @@
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.Integer import Integer
 
 
 class TypeConverter(object):
@@ -62,10 +64,10 @@ class TypeConverter(object):
     def convert(data,
                 sourceType,
                 destinationType,
-                src_unitSize=AbstractType.defaultUnitSize(),
+                src_unitSize=None,
                 src_endianness=AbstractType.defaultEndianness(),
                 src_sign=AbstractType.defaultSign(),
-                dst_unitSize=AbstractType.defaultUnitSize(),
+                dst_unitSize=None,
                 dst_endianness=AbstractType.defaultEndianness(),
                 dst_sign=AbstractType.defaultSign()):
         """Encode data provided as a sourceType to a destinationType.
@@ -88,20 +90,37 @@ class TypeConverter(object):
         35
         >>> print(TypeConverter.convert(decData, Integer, ASCII))
         #
+        
+        Conversion to and from Integer detects the output unitsize depending on the input:
+        
+        >>> TypeConverter.convert(b'\\x0b\\x00', Raw, Integer)
+        2816
+        >>> TypeConverter.convert(11, Integer, Raw)
+        b'\\x0b'
+        >>> TypeConverter.convert(b'\\xa0\\x0b', Raw, Integer, dst_sign=AbstractType.SIGN_SIGNED)
+        -24565
+        >>> TypeConverter.convert(-24565, Integer, Raw, src_sign=AbstractType.SIGN_SIGNED)
+        b'\\xa0\\x0b'
+        >>> TypeConverter.convert(0, Integer, Raw)
+        b'\\x00'
+        >>> TypeConverter.convert(b'\\x00\\x00\\x00', Raw, Integer)
+        Traceback (most recent call last):
+        ...
+        TypeError: Unsupported autodetected Integer target UnitSize. Valid UnitSizes are 8, 16, 32 and 64 bits.
 
         You can also play with the unitSize to convert multiple ascii in a single high value decimal
 
         >>> TypeConverter.convert("5", ASCII, Integer)
         53
         >>> print(TypeConverter.convert("zoby", ASCII, Integer))
-        2036494202
+        2054120057
         >>> print(TypeConverter.convert("zoby", ASCII, Integer, dst_unitSize=AbstractType.UNITSIZE_32))
         2054120057
 
         It also works for 'semantic' data like IPv4s
 
         >>> TypeConverter.convert("192.168.0.10", IPv4, Integer, dst_sign=AbstractType.SIGN_UNSIGNED)
-        167815360
+        3232235530
         >>> TypeConverter.convert("127.0.0.1", IPv4, BitArray)
         bitarray('01111111000000000000000000000001')
         >>> TypeConverter.convert(167815360, Integer, IPv4, src_unitSize=AbstractType.UNITSIZE_32, src_sign=AbstractType.SIGN_UNSIGNED)
@@ -127,6 +146,12 @@ class TypeConverter(object):
         :raise: TypeError if parameter not valid
 
         """
+	# Use defaultUnitSize for all types except Integer
+        if dst_unitSize is None and destinationType is not Integer: 
+            dst_unitSize = AbstractType.defaultUnitSize()
+        if src_unitSize is None and sourceType is not Integer:
+            src_unitSize = AbstractType.defaultUnitSize()
+
         # is the two formats supported ?
         if sourceType not in TypeConverter.supportedTypes():
             raise TypeError(
@@ -147,6 +172,29 @@ class TypeConverter(object):
         else:
             # Convert from source to raw
             if sourceType is not Raw:
+                if sourceType is Integer and src_unitSize is None:
+                    if src_sign is AbstractType.SIGN_SIGNED:
+                        if -0x80 <= data <= 0x7f:
+                            src_unitSize=AbstractType.UNITSIZE_8
+                        elif -0x8000 <= data <= 0x7fff:
+                            src_unitSize=AbstractType.UNITSIZE_16
+                        elif -0x80000000 <= data <= 0x7fffffff:
+                            src_unitSize=AbstractType.UNITSIZE_32
+                        elif -0x8000000000000000 <= data <= 0x7fffffffffffffff:
+                            src_unitSize=AbstractType.UNITSIZE_64
+                        else:
+                            raise ValueError("Source data is out of signed 64bit Integer range.")
+                    if src_sign is AbstractType.SIGN_UNSIGNED:
+                        if 0x00 <= data <= 0xff:
+                            src_unitSize=AbstractType.UNITSIZE_8
+                        elif 0x00 <= data <= 0xffff:
+                            src_unitSize=AbstractType.UNITSIZE_16
+                        elif 0x00 <= data <= 0xffffffff:
+                            src_unitSize=AbstractType.UNITSIZE_32
+                        elif 0x00 <= data <= 0xffffffffffffffff:
+                            src_unitSize=AbstractType.UNITSIZE_64
+                        else:
+                            raise ValueError("Source data is out of unsigned 64bit Integer range.")
                 binData = sourceType.decode(
                     data,
                     unitSize=src_unitSize,
@@ -157,6 +205,18 @@ class TypeConverter(object):
 
             # Convert from raw to Destination
             if destinationType is not Raw:
+                if destinationType is Integer and dst_unitSize is None:
+                    nbUnits = len(binData)
+                    if nbUnits == 8:
+                        dst_unitSize = AbstractType.UNITSIZE_64
+                    elif nbUnits == 4:
+                        dst_unitSize = AbstractType.UNITSIZE_32
+                    elif nbUnits == 2:
+                        dst_unitSize = AbstractType.UNITSIZE_16
+                    elif nbUnits == 1:
+                        dst_unitSize = AbstractType.UNITSIZE_8
+                    else:
+                        raise TypeError("Unsupported autodetected Integer target UnitSize. Valid UnitSizes are 8, 16, 32 and 64 bits.")
                 outputData = destinationType.encode(
                     binData,
                     unitSize=dst_unitSize,

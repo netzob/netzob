@@ -235,6 +235,13 @@ class CorrelationFinder(object):
         result = []
         for data in cellsData:
             if len(data) > 0:
+                # Integer only may be 1, 2, 4, or 8 bytes long, so for conversion
+                # we need to add 0 padding at the front of the raw numbers
+                if len(data) == 3:
+                    data = b'\x00' + data
+                elif len(data) in (5,6,7):
+                    padding_length = 8 - len(data)
+                    data = padding_length *  b'\x00' + data
                 result.append(TypeConverter.convert(
                     data[:8], Raw, Integer))  # We take only the first 8 octets
             else:
