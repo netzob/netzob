@@ -128,7 +128,13 @@ class TypeConverter(object):
 
         To check Integer conversion consistency
         >>> f = Field(b'some')
-        >>> '0x'+f.domain.currentValue.tobytes().hex() == hex(TypeConverter.convert(f.domain.currentValue, BitArray, Integer))
+        >>> v = f.domain.currentValue.tobytes()
+        >>> try:
+        ...     v_hex = v.hex()
+        ... except AttributeError:
+        ...     import codecs # Python <= 3.4: 'bytes' object has no attribute 'hex'
+        ...     v_hex = codecs.encode(v, 'hex_codec').decode('ascii')
+        >>> '0x'+v_hex == hex(TypeConverter.convert(f.domain.currentValue, BitArray, Integer))
         True
 
         :param sourceType: the data source type
