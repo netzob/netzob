@@ -396,3 +396,179 @@ class Automata(object):
     @typeCheck(list)
     def vocabulary(self, vocabulary):
         self.__vocabulary = vocabulary
+
+
+    @typeCheck(callable)
+    def set_cbk_read_symbol_timeout(self, cbk_method, states=None):
+        """Function called to handle cases where a timeout appears when
+        waiting for a symbol. For a server, this symbol would
+        correspond to the input symbol that should trigger a
+        transition. For a client, this symbol would correspond to an
+        output symbol that is expected according to the current
+        transition.
+
+        The method expects some parameters:
+
+        :param cbk_method: A callable function used to handle the selection of the next state when no symbol is received.
+        :param states: A list of states on which the callback function should apply. If no state are specified, the callback function is applied on all states of the automaton.
+        :type cbk_method: :class:`func`, required
+        :type states: a :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
+
+        The callable function should have the following prototype:
+
+        .. code-block:: python
+
+          def cbk_method(current_state,
+                         current_transition):
+
+        Where:
+
+          :attr:`current_state`
+            Corresponds to the current state
+            (:class:`~netzob.Model.Grammar.States.State.State`) in the
+            automaton. It is expected that the current state may not
+            be None.
+
+          :attr:`current_transition`
+            Corresponds to the current transition
+            (:class:`~netzob.Model.Grammar.Transitions.Transition.Transition`)
+            in the automaton. It is expected that the current transition
+            may be None, especially in a server context, where no
+            transition has been initiated.
+
+        The callback function should return the next state
+        (:class:`~netzob.Model.Grammar.States.State.State`). For
+        example, to stay at the same state, the callback function
+        would have to return the ``current_state`` value.
+
+        :type: :class:`func`
+        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
+
+        """
+        if not callable(cbk_method):
+            raise TypeError("'cbk_method' should be a callable function")
+
+        raise NotImplementedError("Not yet implemented")
+
+    @typeCheck(callable, list)
+    def set_cbk_read_unexpected_symbol(self, cbk_method, states=None):
+        """Function called to handle cases where a symbol is received but not
+        expected. In a server context, this symbol would not match the input
+        symbol of the available transitions. In a client context, this
+        symbol would not match the expected output symbols of the current
+        transition.
+
+        The method expects some parameters:
+
+        :param cbk_method: A callable function used to handle the selection of the next state when a unexpected symbol is received.
+        :param states: A list of states on which the callback function should apply. If no state are specified, the callback function is applied on all states of the automaton.
+        :type cbk_method: :class:`func`, required
+        :type states: a :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
+
+        The callable function should have the following prototype:
+
+        .. code-block:: python
+
+          def cbk_method(current_state,
+                         current_transition=None,
+                         received_symbol=None,
+                         received_message=None):
+
+        Where:
+
+          :attr:`current_state`
+            Corresponds to the current state
+            (:class:`~netzob.Model.Grammar.States.State.State`) in the
+            automaton. It is expected that the current state may not
+            be None.
+
+          :attr:`current_transition`
+            Corresponds to the current transition
+            (:class:`~netzob.Model.Grammar.Transitions.Transition.Transition`)
+            in the automaton. It is expected that the current transition
+            may be None, especially in a server context, where no
+            transition has been initiated.
+
+          :attr:`received_symbol`
+            Corresponds to the received symbol
+            (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`).
+
+          :attr:`current_message`
+            Corresponds to the received raw message
+            (:class:`~netzob.Model.Vocabulary.Messages.RawMessage.RawMessage`).
+
+        The callback function should return the next state
+        (:class:`~netzob.Model.Grammar.States.State.State`). For
+        example, to stay at the same state, the callback function
+        would have to return the ``current_state`` value.
+
+        :type: :class:`func`
+        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
+
+        """
+        if not callable(cbk_method):
+            raise TypeError("'cbk_method' should be a callable function")
+
+        raise NotImplementedError("Not yet implemented")
+
+    @typeCheck(callable, list)
+    def set_cbk_read_unknown_symbol(self, cbk_method, states=None):
+        """Function called to handle cases where a message is received but
+        does not correspond to a known symbol. In a server context,
+        this message would not match the input symbol of the available
+        transitions. In a client context, this message would not match
+        the expected output symbols of the current transition.
+
+        The method expects some parameters:
+
+        :param cbk_method: A callable function used to handle the selection of the next state when an unknown symbol is received.
+        :param states: A list of states on which the callback function should apply. If no state are specified, the callback function is applied on all states of the automaton.
+        :type cbk_method: :class:`func`, required
+        :type states: a :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
+
+        The callable function should have the following prototype:
+
+        .. code-block:: python
+
+          def cbk_method(current_state,
+                         current_transition=None,
+                         received_symbol=None,
+                         received_message=None):
+
+        Where:
+
+          :attr:`current_state`
+            Corresponds to the current state
+            (:class:`~netzob.Model.Grammar.States.State.State`) in the
+            automaton. It is expected that the current state may not
+            be None.
+
+          :attr:`current_transition`
+            Corresponds to the current transition
+            (:class:`~netzob.Model.Grammar.Transitions.Transition.Transition`)
+            in the automaton. It is expected that the current transition
+            may be None, especially in a server context, where no
+            transition has been initiated.
+
+          :attr:`received_symbol`
+            Corresponds to the received symbol
+            (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`).
+
+          :attr:`current_message`
+            Corresponds to the received raw message
+            (:class:`~netzob.Model.Vocabulary.Messages.RawMessage.RawMessage`).
+
+        The callback function should return the next state
+        (:class:`~netzob.Model.Grammar.States.State.State`). For
+        example, to stay at the same state, the callback function
+        would have to return the ``current_state`` value.
+
+        :type: :class:`func`
+        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
+
+        """
+        if not callable(cbk_method):
+            raise TypeError("'cbk_method' should be a callable function")
+
+        raise NotImplementedError("Not yet implemented")
+
