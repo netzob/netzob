@@ -126,6 +126,17 @@ class TypeConverter(object):
         >>> TypeConverter.convert(167815360, Integer, IPv4, src_unitSize=AbstractType.UNITSIZE_32, src_sign=AbstractType.SIGN_UNSIGNED)
         IPAddress('10.0.168.192')
 
+        To check Integer conversion consistency
+        >>> f = Field(b'some')
+        >>> v = f.domain.currentValue.tobytes()
+        >>> try:
+        ...     v_hex = v.hex()
+        ... except AttributeError:
+        ...     import codecs # Python <= 3.4: 'bytes' object has no attribute 'hex'
+        ...     v_hex = codecs.encode(v, 'hex_codec').decode('ascii')
+        >>> '0x'+v_hex == hex(TypeConverter.convert(f.domain.currentValue, BitArray, Integer))
+        True
+
         :param sourceType: the data source type
         :type sourceType: :class:`type`
         :param destinationType: the destination type

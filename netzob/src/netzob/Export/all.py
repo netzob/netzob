@@ -30,3 +30,4 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from netzob.Export.WiresharkDissector.all import *
+from netzob.Export.ScapyExporter.all import *
