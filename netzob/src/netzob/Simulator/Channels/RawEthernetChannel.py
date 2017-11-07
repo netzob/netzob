@@ -49,6 +49,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Simulator.AbstractChannel import AbstractChannel
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding import Padding
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.Integer import uint16be
@@ -128,10 +129,19 @@ class RawEthernetChannel(AbstractChannel):
         eth_src = Field(name='eth.src', domain=Raw(self.macToBitarray(self.localMac)))
         eth_type = Field(name='eth.type', domain=uint16be())
         eth_payload = Field(name='eth.payload', domain=Raw())
+        # PADDING field is present if frame length < 60 bytes (+ 4 optional CRC bytes)
+        ethPaddingVariable = Padding([eth_dst,
+                                      eth_src,
+                                      eth_type,
+                                      eth_payload],
+                                     data=Raw(nbBytes=1),
+                                     modulo=8*60)
+        eth_padding = Field(ethPaddingVariable, "eth.padding")
         self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
                                                             eth_src,
                                                             eth_type,
-                                                            eth_payload])
+                                                            eth_payload,
+                                                            eth_padding])
 
     def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a client, it
