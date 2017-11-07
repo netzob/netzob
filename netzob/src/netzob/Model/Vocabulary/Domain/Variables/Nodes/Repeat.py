@@ -421,19 +421,19 @@ class Repeat(AbstractVariableNode):
                 child = self.children[0]
                 for path in child.specialize(newSpecializingPath, fuzz=fuzz):
 
-                    newResult = bitarray()
+                    oldResult = bitarray()
                     if path.hasData(self):
-                        newResult = path.getData(self).copy()
+                        oldResult = path.getData(self).copy()
                         if self.delimiter is not None:
-                            newResult += self.delimiter
-                    newResult += path.getData(child)
+                            oldResult += self.delimiter
+                    newResult = oldResult + path.getData(child)
 
                     if callable(self.nbRepeat):
                         break_repeat = self.nbRepeat(i + 1, newResult, None,
                                                      path, child)
 
                     if break_repeat is RepeatResult.STOP_BEFORE:
-                        path.addResult(self, bitarray())
+                        path.addResult(self, oldResult)
                     else:
                         path.addResult(self, newResult)
 
