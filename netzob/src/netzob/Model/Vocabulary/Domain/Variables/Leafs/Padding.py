@@ -364,7 +364,7 @@ class Padding(AbstractRelationVariableLeaf):
         return self.__offset
 
     @offset.setter  # type: ignore
-    @typeCheck(int)
+    @typeCheck((int, float))
     def offset(self, offset):
         if offset is None:
             raise TypeError(
