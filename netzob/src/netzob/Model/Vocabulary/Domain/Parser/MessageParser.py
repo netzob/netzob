@@ -311,5 +311,3 @@ class MessageParser(object):
 
             except InvalidParsingPathException:
                 pass
-
-        raise StopIteration()
