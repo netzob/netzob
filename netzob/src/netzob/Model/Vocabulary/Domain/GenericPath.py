@@ -245,7 +245,7 @@ class GenericPath(object):
                     resultingPaths = currentVariable.specialize(self, acceptCallBack=True)
                 if len(resultingPaths) == 0:
                     return False
-                if self.hasData(currentVariable):
+                if callBackToExecute in self._variablesCallbacks and self.hasData(currentVariable):
                     self._variablesCallbacks.remove(callBackToExecute)
 
         return True
