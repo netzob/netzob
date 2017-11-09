@@ -249,7 +249,7 @@ class GenericPath(object):
                 moreCallBackFound = True
                 (targetVariables, currentVariable, parsingCB) = callBackToExecute
                 if parsingCB:
-                    resultingPaths = currentVariable.parse(self, acceptCallBack=False)
+                    resultingPaths = currentVariable.parse(self, acceptCallBack=True)
                 else:
                     resultingPaths = currentVariable.specialize(self, acceptCallBack=True)
                 if len(resultingPaths) == 0:
