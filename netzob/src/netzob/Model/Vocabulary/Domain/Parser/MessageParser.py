@@ -301,8 +301,7 @@ class MessageParser(object):
                     else:
                         generator = self._parseBitArrayWithField(
                             newParsingPath, fields, i_current_field + 1)
-                    for x in generator:
-                        yield x
+                    yield from generator
 
                 elif not must_consume_everything and len(remainingValue) >= 0:
                     yield newParsingPath

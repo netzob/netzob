@@ -211,8 +211,7 @@ class FieldParser():
         # we create a first VariableParser and uses it to parse the domain
         variableParser = VariableParser(domain)
 
-        for resultParsingPath in variableParser.parse(parsingPath, carnivorous=self.lastField):
-            yield resultParsingPath
+        yield from variableParser.parse(parsingPath, carnivorous=self.lastField)
 
     @property
     def field(self):

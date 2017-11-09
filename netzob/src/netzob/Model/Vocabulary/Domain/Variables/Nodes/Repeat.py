@@ -378,8 +378,7 @@ class Repeat(AbstractVariableNode):
                 if break_repeat:
                     break
 
-            for result in newParsingPaths:
-                yield result
+            yield from newParsingPaths
 
     @typeCheck(SpecializingPath)
     def specialize(self, originalSpecializingPath, fuzz=None):
