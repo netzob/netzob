@@ -337,7 +337,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 variableSpecializerPath.registerVariablesCallBack(
                     self.targets, self, parsingCB=False)
             else:
-                raise e
+                raise
 
         return [variableSpecializerPath]
 
