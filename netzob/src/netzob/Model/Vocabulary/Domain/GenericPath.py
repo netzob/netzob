@@ -80,7 +80,11 @@ class GenericPath(object):
             self._dataAssignedToVariable = dataAssignedToVariable
 
     def addResult(self, variable, result, notify=True):
-        """This method can be used to register the bitarray obtained after having parsed a variable
+        """
+        This method can be used to register the bitarray obtained after having parsed a variable.
+
+        :param notify: decide to look for other variable that could be evaluated using this result
+        :type notify: bool (default :const:`True`)
 
         >>> from netzob.all import *
         >>> path = GenericPath()
