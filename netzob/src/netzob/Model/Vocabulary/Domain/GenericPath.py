@@ -79,7 +79,7 @@ class GenericPath(object):
         else:
             self._dataAssignedToVariable = dataAssignedToVariable
 
-    def addResult(self, variable, result):
+    def addResult(self, variable, result, notify=True):
         """This method can be used to register the bitarray obtained after having parsed a variable
 
         >>> from netzob.all import *
@@ -99,7 +99,9 @@ class GenericPath(object):
         self.assignData(result, variable)
         self._pendingValueVariables.pop(variable.id, None)
 
-        return self._triggerVariablesCallbacks(variable)
+        if notify:
+            return self._triggerVariablesCallbacks(variable)
+        return True
 
     @typeCheck(AbstractVariable)
     def setPendingValueVariable(self, variable):
