@@ -565,10 +565,10 @@ class String(AbstractType):
         >>> raw = cAscii.convert(Raw)
         >>> print(repr(raw))
         b'hello'
-        >>> ip = cAscii.convert(IPv4)
+        >>> ip = cAscii.convert(IPv4)  # doctest: +ELLIPSIS
         Traceback (most recent call last):
         ...
-        TypeError: Impossible to encode b'hello' into an IPv4 data (unpack requires a bytes object of length 4)
+        TypeError: Impossible to encode b'hello' into an IPv4 data...
 
         The type can be used to specify constraints over the domain:
 
