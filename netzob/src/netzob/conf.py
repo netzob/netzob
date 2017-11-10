@@ -26,14 +26,20 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-# List subpackages to import with the current one
-# see docs.python.org/2/tutorial/modules.html
+import random
 
-from sys import version_info
 
-if version_info[0] < 3:
-    raise ImportError(
-        "This version of Netzob is only compatible with Python3.")
+class Conf(object):
+    """Configuration variables.
+    """
+    seed = 0  ## Seed for random number generation
 
-from netzob.conf import Conf
-Conf.apply()
+
+    @staticmethod
+    def apply():
+        """Apply configuration settings.
+        """
+
+        if 'seed' in Conf.__dict__.keys():
+            random.seed(Conf.seed)
+

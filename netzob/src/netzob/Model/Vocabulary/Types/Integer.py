@@ -640,6 +640,8 @@ class Integer(AbstractType):
         >>> from netzob.all import *
         >>> v1 = Integer(interval=(-10, -1)).generate()
         >>> assert v1[0] is True  # sign bit (MSB) is set
+        >>> v1
+        bitarray('11111100')
 
         >>> v2 = Integer(42, sign=Sign.UNSIGNED)
         >>> v2.generate()
