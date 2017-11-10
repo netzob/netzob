@@ -184,6 +184,8 @@ class State(AbstractState):
             return nextState
 
         # Else, we wait to receive a symbol
+        received_symbol = None
+        received_message = None
         try:
             (received_symbol, received_message) = abstractionLayer.readSymbol()
             if received_symbol is None:
@@ -211,7 +213,7 @@ class State(AbstractState):
             else:
                 self._logger.debug("No transition expects an EmptySymbol as input symbol")
                 self.active = False
-                return None
+                raise ReadSymbolTimeoutException(current_state=self, current_transition=None)
 
         except Exception as e:
             self._logger.warning("An exception occured when receiving a symbol from the abstraction layer.")
@@ -238,8 +240,18 @@ class State(AbstractState):
 
         # Execute the retained transition
         if nextTransition is None:
-            self._logger.debug("The received symbol did not match any of the registered transition, we stay in place.")
-            nextState = self
+            self._logger.debug("The received symbol did not match any of the registered transition")
+            #nextState = self
+            if isinstance(received_symbol, UnknownSymbol):
+                raise ReadUnknownSymbolException(current_state=self,
+                                                 current_transition=None,
+                                                 received_symbol=received_symbol,
+                                                 received_message=received_message)
+            else:
+                raise ReadUnexpectedSymbolException(current_state=self,
+                                                    current_transition=None,
+                                                    received_symbol=received_symbol,
+                                                    received_message=received_message)
         else:
             nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
             self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))

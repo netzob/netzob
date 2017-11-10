@@ -252,7 +252,7 @@ class Transition(AbstractTransition):
         except socket.timeout:
             self._logger.debug("Timeout on abstractionLayer.readSymbol()")
             self.active = False
-            raise
+            raise ReadSymbolTimeoutException(current_state=self.startState, current_transition=self)
         except Exception as e:
             self.active = False
             errorMessage = "An error occured while executing the transition {} as an initiator: {}".format(self.name, e)
@@ -271,10 +271,17 @@ class Transition(AbstractTransition):
             return self.endState
         else:
             self.active = False
-            errorMessage = "Received symbol '{}' was unexpected.".format(
-                received_symbol.name)
-            self._logger.warning(errorMessage)
-            raise Exception(errorMessage)
+            self._logger.debug("Received symbol '{}' was unexpected.".format(received_symbol.name))
+            if isinstance(received_symbol, UnknownSymbol):
+                raise ReadUnknownSymbolException(current_state=self.startState,
+                                                 current_transition=self,
+                                                 received_symbol=received_symbol,
+                                                 received_message=received_message)
+            else:
+                raise ReadUnexpectedSymbolException(current_state=self.startState,
+                                                    current_transition=self,
+                                                    received_symbol=received_symbol,
+                                                    received_message=received_message)
 
     @typeCheck(AbstractionLayer)
     def executeAsNotInitiator(self, abstractionLayer):
