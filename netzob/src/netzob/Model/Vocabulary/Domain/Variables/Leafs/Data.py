@@ -234,11 +234,14 @@ class Data(AbstractVariableLeaf):
         self._logger.debug("Learn '{0}' with {1}".format(content.tobytes(),
                                                          self.dataType))
 
-        (minSize, maxSize) = self.dataType.size
-        if minSize is None:
-            minSize = 0
-        if maxSize is None:
-            maxSize = actualSize
+        try:
+            minSize = maxSize = self.getFixedBitSize()
+        except ValueError:
+            (minSize, maxSize) = self.dataType.size
+            if minSize is None:
+                minSize = 0
+            if maxSize is None:
+                maxSize = actualSize
 
         if actualSize < minSize:
             self._logger.debug(
