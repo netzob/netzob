@@ -409,7 +409,7 @@ class Automata(object):
 
         The method expects some parameters:
 
-        :param cbk_method: A callable function used to handle the selection of the next state when no symbol is received.
+        :param cbk_method: A callable function used to handle the selection of the next state when no symbol is received after the timeout has expired.
         :param states: A list of states on which the callback function should apply. If no state are specified, the callback function is applied on all states of the automaton.
         :type cbk_method: :class:`func`, required
         :type states: a :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
