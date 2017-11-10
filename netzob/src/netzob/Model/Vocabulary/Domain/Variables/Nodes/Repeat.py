@@ -432,9 +432,15 @@ class Repeat(AbstractVariableNode):
                                                      path, child)
 
                     if break_repeat is RepeatResult.STOP_BEFORE:
-                        path.addResult(self, oldResult, notify=False)
+                        # save previous result, then notify
+                        path.addResult(self, oldResult, notify=True)
+                    elif break_repeat is RepeatResult.STOP_AFTER:
+                        # save last result, then notify
+                        path.addResult(self, newResult, notify=True)
                     else:
-                        path.addResult(self, newResult, notify=False)
+                        # save last result, then notify on last iteration only
+                        last_round = (i == i_repeat - 1)
+                        path.addResult(self, newResult, notify=last_round)
 
                     # We forget the assigned data to the child variable and its children
                     path.removeDataRecursively(child)
