@@ -199,9 +199,9 @@ class Repeat(AbstractVariableNode):
     ...         if child.isnode() and len(child.children) > 1:
     ...             second_subchild = child.children[1]
     ...             if parsed_structure.hasData(second_subchild) and parsed_structure.getData(second_subchild).tobytes() == b'B':
-    ...                 return True
-    ...         return False
-    ...     return True
+    ...                 return RepeatResult.STOP_AFTER
+    ...         return RepeatResult.CONTINUE
+    ...     return RepeatResult.STOP_AFTER
     >>> f1 = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=cbk), name="f1")
     >>> f2 = Field(String("B"), name="f2")
     >>> f3 = Field(String("C"), name="f3")
@@ -337,7 +337,7 @@ class Repeat(AbstractVariableNode):
                                                          childParsingPath,
                                                          self.children[0])
 
-                            if break_repeat:
+                            if break_repeat is not RepeatResult.CONTINUE:
                                 # If the callback returns True for the 1st
                                 # repetition (i_repeat=0), it is equivalent to
                                 # nbRepeat=0 : the path also has no data (for
@@ -356,7 +356,8 @@ class Repeat(AbstractVariableNode):
                         childParsingPath.assignData(remainingDataToParse, self.children[0])
 
                         # apply delimiter if necessary
-                        if not break_repeat and self.delimiter is not None and i_repeat < nb_repeat - 1:
+                        if (break_repeat is RepeatResult.CONTINUE and
+                            self.delimiter is not None and i_repeat < nb_repeat - 1):
                                 # check the delimiter is available
                                 toParse = childParsingPath.getData(self.children[0]).copy()
                                 if toParse[:len(self.delimiter)] == self.delimiter:
@@ -369,12 +370,12 @@ class Repeat(AbstractVariableNode):
                             tmp_result.append(childParsingPath)
 
                         if len(dataToParse) == len(newResult):
-                            break_repeat = True
+                            break_repeat = RepeatResult.STOP_AFTER
 
                 if lastResultIsValidPath:
                     newParsingPaths = tmp_result
 
-                if break_repeat:
+                if break_repeat is not RepeatResult.CONTINUE:
                     break
 
             yield from newParsingPaths
