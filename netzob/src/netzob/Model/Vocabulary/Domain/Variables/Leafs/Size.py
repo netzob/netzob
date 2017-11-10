@@ -479,4 +479,16 @@ class Size(AbstractRelationVariableLeaf):
         >>> b"CMDauthentify#\x11" in s.specialize()
         True
 
+        >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=10))
+        >>> f2 = Field(Size(f1, dataType=uint8(), factor=1/8))
+        >>> s = Symbol([f2, f1])
+        >>> s.specialize()
+        b'\nAAAAAAAAAA'
+
+        >>> f1 = Repeat(Raw(b"A"), nbRepeat=5)
+        >>> f2 = Size(f1, dataType=uint8(), factor=1/8)
+        >>> s = Symbol([Field(f2), Field(f1)])
+        >>> s.specialize()
+        b'\x05AAAAA'
+
         """
