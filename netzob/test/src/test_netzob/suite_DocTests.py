@@ -246,9 +246,12 @@ def getSuite():
 
     ]
 
+    def setUp_doctest(*args):
+        Conf.apply()
+
     suite = unittest.TestSuite()
     for mod in modules:
-        suite.addTest(doctest.DocTestSuite(mod))
+        suite.addTest(doctest.DocTestSuite(mod, setUp=setUp_doctest))
         if isinstance(mod, str):
             mod = importlib.import_module(mod)
         suite.addTest(unittest.defaultTestLoader.loadTestsFromModule(mod))
