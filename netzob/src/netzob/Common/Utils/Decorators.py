@@ -187,6 +187,10 @@ def typeCheck(*types):
                                               ]), argument.__class__.__name__))
             return func(*args, **kwargs)
 
+        if hasattr(func, '__annotations__'):
+            for arg, typ in zip(func.__code__.co_varnames[1:], types):
+                func.__annotations__.setdefault(arg, typ)
+
         return wraps(func)(wrapped_f)
 
     return _typeCheck_
