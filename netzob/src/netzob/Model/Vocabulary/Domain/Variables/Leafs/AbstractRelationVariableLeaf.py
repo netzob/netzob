@@ -80,6 +80,11 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         # Handle dataType
         if dataType is None:
             dataType = Raw(nbBytes=1)
+        elif isinstance(dataType, AbstractType):
+            if dataType.value is not None:
+                raise Exception("Relation dataType should not have a constant value: '{}'.".format(dataType))
+        else:
+            raise Exception("Relation dataType has a wront type: '{}'.".format(dataType))
         self.dataType = dataType
 
     def __key(self):

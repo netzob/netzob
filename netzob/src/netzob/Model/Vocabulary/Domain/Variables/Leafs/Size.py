@@ -480,4 +480,12 @@ def _test():
     >>> b"CMDauthentify#\x11" in s.specialize()
     True
 
+    # We check that a Size datatype cannot be constant
+
+    >>> f1 = Field(uint8(0))
+    >>> f2 = Field(Size([f1], dataType=uint16(0)))
+    Traceback (most recent call last):
+    ...
+    Exception: Relation dataType should not have a constant value: 'Integer=0 ((None, None))'.
+
     """
