@@ -130,8 +130,7 @@ class TCPServer(AbstractChannel):
         super(TCPServer, self).__init__(timeout=timeout)
         self.localIP = localIP
         self.localPort = localPort
-        self.__socket = None
-        self.__clientSocket = None
+        self._clientSocket = None
 
     @staticmethod
     def getBuilder():
@@ -149,13 +148,13 @@ class TCPServer(AbstractChannel):
 
         super().open(timeout=timeout)
 
-        self.__socket = socket.socket()
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Reuse the connection
-        self.__socket.settimeout(timeout or self.timeout)
+        self._socket = socket.socket()
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Reuse the connection
+        self._socket.settimeout(timeout or self.timeout)
         self._logger.debug("Bind the TCP server to {0}:{1}".format(
             self.localIP, self.localPort))
-        self.__socket.bind((self.localIP, self.localPort))
-        self.__socket.listen(1)
+        self._socket.bind((self.localIP, self.localPort))
+        self._socket.listen(1)
         self._logger.debug("Ready to accept new TCP connections...")
         self.__clientSocket, addr = self.__socket.accept()
         self._logger.debug("New TCP connection received.")
@@ -165,8 +164,8 @@ class TCPServer(AbstractChannel):
         """Close the communication channel."""
         if self.__clientSocket is not None:
             self.__clientSocket.close()
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
         self._logger.info("TCPServer has closed its socket")
 

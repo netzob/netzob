@@ -151,7 +151,6 @@ class UDPClient(AbstractChannel):
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
-        self.__socket = None
 
     @staticmethod
     def getBuilder():
@@ -169,25 +168,25 @@ class UDPClient(AbstractChannel):
 
         super().open(timeout=timeout)
 
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(timeout or self.timeout)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._socket.settimeout(timeout or self.timeout)
         if self.localIP is not None and self.localPort is not None:
-            self.__socket.bind((self.localIP, self.localPort))
+            self._socket.bind((self.localIP, self.localPort))
         self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
 
     def read(self):
         """Read the next message on the communication channel.
         """
-        if self.__socket is not None:
-            (data, remoteAddr) = self.__socket.recvfrom(1024)
+        if self._socket is not None:
+            (data, remoteAddr) = self._socket.recvfrom(1024)
             return data
         else:
             raise Exception("socket is not available")
@@ -198,8 +197,8 @@ class UDPClient(AbstractChannel):
         :parameter data: the data to write on the channel
         :type data: :class:`bytes`
         """
-        if self.__socket is not None:
-            len_data = self.__socket.sendto(data, (self.remoteIP, self.remotePort))
+        if self._socket is not None:
+            len_data = self._socket.sendto(data, (self.remoteIP, self.remotePort))
             return len_data
         else:
             raise Exception("socket is not available")

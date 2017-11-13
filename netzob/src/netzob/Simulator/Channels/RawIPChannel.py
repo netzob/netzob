@@ -128,7 +128,6 @@ class RawIPChannel(AbstractChannel):
             localIP = NetUtils.getLocalIP(remoteIP)
         self.localIP = localIP
         self.upperProtocol = upperProtocol
-        self.__socket = None
 
         # Header initialization
         self.initHeader()
@@ -148,23 +147,23 @@ class RawIPChannel(AbstractChannel):
 
         super().open(timeout=timeout)
 
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, self.upperProtocol)
-        self.__socket.settimeout(timeout or self.timeout)
-        self.__socket.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
-        self.__socket.bind((self.localIP, self.upperProtocol))
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, self.upperProtocol)
+        self._socket.settimeout(timeout or self.timeout)
+        self._socket.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
+        self._socket.bind((self.localIP, self.upperProtocol))
         self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
 
     def read(self):
         """Read the next message on the communication channel.
         """
-        if self.__socket is not None:
-            (data, _) = self.__socket.recvfrom(65535)
+        if self._socket is not None:
+            (data, _) = self._socket.recvfrom(65535)
 
             # Remove IP header from received data
             ipHeaderLen = (data[0] & 15) * 4  # (Bitwise AND 00001111) x 4bytes --> see RFC-791
@@ -183,7 +182,7 @@ class RawIPChannel(AbstractChannel):
 
         self.header_presets['ip.payload'] = data
         packet = self.header.specialize(presets=self.header_presets)
-        len_data = self.__socket.sendto(packet, (self.remoteIP, 0))
+        len_data = self._socket.sendto(packet, (self.remoteIP, 0))
         return len_data
 
     @typeCheck(bytes)
@@ -194,7 +193,7 @@ class RawIPChannel(AbstractChannel):
         :param data: the data to write on the channel
         :type data: :class:`bytes`
         """
-        if self.__socket is not None:
+        if self._socket is not None:
             # get the ports from message to identify the good response (in TCP or UDP)
             portSrcTx = (data[0] * 256) + data[1]
             portDstTx = (data[2] * 256) + data[3]

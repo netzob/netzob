@@ -145,7 +145,6 @@ class TCPClient(AbstractChannel):
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
-        self.__socket = None
 
     @staticmethod
     def getBuilder():
@@ -163,21 +162,21 @@ class TCPClient(AbstractChannel):
 
         super().open(timeout=timeout)
 
-        self.__socket = socket.socket()
+        self._socket = socket.socket()
         # Reuse the connection
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(timeout or self.timeout)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._socket.settimeout(timeout or self.timeout)
         if self.localIP is not None and self.localPort is not None:
-            self.__socket.bind((self.localIP, self.localPort))
+            self._socket.bind((self.localIP, self.localPort))
         self._logger.debug("Connect to the TCP server to {0}:{1}".format(
             self.remoteIP, self.remotePort))
-        self.__socket.connect((self.remoteIP, self.remotePort))
+        self._socket.connect((self.remoteIP, self.remotePort))
         self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
 
     def read(self):
@@ -186,12 +185,12 @@ class TCPClient(AbstractChannel):
         """
         reading_seg_size = 1024
 
-        if self.__socket is not None:
+        if self._socket is not None:
             data = b""
             finish = False
             while not finish:
                 try:
-                    recv = self.__socket.recv(reading_seg_size)
+                    recv = self._socket.recv(reading_seg_size)
                 except socket.timeout:
                     # says we received nothing (timeout issue)
                     recv = b""
@@ -209,9 +208,9 @@ class TCPClient(AbstractChannel):
         :parameter data: the data to write on the channel
         :type data: :class:`bytes`
         """
-        if self.__socket is not None:
+        if self._socket is not None:
             try:
-                self.__socket.sendall(data)
+                self._socket.sendall(data)
                 return len(data)
             except socket.error:
                 raise ChannelDownException()

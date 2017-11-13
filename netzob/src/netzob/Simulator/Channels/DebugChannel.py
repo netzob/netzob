@@ -152,6 +152,10 @@ class DebugChannel(AbstractChannel):
         """
         return True
 
+    def updateSocketTimeout(self):
+        """Do nothing
+        """
+
 
 class DebugChannelBuilder(ChannelBuilder):
     """

@@ -114,7 +114,6 @@ class RawEthernetChannel(AbstractChannel):
         self.remoteMac = remoteMac
         self.localMac = localMac
         self.__interface = interface
-        self.__socket = None
 
         self.__useEthernetHeader = True
 
@@ -157,25 +156,25 @@ class RawEthernetChannel(AbstractChannel):
 
         super().open(timeout=timeout)
 
-        self.__socket = socket.socket(
+        self._socket = socket.socket(
             socket.AF_PACKET,
             socket.SOCK_RAW,
             socket.htons(RawEthernetChannel.ETH_P_ALL))
-        self.__socket.settimeout(timeout or self.timeout)
-        self.__socket.bind((self.interface, RawEthernetChannel.ETH_P_ALL))
+        self._socket.settimeout(timeout or self.timeout)
+        self._socket.bind((self.interface, RawEthernetChannel.ETH_P_ALL))
         self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
 
     def read(self):
         """Read the next message on the communication channel.
         """
-        if self.__socket is not None:
-            (data, _) = self.__socket.recvfrom(65535)
+        if self._socket is not None:
+            (data, _) = self._socket.recvfrom(65535)
 
             # Remove Ethernet header from received data
             ethHeaderLen = 14
@@ -193,12 +192,12 @@ class RawEthernetChannel(AbstractChannel):
         :param data: the data to write on the channel
         :type data: :class:`bytes`
         """
-        if self.__socket is not None:
+        if self._socket is not None:
 
             rawRemoteMac = binascii.unhexlify(self.remoteMac.replace(':', ''))
             self.write(data)
             while True:
-                (data, _) = self.__socket.recvfrom(65535)
+                (data, _) = self._socket.recvfrom(65535)
                 if data[6:12] == rawRemoteMac:
                     # Remove Ethernet header from received data
                     ethHeaderLen = 14
@@ -235,7 +234,7 @@ class RawEthernetChannel(AbstractChannel):
         :type data: :class:`bytes`
         """
 
-        if self.__socket is None:
+        if self._socket is None:
             raise Exception("socket is not available")
 
         if self.__useEthernetHeader:
@@ -243,7 +242,7 @@ class RawEthernetChannel(AbstractChannel):
             packet = self.header.specialize(presets=self.header_presets)
         else:
             packet = data
-        len_data = self.__socket.sendto(packet, (self.interface,
+        len_data = self._socket.sendto(packet, (self.interface,
                                                  RawEthernetChannel.ETH_P_ALL))
         return len_data
 

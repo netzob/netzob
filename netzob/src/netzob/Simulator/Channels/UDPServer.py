@@ -132,7 +132,6 @@ class UDPServer(AbstractChannel):
         super(UDPServer, self).__init__(timeout=timeout)
         self.localIP = localIP
         self.localPort = localPort
-        self.__socket = None
         self.__remoteAddr = None
 
     @staticmethod
@@ -151,24 +150,24 @@ class UDPServer(AbstractChannel):
 
         super().open(timeout=timeout)
 
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(self.timeout)
-        self.__socket.bind((self.localIP, self.localPort))
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._socket.settimeout(self.timeout)
+        self._socket.bind((self.localIP, self.localPort))
         self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
 
     def read(self):
         """Read the next message on the communication channel.
         """
-        if self.__socket is not None:
-            (data, self.__remoteAddr) = self.__socket.recvfrom(1024)
+        if self._socket is not None:
+            (data, self.__remoteAddr) = self._socket.recvfrom(1024)
             return data
         else:
             raise Exception("socket is not available")
@@ -179,8 +178,8 @@ class UDPServer(AbstractChannel):
         :parameter data: the data to write on the channel
         :type data: :class:`bytes`
         """
-        if self.__socket is not None and self.__remoteAddr is not None:
-            len_data = self.__socket.sendto(data, self.__remoteAddr)
+        if self._socket is not None and self.__remoteAddr is not None:
+            len_data = self._socket.sendto(data, self.__remoteAddr)
             return len_data
         else:
             raise Exception(

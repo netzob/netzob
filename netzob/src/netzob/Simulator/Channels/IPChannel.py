@@ -111,7 +111,6 @@ class IPChannel(AbstractChannel):
         self.remoteIP = remoteIP
         self.localIP = localIP
         self.upperProtocol = upperProtocol
-        self.__socket = None
 
     @staticmethod
     def getBuilder():
@@ -131,26 +130,26 @@ class IPChannel(AbstractChannel):
 
         super().open(timeout=timeout)
 
-        self.__socket = socket.socket(socket.AF_INET,
+        self._socket = socket.socket(socket.AF_INET,
                                       socket.SOCK_RAW,
                                       self.upperProtocol)
-        self.__socket.settimeout(timeout or self.timeout)
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2**30)
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
-        self.__socket.bind((self.localIP, self.upperProtocol))
+        self._socket.settimeout(timeout or self.timeout)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2**30)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
+        self._socket.bind((self.localIP, self.upperProtocol))
         self.isOpen = True
 
     def close(self):
         """Close the communication channel."""
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
 
     def read(self):
         """Read the next message on the communication channel.
         """
-        if self.__socket is not None:
-            (data, _) = self.__socket.recvfrom(65535)
+        if self._socket is not None:
+            (data, _) = self._socket.recvfrom(65535)
 
             return data
         else:
@@ -162,8 +161,8 @@ class IPChannel(AbstractChannel):
         :param data: the data to write on the channel
         :type data: :class:`bytes`
         """
-        if self.__socket is not None:
-            len_data = self.__socket.sendto(data, (self.remoteIP, 0))
+        if self._socket is not None:
+            len_data = self._socket.sendto(data, (self.remoteIP, 0))
             return len_data
         else:
             raise Exception("socket is not available")
@@ -176,7 +175,7 @@ class IPChannel(AbstractChannel):
         :type data: :class:`bytes`
 
         """
-        if self.__socket is not None:
+        if self._socket is not None:
             # get the ports from message to identify the good response
             #  (in TCP or UDP)
 

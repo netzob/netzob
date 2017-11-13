@@ -143,7 +143,6 @@ class SSLClient(AbstractChannel):
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
-        self.__socket = None
         self.__ssl_socket = None
         self.server_cert_file = server_cert_file
         self.alpn_protocols = alpn_protocols
@@ -164,13 +163,13 @@ class SSLClient(AbstractChannel):
 
         super().open(timeout=timeout)
 
-        self.__socket = socket.socket()
+        self._socket = socket.socket()
         # Reuse the connection
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(timeout or self.timeout)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._socket.settimeout(timeout or self.timeout)
 
         if self.localIP is not None and self.localPort is not None:
-            self.__socket.bind((self.localIP, self.localPort))
+            self._socket.bind((self.localIP, self.localPort))
 
         # lets create the ssl context
         context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
@@ -186,7 +185,7 @@ class SSLClient(AbstractChannel):
             context.set_alpn_protocols(self.alpn_protocols)
 
         # lets wrap the socket to create the ssl tunnel
-        self.__ssl_socket = context.wrap_socket(self.__socket)
+        self.__ssl_socket = context.wrap_socket(self._socket)
         self.__ssl_socket.settimeout(timeout or self.timeout)
 
         self._logger.debug("Connect to the SSL server to {0}:{1}".format(
@@ -198,8 +197,8 @@ class SSLClient(AbstractChannel):
         """Close the communication channel."""
         if self.__ssl_socket is not None:
             self.__ssl_socket.close()
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
 
     def read(self):
@@ -230,7 +229,7 @@ class SSLClient(AbstractChannel):
         :parameter data: the data to write on the channel
         :type data: :class:`bytes`
         """
-        if self.__socket is not None:
+        if self._socket is not None:
             try:
                 self.__ssl_socket.sendall(data)
                 return len(data)
@@ -318,6 +317,12 @@ class SSLClient(AbstractChannel):
     @typeCheck(int)
     def localPort(self, localPort):
         self.__localPort = localPort
+
+    def updateSocketTimeout(self):
+        """Update the timeout of the socket."""
+        super(SSLClient, self).updateSocketTimeout()
+        if self._socket is not None:
+            self.__ssl_socket.settimeout(self.timeout)
 
 
 class SSLClientBuilder(ChannelBuilder):

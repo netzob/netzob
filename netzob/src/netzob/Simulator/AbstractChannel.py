@@ -106,6 +106,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         :type timeout: :class:`float`, optional
 
         """
+        self._socket = None
         self.timeout = timeout
 
     # Interface methods ##
@@ -175,6 +176,12 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         :type timeout: :class:`float`, optional
         """
         self._timeout = None if timeout is None else float(timeout)
+        self.updateSocketTimeout()
+
+    def updateSocketTimeout(self):
+        """Update the timeout of the socket."""
+        if self._socket is not None:
+            self._socket.settimeout(self.timeout)
 
 
 class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
