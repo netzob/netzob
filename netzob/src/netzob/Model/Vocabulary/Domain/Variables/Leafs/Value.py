@@ -62,7 +62,8 @@ class Value(AbstractRelationVariableLeaf):
     :param name: The name of the variable. If None, the name
                      will be generated.
     :param operation: An optional transformation operation to be
-                      applied to the targeted field value, through a callback. The default is None.
+                      applied to the targeted field value, through a callback.
+                      The default is None.
     :type target: :class:`Field <netzob.Model.Vocabulary.Field>`, required
     :type name: :class:`str`, optional
     :type operation: :class:`Callable <collections.abc.Callable>`, optional
@@ -71,8 +72,7 @@ class Value(AbstractRelationVariableLeaf):
     The Value class provides the following public variables:
 
     :var operation: Defines the operation to be performed on the found value.
-                    This operation takes the form of a python function that accepts
-                    a single parameter of BitArray type and returns a BitArray.
+                    The prototype of this callback is detailed below.
     :vartype operation: :class:`Callable <collections.abc.Callable>`
 
 
@@ -82,11 +82,15 @@ class Value(AbstractRelationVariableLeaf):
     relationship. The callback function that can be used in the
     ``operation`` parameter has the following prototype:
 
-    ``def cbk_operation(data):``
+    ``def cbk_operation(data, parsed_structure, value):``
 
     Where:
 
-    * ``data`` is a :class:`bitarray <bitarray>` that contains the value of the targeted field.
+    * ``data`` is a :class:`bitarray <bitarray>` that contains the value of the
+      targeted field.
+    * ``parsed_structure`` is a data structure that allows access to the values
+      of the parsed ``Variable`` elements.
+    * value is the Value variable
 
     The callback function is expected to implement relationship
     operations based on the provided data.
@@ -174,7 +178,7 @@ class Value(AbstractRelationVariableLeaf):
     returns a bitarray object.
 
     >>> from netzob.all import *
-    >>> def cbk(data):
+    >>> def cbk(data, parsed_structure, value):
     ...    ret = data.copy()
     ...    ret.reverse()
     ...    return ret
@@ -255,16 +259,17 @@ class Value(AbstractRelationVariableLeaf):
         if not parsingPath.hasData(variable):
             return None
         else:
-            return self._applyOperation(parsingPath.getData(variable))
+            return self._applyOperation(parsingPath.getData(variable),
+                                        parsingPath)
 
-    def _applyOperation(self, data):
-        """This method can be used to apply the specified operation function to the data parameter.
-        If no operation function is known, the data parameter is returned"""
+    def _applyOperation(self, data, parsed_structure):
+        """This method can be used to apply the specified operation function.
+        If no operation function is known, the data parameter is returned."""
 
         if self.__operation is None:
             return data
 
-        return self.__operation(data)
+        return self.__operation(data, parsed_structure, self)
 
     def __str__(self):
         """The str method."""
