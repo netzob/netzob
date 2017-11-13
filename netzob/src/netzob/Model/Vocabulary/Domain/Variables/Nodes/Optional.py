@@ -45,9 +45,9 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 
 
 class Optional(Repeat):
-    """The Optional class is a node variable that represents a sequence of
-    the same variable. This denotes an n-time repetition of a
-    variable, which can be a terminal leaf or a non-terminal node.
+    """The Optional class is a node variable that represents a variable
+    that may or may not produce a value, either in abstraction or
+    specialization.
 
     The Optional constructor expects some parameters:
 
@@ -62,6 +62,7 @@ class Optional(Repeat):
     >>> f0 = Field(String("a"), "f0")
     >>> f1 = Field(Optional(String("b")), "f1")
     >>> assert Symbol([f0, f1]).specialize() in (b"a", b"ab")
+
     """
 
     def __init__(self, child, svas=None):

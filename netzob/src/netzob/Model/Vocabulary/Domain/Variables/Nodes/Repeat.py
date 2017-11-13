@@ -506,3 +506,153 @@ class Repeat(AbstractVariableNode):
     @typeCheck(bitarray)
     def delimiter(self, delimiter):
         self.__delimiter = delimiter
+
+
+def _test():
+    r"""
+
+    >>> from netzob.all import *
+    >>> Conf.seed = 0
+    >>> Conf.apply()
+    
+
+    ## Size field on the right
+
+    Size field targeting a field containing a repeat variable, with size field on the right:
+
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4))
+    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> s = Symbol([f2, f1])
+    >>> s.specialize()
+    b'\x04AAAA'
+
+    Size field targeting a field containing a repeat variable of non fixed size, with size field on the right:
+
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)))
+    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> s = Symbol([f2, f1])
+    >>> s.specialize()
+    b'\x05AAAAA'
+
+    Size field targeting a repeat variable, with size field on the right:
+
+    >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
+    >>> v2 = Size(v1, dataType=uint8())
+    >>> s = Symbol([Field(v2), Field(v1)])
+    >>> s.specialize()
+    b'\x05AAAAA'
+
+    Size field targeting a repeat variable of non fixed size, with size field on the right:
+
+    >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
+    >>> v2 = Size(v1, dataType=uint8())
+    >>> s = Symbol([Field(v2), Field(v1)])
+    >>> s.specialize()
+    b'\x04AAAA'
+
+
+    ## Size field on the left
+
+    Size field targeting a field containing a repeat variable, with size field on the left:
+
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4))
+    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> s = Symbol([f1, f2])
+    >>> s.specialize()
+    b'AAAA\x04'
+
+    Size field targeting a field containing a repeat variable of non fixed size, with size field on the left:
+
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)))
+    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> s = Symbol([f1, f2])
+    >>> s.specialize()
+    b'AAAAA\x05'
+
+    Size field targeting a repeat variable, with size field on the left:
+
+    >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
+    >>> v2 = Size(v1, dataType=uint8())
+    >>> s = Symbol([Field(v1), Field(v2)])
+    >>> s.specialize()
+    b'AAAAA\x05'
+
+    Size field targeting a repeat variable of non fixed size, with size field on the left:
+
+    >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
+    >>> v2 = Size(v1, dataType=uint8())
+    >>> s = Symbol([Field(v1), Field(v2)])
+    >>> s.specialize()
+    b'AAAAA\x05'
+
+
+    ## Value field on the right
+
+    Value field targeting a field containing a repeat variable, with value field on the right:
+
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4))
+    >>> f2 = Field(Value(f1))
+    >>> s = Symbol([f2, f1])
+    >>> s.specialize()
+    b'AAAAAAAA'
+
+    Value field targeting a field containing a repeat variable of non fixed size, with value field on the right:
+
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)))
+    >>> f2 = Field(Value(f1))
+    >>> s = Symbol([f2, f1])
+    >>> s.specialize()
+    b'AAAAAA'
+
+    Value field targeting a repeat variable, with value field on the right:
+
+    >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
+    >>> v2 = Value(v1)
+    >>> s = Symbol([Field(v2), Field(v1)])
+    >>> s.specialize()
+    b'AAAAAAAAAA'
+
+    Value field targeting a repeat variable of non fixed size, with value field on the right:
+
+    >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
+    >>> v2 = Value(v1)
+    >>> s = Symbol([Field(v2), Field(v1)])
+    >>> s.specialize()
+    b'AAAAAAAA'
+
+
+    ## Value field on the left
+
+    Value field targeting a field containing a repeat variable, with value field on the left:
+
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4))
+    >>> f2 = Field(Value(f1))
+    >>> s = Symbol([f1, f2])
+    >>> s.specialize()
+    b'AAAAAAAA'
+
+    Value field targeting a field containing a repeat variable of non fixed size, with value field on the left:
+
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)))
+    >>> f2 = Field(Value(f1))
+    >>> s = Symbol([f1, f2])
+    >>> s.specialize()
+    b'AAAA'
+
+    Value field targeting a repeat variable, with value field on the left:
+
+    >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
+    >>> v2 = Value(v1)
+    >>> s = Symbol([Field(v1), Field(v2)])
+    >>> s.specialize()
+    b'AAAAAAAAAA'
+
+    Value field targeting a repeat variable of non fixed size, with value field on the left:
+
+    >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
+    >>> v2 = Value(v1)
+    >>> s = Symbol([Field(v1), Field(v2)])
+    >>> s.specialize()
+    b'AAAAAA'
+
+    """

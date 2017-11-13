@@ -405,90 +405,79 @@ class Size(AbstractRelationVariableLeaf):
                 "Offset cannot be None, use 0 if no offset should be applied.")
         self.__offset = offset
 
-    def _test(self):
-        r"""
-        The following example shows a real example with an IP header with
-        two Size fields:
+def _test():
+    r"""
+    The following example shows a real example with an IP header with
+    two Size fields:
 
-        >>> from netzob.all import *
-        >>> # Fields
-        >>> ip_ver      = Field(name='Version', domain=BitArray(value=bitarray('0100')))
-        >>> ip_ihl      = Field(name='Header length', domain=bitarray('0000'))
-        >>> ip_tos      = Field(name='TOS', domain=Data(dataType=BitArray(nbBits=8),
-        ...                     originalValue=bitarray('00000000'), svas=SVAS.PERSISTENT))
-        >>> ip_tot_len  = Field(name='Total length', domain=bitarray('0000000000000000'))
-        >>> ip_id       = Field(name='Identification number', domain=BitArray(nbBits=16))
-        >>> ip_flags    = Field(name='Flags', domain=Data(dataType=BitArray(nbBits=3),
-        ...                     originalValue=bitarray('000'), svas=SVAS.PERSISTENT))
-        >>> ip_frag_off = Field(name='Fragment offset',
-        ...                     domain=Data(dataType=BitArray(nbBits=13),
-        ...                     originalValue=bitarray('0000000000000'), svas=SVAS.PERSISTENT))
-        >>> ip_ttl      = Field(name='TTL', domain=Data(dataType=BitArray(nbBits=8),
-        ...                     originalValue=bitarray('10000000'), svas=SVAS.PERSISTENT))
-        >>> ip_proto    = Field(name='Protocol', domain=uint8be(6))
-        >>> ip_checksum = Field(name='Checksum', domain=bitarray('0000000000000000'))
-        >>> ip_saddr    = Field(name='Source address', domain=IPv4("127.0.0.1"))
-        >>> ip_daddr    = Field(name='Destination address', domain=IPv4("127.0.0.1"))
-        >>> ip_payload  = Field(name='Payload', domain=bitarray('0000000000000000'))
-        >>> # Domains
-        >>> ip_ihl.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags,
-        ...                       ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr],
-        ...                      dataType=BitArray(nbBits=4), factor=1./32)
-        >>> ip_tot_len.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags,
-        ...                           ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr,
-        ...                           ip_daddr, ip_payload],
-        ...                          dataType=Raw(nbBytes=2), factor=1./8)
-        >>> # Symbol
-        >>> packet = Symbol(name='IP layer', fields=[
-        ...    ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off,
-        ...    ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload])
-        >>> data = packet.specialize()
-        >>> hex(data[0])
-        ... # This corresponds to the first byte of the IP layer. '5' means 5*32 bits,
-        ... # which is the size of the default IP header.
-        '0x45'
-        >>> hex(data[3])
-        ... # This corresponds to the third byte of the IP layer. '0x16' means 22 octets,
-        ... # which is the size of the default IP header + 2 octets of payload.
-        '0x16'
+    >>> from netzob.all import *
+    >>> # Fields
+    >>> ip_ver      = Field(name='Version', domain=BitArray(value=bitarray('0100')))
+    >>> ip_ihl      = Field(name='Header length', domain=bitarray('0000'))
+    >>> ip_tos      = Field(name='TOS', domain=Data(dataType=BitArray(nbBits=8),
+    ...                     originalValue=bitarray('00000000'), svas=SVAS.PERSISTENT))
+    >>> ip_tot_len  = Field(name='Total length', domain=bitarray('0000000000000000'))
+    >>> ip_id       = Field(name='Identification number', domain=BitArray(nbBits=16))
+    >>> ip_flags    = Field(name='Flags', domain=Data(dataType=BitArray(nbBits=3),
+    ...                     originalValue=bitarray('000'), svas=SVAS.PERSISTENT))
+    >>> ip_frag_off = Field(name='Fragment offset',
+    ...                     domain=Data(dataType=BitArray(nbBits=13),
+    ...                     originalValue=bitarray('0000000000000'), svas=SVAS.PERSISTENT))
+    >>> ip_ttl      = Field(name='TTL', domain=Data(dataType=BitArray(nbBits=8),
+    ...                     originalValue=bitarray('10000000'), svas=SVAS.PERSISTENT))
+    >>> ip_proto    = Field(name='Protocol', domain=uint8be(6))
+    >>> ip_checksum = Field(name='Checksum', domain=bitarray('0000000000000000'))
+    >>> ip_saddr    = Field(name='Source address', domain=IPv4("127.0.0.1"))
+    >>> ip_daddr    = Field(name='Destination address', domain=IPv4("127.0.0.1"))
+    >>> ip_payload  = Field(name='Payload', domain=bitarray('0000000000000000'))
+    >>> # Domains
+    >>> ip_ihl.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags,
+    ...                       ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr],
+    ...                      dataType=BitArray(nbBits=4), factor=1./32)
+    >>> ip_tot_len.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags,
+    ...                           ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr,
+    ...                           ip_daddr, ip_payload],
+    ...                          dataType=Raw(nbBytes=2), factor=1./8)
+    >>> # Symbol
+    >>> packet = Symbol(name='IP layer', fields=[
+    ...    ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off,
+    ...    ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload])
+    >>> data = packet.specialize()
+    >>> hex(data[0])
+    ... # This corresponds to the first byte of the IP layer. '5' means 5*32 bits,
+    ... # which is the size of the default IP header.
+    '0x45'
+    >>> hex(data[3])
+    ... # This corresponds to the third byte of the IP layer. '0x16' means 22 octets,
+    ... # which is the size of the default IP header + 2 octets of payload.
+    '0x16'
 
-        The following examples show the specialization process of a Size
-        field:
 
-        >>> from netzob.all import *
-        >>> f0 = Field(String(nbChars=20))
-        >>> f1 = Field(String(";"))
-        >>> f2 = Field(Size(f0))
-        >>> f = Field([f0, f1, f2])
-        >>> res = f.specialize()
-        >>> b'\x14' in res
-        True
+    The following examples show the specialization process of a Size
+    field:
 
-        >>> from netzob.all import *
-        >>> f0 = Field(String("CMDauthentify"), name="f0")
-        >>> f1 = Field(String('#'), name="sep")
-        >>> f2 = Field(name="f2")
-        >>> f3 = Field(name="size field")
-        >>> f4 = Field(Raw(b"\x00\x00\x00\x00"), name="f4")
-        >>> f5 = Field(Raw(nbBytes=11))
-        >>> f6 = Field(Raw(b'wd'), name="f6")
-        >>> f7 = Field(Raw(nbBytes=(0, 1)))
-        >>> f3.domain = Size([f4, f5, f6])
-        >>> f2.fields = [f3, f4, f5, f6, f7]
-        >>> s = Symbol(fields=[f0, f1, f2])
-        >>> b"CMDauthentify#\x11" in s.specialize()
-        True
+    >>> from netzob.all import *
+    >>> f0 = Field(String(nbChars=20))
+    >>> f1 = Field(String(";"))
+    >>> f2 = Field(Size(f0))
+    >>> f = Field([f0, f1, f2])
+    >>> res = f.specialize()
+    >>> b'\x14' in res
+    True
 
-        >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=10))
-        >>> f2 = Field(Size(f1, dataType=uint8(), factor=1/8))
-        >>> s = Symbol([f2, f1])
-        >>> s.specialize()
-        b'\nAAAAAAAAAA'
+    >>> from netzob.all import *
+    >>> f0 = Field(String("CMDauthentify"), name="f0")
+    >>> f1 = Field(String('#'), name="sep")
+    >>> f2 = Field(name="f2")
+    >>> f3 = Field(name="size field")
+    >>> f4 = Field(Raw(b"\x00\x00\x00\x00"), name="f4")
+    >>> f5 = Field(Raw(nbBytes=11))
+    >>> f6 = Field(Raw(b'wd'), name="f6")
+    >>> f7 = Field(Raw(nbBytes=(0, 1)))
+    >>> f3.domain = Size([f4, f5, f6])
+    >>> f2.fields = [f3, f4, f5, f6, f7]
+    >>> s = Symbol(fields=[f0, f1, f2])
+    >>> b"CMDauthentify#\x11" in s.specialize()
+    True
 
-        >>> f1 = Repeat(Raw(b"A"), nbRepeat=5)
-        >>> f2 = Size(f1, dataType=uint8(), factor=1/8)
-        >>> s = Symbol([Field(f2), Field(f1)])
-        >>> s.specialize()
-        b'\x05AAAAA'
-
-        """
+    """

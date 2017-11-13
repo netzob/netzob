@@ -540,3 +540,89 @@ class Agg(AbstractVariableNode):
 
         # ok we managed to parse all the children, and it produced some valid specializer paths. We return them
         return specializingPaths
+
+
+def _test():
+    r"""
+
+    >>> from netzob.all import *
+    >>> Conf.seed = 0
+    >>> Conf.apply()
+    
+
+    ## Size field on the right
+
+    Size field targeting a field containing a agg variable, with size field on the right:
+
+    >>> f1 = Field(Agg(["A", "B", "C"]))
+    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> s = Symbol([f2, f1])
+    >>> s.specialize()
+    b'\x03ABC'
+
+    Size field targeting a agg variable, with size field on the right:
+
+    >>> v1 = Agg(["A", "B", "C"])
+    >>> v2 = Size(v1, dataType=uint8())
+    >>> s = Symbol([Field(v2), Field(v1)])
+    >>> s.specialize()
+    b'\x03ABC'
+
+
+    ## Size field on the left
+
+    Size field targeting a field containing a agg variable, with size field on the left:
+
+    >>> f1 = Field(Agg(["A", "B", "C"]))
+    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> s = Symbol([f1, f2])
+    >>> s.specialize()
+    b'ABC\x03'
+
+    Size field targeting a agg variable, with size field on the left:
+
+    >>> v1 = Agg(["A", "B", "C"])
+    >>> v2 = Size(v1, dataType=uint8())
+    >>> s = Symbol([Field(v1), Field(v2)])
+    >>> s.specialize()
+    b'ABC\x03'
+
+
+    ## Value field on the right
+
+    Value field targeting a field containing a agg variable, with value field on the right:
+
+    >>> f1 = Field(Agg(["A", "B", "C"]))
+    >>> f2 = Field(Value(f1))
+    >>> s = Symbol([f2, f1])
+    >>> s.specialize()
+    b'ABCABC'
+
+    Value field targeting a agg variable, with value field on the right:
+
+    >>> f1 = Agg(["A", "B", "C"])
+    >>> v2 = Value(v1)
+    >>> s = Symbol([Field(v2), Field(v1)])
+    >>> s.specialize()
+    b'ABCABC'
+
+
+    ## Value field on the left
+
+    Value field targeting a field containing a agg variable, with value field on the left:
+
+    >>> f1 = Field(Agg(["A", "B", "C"]))
+    >>> f2 = Field(Value(f1))
+    >>> s = Symbol([f1, f2])
+    >>> s.specialize()
+    b'ABCABC'
+
+    Value field targeting a agg variable, with value field on the left:
+
+    >>> f1 = Agg(["A", "B", "C"])
+    >>> v2 = Value(v1)
+    >>> s = Symbol([Field(v1), Field(v2)])
+    >>> s.specialize()
+    b'ABCABC'
+
+    """

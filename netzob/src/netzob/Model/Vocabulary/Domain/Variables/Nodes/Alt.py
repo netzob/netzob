@@ -241,19 +241,100 @@ class Alt(AbstractVariableNode):
         random.shuffle(specializingPaths)
         return specializingPaths
 
-    def _test(self):
-        """
-        Here is an example with an Alt variable:
+def _test(self):
+    r"""
 
-        >>> from netzob.all import *
-        >>> m1 = RawMessage("220044")
-        >>> f1 = Field("22", name="f1")
-        >>> f2 = Field(Alt(["00", "0044", "0", "004"]), name="f2")
-        >>> s = Symbol([f1, f2], messages=[m1], name="S0")
-        >>> print(s.str_data())
-        f1   | f2    
-        ---- | ------
-        '22' | '0044'
-        ---- | ------
+    >>> from netzob.all import *
+    >>> Conf.seed = 0
+    >>> Conf.apply()
 
-        """
+    Here is an example with an Alt variable:
+
+    >>> from netzob.all import *
+    >>> m1 = RawMessage("220044")
+    >>> f1 = Field("22", name="f1")
+    >>> f2 = Field(Alt(["00", "0044", "0", "004"]), name="f2")
+    >>> s = Symbol([f1, f2], messages=[m1], name="S0")
+    >>> print(s.str_data())
+    f1   | f2    
+    ---- | ------
+    '22' | '0044'
+    ---- | ------
+
+
+    ## Size field on the right
+
+    Size field targeting a field containing a alt variable, with size field on the right:
+
+    >>> f1 = Field(Alt(["A", "B", "C"]))
+    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> s = Symbol([f2, f1])
+    >>> s.specialize()
+    b'\x01B'
+
+    Size field targeting a alt variable, with size field on the right:
+
+    >>> v1 = Alt(["A", "B", "C"])
+    >>> v2 = Size(v1, dataType=uint8())
+    >>> s = Symbol([Field(v2), Field(v1)])
+    >>> s.specialize()
+    b'\x01B'
+
+
+    ## Size field on the left
+
+    Size field targeting a field containing a alt variable, with size field on the left:
+
+    >>> f1 = Field(Alt(["A", "B", "C"]))
+    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> s = Symbol([f1, f2])
+    >>> s.specialize()
+    b'A\x01'
+
+    Size field targeting a alt variable, with size field on the left:
+
+    >>> v1 = Alt(["A", "B", "C"])
+    >>> v2 = Size(v1, dataType=uint8())
+    >>> s = Symbol([Field(v1), Field(v2)])
+    >>> s.specialize()
+    b'B\x01'
+
+
+    ## Value field on the right
+
+    Value field targeting a field containing a alt variable, with value field on the right:
+
+    >>> f1 = Field(Alt(["A", "B", "C"]))
+    >>> f2 = Field(Value(f1))
+    >>> s = Symbol([f2, f1])
+    >>> s.specialize()
+    b'CC'
+
+    Value field targeting a alt variable, with value field on the right:
+
+    >>> f1 = Alt(["A", "B", "C"])
+    >>> v2 = Value(v1)
+    >>> s = Symbol([Field(v2), Field(v1)])
+    >>> s.specialize()
+    b'BB'
+
+
+    ## Value field on the left
+
+    Value field targeting a field containing a alt variable, with value field on the left:
+
+    >>> f1 = Field(Alt(["A", "B", "C"]))
+    >>> f2 = Field(Value(f1))
+    >>> s = Symbol([f1, f2])
+    >>> s.specialize()
+    b'BB'
+
+    Value field targeting a alt variable, with value field on the left:
+
+    >>> f1 = Alt(["A", "B", "C"])
+    >>> v2 = Value(v1)
+    >>> s = Symbol([Field(v1), Field(v2)])
+    >>> s.specialize()
+    b'BB'
+
+    """
