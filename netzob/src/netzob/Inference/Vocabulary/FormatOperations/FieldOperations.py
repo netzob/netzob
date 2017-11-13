@@ -147,11 +147,95 @@ class FieldOperations(object):
                 "Field1 must be directly on the left of field2 (iField1={0}, iField2={1})".
                 format(iField1, iField2))
 
-        # build a new field domain
-        newDomain = Agg([field1.domain, field2.domain])
-        newField = Field(domain=newDomain, name="Merge")
-        newField.encodingFunctions = list(field1.encodingFunctions.values())
+        try:
+            # first try to completely blend the fields if this is supported
+            newField = FieldOperations._blendFields(field1,field2)
+        except TypeError or NotImplementedError:
+            # build a new field domain
+            newDomain = Agg([field1.domain, field2.domain])
+            newField = Field(domain=newDomain, name="Merge")
+            newField.encodingFunctions = list(field1.encodingFunctions.values())
         parent = field1.parent
         before = parent.fields[:iField1]
         after = parent.fields[iField2 + 1:]
         parent.fields = before + [newField] + after
+
+    @staticmethod
+    def _blendFields(field1, field2):
+        """
+        Completely blend two fields without using Agg.
+        This requires that the two fields are of the same domain and its parameters
+        >>> from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
+        >>> samples = [ b'\\x00\\xff/BPz', b'\\x00\\x00 CQ~', b'\\x00\\xff/Gf/' ]
+        >>> messages = [RawMessage(data=sample) for sample in samples]
+        >>> f1 = Field(Raw(nbBytes=1))
+        >>> f2 = Field(Raw(nbBytes=2))
+        >>> f3 = Field(Raw(nbBytes=3))
+        >>> symbol = Symbol([f1, f2, f3], messages=messages)
+        >>> print(f2.domain.dataType.size)
+        (16, 16)
+        >>> print(f3.domain.dataType.size)
+        (24, 24)
+        >>> nf = FieldOperations._blendFields(f2,f3)
+        >>> print(nf.domain.currentValue)
+        None
+        >>> print(nf.domain.dataType.endianness)
+        big
+        >>> print(nf.domain.dataType.size)
+        (40, 40)
+
+        :param field1: the left field
+        :param field2: the right field
+        :return: a combination of field1 and field2
+        :raises TypeError: if domains are not compatible
+        :raises NotImplementedError: for datatypes which still need to be implemented
+        """
+
+        for d in [field1.domain, field2.domain]:
+            if len(d._AbstractVariable__boundedVariables) > 0 \
+                or len(d._AbstractVariable__fathers) > 0 \
+                or len(d._AbstractVariable__tokenChoppedIndexes) > 0:
+                raise TypeError("Blending does not support __boundedVariables, __fathers, or __tokenChoppedIndexes.")
+            if not isinstance(d.dataType, Raw):
+                NotImplementedError("The datatype {} is not yet supported.".format(d.dataType.typeName))
+
+        if not field1.domain.svas == field2.domain.svas:
+            raise TypeError("The SVAS-values of both fields to merge are not the same.")
+        if not field1.domain.dataType.endianness == field2.domain.dataType.endianness:
+            raise TypeError("The endianness of both fields to merge are not the same.")
+        if not field1.domain.dataType.sign == field2.domain.dataType.sign:
+            raise TypeError("The signedness of both fields to merge are not the same.")
+        if not field1.domain.dataType.unitSize == field2.domain.dataType.unitSize:
+            raise TypeError("The unitSize of both fields to merge are not the same.")
+
+        # '_ASCII__nbChars': (None, None),
+
+        newDomain = field1.domain.__class__(field1.domain.dataType.__class__())
+        newDomain.svas = field1.domain.svas
+        newDomain.dataType.endianness = field1.domain.dataType.endianness
+        newDomain.dataType.sign = field1.domain.dataType.sign
+        newDomain.dataType.unitSize = field1.domain.dataType.unitSize
+        newDomain.dataType.size = field1.domain.dataType.size
+
+        minsizes = []
+        maxsizes = []
+        for f in [field1, field2]:
+            if not f.domain.dataType.size is None:
+                sizes = []
+                for s in f.domain.dataType.size:
+                    if s is not None:
+                        sizes.append(s)
+                minsizes.append(min(sizes))
+                maxsizes.append(max(sizes))
+        newDomain.dataType.size = (sum(minsizes) , sum(maxsizes))
+
+        newField = Field(domain=newDomain, name="Merge")
+        newField.encodingFunctions = list(field1.encodingFunctions.values())
+
+        # Position the new field in correct positions with correct dataType size
+        if field1.domain.currentValue is None or field2.domain.currentValue is None:
+            newField.domain.currentValue = None
+        else:
+            newField.domain.currentValue = (field1.domain.currentValue + field2.domain.currentValue)
+
+        return newField
