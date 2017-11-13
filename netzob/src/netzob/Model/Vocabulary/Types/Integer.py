@@ -90,27 +90,33 @@ class Integer(AbstractType):
     TypeError: Data cannot be None
 
     """
-
     def __init__(self,
                  value=None,
                  interval=None,
-                 unitSize=AbstractType.defaultUnitSize(),
+                 unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
+
+        if unitSize is None:
+            if interval is None:  # value handling
+                if value is None:
+                    unitSize = AbstractType.defaultUnitSize()
+                else:
+                    unitSize = Integer.checkUnitSizeForValue(value, sign)
+            else:  # interval handling
+                if isinstance(interval, int):
+                    unitSize = Integer.checkUnitSizeForValue(interval, sign)
+                elif len(interval) == 2:
+                    unitSizeA = Integer.checkUnitSizeForValue(interval[0], sign)
+                    unitSizeB = Integer.checkUnitSizeForValue(interval[1], sign)
+                    unitSize = max(unitSizeA, unitSizeB)
+                else:  # shouldn't happen, since _checkUnitSizeForValue raises an exception before
+                    unitSize = AbstractType.defaultUnitSize()
+
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
-            interval = value
-            if value <= math.pow(2,8)/2-1 and value >= -math.pow(2,8)/2:
-                unitSize=AbstractType.UNITSIZE_8
-            elif value <= math.pow(2,16)/2-1 and value >= -math.pow(2,16)/2: 
-                unitSize=AbstractType.UNITSIZE_16
-            elif value <= math.pow(2,32)/2-1 and value >= -math.pow(2,32)/2: 
-                unitSize=AbstractType.UNITSIZE_32
-            elif value <= math.pow(2,64)/2-1 and value >= -math.pow(2,64)/2: 
-                unitSize=AbstractType.UNITSIZE_64
-            else:
-                raise ValueError("value out of range")
+
             value = TypeConverter.convert(
                 value,
                 Integer,
@@ -121,20 +127,9 @@ class Integer(AbstractType):
                 dst_unitSize=unitSize,
                 dst_endianness=endianness,
                 dst_sign=sign)
-        else:
-            value = None
 
         if interval is not None:
-            if sign==AbstractType.SIGN_UNSIGNED:
-                if isinstance(interval, int):
-                    if interval < 0: # value handling
-                        raise ValueError("Value with negative values needs signed type.")
-                elif len(interval) == 2: # interval handling
-                    if min(interval) < 0:
-                        raise ValueError("Interval with negative values needs signed type.")
-            nbBits = int(
-                self._computeNbUnitSizeForInterval(interval, unitSize,
-                                                   sign)) * int(unitSize)
+            nbBits = int(self._computeNbUnitSizeForInterval(interval, unitSize, sign)) * int(unitSize)
         else:
             nbBits = int(unitSize)
 
@@ -382,3 +377,59 @@ class Integer(AbstractType):
             unitFormat = unitFormat.upper()
 
         return endianFormat + unitFormat
+
+    @staticmethod
+    def checkUnitSizeForValue(value, sign):
+        """
+        >>> Integer.checkUnitSizeForValue(-1, AbstractType.SIGN_SIGNED) == AbstractType.UNITSIZE_8
+        True
+        >>> Integer.checkUnitSizeForValue(-1, AbstractType.SIGN_UNSIGNED)
+        Traceback (most recent call last):
+        ...
+        ValueError: Value is out of unsigned 64bit Integer range.
+        >>> Integer.checkUnitSizeForValue(-130, AbstractType.SIGN_SIGNED) == AbstractType.UNITSIZE_16
+        True
+        >>> Integer.checkUnitSizeForValue(260, AbstractType.SIGN_UNSIGNED) == AbstractType.UNITSIZE_16
+        True
+        >>> Integer.checkUnitSizeForValue(2147483647, AbstractType.SIGN_SIGNED) == AbstractType.UNITSIZE_32
+        True
+        >>> Integer.checkUnitSizeForValue(4294967295, AbstractType.SIGN_UNSIGNED) == AbstractType.UNITSIZE_32
+        True
+        >>> Integer.checkUnitSizeForValue(-9223372036854775808, AbstractType.SIGN_SIGNED) == AbstractType.UNITSIZE_64
+        True
+        >>> Integer.checkUnitSizeForValue(18446744073709551615, AbstractType.SIGN_UNSIGNED) == AbstractType.UNITSIZE_64
+        True
+        >>> Integer.checkUnitSizeForValue(18446744073709551615, AbstractType.SIGN_SIGNED)
+        Traceback (most recent call last):
+        ...
+        ValueError: Value is out of signed 64bit Integer range.
+
+
+        :param value: The value to get an unitSize for
+        :param sign: The desired sign for the value
+        :returns: The unitsize that can hold "value".
+        :raises ValueError: There is no unit size of Integer (max 64 bits) that can hold "value"
+        """
+
+        if sign is AbstractType.SIGN_SIGNED:
+            if -0x80 <= value <= 0x7f:
+                return AbstractType.UNITSIZE_8
+            elif -0x8000 <= value <= 0x7fff:
+                return AbstractType.UNITSIZE_16
+            elif -0x80000000 <= value <= 0x7fffffff:
+                return AbstractType.UNITSIZE_32
+            elif -0x8000000000000000 <= value <= 0x7fffffffffffffff:
+                return AbstractType.UNITSIZE_64
+            else:
+                raise ValueError("Value is out of signed 64bit Integer range.")
+        if sign is AbstractType.SIGN_UNSIGNED:
+            if 0x00 <= value <= 0xff:
+                return AbstractType.UNITSIZE_8
+            elif 0x00 <= value <= 0xffff:
+                return AbstractType.UNITSIZE_16
+            elif 0x00 <= value <= 0xffffffff:
+                return AbstractType.UNITSIZE_32
+            elif 0x00 <= value <= 0xffffffffffffffff:
+                return AbstractType.UNITSIZE_64
+            else:
+                raise ValueError("Value is out of unsigned 64bit Integer range.")
