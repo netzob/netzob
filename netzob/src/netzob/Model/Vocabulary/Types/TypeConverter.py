@@ -184,28 +184,8 @@ class TypeConverter(object):
             # Convert from source to raw
             if sourceType is not Raw:
                 if sourceType is Integer and src_unitSize is None:
-                    if src_sign is AbstractType.SIGN_SIGNED:
-                        if -0x80 <= data <= 0x7f:
-                            src_unitSize=AbstractType.UNITSIZE_8
-                        elif -0x8000 <= data <= 0x7fff:
-                            src_unitSize=AbstractType.UNITSIZE_16
-                        elif -0x80000000 <= data <= 0x7fffffff:
-                            src_unitSize=AbstractType.UNITSIZE_32
-                        elif -0x8000000000000000 <= data <= 0x7fffffffffffffff:
-                            src_unitSize=AbstractType.UNITSIZE_64
-                        else:
-                            raise ValueError("Source data is out of signed 64bit Integer range.")
-                    if src_sign is AbstractType.SIGN_UNSIGNED:
-                        if 0x00 <= data <= 0xff:
-                            src_unitSize=AbstractType.UNITSIZE_8
-                        elif 0x00 <= data <= 0xffff:
-                            src_unitSize=AbstractType.UNITSIZE_16
-                        elif 0x00 <= data <= 0xffffffff:
-                            src_unitSize=AbstractType.UNITSIZE_32
-                        elif 0x00 <= data <= 0xffffffffffffffff:
-                            src_unitSize=AbstractType.UNITSIZE_64
-                        else:
-                            raise ValueError("Source data is out of unsigned 64bit Integer range.")
+                    src_unitSize = Integer.checkUnitSizeForValue(data,src_sign)
+
                 binData = sourceType.decode(
                     data,
                     unitSize=src_unitSize,
