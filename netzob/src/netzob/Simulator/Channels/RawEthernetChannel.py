@@ -72,7 +72,8 @@ class RawEthernetChannel(AbstractChannel):
     :type remoteMac: :class:`str` or :class:`netaddr.EUI`, required
     :type localMac: :class:`str` or :class:`netaddr.EUI`, required
     :type timeout: :class:`float`, optional
-    :todo: add support of netaddr.EUI
+
+    .. todo:: add support of netaddr.EUI
 
     Adding to AbstractChannel variables, the RawEthernetChannel class provides
     the following public variables:
