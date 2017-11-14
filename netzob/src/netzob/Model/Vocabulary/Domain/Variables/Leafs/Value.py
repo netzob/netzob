@@ -213,27 +213,28 @@ class Value(AbstractRelationVariableLeaf):
         # we verify we have access to the expected value
         expectedValue = self.computeExpectedValue(parsingPath)
 
-        self._logger.debug(
-            "Expected value to parse: {0}".format(expectedValue))
+        self._logger.debug("Expected value to parse: {0}".format(expectedValue))
 
         if expectedValue is None:
+            self._logger.debug("Let's compute what could be the possible value based on the target datatype")
+            if self.target.isnode():
+                minSizeDep = 0
+                maxSizeDep = len(content)
+            else:
+                (minSizeDep, maxSizeDep) = self.target.dataType.size
 
-            # lets compute what could be the possible value
-            variable = self.target
-            (minSizeDep, maxSizeDep) = variable.dataType.size
-            if minSizeDep > len(content):
-                self._logger.debug(
-                    "Size of the content to parse is smallest than the min expected size of the dependency field"
-                )
-                return results
+                if minSizeDep > len(content):
+                    self._logger.debug("Size of the content to parse is smaller than the min expected size of the dependency field")
+                    return results
 
-            for size in range(
-                    min(maxSizeDep, len(content)), minSizeDep - 1, -1):
+            for size in range(min(maxSizeDep, len(content)), minSizeDep - 1, -1):
                 # we create a new parsing path and returns it
                 newParsingPath = parsingPath.duplicate()
                 newParsingPath.addResult(self, content[:size].copy())
                 self._addCallBacksOnUndefinedVariables(newParsingPath)
                 results.append(newParsingPath)
+
+        # If the expectedValue contains data
         else:
             if content[:len(expectedValue)] == expectedValue:
                 self._logger.debug("add result: {0}".format(expectedValue.copy().tobytes()))
