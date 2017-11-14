@@ -537,7 +537,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
         unknown_symbol = UnknownSymbol(RawMessage(data))
         structured_data = OrderedDict()
-        logging.error("Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it: '%s'", unknown_symbol)
+        logging.warn("Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it: '%s'", unknown_symbol)
 
         return (unknown_symbol, structured_data)
 
