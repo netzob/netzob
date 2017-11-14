@@ -100,7 +100,7 @@ class Protocol(object):
     >>> udp.name
     'UDP'
     >>> udp.symbols
-    {'udp': udp}
+    Symbols(udp)
     >>> dot_code = udp.automata.generateDotCode()
     >>> print(dot_code)  # doctest: +ELLIPSIS
     digraph G {
