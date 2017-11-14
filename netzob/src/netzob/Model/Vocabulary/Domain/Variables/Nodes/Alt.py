@@ -266,75 +266,99 @@ def _test(self):
 
     Size field targeting a field containing a alt variable, with size field on the right:
 
-    >>> f1 = Field(Alt(["A", "B", "C"]))
-    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
+    >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'\x01B'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f2', b'\x01'), ('f1', b'B')]))
 
     Size field targeting a alt variable, with size field on the right:
 
     >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
-    >>> s = Symbol([Field(v2), Field(v1)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v2, name='f2'), Field(v1, name='f1')])
+    >>> d = s.specialize()
+    >>> d
     b'\x01B'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f2', b'\x01'), ('f1', b'B')]))
 
 
     ## Size field on the left
 
     Size field targeting a field containing a alt variable, with size field on the left:
 
-    >>> f1 = Field(Alt(["A", "B", "C"]))
-    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
+    >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'A\x01'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'A'), ('f2', b'\x01')]))
 
     Size field targeting a alt variable, with size field on the left:
 
     >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
-    >>> s = Symbol([Field(v1), Field(v2)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'B\x01'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'B'), ('f2', b'\x01')]))
 
 
     ## Value field on the right
 
     Value field targeting a field containing a alt variable, with value field on the right:
 
-    >>> f1 = Field(Alt(["A", "B", "C"]))
-    >>> f2 = Field(Value(f1))
+    >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
+    >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'CC'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f2', b'C'), ('f1', b'C')]))
 
     Value field targeting a alt variable, with value field on the right:
 
-    >>> f1 = Alt(["A", "B", "C"])
+    >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Value(v1)
-    >>> s = Symbol([Field(v2), Field(v1)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v2, name='f2'), Field(v1, name='f1')])
+    >>> d = s.specialize()
+    >>> d
     b'BB'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f2', b'B'), ('f1', b'B')]))
 
 
     ## Value field on the left
 
     Value field targeting a field containing a alt variable, with value field on the left:
 
-    >>> f1 = Field(Alt(["A", "B", "C"]))
-    >>> f2 = Field(Value(f1))
+    >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
+    >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'BB'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'B'), ('f2', b'B')]))
 
     Value field targeting a alt variable, with value field on the left:
 
-    >>> f1 = Alt(["A", "B", "C"])
+    >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Value(v1)
-    >>> s = Symbol([Field(v1), Field(v2)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'BB'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'B'), ('f2', b'B')]))
 
     """

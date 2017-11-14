@@ -554,75 +554,99 @@ def _test():
 
     Size field targeting a field containing a agg variable, with size field on the right:
 
-    >>> f1 = Field(Agg(["A", "B", "C"]))
-    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
+    >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'\x03ABC'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f2', b'\x03'), ('f1', b'ABC')]))
 
     Size field targeting a agg variable, with size field on the right:
 
     >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
-    >>> s = Symbol([Field(v2), Field(v1)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'\x03ABC'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'\x03'), ('f2', b'ABC')]))
 
 
     ## Size field on the left
 
     Size field targeting a field containing a agg variable, with size field on the left:
 
-    >>> f1 = Field(Agg(["A", "B", "C"]))
-    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
+    >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'ABC\x03'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'\x03')]))
 
     Size field targeting a agg variable, with size field on the left:
 
     >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
-    >>> s = Symbol([Field(v1), Field(v2)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'ABC\x03'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'\x03')]))
 
 
     ## Value field on the right
 
     Value field targeting a field containing a agg variable, with value field on the right:
 
-    >>> f1 = Field(Agg(["A", "B", "C"]))
-    >>> f2 = Field(Value(f1))
+    >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
+    >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'ABCABC'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f2', b'ABC'), ('f1', b'ABC')]))
 
     Value field targeting a agg variable, with value field on the right:
 
-    >>> f1 = Agg(["A", "B", "C"])
+    >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Value(v1)
-    >>> s = Symbol([Field(v2), Field(v1)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v2, name='f2'), Field(v1, name='f1')])
+    >>> d = s.specialize()
+    >>> d
     b'ABCABC'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f2', b'ABC'), ('f1', b'ABC')]))
 
 
     ## Value field on the left
 
     Value field targeting a field containing a agg variable, with value field on the left:
 
-    >>> f1 = Field(Agg(["A", "B", "C"]))
-    >>> f2 = Field(Value(f1))
+    >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
+    >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'ABCABC'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'ABC')]))
 
     Value field targeting a agg variable, with value field on the left:
 
-    >>> f1 = Agg(["A", "B", "C"])
+    >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Value(v1)
-    >>> s = Symbol([Field(v1), Field(v2)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'ABCABC'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'ABC')]))
 
     """
