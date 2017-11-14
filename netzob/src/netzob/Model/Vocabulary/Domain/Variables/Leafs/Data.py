@@ -215,7 +215,7 @@ class Data(AbstractVariableLeaf):
         results = []
         if len(content) >= len(expectedValue) and content[:len(
                 expectedValue)].tobytes() == expectedValue.tobytes():
-            parsingPath.addResult(self, expectedValue.copy())
+            parsingPath.addResult(self, content[:len(expectedValue)].copy())
             results.append(parsingPath)
             self._logger.debug("Data '{}' can be parsed with variable {}".format(content.tobytes(), self))
         else:

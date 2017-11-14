@@ -233,9 +233,8 @@ class Value(AbstractRelationVariableLeaf):
                 results.append(newParsingPath)
         else:
             if content[:len(expectedValue)] == expectedValue:
-                self._logger.debug(
-                    "add result: {0}".format(expectedValue.copy()))
-                parsingPath.addResult(self, expectedValue.copy())
+                self._logger.debug("add result: {0}".format(expectedValue.copy().tobytes()))
+                parsingPath.addResult(self, content[:len(expectedValue)].copy())
                 results.append(parsingPath)
 
         return results
