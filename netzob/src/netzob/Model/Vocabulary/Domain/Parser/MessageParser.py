@@ -35,6 +35,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -288,6 +289,7 @@ class MessageParser(object):
                 remainingValue = value_before_parsing[len(
                     value_after_parsing):].copy()
 
+                # All the fields except the last one
                 if i_current_field < len(fields) - 1:
                     newParsingPath.assignData(
                         remainingValue, fields[i_current_field + 1].domain)
@@ -303,11 +305,25 @@ class MessageParser(object):
                             newParsingPath, fields, i_current_field + 1)
                     yield from generator
 
+                # When we are at the last field
                 elif not must_consume_everything and len(remainingValue) >= 0:
                     yield newParsingPath
                 elif len(remainingValue) == 0:
-                    # valid parsing path must consume everything
-                    yield newParsingPath
+
+                    # Double check if everything has been parsed
+                    final_parsing = bitarray()
+                    for f in fields:
+                        final_parsing += newParsingPath.getData(f.domain)
+
+                    if parsingPath.originalDataToParse == final_parsing:
+                        self._logger.debug("The content has been entirely parsed")
+
+                        # valid parsing path must consume everything
+                        yield newParsingPath
+                    else:
+                        self._logger.debug("The content has not been entirely parsed")
+                        self._logger.debug("Content to parse: '{}'".format(parsingPath.originalDataToParse))
+                        self._logger.debug("Content parsed:   '{}'".format(final_parsing))
 
             except InvalidParsingPathException:
                 pass
