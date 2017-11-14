@@ -306,8 +306,7 @@ class Repeat(AbstractVariableNode):
 
             # initiate a new parsing path based on the current one
             newParsingPath = parsingPath.duplicate()
-            newParsingPath.assignData(dataToParse.copy(),
-                                      self.children[0])
+            newParsingPath.assignData(dataToParse.copy(), self.children[0])
             newParsingPaths = [newParsingPath]
 
             # deal with the case where no repetition is accepted
@@ -520,139 +519,191 @@ def _test():
 
     Size field targeting a field containing a repeat variable, with size field on the right:
 
-    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4))
-    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
+    >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'\x04AAAA'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f2', b'\x04'), ('f1', b'AAAA')]))
 
     Size field targeting a field containing a repeat variable of non fixed size, with size field on the right:
 
-    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)))
-    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
+    >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'\x05AAAAA'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f2', b'\x05'), ('f1', b'AAAAA')]))
 
     Size field targeting a repeat variable, with size field on the right:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Size(v1, dataType=uint8())
-    >>> s = Symbol([Field(v2), Field(v1)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'\x05AAAAA'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'\x05'), ('f2', b'AAAAA')]))
 
     Size field targeting a repeat variable of non fixed size, with size field on the right:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Size(v1, dataType=uint8())
-    >>> s = Symbol([Field(v2), Field(v1)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'\x04AAAA'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'\x04'), ('f2', b'AAAA')]))
 
 
     ## Size field on the left
 
     Size field targeting a field containing a repeat variable, with size field on the left:
 
-    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4))
-    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
+    >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'AAAA\x04'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'AAAA'), ('f2', b'\x04')]))
 
     Size field targeting a field containing a repeat variable of non fixed size, with size field on the left:
 
-    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)))
-    >>> f2 = Field(Size(f1, dataType=uint8()))
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
+    >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'AAAAA\x05'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')]))
 
     Size field targeting a repeat variable, with size field on the left:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Size(v1, dataType=uint8())
-    >>> s = Symbol([Field(v1), Field(v2)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'AAAAA\x05'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')]))
 
     Size field targeting a repeat variable of non fixed size, with size field on the left:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Size(v1, dataType=uint8())
-    >>> s = Symbol([Field(v1), Field(v2)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'AAAAA\x05'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')]))
 
 
     ## Value field on the right
 
     Value field targeting a field containing a repeat variable, with value field on the right:
 
-    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4))
-    >>> f2 = Field(Value(f1))
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
+    >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'AAAAAAAA'
+
+    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
+    (Symbol, OrderedDict([('f2', b'AAAA'), ('f1', b'AAAA')]))
 
     Value field targeting a field containing a repeat variable of non fixed size, with value field on the right:
 
-    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)))
-    >>> f2 = Field(Value(f1))
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
+    >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'AAAAAA'
+    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
+    (Symbol, OrderedDict([('f2', b'AAA'), ('f1', b'AAA')]))
+
 
     Value field targeting a repeat variable, with value field on the right:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Value(v1)
-    >>> s = Symbol([Field(v2), Field(v1)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'AAAAAAAAAA'
+    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
+    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')]))
+
 
     Value field targeting a repeat variable of non fixed size, with value field on the right:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Value(v1)
-    >>> s = Symbol([Field(v2), Field(v1)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'AAAAAAAA'
+    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
+    (Symbol, OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')]))
 
 
     ## Value field on the left
 
     Value field targeting a field containing a repeat variable, with value field on the left:
 
-    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4))
-    >>> f2 = Field(Value(f1))
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
+    >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'AAAAAAAA'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')]))
 
     Value field targeting a field containing a repeat variable of non fixed size, with value field on the left:
 
-    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)))
-    >>> f2 = Field(Value(f1))
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
+    >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> s.specialize()
+    >>> d = s.specialize()
+    >>> d
     b'AAAA'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'AA'), ('f2', b'AA')]))
+
 
     Value field targeting a repeat variable, with value field on the left:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Value(v1)
-    >>> s = Symbol([Field(v1), Field(v2)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'AAAAAAAAAA'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')]))
 
     Value field targeting a repeat variable of non fixed size, with value field on the left:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Value(v1)
-    >>> s = Symbol([Field(v1), Field(v2)])
-    >>> s.specialize()
+    >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
+    >>> d = s.specialize()
+    >>> d
     b'AAAAAA'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('f1', b'AAA'), ('f2', b'AAA')]))
 
     """
