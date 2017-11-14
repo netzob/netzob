@@ -161,6 +161,9 @@ class GenericPath(object):
         if variable is None:
             raise Exception("Variable cannot be None")
 
+        if variable.id in self._dataAssignedToVariable:
+            self._logger.debug("Replacing '{}' by '{}' for variable '{}'".format(self._dataAssignedToVariable[variable.id].tobytes(), data.tobytes(), variable))
+
         self._dataAssignedToVariable[variable.id] = data
 
     @typeCheck(AbstractVariable)
@@ -255,6 +258,11 @@ class GenericPath(object):
                     self._variablesCallbacks.remove(callBackToExecute)
 
         return True
+
+    def show(self):
+        self._logger.debug("Variables registered for genericPath: '{}':".format(self))
+        for (var, val) in self._dataAssignedToVariable.items():
+            self._logger.debug("  [+] Variable: '{}' - Value: '{}'".format(var, val))
 
     @property
     def name(self):
