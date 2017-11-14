@@ -99,7 +99,7 @@ class Value(AbstractRelationVariableLeaf):
     <bitarray>`.
 
 
-    **Value examples**
+    **Value usage**
 
     The following example shows how to define a field with a copy of
     another field value, in specialization mode:
@@ -147,7 +147,8 @@ class Value(AbstractRelationVariableLeaf):
     **Specialization of Value objects**
 
     The following examples show the specialization process of Value
-    objects:
+    objects. The first example illustrates a case where the Value
+    variable is placed before the targeted variable.
 
     >>> from netzob.all import *
     >>> f1 = Field(String("john"), name="f1")
@@ -157,6 +158,9 @@ class Value(AbstractRelationVariableLeaf):
     >>> f = Field([f1, f2, f3, f4])
     >>> f.specialize()
     b'john;john!'
+
+    The second example illustrates a case where the Value variable is
+    placed after the targeted variable.
 
     >>> from netzob.all import *
     >>> f3 = Field(String("john"), name="f3")
@@ -187,7 +191,6 @@ class Value(AbstractRelationVariableLeaf):
     >>> f = Field([f0, f1])
     >>> f.specialize()
     b'\x01\x80'
-
 
     """
 
