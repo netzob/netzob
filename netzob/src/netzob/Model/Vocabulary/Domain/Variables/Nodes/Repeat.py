@@ -370,10 +370,9 @@ class Repeat(AbstractVariableNode):
                         if len(dataToParse) == len(newResult):
                             break_repeat = RepeatResult.STOP_AFTER
 
-                if break_repeat is RepeatResult.CONTINUE:
-                    if len(tmp_result) > 0:
-                        newParsingPaths = tmp_result
-                else:
+                if len(tmp_result) > 0:
+                    newParsingPaths = tmp_result
+                if break_repeat is not RepeatResult.CONTINUE:
                     break
 
             yield from newParsingPaths

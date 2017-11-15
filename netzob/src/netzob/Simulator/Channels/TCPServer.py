@@ -130,7 +130,7 @@ class TCPServer(AbstractChannel):
         super(TCPServer, self).__init__(timeout=timeout)
         self.localIP = localIP
         self.localPort = localPort
-        self._clientSocket = None
+        self.__clientSocket = None
 
     @staticmethod
     def getBuilder():
