@@ -310,7 +310,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         # Compute the relation result
         result = self.relationOperation(concatValues)
 
-        self._logger.debug("Computed value for relation variable: '{}'".format(result))
+        self._logger.debug("Computed value for relation variable: '{}'".format(result.tobytes()))
         return result
 
     @typeCheck(SpecializingPath)
