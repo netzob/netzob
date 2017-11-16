@@ -49,6 +49,7 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
 
 @NetzobLogger
@@ -248,8 +249,14 @@ class Data(AbstractVariableLeaf):
                 "Length of the content is too short ({0}), expect data of at least {1} bits".
                 format(len(content), minSize))
         else:
-            for size in range(min(maxSize, len(content)), minSize - 1, -1):
-                self._logger.debug("Try to parse {}/{} bits".format(size, maxSize))
+            # Handle specific case where the parsing can be made at the bit level
+            if isinstance(self.dataType, BitArray):
+                step = -1
+            else:
+                step = -8
+
+            for size in range(min(maxSize, len(content)), minSize - 1, step):
+                self._logger.debug("Try to parse {}/{} bits for variable '{}'".format(size, min(maxSize, len(content)), self.field))
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
