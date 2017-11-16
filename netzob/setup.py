@@ -184,11 +184,11 @@ with open('requirements.txt', 'r') as fd_requirements:
 
 extra_dependencies = {
     'docs': ['Sphinx>=1.1.3'],
-    'network': ['pcapy>=0.10.8', 'impacket>=0.9.12'],
+    'network': ['pcapy>=0.10.8'],
     'correlation': ['numpy>=1.9.2', 'minepy>=1.0.0']
 }
 
-dependency_links = []
+dependency_links = ["git+https://git@github.com/euri10/impacket.git/@py3#egg=impacket-0.9.16-dev"]
 
 # +----------------------------------------------------------------------------
 # | Extensions in the build operations (create manpage, i18n, ...)
