@@ -32,6 +32,7 @@
 import sys
 import os
 import uuid
+import pip
 
 from setuptools import setup, Extension, find_packages
 
@@ -177,10 +178,10 @@ moduleLibRelation = Extension('netzob._libRelation',
 # +----------------------------------------------------------------------------
 # | Definition of the dependencies
 # +----------------------------------------------------------------------------
-dependencies = []
-with open('requirements.txt', 'r') as fd_requirements:
-    for dependency in fd_requirements:
-        dependencies.append(dependency.strip())
+def get_dependencies():
+    session = pip.download.PipSession()
+    return [_.name for _ in pip.req.parse_requirements('requirements.txt',
+                                                       session=session)]
 
 extra_dependencies = {
     'docs': ['Sphinx>=1.1.3'],
@@ -188,7 +189,7 @@ extra_dependencies = {
     'correlation': ['numpy>=1.9.2', 'minepy>=1.0.0']
 }
 
-dependency_links = ["git+https://git@github.com/euri10/impacket.git/@py3#egg=impacket-0.9.16-dev"]
+dependency_links = []
 
 # +----------------------------------------------------------------------------
 # | Extensions in the build operations (create manpage, i18n, ...)
@@ -223,7 +224,7 @@ setup(
     ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRelation],
     data_files=data_files,
     scripts=["netzob"],
-    install_requires=dependencies,
+    install_requires=get_dependencies(),
     extras_require=extra_dependencies,
     dependency_links=dependency_links,
     version=release.version,

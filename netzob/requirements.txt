@@ -10,4 +10,4 @@ arpreq==0.3.1
 PyCRC==1.21
 cython==0.25.2
 randomstate==1.13.1
-impacket==0.9.16-dev
+git+https://git@github.com/euri10/impacket.git/@py3#egg=impacket-0.9.16-dev
