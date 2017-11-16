@@ -40,8 +40,11 @@ import pcapy
 # import impacket.ImpactDecoder as Decoders
 # import impacket.ImpactPacket as Packets
 ## Instead, import local adapted files
-from netzob.Import.PCAPImporter import ImpactPacket as Packets
-from netzob.Import.PCAPImporter import ImpactDecoder as Decoders
+#from netzob.Import.PCAPImporter import ImpactPacket as Packets
+#from netzob.Import.PCAPImporter import ImpactDecoder as Decoders
+
+from impacket import ImpactPacket as Packets
+from impacket import ImpactDecoder as Decoders
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
