@@ -488,4 +488,41 @@ def _test():
     ...
     Exception: Relation dataType should not have a constant value: 'Integer=0 ((None, None))'.
 
+
+
+    # Example with UDP inner relationships (2 Size fields with a CRC)
+
+    >>> # UDP header fields
+    >>> udp_sport = Field(uint16(), "udp.sport")
+    >>> udp_dport = Field(uint16(), "udp.dport")
+    >>> udp_length = Field(bitarray('0000000000000000'), "udp.length")
+    >>> udp_checksum = Field(bitarray('0000000000000000'), "udp.checksum")
+    >>> udp_payload = Field(Raw(), "udp.payload")
+    >>> 
+    >>> udp_header = [udp_sport, udp_dport, udp_length, udp_checksum, udp_payload]
+    >>> 
+    >>> # Update UDP length field
+    >>> udp_length.domain = Size(udp_header, dataType=uint16(), factor=1./8)
+    >>> 
+    >>> # Pseudo IP header to compute the UDP checksum
+    >>> pseudo_ip_src = Field(IPv4(), "udp.pseudoIP.saddr")
+    >>> pseudo_ip_dst = Field(IPv4(), "udp.pseudoIP.daddr")
+    >>> pseudo_ip_proto = Field(Raw(b'\x00\x11'), "udp.pseudoIP.proto")
+    >>> pseudo_ip_length = Field(Size(udp_header, dataType=uint16(), factor=1./8), "udp.pseudoIP.length")
+    >>> 
+    >>> pseudo_ip_header = Field(name="udp.pseudoIP", isPseudoField=True)
+    >>> pseudo_ip_header.fields = [pseudo_ip_src, pseudo_ip_dst, pseudo_ip_proto, pseudo_ip_length]
+    >>> 
+    >>> udp_checksum.domain = InternetChecksum([pseudo_ip_header] + udp_header, dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))
+    >>> 
+    >>> # UDP symbol
+    >>> symbol_udp = Symbol(name="udp", fields=(udp_header + [pseudo_ip_header]))
+    >>>
+    >>> # 
+    >>> data = symbol_udp.specialize(presets={"udp.payload": "test AAAAAAAA"})
+    >>>
+    >>> (symbol_result, structured_data) = Symbol.abstract(data, [symbol_udp])
+    >>> symbol_result == symbol_udp
+    True
+
     """
