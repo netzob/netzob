@@ -216,17 +216,15 @@ class GenericPath(object):
 
         # Try n-times to trigger callbacks in different orders as there can
         # have deadlocks between mutually linked domain definitions
-        for _ in range(10):
+        for _ in range(2):
             if moreCallBackFound is False:
                 break
 
             moreCallBackFound = False
             callBackToExecute = None
 
-            # Mix the callbacks functions, as we want to call them
-            # randomly in order to eliminate potential deadlocks due
-            # to mutually linked domain definitions
-            shuffle(self._variablesCallbacks)
+            # Try to trigger the callback in different order to unlock some deadlock situations
+            self._variablesCallbacks.reverse()
 
             for (targetVariables, currentVariable, parsingCB) in self._variablesCallbacks:
 
@@ -256,6 +254,7 @@ class GenericPath(object):
                     return False
                 if callBackToExecute in self._variablesCallbacks and self.hasData(currentVariable):
                     self._variablesCallbacks.remove(callBackToExecute)
+                break
 
         return True
 
