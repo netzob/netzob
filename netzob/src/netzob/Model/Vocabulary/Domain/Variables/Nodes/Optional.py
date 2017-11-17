@@ -52,11 +52,7 @@ class Optional(Repeat):
     The Optional constructor expects some parameters:
 
     :param child: The optional variable element.
-    :param svas: The SVAS strategy defining how the variable behaves during
-                 abstraction and specialization.
-                 The default strategy is SVAS.EPHEMERAL.
     :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
-    :type svas: :class:`~netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS`, optional
 
     >>> from netzob.all import *
     >>> f0 = Field(String("a"), "f0")
@@ -65,8 +61,8 @@ class Optional(Repeat):
 
     """
 
-    def __init__(self, child, svas=None):
-        super(Optional, self).__init__(child, (0, 1), svas=svas)
+    def __init__(self, child):
+        super(Optional, self).__init__(child, (0, 1))
 
 
 Opt = Optional

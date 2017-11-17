@@ -55,14 +55,14 @@ class AbstractVariableNode(AbstractVariable):
 
     """
 
-    def __init__(self, varType, children=None, svas=None):
+    def __init__(self, varType, children=None):
         # First, normalize the children
         self._children = []
         if children is not None:
             self.children = children
 
         # Then, call the parent init
-        super(AbstractVariableNode, self).__init__(varType, svas=svas)
+        super(AbstractVariableNode, self).__init__(varType)
 
     def isnode(self):
         return True

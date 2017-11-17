@@ -77,8 +77,6 @@ class Repeat(AbstractVariableNode):
     :param child: The variable element that will be repeated.
     :param nbRepeat: The number of repetitions of the element. This value can be a fixed integer, a tuple of integers defining the minimum and maximum of permitted repetitions, a constant from the calling script, a value present in another field, or can be identified by calling a callback function. In the latter case, the callback function should return a boolean telling if the expected number of repetitions is reached. Those use cases are described below.
     :param delimiter: The delimiter used to separate the repeated element. The default is None.
-    :param svas: The SVAS strategy defining how the Alternate
-                 behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type nbRepeat: an :class:`int` or a :class:`tuple` of :class:`int` or
                     a Python variable containing an :class:`int` or a
@@ -86,7 +84,6 @@ class Repeat(AbstractVariableNode):
                     <netzob.Model.Vocabulary.Field.Field>` or a
                     :class:`func` method, required
     :type delimiter: :class:`bitarray`, optional
-    :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
     **Callback prototype**
@@ -259,7 +256,7 @@ class Repeat(AbstractVariableNode):
        >>> from netzob.all import *
        >>> delimiter = bitarray(endian='big')
        >>> delimiter.frombytes(b";")
-       >>> child = Data(dataType=String(nbChars=(5)), svas=SVAS.PERSISTENT)
+       >>> child = Data(dataType=String(nbChars=(5)))
        >>> f1 = Field(Repeat(child, nbRepeat=3,
        ...            delimiter=delimiter))
        >>> s = Symbol([f1])
@@ -273,8 +270,8 @@ class Repeat(AbstractVariableNode):
 
     MAX_REPEAT = 1000
 
-    def __init__(self, child, nbRepeat, delimiter=None, svas=None):
-        super(Repeat, self).__init__(self.__class__.__name__, [child], svas=svas)
+    def __init__(self, child, nbRepeat, delimiter=None):
+        super(Repeat, self).__init__(self.__class__.__name__, [child])
         self.nbRepeat = nbRepeat  # type: nbRepeatType
         self.delimiter = delimiter
 

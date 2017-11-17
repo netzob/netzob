@@ -67,11 +67,8 @@ class Agg(AbstractVariableNode):
     :param children: The sequence of variable elements contained in
                      the aggregate. The default value is None.
     :param last_optional: A flag indicating if the last element of the children is optional or not. The default value is False.
-    :param svas: The SVAS strategy defining how the Aggregate
-                 behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type last_optional: :class:`bool`, optional
-    :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
     The Agg class supports modeling of direct recursions on the
@@ -376,8 +373,8 @@ class Agg(AbstractVariableNode):
 
     """
 
-    def __init__(self, children=None, last_optional=False, svas=None):
-        super(Agg, self).__init__(self.__class__.__name__, children, svas=svas)
+    def __init__(self, children=None, last_optional=False):
+        super(Agg, self).__init__(self.__class__.__name__, children)
 
         self._last_optional = last_optional
 

@@ -68,11 +68,8 @@ class Alt(AbstractVariableNode):
     :param children: The set of variable elements permitted in the
                      alternative. The default is None.
     :param callback: The callback function should return an integer used to determine the child index to select.
-    :param svas: The SVAS strategy defining how the Alternate
-                 behaves during abstraction and specialization. The default strategy is SVAS.EPHEMERAL.
     :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type callback: callable function taking two positional arguments returning an integer
-    :type svas: :class:`SVAS <netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS>`, optional
 
 
     For example, the following code denotes an alternate object that
@@ -139,8 +136,8 @@ class Alt(AbstractVariableNode):
 
     """
 
-    def __init__(self, children=None, callback=None, svas=None):
-        super(Alt, self).__init__(self.__class__.__name__, children, svas=svas)
+    def __init__(self, children=None, callback=None):
+        super(Alt, self).__init__(self.__class__.__name__, children)
         self.callback = callback  # type: altCbkType
 
     @typeCheck(ParsingPath)
