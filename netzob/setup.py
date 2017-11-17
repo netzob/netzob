@@ -32,7 +32,6 @@
 import sys
 import os
 import uuid
-import pip
 
 from setuptools import setup, Extension, find_packages
 
@@ -179,9 +178,19 @@ moduleLibRelation = Extension('netzob._libRelation',
 # | Definition of the dependencies
 # +----------------------------------------------------------------------------
 def get_dependencies():
-    session = pip.download.PipSession()
-    return [_.name for _ in pip.req.parse_requirements('requirements.txt',
-                                                       session=session)]
+    return """
+    pcapy==0.10.10
+    netaddr==0.7.18
+    bitarray==0.8.1
+    numpy
+    colorama==0.3.3
+    bintrees==2.0.7
+    minepy==1.0.0
+    arpreq==0.3.1
+    PyCRC==1.21
+    randomstate==1.13.1
+    impacket>=0.9.16-dev
+    """.split()
 
 extra_dependencies = {
     'docs': ['Sphinx>=1.1.3'],

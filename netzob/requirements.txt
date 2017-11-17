@@ -1,13 +1,5 @@
-jsonpickle==0.9.2
-pcapy==0.10.10
-netaddr==0.7.18
-bitarray==0.8.1
+--index-url https://pypi.python.org/simple/
+
 numpy
-colorama==0.3.3
-bintrees==2.0.7
-minepy==1.0.0
-arpreq==0.3.1
-PyCRC==1.21
-cython==0.25.2
-randomstate==1.13.1
-git+https://git@github.com/euri10/impacket.git/@py3#egg=impacket-0.9.16-dev
+-e git+https://git@github.com/euri10/impacket.git/@py3#egg=impacket-0.9.16-dev
+.
