@@ -205,7 +205,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         raise Exception("not implemented")
         self._logger.debug("RELATION LEARN")
         if parsingPath is None:
-            raise Exception("VariableParserPath cannot be None")
+            raise Exception("ParsingPath cannot be None")
         return []
 
     def compareValues(self, content, expectedSize, computedValue):
@@ -215,8 +215,10 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """This method participates in the abstraction process.
 
-        It creates a VariableSpecializerResult in the provided path if
-        the remainingData (or some if it) follows the type definition"""
+        It creates a result in the provided path if the remainingData
+        (or some if it) follows the type definition
+
+        """
 
         results = []
         self._logger.debug(
@@ -317,8 +319,9 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True):
         """This method participates in the specialization proces.
 
-        It creates a VariableSpecializerResult in the provided path that
-        contains a generated value that follows the definition of the Data
+        It creates a result in the provided path that contains a
+        generated value that follows the definition of the Data
+
         """
         self._logger.debug("Regenerate relation domain {0}".format(self))
         if variableSpecializerPath is None:

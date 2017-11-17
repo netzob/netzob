@@ -247,8 +247,10 @@ class Value(AbstractRelationVariableLeaf):
     def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """This method participates in the abstraction process.
 
-        It creates a VariableSpecializerResult in the provided path if
-        the remainingData (or some if it) follows the type definition"""
+        It creates a result in the provided path if the remainingData
+        (or some if it) follows the type definition
+
+        """
 
         return self.valueCMP(parsingPath, acceptCallBack)
 
