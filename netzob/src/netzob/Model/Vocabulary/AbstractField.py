@@ -721,8 +721,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """Returns a string which denotes the current symbol/field definition
         using a tree display.
 
-        :param deepness: Parameter used to specify the number of indentations.
-        :type deepness: :class:`int`, required
+        :param deepness: Parameter used to specify the number of indentations. The default value is 0.
+        :type deepness: :class:`int`, optional
         :return: The current symbol/field represented as a string.
         :rtype: :class:`str`
 
@@ -759,8 +759,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """Returns a string which shows the associated messages of the current
         symbol/field, after applying the symbol/field definition.
 
-        :param deepness: Parameter used to specify th number of indentations.
-        :type deepness: :class:`int`
+        :param deepness: Parameter used to specify th number of indentations. The default value is 0.
+        :type deepness: :class:`int`, optional
 
         >>> from netzob.all import *
         >>> messages = []
