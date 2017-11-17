@@ -189,7 +189,7 @@ def get_dependencies():
     arpreq==0.3.1
     PyCRC==1.21
     randomstate==1.13.1
-    impacket>=0.9.16-dev
+    impacket>0.9.15
     """.split()
 
 extra_dependencies = {
