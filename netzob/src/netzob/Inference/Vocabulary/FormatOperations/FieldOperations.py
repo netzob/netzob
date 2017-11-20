@@ -43,8 +43,6 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
@@ -54,7 +52,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 class FieldOperations(object):
     """This class offers various operations to support manual merge and split of fields."""
 
-    @typeCheck(AbstractField, AbstractField)
+    @typeCheck(Field, Field)
     def mergeFields(self, field1, field2):
         """Merge specified fields.
 
@@ -65,7 +63,7 @@ class FieldOperations(object):
         >>> f1 = Field(Raw(nbBytes=1), name="f1")
         >>> f2 = Field(Raw(nbBytes=2), name="f2")
         >>> f3 = Field(Raw(nbBytes=2), name="f3")
-        >>> f4 = Field(Raw(nbBytes=1), name="f4")
+        >>> f4 = Field(Data(Integer(unitSize=AbstractType.UNITSIZE_8)), name="f4")
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
 
@@ -106,9 +104,9 @@ class FieldOperations(object):
         --------------
         
         :param field1: the left field to merge
-        :type field1: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field1: :class:`Field`
         :param field2: the right field to merge
-        :type field2: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field2: :class:`Field`
 
         :raise Exception if something bad happens
         """
@@ -149,8 +147,8 @@ class FieldOperations(object):
 
         try:
             # first try to completely blend the fields if this is supported
-            newField = FieldOperations._blendFields(field1,field2)
-        except TypeError or NotImplementedError:
+            newField = FieldOperations._blendFields(field1, field2)
+        except (TypeError, NotImplementedError):
             # build a new field domain
             newDomain = Agg([field1.domain, field2.domain])
             newField = Field(domain=newDomain, name="Merge")
@@ -160,15 +158,18 @@ class FieldOperations(object):
         after = parent.fields[iField2 + 1:]
         parent.fields = before + [newField] + after
 
+    @typeCheck(Field, Field)
     @staticmethod
     def _blendFields(field1, field2):
         """
         Completely blend two fields without using Agg.
-        This requires that the two fields are of the same domain and its parameters
-        >>> from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
+        This requires that the two fields are of the same domain and its parameters.
+        The returned new field still needs to be placed into the symbol.
+
+        >>> from netzob.all import *
         >>> samples = [ b'\\x00\\xff/BPz', b'\\x00\\x00 CQ~', b'\\x00\\xff/Gf/' ]
         >>> messages = [RawMessage(data=sample) for sample in samples]
-        >>> f1 = Field(Raw(nbBytes=1))
+        >>> f1 = Field(Data(Integer(unitSize=AbstractType.UNITSIZE_8)))
         >>> f2 = Field(Raw(nbBytes=2))
         >>> f3 = Field(Raw(nbBytes=3))
         >>> symbol = Symbol([f1, f2, f3], messages=messages)
@@ -183,6 +184,10 @@ class FieldOperations(object):
         big
         >>> print(nf.domain.dataType.size)
         (40, 40)
+        >>> nf2 = FieldOperations._blendFields(f1,f2)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: The datatype Integer is not yet supported.
 
         :param field1: the left field
         :param field2: the right field
@@ -193,11 +198,11 @@ class FieldOperations(object):
 
         for d in [field1.domain, field2.domain]:
             if len(d._AbstractVariable__boundedVariables) > 0 \
-                or len(d._AbstractVariable__fathers) > 0 \
-                or len(d._AbstractVariable__tokenChoppedIndexes) > 0:
+                    or len(d._AbstractVariable__fathers) > 0 \
+                    or len(d._AbstractVariable__tokenChoppedIndexes) > 0:
                 raise TypeError("Blending does not support __boundedVariables, __fathers, or __tokenChoppedIndexes.")
             if not isinstance(d.dataType, Raw):
-                NotImplementedError("The datatype {} is not yet supported.".format(d.dataType.typeName))
+                raise NotImplementedError("The datatype {} is not yet supported.".format(d.dataType.typeName))
 
         if not field1.domain.svas == field2.domain.svas:
             raise TypeError("The SVAS-values of both fields to merge are not the same.")
@@ -208,7 +213,7 @@ class FieldOperations(object):
         if not field1.domain.dataType.unitSize == field2.domain.dataType.unitSize:
             raise TypeError("The unitSize of both fields to merge are not the same.")
 
-        # '_ASCII__nbChars': (None, None),
+        # '_ASCII__nbChars': (None, None)
 
         newDomain = field1.domain.__class__(field1.domain.dataType.__class__())
         newDomain.svas = field1.domain.svas
