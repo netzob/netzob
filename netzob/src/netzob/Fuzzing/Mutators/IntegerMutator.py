@@ -195,7 +195,7 @@ class IntegerMutator(DomainMutator):
     >>> mutator = IntegerMutator(fieldInt.domain, generator=repeatfunc(random.random))
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
-    64
+    65
 
     This example uses an iterator object with a finite number of values (3),
     resulting in an error as soon as the limit is reached:
@@ -207,7 +207,7 @@ class IntegerMutator(DomainMutator):
     0
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
-    127
+    128
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
     255
@@ -317,10 +317,12 @@ class IntegerMutator(DomainMutator):
 
         # Generate and return a random value in the interval
         dom_type = self.domain.dataType
-        return Integer.decode(self.generateInt(),
-                              unitSize=dom_type.unitSize,
-                              endianness=dom_type.endianness,
-                              sign=dom_type.sign)
+        value = self.generateInt()
+        value = Integer.decode(value,
+                               unitSize=dom_type.unitSize,
+                               endianness=dom_type.endianness,
+                               sign=dom_type.sign)
+        return value
 
     def generateInt(self):
         """This is the mutation method of the integer type.
@@ -340,6 +342,11 @@ def center(val, lower, upper):
     """
     Center :attr:`val` between :attr:`lower` and :attr:`upper`.
     """
-    return int(val * (upper - lower) + lower)
 
-
+    number_values = float(upper) - float(lower) + 1.0
+    result = lower + int(val * number_values)
+    if result > upper:
+        result = upper
+    if result < lower:
+        result = lower
+    return result

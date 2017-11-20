@@ -107,7 +107,7 @@ class RepeatMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> fuzz.set(f_rep)
     >>> symbol.specialize(fuzz=fuzz)  # doctest: +ELLIPSIS
-    b'\x00\x03\x00\x01\x00\x02...\x00\x03'
+    b'\x00\x04\x00\x01\x00\x03...\x00\x04'
 
 
     **Fuzzing example of a field that contains a variable number of repeat of a variable**
@@ -117,9 +117,9 @@ class RepeatMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> fuzz.set(f_rep)
     >>> symbol.specialize(fuzz=fuzz)  # doctest: +ELLIPSIS
-    b'\x00\x03\x00\x01\x00\x02...\x00\x03'
+    b'\x00\x04\x00\x01\x00\x03...\x00\x04'
     >>> symbol.specialize(fuzz=fuzz)  # doctest: +ELLIPSIS
-    b'\x00\x01\x00\x01\x00\x02...\x00\x01'
+    b'\x00\x02\x00\x02\x00\x03...\x00\x01'
 
 
     **Fuzzing of an alternate of variables with non-default fuzzing strategy (MutatorMode.MUTATE)**
