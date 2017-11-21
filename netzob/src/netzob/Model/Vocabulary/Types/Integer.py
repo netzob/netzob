@@ -76,14 +76,14 @@ class Integer(AbstractType):
       * UnitSize.SIZE_32
       * UnitSize.SIZE_64
 
-    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
+    :param endianness: The endianness of the current value.
 
       The following endianness are available:
 
       * Endianness.BIG (default endianness)
       * Endianness.LITTLE
 
-    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. The default value is Sign.SIGNED.
+    :param sign: The sign of the current value.
 
       The following signs are available:
 

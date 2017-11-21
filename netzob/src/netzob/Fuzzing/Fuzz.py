@@ -89,7 +89,7 @@ class Fuzz(object):
                        should be used to represent an absolute value, whereas
                        a :class:`float` should be used to represent a ratio in
                        percent).
-    :type counterMax: :class:`int` or :class:`float`, defaults to
+    :type counterMax: :class:`int` or :class:`float`, optional, default to
                       :attr:`COUNTER_MAX_DEFAULT`
 
 

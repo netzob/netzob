@@ -85,15 +85,20 @@ class Timestamp(AbstractType):
 
     :param value: The raw value of the timestamp (in seconds by default). If None, the default generated value is the current time in UTC.
     :param epoch: The initial date expressed in UTC from which
-                  timestamp is measured. Default value is EPOCH_UNIX.
+                  timestamp is measured. Default value is Epoch.UNIX.
     :param unity: This specifies the unity of the timestamp (seconds,
                   milliseconds, nanoseconds). The default value is
-                  UNITY_SECOND.
+                  Unity.SECOND.
     :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). The default value is UnitSize.SIZE_32.
+    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
+    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. The default value is Sign.SIGNED.
+
     :type value: :class:`bitarray` or :class:`int`, optional
     :type epoch: :class:`Epoch <netzob.Model.Vocabulary.Types.Timestamp.Epoch`, optional
     :type unity: :class:`Unity <netzob.Model.Vocabulary.Types.Timestamp.Unity`, optional
     :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
+    :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
+    :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
 
     .. note::
        :attr:`value` and :attr:`unitSize` attributes are mutually exclusive.

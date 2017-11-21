@@ -123,14 +123,14 @@ class AbstractType(object, metaclass=abc.ABCMeta):
       * UnitSize.SIZE_32
       * UnitSize.SIZE_64
 
-    :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. If None, the value is the default one.
+    :param endianness: The endianness of the current value. If None, the value is the default one.
 
       The following endianness are available:
 
       * Endianness.BIG (default value)
       * Endianness.LITTLE
 
-    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. If None, the value is the default one.
+    :param sign: The sign of the current value. If None, the value is the default one.
 
       The following signs are available:
 

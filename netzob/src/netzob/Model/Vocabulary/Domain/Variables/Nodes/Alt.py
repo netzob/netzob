@@ -67,9 +67,9 @@ class Alt(AbstractVariableNode):
 
     :param children: The set of variable elements permitted in the
                      alternative. The default is None.
-    :param callback: The callback function should return an integer used to determine the child index to select.
+    :param callback: The callback function should return an integer used to determine the child index to select. The default is None.
     :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
-    :type callback: callable function taking two positional arguments returning an integer
+    :type callback: callable function taking two positional arguments returning an integer, optional
 
 
     For example, the following code denotes an alternate object that
