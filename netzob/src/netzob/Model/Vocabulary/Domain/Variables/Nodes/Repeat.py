@@ -372,6 +372,9 @@ class Repeat(AbstractVariableNode):
                 else:
                     break
 
+            if len(newParsingPaths) == 0:
+                newParsingPath.addResult(self, bitarray())
+                newParsingPaths.append(newParsingPath)
             yield from newParsingPaths
 
     @typeCheck(SpecializingPath)
