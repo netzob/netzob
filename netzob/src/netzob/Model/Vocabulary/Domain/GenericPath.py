@@ -212,19 +212,12 @@ class GenericPath(object):
 
     def _triggerVariablesCallbacks(self, triggeringVariable):
 
-        moreCallBackFound = True
+        for _ in range(len(self._variablesCallbacks)):
 
-        # Try n-times to trigger callbacks in different orders as there can
-        # have deadlocks between mutually linked domain definitions
-        for _ in range(1):
-            if moreCallBackFound is False:
-                break
-
-            moreCallBackFound = False
             callBackToExecute = None
 
             # Try to trigger the callback in different order to unlock some deadlock situations
-            #shuffle(self._variablesCallbacks)
+            shuffle(self._variablesCallbacks)
 
             for (targetVariables, currentVariable, parsingCB) in self._variablesCallbacks:
 
@@ -243,18 +236,20 @@ class GenericPath(object):
                     callBackToExecute = (targetVariables, currentVariable, parsingCB)
                     break
 
-            if callBackToExecute is not None:
-                moreCallBackFound = True
-                (targetVariables, currentVariable, parsingCB) = callBackToExecute
-                if parsingCB:
-                    resultingPaths = currentVariable.parse(self, acceptCallBack=True)
-                else:
-                    resultingPaths = currentVariable.specialize(self, acceptCallBack=True)
-                if len(resultingPaths) == 0:
-                    return False
-                if callBackToExecute in self._variablesCallbacks and self.hasData(currentVariable):
-                    self._variablesCallbacks.remove(callBackToExecute)
+            if callBackToExecute is None:
                 break
+
+            (targetVariables, currentVariable, parsingCB) = callBackToExecute
+            if parsingCB:
+                resultingPaths = currentVariable.parse(self, acceptCallBack=True)
+            else:
+                resultingPaths = currentVariable.specialize(self, acceptCallBack=True)
+            if len(resultingPaths) == 0:
+                return False
+            if self.hasData(currentVariable):
+                if callBackToExecute in self._variablesCallbacks:
+                    self._variablesCallbacks.remove(callBackToExecute)
+                continue
 
         return True
 
