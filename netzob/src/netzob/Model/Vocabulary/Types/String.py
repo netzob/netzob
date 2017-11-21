@@ -73,7 +73,7 @@ class String(AbstractType):
     :type value: :class:`bitarray` or :class:`str`, optional
     :type nbChars: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
     :type encoding: :class:`str`, optional
-    :type eos: a :class:`list` of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, optional
+    :type eos: a :class:`list` of :class:`str`, optional
 
     .. note::
        :attr:`value` and :attr:`nbChars` attributes are mutually exclusive.
@@ -89,14 +89,12 @@ class String(AbstractType):
                Instead of a tuple, an integer can be used to represent both min and max value.
     :var encoding: The encoding of the current value, such as 'ascii' or 'utf-8'.
     :var eos: A list defining the potential terminal characters for
-              the string, with either specific constants or pointers
-              to other fields containing the permitted terminal
-              values.
+              the string.
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype encoding: :class:`str`
-    :type eos: a :class:`list` of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>` or a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`
+    :type eos: a :class:`list` of :class:`str`
 
 
     Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_
@@ -148,19 +146,19 @@ class String(AbstractType):
     **String with terminal character**
 
     Strings with a terminal delimiter are supported. The following
-    example shows the usage of a delimiter that can either be a
-    constant or a Field object (see :class:`Field
-    <netzob.Model.Vocabulary.Field.Field>` for more information).
+    example shows the usage of a delimiter.
 
     >>> from netzob.all import *
-    >>> f_eos    = Field(String('\t'))
-    >>> s = String(eos=[String('\n'), Raw(b'\x00'), f_eos]) # doctest: +SKIP
+    >>> s = String(nbChars=10, eos=['\n'])
+    >>> data = s.generate().tobytes()
+    >>> len(data) == 10
+    True
+    >>> data[-1:] == b'\n'
+    True
 
     The ``eos`` attribute specifies a list of values that is used as
-    potential terminal characters. Terminal characters can either be a
-    constant (such as ``String('\n')`` and ``Raw('\x00')`` in the
-    previous example) or a targeted Field (such as ``f_eos`` in the
-    previous example) from which the terminal character is used.
+    potential terminal characters. Terminal characters can be a
+    constant (such as ``'\n`` in the previous example).
 
     """
 
@@ -173,7 +171,7 @@ class String(AbstractType):
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
         self.encoding = encoding
-        self.eos = eos  # TODO(fgy): to implement
+        self.eos = eos
 
         # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):
@@ -256,7 +254,6 @@ class String(AbstractType):
         True
 
         """
-
         if self.value is not None:
             return self.value
 
@@ -270,11 +267,30 @@ class String(AbstractType):
             minSize = 0
 
         generatedSize = random.randint(minSize / 8, maxSize / 8)
-        randomContent = ''.join([
-            random.choice(string.printable)
+
+        permitted_characters = list(string.printable)
+
+        # Handle terminal character ('end of string')
+        for elt in self.eos:
+            if isinstance(elt, str):
+                permitted_characters.remove(elt)
+            else:
+                raise Exception("Wrong type for the end of string (eos) character: {} is a {}, and should be a string".format(elt, type(elt)))
+
+        # Generate the sufficient amount of data
+        random_content = ''.join([
+            random.choice(permitted_characters)
             for i in range(generatedSize)
         ])
-        return TypeConverter.convert(randomContent, String, BitArray)
+
+        # Handle terminal character ('end of string')
+        if len(self.eos) > 0:
+            final_character = random.choice(self.eos)
+
+            # Remove the size of the added terminal character to the original random_content, and add the final character
+            random_content = random_content[:len(random_content) - len(final_character)] + final_character
+
+        return TypeConverter.convert(random_content, String, BitArray)
 
     @typeCheck(str)
     def mutate(self, prefixDescription=None):
@@ -455,6 +471,15 @@ class String(AbstractType):
             if len(rawData) > (maxChar / 8):
                 return False
 
+        # Verify the terminal character
+        if len(self.eos) > 0:
+            last_element = rawData[-1:]
+            for permitted_element in self.eos:
+                if last_element == str.encode(permitted_element):
+                    break
+            else:
+                return False
+
         return True
 
     @staticmethod
@@ -544,56 +569,99 @@ class String(AbstractType):
             raise TypeError("Encoding cannot be None")
         self.__encoding = encoding
 
-    def _test(self):
-        """
-        Examples of string internal attributes access:
-
-        >>> from netzob.all import *
-        >>> cAscii = String("hello")
-        >>> print(cAscii)
-        String=hello ((None, None))
-        >>> cAscii.typeName
-        'String'
-        >>> cAscii.value
-        bitarray('0110100001100101011011000110110001101111')
-
-        The following example shows how to convert the
-        current type to any other Netzob types:
-
-        >>> from netzob.all import *
-        >>> cAscii = String("hello")
-        >>> raw = cAscii.convert(Raw)
-        >>> print(repr(raw))
-        b'hello'
-        >>> ip = cAscii.convert(IPv4)  # doctest: +ELLIPSIS
-        Traceback (most recent call last):
-        ...
-        TypeError: Impossible to encode b'hello' into an IPv4 data...
-
-        The type can be used to specify constraints over the domain:
-
-        >>> from netzob.all import *
-        >>> a = String(nbChars=10)
-        >>> print(a.value)
-        None
-
-        It is not possible to convert if the object has not value:
-
-        >>> from netzob.all import *
-        >>> a = String(nbChars=10)
-        >>> a.convert(Raw)
-        Traceback (most recent call last):
-        ...
-        TypeError: Data cannot be None
-
-
-        >>> from netzob.all import Field, Symbol
-        >>> domains = [
-        ...    String("abcd"), String(nbChars=(4, 5)),
-        ... ]
-        >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-        >>> data = b''.join(f.specialize() for f in symbol.fields)
-        >>> Symbol.abstract(data, [symbol])  #doctest: +ELLIPSIS
-        (Symbol, OrderedDict([('0', b'abcd'), ('1', ...)]))
+    @property
+    def eos(self):
+        """A list defining the potential terminal characters for the string,
+        which should be of string type.
 
         """
+        return self.__eos
+
+    @eos.setter  # type: ignore
+    def eos(self, eos):
+        if eos is None:
+            raise Exception("'eos' parameter cannot be None")
+        if not isinstance(eos, list):
+            raise Exception("'eos' parameter must be a list")
+        eos_list = []
+
+        for elt in eos:
+            if isinstance(elt, str):
+                eos_list.append(elt)
+            else:
+                raise Exception("'eos' parameter must be a list of string or AbstractField")
+        self.__eos = eos_list
+
+
+def _test(self):
+    r"""
+    Examples of string internal attributes access:
+
+    >>> from netzob.all import *
+    >>> cAscii = String("hello")
+    >>> print(cAscii)
+    String=hello ((None, None))
+    >>> cAscii.typeName
+    'String'
+    >>> cAscii.value
+    bitarray('0110100001100101011011000110110001101111')
+
+    The following example shows how to convert the
+    current type to any other Netzob types:
+
+    >>> from netzob.all import *
+    >>> cAscii = String("hello")
+    >>> raw = cAscii.convert(Raw)
+    >>> print(repr(raw))
+    b'hello'
+    >>> ip = cAscii.convert(IPv4)  # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    TypeError: Impossible to encode b'hello' into an IPv4 data...
+
+    The type can be used to specify constraints over the domain:
+
+    >>> from netzob.all import *
+    >>> a = String(nbChars=10)
+    >>> print(a.value)
+    None
+
+    It is not possible to convert if the object has not value:
+
+    >>> from netzob.all import *
+    >>> a = String(nbChars=10)
+    >>> a.convert(Raw)
+    Traceback (most recent call last):
+    ...
+    TypeError: Data cannot be None
+
+
+    >>> from netzob.all import Field, Symbol
+    >>> domains = [
+    ...    String("abcd"), String(nbChars=(4, 5)),
+    ... ]
+    >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> Symbol.abstract(data, [symbol])  #doctest: +ELLIPSIS
+    (Symbol, OrderedDict([('0', b'abcd'), ('1', ...)]))
+
+
+    ## String with terminal character as a constant (specialization and abstraction)
+
+    >>> from netzob.all import *
+    >>> s = String(nbChars=10, eos=['A'])
+    >>> data = s.generate().tobytes()
+    >>> len(data) == 10
+    True
+    >>> data[-1:] == b'A'
+    True
+    >>> symbol = Symbol([Field(s)])
+    >>> (symbol1, structured_data) = Symbol.abstract(data, [symbol])
+    >>> symbol1 == symbol
+    True
+    >>> data = data[:-1] + b'\t'
+    >>> (symbol2, structured_data) = Symbol.abstract(data, [symbol])
+    >>> isinstance(symbol2, UnknownSymbol)
+    True
+
+    """
