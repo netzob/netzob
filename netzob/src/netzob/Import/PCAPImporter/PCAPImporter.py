@@ -346,11 +346,20 @@ class PCAPImporter(object):
                 l3Payload = l3Payload[:len(l3Payload) - paddingSize]
             ipProtocolNum = layer3.get_ip_p()
             return (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum)
+        if etherType == Packets.ARP.ethertype:
+            l3Proto = "ARP"
+            l3Decoder = Decoders.ARPDecoder()
+            layer3 = l3Decoder.decode(l2Payload)
+
+            l3SrcAddr = layer3.get_ar_spa()
+            l3DstAddr = layer3.get_ar_tpa()
+            l3Payload = l2Payload[:layer3.get_header_size()]
+            return (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, None)
         else:
             warnMessage = _("Cannot import one of the provided packets since "
                             + "its layer 3 is unsupported (Only IP is " +
                             "currently supported, packet ethernet " +
-                            "type = {0})").format(etherType)
+                            "type = {} -- {})").format(etherType, etherType.to_bytes(length=2, byteorder='big'))
             self._logger.warn(warnMessage)
             raise NetzobImportException("PCAP", warnMessage,
                                         self.INVALID_LAYER3)
