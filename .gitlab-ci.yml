@@ -53,6 +53,7 @@ build:host:
     paths:
       - netzob/build/
       - netzob/dist/
+      - netzob/src/
   tags:
     - ubuntu
 
