@@ -571,8 +571,8 @@ class String(AbstractType):
 
     @property
     def eos(self):
-        """A :class:list of :class:str defining the potential terminal
-        characters for the string, which should be of string type.
+        """A :class:`list` of :class:`str` defining the potential terminal
+        characters for the string.
 
         """
         return self.__eos
