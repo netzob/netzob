@@ -274,22 +274,27 @@ class String(AbstractType):
         permitted_characters = list(string.printable)
 
         # Handle terminal character ('end of string')
-        for elt in self.eos:
-            if isinstance(elt, str):
-                permitted_characters.remove(elt)
-            else:
-                raise Exception("Wrong type for the end of string (eos) character: {} is a {}, and should be a string".format(elt, type(elt)))
-
-        # Generate the sufficient amount of data
-        random_content = ''.join([
-            random.choice(permitted_characters)
-            for i in range(generatedSize)
-        ])
-
-        # Handle terminal character ('end of string')
+        final_character = None
         if len(self.eos) > 0:
             final_character = random.choice(self.eos)
 
+        # Generate the sufficient amount of data
+        random_content = ""
+        while len(random_content) < generatedSize:
+            random_content += random.choice(permitted_characters)
+
+            # Be sure that the final character is not present in the first part of the generated string
+            if final_character is not None:
+                while True:
+                    random_content_tmp = random_content.replace(final_character, "")
+                    if len(random_content_tmp) == len(random_content):
+                        random_content = random_content_tmp
+                        break
+                    else:
+                        random_content = random_content_tmp
+
+        # Handle terminal character ('end of string')
+        if final_character is not None:
             # Remove the size of the added terminal character to the original random_content, and add the final character
             random_content = random_content[:len(random_content) - len(final_character)] + final_character
 
@@ -476,8 +481,8 @@ class String(AbstractType):
 
         # Verify the terminal character
         if len(self.eos) > 0:
-            last_element = rawData[-1:]
             for permitted_element in self.eos:
+                last_element = rawData[-(len(permitted_element)):]
                 if last_element == str.encode(permitted_element):
                     break
             else:
@@ -663,6 +668,54 @@ def _test(self):
     >>> symbol1 == symbol
     True
     >>> data = data[:-1] + b'\t'
+    >>> (symbol2, structured_data) = Symbol.abstract(data, [symbol])
+    >>> isinstance(symbol2, UnknownSymbol)
+    True
+
+
+    ## String with terminal character as a list of constants (specialization and abstraction)
+
+    >>> from netzob.all import *
+    >>> s = String(nbChars=10, eos=['A', 'B'])
+    >>> data = s.generate().tobytes()
+    >>> len(data) == 10
+    True
+    >>> data[-1:] == b'A' or data[-1:] == b'B'
+    True
+    >>> data = s.generate().tobytes()
+    >>> len(data) == 10
+    True
+    >>> data[-1:] == b'A' or data[-1:] == b'B'
+    True
+    >>> data = s.generate().tobytes()
+    >>> len(data) == 10
+    True
+    >>> data[-1:] == b'A' or data[-1:] == b'B'
+    True
+    >>> symbol = Symbol([Field(s)])
+    >>> (symbol1, structured_data) = Symbol.abstract(data, [symbol])
+    >>> symbol1 == symbol
+    True
+    >>> data = data[:-1] + b'\t'
+    >>> (symbol2, structured_data) = Symbol.abstract(data, [symbol])
+    >>> isinstance(symbol2, UnknownSymbol)
+    True
+
+
+    ## String with terminal character as a mulitple characters constant (specialization and abstraction)
+
+    >>> from netzob.all import *
+    >>> s = String(nbChars=10, eos=['\r\n'])
+    >>> data = s.generate().tobytes()
+    >>> len(data) == 10
+    True
+    >>> data[-2:] == b'\r\n'
+    True
+    >>> symbol = Symbol([Field(s)])
+    >>> (symbol1, structured_data) = Symbol.abstract(data, [symbol])
+    >>> symbol1 == symbol
+    True
+    >>> data = data[:-2] + b'\r\t'
     >>> (symbol2, structured_data) = Symbol.abstract(data, [symbol])
     >>> isinstance(symbol2, UnknownSymbol)
     True
