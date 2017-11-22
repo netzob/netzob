@@ -276,7 +276,7 @@ class Repeat(AbstractVariableNode):
         self.delimiter = delimiter
 
     @typeCheck(ParsingPath)
-    def parse(self, parsingPath, carnivorous=False):
+    def parse(self, parsingPath, **kwargs):
         """Parse the content with the definition domain of the Repeat
         """
 
@@ -293,11 +293,28 @@ class Repeat(AbstractVariableNode):
         parsingPath.removeData(self)
 
         if callable(self.nbRepeat):
-            min_nb_repeat = Repeat.MAX_REPEAT - 1
-            max_nb_repeat = Repeat.MAX_REPEAT
+            gen = self._parse_callback
         else:
-            min_nb_repeat = self.nbRepeat[0] - 1
-            max_nb_repeat = self.nbRepeat[1]
+            gen = self._parse_without_callback
+
+        # result generator
+        results = gen(parsingPath, dataToParse, **kwargs)
+
+        # filter on results having a data for this variable
+        valid_results = [result for result in results if result.hasData(self)]
+
+        # if no valid result if found, provide a fallback parsing path with
+        # an empty result
+        if len(valid_results) == 0:
+            newParsingPath = parsingPath.duplicate()
+            newParsingPath.addResult(self, bitarray())
+            valid_results.append(newParsingPath)
+
+        return valid_results
+
+    def _parse_without_callback(self, parsingPath, dataToParse, carnivorous=False):
+        min_nb_repeat = self.nbRepeat[0] - 1
+        max_nb_repeat = self.nbRepeat[1]
 
         for nb_repeat in range(max_nb_repeat, min_nb_repeat, -1):
 
@@ -306,76 +323,100 @@ class Repeat(AbstractVariableNode):
             newParsingPath.assignData(dataToParse.copy(), self.children[0])
             newParsingPaths = [newParsingPath]
 
-            # deal with the case where no repetition is accepted
-            if nb_repeat == 0:
-                newParsingPath.addResult(self, bitarray())
-                yield newParsingPath
-
             # check we can apply nb_repeat times the child
             for i_repeat in range(nb_repeat):
-                tmp_result = []
+                tmp_results = []
                 break_repeat = RepeatResult.CONTINUE
                 for newParsingPath in newParsingPaths:
                     for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
 
+                        newResult = bitarray()
                         if childParsingPath.hasData(self):
-                            newResult = childParsingPath.getData(self).copy()
-                            newResult = newResult + childParsingPath.getData(self.children[0])
-                        else:
-                            newResult = childParsingPath.getData(self.children[0])
+                            newResult += childParsingPath.getData(self).copy()
+                        newResult += childParsingPath.getData(self.children[0])
 
                         remainingDataToParse = dataToParse.copy()[len(newResult):]
-
-                        if callable(self.nbRepeat):
-                            break_repeat = self.nbRepeat(i_repeat + 1,
-                                                         newResult,
-                                                         remainingDataToParse,
-                                                         childParsingPath,
-                                                         self.children[0])
-
-                            if break_repeat is not RepeatResult.CONTINUE:
-                                # If the callback returns True for the 1st
-                                # repetition (i_repeat=0), it is equivalent to
-                                # nbRepeat=0 : the path also has no data (for
-                                # example an optional field is not present).
-                                # Else if i_repeat > 0, a data was already set
-                                # to the path which has not to be overwritten
-                                # with an empty bitarray.
-                                if not newParsingPath.hasData(self):
-                                    newParsingPath.addResult(self, bitarray())
-                                    tmp_result.append(newParsingPath)
-                                break
 
                         childParsingPath.addResult(self, newResult)
 
                         childParsingPath.assignData(remainingDataToParse, self.children[0])
 
                         # apply delimiter if necessary
-                        if (break_repeat is RepeatResult.CONTINUE and
-                            self.delimiter is not None and i_repeat < nb_repeat - 1):
-                                # check the delimiter is available
-                                toParse = childParsingPath.getData(self.children[0]).copy()
-                                if toParse[:len(self.delimiter)] == self.delimiter:
-                                    newResult = childParsingPath.getData(
-                                        self).copy() + self.delimiter
-                                    childParsingPath.addResult(self, newResult)
-                                    childParsingPath.assignData(dataToParse.copy()[len(newResult):], self.children[0])
-                                    tmp_result.append(childParsingPath)
+                        if self.delimiter is not None and i_repeat < nb_repeat - 1:
+                            # check the delimiter is available
+                            toParse = childParsingPath.getData(self.children[0]).copy()
+                            if toParse[:len(self.delimiter)] == self.delimiter:
+                                newResult = childParsingPath.getData(self).copy() + self.delimiter
+                                childParsingPath.addResult(self, newResult)
+                                childParsingPath.assignData(dataToParse.copy()[len(newResult):],
+                                                            self.children[0])
+                                tmp_results.append(childParsingPath)
                         else:
-                            tmp_result.append(childParsingPath)
+                            tmp_results.append(childParsingPath)
 
                         if len(dataToParse) == len(newResult):
                             break_repeat = RepeatResult.STOP_AFTER
 
-                if break_repeat is not RepeatResult.STOP_BEFORE and len(tmp_result) > 0:
-                    newParsingPaths = tmp_result
-                else:
+                if break_repeat is RepeatResult.STOP_BEFORE:
+                    break
+                newParsingPaths = tmp_results
+                if break_repeat is RepeatResult.STOP_AFTER:
                     break
 
-            if len(newParsingPaths) == 0:
+            # deal with the case where no repetition is expected
+            if nb_repeat == 0:
                 newParsingPath.addResult(self, bitarray())
-                newParsingPaths.append(newParsingPath)
+
             yield from newParsingPaths
+
+    def _parse_callback(self, parsingPath, dataToParse, carnivorous=False):
+        # initiate a new parsing path based on the current one
+        newParsingPath = parsingPath.duplicate()
+        newParsingPath.assignData(dataToParse, self.children[0])
+        newParsingPaths = [newParsingPath]
+
+        for i_repeat in range(self.MAX_REPEAT):
+            tmp_results = []
+            break_repeat = RepeatResult.CONTINUE
+            for newParsingPath in newParsingPaths:
+                for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
+
+                    if childParsingPath.hasData(self):
+                        newResult = childParsingPath.getData(self)
+                        newResult = newResult + childParsingPath.getData(self.children[0])
+                    else:
+                        newResult = childParsingPath.getData(self.children[0])
+
+                    remainingDataToParse = dataToParse[len(newResult):]
+
+                    break_repeat = self.nbRepeat(i_repeat + 1, newResult, remainingDataToParse, childParsingPath, self.children[0])
+
+                    childParsingPath.addResult(self, newResult)
+
+                    childParsingPath.assignData(remainingDataToParse, self.children[0])
+
+                    # apply delimiter if necessary
+                    if self.delimiter is not None:
+                        # check the delimiter is available
+                        toParse = childParsingPath.getData(self.children[0])
+                        if toParse[:len(self.delimiter)] == self.delimiter:
+                            newResult = childParsingPath.getData(self) + self.delimiter
+                            childParsingPath.addResult(self, newResult)
+                            childParsingPath.assignData(dataToParse[len(newResult):], self.children[0])
+                            tmp_results.append(childParsingPath)
+                    else:
+                        tmp_results.append(childParsingPath)
+
+                    if len(dataToParse) == len(newResult):
+                        break_repeat = RepeatResult.STOP_AFTER
+
+            if break_repeat is RepeatResult.STOP_BEFORE:
+                break
+            newParsingPaths = tmp_results
+            if break_repeat is RepeatResult.STOP_AFTER:
+                break
+
+        yield from newParsingPaths
 
     @typeCheck(SpecializingPath)
     def specialize(self, originalSpecializingPath, fuzz=None):
