@@ -55,7 +55,7 @@ from typing import Any, Callable, List, Type  # noqa: F401
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, public_api
 from netzob.Simulator.ChannelBuilder import ChannelBuilder  # noqa: F401
 
 
@@ -111,6 +111,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
 
     # Interface methods ##
 
+    @public_api
     @abc.abstractmethod
     def open(self, timeout=DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a server, it
@@ -126,10 +127,12 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
             raise RuntimeError(
                 "The channel is already open, cannot open it again")
 
+    @public_api
     @abc.abstractmethod
     def close(self):
         """Close the communication channel."""
 
+    @public_api
     @abc.abstractmethod
     def read(self):
         """Read the next message from the communication channel.
@@ -147,6 +150,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
         :type data: :class:`bytes`
         """
 
+    @public_api
     @abc.abstractmethod
     def sendReceive(self, data):
         """Write on the communication channel the specified data, wait for a
@@ -221,6 +225,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
 
     # Public API methods ##
 
+    @public_api
     def setSendLimit(self, maxValue):
         """Change the max number of writings.
 
@@ -234,12 +239,14 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         """
         self.__writeCounterMax = maxValue
 
+    @public_api
     def clearSendLimit(self):
         """Reset the writing counters.
         """
         self.__writeCounter = 0
         self.__writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 
+    @public_api
     def write(self, data, rate=None, duration=None):
         """Write to the communication channel the specified data, either one
         time, either in loop according to the `rate` and `duration`
@@ -306,6 +313,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
                                                                                                                                round(t_elapsed, 2)))
         return len_data
 
+    @public_api
     def checkReceived(self,
                       predicate,  # type: Callable[..., bool]
                       *args, **kwargs):
@@ -324,6 +332,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
                              "expecting a single bytes attribute, not '{}'"
                              .format(type(predicate).__name__))
         return predicate(self.read(), *args, **kwargs)
+
 
     # Internal methods ##
 
@@ -346,6 +355,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         """Exit the runtime channel context.
         """
         self.close()
+
 
     # Properties ##
 

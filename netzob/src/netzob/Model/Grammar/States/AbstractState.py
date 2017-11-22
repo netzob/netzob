@@ -44,7 +44,7 @@ import abc
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, public_api
 
 
 class AbstractState(object, metaclass=abc.ABCMeta):
@@ -96,6 +96,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
             raise TypeError("id cannot be None")
         self.__id = _id
 
+    @public_api
     @property
     def name(self):
         """Optional Name of the state
@@ -113,6 +114,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
         self.__name = name
 
+    @public_api
     @property
     def active(self):
         """Represents the current execution status of the state.

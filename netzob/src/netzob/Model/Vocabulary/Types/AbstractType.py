@@ -49,7 +49,7 @@ from enum import Enum
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 
 
@@ -331,6 +331,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def __hash__(self):
         return hash(self.__key())
 
+    @public_api
     @typeCheck(type)
     def convert(self,
                 typeClass,
@@ -400,6 +401,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             endianness=dst_endianness,
             sign=dst_sign)
 
+    @public_api
     def generate(self, generationStrategy=None):
         """Generates a random data that respects the current data type.
 

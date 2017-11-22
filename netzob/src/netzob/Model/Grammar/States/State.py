@@ -45,7 +45,7 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Simulator.AbstractionLayer import AbstractionLayer
 from netzob.Model.Grammar.Transitions.Transition import Transition
 from netzob.Model.Grammar.States.AbstractState import AbstractState
@@ -305,6 +305,7 @@ class State(AbstractState):
             raise ValueError("The transition is not associated to the current state so cannot be removed.")
         self.__transitions.remove(transition)
 
+    @public_api
     @property
     def transitions(self):
         return self.__transitions

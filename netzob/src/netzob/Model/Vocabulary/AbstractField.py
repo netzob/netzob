@@ -47,7 +47,7 @@ from collections import OrderedDict
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Common.Utils.UndoRedo.AbstractMementoCreator import AbstractMementoCreator
 from netzob.Model.Vocabulary.Functions.EncodingFunction import EncodingFunction
 from netzob.Model.Vocabulary.Functions.VisualizationFunction import VisualizationFunction
@@ -466,6 +466,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """
         return
 
+    @public_api
     @staticmethod
     def abstract(data, fields, memory=None):
         """The method :meth:`abstract` is used to retrieve the
@@ -541,6 +542,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         return (unknown_symbol, structured_data)
 
+    @public_api
     def getSymbol(self):
         """Return the symbol to which this field is attached.
 
@@ -575,6 +577,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
             raise NoSymbolException(
                 "Impossible to retrieve the symbol attached to this element")
 
+    @public_api
     def getField(self, field_name):
         """Retrieve a sub-field based on its name.
 
@@ -716,6 +719,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """
         return repr(self)
 
+    @public_api
     @typeCheck(int)
     def str_structure(self, deepness=0):
         """Returns a string which denotes the current symbol/field definition

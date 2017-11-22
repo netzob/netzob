@@ -96,8 +96,8 @@ class Size(AbstractRelationVariableLeaf):
     :var factor: Defines the multiplication factor to apply on the targeted length.
     :var offset: Defines the offset to apply on the computed length.
     :vartype dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
-    :vartype factor: :type: :class:`float`
-    :vartype offset: :type: :class:`int`
+    :vartype factor: :class:`float`
+    :vartype offset: :class:`int`
 
 
     The following example shows how to define a size field with a

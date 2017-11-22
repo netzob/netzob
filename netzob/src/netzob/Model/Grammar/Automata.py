@@ -36,7 +36,7 @@
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Grammar.States.State import State
 from netzob.Inference.Grammar.AutomataFactories.OneStateAutomataFactory import OneStateAutomataFactory
 from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
@@ -155,6 +155,7 @@ class Automata(object):
 
         return '\n'.join(dotCode)
 
+    @public_api
     def getAllStates(self):
         """Visits the automata to discover all the available states.
 
@@ -205,6 +206,7 @@ class Automata(object):
                     states.append(currentState)
         return states
 
+    @public_api
     def getState(self, stateName):
         """Returns the State object of the given name.
 
@@ -377,6 +379,7 @@ class Automata(object):
         """
         return PTAAutomataFactory.generate(abstractSessions, symbolList)
 
+    @public_api
     @property
     def initialState(self):
         return self.__initialState
@@ -388,6 +391,7 @@ class Automata(object):
             raise TypeError("AbstractionLayer cannot be None")
         self.__initialState = initialState
 
+    @public_api
     @property
     def vocabulary(self):
         return self.__vocabulary
@@ -398,6 +402,7 @@ class Automata(object):
         self.__vocabulary = vocabulary
 
 
+    @public_api
     @typeCheck(callable)
     def set_cbk_read_symbol_timeout(self, cbk_method, states=None):
         """Function called to handle cases where a timeout appears when
@@ -450,6 +455,7 @@ class Automata(object):
 
         raise NotImplementedError("Not yet implemented")
 
+    @public_api
     @typeCheck(callable, list)
     def set_cbk_read_unexpected_symbol(self, cbk_method, states=None):
         """Function called to handle cases where a symbol is received but not
@@ -511,6 +517,7 @@ class Automata(object):
 
         raise NotImplementedError("Not yet implemented")
 
+    @public_api
     @typeCheck(callable, list)
     def set_cbk_read_unknown_symbol(self, cbk_method, states=None):
         """Function called to handle cases where a message is received but

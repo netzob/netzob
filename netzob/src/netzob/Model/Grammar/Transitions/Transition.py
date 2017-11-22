@@ -46,7 +46,7 @@ from typing import Dict  # noqa: F401
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
@@ -391,6 +391,7 @@ class Transition(AbstractTransition):
 
     # Properties
 
+    @public_api
     @property
     def inputSymbol(self):
         """The input symbol is the symbol which triggers the execution
@@ -408,6 +409,7 @@ class Transition(AbstractTransition):
 
         self.__inputSymbol = inputSymbol
 
+    @public_api
     @property
     def outputSymbols(self):
         """Output symbols that can be generated when
@@ -444,6 +446,7 @@ class Transition(AbstractTransition):
                 if symbol is not None:
                     self.__outputSymbols.append(symbol)
 
+    @public_api
     @property
     def description(self):
         if self._description is not None:

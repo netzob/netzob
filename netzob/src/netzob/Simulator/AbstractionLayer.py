@@ -45,7 +45,7 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
@@ -192,6 +192,7 @@ class AbstractionLayer(object):
         self.last_received_symbol = None
         self.last_received_message = None
 
+    @public_api
     @typeCheck(Symbol)
     def writeSymbol(self, symbol, rate=None, duration=None, presets=None, fuzz=None):
         """Write the specified symbol on the communication channel
@@ -333,6 +334,7 @@ class AbstractionLayer(object):
 
         return len_data
 
+    @public_api
     @typeCheck(int)
     def readSymbols(self):
         """Read a flow from the abstraction layer and abstract it in one or
@@ -374,6 +376,7 @@ class AbstractionLayer(object):
 
         return (symbols, data)
 
+    @public_api
     @typeCheck(int)
     def readSymbol(self):
         """Read a message from the abstraction layer and abstract it
@@ -427,6 +430,7 @@ class AbstractionLayer(object):
         self._logger.debug("Receiving the following symbol from the commnunication channel: '{}'".format(symbol.name))
         return (symbol, data)
 
+    @public_api
     def openChannel(self):
         """Open the underlying communication channel.
 
@@ -435,6 +439,7 @@ class AbstractionLayer(object):
         self.channel.open()
         self._logger.debug("Communication channel opened.")
 
+    @public_api
     def closeChannel(self):
         """Close the underlying communication channel.
 
@@ -443,6 +448,7 @@ class AbstractionLayer(object):
         self.channel.close()
         self._logger.debug("Communication channel close.")
 
+    @public_api
     def reset(self):
         """Reset the abstraction layer (i.e. its internal memory as well as the internal parsers).
 

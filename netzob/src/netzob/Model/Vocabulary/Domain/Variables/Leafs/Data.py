@@ -43,7 +43,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
@@ -337,6 +337,7 @@ class Data(AbstractVariableLeaf):
         variableSpecializerPath.addResult(self, newValue)
         return [variableSpecializerPath]
 
+    @public_api
     @property
     def currentValue(self):
         """
@@ -359,6 +360,7 @@ class Data(AbstractVariableLeaf):
             cv = currentValue
         self.__currentValue = cv
 
+    @public_api
     @property
     def dataType(self):
         """

@@ -43,7 +43,7 @@ import threading
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Grammar.Automata import Automata
 from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
@@ -731,6 +731,7 @@ class Actor(threading.Thread):
 
         self._logger.debug("Actor '{}' has finished to execute".format(self.name))
 
+    @public_api
     def stop(self):
         """Stop the visit of the automaton.
 
@@ -744,6 +745,7 @@ class Actor(threading.Thread):
         except Exception as e:
             self._logger.error(e)
 
+    @public_api
     def isActive(self):
         """Tell if the current actor is active (i.e. if the automaton
         visit is still processing).
@@ -753,6 +755,7 @@ class Actor(threading.Thread):
         """
         return not self.__stopEvent.is_set()
 
+    @public_api
     @property
     def automata(self):
         return self.__automata
@@ -764,6 +767,7 @@ class Actor(threading.Thread):
             raise TypeError("Automata cannot be None")
         self.__automata = automata
 
+    @public_api
     @property
     def initiator(self):
         return self.__initiator
@@ -775,6 +779,7 @@ class Actor(threading.Thread):
             raise TypeError("Initiator  cannot be None")
         self.__initiator = initiator
 
+    @public_api
     @property
     def abstractionLayer(self):
         return self.__abstractionLayer

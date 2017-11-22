@@ -43,7 +43,7 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, public_api
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
@@ -200,6 +200,7 @@ class Symbol(AbstractField):
     def __hash__(self):
         return hash(frozenset(self.name))
 
+    @public_api
     @typeCheck(Memory, object)
     def specialize(self, presets=None, fuzz=None, memory=None):
         r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose
@@ -362,6 +363,7 @@ class Symbol(AbstractField):
         if spePath is not None:
             return spePath.generatedContent.tobytes()
 
+    @public_api
     @typeCheck(Memory, object, (int, float))
     def specialize_count(self, presets=None, fuzz=None, timeout=None):
         r"""The method :meth:`specialize_count` computes the expected number of unique

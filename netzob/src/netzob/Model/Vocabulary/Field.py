@@ -43,7 +43,7 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, public_api
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
@@ -319,6 +319,7 @@ class Field(AbstractField):
 
         self.isPseudoField = isPseudoField
 
+    @public_api
     def specialize(self):
         r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose
         content follows the symbol definition.

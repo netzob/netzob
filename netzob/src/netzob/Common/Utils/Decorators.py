@@ -194,3 +194,7 @@ def typeCheck(*types):
         return wraps(func)(wrapped_f)
 
     return _typeCheck_
+
+
+def public_api(func):
+    return func

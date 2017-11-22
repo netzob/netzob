@@ -43,7 +43,7 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
 from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
@@ -161,6 +161,7 @@ class CloseChannelTransition(AbstractTransition):
         self.active = False
         return self.endState
 
+    @public_api
     @property
     def description(self):
         if self._description is not None:

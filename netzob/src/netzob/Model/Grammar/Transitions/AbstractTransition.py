@@ -44,7 +44,7 @@ import abc
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, public_api
 
 
 class AbstractTransition(object, metaclass=abc.ABCMeta):
@@ -123,6 +123,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
             raise ValueError("Type cannot be an empty string")
         self.__type = _type
 
+    @public_api
     @property
     def startState(self):
         """
@@ -158,6 +159,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
         self.__startState = startState
 
+    @public_api
     @property
     def endState(self):
         """
@@ -215,6 +217,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
         self.__priority = priority
 
+    @public_api
     @property
     def active(self):
         """Represents the current execution status of the transition.

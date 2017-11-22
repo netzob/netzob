@@ -37,7 +37,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
@@ -110,6 +110,7 @@ class Memory(object):
         self.memory = dict()
         self.__memoryAccessCB = None
 
+    @public_api
     @typeCheck(AbstractVariable, bitarray)
     def memorize(self, variable, value):
         """Memorizes the provided variable value.
@@ -129,6 +130,7 @@ class Memory(object):
         """
         self.memory[variable] = value
 
+    @public_api
     @typeCheck(AbstractVariable)
     def hasValue(self, variable):
         """Returns true if the memory contains a value for the provided variable.
@@ -151,6 +153,7 @@ class Memory(object):
         """
         return variable in list(self.memory.keys())
 
+    @public_api
     @typeCheck(AbstractVariable)
     def getValue(self, variable):
         """Returns the value memorized for the provided variable.
@@ -170,6 +173,7 @@ class Memory(object):
         """
         return self.memory[variable]
 
+    @public_api
     @typeCheck(AbstractVariable)
     def forget(self, variable):
         """Forgets any memorized value of the provided variable
@@ -190,6 +194,7 @@ class Memory(object):
         if variable in list(self.memory.keys()):
             self.memory.pop(variable, None)
 
+    @public_api
     def duplicate(self):
         """Duplicates the current memory in a new memory.
 
