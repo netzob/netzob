@@ -135,8 +135,8 @@ class Repeat(AbstractVariableNode):
     >>> delimiter.frombytes(b"-")
     >>> f = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=(2, 4),
     ...           delimiter=delimiter), name='f1')
-    >>> 1 <= len(f.specialize()) <= 7
-    True
+    >>> f.specialize()
+    b'A-B-B'
 
 
     **Limiting the number of repetitions with an integer**
