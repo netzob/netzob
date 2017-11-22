@@ -129,6 +129,9 @@ class IPv4(AbstractType):
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
 
+        if value is not None and network is not None:
+            raise ValueError("An IPv4 should have either its value or its network set, but not both")
+
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
@@ -412,16 +415,24 @@ class IPv4(AbstractType):
         return self.unitSize.value
 
 
-class __TestIPv4(unittest.TestCase):
-    """
-    Test class with test-only scenario that should not be documented.
-    """
+def _test():
+    r"""
+    # test abstraction arbitrary values
 
-    def test_abstraction_arbitrary_values(self):
-        from netzob.all import Field, Symbol
-        domains = [
-            IPv4("1.2.3.4"), IPv4(),
-        ]
-        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-        data = b''.join(f.specialize() for f in symbol.fields)
-        assert Symbol.abstract(data, [symbol])[1]
+    >>> from netzob.all import *
+    >>> domains = [
+    ...    IPv4("1.2.3.4"), IPv4(),
+    ... ]
+    >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> assert Symbol.abstract(data, [symbol])[1]
+
+
+    # Verify that you cannot create an IPv4 with a value AND a network:
+
+    >>> i = IPv4('10.0.0.1', network="10.10.10.0/24")
+    Traceback (most recent call last):
+    ...
+    ValueError: An IPv4 should have either its value or its network set, but not both
+
+    """

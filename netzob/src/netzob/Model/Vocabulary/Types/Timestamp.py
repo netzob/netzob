@@ -386,16 +386,16 @@ class Timestamp(AbstractType):
         self.__epoch = epoch
 
 
-class __TestTimestamp(unittest.TestCase):
-    """
-    Test class with test-only scenario that should not be documented.
-    """
+def _test():
+    r"""
+    # test abstraction of arbitrary values
 
-    def test_abstraction_arbitrary_values(self):
-        from netzob.all import Field, Symbol
-        domains = [
-            Timestamp(), Timestamp(1444737333),
-        ]
-        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-        data = b''.join(f.specialize() for f in symbol.fields)
-        assert Symbol.abstract(data, [symbol])[1]
+    >>> from netzob.all import *
+    >>> domains = [
+    ...     Timestamp(), Timestamp(1444737333),
+    ... ]
+    >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> assert Symbol.abstract(data, [symbol])[1]
+
+    """

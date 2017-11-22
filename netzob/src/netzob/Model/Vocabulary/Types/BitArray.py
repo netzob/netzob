@@ -157,6 +157,9 @@ class BitArray(AbstractType):
 
     def __init__(self, value=None, nbBits=(None, None)):
 
+        if value is not None and nbBits != (None, None):
+            raise ValueError("A BitArray should have either its value or its nbBits set, but not both")
+
         # Handle input value
         if value is not None and not isinstance(value, bitarray):
 
@@ -351,16 +354,24 @@ class BitArray(AbstractType):
         return b
 
 
-class __TestBitArray(unittest.TestCase):
-    """
-    Test class with test-only scenario that should not be documented.
-    """
+def _test():
+    r"""
+    # test abstraction arbitrary values
 
-    def test_abstraction_arbitrary_values(self):
-        from netzob.all import Field, Symbol
-        domains = [
-            BitArray(nbBits=8),  # BitArray(bitarray("00001111" "1")), BitArray(nbBits=7),
-        ]
-        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-        data = b''.join(f.specialize() for f in symbol.fields)
-        assert Symbol.abstract(data, [symbol])[1]
+    >>> from netzob.all import *
+    >>> domains = [
+    ...     BitArray(nbBits=8),  # BitArray(bitarray("00001111" "1")), BitArray(nbBits=7),
+    ... ]
+    >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> assert Symbol.abstract(data, [symbol])[1]
+
+
+    # Verify that you cannot create a BitArray with a value AND an nbBits:
+
+    >>> i = BitArray(b'aabb', nbBits=(2, 10))
+    Traceback (most recent call last):
+    ...
+    ValueError: A BitArray should have either its value or its nbBits set, but not both
+
+    """

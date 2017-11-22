@@ -173,6 +173,9 @@ class String(AbstractType):
         self.encoding = encoding
         self.eos = eos
 
+        if value is not None and nbChars != (None, None):
+            raise ValueError("A String should have either its value or its nbChars set, but not both")
+
         # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):
 
@@ -663,5 +666,13 @@ def _test(self):
     >>> (symbol2, structured_data) = Symbol.abstract(data, [symbol])
     >>> isinstance(symbol2, UnknownSymbol)
     True
+
+
+    # Verify that you cannot create a String with a value AND an nbChars:
+
+    >>> i = String('test', nbChars=(2, 10))
+    Traceback (most recent call last):
+    ...
+    ValueError: A String should have either its value or its nbChars set, but not both
 
     """

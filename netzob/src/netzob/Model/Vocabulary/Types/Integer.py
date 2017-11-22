@@ -269,6 +269,9 @@ class Integer(AbstractType):
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
 
+        if value is not None and interval is not None:
+            raise ValueError("An Integer should have either its value or its interval set, but not both")
+
         # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
@@ -674,42 +677,6 @@ class Integer(AbstractType):
                            "the type")
         return self.unitSize.value
 
-    def _test(self):
-        r"""
-        Examples of Integer internal attribute access
-
-        >>> from netzob.all import *
-        >>> cDec = Integer(20)
-        >>> print(repr(cDec))
-        20
-        >>> cDec.typeName
-        'Integer'
-        >>> cDec.value
-        bitarray('00010100')
-
-        The required size in bits is automatically computed following the specifications:
-
-        >>> dec = Integer(10)
-        >>> dec.size
-        (None, None)
-
-        >>> dec = Integer(interval=(-120, 10))
-        >>> dec.size
-        (-120, 10)
-
-        Symbol abstraction:
-
-        >>> from netzob.all import Field, Symbol
-        >>> domains = [
-        ...     uint16(1), int8le(), int32be(0x007F0041), uint16le(2)
-        ... ]
-        >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-        >>> data = b''.join(f.specialize() for f in symbol.fields)
-        >>> Symbol.abstract(data, [symbol])  #doctest: +ELLIPSIS
-        (Symbol, OrderedDict([('0', b'\x00\x01'), ('1', b'...'), ('2', b'\x00\x7f\x00A'), ('3', b'\x02\x00')]))
-
-        """
-
 
 def getMinStorageValue(unitSize, sign):
     if sign == Sign.UNSIGNED:
@@ -791,3 +758,50 @@ uint64le = partialclass(Integer,
                         endianness=Endianness.LITTLE)
 int8, int16, int32, int64 = int8be, int16be, int32be, int64be
 uint8, uint16, uint32, uint64 = uint8be, uint16be, uint32be, uint64be
+
+
+def _test():
+    r"""
+    Examples of Integer internal attribute access
+
+    >>> from netzob.all import *
+    >>> cDec = Integer(20)
+    >>> print(repr(cDec))
+    20
+    >>> cDec.typeName
+    'Integer'
+    >>> cDec.value
+    bitarray('00010100')
+
+    The required size in bits is automatically computed following the specifications:
+
+    >>> dec = Integer(10)
+    >>> dec.size
+    (None, None)
+
+    >>> dec = Integer(interval=(-120, 10))
+    >>> dec.size
+    (-120, 10)
+
+    Symbol abstraction:
+
+    >>> from netzob.all import Field, Symbol
+    >>> domains = [
+    ...     uint16(1), int8le(), int32be(0x007F0041), uint16le(2)
+    ... ]
+    >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> Symbol.abstract(data, [symbol])  #doctest: +ELLIPSIS
+    (Symbol, OrderedDict([('0', b'\x00\x01'), ('1', b'...'), ('2', b'\x00\x7f\x00A'), ('3', b'\x02\x00')]))
+
+
+    # Verify that you cannot create an Integer with a value AND an interval:
+
+    >>> i = Integer(2, interval=(2, 10))
+    Traceback (most recent call last):
+    ...
+    ValueError: An Integer should have either its value or its interval set, but not both
+
+    """
+
+

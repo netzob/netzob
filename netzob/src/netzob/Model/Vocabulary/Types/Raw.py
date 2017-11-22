@@ -126,6 +126,9 @@ class Raw(AbstractType):
                  sign=AbstractType.defaultSign(),
                  alphabet=None):
 
+        if value is not None and nbBytes is not None:
+            raise ValueError("A Raw should have either its value or its nbBytes set, but not both")
+
         if value is not None and not isinstance(value, bitarray):
             if isinstance(value, bytes):
                 tmp_value = value
@@ -343,13 +346,23 @@ class Raw(AbstractType):
 
         return True
 
-    def _test(self):
-        """
-        from netzob.all import Field, Symbol
-        domains = [
-            Raw(b"xxxx"), Raw(nbBytes=2),
-        ]
-        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-        data = b''.join(f.specialize() for f in symbol.fields)
-        assert Symbol.abstract(data, [symbol])[1]
-        """
+
+def _test(self):
+    r"""
+    from netzob.all import Field, Symbol
+    domains = [
+        Raw(b"xxxx"), Raw(nbBytes=2),
+    ]
+    symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+    data = b''.join(f.specialize() for f in symbol.fields)
+    assert Symbol.abstract(data, [symbol])[1]
+
+
+    # Verify that you cannot create a Raw with a value AND an nbBytes:
+
+    >>> i = Raw(b'test', nbBytes=(2, 10))
+    Traceback (most recent call last):
+    ...
+    ValueError: A Raw should have either its value or its nbBytes set, but not both
+
+    """

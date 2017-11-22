@@ -107,6 +107,9 @@ class HexaString(AbstractType):
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
 
+        if value is not None and nbBytes != (None, None):
+            raise ValueError("An HexaString should have either its value or its nbBytes set, but not both")
+
         if value is not None and not isinstance(value, bitarray):
             if isinstance(value, bytes):
                 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
@@ -326,16 +329,24 @@ class HexaString(AbstractType):
         return binascii.hexlify(data)
 
 
-class __TestHexaString(unittest.TestCase):
-    """
-    Test class with test-only scenario that should not be documented.
-    """
+def _test():
+    r"""
+    # test abstraction of arbitrary values
 
-    def test_abstraction_arbitrary_values(self):
-        from netzob.all import Field, Symbol
-        domains = [
-            HexaString(b"aabb"), HexaString(nbBytes=4),
-        ]
-        symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-        data = b''.join(f.specialize() for f in symbol.fields)
-        assert Symbol.abstract(data, [symbol])[1]
+    >>> from netzob.all import *
+    >>> domains = [
+    ...     HexaString(b"aabb"), HexaString(nbBytes=4),
+    ... ]
+    >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> assert Symbol.abstract(data, [symbol])[1]
+
+
+    # Verify that you cannot create an HexaString with a value AND an nbBytes:
+
+    >>> i = HexaString(b'aabb', nbBytes=(2, 10))
+    Traceback (most recent call last):
+    ...
+    ValueError: An HexaString should have either its value or its nbBytes set, but not both
+
+    """
