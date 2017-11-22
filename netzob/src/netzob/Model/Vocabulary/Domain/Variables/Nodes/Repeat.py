@@ -284,7 +284,7 @@ class Repeat(AbstractVariableNode):
             raise Exception("Parsing path cannot be None")
 
         # retrieve the data to parse
-        dataToParse = parsingPath.getData(self).copy()
+        dataToParse = parsingPath.getData(self)
 
         self._logger.debug("Parse '{}' as {} with parser path '{}'".format(
             dataToParse.tobytes(), self, parsingPath))
@@ -320,7 +320,7 @@ class Repeat(AbstractVariableNode):
 
             # initiate a new parsing path based on the current one
             newParsingPath = parsingPath.duplicate()
-            newParsingPath.assignData(dataToParse.copy(), self.children[0])
+            newParsingPath.assignData(dataToParse, self.children[0])
             newParsingPaths = [newParsingPath]
 
             # check we can apply nb_repeat times the child
@@ -332,10 +332,10 @@ class Repeat(AbstractVariableNode):
 
                         newResult = bitarray()
                         if childParsingPath.hasData(self):
-                            newResult += childParsingPath.getData(self).copy()
+                            newResult += childParsingPath.getData(self)
                         newResult += childParsingPath.getData(self.children[0])
 
-                        remainingDataToParse = dataToParse.copy()[len(newResult):]
+                        remainingDataToParse = dataToParse[len(newResult):]
 
                         childParsingPath.addResult(self, newResult)
 
@@ -344,11 +344,11 @@ class Repeat(AbstractVariableNode):
                         # apply delimiter if necessary
                         if self.delimiter is not None and i_repeat < nb_repeat - 1:
                             # check the delimiter is available
-                            toParse = childParsingPath.getData(self.children[0]).copy()
+                            toParse = childParsingPath.getData(self.children[0])
                             if toParse[:len(self.delimiter)] == self.delimiter:
-                                newResult = childParsingPath.getData(self).copy() + self.delimiter
+                                newResult = childParsingPath.getData(self) + self.delimiter
                                 childParsingPath.addResult(self, newResult)
-                                childParsingPath.assignData(dataToParse.copy()[len(newResult):],
+                                childParsingPath.assignData(dataToParse[len(newResult):],
                                                             self.children[0])
                                 tmp_results.append(childParsingPath)
                         else:
@@ -460,7 +460,7 @@ class Repeat(AbstractVariableNode):
 
                     oldResult = bitarray()
                     if path.hasData(self):
-                        oldResult = path.getData(self).copy()
+                        oldResult += path.getData(self)
                         if self.delimiter is not None:
                             oldResult += self.delimiter
                     newResult = oldResult + path.getData(child)
