@@ -196,7 +196,7 @@ class Repeat(AbstractVariableNode):
     ...         if child.isnode() and len(child.children) > 1:
     ...             second_subchild = child.children[1]
     ...             if parsed_structure.hasData(second_subchild) and parsed_structure.getData(second_subchild).tobytes() == b'B':
-    ...                 return RepeatResult.STOP_AFTER
+    ...                 return RepeatResult.STOP_BEFORE
     ...         return RepeatResult.CONTINUE
     ...     return RepeatResult.STOP_AFTER
     >>> f1 = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=cbk), name="f1")
