@@ -286,8 +286,9 @@ class String(AbstractType):
             # Be sure that the potential terminal characters are not present in the first part of the generated string
             if final_character is not None:
                 while True:
+                    random_content_tmp = random_content
                     for elt in self.eos:
-                        random_content_tmp = random_content.replace(elt, "")
+                        random_content_tmp = random_content_tmp.replace(elt, "")
                     if len(random_content_tmp) == len(random_content):
                         random_content = random_content_tmp
                         break
