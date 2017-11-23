@@ -283,10 +283,11 @@ class String(AbstractType):
         while len(random_content) < generatedSize:
             random_content += random.choice(permitted_characters)
 
-            # Be sure that the final character is not present in the first part of the generated string
+            # Be sure that the potential terminal characters are not present in the first part of the generated string
             if final_character is not None:
                 while True:
-                    random_content_tmp = random_content.replace(final_character, "")
+                    for elt in self.eos:
+                        random_content_tmp = random_content.replace(elt, "")
                     if len(random_content_tmp) == len(random_content):
                         random_content = random_content_tmp
                         break
