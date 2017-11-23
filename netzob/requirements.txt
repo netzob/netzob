@@ -1,3 +1,2 @@
 numpy
 -e git+https://git@github.com/euri10/impacket.git/@py3#egg=impacket
-.
