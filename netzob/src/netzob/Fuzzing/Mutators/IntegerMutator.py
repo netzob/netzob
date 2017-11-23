@@ -143,8 +143,8 @@ class IntegerMutator(DomainMutator):
     >>> fieldInt1 = Field(uint8())
     >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=1234, interval=(10, 20))
     >>> d = mutator.generate()
-    >>> int.from_bytes(d, byteorder='big') # doctest: +SKIP
-    10
+    >>> int.from_bytes(d, byteorder='big')
+    255
 
     The following example shows how to generate an 8 bits integer in [-10, +5]
     interval, with an arbitrary seed of 1234 and by using the determinist
@@ -345,8 +345,80 @@ def center(val, lower, upper):
 
     number_values = float(upper) - float(lower) + 1.0
     result = lower + int(val * number_values)
+
+    # Ensure the produced value is in the range of the permitted values of the domain datatype
     if result > upper:
         result = upper
     if result < lower:
         result = lower
     return result
+
+
+def _test_endianness():
+    r"""
+
+    # Fuzzing of integer takes into account the endianness
+
+    >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+
+    >>> fieldInt = Field(uint8le())
+    >>> mutator = IntegerMutator(fieldInt.domain)
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='little')
+    197
+
+    >>> fieldInt = Field(uint8be())
+    >>> mutator = IntegerMutator(fieldInt.domain)
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    197
+
+    """
+
+def _test_determinist_generator_1():
+    r"""
+
+    # Fuzzing of integer with deterministic generator: ensure that the expected values are generated (P, Q, P-1, Q-1, P+1, Q+1, 0, -1, 1)
+
+    >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+
+    >>> v = int8(interval=(10, 20))
+    >>> f = Field(v)
+    >>> mutator = IntegerMutator(f.domain, generator=DeterministGenerator.NG_determinist)
+    >>> generated_values = set()
+    >>> for _ in range(30):
+    ...     d = mutator.generate()
+    ...     generated_values.add(int.from_bytes(d, byteorder='big', signed=True))
+
+    >>> min_value = v.getMinValue()
+    >>> max_value = v.getMaxValue()
+
+    >>> expected_values = set()
+    >>> expected_values.add(min_value)
+    >>> expected_values.add(max_value)
+    >>> expected_values.add(min_value - 1)
+    >>> expected_values.add(max_value - 1)
+    >>> expected_values.add(min_value + 1)
+    >>> expected_values.add(max_value + 1)
+    >>> expected_values.add(0)
+    >>> expected_values.add(-1)
+    >>> expected_values.add(1)
+    >>> expected_values
+    {0, 1, 9, 10, 11, 19, 20, 21, -1}
+
+    >>> expected_values.issubset(generated_values)
+    True
+
+    """
+
+def _test_determinist_generator_2():
+    r"""
+
+    # Fuzzing of integer with deterministic generator: ensure that the expected values are generated (-2^k, ...)
+
+    # TODO
+
+    """
