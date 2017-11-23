@@ -159,40 +159,40 @@ class DomainMutator(Mutator):
         self._domain = domain
 
 
-    ## Unit tests
+## Unit tests
     
-    def _test(self):
-        """
+def _test():
+    """
 
-        Test constructor with different parameters:
+    Test constructor with different parameters:
 
-        >>> from netzob.all import *
-        >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-        >>> domain = Data(Integer())
-        >>> d = IntegerMutator(domain)
-        >>> type(d)
-        <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
+    >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+    >>> domain = Data(Integer())
+    >>> d = IntegerMutator(domain)
+    >>> type(d)
+    <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
 
-        >>> d = IntegerMutator(domain, mode=MutatorMode.MUTATE)
-        >>> type(d)
-        <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
+    >>> d = IntegerMutator(domain, mode=MutatorMode.MUTATE)
+    >>> type(d)
+    <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
 
-        >>> d = IntegerMutator(domain, generator=Generator.NG_mt19937)
-        >>> type(d)
-        <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
-        >>> type(d.generator)
-        <class 'itertools.starmap'>
+    >>> d = IntegerMutator(domain, generator=Generator.NG_mt19937)
+    >>> type(d)
+    <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
+    >>> type(d.generator)
+    <class 'itertools.starmap'>
 
-        >>> d = IntegerMutator(domain, seed=42)
-        >>> type(d)
-        <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
-        >>> d.seed
-        42
+    >>> d = IntegerMutator(domain, seed=42)
+    >>> type(d)
+    <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
+    >>> d.seed
+    42
 
-        >>> d = IntegerMutator(domain, counterMax=42)
-        >>> type(d)
-        <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
-        >>> d.counterMax
-        42
+    >>> d = IntegerMutator(domain, counterMax=42)
+    >>> type(d)
+    <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
+    >>> d.counterMax
+    42
 
         """
