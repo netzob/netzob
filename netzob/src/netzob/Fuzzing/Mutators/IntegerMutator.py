@@ -409,7 +409,8 @@ def _test_determinist_generator_1():
     >>> expected_values
     {0, 1, 9, 10, 11, 19, 20, 21, -1}
 
-    >>> expected_values.issubset(generated_values)
+
+    >>> all(x in generated_values for x in expected_values)
     True
 
     """
