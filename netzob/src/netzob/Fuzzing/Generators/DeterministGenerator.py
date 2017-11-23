@@ -115,11 +115,11 @@ class DeterministGenerator(Generator):
         self._values = list()
         self._values.append(maxValue)  # Q
         self._values.append(minValue)  # P
-        if (minValue-1) & 2**bitsize == minValue-1:
+        if (minValue-1) & ((2**bitsize) -1) == minValue-1:
             self._values.append(minValue-1)  # P-1
         self._values.append(maxValue-1)  # Q-1
         self._values.append(minValue+1)  # P+1
-        if (maxValue+1) & 2**bitsize == maxValue+1:
+        if (maxValue+1) & ((2**bitsize) -1) == maxValue+1:
             self._values.append(maxValue+1)  # Q+1
         self._values.append(0)  # 0
         self._values.append(-1 + signedShift)  # -1
