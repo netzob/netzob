@@ -442,7 +442,8 @@ class Repeat(AbstractVariableNode):
 
             if break_repeat is RepeatResult.STOP_BEFORE:
                 break
-            newParsingPaths = tmp_results
+            if len(tmp_results) > 0:
+                newParsingPaths = tmp_results
             if break_repeat is RepeatResult.STOP_AFTER:
                 break
 
