@@ -375,28 +375,28 @@ class Repeat(AbstractVariableNode):
         newParsingPath.assignData(dataToParse, self.children[0])
         newParsingPaths = [newParsingPath]
 
+        break_repeat = RepeatResult.CONTINUE
         for i_repeat in range(self.MAX_REPEAT):
             tmp_results = []
             break_repeat = RepeatResult.CONTINUE
             for newParsingPath in newParsingPaths:
                 for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
 
+                    newResult = bitarray()
                     if childParsingPath.hasData(self):
-                        newResult = childParsingPath.getData(self)
-                        newResult = newResult + childParsingPath.getData(self.children[0])
-                    else:
-                        newResult = childParsingPath.getData(self.children[0])
+                        newResult += childParsingPath.getData(self)
+                    newResult += childParsingPath.getData(self.children[0])
 
                     remainingDataToParse = dataToParse[len(newResult):]
 
                     break_repeat = self.nbRepeat(i_repeat + 1, newResult, remainingDataToParse, childParsingPath, self.children[0])
 
                     childParsingPath.addResult(self, newResult)
-
                     childParsingPath.assignData(remainingDataToParse, self.children[0])
 
                     # apply delimiter if necessary
                     if self.delimiter is not None:
+                        raise NotImplementedError("may be buggy")
                         # check the delimiter is available
                         toParse = childParsingPath.getData(self.children[0])
                         if toParse[:len(self.delimiter)] == self.delimiter:
@@ -409,6 +409,7 @@ class Repeat(AbstractVariableNode):
 
                     if len(dataToParse) == len(newResult):
                         break_repeat = RepeatResult.STOP_AFTER
+                        break
 
             if break_repeat is RepeatResult.STOP_BEFORE:
                 break
