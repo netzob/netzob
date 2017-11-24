@@ -68,10 +68,10 @@ class Automata(object):
 
 
     The following example shows the definition of an automaton with
-    three states `s0`, `s1`, `s2`, an opening transition between the
+    three states `s0`, `s1`, `s2`, an opening transition between
     states `s0` and `s1`, a standard transition within the same state
-    `s1` which accept the input symbol `inputSymbol` and generate the
-    output symbol `outputSymbol`, and a closing transition between the
+    `s1` which accepts the input symbol `inputSymbol` and generate the
+    output symbol `outputSymbol`, and a closing transition between
     states `s1` and `s2`.
 
     >>> # Creation of some states and transitions
@@ -415,7 +415,7 @@ class Automata(object):
         The method expects some parameters:
 
         :param cbk_method: A callable function used to handle the selection of the next state when no symbol is received after the timeout has expired.
-        :param states: A list of states on which the callback function should apply. If no state are specified, the callback function is applied on all states of the automaton.
+        :param states: A list of states on which the callback function should apply. If no states are specified, the callback function is applied on all states of the automaton.
         :type cbk_method: :class:`func`, required
         :type states: a :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
 
@@ -467,7 +467,7 @@ class Automata(object):
         The method expects some parameters:
 
         :param cbk_method: A callable function used to handle the selection of the next state when a unexpected symbol is received.
-        :param states: A list of states on which the callback function should apply. If no state are specified, the callback function is applied on all states of the automaton.
+        :param states: A list of states on which the callback function should apply. If no states are specified, the callback function is applied on all states of the automaton.
         :type cbk_method: :class:`func`, required
         :type states: a :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
 
@@ -529,7 +529,7 @@ class Automata(object):
         The method expects some parameters:
 
         :param cbk_method: A callable function used to handle the selection of the next state when an unknown symbol is received.
-        :param states: A list of states on which the callback function should apply. If no state are specified, the callback function is applied on all states of the automaton.
+        :param states: A list of states on which the callback function should apply. If no states are specified, the callback function is applied on all states of the automaton.
         :type cbk_method: :class:`func`, required
         :type states: a :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
 

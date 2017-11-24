@@ -203,7 +203,7 @@ class Symbol(AbstractField):
     @public_api
     @typeCheck(Memory, object)
     def specialize(self, presets=None, fuzz=None, memory=None):
-        r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose
+        r"""The :meth:`specialize()` method generates a :class:`bytes` sequence whose
         content follows the symbol definition.
 
         The specialize() method expects some parameters:
@@ -237,7 +237,7 @@ class Symbol(AbstractField):
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
 
         The following example shows the :meth:`specialize()` method used for a
-        field which contains a String and a Size fields.
+        field which contains a String field and a Size field.
 
         >>> from netzob.all import *
         >>> f1 = Field(domain=String(nbChars=5))
@@ -280,8 +280,8 @@ class Symbol(AbstractField):
         >>> symbol_udp = Symbol(name="udp", fields=[f_dport, f_payload])
 
         The three following codes show the same way to express the
-        parameterized **values** during specialization of the fields
-        ``udp_dport`` and ``udp_payload``:
+        parameterized **values** during specialization of the
+        ``udp_dport`` and ``udp_payload`` fields:
 
         >>> from netzob.all import *
         >>> presets = {}
@@ -341,18 +341,18 @@ class Symbol(AbstractField):
         255
 
 
-        **Fuzzing of Fields**
+        **Field Fuzzing**
 
         It is possible to fuzz fields during symbol specialization,
-        through the ``fuzz=`` parameter of the
+        through the :attr:`fuzz` parameter of the
         :meth:`~netzob.Model.Vocabulary.Symbol.specialize`
         method. Values in this parameter will override any field
         definition, constraints, relationship dependencies or
         parameterized values.
 
-        For more information regarding the expected ``fuzz=``
+        For more information regarding the expected :attr:`fuzz`
         parameter content, see the class :class:`Fuzz
-        <netzob.Fuzzing.Fuzz.Fuzz>`.
+        <netzob.Fuzzing.Fuzz.Fuzz>` class.
 
         """
 
@@ -366,8 +366,8 @@ class Symbol(AbstractField):
     @public_api
     @typeCheck(Memory, object, (int, float))
     def specialize_count(self, presets=None, fuzz=None, timeout=None):
-        r"""The method :meth:`specialize_count` computes the expected number of unique
-        produced messages, considering the initial symbol model, the
+        r"""The :meth:`specialize_count` method computes the expected number of unique
+        messages produced, considering the initial symbol model, the
         preset fields and the fuzzed fields.
 
         The :meth:`specialize_count` method expects the same parameters as the :meth:`specialize` method:
@@ -399,7 +399,7 @@ class Symbol(AbstractField):
            The theoretical value returned by :meth:`~specialize_count` may be huge
            and hard to compute considering the number of variables involved.
            Beyond :attr:`timeout` the computation would return the special
-           value :const:`-1` indicating a too large value to compute.
+           value :const:`-1` indicating a value too large to compute.
 
         >>> # Symbol definition
         >>> from netzob.all import *

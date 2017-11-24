@@ -74,7 +74,7 @@ class Sign(Enum):
 
 
 class UnitSize(Enum):
-    """Enum class used to specify the unit size of a type (i.e. the space in bits that a unitary element takes).
+    """Enum class used to specify the unit size of a type (i.e. the space in bits that a unitary element takes up).
     """
     SIZE_1 = 1
     """UnitSize.SIZE_1 can be used to specify the unit size of a type."""
@@ -125,7 +125,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     :param endianness: The endianness of the current value. If None, the value is the default one.
 
-      The following endianness are available:
+      The following endiannesses are available:
 
       * Endianness.BIG (default value)
       * Endianness.LITTLE
@@ -148,9 +148,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     **Internal representation of Type objects**
 
     Regarding the internal representation of variables, the Python
-    module :class:`bitarray` is used, thus makes it possible to
-    specify objects at the bit granularity. As an example, the
-    following code show how to access the internal representation of
+    module :class:`bitarray` is used, thus making it possible to
+    specify objects at the granularity bit. As an example, the
+    following code shows how to access the internal representation of
     the value of an Integer object:
 
     >>> from netzob.all import *
@@ -403,7 +403,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     @public_api
     def generate(self, generationStrategy=None):
-        """Generates a random data that respects the current data type.
+        """Generates random data that respects the current data type.
 
         :return: The value produced.
         :rtype: :class:`bitarray`

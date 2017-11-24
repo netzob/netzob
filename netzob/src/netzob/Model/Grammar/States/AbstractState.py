@@ -165,23 +165,23 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
           :attr:`last_sent_symbol`
             Last sent symbol (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`)
-            on the abstraction layer, and thus makes it possible to create relationships
+            on the abstraction layer, and thus making it possible to create relationships
             with the previously sent symbol.
 
           :attr:`last_sent_message`
             Corresponds to the last sent message (:class:`bitarray`) on the
-            abstraction layer, and thus makes it possible to create relationships with
+            abstraction layer, and thus making it possible to create relationships with
             the previously sent message.
 
           :attr:`last_received_symbol`
             Corresponds to the last received symbol
             (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`) on the
-            abstraction layer, and thus makes it possible to create relationships with
+            abstraction layer, and thus making it possible to create relationships with
             the previously received symbol.
 
           :attr:`last_received_message`
             Corresponds to the last received message (:class:`bitarray`) on the
-            abstraction layer, and thus makes it possible to create relationships with
+            abstraction layer, and thus making it possible to create relationships with
             the previously received message.
 
         The callback function should return a transition (which could

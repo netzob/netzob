@@ -70,7 +70,7 @@ class Data(AbstractVariableLeaf):
     :param name: The name of the data (if None, the name will
                  be generated).
     :param svas: The SVAS strategy defining how the Data value is
-                 used during abstraction and specialization process.
+                 used during the abstraction and specialization process.
                  The default strategy is SVAS.EPHEMERAL.
     :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`, required
     :type originalValue: :class:`bitarray`, optional
@@ -87,7 +87,7 @@ class Data(AbstractVariableLeaf):
 
 
     The following example shows the definition of the Data `pseudo`
-    with a type String and a default value `"hello"`. This means that
+    with a String type and a `"hello"` default value. This means that
     this Data object accepts any string, and the current value
     of this object is `"hello"`.
 

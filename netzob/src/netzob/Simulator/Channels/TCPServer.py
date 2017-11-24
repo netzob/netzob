@@ -55,7 +55,7 @@ class TCPServer(AbstractChannel):
     server listening to a specified IP:Port over a TCP socket.
 
     When the actor executes an OpenChannelTransition, it calls the open
-    method on the tcp server which starts the server. The objective of
+    method on the TCP server which starts the server. The objective of
     the server is to wait for the client to connect.
 
     The TCPServer constructor expects some parameters:

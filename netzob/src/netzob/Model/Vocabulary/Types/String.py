@@ -55,7 +55,7 @@ class String(AbstractType):
     r"""This class defines a String type, which is used to represent String
     or Unicode characters.
 
-    The type String is a wrapper for the Python :class:`str` object
+    The String type is a wrapper for the Python :class:`str` object
     with the capability to express more constraints on the permitted
     string values.
 
@@ -156,7 +156,7 @@ class String(AbstractType):
     >>> data[-1:] == b'\n'
     True
 
-    The ``eos`` attribute specifies a list of values that is used as
+    The ``eos`` attribute specifies a list of values that are used as
     potential terminal characters. Terminal characters can be a
     constant (such as ``'\n`` in the previous example).
 

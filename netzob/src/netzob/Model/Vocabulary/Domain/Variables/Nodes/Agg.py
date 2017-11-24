@@ -206,7 +206,7 @@ class Agg(AbstractVariableNode):
        **Important note about recursion**
 
        The library can handle both direct and indirect recursion. However,
-       there is a limitation requiring to use a recursing variable on the
+       there is a limitation requiring the use of a recursing variable on the
        **right side of a statement**. Any other behavior could lead to
        infinite recursion during the loading of the model.
        To help understand what syntax should be preferred, here is a list of
@@ -305,7 +305,7 @@ class Agg(AbstractVariableNode):
 
     The following example shows how to specify a field with a
     structure (``v2``) that contains another structure (``v1``), which
-    can itself contains the first structure (``v2``). The flag
+    can itself contain the first structure (``v2``). The flag
     ``last_optional`` is used to indicate that the specialization or
     parsing of the last element of the aggregate ``v2`` is optional.
 

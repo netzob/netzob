@@ -144,7 +144,7 @@ class Fuzz(object):
             seed=Mutator.SEED_DEFAULT,
             counterMax=Mutator.COUNTER_MAX_DEFAULT,
             **kwargs):
-        r"""The method :meth:`set <.Fuzz.set>` specifies the fuzzing
+        r"""The :meth:`set <.Fuzz.set>` method specifies the fuzzing
         strategy for a symbol, a field, a variable or a type.
 
         The :meth:`set <.Fuzz.set>` method expects some parameters:
@@ -207,7 +207,7 @@ class Fuzz(object):
         :type counterMax: :class:`int`, optional
         :type kwargs: :class:`dict`, optional
 
-        The parameter ``kwargs`` is used to provide specific options
+        The ``kwargs`` parameter is used to provide specific options
         depending on the targeted object type. Available options are
         described in the following table:
 
@@ -476,7 +476,7 @@ class Fuzz(object):
         b'EEu'
 
 
-        **Fuzzing of a whole symbol, and covering all fields storage spaces with default fuzzing strategy per types**
+        **Fuzzing of a whole symbol, and covering all field storage spaces with default fuzzing strategy per types**
 
         >>> from netzob.all import *
         >>> fuzz = Fuzz()
@@ -557,7 +557,7 @@ class Fuzz(object):
             raise TypeError("Unsupported type for key: '{}'".format(type(key)))
 
     def unset(self, key):
-        r"""The method :meth:`unset <.Fuzz.set>` deactivates the fuzzing for a
+        r"""The :meth:`unset <.Fuzz.set>` method deactivates the fuzzing for a
         symbol, a field or a variable. It is not possible to unset the
         fuzzing on a type.
 

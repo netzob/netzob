@@ -189,7 +189,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
 
 
 class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
-    """A communication channel is an element allowing to establish a
+    """A communication channel is an element allowing the establishment of a
     connection to or from a remote device.
 
     The AbstractChannel defines the API of a communication channel.
@@ -199,7 +199,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     :var isOpen: The status of the communication channel.
     :var timeout: The default timeout in seconds for opening a connection and
                   waiting for a message.
-    :var header: A Symbol that makes it possible to access to the protocol header.
+    :var header: A Symbol that makes it possible to access the protocol header.
     :var header_presets: A dictionary of keys:values used to preset
                         (parameterize) the header fields during symbol
                         specialization. See :meth:`Symbol.specialize() <netzob.Model.Vocabulary.Symbol.Symbol.specialize>` for more information.
@@ -229,7 +229,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     def setSendLimit(self, maxValue):
         """Change the max number of writings.
 
-        When it is reached, no packet can be sent anymore until
+        When it is reached, no more packets can be sent until
         :meth:`clearSendLimit` is called.
 
         If maxValue is -1, the sending limit is deactivated.
@@ -248,14 +248,14 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
 
     @public_api
     def write(self, data, rate=None, duration=None):
-        """Write to the communication channel the specified data, either one
-        time, either in loop according to the `rate` and `duration`
-        parameter.
+        """Write to the communication channel the specified data, either once,
+        or in a loop according to the `rate` and `duration`
+        parameters.
 
         :param data: The data to write on the channel.
         :param rate: This specifies the bandwidth in octets to respect during
                      traffic emission (should be used with duration= parameter).
-        :param duration: This tells how much seconds the data is continuously
+        :param duration: This indicates for how many seconds the data is continuously
                          written on the channel.
         :type data: :class:`bytes`, required
         :type rate: :class:`int`, optional

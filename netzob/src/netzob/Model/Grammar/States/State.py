@@ -67,7 +67,7 @@ class State(AbstractState):
     The State class provides the following public variables:
 
     :var name: The name of the state. The default value is 'State'.
-    :var active: Tells that the current position of the actor in the automaton is this state.
+    :var active: Indicates that the current position of the actor in the automaton is this state.
                  If a state is active, it also means none of its transitions has yet
                  been fully initiated.
     :var transitions: The current value of the data.
@@ -76,7 +76,7 @@ class State(AbstractState):
     :vartype transitions: :class:`list` of :class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`
 
 
-    The following example shows the definition of a state `s0` and a state `s1`:
+    The following example shows the definition of an `s0` state and an `s1` state:
 
     >>> from netzob.all import *
     >>> s0 = State()

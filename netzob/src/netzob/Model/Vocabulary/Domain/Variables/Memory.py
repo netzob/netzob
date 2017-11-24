@@ -49,7 +49,7 @@ class Memory(object):
     """This class provides a memory, used to store variable values (in bitarray) in a persisting and independent way.
 
     To compute or verify the constraints and relationships that
-    participate in the definition of the fields, the Netzob library
+    participate to the definition of the fields, the Netzob library
     relies on a memory. This memory stores the values of previously
     captured or emitted fields. More precisely, the Memory contains
     all the field variables that are needed according to the field

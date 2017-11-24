@@ -51,8 +51,10 @@ class Optional(Repeat):
 
     The Optional constructor expects some parameters:
 
+
     :param child: The optional variable element.
     :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+
 
     >>> from netzob.all import *
     >>> f0 = Field(String("a"), "f0")

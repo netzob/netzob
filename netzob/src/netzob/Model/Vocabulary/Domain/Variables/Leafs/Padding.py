@@ -107,8 +107,8 @@ class Padding(AbstractRelationVariableLeaf):
 
     **Padding examples**
 
-    The following code illustrates a padding with an integer
-    modulo. Here, the padding data ``b'\x00'`` is repeated ``n``
+    The following code illustrates a padding with a modulo integer.
+    Here, the padding data ``b'\x00'`` is repeated ``n``
     times, where ``n`` is computed by decrementing the modulo number,
     ``128``, by the current length of the targeted structure. The
     padding length is therefore equal to ``128 - (10+2)*8 = 32`` bits.
@@ -140,7 +140,7 @@ class Padding(AbstractRelationVariableLeaf):
     120
 
     The following code illustrates a padding with the use of the
-    ``factor`` parameter, where the targeted field sizes is divided by 2
+    ``factor`` parameter, where the targeted field sizes are divided by 2
     before computing the padding value length.
 
     >>> from netzob.all import *

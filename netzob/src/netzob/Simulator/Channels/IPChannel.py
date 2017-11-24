@@ -52,7 +52,7 @@ from netzob.Simulator.ChannelBuilder import ChannelBuilder
 class IPChannel(AbstractChannel):
     """An IPChannel is a communication channel to send IP
     payloads. The **kernel** is responsible for building the IP header. It is
-    similar to RawIPChannel channel, except that with RawIPChannel the
+    similar to the RawIPChannel channel, except that with RawIPChannel the
     channel builds the IP header. Therefore, with :class:`IPChannel <netzob.Simulator.Channels.IPChannel.IPChannel>`,
     we **cannot** modify or fuzz the IP header fields.
 

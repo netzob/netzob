@@ -65,8 +65,8 @@ class Size(AbstractRelationVariableLeaf):
     itself).
 
     By default, the computed size expresses an amount of bytes. It is
-    possible to change this behavior by using the parameters ``factor``
-    and ``offset``.
+    possible to change this behavior by using the ``factor``
+    and ``offset`` parameters.
 
     The Size constructor expects some parameters:
 
@@ -93,8 +93,8 @@ class Size(AbstractRelationVariableLeaf):
     The Size class provides the following public variables:
 
     :var dataType: The type of the data.
-    :var factor: Defines the multiplication factor to apply on the targeted length.
-    :var offset: Defines the offset to apply on the computed length.
+    :var factor: Defines the multiplication factor to apply to the targeted length.
+    :var offset: Defines the offset to apply to the computed length.
     :vartype dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
     :vartype factor: :class:`float`
     :vartype offset: :class:`int`
@@ -124,7 +124,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> data[-1] > (4*8*1./8 + 4) # == 4 bytes minimum * 8 bits * a factor of 1./8 + an offset of 4
     True
 
-    In this example, the field *f2* is a size field where its value is
+    In this example, the *f2* field is a size field where its value is
     equal to the size of the concatenated values of fields *f0* and
     *f1*. The *dataType* parameter specifies that the produced value
     should be represented as a ``Raw``. The *factor* parameter
@@ -372,7 +372,7 @@ class Size(AbstractRelationVariableLeaf):
     def factor(self):
         """
         Property (getter.setter  # type: ignore).
-        Defines the multiplication factor to apply on the targeted length
+        Defines the multiplication factor to apply to the targeted length
         (in bits).
 
         :type: :class:`float`
@@ -390,7 +390,7 @@ class Size(AbstractRelationVariableLeaf):
     def offset(self):
         """
         Property (getter.setter  # type: ignore).
-        Defines the offset to apply on the computed length.
+        Defines the offset to apply to the computed length.
         computed size = (factor*size(targetField)+offset)
 
         :type: :class:`int`

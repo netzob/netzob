@@ -58,7 +58,7 @@ class SVAS(Enum):
     when abstracting and specializing. A SVAS strategy describes the
     set of memory operations that must be performed each time a
     variable is abstracted or specialized. These operations can be
-    separated into two groups, those used during the abstraction and
+    separated into two groups: those used during the abstraction and
     those used during the specialization.
 
     The available SVAS strategies for a variable are:
@@ -68,22 +68,22 @@ class SVAS(Enum):
     * SVAS.VOLATILE
     * SVAS.PERSISTENT
 
-    Those strategies are explained below. Besides some following
+    Those strategies are explained below. In addition, some following
     examples are shown in order to understand how the strategies can
     be applied during abstraction and specialization of Field with
     Data variables.
 
     * **SVAS.CONSTANT**: A constant value denotes a static content
       defined once and for all in the protocol. When abstracting, the
-      concrete value is compared with the symbolic value which is a
+      concrete value is compared with the symbolic value, which is a
       constant and succeeds only if it matches. On the other hand, the
       specialization of a constant value does not imply any additional
-      operations than just using the value as is. A typical example of
+      operations than just using the value as it is. A typical example of
       a constant value is a magic number in a protocol or a delimiter
       field.
 
 
-      The following example shows the **abstraction of a constant
+      The following example shows the **abstraction of constant
       data**, through the parsing of a message that corresponds to the
       expected model:
 
@@ -109,7 +109,7 @@ class SVAS(Enum):
       >>> Symbol.abstract("kurt", [s], memory=m)
       (Unknown message 'kurt', OrderedDict())
 
-      The following example shows the **specialization of a constant
+      The following example shows the **specialization of constant
       data**:
 
       >>> from netzob.all import *
@@ -125,7 +125,7 @@ class SVAS(Enum):
       >>> len(str(m))
       0
 
-      The following example shows that the specialization of a
+      The following example shows that the specialization of
       constant data raises an exception when no original value is
       attached to the definition domain of the variable:
 
@@ -143,8 +143,8 @@ class SVAS(Enum):
     * **SVAS.PERSISTENT**: A persistent value carries a value, such as
       a session identifier, generated and memorized during its first
       specialization and reused as such in the remainder of the
-      session. Conversely, the first time such persistent field is
-      abstracted, its variable's value is not defined and the received
+      session. Conversely, the first time a persistent field such as this is
+      abstracted, the value of its variable is not defined and the received
       value is saved. Later in the session, if this field is
       abstracted again, the corresponding variable is then defined and
       we compare the received field value against the memorized one.
@@ -163,7 +163,7 @@ class SVAS(Enum):
       >>> Symbol.abstract("dylan", [s], memory=m)
       (S0, OrderedDict([('f1', b'dylan')]))
 
-      The following example shows that the abstraction of a persistent
+      The following example shows that the abstraction of persistent
       data that does not correspond to the expected model returns a
       unknown symbol:
 
@@ -176,7 +176,7 @@ class SVAS(Enum):
       (Unknown message 'kurt', OrderedDict())
 
 
-      The following examples show the **specialization of a persistent
+      The following examples show the **specialization of persistent
       data**:
 
       >>> from netzob.all import *
@@ -213,12 +213,12 @@ class SVAS(Enum):
       specialize other fields. During abstraction, the value of this
       field is always learned for the same reason. For example, the
       IRC `nick` command includes such an ephemeral field that denotes
-      the new nick name of the user. This nick name can afterward be
-      used in other fields but whenever a NICK command is emitted, its
+      the new nick name of the user. This nick name can afterwards be
+      used in other fields, but whenever a NICK command is emitted, its
       value is regenerated.
 
 
-      The following example shows the **abstraction of an ephemeral
+      The following example shows the **abstraction of ephemeral
       data**:
   
       >>> from netzob.all import *
@@ -240,7 +240,7 @@ class SVAS(Enum):
       Data (String=None ((32, 80))): b'kurt'
 
 
-      The following examples show the **specialization of an ephemeral
+      The following examples show the **specialization of ephemeral
       data**:
 
       >>> from netzob.all import *
@@ -260,15 +260,15 @@ class SVAS(Enum):
   
 
     * **SVAS.VOLATILE**: A volatile variable denotes a value which
-      changes whenever it is specialized and that is never
+      changes whenever it is specialized and is never
       memorized. It can be seen as an optimization of an ephemeral
-      variable to reduce the memory usages. Thus, the abstraction
-      process of such field only verifies that the received value
+      variable to reduce memory usage. Thus, the abstraction
+      process of such a field only verifies that the received value
       complies with the field definition domain without memorizing
       it. For example, a size field or a CRC field is a volatile
       field.
 
-      The following example shows the **abstraction of a volatile
+      The following example shows the **abstraction of volatile
       data**:
   
       >>> from netzob.all import *
@@ -290,7 +290,7 @@ class SVAS(Enum):
       0
 
 
-      The following example shows the **specialization of a volatile
+      The following example shows the **specialization of volatile
       data**:
 
       >>> from netzob.all import *

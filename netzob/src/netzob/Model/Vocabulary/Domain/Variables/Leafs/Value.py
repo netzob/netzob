@@ -54,7 +54,7 @@ class Value(AbstractRelationVariableLeaf):
 
     It is possible to define a field so that its value is equal to the
     value of another field, on which a transformation operation can be
-    realized.
+    performed.
 
     The Value constructor expects some parameters:
 

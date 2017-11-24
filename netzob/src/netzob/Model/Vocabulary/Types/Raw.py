@@ -82,8 +82,8 @@ class Raw(AbstractType):
     :vartype alphabet: a :class:`list` of :class:`bytes`
 
 
-    The following example shows how to define a six bytes long raw
-    object, and the used of the generation method to produce a
+    The following example shows how to define a six-byte long raw
+    object, and the use of the generation method to produce a
     value:
 
     >>> from netzob.all import *

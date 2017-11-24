@@ -56,7 +56,7 @@ class IPv4(AbstractType):
     r"""This class defines an IPv4 type.
 
     The IPv4 type encodes a :class:`bytes` object in an IPv4
-    representation, and conversely to decode an IPv4 into a raw
+    representation, and conversely decodes an IPv4 into a raw
     object.
 
     The IPv4 constructor expects some parameters:
@@ -81,7 +81,7 @@ class IPv4(AbstractType):
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max value.
-    :var network: A constraint over the network the parsed data belongs to this network or not.
+    :var network: A constraint over the network. The parsed data belongs to this network or not.
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`

@@ -68,7 +68,7 @@ class CloseChannelTransition(AbstractTransition):
     :var startState: The initial state of the transition.
     :var endState: The end state of the transition.
     :var active: Represents the current execution status of the transition.
-                 If a transition is active, it means it did not yet finish to execute it.
+                 If a transition is active, it means it has not yet finished executing it.
     :var name: The name of the transition. The default value is `None`.
     :var id: The unique identifier of the transition.
     :var description: description of the transition. If not explicitly set,

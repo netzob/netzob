@@ -71,7 +71,7 @@ class AbstractionLayer(object):
                     concrete messages.
     :param memory: A memory used to store variable values during specialization
                    and abstraction of successive symbols, especially to handle
-                   inter-symbol relationships. If None, a locale memory is
+                   inter-symbol relationships. If None, a local memory is
                    created by default and used internally.
     :type channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`, required
     :type symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`, required
@@ -86,7 +86,7 @@ class AbstractionLayer(object):
                   concrete messages.
     :var memory: A memory used to store variable values during specialization
                  and abstraction of successive symbols, especially to handle
-                 inter-symbol relationships. If None, a locale memory is
+                 inter-symbol relationships. If None, a local memory is
                  created by default and used internally.
     :vartype channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`
     :vartype symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`
@@ -203,7 +203,7 @@ class AbstractionLayer(object):
                      during traffic emission (should be used with
                      duration= parameter). Default value is None (no
                      rate).
-        :param duration: This tells how much seconds the symbol is
+        :param duration: This indicates for how many seconds the symbol is
                          continuously written on the channel. Default
                          value is None (write only once).
         :param presets: This specifies how to parameterize the emitted
@@ -228,7 +228,7 @@ class AbstractionLayer(object):
                        ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
                        optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
-        :raise: :class:`TypeError` if parameter is not valid and Exception if an exception occurs.
+        :raise: :class:`TypeError` if a parameter is not valid and Exception if an exception occurs.
 
         """
 
@@ -342,7 +342,7 @@ class AbstractionLayer(object):
 
         The timeout attribute of the underlying channel is important
         as it represents the amount of time (in seconds) above which
-        no reception of a message triggers the reception of an
+        no receipt of a message triggers the receipt of an
         :class:`EmptySymbol
         <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
 
@@ -384,7 +384,7 @@ class AbstractionLayer(object):
 
         The timeout attribute of the underlying channel is important
         as it represents the amount of time (in seconds) above which
-        no reception of a message triggers the reception of an
+        no receipt of a message triggers the receipt of an
         :class:`EmptySymbol
         <netzob.Model.Vocabulary.EmptySymbol.EmptySymbol>`.
         """

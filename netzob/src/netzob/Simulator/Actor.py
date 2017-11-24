@@ -61,7 +61,7 @@ class Actor(threading.Thread):
                              and specialize symbols.
     :param initiator: If True, indicates that the actor is a client, and thus initiates the
                       communication and emits the input symbol.  If
-                      False, indicates that the actor is a server, and thus waits for
+                      False, indicates that the actor is a server, and is thus waiting for
                       another peer to initiate the connection. Default
                       value is :const:`True`. The value can be changed
                       during a communication, in order to reverse the
@@ -81,9 +81,9 @@ class Actor(threading.Thread):
                            and specialize symbols.
     :var initiator: If True, indicates that the actor initiates the
                     communication and emits the input symbol.
-                    If False, indicates that the actor waits for another
+                    If False, indicates that the actor is waiting for another
                     peer to initiate the connection. Default value is
-                    :const:`True`. The value can be change
+                    :const:`True`. The value can be changed
                     during a communication, in order to reverse the
                     way the actors communicate together.
     :var name: The name of the actor. Default value is 'Actor'.
@@ -102,7 +102,7 @@ class Actor(threading.Thread):
     The two actors are Alice and Bob. Bob is the initiator of the
     communication, meaning he sends the input symbols, while Alice
     answers with the output symbols of the grammar. The grammar is
-    very simple, we first open the channel, and allow Bob to send
+    very simple: we first open the channel, and allow Bob to send
     ``"Bob> hello"``. At each received message, Alice answers
     ``"Alice> hello"``.
 
@@ -146,7 +146,7 @@ class Actor(threading.Thread):
     **Example with a dedicated automaton for a client and a server**
 
     The two actors are Alice and Bob. Bob is the initiator of the
-    communication meaning he sends the input symbols while Alice
+    communication, meaning he sends the input symbols while Alice
     answers with the output symbols of the grammar. The grammar is
     very simple, and different for each actor. We first open the
     channel, and allow Bob to send the data ``"hello"`` multiple
@@ -614,9 +614,9 @@ class Actor(threading.Thread):
     **Transition with no input symbol**
 
     The following example shows how to specify no input symbol, for
-    both a sender (bob) and a receiver (alice), at the state ``S1``.
+    both a sender (Bob) and a receiver (Alice), at the state ``S1``.
     This example makes it possible to automatically transit to the next state ``S2``.
-    Thus, Bob do not need to send a message (using
+    Thus, Bob does not need to send a message (using
     :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inputSymbol`)
     in transition between ``S2`` and ``S3`` to expect a message from Alice.
 
@@ -747,10 +747,10 @@ class Actor(threading.Thread):
 
     @public_api
     def isActive(self):
-        """Tell if the current actor is active (i.e. if the automaton
+        """Indicate if the current actor is active (i.e. if the automaton
         visit is still processing).
 
-        :return: True is the actor has not finished.
+        :return: True if the actor has not finished.
         :rtype: :class:`bool`
         """
         return not self.__stopEvent.is_set()

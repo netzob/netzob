@@ -75,13 +75,13 @@ class BitArray(AbstractType):
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max value.
-    :var constants: A list of named constant used to access the bitarray internal elements.
+    :var constants: A list of named constants used to access the bitarray internal elements.
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype constants: a :class:`list` of :class:`str`
 
-    The following example show how to define a BitArray
+    The following example shows how to define a BitArray
     containing a fixed constant.
 
     >>> from netzob.all import *
@@ -137,7 +137,7 @@ class BitArray(AbstractType):
     >>> b.constants
     ['Urgent flag', 'Data flag']
 
-    Bitarray element can be accessed in read or write mode:
+    Bitarray elements can be accessed in read or write mode:
 
     >>> from netzob.all import *
     >>> b['Urgent flag']
@@ -146,7 +146,7 @@ class BitArray(AbstractType):
     >>> b['Urgent flag']
     True
 
-    Bitarray element can be used with binary operators:
+    Bitarray elements can be used with binary operators:
 
     >>> from netzob.all import *
     >>> b['Urgent flag'] |= b['Data flag']

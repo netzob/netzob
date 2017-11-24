@@ -52,7 +52,7 @@ from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 @NetzobLogger
 class DebugChannel(AbstractChannel):
-    """An DebugChannel is a file-like channel that handle writing of output
+    """A DebugChannel is a file-like channel that handles writing of output
     data.
 
     The DebugChannel constructor expects some parameters:
@@ -64,7 +64,7 @@ class DebugChannel(AbstractChannel):
     :type timeout: :class:`float`, optional
 
 
-    The following code shows the use of an DebugChannel channel:
+    The following code shows the use of a DebugChannel channel:
 
     >>> from netzob.all import *
     >>> client = DebugChannel("/dev/null")

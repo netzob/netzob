@@ -469,7 +469,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     @public_api
     @staticmethod
     def abstract(data, fields, memory=None):
-        """The method :meth:`abstract` is used to retrieve the
+        """The :meth:`abstract` method is used to retrieve the
         corresponding symbol according to a concrete :class:`bytes`
         message.
 
@@ -551,7 +551,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :raises: :class:`NoSymbolException <netzob.Model.Vocabulary.AbstractField.NoSymbolException>`
 
         To retrieve the associated symbol, this method recursively
-        call the parent of the current object until the root is found.
+        calls the parent of the current object until the root is found.
         
         If the root is not a :class:`Symbol
         <netzob.Model.Vocabulary.Symbol.Symbol>`, this raises an Exception.

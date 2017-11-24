@@ -71,7 +71,7 @@ class Field(AbstractField):
                  default name will be "Field".
     :param isPseudoField: A flag indicating if the field is a
                           pseudo field, meaning it is used
-                          internally to help for the computation
+                          internally to help the computation
                           of the value of another field, but does
                           not directly produce data. The default value is False.
     :type domain: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
@@ -94,7 +94,7 @@ class Field(AbstractField):
     :var parent: The parent element.
     :var isPseudoField: A flag indicating if the field is a
                         pseudo field, meaning it is used
-                        internally to help for the computation
+                        internally to help the computation
                         of the value of another field, but does
                         not directly produce data.
     :vartype name: :class:`str`
@@ -109,12 +109,12 @@ class Field(AbstractField):
 
     A field can be composed of sub-fields. This is useful for example
     to separate a header, composed of multiple fields, from its
-    payload.  The parent field can be seen as a facility to access to
+    payload.  The parent field can be seen as a facility to access 
     a group of fields.
 
     In the following example, the ``fheader`` field is a parent field
     for a group of sub-fields. The parent field does not contain any
-    concrete data, in contrary to its sub-fields.
+    concrete data, contrary to its sub-fields.
 
     >>> from netzob.all import *
     >>> fh0 = Field(name='fh0')
@@ -128,7 +128,7 @@ class Field(AbstractField):
          |--   Data (Raw=None ((0, 524288)))
 
     More generally, a field is part of a tree whose root is a symbol
-    and whose all other nodes of the tree are fields. Hence, a field
+    and whose all all other nodes are fields. Hence, a field
     always has a parent which can be another field or a symbol if it
     is the root.
 
@@ -138,10 +138,10 @@ class Field(AbstractField):
     The value that can take a field is defined by its definition
     domain. The definition domain of a field can take multiple forms,
     in order to easily express basic types (such as Integer or String)
-    or to model complex data structures (such has alternatives,
+    or to model complex data structures (such as alternatives,
     repetitions or sequences).
 
-    The following examples present the different forms that make is possible to
+    The following examples present the different forms that make it possible to
     express the same field content (i.e. an Integer with a constant
     value of 10):
 
@@ -198,7 +198,7 @@ class Field(AbstractField):
     field is only used for the computation of the value of another
     field, but does not produce real content during
     specialization. The following example shows a pseudo field that
-    contains an external data, and a real field whose content is the
+    contains external data, and a real field whose content is the
     size of the external data:
 
     >>> from netzob.all import *

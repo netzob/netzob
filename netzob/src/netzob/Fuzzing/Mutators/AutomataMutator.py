@@ -85,7 +85,7 @@ class AutomataMutator(Mutator):
     The following code shows the creation of the new automaton with
     random transitions between the existing states, and with a
     precision concerning the states between which fuzzing of message
-    formats will be done:
+    formats will be performed:
 
     >>> # Symbol definition
     >>> f1 = Field(String())
@@ -129,7 +129,7 @@ class AutomataMutator(Mutator):
                startingState=None,                       # type: State
                endingState=None                          # type: State
                ) -> Automata:
-        """This is the mutation method of the automaton. This methods returns
+        """This is the mutation method of the automaton. This method returns
         a new automaton that may be used for fuzzing purpose.
 
         The mutate method expects some parameters:

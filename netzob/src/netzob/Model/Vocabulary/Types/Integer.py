@@ -78,7 +78,7 @@ class Integer(AbstractType):
 
     :param endianness: The endianness of the current value.
 
-      The following endianness are available:
+      The following endiannesses are available:
 
       * Endianness.BIG (default endianness)
       * Endianness.LITTLE
@@ -215,8 +215,8 @@ class Integer(AbstractType):
 
     The following examples show how to create integers with different
     raw representation, depending on data type attributes. In these
-    examples, we create a 16 bits little endian, a 16 bits big endian,
-    a 32 bits little endian and a 32 bits big endian:
+    examples, we create a 16-bit little endian, a 16-bit big endian,
+    a 32-bit little endian and a 32-bit big endian:
 
     >>> from netzob.all import *
     >>> int16le(1234).value.tobytes()

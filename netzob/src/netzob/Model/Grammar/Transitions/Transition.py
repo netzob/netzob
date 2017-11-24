@@ -98,8 +98,8 @@ class Transition(AbstractTransition):
     :var startState: The initial state of the transition.
     :var endState: The end state of the transition.
     :var active: Represents the current execution status of the transition.
-                 If a transition is active, it means it did not yet finish to
-                 execute it.
+                 If a transition is active, it means it has not yet finished
+                 executing it.
     :var name: The name of the transition. The default value is `None`.
     :var inputSymbol: The input symbol is the symbol which triggers the
                       execution of the transition.
@@ -127,7 +127,7 @@ class Transition(AbstractTransition):
     :vartype outputSymbolReactionTimes: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
 
     The following example shows the definition of a transition `t` between
-    two states `s0` and `s1`:
+    two states, `s0` and `s1`:
 
     >>> from netzob.all import *
     >>> s0 = State()

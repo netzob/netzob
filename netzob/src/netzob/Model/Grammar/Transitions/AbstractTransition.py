@@ -245,7 +245,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
     def add_cbk_modify_symbol(self, cbk_method):
         """Function called during transition execution, to help
-        choosing/modifying the output symbol to send (in a server
+        choose/modify the output symbol to send (in a server
         context) or the input symbol to send (in a client context).
 
         The callable function should have the following prototype:
@@ -275,18 +275,18 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
           :attr:`last_sent_symbol`
             Last sent symbol (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`)
-            on the abstraction layer, and thus makes it possible to create relationships
+            on the abstraction layer, and thus making it possible to create relationships
             with the previously sent symbol.
 
           :attr:`last_sent_message`
             Last sent message (:class:`bitarray`) on the abstraction layer, and
-            thus makes it possible to create relationships with the previously sent
+            thus making it possible to create relationships with the previously sent
             message.
 
           :attr:`last_received_symbol`
             Last received symbol
             (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`) on the
-            abstraction layer, and thus makes it possible to create relationships with
+            abstraction layer, and thus making it possible to create relationships with
             the previously received symbol.
 
           :attr:`last_received_message`

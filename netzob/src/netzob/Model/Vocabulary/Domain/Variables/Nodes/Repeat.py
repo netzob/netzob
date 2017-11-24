@@ -96,7 +96,7 @@ class Repeat(AbstractVariableNode):
     Where:
 
     * ``nb_repeat`` is an :class:`int` that corresponds
-      to the amount of time the child element has been parsed or specialize.
+      to the amount of time the child element has been parsed or specialized.
     * ``data`` is a :class:`bitarray` that corresponds to the already parsed or specialized data.
     * ``remaining`` is a :class:`bitarray` that corresponds to the remaining data to be parsed. Only set in parsing mode. In specialization mode, this parameter will have a `None` value. This parameter can therefore be used to identify the current mode.
     * ``parsed_structure`` is a data structure that allows access to the values of the parsed :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` elements. Only set in parsing mode. In specialization mode, this parameter will have a `None` value.
@@ -161,7 +161,7 @@ class Repeat(AbstractVariableNode):
 
     The following example shows how to create a Repeat variable whose
     number of repetitions is limited by a Python integer
-    variable. Such variable is typically managed by the calling script:
+    variable. Such a variable is typically managed by the calling script:
 
     >>> from netzob.all import *
     >>> var = 3
@@ -184,7 +184,7 @@ class Repeat(AbstractVariableNode):
     number of repetitions is handled by calling a callback function
     which returns a boolean telling if the expected number of
     repetitions is reached. Here, in parsing mode, the repeat stops
-    when the byte `b'B'` is encountered. In specialization mode, the
+    when the `b'B'` byte is encountered. In specialization mode, the
     repeat stops at the first iteration.
 
     >>> from netzob.all import *
