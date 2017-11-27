@@ -49,8 +49,6 @@ from random import shuffle
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
 @NetzobLogger
@@ -233,7 +231,10 @@ class GenericPath(object):
                 if found:
                     self._logger.debug("Found a callback that should be able to trigger")
                     callBackToExecute = (targetVariables, currentVariable, parsingCB)
-                    break
+                    variablesToCheck = set(targetVariables)
+                    variablesToCheck.remove(triggeringVariable)
+                    if not currentVariable.check_may_miss(*variablesToCheck):
+                        break
 
             if callBackToExecute is None:
                 break

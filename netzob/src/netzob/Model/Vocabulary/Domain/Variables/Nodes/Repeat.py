@@ -379,7 +379,7 @@ class Repeat(AbstractVariableNode):
                         else:
                             tmp_results.append(childParsingPath)
 
-                        if len(dataToParse) == len(newResult):
+                        if len(dataToParse) <= len(newResult):
                             break_repeat = RepeatResult.STOP_AFTER
 
                 if break_repeat is RepeatResult.STOP_BEFORE:
@@ -402,8 +402,11 @@ class Repeat(AbstractVariableNode):
 
         break_repeat = RepeatResult.CONTINUE
         for i_repeat in range(self.MAX_REPEAT):
+            if break_repeat is not RepeatResult.CONTINUE:
+                break
+
             tmp_results = []
-            break_repeat = RepeatResult.CONTINUE
+            break_repeat = RepeatResult.STOP_AFTER
             for newParsingPath in newParsingPaths:
                 for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
 
@@ -436,7 +439,7 @@ class Repeat(AbstractVariableNode):
                     else:
                         tmp_results.append(childParsingPath)
 
-                    if len(dataToParse) == len(newResult):
+                    if len(dataToParse) <= len(newResult):
                         break_repeat = RepeatResult.STOP_AFTER
                         break
 

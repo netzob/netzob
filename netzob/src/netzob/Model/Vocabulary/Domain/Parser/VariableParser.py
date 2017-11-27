@@ -68,7 +68,7 @@ class VariableParser(object):
         self._logger.debug("Parse '{}' with variable '{}' specifications".
                            format(dataToParse.tobytes(), self.variable))
 
-        yield from self.variable.parse(parsingPath, carnivorous=carnivorous)
+        return self.variable.parse(parsingPath, carnivorous=carnivorous)
 
     @property
     def variable(self):

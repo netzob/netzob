@@ -55,15 +55,15 @@ from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
+
 class RelationException(Exception):
     pass
+
 
 @NetzobLogger
 class AbstractRelationVariableLeaf(AbstractVariableLeaf):
@@ -76,6 +76,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             varType, name, svas=SVAS.VOLATILE)
 
         self.targets = targets
+        self._missing_targets = set()
 
         # Handle dataType
         if dataType is None:
@@ -93,7 +94,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     def __eq__(x, y):
         try:
             return x.__key() == y.__key()
-        except:
+        except Exception:
             return False
 
     def __hash__(self):
@@ -103,6 +104,12 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         """The str method."""
         return "Relation({0}) - Type:{1}".format(
             str([v.name for v in self.targets]), self.dataType)
+
+    def check_may_miss(self, *variables):
+        if self._missing_targets:
+            missing_targets = self._missing_targets & set(variables)
+            return len(missing_targets) > 0
+        return True
 
     def normalize_targets(self):
         # Normalize targets (so that targets now only contain variables)

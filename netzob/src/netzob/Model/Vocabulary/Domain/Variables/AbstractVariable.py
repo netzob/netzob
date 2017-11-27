@@ -108,6 +108,11 @@ class AbstractVariable(object):
         raise ValueError("Cannot determine a fixed size for variable '{}'"
                          .format(self))
 
+    def check_may_miss(self,
+                       *variables  # type: AbstractVariable
+                       ):          # type: bool
+        return True
+
     #+---------------------------------------------------------------------------+
     #| Special Functions                                                         |
     #+---------------------------------------------------------------------------+
