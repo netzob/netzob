@@ -46,36 +46,50 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Simulator.AbstractChannel import AbstractChannel
+from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding import Padding
+from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Types.Raw import Raw
+from netzob.Model.Vocabulary.Types.Integer import uint16be
 
 
 @NetzobLogger
-class RawEthernetChannel(AbstractChannel):
-    r"""A RawEthernetChannel is a communication channel to send Raw Ethernet
-    frames. This channel is not responsible for building the Ethernet
+class EthernetChannel(AbstractChannel):
+    r"""A EthernetChannel is a communication channel to send Ethernet
+    frames. This channel is responsible for building the Ethernet
     layer.
 
-    The RawEthernetChannel constructor expects some parameters:
+    The EthernetChannel constructor expects some parameters:
 
-    :param interface: The local network interface name (such as 'eth0', 'lo').
+    :param remoteMac: The remote MAC address to connect to.
+    :param localMac: The local MAC address.
     :param timeout: The default timeout of the channel for global
                     connection. Default value is blocking (None).
-    :type interface: :class:`str`, required
+    :type remoteMac: :class:`str` or :class:`netaddr.EUI`, required
+    :type localMac: :class:`str` or :class:`netaddr.EUI`, required
     :type timeout: :class:`float`, optional
-    :todo: add support of netaddr.EUI
 
-    Adding to AbstractChannel variables, the RawEthernetChannel class provides
+    .. todo:: add support of netaddr.EUI
+
+    Adding to AbstractChannel variables, the EthernetChannel class provides
     the following public variables:
 
+    :var remoteMac: The remote MAC address to connect to.
+    :var localMac: The local MAC address.
     :var interface: The network Interface name such as 'eth0', 'lo', determined
                     with the local MAC address. Read only variable.
+    :vartype remoteMac: :class:`str`
+    :vartype localMac: :class:`str`
     :vartype interface: :class:`str`
 
 
     >>> from netzob.all import *
     >>> from binascii import hexlify
-    >>> client = RawEthernetChannel(interface="lo")
+    >>> client = EthernetChannel(
+    ...    remoteMac="00:01:02:03:04:05",
+    ...    localMac="00:06:07:08:09:10")
     >>> client.open()
     >>> symbol = Symbol([Field("ABC")])
     >>> client.write(symbol.specialize())
@@ -91,14 +105,42 @@ class RawEthernetChannel(AbstractChannel):
 
     @typeCheck(str, str)
     def __init__(self,
-                 interface,
+                 remoteMac,
+                 localMac,
                  timeout=AbstractChannel.DEFAULT_TIMEOUT):
-        super(RawEthernetChannel, self).__init__(timeout=timeout)
-        self.__interface = interface
+        super(EthernetChannel, self).__init__(timeout=timeout)
+        self.remoteMac = remoteMac
+        self.localMac = localMac
+        self.__interface = NetUtils.getLocalInterfaceFromMac(self.localMac)
+
+        if self.__interface is None:
+            raise Exception(
+                "No interface found for '{}' MAC address".format(self.localMac))
+
+        self.initHeader()
 
     @staticmethod
     def getBuilder():
-        return RawEthernetChannelBuilder
+        return EthernetChannelBuilder
+
+    def initHeader(self):
+        eth_dst = Field(name='eth.dst', domain=Raw(self.macToBitarray(self.remoteMac)))
+        eth_src = Field(name='eth.src', domain=Raw(self.macToBitarray(self.localMac)))
+        eth_type = Field(name='eth.type', domain=uint16be())
+        eth_payload = Field(name='eth.payload', domain=Raw())
+        # PADDING field is present if frame length < 60 bytes (+ 4 optional CRC bytes)
+        ethPaddingVariable = Padding([eth_dst,
+                                      eth_src,
+                                      eth_type,
+                                      eth_payload],
+                                     data=Raw(nbBytes=1),
+                                     modulo=8*60)
+        eth_padding = Field(ethPaddingVariable, "eth.padding")
+        self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
+                                                            eth_src,
+                                                            eth_type,
+                                                            eth_payload,
+                                                            eth_padding])
 
     def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a client, it
@@ -117,10 +159,9 @@ class RawEthernetChannel(AbstractChannel):
         self._socket = socket.socket(
             socket.AF_PACKET,
             socket.SOCK_RAW,
-            socket.htons(RawEthernetChannel.ETH_P_ALL))
+            socket.htons(EthernetChannel.ETH_P_ALL))
         self._socket.settimeout(timeout or self.timeout)
-        self._socket.bind((self.interface, RawEthernetChannel.ETH_P_ALL))
-
+        self._socket.bind((self.interface, EthernetChannel.ETH_P_ALL))
         self.isOpen = True
 
     def close(self):
@@ -166,20 +207,24 @@ class RawEthernetChannel(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    def write(self, data, rate=None, duration=None):
+    def write(self, data, upperProtocol=0x0800, rate=None, duration=None):
         """Write to the communication channel the specified data.
 
         :param data: The data to write on the channel.
         :param rate: This specifies the bandwidth in octets to respect during
-                     traffic emission (should be used with duration=parameter).
+                     traffic emission (should be used with duration= parameter).
+        :param upperProtocol: The protocol following Ethernet in the stack.
+                              Default value is IPv4 (0x0800)
         :param duration: This tells how much seconds the symbol is continuously
                          written on the channel.
         :type data: :class:`bytes`, required
+        :type upperProtocol: :class:`int`, optional
         :type rate: :class:`int`, optional
         :type duration: :class:`int`, optional
         :return: The amount of written data, in bytes.
         :rtype: :class:`int`
         """
+        self._setProtocol(upperProtocol)
         return super().write(data, rate=rate, duration=duration)
 
     def writePacket(self, data):
@@ -192,13 +237,75 @@ class RawEthernetChannel(AbstractChannel):
         if self._socket is None:
             raise Exception("socket is not available")
 
-        packet = data
-        len_data = self._socket.sendto(
-            packet, (self.interface,
-                     RawEthernetChannel.ETH_P_ALL))
+        self.header_presets["eth.payload"] = data
+        packet = self.header.specialize(presets=self.header_presets)
+        len_data = self._socket.sendto(packet, (self.interface,
+                                                EthernetChannel.ETH_P_ALL))
         return len_data
 
+    def macToBitarray(self, addr):
+        """Converts a mac address represented as a string to its bitarray value.
+
+        >>> client = EthernetChannel('00:01:02:03:04:05', '06:07:08:09:10:11')
+        >>> client.macToBitarray('00:01:02:03:04:05')
+        bitarray('000000000000000100000010000000110000010000000101')
+        >>> client.macToBitarray(b'\\x00\\x01\\x02\\x03\\x04\\x05')
+        bitarray('000000000000000100000010000000110000010000000101')
+        """
+
+        if addr is None:
+            return bitarray(48)
+
+        if isinstance(addr, bytes):
+            addr = binascii.hexlify(addr).decode()
+
+        numeric = int(addr.replace(":", ""), 16)
+        binary = bin(numeric)[2:]
+        binLength = len(binary)
+        if binLength > 48:
+            raise Exception("Binary overflow while converting hexadecimal value")
+
+        binary = "0" * (48 - binLength) + binary
+        return bitarray(binary)
+
+    @typeCheck(int)
+    def _setProtocol(self, upperProtocol):
+        if upperProtocol < 0 or upperProtocol > 0xffff:
+            raise TypeError("Upper protocol should be between 0 and 0xffff")
+
+        self.header_presets['eth.type'] = upperProtocol
+
     # Properties
+
+    @property
+    def remoteMac(self):
+        """Remote hardware address (MAC)
+
+        :type: :class:`str`
+        """
+        return self.__remoteMac
+
+    @remoteMac.setter  # type: ignore
+    @typeCheck(str)
+    def remoteMac(self, remoteMac):
+        if remoteMac is None:
+            raise TypeError("remoteMac cannot be None")
+        self.__remoteMac = remoteMac
+
+    @property
+    def localMac(self):
+        """Local hardware address (MAC)
+
+        :type: :class:`str`
+        """
+        return self.__localMac
+
+    @localMac.setter  # type: ignore
+    @typeCheck(str)
+    def localMac(self, localMac):
+        if localMac is None:
+            raise TypeError("localMac cannot be None")
+        self.__localMac = localMac
 
     @property
     def interface(self):
@@ -209,20 +316,25 @@ class RawEthernetChannel(AbstractChannel):
         return self.__interface
 
 
-class RawEthernetChannelBuilder(ChannelBuilder):
+class EthernetChannelBuilder(ChannelBuilder):
     """
-    This builder is used to create a
-    :class:`~netzob.Simulator.Channel.RawEthernetChannel.RawEthernetChannel`
-    instance.
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channel.EthernetChannel.EthernetChannel` instance
 
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
-    >>> netinfo = NetInfo(interface="eth0")
-    >>> chan = RawEthernetChannelBuilder().set_map(netinfo.getDict()).build()
-    >>> assert isinstance(chan, RawEthernetChannel)
+    >>> netinfo = NetInfo(dst_addr="00:11:22:33:44:55",
+    ...                   src_addr="55:44:33:22:11:00",
+    ...                   protocol=0x0800,
+    ...                   interface="eth0")
+    >>> chan = EthernetChannelBuilder().set_map(netinfo.getDict()).build()
+    >>> assert isinstance(chan, EthernetChannel)
     """
 
     def __init__(self):
-        super().__init__(RawEthernetChannel)
+        super().__init__(EthernetChannel)
 
-    def set_interface(self, value):
-        self.attrs['interface'] = value
+    def set_src_addr(self, value):
+        self.attrs['localMac'] = value
+
+    def set_dst_addr(self, value):
+        self.attrs['remoteMac'] = value

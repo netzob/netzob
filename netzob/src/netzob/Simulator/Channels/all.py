@@ -39,5 +39,6 @@ from netzob.Simulator.Channels.IPChannel import IPChannel, IPChannelBuilder
 from netzob.Simulator.Channels.RawIPChannel import RawIPChannel, RawIPChannelBuilder
 from netzob.Simulator.Channels.RawEthernetChannel import RawEthernetChannel, RawEthernetChannelBuilder
 from netzob.Simulator.Channels.DebugChannel import DebugChannel, DebugChannelBuilder
+from netzob.Simulator.Channels.EthernetChannel import EthernetChannel, EthernetChannelBuilder
 
 from netzob.Simulator.Channels.NetInfo import NetInfo
