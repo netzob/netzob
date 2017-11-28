@@ -116,9 +116,9 @@ class IPv4(AbstractType):
     following example:
 
     >>> from netzob.all import *
-    >>> ip = IPv4(network="10.10.10.0/24")
-    >>> len(ip.generate().tobytes())
-    4
+    >>> ip = IPv4(network="10.10.10.0/27")
+    >>> IPv4(ip.generate())  # initialize with the generated bitarray value
+    10.10.10.19
 
     """
 

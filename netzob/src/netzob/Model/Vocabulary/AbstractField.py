@@ -591,9 +591,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         >>> from netzob.all import *
         >>> f1 = Field("hello", name="f1")
-        >>> f2 = Field("hello", name="f3")
-        >>> f3 = Field("hello", name="f2")
-        >>> fheader = Field("hello", name="fheader")
+        >>> f2 = Field("hello", name="f2")
+        >>> f3 = Field("hello", name="f3")
+        >>> fheader = Field(name="fheader")
         >>> fheader.fields = [f1, f2, f3]
         >>> fheader.getField('f2')
         f2

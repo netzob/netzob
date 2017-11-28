@@ -248,69 +248,57 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         choose/modify the output symbol to send (in a server
         context) or the input symbol to send (in a client context).
 
-        The callable function should have the following prototype:
-
-        .. code-block:: python
-
-          def cbk_method(available_symbols,
-                         current_symbol,
-                         current_state,
-                         last_sent_symbol,
-                         last_sent_message,
-                         last_received_symbol,
-                         last_received_message):
-
-        Where:
-
-          :attr:`available_symbols`
-            Corresponds to the :class:`list` of possible Symbols
-            (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`) to send.
-
-          :attr:`current_symbol`
-            Currently selected symbol that will be sent, either the initial
-            symbol or the symbol returned by the previous callback.
-
-          :attr:`current_state`
-            Current state in the automaton.
-
-          :attr:`last_sent_symbol`
-            Last sent symbol (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`)
-            on the abstraction layer, and thus making it possible to create relationships
-            with the previously sent symbol.
-
-          :attr:`last_sent_message`
-            Last sent message (:class:`bitarray`) on the abstraction layer, and
-            thus making it possible to create relationships with the previously sent
-            message.
-
-          :attr:`last_received_symbol`
-            Last received symbol
-            (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`) on the
-            abstraction layer, and thus making it possible to create relationships with
-            the previously received symbol.
-
-          :attr:`last_received_message`
-            Last received message (:class:`bitarray`) on the abstraction layer,
-            and this makes it possible to create relationships with
-            received message.
-
-        The callback function should return a tuple (symbol, presets)
-        whose meaning is as follows:
-
-          :attr:`symbol`
-            The symbol (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`)
-            that will be sent. This could be the same as the
-            :attr:`current_symbol` or another one.
-
-          :attr:`presets`
-            A :class:`dict` of keys:values used to preset (parameterize) fields
-            during symbol specialization. Values in this dictionary will
-            override any field definition, constraints or relationship
-            dependencies (see :meth:`~netzob.Model.Vocabulary.Symbol.Symbol.specialize`,
-            for more information).
-
-        :type: :class:`func`
+        :param cbk_method: the callback function
+        :type cbk_method: ~typing.Callable, required
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
+
+        :attr:`cbk_method` should have the following prototype:
+
+        .. function:: cbk_method(available_symbols, current_symbol, current_state,\
+                                 last_sent_symbol, last_sent_message,\
+                                 last_received_symbol, last_received_message)
+           :noindex:
+
+           :param available_symbols:
+                  Corresponds to the list of possible symbols to send.
+           :param current_symbol:
+                  Currently selected symbol that will be sent, either the initial
+                  symbol or the symbol returned by the previous callback.
+           :param current_state:
+                  Current state in the automaton.
+           :param last_sent_symbol:
+                  Last sent symbol on the abstraction layer, and thus making it
+                  possible to create relationships with the previously sent symbol.
+           :param last_sent_message:
+                  Last sent message on the abstraction layer, and thus making
+                  it possible to create relationships with the previously sent
+                  message.
+           :param last_received_symbol:
+                  Last received symbol on the abstraction layer, and thus
+                  making it possible to create relationships with the
+                  previously received symbol.
+           :param last_received_message:
+                  Last received message (:class:`bitarray`) on the abstraction layer,
+                  and this makes it possible to create relationships with
+                  received message.
+
+           :type available_symbols: ~typing.List[~netzob.Model.Vocabulary.Symbol.Symbol]
+           :type current_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
+           :type current_state: ~netzob.Model.Grammar.States.State.State
+           :type last_sent_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
+           :type last_sent_message: ~bitarray.bitarray
+           :type last_received_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
+           :type last_received_message: ~bitarray.bitarray
+
+           :return:
+             * The symbol that will be sent. This could be the same as the
+               :attr:`current_symbol` or another one,
+             * A dict of key-value used to preset (parameterize) fields
+               during symbol specialization. Values in this dictionary will
+               override any field definition, constraints or relationship
+               dependencies (see :meth:`~netzob.Model.Vocabulary.Symbol.Symbol.specialize`,
+               for more information).
+           :rtype: ~typing.Tuple[~netzob.Model.Vocabulary.Symbol.Symbol,~typing.Dict]
 
         """
         if not callable(cbk_method):

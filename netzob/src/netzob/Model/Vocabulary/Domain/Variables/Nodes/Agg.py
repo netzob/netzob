@@ -335,6 +335,7 @@ class Agg(AbstractVariableNode):
        operator: "+" | "*"
        operation: left, right
        left: subop, ")"
+       right: operator, operation
        subop: "(", operation
 
     The following examples **should** be compatible with these expressions::

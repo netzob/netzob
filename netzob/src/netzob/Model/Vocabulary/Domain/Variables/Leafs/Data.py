@@ -82,8 +82,10 @@ class Data(AbstractVariableLeaf):
 
     :var currentValue: The current value of the data.
     :var dataType: The type of the data.
+    :var name: The name of the variable
     :vartype currentValue: :class:`bitarray`
     :vartype dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType>`
+    :vartype name: :class:`str`
 
 
     The following example shows the definition of the Data `pseudo`

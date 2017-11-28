@@ -35,7 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import random
-import traceback
+# import traceback
 import socket
 
 #+---------------------------------------------------------------------------+
@@ -70,10 +70,10 @@ class State(AbstractState):
     :var active: Indicates that the current position of the actor in the automaton is this state.
                  If a state is active, it also means none of its transitions has yet
                  been fully initiated.
-    :var transitions: The current value of the data.
+    :var transitions: The list of outgoing transitions
     :vartype name: :class:`str`
     :vartype active: :class:`bool`
-    :vartype transitions: :class:`list` of :class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`
+    :vartype transitions: ~typing.List[~netzob.Model.Grammar.Transitions.Transition.Transition]
 
 
     The following example shows the definition of an `s0` state and an `s1` state:
@@ -134,7 +134,7 @@ class State(AbstractState):
 
     @typeCheck(AbstractionLayer)
     def executeAsNotInitiator(self, abstractionLayer):
-        """This method executes the current state as not an initiator. 
+        """This method executes the current state as not an initiator.
 
         :param abstractionLayer: The abstraction layer from which it receives messages.
         :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`

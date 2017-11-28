@@ -314,17 +314,9 @@ class Symbol(AbstractField):
         ``udp_dport`` and ``udp_payload``:
 
         >>> from netzob.all import *
-        >>> presets = {}
-        >>> presets[f_dport] = 11
-        >>> presets[f_payload] = b"\xaa\xbb"
-        >>> symbol_udp.specialize(presets=presets)
+        >>> symbol_udp.specialize(presets={f_dport: 11, f_payload: b"\xaa\xbb"})
         b'\x0b\xaa\xbb'
-
-        >>> from netzob.all import *
-        >>> presets = {}
-        >>> presets["udp.dport"] = 11
-        >>> presets["udp.payload"] = b"\xaa\xbb"
-        >>> symbol_udp.specialize(presets=presets)
+        >>> symbol_udp.specialize(presets={"udp.dport": 11, "udp.payload": b"\xaa\xbb"})
         b'\x0b\xaa\xbb'
 
 

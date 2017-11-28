@@ -73,9 +73,9 @@ class Raw(AbstractType):
     :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
-    :var size: The size in bits of the expected data type defined by a tuple (min, max).
-                  Instead of a tuple, an integer can be used to represent both min and max values.
-    :var alphabet: The alphabet used to limit the bytes that can participate in the domain value.
+    :var size: The internal size (in bits) of the expected data type defined by a tuple (min, max).
+               Instead of a tuple, an integer can be used to represent both min and max values.
+    :var alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
@@ -112,10 +112,12 @@ class Raw(AbstractType):
     >>> from netzob.all import *
     >>> r = Raw(nbBytes=100, alphabet=[b"t", b"o"])
     >>> data = r.generate().tobytes()
-    >>> data_set = set(data)
-    >>> data_set
-    {116, 111}
-
+    >>> data  # doctest: +ELLIPSIS
+    b'oooooottottotottootoootoootttotoototttttottootoototootootottt...
+    >>> for c in set(data):  # extract distinct characters
+    ...    print(chr(c))
+    t
+    o
     """
 
     def __init__(self,

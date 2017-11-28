@@ -137,59 +137,54 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         next transition (in a client context) or modifying the current
         transition (in a server context).
 
-        The callable function should have the following prototype:
+        :param cbk_method: the callback function
+        :type cbk_method: ~typing.Callable, required
+        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
-        .. code-block:: python
+        :attr:`cbk_method` should have the following prototype:
 
-           def cbk_method(availableTransitions,
-                          nextTransition,
-                          current_state,
-                          last_sent_symbol,
-                          last_sent_message,
-                          last_received_symbol,
-                          last_received_message):
+        .. function:: cbk_method(availableTransitions, nextTransition,\
+                                 current_state, last_sent_symbol,\
+                                 last_sent_message, last_received_symbol,\
+                                 last_received_message)
+           :noindex:
 
-        Where:
+           :param availableTransitions:
+                  Corresponds to the list of available transitions starting
+                  from the current state.
+           :param nextTransition:
+                  Currently selected transition, either the initial transition
+                  or the transition returned by the previous callback.
+           :param current_state:
+                  Current state in the automaton.
+           :param last_sent_symbol:
+                  Last sent symbol on the abstraction layer, and thus making it
+                  possible to create relationships with the previously sent symbol.
+           :param last_sent_message:
+                  Corresponds to the last sent message on the abstraction layer,
+                  and thus making it possible to create relationships with
+                  the previously sent message.
+           :param last_received_symbol:
+                  Corresponds to the last received symbol on the abstraction
+                  layer, and thus making it possible to create relationships
+                  with the previously received symbol.
+           :param last_received_message:
+                  Corresponds to the last received message on the abstraction
+                  layer, and thus making it possible to create relationships
+                  with the previously received message.
 
-          :attr:`availableTransitions`
-            Corresponds to the :class:`list` of available transitions
-            (:class:`~netzob.Model.Grammar.Transitions.Transition.Transition`)
-            starting from the current state.
+           :type availableTransitions: ~typing.List[~netzob.Model.Grammar.Transitions.Transition.Transition]
+           :type nextTransition: ~netzob.Model.Grammar.Transitions.Transition.Transition
+           :type current_state: ~netzob.Model.Grammar.States.State.State
+           :type last_sent_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
+           :type last_sent_message: ~bitarray.bitarray
+           :type last_received_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
+           :type last_received_message: ~bitarray.bitarray
 
-          :attr:`nextTransition`
-            Currently selected transition, either the initial transition or
-            the transition returned by the previous callback.
-
-          :attr:`current_state`
-            Current state in the automaton.
-
-          :attr:`last_sent_symbol`
-            Last sent symbol (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`)
-            on the abstraction layer, and thus making it possible to create relationships
-            with the previously sent symbol.
-
-          :attr:`last_sent_message`
-            Corresponds to the last sent message (:class:`bitarray`) on the
-            abstraction layer, and thus making it possible to create relationships with
-            the previously sent message.
-
-          :attr:`last_received_symbol`
-            Corresponds to the last received symbol
-            (:class:`~netzob.Model.Vocabulary.Symbol.Symbol`) on the
-            abstraction layer, and thus making it possible to create relationships with
-            the previously received symbol.
-
-          :attr:`last_received_message`
-            Corresponds to the last received message (:class:`bitarray`) on the
-            abstraction layer, and thus making it possible to create relationships with
-            the previously received message.
-
-        The callback function should return a transition (which could
-        be the original transition or another one in the available
-        transitions).
-
-        :type: :class:`func`
-        :raise: :class:`TypeError` if ``cbk_method`` is not a callable function
+           :return:
+             The callback function should return a transition (which could be
+             the original transition or another one in the available transitions).
+           :rtype: ~netzob.Model.Grammar.Transitions.Transition.Transition
 
         """
 

@@ -47,6 +47,7 @@ from enum import Enum
 # +---------------------------------------------------------------------------+
 from netzob.Model.Grammar.Automata import Automata  # noqa: F401
 from netzob.Fuzzing.Generator import Generator
+from netzob.Common.Utils.Constant import Constant
 
 
 class MutatorMode(Enum):
@@ -82,7 +83,7 @@ class Mutator(metaclass=abc.ABCMeta):
 
     # Class constants
     SEED_DEFAULT = 10  #: the default seed value
-    COUNTER_MAX_DEFAULT = 2 ** 16  #: the default max counter value (65536)
+    COUNTER_MAX_DEFAULT = Constant(2 ** 16)  #: the default max counter value (65536)
 
     # Class variables
     globalCounterMax = COUNTER_MAX_DEFAULT
