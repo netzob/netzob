@@ -53,9 +53,12 @@ from netzob.Model.Grammar.States.State import State  # noqa: F401
 class AutomataMutatorStrategy(Enum):
     """The :class:`AutomataMutator` strategy enumeration."""
     __repr__ = Enum.__str__
-    CHAINED = 1  #: Randomly insert and remove transitions between states of the original automaton
-    RANDOM = 2   #: At each state of the automaton, it is possible to reach any states, including the starting state
-    TOTAL = 3    #: Build a chained automaton (or a chaplet), where each state has only one possible transition towards another different state of the protocol, and where all the states of the protocol are covered
+    RANDOM = 1
+    """Randomly insert and remove transitions between states of the original automaton."""
+    TOTAL = 2
+    """At each state of the automaton, it is possible to reach any states, including the starting state."""
+    CHAINED = 3
+    """Build a chained automaton (or a chaplet), where each state has only one possible transition towards another different state of the protocol, and where all the states of the protocol are covered."""
 
 
 class AutomataMutator(Mutator):
@@ -91,24 +94,25 @@ class AutomataMutator(Mutator):
     >>> f1 = Field(String())
     >>> f2 = Field(Integer())
     >>> symbol = Symbol(fields=[f1, f2])
-
+    >>>
     >>> # Automaton definition
     >>> s1 = State()
     >>> s2 = State()
     >>> automata = Automata(s1, vocabulary=[symbol])
-
+    >>>
     >>> # Creation of a mutated automaton
     >>> mutator = AutomataMutator(automata, seed=42)
     >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM, startingState=s1, endingState=s2)  # doctest: +SKIP
     >>> assert isinstance(mutatedAutomata, Automata)  # doctest: +SKIP
-
+    >>>
     >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, [symbol])
     >>> visitor = Actor(automata=mutatedAutomata, initiator=True, abstractionLayer=abstractionLayer)  # doctest: +SKIP
-
+    >>>
     >>> # We start the visitor, thus the fuzzing of message formats will be applied when specific states are reached
     >>> visitor.start()  # doctest: +SKIP
+
     """
 
     def __init__(self,
