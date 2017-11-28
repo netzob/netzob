@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import threading
+import traceback
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -118,10 +119,9 @@ class Actor(threading.Thread):
     >>> from netzob.all import *
     >>> import time
     >>>
-    >>> # First we create the symbols
-    >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
-    >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
-    >>> symbolList = [aliceSymbol, bobSymbol]
+    >>> # First we create a symbol
+    >>> symbol = Symbol(name="Hello", fields=[Field("hello")])
+    >>> symbolList = [symbol]
     >>>
     >>> # Create the grammar
     >>> s0 = State(name="S0")
@@ -129,19 +129,41 @@ class Actor(threading.Thread):
     >>> s2 = State(name="S2")
     >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
     >>> mainTransition = Transition(startState=s1, endState=s1,
-    ...                             inputSymbol=aliceSymbol, outputSymbols=[bobSymbol],
-    ...                             name="hello")
+    ...                             inputSymbol=symbol, outputSymbols=[symbol],
+    ...                             name="T1")
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
     >>> automata = Automata(s0, symbolList)
+    >>>
+    >>> automata_ascii = automata.generateASCII()
+    >>> print(automata_ascii)
+    #=========================#
+    H           S0            H
+    #=========================#
+      |
+      | OpenChannelTransition
+      v
+    +-------------------------+   T1 (Hello;{Hello})
+    |                         | ---------------------+
+    |           S1            |                      |
+    |                         | <--------------------+
+    +-------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-------------------------+
+    |           S2            |
+    +-------------------------+
+    <BLANKLINE>
     >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=automata, abstractionLayer=abstractionLayer, initiator=False)
+    >>> alice = Actor(automata=automata, abstractionLayer=abstractionLayer, initiator=False, name='Alice')
     >>>
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=automata, abstractionLayer=abstractionLayer)
+    >>> bob = Actor(automata=automata, abstractionLayer=abstractionLayer, name='Bob')
+    >>> bob.nbMaxTransitions = 3
     >>>
     >>> alice.start()
     >>> bob.start()
@@ -150,6 +172,36 @@ class Actor(threading.Thread):
     >>>
     >>> bob.stop()
     >>> alice.stop()
+    >>>
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'Hello'
+      [+]   During transition 'T1', receiving expected output symbol 'Hello'
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'Hello'
+      [+]   During transition 'T1', receiving expected output symbol 'Hello'
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1', we reached the max number of transitions (3), so we stop
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Hello', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Hello'
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Hello', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Hello'
+      [+]   Transition 'T1' lead to state 'S1'
 
 
     **Example with a dedicated automaton for a client and a server**
@@ -165,7 +217,7 @@ class Actor(threading.Thread):
     >>> import time
     >>>
     >>> # First we create the symbols
-    >>> symbol = Symbol(name="Main-symbol", fields=[Field("hello")])
+    >>> symbol = Symbol(name="Hello", fields=[Field("hello")])
     >>> symbolList = [symbol]
     >>>
     >>> # Create Bob's automaton
@@ -176,12 +228,33 @@ class Actor(threading.Thread):
     >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
     >>> bob_firstTransition = Transition(startState=bob_s1, endState=bob_s2,
     ...                                  inputSymbol=symbol, outputSymbols=[symbol],
-    ...                                  name="hello")
+    ...                                  name="T1")
     >>> bob_secondTransition = Transition(startState=bob_s2, endState=bob_s2,
     ...                                   inputSymbol=symbol, outputSymbols=[symbol],
-    ...                                   name="hello")
+    ...                                   name="T2")
     >>> bob_closeTransition = CloseChannelTransition(startState=bob_s2, endState=bob_s2, name="Close")
     >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> automata_ascii = bob_automata.generateASCII()
+    >>> print(automata_ascii)
+                                 #========================#
+                                 H           S0           H
+                                 #========================#
+                                   |
+                                   | OpenChannelTransition
+                                   v
+                                 +------------------------+
+                                 |           S1           |
+                                 +------------------------+
+                                   |
+                                   | T1 (Hello;{Hello})
+                                   v
+        CloseChannelTransition   +------------------------+   T2 (Hello;{Hello})
+      +------------------------- |                        | ---------------------+
+      |                          |           S2           |                      |
+      +------------------------> |                        | <--------------------+
+                                 +------------------------+
+    <BLANKLINE>
     >>>
     >>> # Create Alice's automaton
     >>> alice_s0 = State(name="S0")
@@ -190,19 +263,41 @@ class Actor(threading.Thread):
     >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
     >>> alice_mainTransition = Transition(startState=alice_s1, endState=alice_s1,
     ...                                   inputSymbol=symbol, outputSymbols=[symbol],
-    ...                                   name="hello")
+    ...                                   name="T1")
     >>> alice_closeTransition = CloseChannelTransition(startState=alice_s1, endState=alice_s2, name="Close")
     >>> alice_automata = Automata(alice_s0, symbolList)
+    >>>
+    >>> automata_ascii = alice_automata.generateASCII()
+    >>> print(automata_ascii)
+    #=========================#
+    H           S0            H
+    #=========================#
+      |
+      | OpenChannelTransition
+      v
+    +-------------------------+   T1 (Hello;{Hello})
+    |                         | ---------------------+
+    |           S1            |                      |
+    |                         | <--------------------+
+    +-------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-------------------------+
+    |           S2            |
+    +-------------------------+
+    <BLANKLINE>
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer)
+    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob.nbMaxTransitions = 3
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False)
+    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
     >>>
     >>> alice.start()
     >>> bob.start()
@@ -211,6 +306,36 @@ class Actor(threading.Thread):
     >>>
     >>> bob.stop()
     >>> alice.stop()
+    >>>
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'Hello'
+      [+]   During transition 'T1', receiving expected output symbol 'Hello'
+      [+]   Transition 'T1' lead to state 'S2'
+      [+] At state 'S2'
+      [+]   Picking transition 'T2'
+      [+]   During transition 'T2', sending input symbol 'Hello'
+      [+]   During transition 'T2', receiving expected output symbol 'Hello'
+      [+]   Transition 'T2' lead to state 'S2'
+      [+] At state 'S2', we reached the max number of transitions (3), so we stop
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Hello', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Hello'
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Hello', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Hello'
+      [+]   Transition 'T1' lead to state 'S1'
 
 
     **Modification of the emitted symbol by a client through a callback**
@@ -226,14 +351,10 @@ class Actor(threading.Thread):
     ...                     last_sent_symbol, last_sent_message,
     ...                     last_received_symbol, last_received_message):
     ...
-    ...    # Just printing some data accessible within the callback
-    ...    print("Current state: '{}'".format(current_state))
     ...    if last_received_symbol:
     ...        last_received_symbol_name = last_received_symbol.name
     ...    else:
     ...        last_received_symbol_name = None
-    ...    print("[+] Last received symbol: '{}' with message: '{}'"
-    ...          .format(last_received_symbol_name, last_received_message))
     ...    presets = {}
     ...
     ...    # Building the output symbol by incrementing the value of the last
@@ -248,8 +369,7 @@ class Actor(threading.Thread):
     ...    else:
     ...        presets[current_symbol.fields[0]] = b'\x02'
     ...
-    ...    print("[+] Sending symbol '{}' with presets: '{}'"
-    ...          .format(current_symbol.name, presets))
+    ...    # Sending current symbol with specific preset
     ...    return (current_symbol, presets)
     >>>
     >>> # We create the symbols
@@ -265,13 +385,28 @@ class Actor(threading.Thread):
     >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
     >>> bob_mainTransition = Transition(startState=bob_s1, endState=bob_s1,
     ...                                 inputSymbol=symbol1, outputSymbols=[symbol1],
-    ...                                 name="hello")
+    ...                                 name="main transition")
     >>>
     >>> # Apply the callback on the main transition
     >>> bob_mainTransition.add_cbk_modify_symbol(cbk_modifySymbol)
     >>>
     >>> bob_closeTransition = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
     >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> automata_ascii = bob_automata.generateASCII()
+    >>> print(automata_ascii)
+    #========================#
+    H           S0           H
+    #========================#
+      |
+      | OpenChannelTransition
+      v
+    +------------------------+   main transition (Symbol;{Symbol}) [CBK modify symbol]
+    |                        | --------------------------------------------------------+
+    |           S1           |                                                         |
+    |                        | <-------------------------------------------------------+
+    +------------------------+
+    <BLANKLINE>
     >>>
     >>> # Create Alice's automaton
     >>> alice_s0 = State(name="S0")
@@ -290,32 +425,91 @@ class Actor(threading.Thread):
     ...     endState=alice_s4, name="Close")
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
+    >>> automata_ascii = alice_automata.generateASCII()
+    >>> print(automata_ascii)
+    #=========================#
+    H           S0            H
+    #=========================#
+      |
+      | OpenChannelTransition
+      v
+    +-------------------------+
+    |           S1            |
+    +-------------------------+
+      |
+      | T1 (Symbol;{Symbol})
+      v
+    +-------------------------+
+    |           S2            |
+    +-------------------------+
+      |
+      | T2 (Symbol;{Symbol})
+      v
+    +-------------------------+
+    |           S3            |
+    +-------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-------------------------+
+    |           S4            |
+    +-------------------------+
+    <BLANKLINE>
+    >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer)
+    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False)
+    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
     >>>
     >>> alice.start()
-    >>> bob.start()  # doctest: +SKIP
+    >>> bob.start()
     >>>
-    >>> time.sleep(1)  # doctest: +SKIP
-    Current state: 'S1'
-    [+] Last received symbol: 'None' with message: 'None'
-    [+] Sending symbol 'Symbol' with presets: '{Field: b'\x02'}'
-    Current state: 'S1'
-    [+] Last received symbol: 'Symbol' with message: 'b'\x00''
-    [+] Sending symbol 'Symbol' with presets: '{Field: b'\x01'}'
-    Current state: 'S1'
-    [+] Last received symbol: 'Symbol' with message: 'b'\x00''
-    [+] Sending symbol 'Symbol' with presets: '{Field: b'\x01'}'
+    >>> time.sleep(1)
     >>>
     >>> bob.stop()
     >>> alice.stop()
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'main transition'
+      [+]   During transition 'main transition', sending input symbol 'Symbol'
+      [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
+      [+]   During transition 'main transition', receiving expected output symbol 'Symbol'
+      [+]   Transition 'main transition' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'main transition'
+      [+]   During transition 'main transition', sending input symbol 'Symbol'
+      [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
+      [+]   During transition 'main transition', receiving expected output symbol 'Symbol'
+      [+]   Transition 'main transition' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'main transition'
+      [+]   During transition 'main transition', sending input symbol 'Symbol'
+      [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Symbol', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Symbol'
+      [+]   Transition 'T1' lead to state 'S2'
+      [+] At state 'S2'
+      [+]   Receiving input symbol 'Symbol', which corresponds to transition 'T2'
+      [+]   During transition 'T2', choosing output symbol 'Symbol'
+      [+]   Transition 'T2' lead to state 'S3'
+      [+] At state 'S3'
+      [+]   Picking transition 'Close'
+      [+]   Transition 'Close' lead to state 'S4'
 
 
     **Modification of the emitted symbol by a server through a callback**
@@ -332,14 +526,10 @@ class Actor(threading.Thread):
     ...                      last_sent_symbol, last_sent_message,
     ...                      last_received_symbol, last_received_message):
     ...
-    ...    # Just printing some data accessible within the callback
-    ...    print("Current state: '{}'".format(current_state))
     ...    if last_received_symbol:
     ...        last_received_symbol_name = last_received_symbol.name
     ...    else:
     ...        last_received_symbol_name = None
-    ...    print("[+] Last received symbol: '{}' with message: '{}'"
-    ...          .format(last_received_symbol_name, last_received_message))
     ...    presets = {}
     ...
     ...    # Building the output symbol by incrementing the value of the last received symbol
@@ -353,13 +543,12 @@ class Actor(threading.Thread):
     ...    else:
     ...        presets[current_symbol.fields[0]] = b'\x02'
     ...
-    ...    print("[+] Sending symbol '{}' with presets: '{}'"
-    ...          .format(current_symbol.name, presets))
+    ...    # Sending current symbol with specific presets
     ...    return (current_symbol, presets)
     >>>
     >>> # We create the symbols
-    >>> symbol1 = Symbol(fields=[Field(Raw(nbBytes=1))])
-    >>> symbol2 = Symbol(fields=[Field(Raw(b'\x00'))])
+    >>> symbol1 = Symbol(fields=[Field(Raw(nbBytes=1))], name='symbol1')
+    >>> symbol2 = Symbol(fields=[Field(Raw(b'\x00'))], name='symbol2')
     >>> symbolList = [symbol1, symbol2]
     >>>
     >>> # Create Bob's automaton
@@ -371,12 +560,43 @@ class Actor(threading.Thread):
     >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
     >>> bob_transition1 = Transition(startState=bob_s1, endState=bob_s2,
     ...                              inputSymbol=symbol2, outputSymbols=[symbol1],
-    ...                              name="hello")
+    ...                              name="T1")
     >>> bob_transition2 = Transition(startState=bob_s2, endState=bob_s3,
     ...                              inputSymbol=symbol2, outputSymbols=[symbol1],
-    ...                              name="hello")
+    ...                              name="T2")
     >>> bob_closeTransition = CloseChannelTransition(startState=bob_s3, endState=bob_s4, name="Close")
     >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> automata_ascii = bob_automata.generateASCII()
+    >>> print(automata_ascii)
+    #=========================#
+    H           S0            H
+    #=========================#
+      |
+      | OpenChannelTransition
+      v
+    +-------------------------+
+    |           S1            |
+    +-------------------------+
+      |
+      | T1 (symbol2;{symbol1})
+      v
+    +-------------------------+
+    |           S2            |
+    +-------------------------+
+      |
+      | T2 (symbol2;{symbol1})
+      v
+    +-------------------------+
+    |           S3            |
+    +-------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-------------------------+
+    |           S4            |
+    +-------------------------+
+    <BLANKLINE>
     >>>
     >>> # Create Alice's automaton
     >>> alice_s0 = State(name="S0")
@@ -392,29 +612,73 @@ class Actor(threading.Thread):
     >>>
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
+    >>> automata_ascii = alice_automata.generateASCII()
+    >>> print(automata_ascii)
+    #========================#
+    H           S0           H
+    #========================#
+      |
+      | OpenChannelTransition
+      v
+    +------------------------+   T1 (symbol1;{symbol1}) [CBK modify symbol]
+    |                        | ---------------------------------------------+
+    |           S1           |                                              |
+    |                        | <--------------------------------------------+
+    +------------------------+
+    <BLANKLINE>
+    >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer)
+    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False)
+    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
     >>>
-    >>> alice.start()  # doctest: +SKIP
+    >>> alice.start()
     >>> bob.start()
     >>>
-    >>> time.sleep(1)  # doctest: +SKIP
-    Current state: 'S1'
-    [+] Last received symbol: 'Symbol' with message: 'b'\x00''
-    [+] Sending symbol 'Symbol' with presets: '{Field: b'\x01'}'
-    Current state: 'S1'
-    [+] Last received symbol: 'Symbol' with message: 'b'\x00''
-    [+] Sending symbol 'Symbol' with presets: '{Field: b'\x01'}'
+    >>> time.sleep(1)
     >>>
     >>> bob.stop()
     >>> alice.stop()
+    >>>
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'symbol2'
+      [+]   During transition 'T1', receiving expected output symbol 'symbol1'
+      [+]   Transition 'T1' lead to state 'S2'
+      [+] At state 'S2'
+      [+]   Picking transition 'T2'
+      [+]   During transition 'T2', sending input symbol 'symbol2'
+      [+]   During transition 'T2', receiving expected output symbol 'symbol1'
+      [+]   Transition 'T2' lead to state 'S3'
+      [+] At state 'S3'
+      [+]   Picking transition 'Close'
+      [+]   Transition 'Close' lead to state 'S4'
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'symbol1', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'symbol1'
+      [+]   During transition 'T1', modifying output symbol to 'symbol1', through callback
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'symbol1', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'symbol1'
+      [+]   During transition 'T1', modifying output symbol to 'symbol1', through callback
+      [+]   Transition 'T1' lead to state 'S1'
+
 
 
     **Modification of the selected transition by a client through a callback**
@@ -430,22 +694,11 @@ class Actor(threading.Thread):
     ...                          last_sent_symbol, last_sent_message,
     ...                          last_received_symbol, last_received_message):
     ...
-    ...     # Just printing some data accessible within the callback
-    ...     print("In cbk_modifyTransition()")
-    ...     print("[+] Current state: '{}'".format(nextTransition.startState))
-    ...     print("[+] Available transitions: '{}'".format(availableTransitions))
-    ...     print("[+] Selected transition: '{}' with nextState: '{}'"
-    ...           .format(nextTransition, nextTransition.endState))
-    ...
     ...     # Modify the selected transition so that we change the next state
     ...     if nextTransition.endState == nextTransition.startState:
-    ...         print("[+] Next state is similar as the current state. "
-    ...               "We change this behavior by picking another transition")
     ...         availableTransitions.remove(nextTransition)
     ...         if len(availableTransitions) > 0:
     ...             nextTransition = random.choice(availableTransitions)
-    ...             print("[+] Changed transition: '{}' with nextState: '{}'"
-    ...                   .format(nextTransition, nextTransition.endState))
     ...     return nextTransition
     >>>
     >>> # We create the symbols
@@ -473,12 +726,46 @@ class Actor(threading.Thread):
     ...                              name="T4")
     >>> bob_closeTransition = CloseChannelTransition(startState=bob_s3, endState=bob_s4, name="Close")
     >>>
-    >>> # Apply the callback on the main states, which is the main state
+    >>> # Apply the callback on the main states
     >>> bob_s1.add_cbk_modify_transition(cbk_modifyTransition)
     >>> bob_s2.add_cbk_modify_transition(cbk_modifyTransition)
     >>>
-    >>> bob_closeTransition = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
     >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> automata_ascii = bob_automata.generateASCII()
+    >>> print(automata_ascii)
+    #============================#
+    H             S0             H
+    #============================#
+      |
+      | OpenChannelTransition
+      v
+    +----------------------------+   T1 (Symbol;{Symbol})
+    |                            | -----------------------+
+    | S1 [CBK modify transition] |                        |
+    |                            | <----------------------+
+    +----------------------------+
+      |
+      | T2 (Symbol;{Symbol})
+      v
+    +----------------------------+   T3 (Symbol;{Symbol})
+    |                            | -----------------------+
+    | S2 [CBK modify transition] |                        |
+    |                            | <----------------------+
+    +----------------------------+
+      |
+      | T4 (Symbol;{Symbol})
+      v
+    +----------------------------+
+    |             S3             |
+    +----------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +----------------------------+
+    |             S4             |
+    +----------------------------+
+    <BLANKLINE>
     >>>
     >>> # Create Alice's automaton
     >>> alice_s0 = State(name="S0")
@@ -489,33 +776,92 @@ class Actor(threading.Thread):
     ...                                   name="T1")
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
+    >>> automata_ascii = bob_automata.generateASCII()
+    >>> print(automata_ascii)
+    #============================#
+    H             S0             H
+    #============================#
+      |
+      | OpenChannelTransition
+      v
+    +----------------------------+   T1 (Symbol;{Symbol})
+    |                            | -----------------------+
+    | S1 [CBK modify transition] |                        |
+    |                            | <----------------------+
+    +----------------------------+
+      |
+      | T2 (Symbol;{Symbol})
+      v
+    +----------------------------+   T3 (Symbol;{Symbol})
+    |                            | -----------------------+
+    | S2 [CBK modify transition] |                        |
+    |                            | <----------------------+
+    +----------------------------+
+      |
+      | T4 (Symbol;{Symbol})
+      v
+    +----------------------------+
+    |             S3             |
+    +----------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +----------------------------+
+    |             S4             |
+    +----------------------------+
+    <BLANKLINE>
+    >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer)
+    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False)
+    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
     >>>
     >>> alice.start()
-    >>> bob.start()  # doctest: +SKIP
+    >>> bob.start()
     >>>
-    >>> time.sleep(1)  # doctest: +SKIP
-    In cbk_modifyTransition()
-    [+] Current state: 'S1'
-    [+] Available transitions: '[T1, T2]'
-    [+] Selected transition: 'T2' with nextState: 'S2'
-    In cbk_modifyTransition()
-    [+] Current state: 'S2'
-    [+] Available transitions: '[T3, T4]'
-    [+] Selected transition: 'T3' with nextState: 'S2'
-    [+] Next state is similar as the current state. We change this behavior by picking another transition
-    [+] Changed transition: 'T4' with nextState: 'S3'
+    >>> time.sleep(1)
     >>>
     >>> bob.stop()
     >>> alice.stop()
+    >>>
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T2'
+      [+]   Changing transition to 'T2', trough callback
+      [+]   During transition 'T2', sending input symbol 'Symbol'
+      [+]   During transition 'T2', receiving expected output symbol 'Symbol'
+      [+]   Transition 'T2' lead to state 'S2'
+      [+] At state 'S2'
+      [+]   Picking transition 'T4'
+      [+]   Changing transition to 'T4', trough callback
+      [+]   During transition 'T4', sending input symbol 'Symbol'
+      [+]   During transition 'T4', receiving expected output symbol 'Symbol'
+      [+]   Transition 'T4' lead to state 'S3'
+      [+] At state 'S3'
+      [+]   Picking transition 'Close'
+      [+]   Transition 'Close' lead to state 'S4'
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Symbol', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Symbol'
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Symbol', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Symbol'
+      [+]   Transition 'T1' lead to state 'S1'
 
 
     **Modification of the current transition of a server through a callback**
@@ -531,22 +877,11 @@ class Actor(threading.Thread):
     ...                          last_sent_symbol, last_sent_message,
     ...                          last_received_symbol, last_received_message):
     ...
-    ...     # Just printing some data accessible within the callback
-    ...     print("In cbk_modifyTransition()")
-    ...     print("[+] Current state: '{}'".format(nextTransition.startState))
-    ...     print("[+] Available transitions: '{}'".format(availableTransitions))
-    ...     print("[+] Selected transition: '{}' with nextState: '{}'"
-    ...           .format(nextTransition, nextTransition.endState))
-    ...
     ...     # Modify the selected transition so that we change the next state
     ...     if nextTransition.endState == nextTransition.startState:
-    ...         print("[+] Next state is similar as the current state. "
-    ...               "We change this behavior by picking another transition")
     ...         availableTransitions.remove(nextTransition)
     ...         if len(availableTransitions) > 0:
     ...             nextTransition = random.choice(availableTransitions)
-    ...             print("[+] Changed transition: '{}' with nextState: '{}'"
-    ...                   .format(nextTransition, nextTransition.endState))
     ...     return nextTransition
     >>>
     >>> # We create the symbols
@@ -561,6 +896,21 @@ class Actor(threading.Thread):
     ...                                 inputSymbol=symbol1, outputSymbols=symbolList,
     ...                                 name="T1")
     >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> automata_ascii = bob_automata.generateASCII()
+    >>> print(automata_ascii)
+    #========================#
+    H           S0           H
+    #========================#
+      |
+      | OpenChannelTransition
+      v
+    +------------------------+   T1 (Symbol;{Symbol})
+    |                        | -----------------------+
+    |           S1           |                        |
+    |                        | <----------------------+
+    +------------------------+
+    <BLANKLINE>
     >>>
     >>> # Create Alice's automaton
     >>> alice_s0 = State(name="S0")
@@ -589,6 +939,41 @@ class Actor(threading.Thread):
     >>>
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
+    >>> automata_ascii = alice_automata.generateASCII()
+    >>> print(automata_ascii)
+    #============================#
+    H             S0             H
+    #============================#
+      |
+      | OpenChannelTransition
+      v
+    +----------------------------+   T1 (Symbol;{Symbol})
+    |                            | -----------------------+
+    | S1 [CBK modify transition] |                        |
+    |                            | <----------------------+
+    +----------------------------+
+      |
+      | T2 (Symbol;{Symbol})
+      v
+    +----------------------------+   T3 (Symbol;{Symbol})
+    |                            | -----------------------+
+    | S2 [CBK modify transition] |                        |
+    |                            | <----------------------+
+    +----------------------------+
+      |
+      | T4 (Symbol;{Symbol})
+      v
+    +----------------------------+
+    |             S3             |
+    +----------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +----------------------------+
+    |             S4             |
+    +----------------------------+
+    <BLANKLINE>
+    >>>
     >>> # Create Bob actor (a server)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
@@ -603,21 +988,46 @@ class Actor(threading.Thread):
     >>> bob.start()
     >>>
     >>> time.sleep(1)
-    In cbk_modifyTransition()
-    [+] Current state: 'S1'
-    [+] Available transitions: '[T1, T2]'
-    [+] Selected transition: 'T1' with nextState: 'S1'
-    [+] Next state is similar as the current state. We change this behavior by picking another transition
-    [+] Changed transition: 'T2' with nextState: 'S2'
-    In cbk_modifyTransition()
-    [+] Current state: 'S2'
-    [+] Available transitions: '[T3, T4]'
-    [+] Selected transition: 'T3' with nextState: 'S2'
-    [+] Next state is similar as the current state. We change this behavior by picking another transition
-    [+] Changed transition: 'T4' with nextState: 'S3'
     >>>
     >>> bob.stop()
     >>> alice.stop()
+    >>>
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'Symbol'
+      [+]   During transition 'T1', receiving expected output symbol 'Symbol'
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'Symbol'
+      [+]   During transition 'T1', receiving expected output symbol 'Symbol'
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'Symbol'
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Symbol', which corresponds to transition 'T1'
+      [+]   Changing transition to 'T2', trough callback
+      [+]   During transition 'T2', choosing output symbol 'Symbol'
+      [+]   Transition 'T2' lead to state 'S2'
+      [+] At state 'S2'
+      [+]   Receiving input symbol 'Symbol', which corresponds to transition 'T3'
+      [+]   Changing transition to 'T4', trough callback
+      [+]   During transition 'T4', choosing output symbol 'Symbol'
+      [+]   Transition 'T4' lead to state 'S3'
+      [+] At state 'S3'
+      [+]   Picking transition 'Close'
+      [+]   Transition 'Close' lead to state 'S4'
 
 
     **Transition with no input symbol**
@@ -650,15 +1060,42 @@ class Actor(threading.Thread):
     >>> bob_s2 = State(name="S2")
     >>> bob_s3 = State(name="S3")
     >>> bob_s4 = State(name="S4")
-    >>> OpenChannelTransition(bob_s0, bob_s1, name="Open")
-    Open
-    >>> Transition(bob_s1, bob_s2, inputSymbol=helloAlice, outputSymbols=[helloBob], name="Hello")
-    Hello
-    >>> Transition(bob_s2, bob_s3, inputSymbol=None, outputSymbols=[bye], name="Wait for bye")
-    Wait for bye
-    >>> CloseChannelTransition(bob_s3, bob_s4, name="Close")
-    Close
+    >>> topen = OpenChannelTransition(bob_s0, bob_s1, name="Open")
+    >>> t1 = Transition(bob_s1, bob_s2, inputSymbol=helloAlice, outputSymbols=[helloBob], name="T1")
+    >>> t2 = Transition(bob_s2, bob_s3, inputSymbol=None, outputSymbols=[bye], name="T2")
+    >>> tclose = CloseChannelTransition(bob_s3, bob_s4, name="Close")
     >>> bob_automata = Automata(bob_s0, allSymbols)
+    >>>
+    >>> automata_ascii = bob_automata.generateASCII()
+    >>> print(automata_ascii)
+    #=============================#
+    H             S0              H
+    #=============================#
+      |
+      | OpenChannelTransition
+      v
+    +-----------------------------+
+    |             S1              |
+    +-----------------------------+
+      |
+      | T1 (HelloAlice;{HelloBob})
+      v
+    +-----------------------------+
+    |             S2              |
+    +-----------------------------+
+      |
+      | T2 (Empty Symbol;{Bye})
+      v
+    +-----------------------------+
+    |             S3              |
+    +-----------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-----------------------------+
+    |             S4              |
+    +-----------------------------+
+    <BLANKLINE>
     >>>
     >>> # Alice
     >>> alice_s0 = State(name="S0")
@@ -675,6 +1112,37 @@ class Actor(threading.Thread):
     >>> CloseChannelTransition(alice_s3, alice_s4, name="Close")
     Close
     >>> alice_automata = Automata(alice_s0, allSymbols)
+    >>>
+    >>> automata_ascii = alice_automata.generateASCII()
+    >>> print(automata_ascii)
+    #================================#
+    H               S0               H
+    #================================#
+      |
+      | OpenChannelTransition
+      v
+    +--------------------------------+
+    |               S1               |
+    +--------------------------------+
+      |
+      | Hello (HelloAlice;{HelloBob})
+      v
+    +--------------------------------+
+    |               S2               |
+    +--------------------------------+
+      |
+      | Bye (Empty Symbol;{Bye})
+      v
+    +--------------------------------+
+    |               S3               |
+    +--------------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +--------------------------------+
+    |               S4               |
+    +--------------------------------+
+    <BLANKLINE>
     >>>
     >>> # Create actors: Alice (a UDP server) and Bob (a UDP client)
     >>> # Alice
@@ -698,6 +1166,36 @@ class Actor(threading.Thread):
     >>>
     >>> bob.stop()
     >>> alice.stop()
+    >>>
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'HelloAlice'
+      [+]   During transition 'T1', receiving expected output symbol 'HelloBob'
+      [+]   Transition 'T1' lead to state 'S2'
+      [+] At state 'S2'
+      [+]   Picking transition 'T2'
+      [+]   During transition 'T2', sending input symbol 'Empty Symbol'
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'HelloAlice', which corresponds to transition 'Hello'
+      [+]   During transition 'Hello', choosing output symbol 'HelloBob'
+      [+]   Transition 'Hello' lead to state 'S2'
+      [+] At state 'S2'
+      [+]   Receiving no symbol (EmptySymbol), which corresponds to transition 'Bye'
+      [+]   During transition 'Bye', choosing output symbol 'Bye'
+      [+]   Transition 'Bye' lead to state 'S3'
+      [+] At state 'S3'
+      [+]   Picking transition 'Close'
+      [+]   Transition 'Close' lead to state 'S4'
 
 
     """
@@ -716,6 +1214,13 @@ class Actor(threading.Thread):
         self.abstractionLayer = abstractionLayer
         self.__stopEvent = threading.Event()
 
+        # Max number of transitions the actor can browse
+        self.__nbMaxTransitions = None   # -1 means no limit
+        self._currentnbTransitions = 0
+
+        # Initiate visit log, which contains the information regarding the different transitions and states visited by the actor
+        self.visit_log = []
+
     def run(self):
         """Start the visit of the automaton from its initial state."""
 
@@ -724,18 +1229,23 @@ class Actor(threading.Thread):
             try:
                 self._logger.debug("Current state for actor '{}': '{}'.".format(self.name, currentState))
                 if self.initiator:
-                    currentState = currentState.executeAsInitiator(self.abstractionLayer)
+                    currentState = currentState.executeAsInitiator(self.abstractionLayer, self.visit_log)
                 else:
-                    currentState = currentState.executeAsNotInitiator(self.abstractionLayer)
+                    currentState = currentState.executeAsNotInitiator(self.abstractionLayer, self.visit_log)
 
                 if currentState is None:
                     self._logger.debug("The execution of transition did not returned a state, for actor '{}'".format(self.name))
                     self.stop()
 
+                self._currentnbTransitions += 1
+                if self.nbMaxTransitions is not None and self._currentnbTransitions >= self.nbMaxTransitions:
+                    self.visit_log.append("  [+] At state '{}', we reached the max number of transitions ({}), so we stop".format(currentState.name, self.nbMaxTransitions))
+                    self.stop()
+
             except Exception as e:
-                self._logger.warning("Exception raised for actor '{}' when on the execution of state {}.".format(self.name, currentState.name))
-                self._logger.warning("Exception error for actor '{}': {}".format(self.name, str(e)))
-                #self._logger.warning(traceback.format_exc())
+                self._logger.debug("Exception raised for actor '{}' when on the execution of state {}.".format(self.name, currentState.name))
+                self._logger.debug("Exception error for actor '{}': {}".format(self.name, str(e)))
+                #self._logger.warn(traceback.format_exc())
                 self.stop()
 
         self._logger.debug("Actor '{}' has finished to execute".format(self.name))
@@ -811,3 +1321,13 @@ class Actor(threading.Thread):
         if abstractionLayer is None:
             raise TypeError("AbstractionLayer cannot be None")
         self.__abstractionLayer = abstractionLayer
+
+    @public_api
+    @property
+    def nbMaxTransitions(self):
+        return self.__nbMaxTransitions
+
+    @nbMaxTransitions.setter  # type: ignore
+    @typeCheck(int)
+    def nbMaxTransitions(self, nbMaxTransitions):
+        self.__nbMaxTransitions = nbMaxTransitions

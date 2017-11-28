@@ -326,7 +326,7 @@ class AbstractionLayer(object):
             self._logger.debug("Timeout on channel.write(...)")
             raise
         except Exception as e:
-            self._logger.warn("Exception on channel.write(...): '{}'".format(e))
+            self._logger.debug("Exception on channel.write(...): '{}'".format(e))
             raise
 
         self.last_sent_symbol = symbol
@@ -397,7 +397,7 @@ class AbstractionLayer(object):
             self._logger.debug("Timeout on channel.read()")
             raise
         except Exception as e:
-            self._logger.warn("Exception on channel.read(): '{}'".format(e))
+            self._logger.debug("Exception on channel.read(): '{}'".format(e))
             raise
 
         self._logger.debug("Received: {}".format(repr(data)))

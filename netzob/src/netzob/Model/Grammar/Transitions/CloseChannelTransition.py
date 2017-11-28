@@ -109,7 +109,7 @@ class CloseChannelTransition(AbstractTransition):
             priority=20)
 
     @typeCheck(AbstractionLayer)
-    def executeAsInitiator(self, abstractionLayer):
+    def executeAsInitiator(self, abstractionLayer, visit_log):
         """Execute the current transition and close the communication channel. Being an initiator or not
         changes nothing from the close channel transition point of view.
 
@@ -118,10 +118,10 @@ class CloseChannelTransition(AbstractTransition):
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-        return self.__execute(abstractionLayer)
+        return self.__execute(abstractionLayer, visit_log)
 
     @typeCheck(AbstractionLayer)
-    def executeAsNotInitiator(self, abstractionLayer):
+    def executeAsNotInitiator(self, abstractionLayer, visit_log):
         """Execute the current transition and close the communication channel. Being an initiator or not
         changes nothing from the open close channel transition point of view.
 
@@ -130,10 +130,10 @@ class CloseChannelTransition(AbstractTransition):
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-        return self.__execute(abstractionLayer)
+        return self.__execute(abstractionLayer, visit_log)
 
     @typeCheck(AbstractionLayer)
-    def __execute(self, abstractionLayer):
+    def __execute(self, abstractionLayer, visit_log):
         """Execute the current transition and close the communication channel. Being an initiator or not
         changes nothing from the close channel transition point of view.
 
@@ -159,6 +159,8 @@ class CloseChannelTransition(AbstractTransition):
             raise e
 
         self.active = False
+
+        visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
         return self.endState
 
     @public_api

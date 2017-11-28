@@ -109,7 +109,7 @@ class OpenChannelTransition(AbstractTransition):
             priority=0)
 
     @typeCheck(AbstractionLayer)
-    def executeAsInitiator(self, abstractionLayer):
+    def executeAsInitiator(self, abstractionLayer, visit_log):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
@@ -118,10 +118,10 @@ class OpenChannelTransition(AbstractTransition):
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-        return self.__execute(abstractionLayer)
+        return self.__execute(abstractionLayer, visit_log)
 
     @typeCheck(AbstractionLayer)
-    def executeAsNotInitiator(self, abstractionLayer):
+    def executeAsNotInitiator(self, abstractionLayer, visit_log):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
@@ -130,10 +130,10 @@ class OpenChannelTransition(AbstractTransition):
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-        return self.__execute(abstractionLayer)
+        return self.__execute(abstractionLayer, visit_log)
 
     @typeCheck(AbstractionLayer)
-    def __execute(self, abstractionLayer):
+    def __execute(self, abstractionLayer, visit_log):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
@@ -152,13 +152,15 @@ class OpenChannelTransition(AbstractTransition):
         try:
             abstractionLayer.openChannel()
         except Exception as e:
-            self._logger.warning(
+            self._logger.debug(
                 "An error occured which prevented the good execution of the open channel transition"
             )
             self.active = False
             raise e
 
         self.active = False
+
+        visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
         return self.endState
 
     @public_api

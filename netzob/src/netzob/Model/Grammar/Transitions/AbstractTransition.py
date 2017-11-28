@@ -97,11 +97,11 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     # Execution abstract methods
 
     @abc.abstractmethod
-    def executeAsInitiator(self, abstractionLayer):
+    def executeAsInitiator(self, abstractionLayer, visit_log):
         pass
 
     @abc.abstractmethod
-    def executeAsNotInitiator(self, abstractionLayer):
+    def executeAsNotInitiator(self, abstractionLayer, visit_log):
         pass
 
     # Priorities

@@ -189,7 +189,7 @@ class Transition(AbstractTransition):
         self.outputSymbolReactionTimes = outputSymbolReactionTimes  # TODO: not yet implemented
 
     @typeCheck(AbstractionLayer)
-    def executeAsInitiator(self, abstractionLayer):
+    def executeAsInitiator(self, abstractionLayer, visit_log):
         """Execute the current transition as an initiator.
 
         :param abstractionLayer: The abstraction layer which provides access
@@ -218,6 +218,7 @@ class Transition(AbstractTransition):
         # Retrieve the symbol to send
         symbol_to_send = self.inputSymbol
         symbol_presets = {}
+        visit_log.append("  [+]   During transition '{}', sending input symbol '{}'".format(self.name, str(symbol_to_send)))
 
         # If a callback is defined, we can change or modify the selected symbol
         self._logger.debug("Test if a callback function is defined at transition '{}'".format(self.name))
@@ -230,21 +231,23 @@ class Transition(AbstractTransition):
                                                    abstractionLayer.last_sent_message,
                                                    abstractionLayer.last_received_symbol,
                                                    abstractionLayer.last_received_message)
+            visit_log.append("  [+]   During transition '{}', modifying input symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
             self._logger.debug("No callback function is defined at transition '{}'".format(self.name))
 
         # Write a symbol on the channel
-        try:
-            abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
-        except socket.timeout:
-            self._logger.debug("Timeout on abstractionLayer.readSymbol()")
-            self.active = False
-            raise
-        except Exception as e:
-            self.active = False
-            errorMessage = "An error occured while executing the transition {} as an initiator: {}".format(self.name, e)
-            self._logger.warning(errorMessage)
-            raise Exception(errorMessage)
+        if not isinstance(symbol_to_send, EmptySymbol):
+            try:
+                abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
+            except socket.timeout:
+                self._logger.debug("Timeout on abstractionLayer.readSymbol()")
+                self.active = False
+                raise
+            except Exception as e:
+                self.active = False
+                errorMessage = "An error occured while executing the transition {} as an initiator: {}".format(self.name, e)
+                self._logger.debug(errorMessage)
+                raise Exception(errorMessage)
 
         # Waits for the reception of a symbol
         try:
@@ -256,7 +259,7 @@ class Transition(AbstractTransition):
         except Exception as e:
             self.active = False
             errorMessage = "An error occured while executing the transition {} as an initiator: {}".format(self.name, e)
-            self._logger.warning(errorMessage)
+            self._logger.debug(errorMessage)
             raise Exception(errorMessage)
 
         # Computes the next state following the received symbol
@@ -268,23 +271,28 @@ class Transition(AbstractTransition):
 
         if received_symbol in self.outputSymbols:
             self.active = False
+            visit_log.append("  [+]   During transition '{}', receiving expected output symbol '{}'".format(self.name, str(received_symbol)))
+            visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
+
             return self.endState
         else:
             self.active = False
             self._logger.debug("Received symbol '{}' was unexpected.".format(received_symbol.name))
             if isinstance(received_symbol, UnknownSymbol):
+                visit_log.append("  [+]   During transition '{}', receiving unknown symbol".format(self.name))
                 raise ReadUnknownSymbolException(current_state=self.startState,
                                                  current_transition=self,
                                                  received_symbol=received_symbol,
                                                  received_message=received_message)
             else:
+                visit_log.append("  [+]   During transition '{}', receiving unexpected output symbol '{}'".format(self.name, str(received_symbol)))
                 raise ReadUnexpectedSymbolException(current_state=self.startState,
                                                     current_transition=self,
                                                     received_symbol=received_symbol,
                                                     received_message=received_message)
 
     @typeCheck(AbstractionLayer)
-    def executeAsNotInitiator(self, abstractionLayer):
+    def executeAsNotInitiator(self, abstractionLayer, visit_log):
         """Execute the current transition as a not initiator.
 
         :param abstractionLayer: The abstraction layer which provides access to
@@ -304,7 +312,7 @@ class Transition(AbstractTransition):
         self.active = True
 
         # Pick the output symbol to emit
-        (symbol_to_send, symbol_presets) = self.__pickOutputSymbol(abstractionLayer)
+        (symbol_to_send, symbol_presets) = self.__pickOutputSymbol(abstractionLayer, visit_log)
         if symbol_to_send is None:
             self._logger.debug("No output symbol to send, we pick an EmptySymbol as output symbol.")
             symbol_to_send = EmptySymbol()
@@ -321,16 +329,20 @@ class Transition(AbstractTransition):
             self.active = False
             return None
         except Exception as e:
-            self._logger.warning("An exception occured when sending a symbol from the abstraction layer: '{}'".format(e))
+            self._logger.debug("An exception occured when sending a symbol from the abstraction layer: '{}'".format(e))
             self.active = False
-            # self._logger.warning(traceback.format_exc())
+            # self._logger.debug(traceback.format_exc())
             raise e
 
         # Return the endState
         self.active = False
+
+        # Update visit log
+        visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
+
         return self.endState
 
-    def __pickOutputSymbol(self, abstractionLayer):
+    def __pickOutputSymbol(self, abstractionLayer, visit_log):
         """Picks the output symbol to emit following their probability.
 
         It computes the probability of symbols which don't explicitly have one
@@ -380,6 +392,9 @@ class Transition(AbstractTransition):
         symbol_to_send = random.choice(distribution)
         symbol_presets = {}
 
+        # Update visit log
+        visit_log.append("  [+]   During transition '{}', choosing output symbol '{}'".format(self.name, str(symbol_to_send)))
+
         # Potentialy modify the selected symbol if a callback is defined
         self._logger.debug("Test if a callback function is defined at transition '{}'".format(self.name))
         for cbk in self.cbk_modify_symbol:
@@ -391,6 +406,7 @@ class Transition(AbstractTransition):
                                                    abstractionLayer.last_sent_message,
                                                    abstractionLayer.last_received_symbol,
                                                    abstractionLayer.last_received_message)
+            visit_log.append("  [+]   During transition '{}', modifying output symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
             self._logger.debug("No callback function is defined at transition '{}'".format(self.name))
 

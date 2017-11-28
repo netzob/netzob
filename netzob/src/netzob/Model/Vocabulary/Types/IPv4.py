@@ -82,7 +82,6 @@ class IPv4(AbstractType):
     :var network: A constraint over the network. The parsed data belongs to this network or not.
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
-    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype network: :class:`str` or :class:`netaddr.IPNetwork`
 
 

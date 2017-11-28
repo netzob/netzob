@@ -618,8 +618,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f3 = Field("hello", name="f3")
         >>> fheader = Field(name="fheader")
         >>> fheader.fields = [f1, f2, f3]
-        >>> fheader.getField('f2')
-        f2
         >>> type(fheader.getField('f2'))
         <class 'netzob.Model.Vocabulary.Field.Field'>
 

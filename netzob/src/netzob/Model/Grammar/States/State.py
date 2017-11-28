@@ -93,7 +93,7 @@ class State(AbstractState):
         self.__transitions = []
 
     @typeCheck(AbstractionLayer)
-    def executeAsInitiator(self, abstractionLayer):
+    def executeAsInitiator(self, abstractionLayer, visit_log):
         """This method picks the next available transition and executes it.
 
         :parameter abstractionLayer: The abstraction layer that will be used to access to the channel.
@@ -108,7 +108,7 @@ class State(AbstractState):
         self.active = True
 
         # Pick the next transition
-        nextTransition = self.__pickNextTransition(abstractionLayer)
+        nextTransition = self.__pickNextTransition(abstractionLayer, visit_log)
         self._logger.debug("Next transition: {0}.".format(nextTransition))
 
         if nextTransition is None:
@@ -117,7 +117,7 @@ class State(AbstractState):
 
         # Execute picked transition as an initiator
         try:
-            nextState = nextTransition.executeAsInitiator(abstractionLayer)
+            nextState = nextTransition.executeAsInitiator(abstractionLayer, visit_log)
             self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
         except Exception as e:
             self.active = False
@@ -130,10 +130,11 @@ class State(AbstractState):
                 format(str(nextTransition), self.name))
 
         self.active = False
+
         return nextState
 
     @typeCheck(AbstractionLayer)
-    def executeAsNotInitiator(self, abstractionLayer):
+    def executeAsNotInitiator(self, abstractionLayer, visit_log):
         """This method executes the current state as not an initiator.
 
         :param abstractionLayer: The abstraction layer from which it receives messages.
@@ -154,7 +155,7 @@ class State(AbstractState):
 
         # if no transition exists we quit
         if len(self.transitions) == 0:
-            self._logger.warn("The current state has no transitions available.")
+            self._logger.debug("The current state has no transitions available.")
             self.active = False
             raise Exception("No transition available for this state.")
 
@@ -173,7 +174,11 @@ class State(AbstractState):
                 nextTransition = self.transitions[0]
 
         if nextTransition is not None:
-            nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
+
+            visit_log.append("  [+] At state '{}'".format(self.name))
+            visit_log.append("  [+]   Picking transition '{}'".format(str(nextTransition)))
+
+            nextState = nextTransition.executeAsNotInitiator(abstractionLayer, visit_log)
             self._logger.debug("Transition '{0}' leads to state: {1}.".format(
                 str(nextTransition), str(nextState)))
             if nextState is None:
@@ -181,6 +186,7 @@ class State(AbstractState):
                 raise Exception(
                     "The execution of transition {0} on state {1} did not return the next state.".
                     format(nextTransition.name, self.name))
+
             return nextState
 
         # Else, we wait to receive a symbol
@@ -199,6 +205,9 @@ class State(AbstractState):
                     nextTransition = transition
                     break
 
+            visit_log.append("  [+] At state '{}'".format(self.name))
+            visit_log.append("  [+]   Receiving input symbol '{}', which corresponds to transition '{}'".format(str(received_symbol), str(nextTransition)))
+
         except socket.timeout:
             self._logger.debug("Timeout on abstractionLayer.readSymbol()")
 
@@ -209,6 +218,10 @@ class State(AbstractState):
                 if isinstance(transition.inputSymbol, EmptySymbol):
                     self._logger.debug("The transition '{}' expects an EmptySymbol as input symbol ".format(transition.name))
                     nextTransition = transition
+
+                    visit_log.append("  [+] At state '{}'".format(self.name))
+                    visit_log.append("  [+]   Receiving no symbol (EmptySymbol), which corresponds to transition '{}'".format(str(nextTransition)))
+
                     break
             else:
                 self._logger.debug("No transition expects an EmptySymbol as input symbol")
@@ -216,9 +229,9 @@ class State(AbstractState):
                 raise ReadSymbolTimeoutException(current_state=self, current_transition=None)
 
         except Exception as e:
-            self._logger.warning("An exception occured when receiving a symbol from the abstraction layer.")
+            self._logger.debug("An exception occured when receiving a symbol from the abstraction layer.")
             self.active = False
-            #self._logger.warning(traceback.format_exc())
+            #self._logger.debug(traceback.format_exc())
             raise
 
         # If a callback function is defined, we call it in order to
@@ -235,6 +248,8 @@ class State(AbstractState):
                                  abstractionLayer.last_sent_message,
                                  abstractionLayer.last_received_symbol,
                                  abstractionLayer.last_received_message)
+
+            visit_log.append("  [+]   Changing transition to '{}', trough callback".format(str(nextTransition)))
         else:
             self._logger.debug("No callback function is defined at state '{}'".format(self.name))
 
@@ -253,13 +268,14 @@ class State(AbstractState):
                                                     received_symbol=received_symbol,
                                                     received_message=received_message)
         else:
-            nextState = nextTransition.executeAsNotInitiator(abstractionLayer)
+            nextState = nextTransition.executeAsNotInitiator(abstractionLayer, visit_log)
             self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
 
         self.active = False
+
         return nextState
 
-    def __pickNextTransition(self, abstractionLayer):
+    def __pickNextTransition(self, abstractionLayer, visit_log):
         """Returns the next transition by considering the priority
         and a random choice.
 
@@ -284,6 +300,10 @@ class State(AbstractState):
         # Randomly select the next transition
         nextTransition = random.choice(availableTransitions)
 
+        # Update visit log
+        visit_log.append("  [+] At state '{}'".format(self.name))
+        visit_log.append("  [+]   Picking transition '{}'".format(str(nextTransition)))
+
         # If a callback function is defined, we call it in order to
         # execute an external program that may change the selected
         # transition
@@ -297,6 +317,7 @@ class State(AbstractState):
                                  abstractionLayer.last_sent_message,
                                  abstractionLayer.last_received_symbol,
                                  abstractionLayer.last_received_message)
+            visit_log.append("  [+]   Changing transition to '{}', trough callback".format(str(nextTransition)))
         else:
             self._logger.debug("No callback function is defined at state '{}'".format(self.name))
 
