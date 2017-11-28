@@ -76,15 +76,17 @@ class Size(AbstractRelationVariableLeaf):
                      value is Raw(nbBytes=1).
     :param factor: Specify that the initial size value (always
                    expressed in bits) should be divided by this
-                   factor. The default value is ``1.0/8``. For example, to express a size in bytes,
-                   the factor should be ``1.0/8``, whereas to express a size in bits, the factor should be ``1.0``.
+                   factor. The default value is ``1.0/8``. For example, to
+                   express a size in bytes, the factor should be ``1.0/8``,
+                   whereas to express a size in bits, the factor should be
+                   ``1.0``.
     :param offset: Specify that an offset value should be added to
                    the final size value (after applying the factor
                    parameter). The default value is 0.
     :param name: The name of the variable. If None, the name
                  will be generated.
-    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`, required
-    :type dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`, optional
+    :type targets: a :class:`list` of :class:`~netzob.Model.Vocabulary.Field.Field`, required
+    :type dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, optional
     :type factor: :class:`float`, optional
     :type offset: :class:`int`, optional
     :type name: :class:`str`, optional
@@ -92,12 +94,19 @@ class Size(AbstractRelationVariableLeaf):
 
     The Size class provides the following public variables:
 
+    :var: targets: The list of variables that are required before computing
+                   the value of this relation
     :var dataType: The type of the data.
-    :var factor: Defines the multiplication factor to apply to the targeted length.
+    :var factor: Defines the multiplication factor to apply to the targeted
+                 length.
     :var offset: Defines the offset to apply to the computed length.
-    :vartype dataType: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
+    :var varType: The type of the variable (Read-only).
+    :vartype targets: a list of
+                      :class:`~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+    :vartype dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
     :vartype factor: :class:`float`
     :vartype offset: :class:`int`
+    :vartype varType: :class:`str`
 
 
     The following example shows how to define a size field with a

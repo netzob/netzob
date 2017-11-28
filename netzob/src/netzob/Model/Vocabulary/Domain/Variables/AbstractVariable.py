@@ -143,7 +143,7 @@ class AbstractVariable(object):
     def varType(self):
         """The type of the variable (Read-only).
 
-        :type: `str`
+        :type: :class:`str`
         :raises: :class:`AttributeError` on write attempt
         """
         return self.__varType

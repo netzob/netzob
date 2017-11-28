@@ -71,6 +71,13 @@ class Alt(AbstractVariableNode):
     :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
     :type callback: callable function taking two positional arguments returning an integer, optional
 
+    The Alt class provides the following public variables:
+
+    :var children: The sorted typed list of children attached to the variable node.
+    :var varType: The type of the variable (Read-only).
+    :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
+    :vartype varType: :class:`str`
+
 
     For example, the following code denotes an alternate object that
     accepts either the string "filename1.txt" or the string

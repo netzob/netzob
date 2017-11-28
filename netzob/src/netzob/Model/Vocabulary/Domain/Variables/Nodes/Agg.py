@@ -75,6 +75,13 @@ class Agg(AbstractVariableNode):
     right. To do so, the flag ``SELF`` is available, and should only
     be used in the last position of the aggregate (see example below).
 
+    The Agg class provides the following public variables:
+
+    :var children: The sorted typed list of children attached to the variable node.
+    :var varType: The type of the variable (Read-only).
+    :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
+    :vartype varType: :class:`str`
+
 
     **Aggregate examples**
 

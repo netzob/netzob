@@ -80,12 +80,30 @@ class Padding(AbstractRelationVariableLeaf):
                    parameter). The default value is 0.
     :param name: The name of the variable. If None, the name
                  will be generated.
-    :type targets: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
-    :type data: a :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>` or a :class:`callable`, required
+    :type targets: a :class:`list` of :class:`~netzob.Model.Vocabulary.Field`, required
+    :type data: a :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
+                or a :class:`callable`, required
     :type modulo: :class:`int`, required
     :type factor: :class:`float`, optional
     :type offset: :class:`int`, optional
     :type name: :class:`str`, optional
+
+
+    The Padding class provides the following public variables:
+
+    :var: targets: The list of variables that are required before computing
+                   the value of this relation
+    :var dataType: The type of the data.
+    :var factor: Defines the multiplication factor to apply to the targeted
+                 length.
+    :var offset: Defines the offset to apply to the computed length.
+    :var varType: The type of the variable (Read-only).
+    :vartype dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
+    :vartype factor: :class:`float`
+    :vartype offset: :class:`int`
+    :vartype varType: :class:`str`
+    :vartype targets: a list of
+                      :class:`~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
 
 
     **Callback prototype**
