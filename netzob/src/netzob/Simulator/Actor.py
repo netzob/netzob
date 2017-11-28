@@ -93,6 +93,15 @@ class Actor(threading.Thread):
     :vartype name: :class:`str`
 
 
+    .. automethod:: netzob.Simulator.Actor.Actor.start
+
+    .. automethod:: netzob.Simulator.Actor.Actor.stop
+
+    .. automethod:: netzob.Simulator.Actor.Actor.isActive
+
+    .. automethod:: netzob.Simulator.Actor.Actor.generateLog
+
+
     **Example with a common automaton for a client and a server**
 
     For instance, we can create two very simple network Actors which
@@ -754,6 +763,18 @@ class Actor(threading.Thread):
         :rtype: :class:`bool`
         """
         return not self.__stopEvent.is_set()
+
+    @public_api
+    def generateLog(self):
+        """Return the log of the transitions and states visited by the actor.
+
+        """
+        result = "Activity log for actor '{}':\n".format(self.name)
+        result += "\n".join(self.visit_log)
+        return result
+
+
+    ## Properties
 
     @public_api
     @property
