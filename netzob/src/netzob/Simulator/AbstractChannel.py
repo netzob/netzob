@@ -47,6 +47,8 @@ import binascii
 from fcntl import ioctl
 import subprocess
 from typing import Any, Callable, List, Type  # noqa: F401
+import array
+import sys
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -427,7 +429,7 @@ class NetUtils(object):
     @staticmethod
     def getLocalMacAddress(interface):
         """
-        Retrieve local MAC address from the network interface name
+        Retrieve local MAC address from the network interface.
         """
         def get_interface_addr(ifname):
             s = socket.socket()
@@ -444,33 +446,39 @@ class NetUtils(object):
     # and local IP according to a remote IP
 
     @staticmethod
+    def getIPFromInterface(ifname):
+        """
+        Retrieve the local IP corresponding to the given local network
+        interface.
+
+        :param ifname: The network interface name.
+        :type ifname: :class:`str`
+        :return: The local IP address.
+        :type: :class:`str`
+        """
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        return socket.inet_ntoa(fcntl.ioctl(
+            s.fileno(),
+            0x8915,  # SIOCGIFADDR
+            struct.pack('256s', bytes(ifname[:15], 'utf-8'))
+        )[20:24])
+
+    @staticmethod
     def getLocalInterface(localIP):
         """
-        Retrieve the network interface name associated with a specific IP
-        address.
+        Retrieve the network interface from the local IP address.
 
-        :param localIP: the local IP address
+        :param localIP: The local IP address
         :type localIP: :class:`str`
+        :return: The network interface name.
+        :type: :class:`str`
         """
 
-        def getIPFromIfname(ifname):
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            return socket.inet_ntoa(fcntl.ioctl(
-                s.fileno(),
-                0x8915,  # SIOCGIFADDR
-                struct.pack('256s', bytes(ifname[:15], 'utf-8'))
-            )[20:24])
-
-        ifname = None
-        for networkInterface in os.listdir('/sys/class/net/'):
-            try:
-                ipAddress = getIPFromIfname(networkInterface)
-            except:
-                continue
-            if ipAddress == localIP:
-                ifname = networkInterface
-                break
-        return ifname
+        for (networkInterface, ip) in NetUtils.getLocalInterfaces():
+            if localIP == ip:
+                return networkInterface
+        return None
 
     @staticmethod
     def getLocalIP(remoteIP):
@@ -486,3 +494,58 @@ class NetUtils(object):
         localIPAddress = s.getsockname()[0]
         s.close()
         return localIPAddress
+
+    @staticmethod
+    def getLocalInterfaces():
+        """ Retrieve the list of all network interfaces and their associated IP.
+
+        :return: The list of (interface name, IP) tuples.
+        :type: :class:`list` of :class:`tuple` (:class:`str`, :class:`str`)
+        """
+
+        # source : http://code.activestate.com/recipes/439093-get-names-of-all-up-network-interfaces-linux-only/
+        is_64bits = sys.maxsize > 2**32
+        struct_size = 40 if is_64bits else 32
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        max_possible = 8  # initial value
+        while True:
+            _bytes = max_possible * struct_size
+            names = array.array('B')
+            for i in range(0, _bytes):
+                names.append(0)
+            outbytes = struct.unpack('iL', fcntl.ioctl(
+                s.fileno(),
+                0x8912,  # SIOCGIFCONF
+                struct.pack('iL', _bytes, names.buffer_info()[0])
+            ))[0]
+            if outbytes == _bytes:
+                max_possible *= 2
+            else:
+                break
+        namestr = names.tostring()
+        ifaces = []
+        for i in range(0, outbytes, struct_size):
+            iface_name = bytes.decode(namestr[i:i+16]).split('\0', 1)[0]
+            iface_addr = socket.inet_ntoa(namestr[i+20:i+24])
+            ifaces.append((iface_name, iface_addr))
+
+        return ifaces
+
+    @staticmethod
+    def getLocalInterfaceFromMac(localMac):
+        """
+        Retrieve the network interface from the local MAC address.
+
+        :param localMac: The local MAC address
+        :type localMac: :class:`str`
+        :return: The network interface name.
+        :type: :class:`str`
+        """
+
+        MacInBytes = localMac.replace(':', '')
+        MacInBytes = binascii.unhexlify(MacInBytes)
+
+        for (networkInterface, _) in NetUtils.getLocalInterfaces():
+            if NetUtils.getLocalMacAddress(networkInterface) == MacInBytes:
+                return networkInterface
+        return None
