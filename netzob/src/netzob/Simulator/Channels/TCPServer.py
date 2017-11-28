@@ -167,7 +167,7 @@ class TCPServer(AbstractChannel):
         if self._socket is not None:
             self._socket.close()
         self.isOpen = False
-        self._logger.info("TCPServer has closed its socket")
+        self._logger.debug("TCPServer has closed its socket")
 
     def read(self):
         """Read the next message on the communication channel.
