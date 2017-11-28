@@ -79,8 +79,6 @@ class IPv4(AbstractType):
     :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
-    :var size: The size in bits of the expected data type defined by a tuple (min, max).
-               Instead of a tuple, an integer can be used to represent both min and max value.
     :var network: A constraint over the network. The parsed data belongs to this network or not.
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
@@ -92,8 +90,6 @@ class IPv4(AbstractType):
 
     >>> from netzob.all import *
     >>> ip = IPv4("192.168.0.10")
-    >>> ip.size
-    (None, None)
     >>> ip.value
     bitarray('11000000101010000000000000001010')
 
