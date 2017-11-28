@@ -60,7 +60,7 @@ class Raw(AbstractType):
     :param nbBytes: The size in bytes that this value can take. The default value is None.
     :param alphabet: The alphabet can be used to limit the bytes that can participate in the domain value. The default value is None.
     :type value: :class:`bitarray` or :class:`bytes`, optional
-    :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
+    :type nbBytes: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
     :type alphabet: a :class:`list` of :class:`bytes`, optional
 
     .. note::
@@ -74,8 +74,8 @@ class Raw(AbstractType):
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
-                  Instead of a tuple, an integer can be used to represent both min and max value.
-    :var alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.
+                  Instead of a tuple, an integer can be used to represent both min and max values.
+    :var alphabet: The alphabet used to limit the bytes that can participate in the domain value.
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`

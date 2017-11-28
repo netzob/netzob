@@ -58,15 +58,19 @@ class Integer(AbstractType):
 
     The Integer constructor expects some parameters:
 
-    :param value: The current value of the type instance, optional. The default value is None.
-    :param interval: The interval of permitted values for the Integer, optional. This information is used to compute the size of the Integer. The default value is None.
-    :param unitSize: The unitsize of the current value, optional. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). The default value is UnitSize.SIZE_8.
+    :param value: The current value of the type instance. The default value is None.
+    :type value: :class:`bitarray` or :class:`int`, optional
+
+    :param interval: The interval of permitted values for the Integer. This information is used to compute the size of the Integer. The default value is None.
+    :type interval: an :class:`int` or a tuple with the min and the max values specified as :class:`int`, optional
 
     .. note::
        :attr:`value` and :attr:`interval` attributes are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
-    The following unit sizes are available:
+    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes).
+
+      The following unit sizes are available:
 
       * UnitSize.SIZE_1
       * UnitSize.SIZE_4
@@ -76,12 +80,16 @@ class Integer(AbstractType):
       * UnitSize.SIZE_32
       * UnitSize.SIZE_64
 
+    :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
+
     :param endianness: The endianness of the current value.
 
       The following endiannesses are available:
 
       * Endianness.BIG (default endianness)
       * Endianness.LITTLE
+
+    :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
 
     :param sign: The sign of the current value.
 
@@ -90,10 +98,6 @@ class Integer(AbstractType):
       * Sign.SIGNED (default sign)
       * Sign.UNSIGNED
 
-    :type value: :class:`bitarray` or :class:`int`, optional
-    :type interval: an :class:`int` or a tuple with the min and the max values specified as :class:`int`, optional
-    :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
-    :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
     :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
 
 
@@ -103,7 +107,7 @@ class Integer(AbstractType):
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size of the expected data type defined by a tuple (min integer, max integer).
-               Instead of a tuple, an integer can be used to represent both min and max value.
+               Instead of a tuple, an integer can be used to represent both min and max values.
     :var unitSize: The unitSize of the current value.
     :var endianness: The endianness of the current value.
     :var sign: The sign of the current value.
@@ -122,7 +126,7 @@ class Integer(AbstractType):
     ``\x0c``):
 
     >>> from netzob.all import *
-    >>> i = Integer(value=12, unitSize=UnitSize.SIZE_8)
+    >>> i = Integer(12, unitSize=UnitSize.SIZE_8)
     >>> i.generate().tobytes()
     b'\x0c'
 
@@ -131,7 +135,7 @@ class Integer(AbstractType):
     producing ``\x00\x00\x00\x0c``):
 
     >>> from netzob.all import *
-    >>> i = Integer(value=12, unitSize=UnitSize.SIZE_32)
+    >>> i = Integer(12, unitSize=UnitSize.SIZE_32)
     >>> i.generate().tobytes()
     b'\x00\x00\x00\x0c'
 
@@ -140,7 +144,7 @@ class Integer(AbstractType):
     (thus producing ``\x0c\x00\x00\x00``):
 
     >>> from netzob.all import *
-    >>> i = Integer(value=12, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)
+    >>> i = Integer(12, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)
     >>> i.generate().tobytes()
     b'\x0c\x00\x00\x00'
 
@@ -149,7 +153,7 @@ class Integer(AbstractType):
     producing ``\xff\xf4``):
 
     >>> from netzob.all import *
-    >>> i = Integer(value=-12, sign=Sign.SIGNED, unitSize=UnitSize.SIZE_16)
+    >>> i = Integer(-12, sign=Sign.SIGNED, unitSize=UnitSize.SIZE_16)
     >>> i.generate().tobytes()
     b'\xff\xf4'
 
@@ -235,7 +239,7 @@ class Integer(AbstractType):
     with and without default value.
 
     >>> from netzob.all import *
-    >>> i = int16le(value=12)
+    >>> i = int16le(12)
     >>> str(i)
     'Integer=12 ((None, None))'
 
@@ -251,7 +255,7 @@ class Integer(AbstractType):
     and without default value.
 
     >>> from netzob.all import *
-    >>> i = int32le(value=12)
+    >>> i = int32le(12)
     >>> repr(i)
     '12'
 

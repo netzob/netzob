@@ -91,7 +91,7 @@ class Timestamp(AbstractType):
                   Unity.SECOND.
     :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes). The default value is UnitSize.SIZE_32.
     :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
-    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. The default value is Sign.SIGNED.
+    :param sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. The default value is Sign.UNSIGNED.
 
     :type value: :class:`bitarray` or :class:`int`, optional
     :type epoch: :class:`Epoch <netzob.Model.Vocabulary.Types.Timestamp.Epoch`, optional
@@ -117,13 +117,16 @@ class Timestamp(AbstractType):
                 timestamp is measured.
     :var unity: This specifies the unity of the timestamp (seconds,
                 milliseconds, nanoseconds).
+    :var sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. The default value is Sign.UNSIGNED.
+    :var endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE.
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
-    :vartype unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
+    :vartype unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`
     :vartype epoch: :class:`Epoch <netzob.Model.Vocabulary.Types.Timestamp.Epoch`
     :vartype unity: :class:`Unity <netzob.Model.Vocabulary.Types.Timestamp.Unity`
-
+    :vartype sign: class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`
+    :vartype endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`
 
     Available values for `epoch` parameter are:
 

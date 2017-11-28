@@ -66,7 +66,7 @@ class Actor(threading.Thread):
                       value is :const:`True`. The value can be changed
                       during a communication, in order to reverse the
                       way the actors communicate together.
-    :param name: The name of the actor.
+    :param name: The name of the actor. Default value is 'Actor'.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
                     required
     :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`, required
@@ -86,7 +86,7 @@ class Actor(threading.Thread):
                     :const:`True`. The value can be changed
                     during a communication, in order to reverse the
                     way the actors communicate together.
-    :var name: The name of the actor. Default value is 'Actor'.
+    :var name: The name of the actor.
     :vartype automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
     :vartype abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
     :vartype initiator: :class:`bool`

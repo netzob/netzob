@@ -413,7 +413,7 @@ class Symbol(AbstractField):
         >>>
         >>> # Count the expected number of unique produced messages
         >>> symbol.specialize_count(presets=presetValues) # doctest: +SKIP
-        279
+        65536
 
         """
 

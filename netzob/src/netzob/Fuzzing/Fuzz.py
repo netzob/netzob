@@ -150,7 +150,7 @@ class Fuzz(object):
         The :meth:`set <.Fuzz.set>` method expects some parameters:
 
         :param key: The targeted object (either a symbol, a field, a
-                    variable or a type) (required).
+                    variable or a type).
         :param mode: The fuzzing strategy, which can be either:
 
                      * ``MutatorMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied to it.
@@ -564,7 +564,7 @@ class Fuzz(object):
         The :meth:`unset <.Fuzz.set>` method expects some parameters:
 
         :param key: The targeted object (either a symbol, a field or a
-                    variable) (required).
+                    variable).
         :type key: :class:`Field
                    <netzob.Model.Vocabulary.Field.Field>`,
                    or :class:`Symbol

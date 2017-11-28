@@ -484,7 +484,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :type fields: :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
         :return: a field/symbol and the structured received message
-        :rtype: a tuple (:class:`Field <netzob.Model.Vocabulary.Field>`, dict)
+        :rtype: a tuple (:class:`Field <netzob.Model.Vocabulary.Field>`, dict[:class:`str`, :class:`bytes`])
         :raises: :class:`AbstractionException <netzob.Model.Vocabulary.AbstractField.AbstractionException>` if an error occurs while abstracting the data
 
 

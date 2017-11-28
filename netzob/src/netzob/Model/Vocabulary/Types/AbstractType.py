@@ -69,7 +69,7 @@ class Sign(Enum):
     SIGNED = 'signed'
     """Sign.SIGNED can be used to specify the sign of a type."""
     UNSIGNED = 'unsigned'
-    """Sign.UNISGNED can be used to specify the sign of a type."""
+    """Sign.UNSIGNED can be used to specify the sign of a type."""
     __repr__ = Enum.__str__
 
 
@@ -104,16 +104,21 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     The constructor for an AbstractType expects some parameters:
 
-    :param typeName: The name of the type (we highly recommend the use of __class__.__name__), required.
-    :param value: The current value of the type instance, required.
-    :param size: The (min, max) size in bits that this value takes, optional. The default is (None, None).
-    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_*. If None, the value is the default one.
+    :param typeName: The name of the type (we highly recommend the use of __class__.__name__).
+    :type typeName: :class:`str`, required
+
+    :param value: The current value of the type instance.
+    :type value: :class:`bitarray`, required
+
+    :param size: The (min, max) size in bits that this value takes. The default is (None, None).
+    :type size: a tuple with the min and the max size specified as :class:`int`, optional
 
     .. note::
        :attr:`value` and :attr:`size` attributes are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
-    The following unit sizes are available:
+    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_*. If None, the value is the default one.
+      The following unit sizes are available:
 
       * UnitSize.SIZE_1
       * UnitSize.SIZE_4
@@ -123,12 +128,16 @@ class AbstractType(object, metaclass=abc.ABCMeta):
       * UnitSize.SIZE_32
       * UnitSize.SIZE_64
 
+    :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
+
     :param endianness: The endianness of the current value. If None, the value is the default one.
 
       The following endiannesses are available:
 
       * Endianness.BIG (default value)
       * Endianness.LITTLE
+
+    :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
 
     :param sign: The sign of the current value. If None, the value is the default one.
 
@@ -137,13 +146,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
       * Sign.SIGNED (default value)
       * Sign.UNSIGNED
 
-    :type typeName: :class:`str`, optional
-    :type value: :class:`bitarray`, required
-    :type size: a tuple with the min and the max size specified as :class:`int`, optional
-    :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
-    :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
     :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
-
 
     **Internal representation of Type objects**
 
