@@ -109,7 +109,7 @@ class OpenChannelTransition(AbstractTransition):
             priority=0)
 
     @typeCheck(AbstractionLayer)
-    def executeAsInitiator(self, abstractionLayer, visit_log):
+    def executeAsInitiator(self, abstractionLayer, actor):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
@@ -118,10 +118,10 @@ class OpenChannelTransition(AbstractTransition):
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-        return self.__execute(abstractionLayer, visit_log)
+        return self.__execute(abstractionLayer, actor)
 
     @typeCheck(AbstractionLayer)
-    def executeAsNotInitiator(self, abstractionLayer, visit_log):
+    def executeAsNotInitiator(self, abstractionLayer, actor):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
@@ -130,10 +130,10 @@ class OpenChannelTransition(AbstractTransition):
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-        return self.__execute(abstractionLayer, visit_log)
+        return self.__execute(abstractionLayer, actor)
 
     @typeCheck(AbstractionLayer)
-    def __execute(self, abstractionLayer, visit_log):
+    def __execute(self, abstractionLayer, actor):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
@@ -160,7 +160,7 @@ class OpenChannelTransition(AbstractTransition):
 
         self.active = False
 
-        visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
+        actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
         return self.endState
 
     @public_api

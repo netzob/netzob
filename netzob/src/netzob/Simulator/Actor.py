@@ -1229,9 +1229,9 @@ class Actor(threading.Thread):
             try:
                 self._logger.debug("Current state for actor '{}': '{}'.".format(self.name, currentState))
                 if self.initiator:
-                    currentState = currentState.executeAsInitiator(self.abstractionLayer, self.visit_log)
+                    currentState = currentState.executeAsInitiator(self.abstractionLayer, self)
                 else:
-                    currentState = currentState.executeAsNotInitiator(self.abstractionLayer, self.visit_log)
+                    currentState = currentState.executeAsNotInitiator(self.abstractionLayer, self)
 
                 if currentState is None:
                     self._logger.debug("The execution of transition did not returned a state, for actor '{}'".format(self.name))
