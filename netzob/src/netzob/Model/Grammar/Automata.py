@@ -28,6 +28,9 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
+import os
+import subprocess
+import tempfile
 
 #+----------------------------------------------
 #| Related third party imports
@@ -94,6 +97,23 @@ class Automata(object):
         self.initialState = initialState
         self.vocabulary = vocabulary  # A list of symbols
 
+    def generateASCII(self):
+        """Render the ASCII representation of the automaton.
+        """
+
+        f = tempfile.NamedTemporaryFile(delete=False)
+        f.write(str.encode(self.generateDotCode()))
+        f.close()
+
+        cmd = ['/usr/bin/graph-easy', '--input', f.name, '--as_ascii']
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        p.wait()
+        result = p.stdout.read().decode("utf-8")
+
+        os.unlink(f.name)
+
+        return result
+
     def generateDotCode(self):
         """Generates the dot code representing the automata.
 
@@ -139,17 +159,29 @@ class Automata(object):
             else:
                 shape = "ellipse"
 
+            descr = state.name
+
+            for cbk in state.cbk_modify_transition:
+                descr += " [CBK modify transition] "
+
             dotCode.append(
-                '"{0}" [shape={1}, style=filled, fillcolor={2}, URL="{3}"];'.
-                format(state.name, shape, color, state.id))
+                '"{}" [shape={}, label="{}", style=filled, fillcolor={}, URL="{}"];'.
+                format(state.name, shape, descr, color, state.id))
 
         for inputState in states:
             for transition in inputState.transitions:
                 outputState = transition.endState
+
+                descr = transition.description
+
+                for cbk in transition.cbk_modify_symbol:
+                    descr += " [CBK modify symbol] "
+                
                 dotCode.append(
-                    '"{0}" -> "{1}" [fontsize=5, label="{2}", URL="{3}"];'.
+                    '"{}" -> "{}" [fontsize=5, label="{}", URL="{}"];'.
+
                     format(inputState.name, outputState.name,
-                           transition.description, transition.id))
+                           descr, transition.id))
 
         dotCode.append("}")
 
