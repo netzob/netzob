@@ -412,7 +412,11 @@ class Repeat(AbstractVariableNode):
 
                     remainingDataToParse = dataToParse[len(newResult):]
 
-                    break_repeat = self.nbRepeat(i_repeat + 1, newResult, remainingDataToParse, childParsingPath, self.children[0])
+                    break_repeat = self.nbRepeat(i_repeat + 1,
+                                                 newResult,
+                                                 childParsingPath,
+                                                 self.children[0],
+                                                 remainingDataToParse)
 
                     childParsingPath.addResult(self, newResult)
                     childParsingPath.assignData(remainingDataToParse, self.children[0])
@@ -490,8 +494,8 @@ class Repeat(AbstractVariableNode):
                     newResult = oldResult + path.getData(child)
 
                     if callable(self.nbRepeat):
-                        break_repeat = self.nbRepeat(i + 1, newResult, None,
-                                                     path, child)
+                        break_repeat = self.nbRepeat(i + 1, newResult,
+                                                     path, child, None)
 
                     if break_repeat is RepeatResult.STOP_BEFORE:
                         # save previous result, then notify
