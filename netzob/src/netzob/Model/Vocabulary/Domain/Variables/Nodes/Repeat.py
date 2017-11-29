@@ -98,7 +98,7 @@ class Repeat(AbstractVariableNode):
     The callback function that can be used in the ``nbRepeat``
     parameter has the following prototype:
 
-    ``def cbk_nbRepeat(nb_repeat, data, remaining=None, path, child)``
+    ``def cbk_nbRepeat(nb_repeat, data, path, child, remaining=None)``
 
     Where:
 
@@ -106,15 +106,15 @@ class Repeat(AbstractVariableNode):
       to the amount of time the child element has been parsed or specialized.
     * ``data`` is a :class:`bitarray` that corresponds to the already parsed or
       specialized data.
-    * ``remaining`` is a :class:`bitarray` that corresponds to the remaining
-      data to be parsed. Only set in parsing mode. In specialization mode, this
-      parameter will have a `None` value. This parameter can therefore be used
-      to identify the current mode.
     * ``path`` is a data structure that allows access to the values of the
       parsed :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
       elements.
     * ``child`` is a :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
       that corresponds to the repeated element.
+    * ``remaining`` is a :class:`bitarray` that corresponds to the remaining
+      data to be parsed. Only set in parsing mode. In specialization mode, this
+      parameter will have a `None` value. This parameter can therefore be used
+      to identify the current mode.
 
     The ``child`` parameter allows access to the root of a tree structure.
     The ``child`` :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
@@ -211,7 +211,7 @@ class Repeat(AbstractVariableNode):
     repeat stops at the first iteration.
 
     >>> from netzob.all import *
-    >>> def cbk(nb_repeat, data, remaining=None, path, child):
+    >>> def cbk(nb_repeat, data, path, child, remaining=None):
     ...     if remaining is not None:  # This means we are in parsing mode
     ...         print("in cbk: nb_repeat:{} -- data:{} -- remaining:{}".format(nb_repeat, data.tobytes(), remaining.tobytes()))
     ...
