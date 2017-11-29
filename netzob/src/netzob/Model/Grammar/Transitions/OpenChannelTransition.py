@@ -153,7 +153,7 @@ class OpenChannelTransition(AbstractTransition):
             abstractionLayer.openChannel()
         except Exception as e:
             self._logger.debug(
-                "An error occured which prevented the good execution of the open channel transition"
+                "[actor='{}'] An error occured which prevented the good execution of the open channel transition".format(actor.name)
             )
             self.active = False
             raise e

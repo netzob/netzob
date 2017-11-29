@@ -103,13 +103,13 @@ class State(AbstractState):
             raise TypeError("AbstractionLayer cannot be None")
 
         self._logger.debug(
-            "Execute state {0} as an initiator".format(self.name))
+            "[actor='{}'] Execute state {} as an initiator".format(str(actor), self.name))
 
         self.active = True
 
         # Pick the next transition
         nextTransition = self.__pickNextTransition(abstractionLayer, actor)
-        self._logger.debug("Next transition: {0}.".format(nextTransition))
+        self._logger.debug("[actor='{}'] Next transition: {}.".format(str(actor), nextTransition))
 
         if nextTransition is None:
             self.active = False
@@ -118,7 +118,7 @@ class State(AbstractState):
         # Execute picked transition as an initiator
         try:
             nextState = nextTransition.executeAsInitiator(abstractionLayer, actor)
-            self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
+            self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(nextTransition), str(nextState)))
         except Exception as e:
             self.active = False
             raise
@@ -126,7 +126,7 @@ class State(AbstractState):
         if nextState is None:
             self.active = False
             raise Exception(
-                "The execution of transition {0} on state {1} did not return the next state.".
+                "The execution of transition {} on state {} did not return the next state.".
                 format(str(nextTransition), self.name))
 
         self.active = False
@@ -149,13 +149,13 @@ class State(AbstractState):
         if abstractionLayer is None:
             raise TypeError("AbstractionLayer cannot be None")
 
-        self._logger.debug("Execute state {0} as a non-initiator".format(self.name))
+        self._logger.debug("[actor='{}'] Execute state {} as a non-initiator".format(str(actor), self.name))
 
         self.active = True
 
         # if no transition exists we quit
         if len(self.transitions) == 0:
-            self._logger.debug("The current state has no transitions available.")
+            self._logger.debug("[actor='{}'] The current state has no transitions available".format(str(actor)))
             self.active = False
             raise Exception("No transition available for this state.")
 
@@ -179,12 +179,12 @@ class State(AbstractState):
             actor.visit_log.append("  [+]   Picking transition '{}'".format(str(nextTransition)))
 
             nextState = nextTransition.executeAsNotInitiator(abstractionLayer, actor)
-            self._logger.debug("Transition '{0}' leads to state: {1}.".format(
-                str(nextTransition), str(nextState)))
+            self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(
+                str(actor), str(nextTransition), str(nextState)))
             if nextState is None:
                 self.active = False
                 raise Exception(
-                    "The execution of transition {0} on state {1} did not return the next state.".
+                    "The execution of transition {} on state {} did not return the next state.".
                     format(nextTransition.name, self.name))
 
             return nextState
@@ -196,7 +196,7 @@ class State(AbstractState):
             (received_symbol, received_message) = abstractionLayer.readSymbol()
             if received_symbol is None:
                 raise Exception("The abstraction layer returned a None received symbol")
-            self._logger.debug("Input symbol: " + str(received_symbol.name))
+            self._logger.debug("[actor='{}'] Input symbol: '{}'".format(str(actor), str(received_symbol)))
 
             # Find the transition which accepts the received symbol as an input symbol
             nextTransition = None
@@ -209,14 +209,14 @@ class State(AbstractState):
             actor.visit_log.append("  [+]   Receiving input symbol '{}', which corresponds to transition '{}'".format(str(received_symbol), str(nextTransition)))
 
         except socket.timeout:
-            self._logger.debug("Timeout on abstractionLayer.readSymbol()")
+            self._logger.debug("[actor='{}'] Timeout on abstractionLayer.readSymbol()".format(str(actor)))
 
             # Check if there is a transition with an EmptySymbol as input symbol
-            self._logger.debug("Check if a transition expects an EmptySymbol as input symbol")
+            self._logger.debug("[actor='{}'] Check if a transition expects an EmptySymbol as input symbol".format(str(actor)))
             nextTransition = None
             for transition in self.transitions:
                 if isinstance(transition.inputSymbol, EmptySymbol):
-                    self._logger.debug("The transition '{}' expects an EmptySymbol as input symbol ".format(transition.name))
+                    self._logger.debug("[actor='{}'] The transition '{}' expects an EmptySymbol as input symbol ".format(str(actor), str(transition)))
                     nextTransition = transition
 
                     actor.visit_log.append("  [+] At state '{}'".format(self.name))
@@ -224,12 +224,12 @@ class State(AbstractState):
 
                     break
             else:
-                self._logger.debug("No transition expects an EmptySymbol as input symbol")
+                self._logger.debug("[actor='{}'] No transition expects an EmptySymbol as input symbol".format(str(actor)))
                 self.active = False
                 raise ReadSymbolTimeoutException(current_state=self, current_transition=None)
 
         except Exception as e:
-            self._logger.debug("An exception occured when receiving a symbol from the abstraction layer.")
+            self._logger.debug("[actor='{}'] An exception occured when receiving a symbol from the abstraction layer".format(str(actor)))
             self.active = False
             #self._logger.debug(traceback.format_exc())
             raise
@@ -237,9 +237,9 @@ class State(AbstractState):
         # If a callback function is defined, we call it in order to
         # execute an external program that may change the selected
         # transition
-        self._logger.debug("Test if a callback function is defined at state '{}'".format(self.name))
+        self._logger.debug("[actor='{}'] Test if a callback function is defined at state '{}'".format(str(actor), self.name))
         for cbk in self.cbk_modify_transition:
-            self._logger.debug("A callback function is defined at state '{}'".format(self.name))
+            self._logger.debug("[actor='{}'] A callback function is defined at state '{}'".format(str(actor), self.name))
             availableTransitions = self.transitions
             nextTransition = cbk(availableTransitions,
                                  nextTransition,
@@ -251,11 +251,11 @@ class State(AbstractState):
 
             actor.visit_log.append("  [+]   Changing transition to '{}', trough callback".format(str(nextTransition)))
         else:
-            self._logger.debug("No callback function is defined at state '{}'".format(self.name))
+            self._logger.debug("[actor='{}'] No callback function is defined at state '{}'".format(str(actor), self.name))
 
         # Execute the retained transition
         if nextTransition is None:
-            self._logger.debug("The received symbol did not match any of the registered transition")
+            self._logger.debug("[actor='{}'] The received symbol did not match any of the registered transition".format(str(actor)))
             #nextState = self
             if isinstance(received_symbol, UnknownSymbol):
                 raise ReadUnknownSymbolException(current_state=self,
@@ -269,7 +269,7 @@ class State(AbstractState):
                                                     received_message=received_message)
         else:
             nextState = nextTransition.executeAsNotInitiator(abstractionLayer, actor)
-            self._logger.debug("Transition '{0}' leads to state: {1}.".format(str(nextTransition), str(nextState)))
+            self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(nextTransition), str(nextState)))
 
         self.active = False
 
@@ -307,9 +307,9 @@ class State(AbstractState):
         # If a callback function is defined, we call it in order to
         # execute an external program that may change the selected
         # transition
-        self._logger.debug("Test if a callback function is defined at state '{}'".format(self.name))
+        self._logger.debug("[actor='{}'] Test if a callback function is defined at state '{}'".format(str(actor), self.name))
         for cbk in self.cbk_modify_transition:
-            self._logger.debug("A callback function is defined at state '{}'".format(self.name))
+            self._logger.debug("[actor='{}'] A callback function is defined at state '{}'".format(str(actor), self.name))
             nextTransition = cbk(availableTransitions,
                                  nextTransition,
                                  self,
@@ -319,7 +319,7 @@ class State(AbstractState):
                                  abstractionLayer.last_received_message)
             actor.visit_log.append("  [+]   Changing transition to '{}', trough callback".format(str(nextTransition)))
         else:
-            self._logger.debug("No callback function is defined at state '{}'".format(self.name))
+            self._logger.debug("[actor='{}'] No callback function is defined at state '{}'".format(str(actor), self.name))
 
         return nextTransition
 

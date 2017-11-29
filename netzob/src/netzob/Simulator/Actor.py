@@ -1103,14 +1103,11 @@ class Actor(threading.Thread):
     >>> alice_s2 = State(name="S2")
     >>> alice_s3 = State(name="S3")
     >>> alice_s4 = State(name="S4")
-    >>> OpenChannelTransition(alice_s0, alice_s1, name="Open")
-    Open
-    >>> Transition(alice_s1, alice_s2, inputSymbol=helloAlice, outputSymbols=[helloBob], name="Hello")
-    Hello
-    >>> Transition(alice_s2, alice_s3, inputSymbol=None, outputSymbols=[bye], name="Bye")
-    Bye
-    >>> CloseChannelTransition(alice_s3, alice_s4, name="Close")
-    Close
+    >>> t0 = OpenChannelTransition(alice_s0, alice_s1, name="Open")
+    >>> t1 = Transition(alice_s1, alice_s2, inputSymbol=helloAlice, outputSymbols=[helloBob], name="Hello")
+    >>> outputSymbolsReactionTime = {bye: 0.5}
+    >>> t2 = Transition(alice_s2, alice_s3, inputSymbol=None, outputSymbols=[bye], outputSymbolsReactionTime=outputSymbolsReactionTime, name="Bye")
+    >>> t3 = CloseChannelTransition(alice_s3, alice_s4, name="Close")
     >>> alice_automata = Automata(alice_s0, allSymbols)
     >>>
     >>> automata_ascii = alice_automata.generateASCII()
@@ -1153,7 +1150,7 @@ class Actor(threading.Thread):
     ...               initiator=False, name="Alice")
     >>>
     >>> # Bob
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=3.)
     >>> abstractionLayer = AbstractionLayer(channel, allSymbols)
     >>> abstractionLayer.timeout = .5
     >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer,
@@ -1180,6 +1177,11 @@ class Actor(threading.Thread):
       [+] At state 'S2'
       [+]   Picking transition 'T2'
       [+]   During transition 'T2', sending input symbol 'Empty Symbol'
+      [+]   During transition 'T2', receiving expected output symbol 'Bye'
+      [+]   Transition 'T2' lead to state 'S3'
+      [+] At state 'S3'
+      [+]   Picking transition 'Close'
+      [+]   Transition 'Close' lead to state 'S4'
     >>> print(alice.generateLog())
     Activity log for actor 'Alice':
       [+] At state 'S0'
@@ -1220,6 +1222,9 @@ class Actor(threading.Thread):
 
         # Initiate visit log, which contains the information regarding the different transitions and states visited by the actor
         self.visit_log = []
+
+    def __str__(self):
+        return str(self.name)
 
     def run(self):
         """Start the visit of the automaton from its initial state."""

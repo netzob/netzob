@@ -153,7 +153,7 @@ class CloseChannelTransition(AbstractTransition):
             abstractionLayer.closeChannel()
         except Exception as e:
             self._logger.warning(
-                "An error occured which prevented the good execution of the close channel transition"
+                "[actor='{}'] An error occured which prevented the good execution of the close channel transition".format(actor.name)
             )
             self.active = False
             raise e

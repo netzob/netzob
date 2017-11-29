@@ -85,12 +85,12 @@ class Transition(AbstractTransition):
     :type name: :class:`str`, optional
     :param inputSymbolReactionTime: The timeout value in seconds to wait for the
                                     input value (only used in a receiving context).
-    :param outputSymbolReactionTimes: A :class:`dict` containing, for each output
+    :param outputSymbolsReactionTime: A :class:`dict` containing, for each output
                                       symbol, the timeout value in seconds to
                                       wait for the output value (only used in a
                                       sending context).
     :type inputSymbolReactionTime: :class:`float`
-    :type outputSymbolReactionTimes: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}, optional
+    :type outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}, optional
 
 
     The Transition class provides the following public variables:
@@ -111,7 +111,7 @@ class Transition(AbstractTransition):
     :var inputSymbolReactionTime: The timeout value in seconds to wait for the
                                   input value (only used in a receiving context).
                                   Default value is None (blocking).
-    :var outputSymbolReactionTimes: A :class:`dict` containing, for each output
+    :var outputSymbolsReactionTime: A :class:`dict` containing, for each output
                                     symbol, the timeout value in seconds to
                                     wait for the output value (only used in a
                                     sending context). Default value is None (blocking).
@@ -124,7 +124,7 @@ class Transition(AbstractTransition):
     :vartype id: :class:`uuid.UUID`
     :vartype description: :class:`str`
     :vartype inputSymbolReactionTime: :class:`float`
-    :vartype outputSymbolReactionTimes: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
+    :vartype outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
 
     The following example shows the definition of a transition `t` between
     two states, `s0` and `s1`:
@@ -163,7 +163,7 @@ class Transition(AbstractTransition):
                  _id=None,
                  name=None,
                  inputSymbolReactionTime=None,   # type: float
-                 outputSymbolReactionTimes=None  # type: Dict[Symbol,float]
+                 outputSymbolsReactionTime=None  # type: Dict[Symbol,float]
                  ):
         # type: (...) -> None
         super(Transition, self).__init__(Transition.TYPE,
@@ -175,18 +175,12 @@ class Transition(AbstractTransition):
 
         if outputSymbols is None:
             outputSymbols = []
-        if outputSymbolReactionTimes is None:
-            outputSymbolReactionTimes = {}
-        elif not isinstance(outputSymbolReactionTimes, dict):
-            raise TypeError("outputSymbolReactionTimes should be a dict of "
-                            "Symbol and float, not {}"
-                            .format(type(outputSymbolReactionTimes).__name__))
 
         self.inputSymbol = inputSymbol
         self.outputSymbols = outputSymbols
         self.outputSymbolProbabilities = {}  # TODO: not yet implemented
         self.inputSymbolReactionTime = inputSymbolReactionTime
-        self.outputSymbolReactionTimes = outputSymbolReactionTimes  # TODO: not yet implemented
+        self.outputSymbolsReactionTime = outputSymbolsReactionTime
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer, actor):
@@ -221,9 +215,9 @@ class Transition(AbstractTransition):
         actor.visit_log.append("  [+]   During transition '{}', sending input symbol '{}'".format(self.name, str(symbol_to_send)))
 
         # If a callback is defined, we can change or modify the selected symbol
-        self._logger.debug("Test if a callback function is defined at transition '{}'".format(self.name))
+        self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))
         for cbk in self.cbk_modify_symbol:
-            self._logger.debug("A callback function is defined at transition '{}'".format(self.name))
+            self._logger.debug("[actor='{}'] A callback function is defined at transition '{}'".format(str(actor), self.name))
             (symbol_to_send, symbol_presets) = cbk([symbol_to_send],
                                                    symbol_to_send,
                                                    self.startState,
@@ -233,19 +227,21 @@ class Transition(AbstractTransition):
                                                    abstractionLayer.last_received_message)
             actor.visit_log.append("  [+]   During transition '{}', modifying input symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
-            self._logger.debug("No callback function is defined at transition '{}'".format(self.name))
+            self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))
 
         # Write a symbol on the channel
-        if not isinstance(symbol_to_send, EmptySymbol):
+        if isinstance(symbol_to_send, EmptySymbol):
+            self._logger.debug("[actor='{}'] Nothing to write on abstraction layer (inputSymbol is an EmptySymbol)".format(str(actor)))    
+        else:
             try:
                 abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
             except socket.timeout:
-                self._logger.debug("Timeout on abstractionLayer.readSymbol()")
+                self._logger.debug("[actor='{}'] Timeout on abstractionLayer.writeSymbol()".format(str(actor)))
                 self.active = False
                 raise
             except Exception as e:
                 self.active = False
-                errorMessage = "An error occured while executing the transition {} as an initiator: {}".format(self.name, e)
+                errorMessage = "[actor='{}'] An error occured while executing the transition {} as an initiator: {}".format(str(actor), self.name, e)
                 self._logger.debug(errorMessage)
                 raise Exception(errorMessage)
 
@@ -253,12 +249,12 @@ class Transition(AbstractTransition):
         try:
             (received_symbol, received_message) = abstractionLayer.readSymbol()
         except socket.timeout:
-            self._logger.debug("Timeout on abstractionLayer.readSymbol()")
+            self._logger.debug("[actor='{}'] Timeout on abstractionLayer.readSymbol()".format(str(actor)))
             self.active = False
             raise ReadSymbolTimeoutException(current_state=self.startState, current_transition=self)
         except Exception as e:
             self.active = False
-            errorMessage = "An error occured while executing the transition {} as an initiator: {}".format(self.name, e)
+            errorMessage = "[actor='{}'] An error occured while executing the transition {} as an initiator: {}".format(str(actor), self.name, e)
             self._logger.debug(errorMessage)
             raise Exception(errorMessage)
 
@@ -266,8 +262,8 @@ class Transition(AbstractTransition):
         #   - if its an expected one, it returns the endState of the transition
         #   - if not it raises an exception
         for outputSymbol in self.outputSymbols:
-            self._logger.debug("Possible output symbol: '{0}' (id={1}).".
-                               format(outputSymbol.name, outputSymbol.id))
+            self._logger.debug("[actor='{}'] Possible output symbol: '{}' (id={}).".
+                               format(str(actor), str(outputSymbol), outputSymbol.id))
 
         if received_symbol in self.outputSymbols:
             self.active = False
@@ -277,7 +273,7 @@ class Transition(AbstractTransition):
             return self.endState
         else:
             self.active = False
-            self._logger.debug("Received symbol '{}' was unexpected.".format(received_symbol.name))
+            self._logger.debug("[actor='{}'] Received symbol '{}' was unexpected.".format(str(actor), (received_symbol)))
             if isinstance(received_symbol, UnknownSymbol):
                 actor.visit_log.append("  [+]   During transition '{}', receiving unknown symbol".format(self.name))
                 raise ReadUnknownSymbolException(current_state=self.startState,
@@ -314,22 +310,24 @@ class Transition(AbstractTransition):
         # Pick the output symbol to emit
         (symbol_to_send, symbol_presets) = self.__pickOutputSymbol(abstractionLayer, actor)
         if symbol_to_send is None:
-            self._logger.debug("No output symbol to send, we pick an EmptySymbol as output symbol.")
+            self._logger.debug("[actor='{}'] No output symbol to send, we pick an EmptySymbol as output symbol".format(str(actor)))
             symbol_to_send = EmptySymbol()
 
         # Sleep before emiting the symbol (if equired)
-        if symbol_to_send in list(self.outputSymbolReactionTimes.keys()):
-            time.sleep(self.outputSymbolReactionTimes[symbol_to_send])
+        if symbol_to_send in list(self.outputSymbolsReactionTime.keys()):
+            delay = self.outputSymbolsReactionTime[symbol_to_send]
+            self._logger.debug("[actor='{}'] Time to wait before sending the output symbol: {}".format(str(actor), delay))
+            time.sleep(delay)
 
         # Emit the symbol
         try:
             abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
         except socket.timeout:
-            self._logger.debug("Timeout on abstractionLayer.writeSymbol()")
+            self._logger.debug("[actor='{}'] Timeout on abstractionLayer.writeSymbol()".format(str(actor)))
             self.active = False
             return None
         except Exception as e:
-            self._logger.debug("An exception occured when sending a symbol from the abstraction layer: '{}'".format(e))
+            self._logger.debug("[actor='{}'] An exception occured when sending a symbol from the abstraction layer: '{}'".format(str(actor), e))
             self.active = False
             # self._logger.debug(traceback.format_exc())
             raise e
@@ -396,9 +394,9 @@ class Transition(AbstractTransition):
         actor.visit_log.append("  [+]   During transition '{}', choosing output symbol '{}'".format(self.name, str(symbol_to_send)))
 
         # Potentialy modify the selected symbol if a callback is defined
-        self._logger.debug("Test if a callback function is defined at transition '{}'".format(self.name))
+        self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))
         for cbk in self.cbk_modify_symbol:
-            self._logger.debug("A callback function is executed at transition '{}'".format(self.name))
+            self._logger.debug("[actor='{}'] A callback function is executed at transition '{}'".format(str(actor), self.name))
             (symbol_to_send, symbol_presets) = cbk(self.outputSymbols,
                                                    symbol_to_send,
                                                    self.startState,
@@ -408,7 +406,7 @@ class Transition(AbstractTransition):
                                                    abstractionLayer.last_received_message)
             actor.visit_log.append("  [+]   During transition '{}', modifying output symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
-            self._logger.debug("No callback function is defined at transition '{}'".format(self.name))
+            self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))
 
         return (symbol_to_send, symbol_presets)
 
@@ -480,3 +478,18 @@ class Transition(AbstractTransition):
                 desc.append(str(outputSymbol.name))
             return self.name + " (" + str(
                 self.inputSymbol.name) + ";{" + ",".join(desc) + "})"
+
+    @public_api
+    @property
+    def outputSymbolsReactionTime(self):
+        return self.__outputSymbolsReactionTime
+
+    @outputSymbolsReactionTime.setter  # type: ignore
+    def outputSymbolsReactionTime(self, outputSymbolsReactionTime):
+        if outputSymbolsReactionTime is None:
+            outputSymbolsReactionTime = {}
+        elif not isinstance(outputSymbolsReactionTime, dict):
+            raise TypeError("outputSymbolsReactionTime should be a dict of "
+                            "Symbol and float, not {}"
+                            .format(type(outputSymbolsReactionTime).__name__))
+        self.__outputSymbolsReactionTime = outputSymbolsReactionTime
