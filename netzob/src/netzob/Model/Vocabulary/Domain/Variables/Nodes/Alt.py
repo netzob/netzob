@@ -67,9 +67,11 @@ class Alt(AbstractVariableNode):
 
     :param children: The set of variable elements permitted in the
                      alternative. The default is None.
-    :param callback: The callback function should return an integer used to determine the child index to select. The default is None.
+    :param callback: The callback function should return an integer used to
+                     determine the child index to select. The default is None.
     :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
-    :type callback: callable function taking two positional arguments returning an integer, optional
+    :type callback: callable function taking two positional arguments returning
+                    an integer, optional
 
     The Alt class provides the following public variables:
 
@@ -79,7 +81,32 @@ class Alt(AbstractVariableNode):
     :vartype varType: :class:`str`
 
 
-    For example, the following code denotes an alternate object that
+    **Callback prototype**
+
+    A callback function can be used to determine the child index to select.
+    The callback function has the following prototype:
+
+    ``def callback(path, children):``
+
+    Where:
+
+    * ``path`` is a data structure that allows access to the values
+      of the ``Variable`` elements.
+    * ``children`` is the `list of the children of the ``Alt`` variable.
+
+    Access to :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+    values is done through the ``path``, thanks to its methods ``hasData``
+    and ``getData``:
+
+    * ``path.hasData(child)`` will return a :class:`bool` telling if a data has
+      been specialized or parsed for the child
+      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+    * ``path.getData(child)`` will return a :class:`bitarray` that corresponds
+      to the value specialized or parsed for the child
+      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+
+
+    The following code denotes an alternate object that
     accepts either the string "filename1.txt" or the string
     "filename2.txt":
 

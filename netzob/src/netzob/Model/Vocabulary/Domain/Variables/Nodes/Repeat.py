@@ -98,21 +98,37 @@ class Repeat(AbstractVariableNode):
     The callback function that can be used in the ``nbRepeat``
     parameter has the following prototype:
 
-    ``def cbk_nbRepeat(nb_repeat, data, remaining=None, parsed_structure=None, child=None)``
+    ``def cbk_nbRepeat(nb_repeat, data, remaining=None, path, child)``
 
     Where:
 
     * ``nb_repeat`` is an :class:`int` that corresponds
       to the amount of time the child element has been parsed or specialized.
-    * ``data`` is a :class:`bitarray` that corresponds to the already parsed or specialized data.
-    * ``remaining`` is a :class:`bitarray` that corresponds to the remaining data to be parsed. Only set in parsing mode. In specialization mode, this parameter will have a `None` value. This parameter can therefore be used to identify the current mode.
-    * ``parsed_structure`` is a data structure that allows access to the values of the parsed :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` elements. Only set in parsing mode. In specialization mode, this parameter will have a `None` value.
-    * ``child`` is a :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` that corresponds to the repeated element. Only set in parsing mode. In specialization mode, this parameter will have a `None` value.
+    * ``data`` is a :class:`bitarray` that corresponds to the already parsed or
+      specialized data.
+    * ``remaining`` is a :class:`bitarray` that corresponds to the remaining
+      data to be parsed. Only set in parsing mode. In specialization mode, this
+      parameter will have a `None` value. This parameter can therefore be used
+      to identify the current mode.
+    * ``path`` is a data structure that allows access to the values of the
+      parsed :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+      elements.
+    * ``child`` is a :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+      that corresponds to the repeated element.
 
-    The ``child`` parameter allows access to the root of a tree structure. The ``child`` :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` can have children. Access to :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` values is done through the ``parsed_structure``, thanks to its methods ``hasData`` and ``getData``:
+    The ``child`` parameter allows access to the root of a tree structure.
+    The ``child`` :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+    can have children.
+    Access to :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+    values is done through the ``path``, thanks to its methods ``hasData``
+    and ``getData``:
 
-    * ``parsed_structure.hasData(child)`` will return a :class:`bool` telling if a data has been parsed for the child :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
-    * ``parsed_structure.getData(child)`` will return a :class:`bitarray` that corresponds to the value parsed by the child :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+    * ``path.hasData(child)`` will return a :class:`bool` telling if a data has
+      been specialized or parsed for the child
+      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+    * ``path.getData(child)`` will return a :class:`bitarray` that corresponds
+      to the value specialized or parsed for the child
+      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
     The callback function is called each time the child element is
     seen.
@@ -195,14 +211,14 @@ class Repeat(AbstractVariableNode):
     repeat stops at the first iteration.
 
     >>> from netzob.all import *
-    >>> def cbk(nb_repeat, data, remaining=None, parsed_structure=None, child=None):
+    >>> def cbk(nb_repeat, data, remaining=None, path, child):
     ...     if remaining is not None:  # This means we are in parsing mode
     ...         print("in cbk: nb_repeat:{} -- data:{} -- remaining:{}".format(nb_repeat, data.tobytes(), remaining.tobytes()))
     ...
     ...         # We check the value of the second child of the parameter child
     ...         if child.isnode() and len(child.children) > 1:
     ...             second_subchild = child.children[1]
-    ...             if parsed_structure.hasData(second_subchild) and parsed_structure.getData(second_subchild).tobytes() == b'B':
+    ...             if path.hasData(second_subchild) and path.getData(second_subchild).tobytes() == b'B':
     ...                 return RepeatResult.STOP_BEFORE
     ...         return RepeatResult.CONTINUE
     ...     return RepeatResult.STOP_AFTER

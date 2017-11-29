@@ -87,15 +87,26 @@ class Value(AbstractRelationVariableLeaf):
     relationship. The callback function that can be used in the
     ``operation`` parameter has the following prototype:
 
-    ``def cbk_operation(data, parsed_structure, value):``
+    ``def cbk_operation(data, path, value):``
 
     Where:
 
     * ``data`` is a :class:`bitarray <bitarray>` that contains the value of the
       targeted field.
-    * ``parsed_structure`` is a data structure that allows access to the values
-      of the parsed ``Variable`` elements.
-    * value is the Value variable
+    * ``path`` is a data structure that allows access to the values
+      of the ``Variable`` elements.
+    * ``value`` is the ``Value`` variable
+
+    Access to :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+    values is done through the ``path``, thanks to its methods ``hasData``
+    and ``getData``:
+
+    * ``path.hasData(child)`` will return a :class:`bool` telling if a data has
+      been specialized or parsed for the child
+      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+    * ``path.getData(child)`` will return a :class:`bitarray` that corresponds
+      to the value specialized or parsed for the child
+      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
     The callback function is expected to implement relationship
     operations based on the provided data.
@@ -187,7 +198,7 @@ class Value(AbstractRelationVariableLeaf):
     returns a bitarray object.
 
     >>> from netzob.all import *
-    >>> def cbk(data, parsed_structure, value):
+    >>> def cbk(data, path, value):
     ...    ret = data.copy()
     ...    ret.reverse()
     ...    return ret
@@ -272,14 +283,14 @@ class Value(AbstractRelationVariableLeaf):
             return self._applyOperation(parsingPath.getData(variable),
                                         parsingPath)
 
-    def _applyOperation(self, data, parsed_structure):
+    def _applyOperation(self, data, path):
         """This method can be used to apply the specified operation function.
         If no operation function is known, the data parameter is returned."""
 
         if self.__operation is None:
             return data
 
-        return self.__operation(data, parsed_structure, self)
+        return self.__operation(data, path, self)
 
     def __str__(self):
         """The str method."""
