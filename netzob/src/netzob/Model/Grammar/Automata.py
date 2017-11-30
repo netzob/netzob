@@ -111,8 +111,9 @@ class Automata(object):
 
         binary_path = '/usr/bin/graph-easy'
         if not os.path.isfile(binary_path):
-            self._logger.warn("Cannot generate ASCII graph as a dependency is missing: 'graph-easy' (see libgraph-easy-perl package)")
-            return ""
+            error_message = "Cannot generate ASCII graph as a dependency is missing: 'graph-easy' (see libgraph-easy-perl package)"
+            self._logger.warn(error_message)
+            return error_message
 
         cmd = [binary_path, '--input', f.name, '--as_ascii']
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -141,12 +142,12 @@ class Automata(object):
         >>> automata = Automata(s0, [inputSymbol, outputSymbol])
         >>> print(automata.generateDotCode()) #doctest: +ELLIPSIS
         digraph G {
-        "S0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="..."];
-        "S1" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "S2" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "S0" ... "S1" [fontsize=5, label="OpenChannelTransition", URL="..."];
-        "S1" ... "S1" [fontsize=5, label="hello (Symbol;{Symbol})", URL="..."];
-        "S1" ... "S2" [fontsize=5, label="CloseChannelTransition", URL="..."];
+        "S0" [shape=doubleoctagon, label="S0", style=filled, fillcolor=white, URL="..."];
+        "S1" [shape=ellipse, label="S1", style=filled, fillcolor=white, URL="..."];
+        "S2" [shape=ellipse, label="S2", style=filled, fillcolor=white, URL="..."];
+        "S0" -> "S1" [fontsize=5, label="OpenChannelTransition", URL="..."];
+        "S1" -> "S1" [fontsize=5, label="hello (Symbol;{Symbol})", URL="..."];
+        "S1" -> "S2" [fontsize=5, label="CloseChannelTransition", URL="..."];
         }
 
         :return: a string containing the dot code of the automata.
@@ -284,18 +285,18 @@ class Automata(object):
         >>> automata = Automata.generateChainedStatesAutomata(abstractSession, symbolList)
         >>> dotcode = automata.generateDotCode()
         >>> len(dotcode)
-        1024
+        1115
         >>> print(dotcode) #doctest: +ELLIPSIS
         digraph G {
-        "Start state" [shape=doubleoctagon, style=filled, fillcolor=white, URL="..."];
-        "State 1" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "State 2" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "State 3" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "End state" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "Start state" ... "State 1" [fontsize=5, label="OpenChannelTransition", URL="..."];
-        "State 1" ... "State 2" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_SYNACK})", URL="..."];
-        "State 2" ... "State 3" [fontsize=5, label="Transition (Symbol_ACK;{Symbol_PUSH})", URL="..."];
-        "State 3" ... "End state" [fontsize=5, label="CloseChannelTransition", URL="..."];
+        "Start state" [shape=doubleoctagon, label="Start state", style=filled, fillcolor=white, URL="..."];
+        "State 1" [shape=ellipse, label="State 1", style=filled, fillcolor=white, URL="..."];
+        "State 2" [shape=ellipse, label="State 2", style=filled, fillcolor=white, URL="..."];
+        "State 3" [shape=ellipse, label="State 3", style=filled, fillcolor=white, URL="..."];
+        "End state" [shape=ellipse, label="End state", style=filled, fillcolor=white, URL="..."];
+        "Start state" -> "State 1" [fontsize=5, label="OpenChannelTransition", URL="..."];
+        "State 1" -> "State 2" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_SYNACK})", URL="..."];
+        "State 2" -> "State 3" [fontsize=5, label="Transition (Symbol_ACK;{Symbol_PUSH})", URL="..."];
+        "State 3" -> "End state" [fontsize=5, label="CloseChannelTransition", URL="..."];
         }
 
         :return: an automata with one sequence of chained states.
@@ -329,15 +330,16 @@ class Automata(object):
         >>> automata = Automata.generateOneStateAutomata(abstractSession, symbolList)
         >>> dotcode = automata.generateDotCode()
         >>> len(dotcode)
-        841
+        901
         >>> print(dotcode) #doctest: +ELLIPSIS
         digraph G {
-        "Start state" [shape=doubleoctagon, style=filled, fillcolor=white, URL="..."];
-        "Main state" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "End state" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "Start state" ... "Main state" [fontsize=5, label="OpenChannelTransition", URL="..."];
-        "Main state" ... "Main state" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_SYNACK})", URL="..."];
-        "Main state" ... "End state" [fontsize=5, label="CloseChannelTransition", URL="..."];
+        "Start state" [shape=doubleoctagon, label="Start state", style=filled, fillcolor=white, URL="..."];
+        "Main state" [shape=ellipse, label="Main state", style=filled, fillcolor=white, URL="..."];
+        "End state" [shape=ellipse, label="End state", style=filled, fillcolor=white, URL="..."];
+        "Start state" -> "Main state" [fontsize=5, label="OpenChannelTransition", URL="..."];
+        "Main state" -> "Main state" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_SYNACK})", URL="..."];
+        "Main state" -> "Main state" [fontsize=5, label="Transition (Symbol_ACK;{Symbol_PUSH})", URL="..."];
+        "Main state" -> "End state" [fontsize=5, label="CloseChannelTransition", URL="..."];
         }
 
         :return: an automata with one main state.
@@ -391,27 +393,27 @@ class Automata(object):
         >>> dotcode = automata.generateDotCode()
         >>> print(dotcode) #doctest: +ELLIPSIS
         digraph G {
-        "Start state" [shape=doubleoctagon, style=filled, fillcolor=white, URL="..."];
-        "State 0" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "State 1" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "State 4" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "State 5" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "End state 6" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "State 2" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "State 7" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "State 8" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "End state 9" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "End state 3" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
-        "Start state" ... "State 0" [fontsize=5, label="OpenChannelTransition", URL="..."];
-        "State 0" ... "State 1" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_SYNACK})", URL="..."];
-        "State 1" ... "State 2" [fontsize=5, label="Transition (Symbol_ACK;{Symbol_PUSH})", URL="..."];
-        "State 1" ... "State 4" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
-        "State 4" ... "State 5" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
-        "State 5" ... "End state 6" [fontsize=5, label="CloseChannelTransition", URL="..."];
-        "State 2" ... "End state 3" [fontsize=5, label="CloseChannelTransition", URL="..."];
-        "State 2" ... "State 7" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
-        "State 7" ... "State 8" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
-        "State 8" ... "End state 9" [fontsize=5, label="CloseChannelTransition", URL="..."];
+        "Start state" [shape=doubleoctagon, label="Start state", style=filled, fillcolor=white, URL="..."];
+        "State 0" [shape=ellipse, label="State 0", style=filled, fillcolor=white, URL="..."];
+        "State 1" [shape=ellipse, label="State 1", style=filled, fillcolor=white, URL="..."];
+        "State 4" [shape=ellipse, label="State 4", style=filled, fillcolor=white, URL="..."];
+        "State 5" [shape=ellipse, label="State 5", style=filled, fillcolor=white, URL="..."];
+        "End state 6" [shape=ellipse, label="End state 6", style=filled, fillcolor=white, URL="..."];
+        "State 2" [shape=ellipse, label="State 2", style=filled, fillcolor=white, URL="..."];
+        "State 7" [shape=ellipse, label="State 7", style=filled, fillcolor=white, URL="..."];
+        "State 8" [shape=ellipse, label="State 8", style=filled, fillcolor=white, URL="..."];
+        "End state 9" [shape=ellipse, label="End state 9", style=filled, fillcolor=white, URL="..."];
+        "End state 3" [shape=ellipse, label="End state 3", style=filled, fillcolor=white, URL="..."];
+        "Start state" -> "State 0" [fontsize=5, label="OpenChannelTransition", URL="..."];
+        "State 0" -> "State 1" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_SYNACK})", URL="..."];
+        "State 1" -> "State 2" [fontsize=5, label="Transition (Symbol_ACK;{Symbol_PUSH})", URL="..."];
+        "State 1" -> "State 4" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
+        "State 4" -> "State 5" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
+        "State 5" -> "End state 6" [fontsize=5, label="CloseChannelTransition", URL="..."];
+        "State 2" -> "End state 3" [fontsize=5, label="CloseChannelTransition", URL="..."];
+        "State 2" -> "State 7" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
+        "State 7" -> "State 8" [fontsize=5, label="Transition (Symbol_SYN;{Symbol_PUSH})", URL="..."];
+        "State 8" -> "End state 9" [fontsize=5, label="CloseChannelTransition", URL="..."];
         }
 
         :return: an automata based on a PTA (Prefix Tree Acceptator).

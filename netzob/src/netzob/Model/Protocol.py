@@ -104,8 +104,8 @@ class Protocol(object):
     >>> dot_code = udp.automata.generateDotCode()
     >>> print(dot_code)  # doctest: +ELLIPSIS
     digraph G {
-    "Initial state" [shape=doubleoctagon, style=filled, fillcolor=white, URL="..."];
-    "Channel opened" [shape=ellipse, style=filled, fillcolor=white, URL="..."];
+    "Initial state" [shape=doubleoctagon, label="Initial state", style=filled, fillcolor=white, URL="..."];
+    "Channel opened" [shape=ellipse, label="Channel opened", style=filled, fillcolor=white, URL="..."];
     "Initial state" -> "Channel opened" [fontsize=5, label="OpenChannelTransition", URL="..."];
     }
 
