@@ -36,6 +36,7 @@
 #+---------------------------------------------------------------------------+
 import threading
 import traceback
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -166,11 +167,12 @@ class Actor(threading.Thread):
     >>> bob.nbMaxTransitions = 3
     >>>
     >>> alice.start()
+    >>> time.sleep(0.5)
     >>> bob.start()
     >>>
-    >>> time.sleep(1)
+    >>> #time.sleep(1)
     >>>
-    >>> bob.stop()
+    >>> bob.wait()
     >>> alice.stop()
     >>>
     >>> print(bob.generateLog())
@@ -232,28 +234,34 @@ class Actor(threading.Thread):
     >>> bob_secondTransition = Transition(startState=bob_s2, endState=bob_s2,
     ...                                   inputSymbol=symbol, outputSymbols=[symbol],
     ...                                   name="T2")
-    >>> bob_closeTransition = CloseChannelTransition(startState=bob_s2, endState=bob_s2, name="Close")
+    >>> bob_closeTransition = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
     >>> bob_automata = Automata(bob_s0, symbolList)
     >>>
     >>> automata_ascii = bob_automata.generateASCII()
     >>> print(automata_ascii)
-                                 #========================#
-                                 H           S0           H
-                                 #========================#
-                                   |
-                                   | OpenChannelTransition
-                                   v
-                                 +------------------------+
-                                 |           S1           |
-                                 +------------------------+
-                                   |
-                                   | T1 (Hello;{Hello})
-                                   v
-        CloseChannelTransition   +------------------------+   T2 (Hello;{Hello})
-      +------------------------- |                        | ---------------------+
-      |                          |           S2           |                      |
-      +------------------------> |                        | <--------------------+
-                                 +------------------------+
+    #=========================#
+    H           S0            H
+    #=========================#
+      |
+      | OpenChannelTransition
+      v
+    +-------------------------+
+    |           S1            |
+    +-------------------------+
+      |
+      | T1 (Hello;{Hello})
+      v
+    +-------------------------+   T2 (Hello;{Hello})
+    |                         | ---------------------+
+    |           S2            |                      |
+    |                         | <--------------------+
+    +-------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-------------------------+
+    |           S3            |
+    +-------------------------+
     <BLANKLINE>
     >>>
     >>> # Create Alice's automaton
@@ -300,6 +308,7 @@ class Actor(threading.Thread):
     >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
     >>>
     >>> alice.start()
+    >>> time.sleep(0.5)
     >>> bob.start()
     >>>
     >>> time.sleep(1)
@@ -460,6 +469,7 @@ class Actor(threading.Thread):
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob.nbMaxTransitions = 10
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
@@ -467,6 +477,7 @@ class Actor(threading.Thread):
     >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
     >>>
     >>> alice.start()
+    >>> time.sleep(0.5)
     >>> bob.start()
     >>>
     >>> time.sleep(1)
@@ -631,6 +642,7 @@ class Actor(threading.Thread):
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob.nbMaxTransitions = 10
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
@@ -815,6 +827,7 @@ class Actor(threading.Thread):
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob.nbMaxTransitions = 10
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
@@ -822,6 +835,7 @@ class Actor(threading.Thread):
     >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
     >>>
     >>> alice.start()
+    >>> time.sleep(0.5)
     >>> bob.start()
     >>>
     >>> time.sleep(1)
@@ -978,6 +992,7 @@ class Actor(threading.Thread):
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> abstractionLayer = AbstractionLayer(channel, symbolList)
     >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob.nbMaxTransitions = 10
     >>>
     >>> # Create Alice actor (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
@@ -985,6 +1000,7 @@ class Actor(threading.Thread):
     >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
     >>>
     >>> alice.start()
+    >>> time.sleep(0.5)
     >>> bob.start()
     >>>
     >>> time.sleep(1)
@@ -1155,8 +1171,10 @@ class Actor(threading.Thread):
     >>> abstractionLayer.timeout = .5
     >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer,
     ...             initiator=True, name="Bob")
+    >>> bob.nbMaxTransitions = 10
     >>>
     >>> alice.start()
+    >>> time.sleep(0.5)
     >>> bob.start()
     >>>
     >>> time.sleep(2)
@@ -1199,6 +1217,370 @@ class Actor(threading.Thread):
       [+]   Picking transition 'Close'
       [+]   Transition 'Close' lead to state 'S4'
 
+
+    **Example on how to catch all read symbol timeout**
+
+    The following example shows how to specify a global behavior, on
+    all states and transitions, in order to catch timeouts when
+    listening for symbols. In this example, we set a callback through the method ''set_cbk_read_symbol_timeout''. when a timeout occurs on
+    reception of a symbol, the defined callback will move the current
+    position in the state machine to a specific state called
+    'error_state'.
+
+    >>> from netzob.all import *
+    >>> import time
+    >>>
+    >>> # First we create a symbol
+    >>> symbol = Symbol(name="Hello", fields=[Field("hello")])
+    >>> symbolList = [symbol]
+    >>>
+    >>> # Create the grammar
+    >>> s0 = State(name="Start state")
+    >>> s1 = State(name="S1")
+    >>> s2 = State(name="Close state")
+    >>> error_state = State(name="Error state")
+    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
+    >>> outputSymbolsReactionTime = {symbol: 2.0}
+    >>> mainTransition = Transition(startState=s1, endState=s1,
+    ...                             inputSymbol=symbol,
+    ...                             outputSymbols=[symbol],
+    ...                             outputSymbolsReactionTime=outputSymbolsReactionTime,
+    ...                             name="T1")
+    >>> closeTransition1 = CloseChannelTransition(startState=error_state, endState=s2, name="Close with error")
+    >>> closeTransition2 = CloseChannelTransition(startState=s1, endState=s2, name="Close")
+    >>> automata = Automata(s0, symbolList)
+    >>>
+    >>> def cbk_method(current_state, current_transition=None):
+    ...     return error_state
+    >>> automata.set_cbk_read_symbol_timeout(cbk_method)
+    >>>
+    >>> automata_ascii = automata.generateASCII()
+    >>> print(automata_ascii)
+    #=========================#
+    H       Start state       H
+    #=========================#
+      |
+      | OpenChannelTransition
+      v
+    +-------------------------+   T1 (Hello;{Hello})
+    |                         | ---------------------+
+    |           S1            |                      |
+    |                         | <--------------------+
+    +-------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-------------------------+
+    |       Close state       |
+    +-------------------------+
+    <BLANKLINE>
+    >>>
+    >>> # Create actors: Alice (a server) and Bob (a client)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> alice = Actor(automata=automata, abstractionLayer=abstractionLayer, initiator=False, name='Alice')
+    >>>
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> bob = Actor(automata=automata, abstractionLayer=abstractionLayer, name='Bob')
+    >>> bob.nbMaxTransitions = 10
+    >>>
+    >>> alice.start()
+    >>> time.sleep(0.5)
+    >>> bob.start()
+    >>>
+    >>> time.sleep(5)
+    >>>
+    >>> bob.stop()
+    >>> alice.stop()
+    >>>
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'Start state'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'Hello'
+      [+]   During transition 'T1', timeout in reception triggered a callback that lead to state 'Error state'
+      [+] At state 'Error state'
+      [+]   Picking transition 'Close with error'
+      [+]   Transition 'Close with error' lead to state 'Close state'
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'Start state'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Hello', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Hello'
+      [+]   Transition 'T1' lead to state 'S1'
+
+
+    **Example on how to catch all receptions of unexpected symbols**
+
+    The following example shows how to specify a global behavior, on
+    all states and transitions, in order to catch reception of unexpected symbols (i.e. symbols that are known but not expected at this state/transition). In this example, we set a callback through the method ''set_cbk_read_unexpected_symbol''. When an unexpected symbol is received, the defined callback will move the current
+    position in the state machine to a specific state called
+    'error_state'.
+
+    >>> from netzob.all import *
+    >>> import time
+    >>>
+    >>> # First we create the symbols
+    >>> symbol1 = Symbol(name="Hello1", fields=[Field("hello1")])
+    >>> symbol2 = Symbol(name="Hello2", fields=[Field("hello2")])
+    >>> symbolList = [symbol1, symbol2]
+    >>>
+    >>> # Create Bob's automaton
+    >>> bob_s0 = State(name="S0")
+    >>> bob_s1 = State(name="S1")
+    >>> bob_s2 = State(name="S2")
+    >>> bob_s3 = State(name="S3")
+    >>> bob_error_state = State(name="Error state")
+    >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+    >>> bob_mainTransition = Transition(startState=bob_s1, endState=bob_s2,
+    ...                                 inputSymbol=symbol1, outputSymbols=[symbol2],
+    ...                                 name="T1")
+    >>> bob_closeTransition1 = CloseChannelTransition(startState=bob_error_state, endState=bob_s3, name="Close")
+    >>> bob_closeTransition2 = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
+    >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> def cbk_method(current_state, current_transition=None, received_symbol=None, received_message=None):
+    ...     return bob_error_state
+    >>> bob_automata.set_cbk_read_unexpected_symbol(cbk_method)
+    >>>
+    >>> automata_ascii = bob_automata.generateASCII()
+    >>> print(automata_ascii)
+    #=========================#
+    H           S0            H
+    #=========================#
+      |
+      | OpenChannelTransition
+      v
+    +-------------------------+
+    |           S1            |
+    +-------------------------+
+      |
+      | T1 (Hello1;{Hello2})
+      v
+    +-------------------------+
+    |           S2            |
+    +-------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-------------------------+
+    |           S3            |
+    +-------------------------+
+    <BLANKLINE>
+    >>>
+    >>> # Create Alice's automaton
+    >>> alice_s0 = State(name="S0")
+    >>> alice_s1 = State(name="S1")
+    >>> alice_s2 = State(name="S2")
+    >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+    >>> alice_mainTransition = Transition(startState=alice_s1, endState=alice_s1,
+    ...                                   inputSymbol=symbol1, outputSymbols=[symbol1],
+    ...                                   name="T1")
+    >>> alice_closeTransition = CloseChannelTransition(startState=alice_s1, endState=alice_s2, name="Close")
+    >>> alice_automata = Automata(alice_s0, symbolList)
+    >>>
+    >>> automata_ascii = alice_automata.generateASCII()
+    >>> print(automata_ascii)
+    #=========================#
+    H           S0            H
+    #=========================#
+      |
+      | OpenChannelTransition
+      v
+    +-------------------------+   T1 (Hello1;{Hello1})
+    |                         | -----------------------+
+    |           S1            |                        |
+    |                         | <----------------------+
+    +-------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-------------------------+
+    |           S2            |
+    +-------------------------+
+    <BLANKLINE>
+    >>>
+    >>> # Create Bob actor (a client)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob.nbMaxTransitions = 10
+    >>>
+    >>> # Create Alice actor (a server)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>>
+    >>> alice.start()
+    >>> time.sleep(0.5)
+    >>> bob.start()
+    >>>
+    >>> time.sleep(1)
+    >>>
+    >>> bob.stop()
+    >>> alice.stop()
+    >>>
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'Hello1'
+      [+]   During transition 'T1', receiving unexpected symbol triggered a callback that lead to state 'Error state'
+      [+] At state 'Error state'
+      [+]   Picking transition 'Close'
+      [+]   Transition 'Close' lead to state 'S3'
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Hello1', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Hello1'
+      [+]   Transition 'T1' lead to state 'S1'
+
+
+    **Example on how to catch all receptions of unknown messages**
+
+    The following example shows how to specify a global behavior, on
+    all states and transitions, in order to catch reception of unknown messages (i.e. messages that cannot be abstracted to a symbol). In this example, we set a callback through the method ''set_cbk_read_unknown_symbol''. When an unknown message is received, the defined callback will move the current
+    position in the state machine to a specific state called
+    'error_state'.
+
+    >>> from netzob.all import *
+    >>> import time
+    >>>
+    >>> # First we create the symbols
+    >>> symbol1 = Symbol(name="Hello1", fields=[Field("hello1")])
+    >>> symbol2 = Symbol(name="Hello2", fields=[Field("hello2")])
+    >>> symbolList = [symbol1]
+    >>>
+    >>> # Create Bob's automaton
+    >>> bob_s0 = State(name="S0")
+    >>> bob_s1 = State(name="S1")
+    >>> bob_s2 = State(name="S2")
+    >>> bob_s3 = State(name="S3")
+    >>> bob_error_state = State(name="Error state")
+    >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+    >>> bob_mainTransition = Transition(startState=bob_s1, endState=bob_s2,
+    ...                                 inputSymbol=symbol1, outputSymbols=[symbol1],
+    ...                                 name="T1")
+    >>> bob_closeTransition1 = CloseChannelTransition(startState=bob_error_state, endState=bob_s3, name="Close")
+    >>> bob_closeTransition2 = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
+    >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> def cbk_method(current_state, current_transition=None, received_symbol=None, received_message=None):
+    ...     return bob_error_state
+    >>> bob_automata.set_cbk_read_unknown_symbol(cbk_method)
+    >>>
+    >>> automata_ascii = bob_automata.generateASCII()
+    >>> print(automata_ascii)
+    #=========================#
+    H           S0            H
+    #=========================#
+      |
+      | OpenChannelTransition
+      v
+    +-------------------------+
+    |           S1            |
+    +-------------------------+
+      |
+      | T1 (Hello1;{Hello1})
+      v
+    +-------------------------+
+    |           S2            |
+    +-------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-------------------------+
+    |           S3            |
+    +-------------------------+
+    <BLANKLINE>
+    >>>
+    >>> # Create Alice's automaton
+    >>> alice_s0 = State(name="S0")
+    >>> alice_s1 = State(name="S1")
+    >>> alice_s2 = State(name="S2")
+    >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+    >>> alice_mainTransition = Transition(startState=alice_s1, endState=alice_s1,
+    ...                                   inputSymbol=symbol1, outputSymbols=[symbol2],
+    ...                                   name="T1")
+    >>> alice_closeTransition = CloseChannelTransition(startState=alice_s1, endState=alice_s2, name="Close")
+    >>> alice_automata = Automata(alice_s0, symbolList)
+    >>>
+    >>> automata_ascii = alice_automata.generateASCII()
+    >>> print(automata_ascii)
+    #=========================#
+    H           S0            H
+    #=========================#
+      |
+      | OpenChannelTransition
+      v
+    +-------------------------+   T1 (Hello1;{Hello2})
+    |                         | -----------------------+
+    |           S1            |                        |
+    |                         | <----------------------+
+    +-------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-------------------------+
+    |           S2            |
+    +-------------------------+
+    <BLANKLINE>
+    >>>
+    >>> # Create Bob actor (a client)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob.nbMaxTransitions = 10
+    >>>
+    >>> # Create Alice actor (a server)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>>
+    >>> alice.start()
+    >>> time.sleep(0.5)
+    >>> bob.start()
+    >>>
+    >>> time.sleep(1)
+    >>>
+    >>> bob.stop()
+    >>> alice.stop()
+    >>>
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'Hello1'
+      [+]   During transition 'T1', receiving unknown symbol triggered a callback that lead to state 'Error state'
+      [+] At state 'Error state'
+      [+]   Picking transition 'Close'
+      [+]   Transition 'Close' lead to state 'S3'
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Hello1', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Hello2'
+      [+]   Transition 'T1' lead to state 'S1'
 
     """
 
@@ -1244,13 +1626,14 @@ class Actor(threading.Thread):
 
                 self._currentnbTransitions += 1
                 if self.nbMaxTransitions is not None and self._currentnbTransitions >= self.nbMaxTransitions:
+                    self._logger.debug("[actor='{}'] Max number of transitions ({}) reached".format(self.name, self.nbMaxTransitions))
                     self.visit_log.append("  [+] At state '{}', we reached the max number of transitions ({}), so we stop".format(currentState.name, self.nbMaxTransitions))
                     self.stop()
 
             except Exception as e:
                 self._logger.debug("Exception raised for actor '{}' when on the execution of state {}.".format(self.name, currentState.name))
-                self._logger.debug("Exception error for actor '{}': {}".format(self.name, str(e)))
-                #self._logger.warn(traceback.format_exc())
+                self._logger.error("Exception error for actor '{}': {}".format(self.name, str(e)))
+                self._logger.warn(traceback.format_exc())
                 self.stop()
 
         self._logger.debug("Actor '{}' has finished to execute".format(self.name))
@@ -1263,11 +1646,25 @@ class Actor(threading.Thread):
         thread as cleanly as possible.
 
         """
+        self._logger.debug("[actor='{}'] Stopping the current actor".format(self.name))
+
         self.__stopEvent.set()
         try:
             self.abstractionLayer.closeChannel()
         except Exception as e:
             self._logger.error(e)
+
+    @public_api
+    def wait(self):
+        """Wait for the current actor to finish the visit of the automaton.
+
+        """
+        self._logger.debug("[actor='{}'] Waiting for the current actor to finish".format(self.name))
+
+        while self.isActive():
+            time.sleep(0.5)
+
+        self._logger.debug("[actor='{}'] The current actor has finished".format(self.name))
 
     @public_api
     def isActive(self):

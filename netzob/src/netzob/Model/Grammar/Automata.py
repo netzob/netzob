@@ -97,6 +97,10 @@ class Automata(object):
         self.initialState = initialState
         self.vocabulary = vocabulary  # A list of symbols
 
+        self.cbk_read_symbol_timeout = None
+        self.cbk_read_unexpected_symbol = None
+        self.cbk_read_unknown_symbol = None
+
     def generateASCII(self):
         """Render the ASCII representation of the automaton.
         """
@@ -435,7 +439,6 @@ class Automata(object):
 
 
     @public_api
-    @typeCheck(callable)
     def set_cbk_read_symbol_timeout(self, cbk_method, states=None):
         """Function called to handle cases where a timeout appears when
         waiting for a symbol. For a server, this symbol would
@@ -458,7 +461,7 @@ class Automata(object):
 
         :attr:`cbk_method` should have the following prototype:
 
-        .. function:: cbk_method(current_state, current_transition)
+        .. function:: cbk_method(current_state, current_transition=None)
            :noindex:
 
            :param current_state:
@@ -481,10 +484,9 @@ class Automata(object):
         if not callable(cbk_method):
             raise TypeError("'cbk_method' should be a callable function")
 
-        raise NotImplementedError("Not yet implemented")
+        self.cbk_read_symbol_timeout = cbk_method
 
     @public_api
-    @typeCheck(callable, list)
     def set_cbk_read_unexpected_symbol(self, cbk_method, states=None):
         """Function called to handle cases where a symbol is received but not
         expected. In a server context, this symbol would not match the input
@@ -540,10 +542,9 @@ class Automata(object):
         if not callable(cbk_method):
             raise TypeError("'cbk_method' should be a callable function")
 
-        raise NotImplementedError("Not yet implemented")
+        self.cbk_read_unexpected_symbol = cbk_method
 
     @public_api
-    @typeCheck(callable, list)
     def set_cbk_read_unknown_symbol(self, cbk_method, states=None):
         """Function called to handle cases where a message is received but
         does not correspond to a known symbol. In a server context,
@@ -598,5 +599,4 @@ class Automata(object):
         if not callable(cbk_method):
             raise TypeError("'cbk_method' should be a callable function")
 
-        raise NotImplementedError("Not yet implemented")
-
+        self.cbk_read_unknown_symbol = cbk_method

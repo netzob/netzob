@@ -49,6 +49,7 @@ from typing import Dict  # noqa: F401
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
+from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
 from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
@@ -236,7 +237,7 @@ class Transition(AbstractTransition):
             try:
                 abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
             except socket.timeout:
-                self._logger.debug("[actor='{}'] Timeout on abstractionLayer.writeSymbol()".format(str(actor)))
+                self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
                 self.active = False
                 raise
             except Exception as e:
@@ -249,9 +250,22 @@ class Transition(AbstractTransition):
         try:
             (received_symbol, received_message) = abstractionLayer.readSymbol()
         except socket.timeout:
-            self._logger.debug("[actor='{}'] Timeout on abstractionLayer.readSymbol()".format(str(actor)))
+            self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.readSymbol()".format(str(actor), self.name))
             self.active = False
-            raise ReadSymbolTimeoutException(current_state=self.startState, current_transition=self)
+
+            if actor.automata.cbk_read_symbol_timeout is not None:
+                nextState = actor.automata.cbk_read_symbol_timeout(current_state=self.startState, current_transition=self)
+
+                actor.visit_log.append("  [+]   During transition '{}', timeout in reception triggered a callback that lead to state '{}'".format(self.name, str(nextState)))
+
+                return nextState
+            else:
+                # Return the start state so that we accept a new message
+                return self.startState
+
+        except OSError as e:
+            self._logger.debug("[actor='{}'] The underlying abstraction channel seems to be closed, so we stop the current actor".format(str(actor)))
+            return
         except Exception as e:
             self.active = False
             errorMessage = "[actor='{}'] An error occured while executing the transition {} as an initiator: {}".format(str(actor), self.name, e)
@@ -259,8 +273,6 @@ class Transition(AbstractTransition):
             raise Exception(errorMessage)
 
         # Computes the next state following the received symbol
-        #   - if its an expected one, it returns the endState of the transition
-        #   - if not it raises an exception
         for outputSymbol in self.outputSymbols:
             self._logger.debug("[actor='{}'] Possible output symbol: '{}' (id={}).".
                                format(str(actor), str(outputSymbol), outputSymbol.id))
@@ -273,19 +285,39 @@ class Transition(AbstractTransition):
             return self.endState
         else:
             self.active = False
-            self._logger.debug("[actor='{}'] Received symbol '{}' was unexpected.".format(str(actor), (received_symbol)))
+            self._logger.debug("[actor='{}'] Received symbol '{}' was unexpected.".format(str(actor), str(received_symbol)))
+
+            # Handle case where received symbol is unknown
             if isinstance(received_symbol, UnknownSymbol):
-                actor.visit_log.append("  [+]   During transition '{}', receiving unknown symbol".format(self.name))
-                raise ReadUnknownSymbolException(current_state=self.startState,
-                                                 current_transition=self,
-                                                 received_symbol=received_symbol,
-                                                 received_message=received_message)
+
+                if actor.automata.cbk_read_unknown_symbol is not None:
+                    nextState = actor.automata.cbk_read_unknown_symbol(current_state=self.startState,
+                                                                       current_transition=self,
+                                                                       received_symbol=received_symbol,
+                                                                       received_message=received_message)
+                    actor.visit_log.append("  [+]   During transition '{}', receiving unknown symbol triggered a callback that lead to state '{}'".format(self.name, str(nextState)))
+                    return nextState
+                else:
+                    actor.visit_log.append("  [+]   During transition '{}', receiving unknown symbol, so we stay at state '{}'".format(self.name, str(self.startState)))
+
+                    # Return the start state so that we accept a new message
+                    return self.startState
+
+            # Handle case where received symbol is known but unexpected
             else:
-                actor.visit_log.append("  [+]   During transition '{}', receiving unexpected output symbol '{}'".format(self.name, str(received_symbol)))
-                raise ReadUnexpectedSymbolException(current_state=self.startState,
-                                                    current_transition=self,
-                                                    received_symbol=received_symbol,
-                                                    received_message=received_message)
+
+                if actor.automata.cbk_read_unexpected_symbol is not None:
+                    nextState = actor.automata.cbk_read_unexpected_symbol(current_state=self,
+                                                                          current_transition=self,
+                                                                          received_symbol=received_symbol,
+                                                                          received_message=received_message)
+                    actor.visit_log.append("  [+]   During transition '{}', receiving unexpected symbol triggered a callback that lead to state '{}'".format(self.name, str(nextState)))
+                    return nextState
+                else:
+                    actor.visit_log.append("  [+]   During transition '{}', receiving unexpected symbol, so we stay at state '{}'".format(self.name, str(self.startState)))
+
+                    # Return the start state so that we accept a new message
+                    return self.startState
 
     @typeCheck(AbstractionLayer)
     def executeAsNotInitiator(self, abstractionLayer, actor):
@@ -323,9 +355,9 @@ class Transition(AbstractTransition):
         try:
             abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
         except socket.timeout:
-            self._logger.debug("[actor='{}'] Timeout on abstractionLayer.writeSymbol()".format(str(actor)))
+            self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
             self.active = False
-            return None
+            raise
         except Exception as e:
             self._logger.debug("[actor='{}'] An exception occured when sending a symbol from the abstraction layer: '{}'".format(str(actor), e))
             self.active = False

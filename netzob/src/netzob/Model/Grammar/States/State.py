@@ -52,6 +52,7 @@ from netzob.Model.Grammar.States.AbstractState import AbstractState
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
 from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
+from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
 
 
 @NetzobLogger
@@ -109,11 +110,11 @@ class State(AbstractState):
 
         # Pick the next transition
         nextTransition = self.__pickNextTransition(abstractionLayer, actor)
-        self._logger.debug("[actor='{}'] Next transition: {}.".format(str(actor), nextTransition))
+        self._logger.debug("[actor='{}'] Next transition for state '{}': {}.".format(str(actor), self.name, nextTransition))
 
         if nextTransition is None:
             self.active = False
-            raise Exception("No transition to execute, we stop here.")
+            return
 
         # Execute picked transition as an initiator
         try:
@@ -124,10 +125,7 @@ class State(AbstractState):
             raise
 
         if nextState is None:
-            self.active = False
-            raise Exception(
-                "The execution of transition {} on state {} did not return the next state.".
-                format(str(nextTransition), self.name))
+            self._logger.debug("[actor='{}'] The execution of transition '{}' on state '{}' did not return the next state".format(str(actor), str(nextTransition), self.name))
 
         self.active = False
 
@@ -155,9 +153,9 @@ class State(AbstractState):
 
         # if no transition exists we quit
         if len(self.transitions) == 0:
-            self._logger.debug("[actor='{}'] The current state has no transitions available".format(str(actor)))
+            self._logger.debug("[actor='{}'] The current state '{}' has no transitions available".format(str(actor), self.name))
             self.active = False
-            raise Exception("No transition available for this state.")
+            return
 
         nextTransition = None
         nextState = None
@@ -184,7 +182,7 @@ class State(AbstractState):
             if nextState is None:
                 self.active = False
                 raise Exception(
-                    "The execution of transition {} on state {} did not return the next state.".
+                    "The execution of transition '{}' on state '{}' did not return the next state.".
                     format(nextTransition.name, self.name))
 
             return nextState
@@ -209,13 +207,13 @@ class State(AbstractState):
             actor.visit_log.append("  [+]   Receiving input symbol '{}', which corresponds to transition '{}'".format(str(received_symbol), str(nextTransition)))
 
         except socket.timeout:
-            self._logger.debug("[actor='{}'] Timeout on abstractionLayer.readSymbol()".format(str(actor)))
+            self._logger.debug("[actor='{}'] In state '{}', timeout on abstractionLayer.readSymbol()".format(str(actor), self.name))
 
             # Check if there is a transition with an EmptySymbol as input symbol
             self._logger.debug("[actor='{}'] Check if a transition expects an EmptySymbol as input symbol".format(str(actor)))
             nextTransition = None
             for transition in self.transitions:
-                if isinstance(transition.inputSymbol, EmptySymbol):
+                if transition.type == Transition.TYPE and isinstance(transition.inputSymbol, EmptySymbol):
                     self._logger.debug("[actor='{}'] The transition '{}' expects an EmptySymbol as input symbol ".format(str(actor), str(transition)))
                     nextTransition = transition
 
@@ -226,12 +224,19 @@ class State(AbstractState):
             else:
                 self._logger.debug("[actor='{}'] No transition expects an EmptySymbol as input symbol".format(str(actor)))
                 self.active = False
-                raise ReadSymbolTimeoutException(current_state=self, current_transition=None)
 
+                if actor.automata.cbk_read_symbol_timeout is not None:
+                    actor.automata.cbk_read_symbol_timeout(current_state=self, current_transition=None)
+
+                # Returning None here will stop the actor
+                return
+
+        except OSError as e:
+            self._logger.debug("[actor='{}'] The underlying abstraction channel seems to be closed, so we stop the current actor".format(str(actor)))
+            return
         except Exception as e:
-            self._logger.debug("[actor='{}'] An exception occured when receiving a symbol from the abstraction layer".format(str(actor)))
+            self._logger.debug("[actor='{}'] An exception occured when waiting for a symbol at state '{}': '{}'".format(str(actor), self.name, e))
             self.active = False
-            #self._logger.debug(traceback.format_exc())
             raise
 
         # If a callback function is defined, we call it in order to
@@ -257,16 +262,29 @@ class State(AbstractState):
         if nextTransition is None:
             self._logger.debug("[actor='{}'] The received symbol did not match any of the registered transition".format(str(actor)))
             #nextState = self
+
+            # Handle case where received symbol is unknown
             if isinstance(received_symbol, UnknownSymbol):
-                raise ReadUnknownSymbolException(current_state=self,
-                                                 current_transition=None,
-                                                 received_symbol=received_symbol,
-                                                 received_message=received_message)
+
+                if actor.automata.cbk_read_unknown_symbol is not None:
+                    actor.automata.cbk_read_unknown_symbol(current_state=self,
+                                                           current_transition=None,
+                                                           received_symbol=received_symbol,
+                                                           received_message=received_message)
+                else:
+                    raise Exception("The received message is unknown")
+
+            # Handle case where received symbol is known but unexpected
             else:
-                raise ReadUnexpectedSymbolException(current_state=self,
-                                                    current_transition=None,
-                                                    received_symbol=received_symbol,
-                                                    received_message=received_message)
+
+                if actor.automata.cbk_read_unexpected_symbol is not None:
+                    actor.automata.cbk_read_unexpected_symbol(current_state=self,
+                                                              current_transition=None,
+                                                              received_symbol=received_symbol,
+                                                              received_message=received_message)
+                else:
+                    raise Exception("The received symbol did not match any of expected symbols")
+
         else:
             nextState = nextTransition.executeAsNotInitiator(abstractionLayer, actor)
             self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(nextTransition), str(nextState)))
