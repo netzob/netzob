@@ -359,12 +359,12 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                          Sign.SIGNED or
                          Sign.UNSIGNED. If None, the
                          value is the default one (Sign.SIGNED).
-        :type typeClass: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`, required
+        :type typeClass: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, required
         :type dst_unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
         :type dst_endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
         :type dst_sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
         :return: The converted current value in the specified data type.
-        :rtype: :class:`AbstractType <netzob.Model.AbstractType.AbstractType>`
+        :rtype: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
 
         """
         if typeClass is None:

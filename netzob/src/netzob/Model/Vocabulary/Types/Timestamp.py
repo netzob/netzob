@@ -138,7 +138,7 @@ class Timestamp(AbstractType):
     :vartype unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional
     :vartype epoch: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Epoch`
     :vartype unity: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Unity`
-    :vartype sign: class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`
+    :vartype sign: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`
     :vartype endianness: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Endianness`
 
 
