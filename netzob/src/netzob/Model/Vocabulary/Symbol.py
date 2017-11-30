@@ -96,15 +96,11 @@ class Symbol(AbstractField):
     >>> f1 = Field(" # ")
     >>> f2 = Field("bbbbbb")
     >>> symbol = Symbol(fields=[f0, f1, f2])
-    >>> print(symbol.str_structure())
-    Symbol
-    |--  Field
-         |--   Data (String=aaaa ((None, None)))
-    |--  Field
-         |--   Data (String= #  ((None, None)))
-    |--  Field
-         |--   Data (String=bbbbbb ((None, None)))
-
+    >>> for f in symbol.fields:
+    ...     print("{} - {}".format(f, f.domain))
+    Field - Data (String=aaaa ((None, None)))
+    Field - Data (String= #  ((None, None)))
+    Field - Data (String=bbbbbb ((None, None)))
 
     .. ifconfig:: scope in ('netzob')
 
@@ -145,27 +141,6 @@ class Symbol(AbstractField):
        'hello ' | 'aaaa' 
        'hello ' | 'bbbb' 
        -------- | -------
-
-    **Usage of Symbol for traffic generation and parsing**
-
-    A Symbol class may be used to generate concrete messages according
-    to its field definition, through the
-    :meth:`~netzob.Model.Vocabulary.Symbol.specialize` method, and
-    may also be used to abstract a concrete message into its
-    associated symbol through the
-    :meth:`~netzob.Model.Vocabulary.Symbol.abstract` method:
-
-    >>> from netzob.all import *
-    >>> f0 = Field("aaaa")
-    >>> f1 = Field(" # ")
-    >>> f2 = Field("bbbbbb")
-    >>> symbol = Symbol(fields=[f0, f1, f2])
-    >>> concrete_message = symbol.specialize()
-    >>> concrete_message
-    b'aaaa # bbbbbb'
-    >>> (abstracted_symbol, structured_data) = Symbol.abstract(concrete_message, [symbol])
-    >>> abstracted_symbol == symbol
-    True
 
     """
 

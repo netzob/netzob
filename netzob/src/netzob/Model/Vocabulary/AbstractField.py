@@ -492,19 +492,19 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> messages = ["{0}, what's up in {1} ?".format(pseudo, city)
         ...             for pseudo in ['john', 'kurt']
         ...             for city in ['Paris', 'Berlin']]
-
+        >>> 
         >>> f1a = Field(name="name", domain="john")
         >>> f2a = Field(name="question", domain=", what's up in ")
         >>> f3a = Field(name="city", domain=Alt(["Paris", "Berlin"]))
         >>> f4a = Field(name="mark", domain=" ?")
         >>> s1 = Symbol([f1a, f2a, f3a, f4a], name="Symbol-john")
-
+        >>> 
         >>> f1b = Field(name="name", domain="kurt")
         >>> f2b = Field(name="question", domain=", what's up in ")
         >>> f3b = Field(name="city", domain=Alt(["Paris", "Berlin"]))
         >>> f4b = Field(name="mark", domain=" ?")
         >>> s2 = Symbol([f1b, f2b, f3b, f4b], name="Symbol-kurt")
-
+        >>> 
         >>> for m in messages:
         ...    (abstractedSymbol, structured_data) = Symbol.abstract(m, [s1, s2])
         ...    print(structured_data)
@@ -517,6 +517,29 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         Symbol-kurt
         OrderedDict([('name', b'kurt'), ('question', b", what's up in "), ('city', b'Berlin'), ('mark', b' ?')])
         Symbol-kurt
+
+
+        **Usage of Symbol for traffic generation and parsing**
+
+        A Symbol class may be used to generate concrete messages according
+        to its field definition, through the
+        :meth:`~netzob.Model.Vocabulary.Symbol.specialize` method, and
+        may also be used to abstract a concrete message into its
+        associated symbol through the
+        :meth:`~netzob.Model.Vocabulary.Symbol.abstract` method:
+
+        >>> from netzob.all import *
+        >>> f0 = Field("aaaa")
+        >>> f1 = Field(" # ")
+        >>> f2 = Field("bbbbbb")
+        >>> symbol = Symbol(fields=[f0, f1, f2])
+        >>> concrete_message = symbol.specialize()
+        >>> concrete_message
+        b'aaaa # bbbbbb'
+        >>> (abstracted_symbol, structured_data) = Symbol.abstract(concrete_message, [symbol])
+        >>> abstracted_symbol == symbol
+        True
+
         """
 
         from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
