@@ -63,10 +63,11 @@ class Field(AbstractField):
 
     The Field constructor expects some parameters:
 
-    :param domain: The definition domain of the field (i.e. the
-                   set of values the field accepts). If not
-                   specified, the default definition domain will
-                   be ``Raw()``, meaning it accepts any values.
+    :param domain: The definition domain of the field (i.e. the set of values
+                   the field accepts). If not specified, the default definition
+                   domain will be ``Raw()``, meaning it accepts any values.
+                   When this parameter is a list of fields, the constructor set
+                   ``self.fields=domain`` and ``self.domain=None``.
     :param name: The name of the field. If not specified, the
                  default name will be "Field".
     :param isPseudoField: A flag indicating if the field is a
@@ -74,8 +75,9 @@ class Field(AbstractField):
                           internally to help the computation
                           of the value of another field, but does
                           not directly produce data. The default value is False.
-    :type domain: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-                  or a :class:`list` of :class:`~netzob.Model.Vocabulary.Field.Field`, optional
+    :type domain: ~typing.Union[Variable,
+                  ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType,
+                  list[~netzob.Model.Vocabulary.Field.Field]], optional
     :type name: :class:`str`, optional
     :type isPseudoField: :class:`bool`, optional
 
@@ -86,6 +88,7 @@ class Field(AbstractField):
     :var description: The description of the field.
     :var domain: The definition domain of the field (i.e. the
                  set of values the field accepts).
+                 ``None`` when ``self.fields`` is set.
     :var fields: The sorted list of sub-fields.
                  This variable should be used only if sub-field domains have basic
                  types (for example :class:`~netzob.Model.Vocabulary.Types.Integer.Integer`
@@ -99,9 +102,12 @@ class Field(AbstractField):
                         not directly produce data.
     :vartype name: :class:`str`
     :vartype description: :class:`str`
-    :vartype domain: a :class:`list` of :class:`object`
-    :vartype fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`
-    :vartype parent: :class:`Field <netzob.Model.Vocabulary.Field.Field>` or :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+    :vartype domain: ~typing.Union[Variable,
+                     ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType,
+                     None]
+    :vartype fields: list[~netzob.Model.Vocabulary.Field.Field]
+    :vartype parent: ~typing.Union[~netzob.Model.Vocabulary.Field.Field,
+                     ~netzob.Model.Vocabulary.Symbol.Symbol]
     :vartype isPseudoField: :class:`bool`
 
 
