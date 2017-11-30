@@ -156,7 +156,7 @@ class TCPServer(AbstractChannel):
         self._socket.bind((self.localIP, self.localPort))
         self._socket.listen(1)
         self._logger.debug("Ready to accept new TCP connections...")
-        self.__clientSocket, addr = self.__socket.accept()
+        self.__clientSocket, addr = self._socket.accept()
         self._logger.debug("New TCP connection received.")
         self.isOpen = True
 
