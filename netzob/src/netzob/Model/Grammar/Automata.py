@@ -109,7 +109,12 @@ class Automata(object):
         f.write(str.encode(self.generateDotCode()))
         f.close()
 
-        cmd = ['/usr/bin/graph-easy', '--input', f.name, '--as_ascii']
+        binary_path = '/usr/bin/graph-easy'
+        if not os.path.isfile(binary_path):
+            self._logger.warn("Cannot generate ASCII graph as a dependency is missing: 'graph-easy' (see libgraph-easy-perl package)")
+            return ""
+
+        cmd = [binary_path, '--input', f.name, '--as_ascii']
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
         p.wait()
         result = p.stdout.read().decode("utf-8")

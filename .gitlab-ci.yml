@@ -17,7 +17,7 @@ stages:
 
 .apt_sys_deps_template: &apt_sys_deps_definition |
   apt-get update -y
-  apt-get install --no-install-recommends -y python3{,-dev,-setuptools,-pip} openssh-client git build-essential lib{pcap,ssl,ffi}-dev locales
+  apt-get install --no-install-recommends -y python3{,-dev,-setuptools,-pip} openssh-client git build-essential lib{pcap,ssl,ffi}-dev locales libgraph-easy-perl
   echo 'fr_FR.UTF-8 UTF-8' >> /etc/locale.gen
   locale-gen
   export LANG=fr_FR.UTF-8

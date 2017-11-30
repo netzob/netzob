@@ -91,8 +91,9 @@ following bunch of prerequisites before initiating Netzob's install process.
 * python3
 * python3-dev
 * python3-setuptools
-* build-essential  
-  
+* build-essential
+* libgraph-easy-perl (if you want to generate ASCII graph of state machines)
+
 We also highly recommend to install the following additional dependencies:
 
 * python-sphinx (for the documentation)
