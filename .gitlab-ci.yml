@@ -75,7 +75,7 @@ build:full:
 test:host:
   stage: test
   script:
-    - apt-get install --no-install-recommends -y libgraph-easy-perl
+    - sudo apt-get install --no-install-recommends -y libgraph-easy-perl
     - cd netzob
     - cp build/lib.*/netzob/_lib*.so src/netzob/
     - coverage3 run setup.py test
