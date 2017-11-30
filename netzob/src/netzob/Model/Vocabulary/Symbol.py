@@ -258,21 +258,18 @@ class Symbol(AbstractField):
         parameterized **values** during specialization of the
         ``udp_dport`` and ``udp_payload`` fields:
 
-        >>> from netzob.all import *
         >>> presets = {}
         >>> presets["udp.dport"] = 11              # udp.dport expects an int or an Integer
         >>> presets["udp.payload"] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
         >>> symbol_udp.specialize(presets=presets)
         b'\x0b\xaa\xbb'
 
-        >>> from netzob.all import *
         >>> presets = {}
         >>> presets["udp.dport"] = Integer(11)        # udp.dport expects an int or an Integer
         >>> presets["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
         >>> symbol_udp.specialize(presets=presets)
         b'\x0b\xaa\xbb'
 
-        >>> from netzob.all import *
         >>> presets = {}
         >>> presets["udp.dport"] = bitarray('00001011', endian='big')
         >>> presets["udp.payload"] = bitarray('1010101010111011', endian='big')
@@ -288,7 +285,6 @@ class Symbol(AbstractField):
         parameterized **keys** during specialization of the fields
         ``udp_dport`` and ``udp_payload``:
 
-        >>> from netzob.all import *
         >>> symbol_udp.specialize(presets={f_dport: 11, f_payload: b"\xaa\xbb"})
         b'\x0b\xaa\xbb'
         >>> symbol_udp.specialize(presets={"udp.dport": 11, "udp.payload": b"\xaa\xbb"})

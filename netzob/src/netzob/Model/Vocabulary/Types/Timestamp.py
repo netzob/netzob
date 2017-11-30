@@ -166,11 +166,15 @@ class Timestamp(AbstractType):
     * Unity.MICROSECOND = 1000000
     * Unity.NANOSECOND = 10000000000
 
-    In the following example, a Timestamp data is created with a
-    specific value '1444492442' and represented as 32 bits:
+    In the following example, a Timestamp data is created from a datetime
+    and represented as 32 bits:
 
+    >>> import time
+    >>> import datetime
     >>> from netzob.all import *
-    >>> time = Timestamp(1444492442)
+    >>> date = datetime.datetime(2015, 10, 10, 17, 54, 2)
+    >>> timestamp = time.mktime(date.timetuple())
+    >>> time = Timestamp(timestamp)
     >>> time.size
     (None, None)
     >>> time.value

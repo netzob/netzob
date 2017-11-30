@@ -57,9 +57,9 @@ class Endianness(Enum):
     """Enum class used to specify the endianness of a type.
     """
     BIG = 'big'
-    """Endianness.BIG can be used to specify the endianness of a type."""
+    """Endianness.BIG can be used to specify a BIG endianness of a type."""
     LITTLE = 'little'
-    """Endianness.LITTLE can be used to specify the endianness of a type."""
+    """Endianness.LITTLE can be used to specify a LITTLE endianness of a type."""
     __repr__ = Enum.__str__
 
 
@@ -67,9 +67,9 @@ class Sign(Enum):
     """Enum class used to specify the sign of a type.
     """
     SIGNED = 'signed'
-    """Sign.SIGNED can be used to specify the sign of a type."""
+    """Sign.SIGNED can be used to specify a SIGNED sign of a type."""
     UNSIGNED = 'unsigned'
-    """Sign.UNSIGNED can be used to specify the sign of a type."""
+    """Sign.UNSIGNED can be used to specify a UNSIGNED sign of a type."""
     __repr__ = Enum.__str__
 
 
@@ -77,19 +77,19 @@ class UnitSize(Enum):
     """Enum class used to specify the unit size of a type (i.e. the space in bits that a unitary element takes up).
     """
     SIZE_1 = 1
-    """UnitSize.SIZE_1 can be used to specify the unit size of a type."""
+    """UnitSize.SIZE_1 can be used to specify a 1-bit unit size of a type."""
     SIZE_4 = 4
-    """UnitSize.SIZE_4 can be used to specify the unit size of a type."""
+    """UnitSize.SIZE_4 can be used to specify a 4-bit unit size of a type."""
     SIZE_8 = 8
-    """UnitSize.SIZE_8 can be used to specify the unit size of a type."""
+    """UnitSize.SIZE_8 can be used to specify a 8-bit unit size of a type."""
     SIZE_16 = 16
-    """UnitSize.SIZE_16 can be used to specify the unit size of a type."""
+    """UnitSize.SIZE_16 can be used to specify a 16-bit unit size of a type."""
     SIZE_24 = 24
-    """UnitSize.SIZE_24 can be used to specify the unit size of a type."""
+    """UnitSize.SIZE_24 can be used to specify a 24-bit unit size of a type."""
     SIZE_32 = 32
-    """UnitSize.SIZE_32 can be used to specify the unit size of a type."""
+    """UnitSize.SIZE_32 can be used to specify a 32-bit unit size of a type."""
     SIZE_64 = 64
-    """UnitSize.SIZE_64 can be used to specify the unit size of a type."""
+    """UnitSize.SIZE_64 can be used to specify a 64-bit unit size of a type."""
     __repr__ = Enum.__str__
 
 
