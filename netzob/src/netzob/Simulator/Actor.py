@@ -136,7 +136,7 @@ class Actor(threading.Thread):
     >>> automata = Automata(s0, symbolList)
     >>>
     >>> automata_ascii = automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #=========================#
     H           S0            H
     #=========================#
@@ -238,7 +238,7 @@ class Actor(threading.Thread):
     >>> bob_automata = Automata(bob_s0, symbolList)
     >>>
     >>> automata_ascii = bob_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #=========================#
     H           S0            H
     #=========================#
@@ -276,7 +276,7 @@ class Actor(threading.Thread):
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
     >>> automata_ascii = alice_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #=========================#
     H           S0            H
     #=========================#
@@ -403,7 +403,7 @@ class Actor(threading.Thread):
     >>> bob_automata = Automata(bob_s0, symbolList)
     >>>
     >>> automata_ascii = bob_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #========================#
     H           S0           H
     #========================#
@@ -435,7 +435,7 @@ class Actor(threading.Thread):
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
     >>> automata_ascii = alice_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #=========================#
     H           S0            H
     #=========================#
@@ -579,7 +579,7 @@ class Actor(threading.Thread):
     >>> bob_automata = Automata(bob_s0, symbolList)
     >>>
     >>> automata_ascii = bob_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #=========================#
     H           S0            H
     #=========================#
@@ -624,7 +624,7 @@ class Actor(threading.Thread):
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
     >>> automata_ascii = alice_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #========================#
     H           S0           H
     #========================#
@@ -745,7 +745,7 @@ class Actor(threading.Thread):
     >>> bob_automata = Automata(bob_s0, symbolList)
     >>>
     >>> automata_ascii = bob_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #============================#
     H             S0             H
     #============================#
@@ -789,7 +789,7 @@ class Actor(threading.Thread):
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
     >>> automata_ascii = bob_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #============================#
     H             S0             H
     #============================#
@@ -912,7 +912,7 @@ class Actor(threading.Thread):
     >>> bob_automata = Automata(bob_s0, symbolList)
     >>>
     >>> automata_ascii = bob_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #========================#
     H           S0           H
     #========================#
@@ -954,7 +954,7 @@ class Actor(threading.Thread):
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
     >>> automata_ascii = alice_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #============================#
     H             S0             H
     #============================#
@@ -1083,7 +1083,7 @@ class Actor(threading.Thread):
     >>> bob_automata = Automata(bob_s0, allSymbols)
     >>>
     >>> automata_ascii = bob_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #=============================#
     H             S0              H
     #=============================#
@@ -1127,7 +1127,7 @@ class Actor(threading.Thread):
     >>> alice_automata = Automata(alice_s0, allSymbols)
     >>>
     >>> automata_ascii = alice_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #================================#
     H               S0               H
     #================================#
@@ -1255,7 +1255,7 @@ class Actor(threading.Thread):
     >>> automata.set_cbk_read_symbol_timeout(cbk_method)
     >>>
     >>> automata_ascii = automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #=========================#
     H       Start state       H
     #=========================#
@@ -1351,7 +1351,7 @@ class Actor(threading.Thread):
     >>> bob_automata.set_cbk_read_unexpected_symbol(cbk_method)
     >>>
     >>> automata_ascii = bob_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #=========================#
     H           S0            H
     #=========================#
@@ -1387,7 +1387,7 @@ class Actor(threading.Thread):
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
     >>> automata_ascii = alice_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #=========================#
     H           S0            H
     #=========================#
@@ -1484,7 +1484,7 @@ class Actor(threading.Thread):
     >>> bob_automata.set_cbk_read_unknown_symbol(cbk_method)
     >>>
     >>> automata_ascii = bob_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #=========================#
     H           S0            H
     #=========================#
@@ -1520,7 +1520,7 @@ class Actor(threading.Thread):
     >>> alice_automata = Automata(alice_s0, symbolList)
     >>>
     >>> automata_ascii = alice_automata.generateASCII()
-    >>> print(automata_ascii)
+    >>> print(automata_ascii)  # doctest: +SKIP
     #=========================#
     H           S0            H
     #=========================#
