@@ -62,9 +62,9 @@ class IPv4(AbstractType):
     The IPv4 constructor expects some parameters:
 
     :param value: An IP value expressed in standard dot notation
-                          (ex: "192.168.0.10"). The default value is None.
+                  (ex: "192.168.0.10"). The default value is None.
     :param network: A network address expressed in standard
-                            dot notation (ex: "192.168.0.0/24"). The default value is None.
+                    dot notation (ex: "192.168.0.0/24"). The default value is None.
     :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
     :type value: :class:`str` or :class:`netaddr.IPAddress`, optional
     :type network: :class:`str` or :class:`netaddr.IPNetwork`, optional

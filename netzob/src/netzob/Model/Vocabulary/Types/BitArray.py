@@ -58,8 +58,8 @@ class BitArray(AbstractType):
 
     The BitArray constructor expects some parameters:
 
-    :param value: The current value of the type instance. The default value is None.
-    :param nbBits: The size in bits that this value can take. The default value is (None, None).
+    :param value: This parameter is used to describe a fixed array of bits. If None, the constructed BitArray will accept a random sequence of bits, whose size may be specified (see :attr:`nbBits` parameter).
+    :param nbBits: The amount of permitted bits. If None, the accepted sizes will range from 0 to 65535*8.
     :type value: :class:`bitarray`, optional
     :type nbBits: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
@@ -155,9 +155,9 @@ class BitArray(AbstractType):
 
     """
 
-    def __init__(self, value=None, nbBits=(None, None)):
+    def __init__(self, value=None, nbBits=None):
 
-        if value is not None and nbBits != (None, None):
+        if value is not None and nbBits is not None:
             raise ValueError("A BitArray should have either its value or its nbBits set, but not both")
 
         # Handle input value
@@ -171,6 +171,10 @@ class BitArray(AbstractType):
                     raise ValueError("Input value for the following BitArray is incorrect: '{}'. Error: '{}'".format(value, e))
             else:
                 raise ValueError("Unsupported input format for value: '{}', type: '{}'".format(value, type(value)))
+
+        # Normalize nbBits
+        if nbBits is None:
+            nbBits=(None,None)
 
         super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
         self.constants = None  # A list of named constant used to access the bitarray elements

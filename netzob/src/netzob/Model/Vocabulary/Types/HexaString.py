@@ -58,8 +58,8 @@ class HexaString(AbstractType):
 
     The HexaString constructor expects some parameters:
 
-    :param value: The current value of the type instance. The default value is None.
-    :param nbBytes: The size in bytes that this value can take. The default value is (None, None).
+    :param value: This parameter is used to describe a fixed hexastring. If None, the constructed hexastring will accept a random sequence of bytes, whose size may be specified (see :attr:`nbBytes` parameter).
+    :param nbBytes: The amount of permitted bytes. If None, the accepted sizes will range from 0 to 65535.
     :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
 
@@ -98,16 +98,26 @@ class HexaString(AbstractType):
     >>> len(h.generate().tobytes())
     6
 
+    It is not possible to define a hexastring that contains
+    semi-octets. However, it is possible to manually convert a
+    BitArray into a string that represent a semi-octet. This is
+    demonstrated in the following example where a 4-bits BitArray is
+    converted into the semi-octet 'a'.
+
+    >>> data = bitarray('1010', endian='big')
+    >>> str(binascii.hexlify(data.tobytes()))[2]
+    'a'
+
     """
 
     def __init__(self,
                  value=None,
-                 nbBytes=(None, None),
+                 nbBytes=None,
                  unitSize=AbstractType.defaultUnitSize(),
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
 
-        if value is not None and nbBytes != (None, None):
+        if value is not None and nbBytes is not None:
             raise ValueError("An HexaString should have either its value or its nbBytes set, but not both")
 
         if value is not None and not isinstance(value, bitarray):

@@ -61,8 +61,8 @@ class String(AbstractType):
 
     The String constructor expects some parameters:
 
-    :param value: The current value of the type instance. The default value is None.
-    :param nbChars: The amount of permitted String characters. The default value is (None, None).
+    :param value: This parameter is used to describe a fixed string. If None, the constructed string will accept a random sequence of character, whose size may be specified (see :attr:`nbChars` parameter).
+    :param nbChars: The amount of permitted characters. If None, the accepted sizes will range from 0 to 65535.
     :param encoding: The encoding of the string, such as 'ascii' or
                     'utf-8'. Default value is 'utf-8'.
     :param eos: A list defining the potential terminal characters for
@@ -164,7 +164,7 @@ class String(AbstractType):
 
     def __init__(self,
                  value=None,
-                 nbChars=(None, None),
+                 nbChars=None,
                  encoding='utf-8',
                  eos=[],
                  unitSize=AbstractType.defaultUnitSize(),
@@ -173,7 +173,7 @@ class String(AbstractType):
         self.encoding = encoding
         self.eos = eos
 
-        if value is not None and nbChars != (None, None):
+        if value is not None and nbChars is not None:
             raise ValueError("A String should have either its value or its nbChars set, but not both")
 
         # Convert value to bitarray

@@ -102,67 +102,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     interval, a string with a number of chars and an IPv4 of a
     specific netmask.
 
-    The constructor for an AbstractType expects some parameters:
-
-    :param typeName: The name of the type (we highly recommend the use of __class__.__name__).
-    :type typeName: :class:`str`, required
-
-    :param value: The current value of the type instance.
-    :type value: :class:`bitarray`, required
-
-    :param size: The (min, max) size in bits that this value takes. The default is (None, None).
-    :type size: a tuple with the min and the max size specified as :class:`int`, optional
-
-    .. note::
-       :attr:`value` and :attr:`size` attributes are mutually exclusive.
-       Setting both values raises an :class:`Exception`.
-
-    :param unitSize: The unitsize of the current value. Values must be one of UnitSize.SIZE_*. If None, the value is the default one.
-      The following unit sizes are available:
-
-      * UnitSize.SIZE_1
-      * UnitSize.SIZE_4
-      * UnitSize.SIZE_8 (default value)
-      * UnitSize.SIZE_16
-      * UnitSize.SIZE_24
-      * UnitSize.SIZE_32
-      * UnitSize.SIZE_64
-
-    :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
-
-    :param endianness: The endianness of the current value. If None, the value is the default one.
-
-      The following endiannesses are available:
-
-      * Endianness.BIG (default value)
-      * Endianness.LITTLE
-
-    :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
-
-    :param sign: The sign of the current value. If None, the value is the default one.
-
-      The following signs are available:
-
-      * Sign.SIGNED (default value)
-      * Sign.UNSIGNED
-
-    :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
-
-    **Internal representation of Type objects**
-
-    Regarding the internal representation of variables, the Python
-    module :class:`bitarray` is used, thus making it possible to
-    specify objects at the granularity bit. As an example, the
-    following code shows how to access the internal representation of
-    the value of an Integer object:
-
-    >>> from netzob.all import *
-    >>> i = Integer(20)
-    >>> print(i)
-    Integer=20 ((None, None))
-    >>> i.value
-    bitarray('00010100')
-
     """
 
     # This value will be used if generate() method is called
@@ -347,18 +286,27 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :param typeClass: The Netzob type class to which the current data
                           must be converted.
         :param dst_unitSize: The unitsize of the destination
-                             value. Values must be one of
-                             UnitSize.SIZE_*. If None, the
-                             value is the default one (UnitSize.SIZE_8).
+                             value. The following unit sizes are available:
+
+          * UnitSize.SIZE_1
+          * UnitSize.SIZE_4
+          * UnitSize.SIZE_8 (default value)
+          * UnitSize.SIZE_16
+          * UnitSize.SIZE_24
+          * UnitSize.SIZE_32
+          * UnitSize.SIZE_64
+
         :param dst_endianness: The endianness of the destination
-                               value. Values must be
-                               Endianness.BIG or
-                               Endianness.LITTLE. If None,
-                               the value is the default one (Endianness.BIG).
-        :param dst_sign: The sign of the destination. Values must be
-                         Sign.SIGNED or
-                         Sign.UNSIGNED. If None, the
-                         value is the default one (Sign.SIGNED).
+                               value. The following endiannesses are available:
+
+          * Endianness.BIG (default value)
+          * Endianness.LITTLE
+
+        :param dst_sign: The sign of the destination. The following signs are available:
+
+          * Sign.SIGNED (default value)
+          * Sign.UNSIGNED
+
         :type typeClass: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, required
         :type dst_unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
         :type dst_endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
@@ -366,7 +314,12 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :return: The converted current value in the specified data type.
         :rtype: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
 
+        .. note::
+           If :attr:`dst_unitSize`, :attr:`dst_endianness` or :attr:`dst_sign` parameters are used, 
+           they will override the default parameters of the object :attr:`typeClass`.
+
         """
+
         if typeClass is None:
             raise TypeError("TypeClass cannot be None")
         if typeClass not in AbstractType.supportedTypes():

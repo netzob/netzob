@@ -56,8 +56,8 @@ class Raw(AbstractType):
 
     The Raw constructor expects some parameters:
 
-    :param value: The current value of the type instance. The default value is None.
-    :param nbBytes: The size in bytes that this value can take. The default value is None.
+    :param value: This parameter is used to describe a fixed sequence of bytes. If None, the constructed Raw will accept a random sequence of bytes, whose size may be specified (see :attr:`nbBytes` parameter).
+    :param nbBytes: The amount of permitted bytes. If None, the accepted sizes will range from 0 to 65535.
     :param alphabet: The alphabet can be used to limit the bytes that can participate in the domain value. The default value is None.
     :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
