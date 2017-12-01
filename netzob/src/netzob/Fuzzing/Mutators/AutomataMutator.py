@@ -62,56 +62,7 @@ class AutomataMutatorStrategy(Enum):
 
 
 class AutomataMutator(Mutator):
-    """The mutator of a protocol state machine.
-
-    **Mutators for automata fuzzing**
-
-    Mutators may be used in order to create fuzzed/mutated automaton.
-
-    The following code shows the creation of the new automaton with
-    random transitions between the existing states:
-
-    >>> from netzob.all import *
-    >>> s0 = State()
-    >>> symbol = Symbol([Field(String('abcd'))])
-    >>> automata = Automata(s0, vocabulary=[symbol])
-    >>> mutator = AutomataMutator(automata, seed=42)
-    >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM)  # doctest: +SKIP
-
-
-    **Combining message formats and automata fuzzing**
-
-    By combining message formats and automata fuzzing, it is possible
-    to fuzz specific message formats at specific states in the
-    automaton.
-
-    The following code shows the creation of the new automaton with
-    random transitions between the existing states, and with a
-    precision concerning the states between which fuzzing of message
-    formats will be performed:
-
-    >>> # Symbol definition
-    >>> f1 = Field(String())
-    >>> f2 = Field(Integer())
-    >>> symbol = Symbol(fields=[f1, f2])
-    >>>
-    >>> # Automaton definition
-    >>> s1 = State()
-    >>> s2 = State()
-    >>> automata = Automata(s1, vocabulary=[symbol])
-    >>>
-    >>> # Creation of a mutated automaton
-    >>> mutator = AutomataMutator(automata, seed=42)
-    >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM, startingState=s1, endingState=s2)  # doctest: +SKIP
-    >>> assert isinstance(mutatedAutomata, Automata)  # doctest: +SKIP
-    >>>
-    >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> visitor = Actor(automata=mutatedAutomata, initiator=True, abstractionLayer=abstractionLayer)  # doctest: +SKIP
-    >>>
-    >>> # We start the visitor, thus the fuzzing of message formats will be applied when specific states are reached
-    >>> visitor.start()  # doctest: +SKIP
+    """The AutomataMutator is used to mutate an existing state machine.
 
     """
 
@@ -153,6 +104,57 @@ class AutomataMutator(Mutator):
         :type endingState: :class:`State <netzob.Model.Grammar.States.State>`, optional
         :return: The mutated automata.
         :rtype: :class:`Automata <netzob.Model.Grammar.Automata>`
+
+
+        **Basic example of automata fuzzing**
+
+        Mutators may be used in order to create fuzzed/mutated automaton.
+
+        The following code shows the creation of the new automaton with
+        random transitions between the existing states:
+
+        >>> from netzob.all import *
+        >>> s0 = State()
+        >>> symbol = Symbol([Field(String('abcd'))])
+        >>> automata = Automata(s0, vocabulary=[symbol])
+        >>> mutator = AutomataMutator(automata, seed=42)
+        >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM)  # doctest: +SKIP
+
+
+        **Combining message formats and automata fuzzing**
+
+        By combining message formats and automata fuzzing, it is possible
+        to fuzz specific message formats at specific states in the
+        automaton.
+
+        The following code shows the creation of the new automaton with
+        random transitions between the existing states, and with a
+        precision concerning the states between which fuzzing of message
+        formats will be performed:
+
+        >>> # Symbol definition
+        >>> f1 = Field(String())
+        >>> f2 = Field(Integer())
+        >>> symbol = Symbol(fields=[f1, f2])
+        >>>
+        >>> # Automaton definition
+        >>> s1 = State()
+        >>> s2 = State()
+        >>> automata = Automata(s1, vocabulary=[symbol])
+        >>>
+        >>> # Creation of a mutated automaton
+        >>> mutator = AutomataMutator(automata, seed=42)
+        >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM, startingState=s1, endingState=s2)  # doctest: +SKIP
+        >>> assert isinstance(mutatedAutomata, Automata)  # doctest: +SKIP
+        >>>
+        >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
+        >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+        >>> abstractionLayer = AbstractionLayer(channel, [symbol])
+        >>> visitor = Actor(automata=mutatedAutomata, initiator=True, abstractionLayer=abstractionLayer)  # doctest: +SKIP
+        >>>
+        >>> # We start the visitor, thus the fuzzing of message formats will be applied when specific states are reached
+        >>> visitor.start()  # doctest: +SKIP
+
         """
         raise NotImplementedError
 
