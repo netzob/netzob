@@ -134,8 +134,8 @@ class GenericPath(object):
             return self.memory.getValue(variable)
 
         raise Exception(
-            "No data assigned to variable '{}' {}".format(variable.name,
-                                                          variable.field))
+            "No data assigned to variable '{}', which is linked to field '{}'".format(variable.name,
+                                                                                      variable.field))
 
     @typeCheck(AbstractVariable)
     def hasData(self, variable):

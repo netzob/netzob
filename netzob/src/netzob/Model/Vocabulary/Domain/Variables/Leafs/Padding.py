@@ -168,9 +168,9 @@ class Padding(AbstractRelationVariableLeaf):
     >>> f = Field([f0, f1, f2])
     >>> d = f.specialize()
     >>> d[12:]
-    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
     >>> len(d) * 8
-    176
+    256
 
     The following code illustrates a padding with the use of a
     callback function that helps to determine the padding value. In
@@ -324,8 +324,14 @@ class Padding(AbstractRelationVariableLeaf):
             else:
                 raise TypeError("Callback parameter is not callable.")
         else:
+            # Compute length to pad
             mod = size % self.modulo
             length_to_pad = self.modulo - mod if mod > 0 else 0
+
+            # Handle factor parameter
+            length_to_pad = length_to_pad / self.factor
+
+            # Add potential padding
             while len(padding_value) < length_to_pad:
                 padding_value.extend(self.dataType.generate())
 
