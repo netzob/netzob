@@ -90,7 +90,7 @@ class Fuzz(object):
                        a :class:`float` should be used to represent a ratio in
                        percent).
     :type counterMax: :class:`int` or :class:`float`, optional, default to
-                      :attr:`COUNTER_MAX_DEFAULT` = 655536
+                      :attr:`COUNTER_MAX_DEFAULT` = 65536
 
 
     The Fuzz class provides the following public variables:
