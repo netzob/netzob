@@ -114,7 +114,7 @@ class Value(AbstractRelationVariableLeaf):
     The callback function should return a :class:`bitarray <bitarray>`
     representing the matching data during specialization or
     abstraction. In the latter case, if the callback function does not
-    succeed to parse the data, it should return the value ``None``.
+    succeed to parse the data, it should return the ``None`` value.
 
 
     **Value usage**
@@ -216,7 +216,7 @@ class Value(AbstractRelationVariableLeaf):
 
     Callback functions are also triggered during data abstraction. In
     the next portion of the example, the previously specialized data
-    in abstracted according to the field definition.
+    is abstracted according to the field definition.
 
     >>> Field.abstract(data, [f])
     (f, OrderedDict([('f0', b'\x01'), ('f1', b'\x80')]))
