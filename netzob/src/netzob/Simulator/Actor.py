@@ -111,18 +111,20 @@ class Actor(threading.Thread):
     names until one stops.
 
     The two actors are Alice and Bob. Bob is the initiator of the
-    communication, meaning he sends the input symbols, while Alice
-    answers with the output symbols of the grammar. The grammar is
-    very simple: we first open the channel, and allow Bob to send
-    ``"Bob> hello"``. At each received message, Alice answers
-    ``"Alice> hello"``.
+    communication. This means that Bob is the first actor to
+    communicate with the remote peer, and Alice is listening for
+    incoming messages. Bob sends an input symbol containing the string
+    "bob>hello". Alice is waiting for this input symbol. When Alice
+    receives this input symbol, she responds with an output symbol
+    containing the string "alice>hello". Bob is then waiting for this
+    output symbol.
 
     >>> from netzob.all import *
     >>> import time
     >>>
     >>> # First we create the symbols
-    >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
     >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
+    >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
     >>> symbolList = [aliceSymbol, bobSymbol]
     >>>
     >>> # Create the grammar
@@ -131,7 +133,7 @@ class Actor(threading.Thread):
     >>> s2 = State(name="S2")
     >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
     >>> mainTransition = Transition(startState=s1, endState=s1,
-    ...                             inputSymbol=aliceSymbol, outputSymbols=[bobSymbol],
+    ...                             inputSymbol=bobSymbol, outputSymbols=[aliceSymbol],
     ...                             name="hello")
     >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
     >>> automata = Automata(s0, symbolList)
@@ -183,13 +185,13 @@ class Actor(threading.Thread):
       [+]   Transition 'Open' lead to state 'S1'
       [+] At state 'S1'
       [+]   Picking transition 'hello'
-      [+]   During transition 'hello', sending input symbol 'Alice-Hello'
-      [+]   During transition 'hello', receiving expected output symbol 'Bob-Hello'
+      [+]   During transition 'hello', sending input symbol 'Bob-Hello'
+      [+]   During transition 'hello', receiving expected output symbol 'Alice-Hello'
       [+]   Transition 'hello' lead to state 'S1'
       [+] At state 'S1'
       [+]   Picking transition 'hello'
-      [+]   During transition 'hello', sending input symbol 'Alice-Hello'
-      [+]   During transition 'hello', receiving expected output symbol 'Bob-Hello'
+      [+]   During transition 'hello', sending input symbol 'Bob-Hello'
+      [+]   During transition 'hello', receiving expected output symbol 'Alice-Hello'
       [+]   Transition 'hello' lead to state 'S1'
       [+] At state 'S1', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
@@ -198,12 +200,12 @@ class Actor(threading.Thread):
       [+]   Picking transition 'Open'
       [+]   Transition 'Open' lead to state 'S1'
       [+] At state 'S1'
-      [+]   Receiving input symbol 'Alice-Hello', which corresponds to transition 'hello'
-      [+]   During transition 'hello', choosing output symbol 'Bob-Hello'
+      [+]   Receiving input symbol 'Bob-Hello', which corresponds to transition 'hello'
+      [+]   During transition 'hello', choosing output symbol 'Alice-Hello'
       [+]   Transition 'hello' lead to state 'S1'
       [+] At state 'S1'
-      [+]   Receiving input symbol 'Alice-Hello', which corresponds to transition 'hello'
-      [+]   During transition 'hello', choosing output symbol 'Bob-Hello'
+      [+]   Receiving input symbol 'Bob-Hello', which corresponds to transition 'hello'
+      [+]   During transition 'hello', choosing output symbol 'Alice-Hello'
       [+]   Transition 'hello' lead to state 'S1'
 
 
@@ -851,13 +853,13 @@ class Actor(threading.Thread):
       [+]   Transition 'Open' lead to state 'S1'
       [+] At state 'S1'
       [+]   Picking transition 'T2'
-      [+]   Changing transition to 'T2', trough callback
+      [+]   Changing transition to 'T2', through callback
       [+]   During transition 'T2', sending input symbol 'Symbol'
       [+]   During transition 'T2', receiving expected output symbol 'Symbol'
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2'
       [+]   Picking transition 'T4'
-      [+]   Changing transition to 'T4', trough callback
+      [+]   Changing transition to 'T4', through callback
       [+]   During transition 'T4', sending input symbol 'Symbol'
       [+]   During transition 'T4', receiving expected output symbol 'Symbol'
       [+]   Transition 'T4' lead to state 'S3'
@@ -1034,12 +1036,12 @@ class Actor(threading.Thread):
       [+]   Transition 'Open' lead to state 'S1'
       [+] At state 'S1'
       [+]   Receiving input symbol 'Symbol', which corresponds to transition 'T1'
-      [+]   Changing transition to 'T2', trough callback
+      [+]   Changing transition to 'T2', through callback
       [+]   During transition 'T2', choosing output symbol 'Symbol'
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2'
       [+]   Receiving input symbol 'Symbol', which corresponds to transition 'T3'
-      [+]   Changing transition to 'T4', trough callback
+      [+]   Changing transition to 'T4', through callback
       [+]   During transition 'T4', choosing output symbol 'Symbol'
       [+]   Transition 'T4' lead to state 'S3'
       [+] At state 'S3'

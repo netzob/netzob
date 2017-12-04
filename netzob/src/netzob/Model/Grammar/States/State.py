@@ -254,7 +254,7 @@ class State(AbstractState):
                                  abstractionLayer.last_received_symbol,
                                  abstractionLayer.last_received_message)
 
-            actor.visit_log.append("  [+]   Changing transition to '{}', trough callback".format(str(nextTransition)))
+            actor.visit_log.append("  [+]   Changing transition to '{}', through callback".format(str(nextTransition)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at state '{}'".format(str(actor), self.name))
 
@@ -335,7 +335,7 @@ class State(AbstractState):
                                  abstractionLayer.last_sent_message,
                                  abstractionLayer.last_received_symbol,
                                  abstractionLayer.last_received_message)
-            actor.visit_log.append("  [+]   Changing transition to '{}', trough callback".format(str(nextTransition)))
+            actor.visit_log.append("  [+]   Changing transition to '{}', through callback".format(str(nextTransition)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at state '{}'".format(str(actor), self.name))
 
