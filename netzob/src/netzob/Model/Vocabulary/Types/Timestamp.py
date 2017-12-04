@@ -96,8 +96,17 @@ class Timestamp(AbstractType):
                   milliseconds, nanoseconds). The default value is
                   :attr:`Unity.SECOND`.
     :param unitSize: The unitsize of the current value. Values must be one of
-                     ``UnitSize.SIZE_*`` (see below for supported unit sizes).
-                     The default value is :attr:`UnitSize.SIZE_32`.
+                     ``UnitSize.SIZE_*``.
+                     The following unit sizes are available:
+
+                     * UnitSize.SIZE_1
+                     * UnitSize.SIZE_4
+                     * UnitSize.SIZE_8
+                     * UnitSize.SIZE_16
+                     * UnitSize.SIZE_24
+                     * UnitSize.SIZE_32 (default unit size)
+                     * UnitSize.SIZE_64
+
     :param endianness: The endianness of the current value.
                        Values must be :attr:`Endianness.BIG` or
                        :attr:`Endianness.LITTLE`.
@@ -124,14 +133,14 @@ class Timestamp(AbstractType):
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
-               Instead of a tuple, an integer can be used to represent both min and max value.
-    :var unitSize: The unitsize of the current value. Values must be one of ``UnitSize.SIZE_*`` (see below for supported unit sizes).
+               Instead of a tuple, an integer can be used to represent both min and max values.
+    :var unitSize: The unitsize of the current value.
     :var epoch: The initial date expressed in UTC from which
                 timestamp is measured.
     :var unity: This specifies the unity of the timestamp (seconds,
                 milliseconds, nanoseconds).
-    :var sign: The sign of the current value. Values must be Sign.SIGNED or Sign.UNSIGNED. The default value is Sign.UNSIGNED.
-    :var endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE.
+    :var sign: The sign of the current value.
+    :var endianness: The endianness of the current value.
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: ~typing.Tuple[int,int] or int

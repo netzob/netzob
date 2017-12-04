@@ -125,7 +125,7 @@ class Automata(object):
         return result
 
     def generateDotCode(self):
-        """Generates the dot code representing the automata.
+        """Generates the dot code representing the automaton.
 
         >>> # Create some states and transitions
         >>> from netzob.all import *
@@ -138,7 +138,7 @@ class Automata(object):
         >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=inputSymbol, outputSymbols=[outputSymbol], name="hello")
         >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
 
-        >>> # Create the automata
+        >>> # Create the automaton
         >>> automata = Automata(s0, [inputSymbol, outputSymbol])
         >>> print(automata.generateDotCode()) #doctest: +ELLIPSIS
         digraph G {

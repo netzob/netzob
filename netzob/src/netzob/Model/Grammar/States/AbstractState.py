@@ -173,13 +173,13 @@ class AbstractState(object, metaclass=abc.ABCMeta):
                   layer, and thus making it possible to create relationships
                   with the previously received message.
 
-           :type availableTransitions: ~typing.List[~netzob.Model.Grammar.Transitions.Transition.Transition]
-           :type nextTransition: ~netzob.Model.Grammar.Transitions.Transition.Transition
-           :type current_state: ~netzob.Model.Grammar.States.State.State
-           :type last_sent_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
-           :type last_sent_message: ~bitarray.bitarray
-           :type last_received_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
-           :type last_received_message: ~bitarray.bitarray
+           :type availableTransitions: ~typing.List[~netzob.Model.Grammar.Transitions.Transition.Transition], required
+           :type nextTransition: :class:`~netzob.Model.Grammar.Transitions.Transition.Transition`, required
+           :type current_state: :class:`~netzob.Model.Grammar.States.State.State`, required
+           :type last_sent_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
+           :type last_sent_message: :class:`~bitarray.bitarray`, required
+           :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
+           :type last_received_message: :class:`~bitarray.bitarray`, required
 
            :return:
              The callback function should return a transition (which could be

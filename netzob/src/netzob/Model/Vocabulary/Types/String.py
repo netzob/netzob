@@ -71,7 +71,7 @@ class String(AbstractType):
                 values. Default value is an empty list, meaning there
                 is no terminal character.
     :type value: :class:`bitarray` or :class:`str`, optional
-    :type nbChars: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
+    :type nbChars: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
     :type encoding: :class:`str`, optional
     :type eos: a :class:`list` of :class:`str`, optional
 
@@ -86,7 +86,7 @@ class String(AbstractType):
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
-               Instead of a tuple, an integer can be used to represent both min and max value.
+               Instead of a tuple, an integer can be used to represent both min and max values.
     :var encoding: The encoding of the current value, such as 'ascii' or 'utf-8'.
     :var eos: A list defining the potential terminal characters for
               the string.

@@ -90,6 +90,13 @@ class AutomataMutator(Mutator):
         The mutate method expects some parameters:
 
         :param strategy: The strategy used to build the new automaton.
+
+                         The following strategies are available:
+
+                         * :attr:`AutomataMutatorStrategy.RANDOM`: Randomly insert and remove transitions between states of the original automaton,
+                         * :attr:`AutomataMutatorStrategy.TOTAL`: At each state of the automaton, it is possible to reach any states, including the starting state,
+                         * :attr:`AutomataMutatorStrategy.CHAINED`: Build a chained automaton (or a chaplet), where each state has only one possible transition towards another different state of the protocol, and where all the states of the protocol are covered.
+
                          Default strategy is :attr:`AutomataMutatorStrategy.RANDOM`.
         :param startingState: The state in the automaton from which to
                               start the fuzzing of message formats

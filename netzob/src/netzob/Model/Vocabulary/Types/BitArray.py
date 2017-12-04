@@ -61,7 +61,7 @@ class BitArray(AbstractType):
     :param value: This parameter is used to describe a fixed array of bits. If None, the constructed BitArray will accept a random sequence of bits, whose size may be specified (see :attr:`nbBits` parameter).
     :param nbBits: The amount of permitted bits. If None, the accepted sizes will range from 0 to 65535*8.
     :type value: :class:`bitarray`, optional
-    :type nbBits: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
+    :type nbBits: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
 
     .. note::
        :attr:`value` and :attr:`nbBits` attributes are mutually exclusive.
@@ -74,7 +74,7 @@ class BitArray(AbstractType):
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
-               Instead of a tuple, an integer can be used to represent both min and max value.
+               Instead of a tuple, an integer can be used to represent both min and max values.
     :var constants: A list of named constants used to access the bitarray internal elements.
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`

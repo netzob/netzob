@@ -95,7 +95,7 @@ class UnitSize(Enum):
 
 @NetzobLogger
 class AbstractType(object, metaclass=abc.ABCMeta):
-    """AbstractType is the abstract class of all the classes that represents netzob types.
+    """AbstractType is the abstract class of all the classes that represent netzob types.
 
     A type defines a definition domain as a unique value or specified
     with specific rules.  For instance, an integer under a specific
@@ -315,8 +315,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :rtype: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
 
         .. note::
-           If :attr:`dst_unitSize`, :attr:`dst_endianness` or :attr:`dst_sign` parameters are used, 
-           they will override the default parameters of the object :attr:`typeClass`.
+           If :attr:`dst_unitSize`, :attr:`dst_endianness` or :attr:`dst_sign` parameters are used,
+           they will override the default parameters of the :attr:`typeClass` object.
 
         """
 
@@ -525,7 +525,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def size(self):
         """The size of the expected Type defined
          by a tuple (min, max).
-         Instead of a tuple, an int can be used to represent both min and max value.
+         Instead of a tuple, an int can be used to represent both min and max values.
 
          The value 'None' can be set for min and/or max to represent no limitations.
 

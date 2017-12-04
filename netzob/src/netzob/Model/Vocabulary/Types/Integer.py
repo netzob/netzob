@@ -62,9 +62,9 @@ class Integer(AbstractType):
     :type value: :class:`bitarray` or :class:`int`, optional
     :param interval: The interval of permitted values for the Integer. This information is used to compute the storage size of the Integer. If None, the interval will range from the minimum value to the maximum value that an integer can encode, according to its unit size, endianness and sign attributes.
     :type interval: an :class:`int` or a tuple with the min and the max values specified as :class:`int`, optional
-    :param unitSize: The unitsize, in bits, of the storage area used to encode the integer. Values must be one of UnitSize.SIZE_* (see below for supported unit sizes).
+    :param unitSize: The unitsize, in bits, of the storage area used to encode the integer. Values must be one of UnitSize.SIZE_*.
 
-      The following unit sizes, in bits, are available:
+      The following unit sizes are available:
 
       * UnitSize.SIZE_1
       * UnitSize.SIZE_4
@@ -315,7 +315,7 @@ class Integer(AbstractType):
         if not (isinstance(interval, tuple) and len(interval) == 2):
             raise ValueError("Input interval shoud be a tuple of two integers. Value received: '{}'".format(interval))
 
-        # Compute min and max value
+        # Compute min and max values
         min_interval = getMinStorageValue(unitSize=unitSize, sign=sign)
         max_interval = getMaxStorageValue(unitSize=unitSize, sign=sign)
 
@@ -323,7 +323,7 @@ class Integer(AbstractType):
             (interval[1] is not None and interval[1] > max_interval)):
             raise ValueError("Specified interval '{}' does not fit in specified unitSize '{}'".format(interval, unitSize))
 
-        # Reset min and max value if a valid interval is provided
+        # Reset min and max values if a valid interval is provided
         if interval[0] is not None:
             min_interval = interval[0]
         if interval[1] is not None:

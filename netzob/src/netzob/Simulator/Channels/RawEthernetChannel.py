@@ -53,8 +53,7 @@ from netzob.Simulator.ChannelBuilder import ChannelBuilder
 @NetzobLogger
 class RawEthernetChannel(AbstractChannel):
     r"""A RawEthernetChannel is a communication channel to send Raw Ethernet
-    frames. This channel is not responsible for building the Ethernet
-    layer.
+    frames.
 
     The RawEthernetChannel constructor expects some parameters:
 

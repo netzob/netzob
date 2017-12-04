@@ -61,7 +61,7 @@ class HexaString(AbstractType):
     :param value: This parameter is used to describe a fixed hexastring. If None, the constructed hexastring will accept a random sequence of bytes, whose size may be specified (see :attr:`nbBytes` parameter).
     :param nbBytes: The amount of permitted bytes. If None, the accepted sizes will range from 0 to 65535.
     :type value: :class:`bitarray` or :class:`bytes`, optional
-    :type nbBytes: an :class:`int` or a tuple with the min and the max size specified as :class:`int`, optional
+    :type nbBytes: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
 
     .. note::
        :attr:`value` and :attr:`nbBytes` attributes are mutually exclusive.
@@ -74,7 +74,7 @@ class HexaString(AbstractType):
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
-               Instead of a tuple, an integer can be used to represent both min and max value.
+               Instead of a tuple, an integer can be used to represent both min and max values.
     :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
@@ -100,9 +100,9 @@ class HexaString(AbstractType):
 
     It is not possible to define a hexastring that contains
     semi-octets. However, it is possible to manually convert a
-    BitArray into a string that represent a semi-octet. This is
-    demonstrated in the following example where a 4-bits BitArray is
-    converted into the semi-octet 'a'.
+    BitArray into a string that represents a semi-octet. This is
+    demonstrated in the following example where a 4-bit BitArray is
+    converted into the 'a' semi-octet.
 
     >>> data = bitarray('1010', endian='big')
     >>> str(binascii.hexlify(data.tobytes()))[2]

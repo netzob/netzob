@@ -126,12 +126,6 @@ class Field(AbstractField):
     >>> fh0 = Field(name='fh0')
     >>> fh1 = Field(name='fh1')
     >>> fheader = Field([fh0, fh1], name='fheader')
-    >>> print(fheader.str_structure())
-    fheader
-    |--  fh0
-         |--   Data (Raw=None ((0, 524288)))
-    |--  fh1
-         |--   Data (Raw=None ((0, 524288)))
 
     More generally, a field is part of a tree whose root is a symbol
     and whose all all other nodes are fields. Hence, a field
@@ -192,10 +186,7 @@ class Field(AbstractField):
     >>> f0 = Field(String("test"))
     >>> f1 = Field(Size(f0))
     >>> fheader = Field([f0, f1])
-    >>> fheader.specialize()
-    b'test\x04'
-
-
+    
     **Pseudo fields**
 
     Sometimes, a specific field can be needed to express a complex
@@ -211,8 +202,6 @@ class Field(AbstractField):
     >>> f_pseudo = Field(domain="An external data", isPseudoField=True)
     >>> f_real = Field(domain=Size(f_pseudo))
     >>> fheader = Field([f_pseudo, f_real])
-    >>> fheader.specialize()
-    b'\x10'
 
     A real example of a pseudo field is found in the UDP checksum,
     which relies on a pseudo IP header for its computation.

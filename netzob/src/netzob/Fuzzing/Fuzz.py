@@ -90,7 +90,7 @@ class Fuzz(object):
                        a :class:`float` should be used to represent a ratio in
                        percent).
     :type counterMax: :class:`int` or :class:`float`, optional, default to
-                      :attr:`COUNTER_MAX_DEFAULT`
+                      :attr:`COUNTER_MAX_DEFAULT` = 655536
 
 
     The Fuzz class provides the following public variables:
@@ -189,7 +189,7 @@ class Fuzz(object):
         :param counterMax: An integer used to limit the number of
                            mutations.
 
-                           Defaults value is :attr:`Mutator.COUNTER_MAX_DEFAULT` = 65536.
+                           Defaults value is :attr:`COUNTER_MAX_DEFAULT`.
 
         :param kwargs: Some context dependent parameters (see below)
                        (optional).

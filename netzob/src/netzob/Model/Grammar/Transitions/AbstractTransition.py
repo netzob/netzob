@@ -282,13 +282,13 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                   and this makes it possible to create relationships with
                   received message.
 
-           :type available_symbols: ~typing.List[~netzob.Model.Vocabulary.Symbol.Symbol]
-           :type current_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
-           :type current_state: ~netzob.Model.Grammar.States.State.State
-           :type last_sent_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
-           :type last_sent_message: ~bitarray.bitarray
-           :type last_received_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
-           :type last_received_message: ~bitarray.bitarray
+           :type available_symbols: ~typing.List[~netzob.Model.Vocabulary.Symbol.Symbol], required
+           :type current_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
+           :type current_state: :class:`~netzob.Model.Grammar.States.State.State`, required
+           :type last_sent_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
+           :type last_sent_message: :class:`~bitarray.bitarray`, required
+           :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
+           :type last_received_message: :class:`~bitarray.bitarray`, required
 
            :return:
              * The symbol that will be sent. This could be the same as the

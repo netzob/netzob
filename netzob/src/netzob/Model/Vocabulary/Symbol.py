@@ -281,7 +281,7 @@ class Symbol(AbstractField):
         field, as it is the internal type for variables in the Netzob
         library.
 
-        The two following codes show the same way to express the
+        The following example shows the same way to express the
         parameterized **keys** during specialization of the fields
         ``udp_dport`` and ``udp_payload``:
 
@@ -292,7 +292,7 @@ class Symbol(AbstractField):
 
 
         A preset value bypasses all the constraint checks on your field definition.
-        For example, in the following example it can be used to bypass a size field definition.
+        In the following example, it can be used to bypass a size field definition.
 
         >>> from netzob.all import *
         >>> f1 = Field()
