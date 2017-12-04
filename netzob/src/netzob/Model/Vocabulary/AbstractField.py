@@ -616,9 +616,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f1 = Field("hello", name="f1")
         >>> f2 = Field("hello", name="f2")
         >>> f3 = Field("hello", name="f3")
-        >>> fheader = Field(name="fheader")
-        >>> fheader.fields = [f1, f2, f3]
-        >>> type(fheader.getField('f2'))
+        >>> fheader = Field(name="fheader")  # create a Field named 'fheader'
+        >>> fheader.fields = [f1, f2, f3] # this Field is parent of 3 existing Fields
+        >>> type(fheader.getField('f2')) # get the sub-field named 'f2'
         <class 'netzob.Model.Vocabulary.Field.Field'>
 
         """
