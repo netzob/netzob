@@ -111,8 +111,10 @@ class Value(AbstractRelationVariableLeaf):
     The callback function is expected to implement relationship
     operations based on the provided data.
 
-    The callback function should return a :class:`bitarray
-    <bitarray>`.
+    The callback function should return a :class:`bitarray <bitarray>`
+    representing the matching data during specialization or
+    abstraction. In the latter case, if the callback function does not
+    succeed to parse the data, it should return the value ``None``.
 
 
     **Value usage**
@@ -201,12 +203,32 @@ class Value(AbstractRelationVariableLeaf):
     >>> def cbk(data, path, value):
     ...    ret = data.copy()
     ...    ret.reverse()
-    ...    return ret
-    >>> f0 = Field(Raw(b'\x01'))
-    >>> f1 = Field(Value(f0, operation = cbk))
-    >>> f = Field([f0, f1])
-    >>> f.specialize()
+    ...    if ret == bitarray('10000000'):
+    ...        return ret
+    ...    else:
+    ...        return None
+    >>> f0 = Field(Raw(b'\x01'), name='f0')
+    >>> f1 = Field(Value(f0, operation = cbk), name='f1')
+    >>> f = Field([f0, f1], name='f')
+    >>> data = f.specialize()
+    >>> data
     b'\x01\x80'
+
+    Callback functions are also triggered during data abstraction. In
+    the next portion of the example, the previously specialized data
+    in abstracted according to the field definition.
+
+    >>> Field.abstract(data, [f])
+    (f, OrderedDict([('f0', b'\x01'), ('f1', b'\x80')]))
+
+    If the targeted field (``f0``) does not contain the expected data,
+    the callback function should return ``None``, indicating that the
+    relationship does not apply. In this case, the abstraction process
+    will not succeed.
+
+    >>> data = b'\x02\x80'
+    >>> Field.abstract(data, [f])
+    (Unknown message b'\x02\x80', OrderedDict())
 
     """
 
