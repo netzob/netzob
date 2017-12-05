@@ -53,6 +53,7 @@ from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 from netzob.Model.Vocabulary.Types.AbstractType import Sign
 
 
+@NetzobLogger
 class IntegerMutator(DomainMutator):
     r"""The integer mutator, using pseudo-random or determinist generator
 
@@ -67,8 +68,7 @@ class IntegerMutator(DomainMutator):
         If it is a tuple of integers (min, max), the values will be generate
         between min and max.
         Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL <netzob.Fuzzing.DomainMutator.MutatorInterval.DEFAULT_INTERVAL>`.
-    :param bitsize: The size in bits of the memory on which the generated
-        values have to be encoded. It is only used with a determinist generator.
+    :param lengthBitSize: The storage size in bits of the integer.
         Default value is `None`, which indicates to use the unit size set in the field domain.
     :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
         used to produce the value.
@@ -84,7 +84,7 @@ class IntegerMutator(DomainMutator):
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type interval: :class:`int` or :class:`tuple`, optional
     :type mode: :class:`int`, optional
-    :type bitsize: :class:`int`, optional
+    :type lengthBitSize: :class:`int`, optional
     :type generator: :class:`str`, optional
     :type seed: :class:`int`, optional
 
@@ -243,7 +243,7 @@ class IntegerMutator(DomainMutator):
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  interval=MutatorInterval.DEFAULT_INTERVAL,
-                 bitsize=None):
+                 lengthBitSize=None):
 
         # Call parent init
         super().__init__(domain,
@@ -252,10 +252,13 @@ class IntegerMutator(DomainMutator):
                          seed=seed,
                          counterMax=counterMax)
 
-        # Initialize generator
-        self.initializeGenerator(interval, bitsize)
+        # Initialize variables
+        self.lengthBitSize = lengthBitSize
 
-    def initializeGenerator(self, interval, bitsize):
+        # Initialize generator
+        self.initializeGenerator(interval)
+
+    def initializeGenerator(self, interval):
 
         # Find min and max potential values for the datatype interval
         self.minValue = 0
@@ -277,28 +280,28 @@ class IntegerMutator(DomainMutator):
         if self.generator == DeterministGenerator.name:
 
             # Check bitsize
-            if bitsize is not None:
-                if not isinstance(bitsize, int) or bitsize <= 0:
-                    raise ValueError("{} is not a valid bitsize value".format(bitsize))
-            if bitsize is None:
-                bitsize = self.domain.dataType.unitSize.value
+            if self.lengthBitSize is not None:
+                if not isinstance(self.lengthBitSize, int) or self.lengthBitSize <= 0:
+                    raise ValueError("{} is not a valid bitsize value".format(self.lengthBitSize))
+            if self.lengthBitSize is None:
+                self.lengthBitSize = self.domain.dataType.unitSize
 
             # Check minValue and maxValue consistency according to the bitsize value
             if self.minValue >= 0:
-                if self.maxValue > 2**bitsize - 1:
-                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self.maxValue, bitsize))
+                if self.maxValue > 2**self.lengthBitSize.value - 1:
+                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self.maxValue, self.lengthBitSize))
             else:
-                if self.maxValue > 2**(bitsize - 1) - 1:
-                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self.maxValue, bitsize))
-                if self.minValue < -2**(bitsize - 1):
-                    raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self.minValue, bitsize))
+                if self.maxValue > 2**(self.lengthBitSize.value - 1) - 1:
+                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self.maxValue, self.lengthBitSize))
+                if self.minValue < -2**(self.lengthBitSize.value - 1):
+                    raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self.minValue, self.lengthBitSize.value))
 
             # Build the generator
             self.generator = GeneratorFactory.buildGenerator(self.generator,
                                                              seed = self.seed,
                                                              minValue = self.minValue,
                                                              maxValue = self.maxValue,
-                                                             bitsize = bitsize,
+                                                             bitsize = self.lengthBitSize.value,
                                                              signed = self.domain.dataType.sign == Sign.SIGNED)
 
         # Else instanciate the other kind of generator
@@ -318,8 +321,15 @@ class IntegerMutator(DomainMutator):
         # Generate and return a random value in the interval
         dom_type = self.domain.dataType
         value = self.generateInt()
+
+        # Handle redefined bitsize
+        if self.lengthBitSize is not None:
+            dst_bitsize = self.lengthBitSize
+        else:
+            dst_bitsize = dom_type.unitSize
+
         value = Integer.decode(value,
-                               unitSize=dom_type.unitSize,
+                               unitSize=dst_bitsize,
                                endianness=dom_type.endianness,
                                sign=dom_type.sign)
         return value
