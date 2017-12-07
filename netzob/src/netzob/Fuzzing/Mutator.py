@@ -220,6 +220,6 @@ def center(val, lower, upper):
     # Ensure the produced value is in the range of the permitted values of the domain datatype
     if result > upper:
         result = upper
-    if result < lower:
+    elif result < lower:
         result = lower
     return result
