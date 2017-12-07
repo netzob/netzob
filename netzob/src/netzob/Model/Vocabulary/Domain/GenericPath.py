@@ -250,9 +250,9 @@ class GenericPath(object):
             else:
                 self._variablesWithResult.append(currentVariable)
 
-            remove_cb = self.hasResult(currentVariable)
-            remove_cb &= isinstance(currentVariable, Data)
-            if remove_cb and callBackToExecute in self._variablesCallbacks:
+            remove_cb_cond = self.hasResult(currentVariable)
+            remove_cb_cond &= isinstance(currentVariable, Data)
+            if remove_cb_cond and callBackToExecute in self._variablesCallbacks:
                 self._variablesCallbacks.remove(callBackToExecute)
 
         return True
