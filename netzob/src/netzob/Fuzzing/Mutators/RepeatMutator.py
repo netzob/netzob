@@ -43,7 +43,7 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode, center
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
@@ -91,13 +91,13 @@ class RepeatMutator(DomainMutator):
     >>> from netzob.all import *
     >>> child = Data(dataType=String("abc"))
     >>> fieldRepeat = Field(Repeat(child, nbRepeat=3))
-    >>> mutator = RepeatMutator(fieldRepeat.domain)
+    >>> mutator = RepeatMutator(fieldRepeat.domain, interval=MutatorInterval.FULL_INTERVAL)
+    >>> mutator.generate()
+    256
     >>> mutator.generate()
     255
     >>> mutator.generate()
     254
-    >>> mutator.generate()
-    253
 
 
     **Fuzzing example of a field that contains a fixed number of repeat of a variable**
@@ -160,8 +160,6 @@ class RepeatMutator(DomainMutator):
     """
 
     # Constants
-    DEFAULT_MIN_LENGTH = 0
-    DEFAULT_MAX_LENGTH = 10
     DOMAIN_TYPE = Repeat
 
     def __init__(self,
@@ -173,49 +171,25 @@ class RepeatMutator(DomainMutator):
                  mutateChild=True,
                  mappingTypesMutators={},
                  interval=MutatorInterval.DEFAULT_INTERVAL,
-                 lengthBitSize=UnitSize.SIZE_8):
+                 lengthBitSize=None):
 
         # Call parent init
         super().__init__(domain,
                          mode=mode,
                          generator=generator,
                          seed=seed,
-                         counterMax=counterMax)
+                         counterMax=counterMax,
+                         lengthBitSize=lengthBitSize)
 
         # Variables from parameters
         self.mutateChild = mutateChild
         self.mappingTypesMutators = mappingTypesMutators
 
-        # Initialize generator
-        self.initializeGenerator(interval, lengthBitSize)
-
-    def initializeGenerator(self, interval, lengthBitSize):
-
-        minLength = self.DEFAULT_MIN_LENGTH
-        maxLength = self.DEFAULT_MAX_LENGTH
-
-        # Check min, max interval
-        if isinstance(interval, tuple) and len(interval) == 2:
-            if all(isinstance(_, int) for _ in interval):
-                minLength, maxLength = interval
-            else:
-                minLength, maxLength = (0, 0)
-        elif isinstance(self.domain.nbRepeat, tuple):
-            # Handle desired length according to the domain information
-            minLength = max(minLength, int(self.domain.nbRepeat[0]))
-            maxLength = min(maxLength, int(self.domain.nbRepeat[1]))
-
-        # Check lengthBitSize
-        if isinstance(lengthBitSize, UnitSize):
-            lengthBitSize = lengthBitSize.value
-
-        # Build the length generator
-        self.generator = GeneratorFactory.buildGenerator(DeterministGenerator.NG_determinist,
-                                                         seed = self.seed,
-                                                         minValue = minLength,
-                                                         maxValue = maxLength,
-                                                         bitsize = lengthBitSize,
-                                                         signed = False)
+        # Initialize the length generator
+        model_min = self.domain.nbRepeat[0]
+        model_max = self.domain.nbRepeat[1]
+        model_unitSize = self.domain.UNIT_SIZE
+        self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
 
     @property
     def mutateChild(self):
@@ -264,4 +238,10 @@ class RepeatMutator(DomainMutator):
         # Call parent generate() method
         super().generate()
 
-        return next(self.generator)
+        # Generate length
+        if self._lengthGenerator is not None:
+            length = next(self._lengthGenerator)
+        else:
+            raise Exception("Length generator not initialized")
+
+        return length

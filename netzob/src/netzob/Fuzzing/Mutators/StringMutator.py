@@ -44,22 +44,23 @@ from typing import Tuple  # noqa: F401
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
-from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode, center
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 from netzob.Fuzzing.Generators.StringPaddedGenerator import StringPaddedGenerator
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Field import Field
 
 
+@NetzobLogger
 class StringMutator(DomainMutator):
-    """The string mutator, using a determinist generator to get a string length.
+    r"""The string mutator, using a determinist generator to get a string length.
     The generated string shall not be longer than 2^16 bytes.
 
     The fuzzing of strings provides the following capabilities:
@@ -100,22 +101,21 @@ class StringMutator(DomainMutator):
     :type lengthBitSize: :class:`int`, optional
     :type naughtyStrings: :class:`list` of :class:`str`, optional
 
+
     The following example shows how to generate a string with a length in
     [35, 60] interval, the smaller one between the field domain and the length
     given to the constructor of StringMutator:
 
     >>> from netzob.all import *
-    >>> fieldString = Field(String(nbChars=(35, 60)))
-    >>> mutator = StringMutator(fieldString.domain, interval=(10,600), seed=10)
-    >>> mutator.generate()  # doctest: +SKIP
-    b'`ls -al /`\x00     '
+    >>> fieldString = Field(String(nbChars=(5, 8)))
+    >>> mutator = StringMutator(fieldString.domain, interval=(5, 12), seed=10)
+    >>> mutator.generate()
+    b'`ls -al /`\x00 '
 
     Constant definitions:
     """
 
     DEFAULT_END_CHAR = '\0'
-    DEFAULT_MIN_LENGTH = 2
-    DEFAULT_MAX_LENGTH = 10
     PADDING_CHAR = ' '
     DATA_TYPE = String
 
@@ -126,8 +126,8 @@ class StringMutator(DomainMutator):
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  endchar=DEFAULT_END_CHAR,  # type: str
-                 interval=(None, None),       # type: Tuple[int, int]
-                 lengthBitSize=UnitSize.SIZE_8,
+                 interval=MutatorInterval.DEFAULT_INTERVAL,
+                 lengthBitSize=None,
                  naughtyStrings=None):
         # type: (...) -> None
 
@@ -136,47 +136,25 @@ class StringMutator(DomainMutator):
                          mode=mode,
                          generator=generator,
                          seed=seed,
-                         counterMax=counterMax)
+                         counterMax=counterMax,
+                         lengthBitSize=lengthBitSize)
 
         # Variables
         self.naughtyStrings = naughtyStrings
 
-        # Initialize generator
-        self.initializeGenerator(interval, lengthBitSize, endchar)
+        # Initialize length generator
+        model_min = int(self.domain.dataType.size[0] / 8)
+        model_max = int(self.domain.dataType.size[1] / 8)
+        model_unitSize = self.domain.dataType.unitSize
+        self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
 
-    def initializeGenerator(self, interval, lengthBitSize, endchar):
-
-        minLength = None
-        maxLength = None
-
-        # Check minLength and maxLength
-        if isinstance(interval, tuple) and len(interval) == 2 and all(isinstance(_, int) for _ in interval):
-            minLength, maxLength = interval
-        dom_size = self.domain.dataType.size
-        if isinstance(dom_size, tuple) and len(dom_size) == 2 and all(isinstance(_, int) for _ in dom_size):
-            # Handle desired interval according to the storage space of the domain dataType
-            minLength = max(minLength, int(dom_size[0] / 8))
-            maxLength = min(maxLength, int(dom_size[1] / 8))
-        if minLength is None or maxLength is None:
-            minLength = self.DEFAULT_MIN_LENGTH
-            maxLength = self.DEFAULT_MAX_LENGTH
-
-        # Check lengthBitSize
-        if isinstance(lengthBitSize, UnitSize):
-            lengthBitSize = lengthBitSize.value
-
-        # Build the length generator
-        lengthGenerator = GeneratorFactory.buildGenerator(DeterministGenerator.NG_determinist,
-                                                          seed = self.seed,
-                                                          minValue = minLength,
-                                                          maxValue = maxLength,
-                                                          bitsize = lengthBitSize,
-                                                          signed = False)
-
-        # Build the string generator
-        self.generator = StringPaddedGenerator(lengthGenerator,
-                                               self.naughtyStrings,
-                                               endchar)
+        # Initialize data generator
+        self.generator = StringPaddedGenerator(seed = self.seed,
+                                               lengthGenerator = self._lengthGenerator,
+                                               stringsList = self.naughtyStrings,
+                                               endchar = endchar,
+                                               minLength = self._minLength,
+                                               maxLength = self._maxLength)
 
 
     ## Properties
@@ -210,7 +188,10 @@ class StringMutator(DomainMutator):
         # Call parent generate() method
         super().generate()
 
+        # Choose the next string
         value = next(self.generator)
+
+        # Conversion
         return String.decode(value,
                              unitSize = self.domain.dataType.unitSize,
                              endianness = self.domain.dataType.endianness,

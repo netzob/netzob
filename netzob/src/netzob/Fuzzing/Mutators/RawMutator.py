@@ -43,8 +43,8 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
-from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode, center
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
@@ -72,6 +72,7 @@ class RawMutator(DomainMutator):
     :type mode: :class:`int`, optional
     :type lengthBitSize: :class:`int`, optional
 
+
     The following example shows how to generate a binary sequence with a length
     in [0, 30] interval:
 
@@ -80,19 +81,17 @@ class RawMutator(DomainMutator):
     >>> fieldRaw = Field(Raw(nbBytes=2))
     >>> mutator = RawMutator(fieldRaw.domain, lengthBitSize=UnitSize.SIZE_4)
     >>> mutator.generate()
-    b'\xc5t\x05O\xa26\xbf\xb0\x7f\x9d9\x8c2\xb4\xc2'
+    b'\xc5t'
 
     >>> from netzob.all import *
     >>> from netzob.Fuzzing.Mutators.RawMutator import RawMutator
     >>> fieldRaw = Field(Raw(nbBytes=2))
     >>> mutator = RawMutator(fieldRaw.domain, seed=19, lengthBitSize=UnitSize.SIZE_4)
     >>> mutator.generate()
-    b'\x18\xf7\xc2\xe0?7#\\T\xd9\x15?\xac\x06\xce'
+    b'\x18\xf7'
 
     """
 
-    DEFAULT_MIN_LENGTH = 4
-    DEFAULT_MAX_LENGTH = 80
     DATA_TYPE = Raw
 
     def __init__(self,
@@ -101,48 +100,24 @@ class RawMutator(DomainMutator):
                  generator=Generator.NG_mt19937,
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
-                 lengthBitSize=UnitSize.SIZE_8):
+                 interval=MutatorInterval.DEFAULT_INTERVAL,
+                 lengthBitSize=None):
 
         # Call parent init
         super().__init__(domain,
                          mode=mode,
                          generator=generator,
                          seed=seed,
-                         counterMax=counterMax)
+                         counterMax=counterMax,
+                         lengthBitSize=lengthBitSize)
 
-        # Initialize generator
-        self.initializeGenerator(lengthBitSize)
+        # Initialize length generator
+        model_min = int(self.domain.dataType.size[0] / 8)
+        model_max = int(self.domain.dataType.size[1] / 8)
+        model_unitSize = self.domain.dataType.unitSize
+        self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
 
-    def initializeGenerator(self, lengthBitSize):
-
-        minLength = None
-        maxLength = None
-
-        # Check min, max interval
-        size = self.domain.dataType.size
-        if (isinstance(size, tuple) and len(size) == 2 and
-                all(isinstance(_, int) for _ in size)):
-            # Handle desired interval according to the storage space of the
-            # domain dataType
-            minLength = int(self.domain.dataType.size[0] / 8)  # nb bits to nb bytes
-            maxLength = int(self.domain.dataType.size[1] / 8)  # nb bits to nb bytes
-        if minLength is None or maxLength is None:
-            minLength = self.DEFAULT_MIN_LENGTH
-            maxLength = self.DEFAULT_MAX_LENGTH
-
-        # Check lengthBitSize
-        if isinstance(lengthBitSize, UnitSize):
-            lengthBitSize = lengthBitSize.value
-
-        # Build the length generator
-        self.lengthGenerator = GeneratorFactory.buildGenerator(DeterministGenerator.NG_determinist,
-                                                               seed = self.seed,
-                                                               minValue = minLength,
-                                                               maxValue = maxLength,
-                                                               bitsize = lengthBitSize,
-                                                               signed = False)
-
-        # Build the data generator
+        # Initialize data generator
         self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
 
     def generate(self):
@@ -156,7 +131,13 @@ class RawMutator(DomainMutator):
         # Call parent generate() method
         super().generate()
 
-        length = next(self.lengthGenerator)
+        # Generate length of random data
+        if self._lengthGenerator is not None:
+            length = next(self._lengthGenerator)
+        else:
+            raise Exception("Length generator not initialized")
+
+        length = center(length, self._minLength, self._maxLength)
 
         valueBytes = bytes()
         if length == 0:

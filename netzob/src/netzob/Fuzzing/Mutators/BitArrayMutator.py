@@ -45,7 +45,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode, center
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
@@ -56,9 +56,11 @@ from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.AbstractType import Sign, UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Sign, UnitSize
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 
+@NetzobLogger
 class BitArrayMutator(DomainMutator):
     """The binary sequence mutator, using pseudo-random generator.
     The generated sequence shall not be longer than 2^32 bits.
@@ -71,37 +73,37 @@ class BitArrayMutator(DomainMutator):
         If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`,
         :meth:`mutate` will be used to produce the value (not used yet).
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
-    :param length: The scope of sequence length to generate. If set to
+    :param interval: The scope of sequence length to generate. If set to
         (min, max), the values will be generated between min and max.
         Default value is **(None, None)**.
     :param lengthBitSize: The size in bits of the memory on which the generated
         length will be encoded.
-        Default value is UnitSize.SIZE_8.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type mode: :class:`int`, optional
-    :type length: :class:`tuple`, optional
+    :type interval: :class:`tuple`, optional
     :type lengthBitSize: :class:`int`, optional
+
 
     The following example shows how to generate a binary sequence with a length
     in [0, 30] interval:
 
-    >>> from netzob.all import *
-    >>> fieldBits = Field(BitArray())
-    >>> mutator = BitArrayMutator(fieldBits.domain)
-    >>> mutator.generate()
-    bitarray('110001010111010000000101010011111010001000110110101111111011000001111111100111010011100110001100001100101011010011000010101100010010101101001010000101101001110110101111011100111111010000010000000000010000001010000011000111101101000000000111100111001100110')
+    # >>> from netzob.all import *
+    # >>> fieldBits = Field(BitArray())
+    # >>> mutator = BitArrayMutator(fieldBits.domain)
+    # >>> data = mutator.generate()
+    # >>> len(data)
+    # 65536
 
-    >>> from netzob.all import *
-    >>> fieldBits = Field(BitArray())
-    >>> mutator = BitArrayMutator(fieldBits.domain, interval=(0,30), seed=19)
-    >>> mutator.generate()
-    bitarray('000110001111011111000010111000000011111100110111001000110101110001010100110110010001010100111111101011000000011011001110011111001111101110010011101000101011101000110111010001101000110010001100100010111010100100111011111011000001110100011101011111111110100')
+    # >>> from netzob.all import *
+    # >>> fieldBits = Field(BitArray())
+    # >>> mutator = BitArrayMutator(fieldBits.domain, interval=(0,30), seed=19)
+    # >>> data = mutator.generate()
+    # >>> len(data)
+    # 32
 
     """
 
-    DEFAULT_MIN_LENGTH = 4
-    DEFAULT_MAX_LENGTH = 80
     DATA_TYPE = BitArray
 
     def __init__(self,
@@ -111,51 +113,23 @@ class BitArrayMutator(DomainMutator):
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  interval=MutatorInterval.DEFAULT_INTERVAL,
-                 lengthBitSize=UnitSize.SIZE_8):
+                 lengthBitSize=None):
 
         # Call parent init
         super().__init__(domain,
                          mode=mode,
                          generator=generator,
                          seed=seed,
-                         counterMax=counterMax)
+                         counterMax=counterMax,
+                         lengthBitSize=lengthBitSize)
 
-        # Initialize generator
-        self.initializeGenerator(interval, lengthBitSize)
+        # Initialize length generator
+        model_min = self.domain.dataType.size[0]
+        model_max = self.domain.dataType.size[1]
+        model_unitSize = self.domain.dataType.unitSize
+        self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
 
-    def initializeGenerator(self, interval, lengthBitSize):
-
-        minLength = None
-        maxLength = None
-
-        # Check min, max interval
-        if (isinstance(interval, tuple) and len(interval) == 2 and
-                all(isinstance(_, int) for _ in interval)):
-            minLength, maxLength = interval
-        size = self.domain.dataType.size
-        if (isinstance(size, tuple) and len(size) == 2 and
-                all(isinstance(_, int) for _ in size)):
-            # Handle desired interval according to the storage space of the
-            # domain dataType
-            minLength = max(minLength, self.domain.dataType.size[0])
-            maxLength = min(maxLength, self.domain.dataType.size[1])
-        if minLength is None or maxLength is None:
-            minLength = self.DEFAULT_MIN_LENGTH
-            maxLength = self.DEFAULT_MAX_LENGTH
-
-        # Check lengthBitSize
-        if isinstance(lengthBitSize, UnitSize):
-            lengthBitSize = lengthBitSize.value
-
-        # Build the length generator
-        self.lengthGenerator = GeneratorFactory.buildGenerator(DeterministGenerator.NG_determinist,
-                                                               seed = self.seed,
-                                                               minValue = minLength,
-                                                               maxValue = maxLength,
-                                                               bitsize = lengthBitSize,
-                                                               signed = False)
-
-        # Build the data generator
+        # Initialize data generator
         self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
 
     def generate(self):
@@ -169,14 +143,173 @@ class BitArrayMutator(DomainMutator):
         # Call parent generate() method
         super().generate()
 
-        length = next(self.lengthGenerator)
+        # Generate length of random data
+        if self._lengthGenerator is not None:
+            length = next(self._lengthGenerator)
+        else:
+            raise Exception("Length generator not initialized")
 
-        valueBits = bitarray()
+        length = center(length, self._minLength, self._maxLength)
+
+        # Generate random data
+        value_bits = bitarray('')
         if length == 0:
-            return valueBits
+            return value_bits.tobytes()
         while True:
-            valueInt = int(next(self.generator) * 65535)
-            valueBits += Integer(valueInt, unitSize=UnitSize.SIZE_16, sign=Sign.UNSIGNED).value
-            if len(valueBits) >= length:
+            # Generate random sequence of bits, octet per octet
+            data_int = int(next(self.generator) * 255)
+            data_bytes = data_int.to_bytes(length=1, byteorder='big')
+            data_bits = bitarray()
+            data_bits.frombytes(data_bytes)
+
+            # Concatenate the generated data
+            value_bits += data_bits
+            if len(value_bits) >= length:
                 break
-        return valueBits[:length]
+        return value_bits[:length].tobytes()
+
+
+def _test():
+    r"""
+
+    # Default BitArray type with default fuzzing
+
+    >>> from netzob.all import *
+    >>> f = Field(BitArray())
+    >>> mutator = BitArrayMutator(f.domain)
+    >>> mutator._minLength
+    0
+    >>> mutator._maxLength
+    65536
+    >>> mutator.lengthBitSize
+    UnitSize.SIZE_16
+    >>> len(mutator.generate())
+    8192
+
+
+    # Default BitArray type and fuzzing with specific interval
+
+    >>> f = Field(BitArray())
+    >>> mutator = BitArrayMutator(f.domain, interval=(10,30))
+    >>> mutator._minLength
+    10
+    >>> mutator._maxLength
+    30
+    >>> mutator.lengthBitSize
+    UnitSize.SIZE_16
+    >>> len(mutator.generate())
+    4
+
+
+    # Default BitArray type and fuzzing with specific interval, and specific length bit size
+
+    >>> f = Field(BitArray())
+    >>> mutator = BitArrayMutator(f.domain, interval=(10,30), lengthBitSize=UnitSize.SIZE_8)
+    >>> mutator._minLength
+    10
+    >>> mutator._maxLength
+    30
+    >>> mutator.lengthBitSize
+    UnitSize.SIZE_8
+    >>> len(mutator.generate())
+    4
+
+
+    # Default BitArray type and fuzzing with full storage size
+
+    >>> f = Field(BitArray())
+    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.FULL_INTERVAL)
+    >>> mutator._minLength
+    0
+    >>> mutator._maxLength
+    65536
+    >>> mutator.lengthBitSize
+    UnitSize.SIZE_16
+    >>> len(mutator.generate())
+    8192
+
+
+    # Default BitArray type and fuzzing with full storage size, and specific length bit size
+
+    >>> f = Field(BitArray())
+    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_4)
+    >>> mutator._minLength
+    0
+    >>> mutator._maxLength
+    16
+    >>> mutator.lengthBitSize
+    UnitSize.SIZE_4
+    >>> len(mutator.generate())
+    2
+
+
+    # BitArray of specific size and fuzzing with default interval
+
+    >>> f = Field(domain=BitArray(nbBits=16), name="data")
+    >>> mutator = BitArrayMutator(f.domain)
+    >>> mutator._minLength
+    16
+    >>> mutator._maxLength
+    16
+    >>> mutator.lengthBitSize
+    UnitSize.SIZE_4
+    >>> len(mutator.generate())
+    2
+
+
+    # BitArray of specific size and fuzzing with default interval, and specific datatype storage size
+
+    >>> f = Field(domain=BitArray(nbBits=16), name="data")
+    >>> mutator = BitArrayMutator(f.domain, lengthBitSize=UnitSize.SIZE_8)
+    >>> mutator._minLength
+    16
+    >>> mutator._maxLength
+    16
+    >>> mutator.lengthBitSize
+    UnitSize.SIZE_8
+    >>> len(mutator.generate())
+    2
+
+
+    # BitArray of specific variable size and fuzzing with default interval
+
+    >>> f = Field(domain=BitArray(nbBits=(8, 12)), name="data")
+    >>> mutator = BitArrayMutator(f.domain)
+    >>> mutator._minLength
+    8
+    >>> mutator._maxLength
+    12
+    >>> mutator.lengthBitSize
+    UnitSize.SIZE_4
+    >>> len(mutator.generate())
+    2
+
+
+    # BitArray of specific variable size and fuzzing with full datatype storage size
+
+    >>> f = Field(domain=BitArray(nbBits=(4, 6)), name="data")
+    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.FULL_INTERVAL)
+    >>> mutator._minLength
+    0
+    >>> mutator._maxLength
+    16
+    >>> mutator.lengthBitSize
+    UnitSize.SIZE_4
+    >>> len(mutator.generate())
+    2
+
+
+    # BitArray of specific variable size and fuzzing with full datatype storage size, and specific length bit size
+
+    >>> f = Field(domain=BitArray(nbBits=(4, 6)), name="data")
+    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_8)
+    >>> mutator._minLength
+    0
+    >>> mutator._maxLength
+    256
+    >>> mutator.lengthBitSize
+    UnitSize.SIZE_8
+    >>> len(mutator.generate())
+    32
+
+    """

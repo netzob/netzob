@@ -49,10 +49,13 @@ from typing import Type  # noqa: F401
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.Mutator import MutatorMode
 from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
+from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 
 class MutatorInterval(Enum):
@@ -62,6 +65,7 @@ class MutatorInterval(Enum):
     # else, we consider the tuple passed as parameter to override the domain interval (ex: DeterminitMutator(interval=(10, 42))
 
 
+@NetzobLogger
 class DomainMutator(Mutator):
     """This class provides the interface of domain mutators.
 
@@ -99,7 +103,8 @@ class DomainMutator(Mutator):
                  mode=MutatorMode.GENERATE,  # type: MutatorMode
                  generator=Generator.NG_mt19937,
                  seed=Mutator.SEED_DEFAULT,
-                 counterMax=Mutator.COUNTER_MAX_DEFAULT):
+                 counterMax=Mutator.COUNTER_MAX_DEFAULT,
+                 lengthBitSize=None):
         # type: (...) -> None
 
         # Call parent init
@@ -108,24 +113,14 @@ class DomainMutator(Mutator):
                          seed=seed,
                          counterMax=counterMax)
 
-        # Sanity checks on domain parameter
-        if not (self.DOMAIN_TYPE is None or isinstance(domain, self.DOMAIN_TYPE)):
-            raise TypeError("Mutator domain should be of type {}. Received object: '{}'"
-                            .format(self.DOMAIN_TYPE, domain))
-
-        # Sanity checks on domain datatype (AbstractVariableLeaf have a dataType, so we check its consistency)
-        if isinstance(domain, AbstractVariableLeaf):
-            domain_datatype = type(getattr(domain, 'dataType', None))
-
-            if domain_datatype is None:
-                raise TypeError("Mutator domain dataType (DATA_TYPE) not set")
-
-            if not (isinstance(domain_datatype, self.DATA_TYPE) or issubclass(domain_datatype, self.DATA_TYPE)):
-                raise TypeError("Mutator domain dataType should be of type '{}'. Received object: '{}'"
-                                .format(self.DATA_TYPE, domain_datatype))
-
-        # Handle parameters
+        # Variables initialized from parameters
         self.domain = domain
+        self.lengthBitSize = lengthBitSize
+
+        # Internal variables
+        self._lengthGenerator = None
+        self._minLength = None
+        self._maxLength = None
 
     def mutate(self, data):
         """This is the mutation method of the field domain. It has to be
@@ -148,6 +143,59 @@ class DomainMutator(Mutator):
         return data
 
 
+    # Internal methods
+
+    def _initializeLengthGenerator(self, fuzzing_interval, model_interval, model_unitSize):
+        """Initialize a DeterministGenerator according to the given parameter.
+
+        """
+
+        # Identify min and max interval from default datatype storage size
+        if fuzzing_interval == MutatorInterval.FULL_INTERVAL:
+            self._logger.debug("Computed fuzzing interval from datatype storage size")
+
+            if self.lengthBitSize is None:
+                self.lengthBitSize = model_unitSize  # Use default bitsize
+
+            self._minLength = 0
+            self._maxLength = 2**self.lengthBitSize.value
+
+        else:
+            # Identify min and max interval from default datatype interval
+            if fuzzing_interval == MutatorInterval.DEFAULT_INTERVAL:
+                self._logger.debug("Computed fuzzing interval from default datatype interval")
+                self._minLength = model_interval[0]
+                self._maxLength = model_interval[1]
+
+            # Identify min and max interval from fuzzing parameters
+            elif (isinstance(fuzzing_interval, tuple) and len(fuzzing_interval) == 2 and all(isinstance(_, int) for _ in fuzzing_interval)):
+                self._logger.debug("Computed fuzzing interval with tupple: {}".format(fuzzing_interval))
+                self._minLength, self._maxLength = fuzzing_interval
+            else:
+                raise Exception("Not enough information to generate the fuzzing data.")
+
+            # Compute lengthBitSize
+            if self.lengthBitSize is None:
+                self.lengthBitSize = model_unitSize  # Use default bitsize
+            else:
+                # Compute bitsize according to the interval length
+                bitsize_tmp = AbstractType.computeUnitSize(self._maxLength)  # Compute unit size according to the maximum length
+
+                # Check size consistency
+                if self.lengthBitSize.value < bitsize_tmp.value:
+                    raise Exception("Specified lengthBitSize ({}) is too small to represent all possible data size from interval: ({}, {})".format(self.lengthBitSize, self._minLength, self._maxLength))
+
+        self._logger.debug("Computed fuzzing interval: ({}, {}) with lengthBitSize: {}".format(self._minLength, self._maxLength, self.lengthBitSize))
+
+        # Build the length generator
+        self._lengthGenerator = GeneratorFactory.buildGenerator(DeterministGenerator.NG_determinist,
+                                                                seed = self.seed,
+                                                                minValue = self._minLength,
+                                                                maxValue = self._maxLength,
+                                                                bitsize = self.lengthBitSize.value,
+                                                                signed = False)
+
+
     ## Properties
 
     @property
@@ -156,7 +204,33 @@ class DomainMutator(Mutator):
 
     @domain.setter  # type: ignore
     def domain(self, domain):
+        # Sanity checks on domain parameter
+        if not (self.DOMAIN_TYPE is None or isinstance(domain, self.DOMAIN_TYPE)):
+            raise TypeError("Mutator domain should be of type {}. Received object: '{}'"
+                            .format(self.DOMAIN_TYPE, domain))
+
+        # Sanity checks on domain datatype (AbstractVariableLeaf have a dataType, so we check its consistency)
+        if isinstance(domain, AbstractVariableLeaf):
+            domain_datatype = type(getattr(domain, 'dataType', None))
+
+            if domain_datatype is None:
+                raise TypeError("Mutator domain dataType (DATA_TYPE) not set")
+
+            if not (isinstance(domain_datatype, self.DATA_TYPE) or issubclass(domain_datatype, self.DATA_TYPE)):
+                raise TypeError("Mutator domain dataType should be of type '{}'. Received object: '{}'"
+                                .format(self.DATA_TYPE, domain_datatype))
+
         self._domain = domain
+
+    @property
+    def lengthBitSize(self):
+        return self._lengthBitSize
+
+    @lengthBitSize.setter  # type: ignore
+    def lengthBitSize(self, lengthBitSize):
+        if lengthBitSize is not None and not isinstance(lengthBitSize, UnitSize):
+            raise Exception("lengthBitSize parameter should be an element of the enum UnitSize")
+        self._lengthBitSize = lengthBitSize
 
 
 ## Unit tests

@@ -250,10 +250,8 @@ class IntegerMutator(DomainMutator):
                          mode=mode,
                          generator=generator,
                          seed=seed,
-                         counterMax=counterMax)
-
-        # Initialize variables
-        self.lengthBitSize = lengthBitSize
+                         counterMax=counterMax,
+                         lengthBitSize=lengthBitSize)
 
         # Initialize generator
         self.initializeGenerator(interval)
@@ -261,18 +259,18 @@ class IntegerMutator(DomainMutator):
     def initializeGenerator(self, interval):
 
         # Find min and max potential values for the datatype interval
-        self.minValue = 0
-        self.maxValue = 0
+        self._minLength = 0
+        self._maxLength = 0
         if isinstance(interval, tuple) and len(interval) == 2 and all(isinstance(_, int) for _ in interval):
             # Handle desired interval according to the storage space of the domain dataType
-            self.minValue = max(interval[0], self.domain.dataType.getMinStorageValue())
-            self.maxValue = min(interval[1], self.domain.dataType.getMaxStorageValue())
+            self._minLength = max(interval[0], self.domain.dataType.getMinStorageValue())
+            self._maxLength = min(interval[1], self.domain.dataType.getMaxStorageValue())
         elif interval == MutatorInterval.DEFAULT_INTERVAL:
-            self.minValue = self.domain.dataType.getMinValue()
-            self.maxValue = self.domain.dataType.getMaxValue()
+            self._minLength = self.domain.dataType.getMinValue()
+            self._maxLength = self.domain.dataType.getMaxValue()
         elif interval == MutatorInterval.FULL_INTERVAL:
-            self.minValue = self.domain.dataType.getMinStorageValue()
-            self.maxValue = self.domain.dataType.getMaxStorageValue()
+            self._minLength = self.domain.dataType.getMinStorageValue()
+            self._maxLength = self.domain.dataType.getMaxStorageValue()
         else:
             raise Exception("Not enough information to generate the mutated data.")
 
@@ -287,20 +285,20 @@ class IntegerMutator(DomainMutator):
                 self.lengthBitSize = self.domain.dataType.unitSize
 
             # Check minValue and maxValue consistency according to the bitsize value
-            if self.minValue >= 0:
-                if self.maxValue > 2**self.lengthBitSize.value - 1:
-                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self.maxValue, self.lengthBitSize))
+            if self._minLength >= 0:
+                if self._maxLength > 2**self.lengthBitSize.value - 1:
+                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self._maxLength, self.lengthBitSize))
             else:
-                if self.maxValue > 2**(self.lengthBitSize.value - 1) - 1:
-                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self.maxValue, self.lengthBitSize))
-                if self.minValue < -2**(self.lengthBitSize.value - 1):
-                    raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self.minValue, self.lengthBitSize.value))
+                if self._maxLength > 2**(self.lengthBitSize.value - 1) - 1:
+                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self._maxLength, self.lengthBitSize))
+                if self._minLength < -2**(self.lengthBitSize.value - 1):
+                    raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self._minLength, self.lengthBitSize.value))
 
             # Build the generator
             self.generator = GeneratorFactory.buildGenerator(self.generator,
                                                              seed = self.seed,
-                                                             minValue = self.minValue,
-                                                             maxValue = self.maxValue,
+                                                             minValue = self._minLength,
+                                                             maxValue = self._maxLength,
                                                              bitsize = self.lengthBitSize.value,
                                                              signed = self.domain.dataType.sign == Sign.SIGNED)
 
@@ -344,7 +342,7 @@ class IntegerMutator(DomainMutator):
         v = next(self.generator)
 
         if not isinstance(self.generator, DeterministGenerator):        
-            v = center(v, self.minValue, self.maxValue)
+            v = center(v, self._minLength, self._maxLength)
 
         return v
 

@@ -48,6 +48,7 @@ from enum import Enum
 from netzob.Model.Grammar.Automata import Automata  # noqa: F401
 from netzob.Fuzzing.Generator import Generator
 from netzob.Common.Utils.Constant import Constant
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 
 class MutatorMode(Enum):
@@ -57,6 +58,7 @@ class MutatorMode(Enum):
     __repr__ = Enum.__str__
 
 
+@NetzobLogger
 class Mutator(metaclass=abc.ABCMeta):
     """This class provides the interface that a mutator should implement.
 
@@ -105,6 +107,7 @@ class Mutator(metaclass=abc.ABCMeta):
         self.currentCounter = 0
         self.currentState = 0
 
+
     # API methods
 
     def generate(self):
@@ -140,6 +143,7 @@ class Mutator(metaclass=abc.ABCMeta):
 
         :meth:`mutate` is an *abstract method* and must be inherited.
         """
+
 
     # Properties
 
@@ -201,3 +205,21 @@ class Mutator(metaclass=abc.ABCMeta):
     @currentState.setter  # type: ignore
     def currentState(self, currentState):
         self._currentState = currentState
+
+
+## Utility functions
+
+def center(val, lower, upper):
+    """
+    Center :attr:`val` between :attr:`lower` and :attr:`upper`.
+    """
+
+    number_values = float(upper) - float(lower) + 1.0
+    result = lower + int(val * number_values)
+
+    # Ensure the produced value is in the range of the permitted values of the domain datatype
+    if result > upper:
+        result = upper
+    if result < lower:
+        result = lower
+    return result

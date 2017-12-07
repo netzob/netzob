@@ -43,12 +43,14 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Fuzzing.Mutator import center
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
 
+@NetzobLogger
 class StringPaddedGenerator(Generator):
     r"""Generates string values.
 
@@ -85,7 +87,9 @@ class StringPaddedGenerator(Generator):
                  seed = 0,
                  lengthGenerator = DeterministGenerator.NG_determinist,
                  stringsList = DEFAULT_NAUGHTY_STRINGS,
-                 endchar = '\0'):
+                 endchar = '\0',
+                 minLength = None,
+                 maxLength = None):
 
         # Call parent init
         super().__init__(seed=seed)
@@ -93,6 +97,8 @@ class StringPaddedGenerator(Generator):
         # Variables from parameters
         self._endchar = endchar
         self._values = stringsList
+        self._minLength = minLength
+        self._maxLength = maxLength
 
         # Initialize length generator
         self.lengthGenerator = GeneratorFactory.buildGenerator(lengthGenerator, seed=self.seed)
@@ -112,8 +118,14 @@ class StringPaddedGenerator(Generator):
         # Generate the initial value
         value = self._values[self.seed] + self._endchar
 
-        # Generate the value final length
-        length = next(self.lengthGenerator)
+        # Generate length of random data
+        if self.lengthGenerator is not None:
+            length = next(self.lengthGenerator)
+        else:
+            raise Exception("Length generator not initialized")
+
+        if self._minLength is not None and self._maxLength is not None:
+            length = center(length, self._minLength, self._maxLength)
 
         # Adapt the initial value according to the final length
         if length > 0:
