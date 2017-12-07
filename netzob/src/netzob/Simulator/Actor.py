@@ -1602,7 +1602,7 @@ class Actor(threading.Thread):
         self.__stopEvent = threading.Event()
 
         # Max number of transitions the actor can browse
-        self.__nbMaxTransitions = None   # -1 means no limit
+        self.__nbMaxTransitions = None   # None means no limit
         self._currentnbTransitions = 0
 
         # Initiate visit log, which contains the information regarding the different transitions and states visited by the actor
