@@ -430,3 +430,41 @@ class Symbol(AbstractField):
             raise KeyError("Field {} has not been found in {}"
                            .format(field_name, self))
         return field
+
+
+def _test_many_relation_abstractions():
+    r"""
+    >>> from netzob.all import *
+    >>> eth_length = Field(bitarray('0000000000000000'), "eth.length")
+    >>>
+    >>> eth_llc = Field(Raw(nbBytes=3), "eth.llc")  # IEEE 802.2 header
+    >>>
+    >>> eth_payload = Field(Raw(), name="eth.payload")
+    >>>
+    >>> eth_padding = Field(Padding([eth_length, eth_llc, eth_payload],
+    ...                              data=Raw(nbBytes=1),
+    ...                              modulo=8*60),
+    ...                      "eth.padding")
+    >>>
+    >>> eth_crc_802_3 = Field(bitarray('00000000000000000000000000000000'), "eth.crc")
+    >>> eth_crc_802_3.domain = CRC32([eth_length,
+    ...                               eth_llc,
+    ...                               eth_payload,
+    ...                               eth_padding],
+    ...                              dataType=Raw(nbBytes=4,
+    ...                                           unitSize=UnitSize.SIZE_32))
+    >>>
+    >>> eth_length.domain = Size([eth_llc, eth_payload],
+    ...                           dataType=uint16(), factor=1./8)
+    >>>
+    >>> symbol = Symbol(name="ethernet_802_3",
+    ...                  fields=[eth_length,
+    ...                          eth_llc,
+    ...                          eth_payload,
+    ...                          eth_padding,
+    ...                          eth_crc_802_3])
+    >>> presets = {'eth.payload': b"PAYLOAD"}
+    >>> Symbol.abstract(symbol.specialize(presets=presets), [symbol])
+    (ethernet_802_3, OrderedDict([('eth.length', b'\x00\n'), ('eth.llc', b'\xbe\xbfa'), ('eth.payload', b'PAYLOAD'), ('eth.padding', b'T\x8a\x1b\xdb\xda\x84\xb7\x00\xf3\x89\x8b\x95\xcd\x03w\xb9+\xadq9\xce&\x04 a4\xd6\xed\xe2\x864\xe3\x0c<\xa4\x8d^\x1c#\x19U\xac\xbf\xd7s>\xd2\xce'), ('eth.crc', b'i\x92\xcbb')]))
+
+    """
