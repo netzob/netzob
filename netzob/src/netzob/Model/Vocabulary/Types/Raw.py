@@ -123,7 +123,7 @@ class Raw(AbstractType):
     def __init__(self,
                  value=None,
                  nbBytes=None,
-                 unitSize=AbstractType.defaultUnitSize(),
+                 unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign(),
                  alphabet=None):

@@ -173,8 +173,10 @@ class BitArray(AbstractType):
                 raise ValueError("Unsupported input format for value: '{}', type: '{}'".format(value, type(value)))
 
         # Normalize nbBits
-        if nbBits is None:
-            nbBits=(None,None)
+        if value is None:
+            nbBits = self._normalizeNbBits(nbBits)
+        else:
+            nbBits = (None, None)
 
         super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
         self.constants = None  # A list of named constant used to access the bitarray elements
@@ -207,6 +209,21 @@ class BitArray(AbstractType):
                 self.value[self.constants.index(key)] = value
             else:
                 raise ValueError("Named constant access to bitarray elements is not possible, as bitarray is not of fixed length.")
+
+    def _normalizeNbBits(self, nbBits):
+        nbMinBit = 0
+        nbMaxBit = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
+        if nbBits is not None:
+            if isinstance(nbBits, int):
+                nbMinBit = nbBits
+                nbMaxBit = nbBits
+            else:
+                if nbBits[0] is not None:
+                    nbMinBit = nbBits[0]
+                if nbBits[1] is not None:
+                    nbMaxBit = nbBits[1]
+
+        return (nbMinBit, nbMaxBit)
 
     def canParse(self,
                  data,

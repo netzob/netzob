@@ -167,7 +167,7 @@ class String(AbstractType):
                  nbChars=None,
                  encoding='utf-8',
                  eos=[],
-                 unitSize=AbstractType.defaultUnitSize(),
+                 unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
         self.encoding = encoding
@@ -729,5 +729,6 @@ def _test(self):
     Traceback (most recent call last):
     ...
     ValueError: A String should have either its value or its nbChars set, but not both
+
 
     """

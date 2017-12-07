@@ -113,7 +113,7 @@ class HexaString(AbstractType):
     def __init__(self,
                  value=None,
                  nbBytes=None,
-                 unitSize=AbstractType.defaultUnitSize(),
+                 unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
 
@@ -259,7 +259,7 @@ class HexaString(AbstractType):
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
                sign=AbstractType.defaultSign()):
-        """This method convert the specified data in hexastring format.
+        """This method convert the specified hexastring data to bytes.
 
         >>> from netzob.all import *
         >>> import os
@@ -304,7 +304,7 @@ class HexaString(AbstractType):
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
                sign=AbstractType.defaultSign()):
-        """This method convert the python raw data to a HexaString
+        """This method convert bytes to a HexaString.
 
         >>> from netzob.all import *
         >>> import os

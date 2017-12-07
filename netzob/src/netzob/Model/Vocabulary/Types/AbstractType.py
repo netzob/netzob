@@ -106,8 +106,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     # This value will be used if generate() method is called
     # without any upper size limit
-    # 65535*8 bits (which equals to 2^16 * 8 bits) is a completly arbitrary value used to limit data generation
-    MAXIMUM_GENERATED_DATA_SIZE = 8 * (1 << 16)
+    # 65536 bits (which equals to 2^16 bits) is a completly arbitrary value used to limit data generation
+    MAXIMUM_GENERATED_DATA_SIZE = 1 << 16
 
     @staticmethod
     def supportedTypes():
@@ -224,10 +224,31 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         self.value = value
         self.size = size
 
-        # Handle encoding attributes
+        # Compute unit size (i.e. the size used to store the length attribute of the current object)
+        if self.value is None:
+            value_length = 0
+        else:
+            value_length = len(self.value)
+        if self.size[1] is None:
+            size_max = 0
+        else:
+            size_max = self.size[1]
+
+        unitSize_tmp = AbstractType.computeUnitSize(max(value_length, size_max))  # Compute unit size according to the maximum length
+
+        # Check consistency of provided unitSize value according to the computed one
         if unitSize is None:
-            unitSize = AbstractType.defaultUnitSize()
-        self.unitSize = unitSize
+            self.unitSize = unitSize_tmp
+        else:
+            if unitSize.value < unitSize_tmp.value:
+                raise ValueError("Provided unitSize '{}' is too small to encode the maximum length of the potential values to generate (unitSize should be: '{}')".format(unitSize, unitSize_tmp))
+            else:
+                self.unitSize = unitSize
+
+        #self._logger.error(self.unitSize)
+        #self._logger.error(self.size)
+
+        # Handle endianness and sign attributes
         if endianness is None:
             endianness = AbstractType.defaultEndianness()
         self.endianness = endianness
@@ -326,15 +347,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             raise TypeError("Requested typeClass ({0}) is not supported.".
                             format(typeClass))
 
-        if dst_unitSize is None:
-            dst_unitSize = AbstractType.defaultUnitSize()
         if dst_endianness is None:
             dst_endianness = AbstractType.defaultEndianness()
         if dst_sign is None:
             dst_sign = AbstractType.defaultSign()
 
-        if dst_unitSize not in AbstractType.supportedUnitSizes():
-            raise TypeError("dst_unitsize is not supported.")
         if dst_endianness not in AbstractType.supportedEndianness():
             raise TypeError("dst_endianness is not supported.")
         if dst_sign not in AbstractType.supportedSign():
@@ -392,6 +409,67 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         generatedSize = random.randint(minSize, maxSize)
         randomContent = [random.randint(0, 1) for i in range(0, generatedSize)]
         return bitarray(randomContent, endian=self.endianness.value)
+
+    @staticmethod
+    def computeUnitSize(length):
+        r"""Return a UnitSize that permits to encode the provided length.
+
+        >>> from netzob.Model.Vocabulary.Types.BitArray import BitArray
+        >>> b = BitArray('0')
+        >>> b.unitSize
+        UnitSize.SIZE_4
+        >>> len(b.generate())
+        1
+
+        >>> b = BitArray('00')
+        >>> b.unitSize
+        UnitSize.SIZE_4
+        >>> len(b.generate())
+        2
+
+        >>> b = BitArray('0000000000000000')
+        >>> b.unitSize
+        UnitSize.SIZE_4
+        >>> len(b.generate())
+        16
+
+        >>> b = BitArray('00000000000000000')
+        >>> b.unitSize
+        UnitSize.SIZE_8
+        >>> len(b.generate())
+        17
+
+        >>> b = BitArray(nbBits=17)
+        >>> b.unitSize
+        UnitSize.SIZE_8
+        >>> len(b.generate())
+        17
+
+        >>> b = BitArray(nbBits=(1,17))
+        >>> b.unitSize
+        UnitSize.SIZE_8
+        >>> 1 <= len(b.generate()) <= 17
+        True
+
+        """
+        if length is None:
+            length = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
+
+        # Deduce unit size according to max possible length
+        if length > 2**UnitSize.SIZE_64.value:
+            raise Exception("Maximum length for datatype is too large: '{}'".format(length))
+        elif length > 2**UnitSize.SIZE_32.value:
+            unit_size = UnitSize.SIZE_64
+        elif length > 2**UnitSize.SIZE_16.value:
+            unit_size = UnitSize.SIZE_32
+        elif length > 2**UnitSize.SIZE_8.value:
+            unit_size = UnitSize.SIZE_16
+        elif length > 2**UnitSize.SIZE_4.value:
+            unit_size = UnitSize.SIZE_8
+        else:
+            unit_size = UnitSize.SIZE_4
+
+        return unit_size
 
     @typeCheck(str)
     def mutate(self, prefixDescription=None):

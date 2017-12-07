@@ -47,6 +47,7 @@ from enum import IntEnum
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
@@ -291,7 +292,8 @@ class Repeat(AbstractVariableNode):
 
     """
 
-    MAX_REPEAT = 1000
+    UNIT_SIZE = UnitSize.SIZE_8
+    MAX_REPEAT = 2**UNIT_SIZE.value
 
     def __init__(self, child, nbRepeat, delimiter=None):
         super(Repeat, self).__init__(self.__class__.__name__, [child])

@@ -621,7 +621,7 @@ class Integer(AbstractType):
                 "Invalid endianness value: {0}".format(endianness))
 
         # unitSize
-        if unitSize == UnitSize.SIZE_8:
+        if unitSize == UnitSize.SIZE_8 or unitSize == UnitSize.SIZE_4:
             unitFormat = 'b'
         elif unitSize == UnitSize.SIZE_16:
             unitFormat = 'h'
