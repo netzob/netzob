@@ -110,7 +110,7 @@ class StringMutator(DomainMutator):
     >>> fieldString = Field(String(nbChars=(5, 8)))
     >>> mutator = StringMutator(fieldString.domain, interval=(5, 12), seed=10)
     >>> mutator.generate()
-    b'`ls -al /`\x00 '
+    b'Kernel.exit\x00'
 
     Constant definitions:
     """
