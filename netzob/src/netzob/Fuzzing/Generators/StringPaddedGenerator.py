@@ -65,8 +65,8 @@ class StringPaddedGenerator(Generator):
     >>> genObject = StringPaddedGenerator(seed = seed,
     ...     lengthGenerator = lengthGenerator,
     ...     stringsList = StringPaddedGenerator.DEFAULT_NAUGHTY_STRINGS)
-    >>> next(genObject)  # doctest: +SKIP
-    '`ls -al\x00'
+    >>> next(genObject)
+    'Kernel.exit(1)\x00                                                                                                                                                                                                                                               '
     """
 
     NG_stringpadded = "stringpadded"
@@ -112,11 +112,10 @@ class StringPaddedGenerator(Generator):
         :return: a generated str value
         :rtype: :class:`str`
         """
-        if self.seed >= len(self._values):
-            self.seed = self.seed % len(self._values)
+        index = next(self.lengthGenerator) % len(self._values)
 
         # Generate the initial value
-        value = self._values[self.seed] + self._endchar
+        value = self._values[index] + self._endchar
 
         # Generate length of random data
         if self.lengthGenerator is not None:
