@@ -37,7 +37,6 @@
 # +---------------------------------------------------------------------------+
 import uuid
 from bitarray import bitarray
-from random import shuffle
 
 # +---------------------------------------------------------------------------+
 # | related third party imports                                               |
@@ -212,9 +211,6 @@ class GenericPath(object):
         for _ in range(len(self._variablesCallbacks)):
 
             callBackToExecute = None
-
-            # Try to trigger the callback in different order to unlock some deadlock situations
-            shuffle(self._variablesCallbacks)
 
             for (targetVariables, currentVariable, parsingCB) in self._variablesCallbacks:
 
