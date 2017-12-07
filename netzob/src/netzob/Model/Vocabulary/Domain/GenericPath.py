@@ -72,7 +72,7 @@ class GenericPath(object):
         else:
             self._variablesCallbacks = []
 
-        self._pendingValueVariables = {}
+        self._variablesWithResult = []
 
         if dataAssignedToVariable is None:
             self._dataAssignedToVariable = {}
@@ -101,15 +101,13 @@ class GenericPath(object):
         """
 
         self.assignData(result, variable)
-        self._pendingValueVariables.pop(variable.id, None)
 
         if notify:
             return self._triggerVariablesCallbacks(variable)
         return True
 
-    @typeCheck(AbstractVariable)
-    def setPendingValueVariable(self, variable):
-        self._pendingValueVariables[variable.id] = True
+    def hasResult(self, variable):
+        return variable in self._variablesWithResult
 
     @typeCheck(AbstractVariable)
     def getData(self, variable):
@@ -211,6 +209,7 @@ class GenericPath(object):
             self._variablesCallbacks.append(newCB)
 
     def _triggerVariablesCallbacks(self, triggeringVariable):
+        from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 
         for _ in range(len(self._variablesCallbacks)):
 
@@ -244,12 +243,17 @@ class GenericPath(object):
                 resultingPaths = currentVariable.parse(self, acceptCallBack=True)
             else:
                 resultingPaths = currentVariable.specialize(self, acceptCallBack=True)
-            if len(resultingPaths) == 0:
+
+            # fail when not any path is valid
+            if not any(path.ok for path in resultingPaths):
                 return False
-            if self.hasData(currentVariable):
-                if callBackToExecute in self._variablesCallbacks:
-                    self._variablesCallbacks.remove(callBackToExecute)
-                continue
+            else:
+                self._variablesWithResult.append(currentVariable)
+
+            remove_cb = self.hasResult(currentVariable)
+            remove_cb &= isinstance(currentVariable, Data)
+            if remove_cb and callBackToExecute in self._variablesCallbacks:
+                self._variablesCallbacks.remove(callBackToExecute)
 
         return True
 

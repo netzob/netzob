@@ -338,7 +338,6 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             self._logger.debug(
                 "Value not available in the relation dependencies, a callback function is created to compute later: {}".
                 format(e))
-            variableSpecializerPath.setPendingValueVariable(self)
 
             if moreCallBackAccepted:
                 #                for field in self.fields:
