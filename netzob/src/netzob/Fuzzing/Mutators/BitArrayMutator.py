@@ -366,12 +366,12 @@ def _test_bitarray_length_2():
     >>> fieldBits = Field(BitArray())
     >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_16)
     >>> len(mutator.generate())
-    65535
+    65536
     >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_8)
     >>> len(mutator.generate())
-    255
+    256
     >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_4)
     >>> len(mutator.generate())
-    15
+    16
 
     """
