@@ -512,7 +512,7 @@ def _test_determinist_generator_2():
     ...     expected_values.add(pow(2, k))
     ...     expected_values.add(pow(2, k) - 1)
     ...     expected_values.add(pow(2, k) + 1)
-    
+
     >>> all(x in generated_values for x in expected_values)
     True
 

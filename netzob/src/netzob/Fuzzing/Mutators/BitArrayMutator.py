@@ -354,6 +354,7 @@ def _test_bitarray_length():
 
     """
 
+
 def _test_bitarray_length_2():
     r"""
     # Fuzzing of bitarray generate positiv value by a determinist generator with lengthBitSize that define the maximum length
@@ -365,12 +366,12 @@ def _test_bitarray_length_2():
     >>> fieldBits = Field(BitArray())
     >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_16)
     >>> len(mutator.generate())
-    65536
+    65535
     >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_8)
     >>> len(mutator.generate())
-    256
+    255
     >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_4)
     >>> len(mutator.generate())
-    16
+    15
 
     """
