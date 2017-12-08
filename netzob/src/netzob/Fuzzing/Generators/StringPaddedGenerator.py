@@ -112,7 +112,10 @@ class StringPaddedGenerator(Generator):
         :return: a generated str value
         :rtype: :class:`str`
         """
-        index = next(self.lengthGenerator) % len(self._values)
+        if isinstance(self.lengthGenerator, DeterministGenerator):
+            index = next(self.lengthGenerator) % len(self._values)
+        else:
+            index = int(next(self.lengthGenerator) * len(self._values))
 
         # Generate the initial value
         value = self._values[index] + self._endchar

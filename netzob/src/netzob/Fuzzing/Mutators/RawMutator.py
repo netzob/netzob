@@ -73,22 +73,18 @@ class RawMutator(DomainMutator):
     :type lengthBitSize: :class:`int`, optional
 
 
-    The following example shows how to generate a binary sequence with a length
-    in [0, 30] interval:
+    The following example shows how to generate a fuzzed raw bytes:
 
     >>> from netzob.all import *
     >>> from netzob.Fuzzing.Mutators.RawMutator import RawMutator
     >>> fieldRaw = Field(Raw(nbBytes=2))
-    >>> mutator = RawMutator(fieldRaw.domain, lengthBitSize=UnitSize.SIZE_4)
-    >>> mutator.generate()
-    b'\xc5t'
-
-    >>> from netzob.all import *
-    >>> from netzob.Fuzzing.Mutators.RawMutator import RawMutator
-    >>> fieldRaw = Field(Raw(nbBytes=2))
-    >>> mutator = RawMutator(fieldRaw.domain, seed=19, lengthBitSize=UnitSize.SIZE_4)
-    >>> mutator.generate()
-    b'\x18\xf7'
+    >>> mutator = RawMutator(fieldRaw.domain)
+    >>> len(mutator.generate())
+    16
+    >>> len(mutator.generate())
+    15
+    >>> len(mutator.generate())
+    14
 
     """
 
@@ -100,7 +96,7 @@ class RawMutator(DomainMutator):
                  generator=Generator.NG_mt19937,
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
-                 interval=MutatorInterval.DEFAULT_INTERVAL,
+                 interval=MutatorInterval.FULL_INTERVAL,
                  lengthBitSize=None):
 
         # Call parent init
@@ -116,9 +112,6 @@ class RawMutator(DomainMutator):
         model_max = int(self.domain.dataType.size[1] / 8)
         model_unitSize = self.domain.dataType.unitSize
         self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
-
-        # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
 
     def generate(self):
         """This is the fuzz generation method of the raw field.
@@ -137,7 +130,9 @@ class RawMutator(DomainMutator):
         else:
             raise Exception("Length generator not initialized")
 
-        length = center(length, self._minLength, self._maxLength)
+        # Do not align length to min,max if the generator is determinist
+        if not isinstance(self._lengthGenerator, DeterministGenerator): 
+            length = center(length, self._minLength, self._maxLength)
 
         valueBytes = bytes()
         if length == 0:

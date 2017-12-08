@@ -187,7 +187,6 @@ class AltMutator(DomainMutator):
         self.maxDepth = maxDepth
 
         # Internal structure used to determine the position to select at each call to generate()
-        self.positionGenerator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
         self._currentDepth = 0
 
     @property
@@ -284,4 +283,4 @@ called, first")
         if self._currentDepth >= self.maxDepth:
             raise RecursionException("Max depth reached ({})".format(self.maxDepth))
 
-        return int(next(self.positionGenerator) * len(self.domain.children))
+        return int(next(self.generator) * len(self.domain.children))

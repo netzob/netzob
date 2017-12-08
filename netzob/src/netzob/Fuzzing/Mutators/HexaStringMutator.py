@@ -72,22 +72,28 @@ class HexaStringMutator(DomainMutator):
     :type mode: :class:`int`, optional
     :type lengthBitSize: :class:`int`, optional
 
-    The following example shows how to generate a binary sequence with a length
-    in [0, 30] interval:
+
+    The following example shows how to generate a fuzzed hexastring:
 
     >>> from netzob.all import *
     >>> from netzob.Fuzzing.Mutators.HexaStringMutator import HexaStringMutator
     >>> fieldHexa = Field(HexaString(nbBytes=2))
-    >>> mutator = HexaStringMutator(fieldHexa.domain, lengthBitSize=UnitSize.SIZE_4)
-    >>> mutator.generate()
-    b'\xc5t'
+    >>> mutator = HexaStringMutator(fieldHexa.domain)
+    >>> len(mutator.generate())
+    16
+    >>> len(mutator.generate())
+    15
+    >>> len(mutator.generate())
+    14
 
     >>> from netzob.all import *
     >>> from netzob.Fuzzing.Mutators.HexaStringMutator import HexaStringMutator
     >>> fieldHexa = Field(HexaString(nbBytes=2))
-    >>> mutator = HexaStringMutator(fieldHexa.domain, seed=19, lengthBitSize=UnitSize.SIZE_4)
-    >>> mutator.generate()
-    b'\x18\xf7'
+    >>> mutator = HexaStringMutator(fieldHexa.domain, lengthBitSize=UnitSize.SIZE_8)
+    >>> len(mutator.generate())
+    256
+    >>> len(mutator.generate())
+    255
 
     """
 
@@ -99,7 +105,7 @@ class HexaStringMutator(DomainMutator):
                  generator=Generator.NG_mt19937,
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
-                 interval=MutatorInterval.DEFAULT_INTERVAL,
+                 interval=MutatorInterval.FULL_INTERVAL,
                  lengthBitSize=None):
 
         # Call parent init
@@ -115,9 +121,6 @@ class HexaStringMutator(DomainMutator):
         model_max = int(self.domain.dataType.size[1] / 8)
         model_unitSize = self.domain.dataType.unitSize
         self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
-
-        # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
 
     def generate(self):
         """This is the fuzz generation method of the raw field.
@@ -136,7 +139,9 @@ class HexaStringMutator(DomainMutator):
         else:
             raise Exception("Length generator not initialized")
 
-        length = center(length, self._minLength, self._maxLength)
+        # Do not align length to min,max if the generator is determinist
+        if not isinstance(self._lengthGenerator, DeterministGenerator): 
+            length = center(length, self._minLength, self._maxLength)
 
         valueBytes = bytes()
         if length == 0:

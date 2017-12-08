@@ -85,22 +85,14 @@ class BitArrayMutator(DomainMutator):
     :type lengthBitSize: :class:`int`, optional
 
 
-    The following example shows how to generate a binary sequence with a length
-    in [0, 30] interval:
+    The following example shows how to generate a fuzzed binary sequence:
 
-    # >>> from netzob.all import *
-    # >>> fieldBits = Field(BitArray())
-    # >>> mutator = BitArrayMutator(fieldBits.domain)
-    # >>> data = mutator.generate()
-    # >>> len(data)
-    # 65536
-
-    # >>> from netzob.all import *
-    # >>> fieldBits = Field(BitArray())
-    # >>> mutator = BitArrayMutator(fieldBits.domain, interval=(0,30), seed=19)
-    # >>> data = mutator.generate()
-    # >>> len(data)
-    # 32
+    >>> from netzob.all import *
+    >>> fieldBits = Field(BitArray())
+    >>> mutator = BitArrayMutator(fieldBits.domain)
+    >>> data = mutator.generate()
+    >>> len(data)
+    8192
 
     """
 
@@ -112,7 +104,7 @@ class BitArrayMutator(DomainMutator):
                  generator=Generator.NG_mt19937,
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
-                 interval=MutatorInterval.DEFAULT_INTERVAL,
+                 interval=MutatorInterval.FULL_INTERVAL,
                  lengthBitSize=None):
 
         # Call parent init
@@ -246,7 +238,7 @@ def _test():
     # BitArray of specific size and fuzzing with default interval
 
     >>> f = Field(domain=BitArray(nbBits=16), name="data")
-    >>> mutator = BitArrayMutator(f.domain)
+    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.DEFAULT_INTERVAL)
     >>> mutator._minLength
     16
     >>> mutator._maxLength
@@ -260,7 +252,7 @@ def _test():
     # BitArray of specific size and fuzzing with default interval, and specific datatype storage size
 
     >>> f = Field(domain=BitArray(nbBits=16), name="data")
-    >>> mutator = BitArrayMutator(f.domain, lengthBitSize=UnitSize.SIZE_8)
+    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.DEFAULT_INTERVAL, lengthBitSize=UnitSize.SIZE_8)
     >>> mutator._minLength
     16
     >>> mutator._maxLength
@@ -274,7 +266,7 @@ def _test():
     # BitArray of specific variable size and fuzzing with default interval
 
     >>> f = Field(domain=BitArray(nbBits=(8, 12)), name="data")
-    >>> mutator = BitArrayMutator(f.domain)
+    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.DEFAULT_INTERVAL)
     >>> mutator._minLength
     8
     >>> mutator._maxLength

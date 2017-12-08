@@ -110,7 +110,11 @@ class StringMutator(DomainMutator):
     >>> fieldString = Field(String(nbChars=(5, 8)))
     >>> mutator = StringMutator(fieldString.domain, interval=(5, 12), seed=10)
     >>> mutator.generate()
-    b'Kernel.exit\x00'
+    b'$ENV\x00'
+    >>> mutator.generate()
+    b'<img \\x00\x00'
+    >>> mutator.generate()
+    b'%x("l\x00'
 
     Constant definitions:
     """
@@ -126,7 +130,7 @@ class StringMutator(DomainMutator):
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  endchar=DEFAULT_END_CHAR,  # type: str
-                 interval=MutatorInterval.DEFAULT_INTERVAL,
+                 interval=MutatorInterval.FULL_INTERVAL,
                  lengthBitSize=None,
                  naughtyStrings=None):
         # type: (...) -> None

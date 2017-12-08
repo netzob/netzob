@@ -43,7 +43,7 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode, center
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Types.Integer import Integer
@@ -152,7 +152,7 @@ class IntegerMutator(DomainMutator):
 
     >>> from netzob.all import *
     >>> fieldInt1 = Field(Integer(interval=(-10, 5)))
-    >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=42)
+    >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=1234)
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
     33
@@ -275,7 +275,7 @@ class IntegerMutator(DomainMutator):
             raise Exception("Not enough information to generate the mutated data.")
 
         # Initialize either the determinist number generator
-        if self.generator == DeterministGenerator.name:
+        if self.generator == DeterministGenerator.name or isinstance(self.generator, DeterministGenerator):
 
             # Check bitsize
             if self.lengthBitSize is not None:
@@ -295,7 +295,7 @@ class IntegerMutator(DomainMutator):
                     raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self._minLength, self.lengthBitSize.value))
 
             # Build the generator
-            self.generator = GeneratorFactory.buildGenerator(self.generator,
+            self.generator = GeneratorFactory.buildGenerator(DeterministGenerator.NG_determinist,
                                                              seed = self.seed,
                                                              minValue = self._minLength,
                                                              maxValue = self._maxLength,
@@ -345,21 +345,6 @@ class IntegerMutator(DomainMutator):
             v = center(v, self._minLength, self._maxLength)
 
         return v
-
-def center(val, lower, upper):
-    """
-    Center :attr:`val` between :attr:`lower` and :attr:`upper`.
-    """
-
-    number_values = float(upper) - float(lower) + 1.0
-    result = lower + int(val * number_values)
-
-    # Ensure the produced value is in the range of the permitted values of the domain datatype
-    if result > upper:
-        result = upper
-    if result < lower:
-        result = lower
-    return result
 
 
 def _test_endianness():

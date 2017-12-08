@@ -152,25 +152,28 @@ class DomainMutator(Mutator):
 
         # Identify min and max interval from default datatype storage size
         if fuzzing_interval == MutatorInterval.FULL_INTERVAL:
-            self._logger.debug("Computed fuzzing interval from datatype storage size")
+            generator = DeterministGenerator.NG_determinist
 
             if self.lengthBitSize is None:
                 self.lengthBitSize = model_unitSize  # Use default bitsize
 
             self._minLength = 0
             self._maxLength = 2**self.lengthBitSize.value
+            self._logger.debug("Computed fuzzing interval from datatype storage size: ({}, {})".format(self._minLength, self._maxLength))
 
         else:
+            generator = self.generator
+
             # Identify min and max interval from default datatype interval
             if fuzzing_interval == MutatorInterval.DEFAULT_INTERVAL:
-                self._logger.debug("Computed fuzzing interval from default datatype interval")
                 self._minLength = model_interval[0]
                 self._maxLength = model_interval[1]
+                self._logger.debug("Computed fuzzing interval from default datatype interval: ({}, {})".format(self._minLength, self._maxLength))
 
             # Identify min and max interval from fuzzing parameters
             elif (isinstance(fuzzing_interval, tuple) and len(fuzzing_interval) == 2 and all(isinstance(_, int) for _ in fuzzing_interval)):
-                self._logger.debug("Computed fuzzing interval with tupple: {}".format(fuzzing_interval))
                 self._minLength, self._maxLength = fuzzing_interval
+                self._logger.debug("Computed fuzzing interval with tupple: ({}, {})".format(self._minLength, self._maxLength))
             else:
                 raise Exception("Not enough information to generate the fuzzing data.")
 
@@ -188,7 +191,7 @@ class DomainMutator(Mutator):
         self._logger.debug("Computed fuzzing interval: ({}, {}) with lengthBitSize: {}".format(self._minLength, self._maxLength, self.lengthBitSize))
 
         # Build the length generator
-        self._lengthGenerator = GeneratorFactory.buildGenerator(DeterministGenerator.NG_determinist,
+        self._lengthGenerator = GeneratorFactory.buildGenerator(generator = generator,
                                                                 seed = self.seed,
                                                                 minValue = self._minLength,
                                                                 maxValue = self._maxLength,

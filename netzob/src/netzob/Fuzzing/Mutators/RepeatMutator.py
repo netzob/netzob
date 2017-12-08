@@ -107,7 +107,7 @@ class RepeatMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> fuzz.set(f_rep)
     >>> symbol.specialize(fuzz=fuzz)  # doctest: +ELLIPSIS
-    b'\x00\x04\x00\x01\x00\x03...\x00\x04'
+    b'\x00\x04\x00\x01\x00\x03...\x00\x02'
 
 
     **Fuzzing example of a field that contains a variable number of repeat of a variable**
@@ -117,9 +117,9 @@ class RepeatMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> fuzz.set(f_rep)
     >>> symbol.specialize(fuzz=fuzz)  # doctest: +ELLIPSIS
-    b'\x00\x04\x00\x01\x00\x03...\x00\x04'
+    b'\x00\x04\x00\x01\x00\x03...\x00\x02'
     >>> symbol.specialize(fuzz=fuzz)  # doctest: +ELLIPSIS
-    b'\x00\x02\x00\x02\x00\x03...\x00\x01'
+    b'\x00\x02\x00\x03\x00\x04...\x00\x04'
 
 
     **Fuzzing of an alternate of variables with non-default fuzzing strategy (MutatorMode.MUTATE)**
@@ -143,7 +143,7 @@ class RepeatMutator(DomainMutator):
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> fuzz.set(f_repeat, mappingTypesMutators=mapping)
     >>> symbol.specialize(fuzz=fuzz)  # doctest: +ELLIPSIS
-    b' \x01 \x00\x1f\xff\x10\x01...@\x00?'
+    b' \x01 \x00\x1f\xff\x10\x01...?\x00!'
 
 
     **Fuzzing of a repeat of variables without fuzzing the children**
@@ -170,7 +170,7 @@ class RepeatMutator(DomainMutator):
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  mutateChild=True,
                  mappingTypesMutators={},
-                 interval=MutatorInterval.DEFAULT_INTERVAL,
+                 interval=MutatorInterval.FULL_INTERVAL,
                  lengthBitSize=None):
 
         # Call parent init

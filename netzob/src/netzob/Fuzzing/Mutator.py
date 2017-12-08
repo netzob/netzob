@@ -47,6 +47,7 @@ from enum import Enum
 # +---------------------------------------------------------------------------+
 from netzob.Model.Grammar.Automata import Automata  # noqa: F401
 from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Common.Utils.Constant import Constant
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 
@@ -106,6 +107,9 @@ class Mutator(metaclass=abc.ABCMeta):
         # Public variables
         self.currentCounter = 0
         self.currentState = 0
+
+        # Initialize data generator
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
 
 
     # API methods

@@ -257,7 +257,7 @@ class Fuzz(object):
                               * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the String length.
                               * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
 
-                              Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+                              Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
 
         lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate String with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
@@ -304,7 +304,7 @@ class Fuzz(object):
                               * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the Raw data length.
                               * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
 
-                              Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+                              Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
 
         lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate Raw data with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
@@ -334,7 +334,7 @@ class Fuzz(object):
                               * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the HexaString length.
                               * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
 
-                              Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+                              Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
 
         lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate HexaStrings with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
@@ -364,7 +364,7 @@ class Fuzz(object):
                               * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the BitArray length.
                               * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
 
-                              Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+                              Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
 
         lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate BitArrays with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
@@ -457,7 +457,7 @@ class Fuzz(object):
                               * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the number of repetitions.
                               * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
 
-                              Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+                              Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
 
         lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate a Repeat with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 

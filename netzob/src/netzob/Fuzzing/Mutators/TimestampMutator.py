@@ -107,9 +107,6 @@ class TimestampMutator(DomainMutator):
                          seed=seed,
                          counterMax=counterMax)
 
-        # Initialize generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
-
     def generate(self):
         """This is the mutation method of the Timestamp type.
         It uses a PRNG to produce the value corresponding to the domain.
