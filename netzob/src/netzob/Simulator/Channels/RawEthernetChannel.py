@@ -133,12 +133,6 @@ class RawEthernetChannel(AbstractChannel):
         """
         if self._socket is not None:
             (data, _) = self._socket.recvfrom(65535)
-
-            # Remove Ethernet header from received data
-            ethHeaderLen = 14
-            if len(data) > ethHeaderLen:
-                data = data[ethHeaderLen:]
-
             return data
         else:
             raise Exception("socket is not available")
@@ -152,15 +146,11 @@ class RawEthernetChannel(AbstractChannel):
         """
         if self._socket is not None:
 
-            rawRemoteMac = binascii.unhexlify(self.remoteMac.replace(':', ''))
+            targetHW = data[0:6]
             self.write(data)
             while True:
                 (data, _) = self._socket.recvfrom(65535)
-                if data[6:12] == rawRemoteMac:
-                    # Remove Ethernet header from received data
-                    ethHeaderLen = 14
-                    if len(data) > ethHeaderLen:
-                        data = data[ethHeaderLen:]
+                if data[6:12] == targetHW:
                     return data
         else:
             raise Exception("socket is not available")
