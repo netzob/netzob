@@ -36,6 +36,7 @@
 #+---------------------------------------------------------------------------+
 import uuid
 import abc
+from typing import Iterable
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -108,9 +109,18 @@ class AbstractVariable(object):
         raise ValueError("Cannot determine a fixed size for variable '{}'"
                          .format(self))
 
-    def check_may_miss(self,
-                       *variables  # type: AbstractVariable
-                       ):          # type: bool
+    def check_may_miss_dependencies(self, variables):
+        # type: (Iterable[AbstractVariable]) -> bool
+        """
+        Verify that this variable **may** fail to process against some variable
+        (both specialization or abstraction).
+
+        :param variables: an iterable of variables
+        :type variables: Iterable[~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable]
+        :return: ``True`` if the result is not empty or no variable have been
+                 passed as argument, else ``False``.
+        :rtype: bool
+        """
         return True
 
     #+---------------------------------------------------------------------------+

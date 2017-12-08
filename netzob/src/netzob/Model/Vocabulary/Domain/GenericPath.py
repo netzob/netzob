@@ -229,7 +229,7 @@ class GenericPath(object):
                     callBackToExecute = (targetVariables, currentVariable, parsingCB)
                     variablesToCheck = set(targetVariables)
                     variablesToCheck.remove(triggeringVariable)
-                    if not currentVariable.check_may_miss(*variablesToCheck):
+                    if not currentVariable.check_may_miss_dependencies(variablesToCheck):
                         break
 
             if callBackToExecute is None:

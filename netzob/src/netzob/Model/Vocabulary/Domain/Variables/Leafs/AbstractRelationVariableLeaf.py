@@ -105,11 +105,25 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         return "Relation({0}) - Type:{1}".format(
             str([v.name for v in self.targets]), self.dataType)
 
-    def check_may_miss(self, *variables):
+    def check_may_miss_dependencies(self, variables):
+        """
+        Verify that this variable **may** fail to process against some targets
+        (both specialization or abstraction).
+        :attr:`variables` are filtered against missing targets.
+
+        :param variables: an iterable of variables
+        :type variables: Iterable[~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable]
+        :return: ``True`` if the result is not empty or no variable have been
+                 passed as argument, else ``False``.
+        :rtype: bool
+        """
         if self._missing_targets:
-            missing_targets = self._missing_targets & set(variables)
+            if len(variables) > 0:
+                missing_targets = self._missing_targets & set(variables)
+            else:
+                missing_targets = self._missing_targets
             return len(missing_targets) > 0
-        return True
+        return super().check_may_miss_dependencies(variables)
 
     def normalize_targets(self):
         # Normalize targets (so that targets now only contain variables)
