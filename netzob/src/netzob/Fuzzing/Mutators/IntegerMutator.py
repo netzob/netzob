@@ -384,10 +384,57 @@ def _test_endianness():
 
     """
 
+def _test_pseudo_rand_interval():
+    r"""
+
+    # Fuzzing of integer follow the interval [0, 2^N - 1]
+    # N is the number of bit of the integer
+
+    >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Generator import Generator
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+
+    >>> v = int8()
+    >>> f = Field(v)
+    >>> mutator = IntegerMutator(f.domain, generator=Generator.NG_mt19937)
+    >>> generated_values = set()
+    >>> generated_values_signed = set()
+    >>> for _ in range(30):
+    ...     d = mutator.generate()
+    ...     generated_values.add(int.from_bytes(d, byteorder='big', signed=False))
+
+    >>> for _ in range(30):
+    ...     d = mutator.generate()
+    ...     generated_values_signed.add(int.from_bytes(d, byteorder='big', signed=True))
+
+    >>> result = True
+    >>> for x in generated_values:
+    ...     if x < 0 or x > pow(2, v.getFixedBitSize()) - 1:
+    ...         result = False
+
+    >>> result
+    True
+
+    >>> result = True
+    >>> atleast_one_neg = False
+    >>> for x in generated_values_signed:
+    ...     if abs(x) < 0 or abs(x) > pow(2, v.getFixedBitSize() - 1):        # for signed interval is [-128, 127] for 8 bit
+    ...         result = False
+    ...     if x < 0:
+    ...         atleast_one_neg = True
+
+    >>> result
+    True
+    >>> atleast_one_neg
+    True
+
+    """
+
 def _test_determinist_generator_1():
     r"""
 
     # Fuzzing of integer with deterministic generator: ensure that the expected values are generated (P, Q, P-1, Q-1, P+1, Q+1, 0, -1, 1)
+    # P is the min value and Q the max value
 
     >>> from netzob.all import *
     >>> from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
@@ -426,8 +473,39 @@ def _test_determinist_generator_1():
 def _test_determinist_generator_2():
     r"""
 
-    # Fuzzing of integer with deterministic generator: ensure that the expected values are generated (-2^k, ...)
+    # Fuzzing of integer with deterministic generator: ensure that the expected values are generated (-2^k, -2^k - 1, -2^k + 1, 2^k, 2^k - 1, 2^k + 1)
+    # k belongs to [0, 1, ..., N-2] ; N is the number of bit of the integer
 
-    # TODO
+    >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+
+    >>> v = int8()
+    >>> f = Field(v)
+    >>> mutator = IntegerMutator(f.domain, generator=DeterministGenerator.NG_determinist)
+    >>> generated_values = set()
+    >>> for _ in range(50):
+    ...     d = mutator.generate()
+    ...     generated_values.add(int.from_bytes(d, byteorder='big', signed=True))
+
+    >>> v = int8()
+    >>> f = Field(v)
+    >>> mutator = IntegerMutator(f.domain, generator=DeterministGenerator.NG_determinist)
+    >>> generated_values = set()
+    >>> for _ in range(50):
+    ...     d = mutator.generate()
+    ...     generated_values.add(int.from_bytes(d, byteorder='big', signed=True))
+
+    >>> expected_values = set()
+    >>> for k in range(v.getFixedBitSize() - 2):
+    ...     expected_values.add(pow(-2, k))
+    ...     expected_values.add(pow(-2, k) - 1)
+    ...     expected_values.add(pow(-2, k) + 1)
+    ...     expected_values.add(pow(2, k))
+    ...     expected_values.add(pow(2, k) - 1)
+    ...     expected_values.add(pow(2, k) + 1)
+    
+    >>> all(x in generated_values for x in expected_values)
+    True
 
     """

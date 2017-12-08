@@ -313,3 +313,48 @@ def _test():
     32
 
     """
+
+
+def _test_bitarray_length():
+    r"""
+    # Fuzzing of bitarray generate bitarray with different length
+
+    >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
+
+    >>> fieldBits = Field(BitArray())
+    >>> mutator = BitArrayMutator(fieldBits.domain)
+    
+    >>> len_list = []
+    >>> duplicata_count = 0
+    >>> for _ in range(20):
+    ...     curr_len = len(mutator.generate())
+    ...     if curr_len in len_list:
+    ...         duplicata_count += 1
+    ...     len_list.append(curr_len)
+
+    >>> duplicata_count < 5
+    True
+
+    """
+
+def _test_bitarray_length_2():
+    r"""
+    # Fuzzing of bitarray generate positiv value by a determinist generator with lengthBitSize that define the maximum length
+
+    >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
+    >>> from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
+
+    >>> fieldBits = Field(BitArray())
+    >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_16)
+    >>> len(mutator.generate())
+    65535
+    >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_8)
+    >>> len(mutator.generate())
+    255
+    >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_4)
+    >>> len(mutator.generate())
+    15
+
+    """
