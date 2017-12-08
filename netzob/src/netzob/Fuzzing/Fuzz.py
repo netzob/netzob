@@ -248,7 +248,7 @@ class Fuzz(object):
         ====================  =================================================
                Option                           Description
         ====================  =================================================
-        endchar               The :class:`str` character(s) which will end the string. This terminal symbol will be mutated by truncating its value if defined on several bytes.
+        endChar               The :class:`str` character(s) which will end the string. This terminal symbol will be mutated by truncating its value if defined on several bytes.
 
                               Default value is :attr:`DEFAULT_END_CHAR`. It is used to set the eos parameter of :class:`String <netzob.Model.Vocabulary.Types.String>`.
         interval              The scope of values to generate.

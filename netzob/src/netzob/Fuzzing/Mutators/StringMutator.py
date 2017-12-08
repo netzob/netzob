@@ -50,7 +50,6 @@ from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
-from netzob.Fuzzing.Generators.StringPaddedGenerator import StringPaddedGenerator
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 from netzob.Model.Vocabulary.Types.Integer import uint16le
@@ -123,13 +122,24 @@ class StringMutator(DomainMutator):
     PADDING_CHAR = ' '
     DATA_TYPE = String
 
+    DEFAULT_NAUGHTY_STRINGS = [
+        'System("ls -al /")',
+        '`ls -al /`',
+        'Kernel.exec("ls -al /")',
+        'Kernel.exit(1)',
+        '%x("ls -al /")',
+        '<img \\x00src=x onerror="alert(1)">',
+        '$ENV{"HOME"}',
+        '%d',
+        '%s']
+
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,
                  generator=Generator.NG_mt19937,
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
-                 endchar=DEFAULT_END_CHAR,  # type: str
+                 endChar=DEFAULT_END_CHAR,  # type: str
                  interval=MutatorInterval.FULL_INTERVAL,
                  lengthBitSize=None,
                  naughtyStrings=None):
@@ -145,6 +155,7 @@ class StringMutator(DomainMutator):
 
         # Variables
         self.naughtyStrings = naughtyStrings
+        self.endChar = endChar
 
         # Initialize length generator
         model_min = int(self.domain.dataType.size[0] / 8)
@@ -152,13 +163,52 @@ class StringMutator(DomainMutator):
         model_unitSize = self.domain.dataType.unitSize
         self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
 
-        # Initialize data generator
-        self.generator = StringPaddedGenerator(seed = self.seed,
-                                               lengthGenerator = self._lengthGenerator,
-                                               stringsList = self.naughtyStrings,
-                                               endchar = endchar,
-                                               minLength = self._minLength,
-                                               maxLength = self._maxLength)
+
+    ## API methods
+
+    def generate(self):
+        """This is the fuzz generation method of the string field.
+
+        :return: a generated content represented with bytes
+        :rtype: :class:`bytes`
+        """
+        # Call parent generate() method
+        super().generate()
+
+        # Choose the string to mutate
+        index = int(next(self.generator) * len(self.naughtyStrings))
+        value = self.naughtyStrings[index] + self.endChar
+
+        # Generate length of random data
+        if self._lengthGenerator is not None:
+            length = next(self._lengthGenerator)
+        else:
+            raise Exception("Length generator not initialized")
+
+        if not isinstance(self._lengthGenerator, DeterministGenerator): 
+            if self._minLength is not None and self._maxLength is not None:
+                length = center(length, self._minLength, self._maxLength)
+
+        # Adapt the initial value according to the final length
+        if length > 0:
+            if length > len(value):
+                # Complete the string with padding characters to have the good
+                # length
+                value = value + (" " * (length - len(value)))
+            else:
+                # truncate the too long string value to length characters
+                value = value[:length-1] + self.endChar
+        else:
+            value = ""
+
+        # Conversion
+        return String.decode(value,
+                             unitSize = self.domain.dataType.unitSize,
+                             endianness = self.domain.dataType.endianness,
+                             sign = self.domain.dataType.sign)
+
+    def mutate(self, data):
+        raise NotImplementedError
 
 
     ## Properties
@@ -176,33 +226,36 @@ class StringMutator(DomainMutator):
     @naughtyStrings.setter  # type: ignore
     def naughtyStrings(self, naughtyStrings):
         if not isinstance(naughtyStrings, list):
-            self._naughtyStrings = StringPaddedGenerator.DEFAULT_NAUGHTY_STRINGS
+            self._naughtyStrings = StringMutator.DEFAULT_NAUGHTY_STRINGS
         else:
             self._naughtyStrings = naughtyStrings
 
+    @property
+    def endChar(self):
+        return self._endChar
 
-    ## API methods
+    @endChar.setter  # type: ignore
+    def endChar(self, endChar):
+        self._endChar = endChar
 
-    def generate(self):
-        """This is the fuzz generation method of the string field.
 
-        :return: a generated content represented with bytes
-        :rtype: :class:`bytes`
-        """
-        # Call parent generate() method
-        super().generate()
+def _test():
+    r"""
 
-        # Choose the next string
-        value = next(self.generator)
+    >>> f = Field(String(nbChars=(35, 60)))
+    >>> f.domain.dataType.unitSize
+    UnitSize.SIZE_16
+    >>> mutator = StringMutator(f.domain)
+    >>> mutator._minLength
+    0
+    >>> len(mutator.generate())
+    65536
+    >>> len(mutator.generate())
+    65535
+    >>> len(mutator.generate())
+    65534
 
-        # Conversion
-        return String.decode(value,
-                             unitSize = self.domain.dataType.unitSize,
-                             endianness = self.domain.dataType.endianness,
-                             sign = self.domain.dataType.sign)
-
-    def mutate(self, data):
-        raise NotImplementedError
+    """
 
 
 def _test_string_length():
@@ -261,5 +314,4 @@ def _test_string_value():
     True
     >>> has_several_eos_symbol
     True
-
     """

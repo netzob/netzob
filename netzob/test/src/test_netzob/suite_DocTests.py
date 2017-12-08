@@ -89,7 +89,6 @@ from netzob.Fuzzing.Mutators.TimestampMutator import TimestampMutator
 
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
-from netzob.Fuzzing.Generators.StringPaddedGenerator import StringPaddedGenerator
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 
 def getSuite():
@@ -218,7 +217,6 @@ def getSuite():
         Generator.__module__,
         IntegerMutator.__module__,
         BitArrayMutator.__module__,
-        StringPaddedGenerator.__module__,
         StringMutator.__module__,
 
         # Modules related to the protocol simulation
