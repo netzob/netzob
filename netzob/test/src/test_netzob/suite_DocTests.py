@@ -68,6 +68,9 @@ from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
 from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
 from netzob.Model.Vocabulary.Domain.Parser.FlowParser import FlowParser
 
+from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
+from netzob.Model.Grammar.States.AbstractState import AbstractState
+
 from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
 from netzob.Inference.Vocabulary import EntropyMeasurement
@@ -199,8 +202,12 @@ def getSuite():
         # Modules related to the grammatical inference
         # --------------------------------------------
         # Angluin.__module__,
+        AbstractState.__module__,
         State.__module__,
+        AbstractTransition.__module__,
         Transition.__module__,
+        OpenChannelTransition.__module__,
+        CloseChannelTransition.__module__,
         AbstractionLayer.__module__,
         Automata.__module__,
 
