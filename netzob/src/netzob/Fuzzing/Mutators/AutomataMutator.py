@@ -44,9 +44,14 @@ from enum import Enum
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Model.Grammar.Automata import Automata
+from netzob.Model.Grammar.Transitions.Transition import Transition
+from netzob.Model.Grammar.Transitions.OpenChannelTransition import OpenChannelTransition
+from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition
 from netzob.Model.Grammar.States.State import State  # noqa: F401
 
 
@@ -54,11 +59,11 @@ class AutomataMutatorStrategy(Enum):
     """The :class:`AutomataMutator` strategy enumeration."""
     __repr__ = Enum.__str__
     RANDOM = 1
-    """Randomly insert and remove transitions between states of the original automaton."""
-    TOTAL = 2
-    """At each state of the automaton, it is possible to reach any states, including the starting state."""
-    CHAINED = 3
-    """Build a chained automaton (or a chaplet), where each state has only one possible transition towards another different state of the protocol, and where all the states of the protocol are covered."""
+    """Randomly insert transitions between states of the original automaton."""
+    FULL = 2
+    """At each state of the automaton, it is possible to reach any states with any input symbols."""
+    ONESTATE = 3
+    """Build an automaton with one main state that accepts every symbols."""
 
 
 class AutomataMutator(Mutator):
@@ -68,21 +73,24 @@ class AutomataMutator(Mutator):
 
     def __init__(self,
                  automata,  # type: Automata
-                 **kwargs):
-        super().__init__(**kwargs)
-
-        # Sanity checks
-        if not isinstance(automata, Automata):
-            raise TypeError("Mutator automata should be of type Automata. Received object: '{}'"
-                            .format(automata))
+                 generator=Generator.NG_mt19937,
+                 seed=Mutator.SEED_DEFAULT):
+        super().__init__(mode=MutatorMode.MUTATE, generator=generator, seed=seed)
 
         # Handle parameters
-        self._automata = automata
+        self.automata = automata
 
+        # Initialize random generator
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
+
+
+    ## Public API
+
+    @public_api
     def mutate(self,
                strategy=AutomataMutatorStrategy.RANDOM,  # type: AutomataMutatorStrategy
-               startingState=None,                       # type: State
-               endingState=None                          # type: State
+               startingState=None,               # type: State
+               endingState=None                  # type: State
                ) -> Automata:
         """This is the mutation method of the automaton. This method returns
         a new automaton that may be used for fuzzing purpose.
@@ -91,11 +99,11 @@ class AutomataMutator(Mutator):
 
         :param strategy: The strategy used to build the new automaton.
 
-                         The following strategies are available:
+                         The following strategys are available:
 
                          * :attr:`AutomataMutatorStrategy.RANDOM`: Randomly insert and remove transitions between states of the original automaton,
-                         * :attr:`AutomataMutatorStrategy.TOTAL`: At each state of the automaton, it is possible to reach any states, including the starting state,
-                         * :attr:`AutomataMutatorStrategy.CHAINED`: Build a chained automaton (or a chaplet), where each state has only one possible transition towards another different state of the protocol, and where all the states of the protocol are covered.
+                         * :attr:`AutomataMutatorStrategy.FULL`: At each state of the automaton, it is possible to reach any states,
+                         * :attr:`AutomataMutatorStrategy.ONESTATE`: Build an automaton with one main state that accepts every symbols.
 
                          Default strategy is :attr:`AutomataMutatorStrategy.RANDOM`.
         :param startingState: The state in the automaton from which to
@@ -121,11 +129,109 @@ class AutomataMutator(Mutator):
         random transitions between the existing states:
 
         >>> from netzob.all import *
-        >>> s0 = State()
-        >>> symbol = Symbol([Field(String('abcd'))])
-        >>> automata = Automata(s0, vocabulary=[symbol])
-        >>> mutator = AutomataMutator(automata, seed=42)
-        >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM)  # doctest: +SKIP
+        >>> sym1 = Symbol([Field("test1")], name='Sym1')
+        >>> sym2 = Symbol([Field("test2")], name='Sym2')
+        >>> s0 = State(name="s0")
+        >>> s1 = State(name="s1")
+        >>> s2 = State(name="s2")
+        >>> s3 = State(name="s3")
+        >>> s4 = State(name="s4")
+        >>> t0 = OpenChannelTransition(startState=s0, endState=s1,
+        ...                            name="t0")
+        >>> t1 = Transition(startState=s1, endState=s1,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t1")
+        >>> t2 = Transition(startState=s1, endState=s2,
+        ...                 inputSymbol=sym2, outputSymbols=[sym2],
+        ...                 name="t2")
+        >>> t3 = Transition(startState=s2, endState=s3,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t3")
+        >>> t4 = CloseChannelTransition(startState=s2, endState=s4,
+        ...                             name="t4")
+        >>>
+        >>> automata = Automata(s0, vocabulary=[sym1, sym2])
+        >>> automata_ascii = automata.generateASCII()
+        >>> print(automata_ascii)
+                                         #========================#
+                                         H           s0           H
+                                         #========================#
+                                           |
+                                           | OpenChannelTransition
+                                           v
+                                         +------------------------+   t1 (Sym1;{Sym1})
+                                         |                        | -------------------+
+                                         |           s1           |                    |
+                                         |                        | <------------------+
+                                         +------------------------+
+                                           |
+                                           | t2 (Sym2;{Sym2})
+                                           v
+        +----+  CloseChannelTransition   +------------------------+
+        | s4 | <------------------------ |           s2           |
+        +----+                           +------------------------+
+                                           |
+                                           | t3 (Sym1;{Sym1})
+                                           v
+                                         +------------------------+
+                                         |           s3           |
+                                         +------------------------+
+        <BLANKLINE>
+        >>>
+        >>> # Generate a random automaton
+        >>>
+        >>> mutator = AutomataMutator(automata)
+        >>> mutatedAutomata = mutator.mutate()
+        >>> automata_ascii_2 = mutatedAutomata.generateASCII()
+        >>> print(automata_ascii_2)
+                                                #==============================#
+                                                H              s0              H
+                                                #==============================#
+                                                  |
+                                                  | OpenChannelTransition
+                                                  v
+                  t_random (Sym2;{Sym1,Sym2})   +------------------------------+   t1 (Sym1;{Sym1})
+                +------------------------------ |                              | -------------------+
+                |                               |              s1              |                    |
+                +-----------------------------> |                              | <------------------+
+                                                +------------------------------+
+                                                  |
+                                                  | t2 (Sym2;{Sym2})
+                                                  v
+        +----+  CloseChannelTransition          +------------------------------+
+        | s4 | <------------------------------- |              s2              | -+
+        +----+                                  +------------------------------+  |
+                                                  |                               |
+                                                  | t_random (Sym2;{Sym1,Sym2})   | t3 (Sym1;{Sym1})
+                                                  v                               |
+                                                +------------------------------+  |
+                                                |              s3              | <+
+                                                +------------------------------+
+        <BLANKLINE>
+        >>>
+        >>> # Generate a full automaton
+        >>>
+        >>> mutator = AutomataMutator(automata)
+        >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.FULL)
+        >>>
+        >>> # Generate an automaton with one main state
+        >>>
+        >>> mutator = AutomataMutator(automata)
+        >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.ONESTATE)
+        >>> automata_ascii_2 = mutatedAutomata.generateASCII()
+        >>> print(automata_ascii_2)
+                                          #========================#
+                                          H     Initial state      H
+                                          #========================#
+                                            |
+                                            | OpenChannelTransition
+                                            v
+            t_random (Sym2;{Sym1,Sym2})   +------------------------+   t_random (Sym1;{Sym1,Sym2})
+          +------------------------------ |                        | ------------------------------+
+          |                               |       Main state       |                               |
+          +-----------------------------> |                        | <-----------------------------+
+                                          +------------------------+
+        <BLANKLINE>
 
 
         **Combining message formats and automata fuzzing**
@@ -163,7 +269,120 @@ class AutomataMutator(Mutator):
         >>> visitor.start()  # doctest: +SKIP
 
         """
-        raise NotImplementedError
+        if strategy == AutomataMutatorStrategy.RANDOM:
+            return self._mutate_random()
+        elif strategy == AutomataMutatorStrategy.FULL:
+            return self._mutate_full()
+        elif strategy == AutomataMutatorStrategy.ONESTATE:
+            return self._mutate_onestate()
+        else:
+            raise ValueError("Unknown automata mutator strategy: '{}'".format(strategy))
+
+    def _mutate_random(self):
+        r"""Generate an automaton that randomely links states together, and
+        where a transition is accepted for every symbols.
+
+        """
+
+        new_automata = self.automata.duplicate()
+        states = new_automata.getStates(main_states=True)
+
+        for state in states:
+
+            # Randomely decide if we create a transition
+            if (round(next(self.generator)) % 2) == 0:
+                continue
+
+            # Randomely select an end state
+            ending_state_idx = (next(self.generator) * len(states)) % len(states)
+            ending_state = states[int(ending_state_idx)]
+
+            for symbol in new_automata.vocabulary:
+
+                # Do not add a new transition between 2 states, if it already exists with the same input symbol
+                stop = False
+                for t in state.transitions:
+                    if t.endState == ending_state and t.inputSymbol == symbol:
+                        stop = True
+                        break
+                if stop:
+                    continue
+
+                # Create a transition between current state and selected end state
+                Transition(startState=state, endState=ending_state,
+                           inputSymbol=symbol, outputSymbols=new_automata.vocabulary,
+                           name="t_random")
+
+        return new_automata
+
+    def _mutate_full(self):
+        r"""Generate an automaton that links all the states together, and where
+        a transition is accepted for every symbols.
+
+        """
+
+        new_automata = self.automata.duplicate()
+        states = new_automata.getStates(main_states=True)
+
+        for state in states:
+            for t in state.transitions:
+                if isinstance(t, Transition):
+                    t.outputSymbols = new_automata.vocabulary
+                    t.description = None  # Force re-computation of transition description
+
+        for initial_state in states:
+
+            for ending_state in states:
+
+                for symbol in new_automata.vocabulary:
+
+                    # Do not add a new transition between 2 states, if it already exists with the same input symbol
+                    stop = False
+                    for t in initial_state.transitions:
+                        if t.endState == ending_state and t.inputSymbol == symbol:
+                            stop = True
+                            break
+                    if stop:
+                        continue
+
+                    # Create a transition between current state and selected end state
+                    Transition(startState=initial_state, endState=ending_state,
+                               inputSymbol=symbol, outputSymbols=new_automata.vocabulary,
+                               name="t_random")
+
+        return new_automata
+
+    def _mutate_onestate(self):
+        r"""Generate an automaton with one main state that accepts every symbols.
+
+        """
+        init_state = State("Initial state")
+        state = State(name="Main state")
+        t = OpenChannelTransition(startState=init_state, endState=state, name='Transition open channel')
+
+        for symbol in self.automata.vocabulary:
+
+            # Create a transition
+            Transition(startState=state, endState=state,
+                       inputSymbol=symbol, outputSymbols=self.automata.vocabulary,
+                       name="t_random")
+
+        return Automata(init_state, self.automata.vocabulary)
 
     def generate(self):
         raise NotImplementedError
+
+
+    ## Properties
+    
+    @property
+    def automata(self):
+        return self._automata
+
+    @automata.setter  # type: ignore
+    def automata(self, automata):
+        # Sanity checks
+        if not isinstance(automata, Automata):
+            raise TypeError("Mutator automata should be of type Automata. Received object: '{}'"
+                            .format(automata))
+        self._automata = automata
