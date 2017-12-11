@@ -62,7 +62,8 @@ class RawEthernetChannel(AbstractChannel):
                     connection. Default value is blocking (None).
     :type interface: :class:`str`, required
     :type timeout: :class:`float`, optional
-    :todo: add support of netaddr.EUI
+
+    .. todo:: add support of netaddr.EUI
 
     Adding to AbstractChannel variables, the RawEthernetChannel class provides
     the following public variables:
