@@ -133,12 +133,12 @@ class Transition(AbstractTransition):
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
-    >>> t = Transition(s0, s1)
+    >>> t = Transition(s0, s1, name="transition")
 
     The following code shows access to attributes of a Transition:
 
     >>> print(t.name)
-    None
+    transition
     >>> s0 == t.startState
     True
     >>> s1 == t.endState
@@ -161,7 +161,6 @@ class Transition(AbstractTransition):
                  endState,
                  inputSymbol=None,
                  outputSymbols=None,
-                 _id=None,
                  name=None,
                  inputSymbolReactionTime=None,   # type: float
                  outputSymbolsReactionTime=None  # type: Dict[Symbol,float]
@@ -170,7 +169,6 @@ class Transition(AbstractTransition):
         super(Transition, self).__init__(Transition.TYPE,
                                          startState,
                                          endState,
-                                         _id,
                                          name,
                                          priority=10)
 
@@ -179,9 +177,25 @@ class Transition(AbstractTransition):
 
         self.inputSymbol = inputSymbol
         self.outputSymbols = outputSymbols
-        self.outputSymbolProbabilities = {}  # TODO: not yet implemented
+        self.outputSymbolProbabilities = {}  # TODO: not yet exposed in the API
         self.inputSymbolReactionTime = inputSymbolReactionTime
         self.outputSymbolsReactionTime = outputSymbolsReactionTime
+        self.description = None
+
+    def duplicate(self):
+        transition = Transition(startState=None,
+                                endState=self.endState,
+                                inputSymbol=self.inputSymbol,
+                                outputSymbols=self.outputSymbols,
+                                name=self.name,
+                                inputSymbolReactionTime=self.inputSymbolReactionTime,
+                                outputSymbolsReactionTime=self.outputSymbolsReactionTime)
+        transition._startState = self.startState
+        transition.description = self.description
+        transition.active = self.active
+        transition.priority = self.priority
+        transition.cbk_modify_symbol = self.cbk_modify_symbol
+        return transition
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer, actor):
@@ -448,7 +462,8 @@ class Transition(AbstractTransition):
 
         return (symbol_to_send, symbol_presets)
 
-    # Properties
+
+    ## Properties
 
     @public_api
     @property
@@ -508,14 +523,21 @@ class Transition(AbstractTransition):
     @public_api
     @property
     def description(self):
-        if self._description is not None:
-            return self._description
+        return self._description
+
+    @description.setter  # type: ignore
+    def description(self, description):
+        if description is not None:
+            self._description = description
         else:
             desc = []
             for outputSymbol in self.outputSymbols:
                 desc.append(str(outputSymbol.name))
-            return self.name + " (" + str(
-                self.inputSymbol.name) + ";{" + ",".join(desc) + "})"
+            if self.inputSymbol is not None:
+                inputSymbolName = self.inputSymbol.name
+            else:
+                inputSymbolName = "None"
+            self._description = "{} ({};{}{}{})".format(self.name, inputSymbolName, "{", ",".join(desc), "}")
 
     @public_api
     @property
@@ -531,3 +553,18 @@ class Transition(AbstractTransition):
                             "Symbol and float, not {}"
                             .format(type(outputSymbolsReactionTime).__name__))
         self.__outputSymbolsReactionTime = outputSymbolsReactionTime
+
+
+def _test():
+    r"""
+
+    # Test duplicate()
+
+    >>> from netzob.all import *
+    >>> s0 = State()
+    >>> s1 = State()
+    >>> t = Transition(s0, s1, name="transition")
+    >>> t.duplicate()
+    transition
+
+    """

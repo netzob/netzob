@@ -87,9 +87,9 @@ class OpenChannelTransition(AbstractTransition):
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
-    >>> t = OpenChannelTransition(s0, s1)
-    >>> t.name
-    None
+    >>> t = OpenChannelTransition(s0, s1, name="transition")
+    >>> print(t.name)
+    transition
     >>> s0 == t.startState
     True
     >>> s1 == t.endState
@@ -99,14 +99,26 @@ class OpenChannelTransition(AbstractTransition):
 
     TYPE = "OpenChannelTransition"
 
-    def __init__(self, startState, endState, _id=None, name=None):
+    def __init__(self, startState, endState, name=None):
         super(OpenChannelTransition, self).__init__(
             OpenChannelTransition.TYPE,
             startState,
             endState,
-            _id,
             name,
             priority=0)
+
+        self.description = "OpenChannelTransition"
+
+    def duplicate(self):
+        transition = OpenChannelTransition(startState=None,
+                                           endState=self.endState,
+                                           name=self.name)
+        transition._startState = self.startState
+        transition.description = self.description
+        transition.active = self.active
+        transition.priority = self.priority
+        transition.cbk_modify_symbol = self.cbk_modify_symbol
+        return transition
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer, actor):
@@ -163,10 +175,17 @@ class OpenChannelTransition(AbstractTransition):
         actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
         return self.endState
 
-    @public_api
-    @property
-    def description(self):
-        if self._description is not None:
-            return self._description
-        else:
-            return "OpenChannelTransition"
+
+def _test():
+    r"""
+
+    # Test duplicate()
+
+    >>> from netzob.all import *
+    >>> s0 = State()
+    >>> s1 = State()
+    >>> t = OpenChannelTransition(s0, s1, name="transition")
+    >>> t.duplicate()
+    transition
+
+    """

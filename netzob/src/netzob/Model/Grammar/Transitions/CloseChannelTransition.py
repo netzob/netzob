@@ -87,9 +87,9 @@ class CloseChannelTransition(AbstractTransition):
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
-    >>> t = CloseChannelTransition(s0, s1)
+    >>> t = CloseChannelTransition(s0, s1, name="transition")
     >>> print(t.name)
-    None
+    transition
     >>> print(s0 == t.startState)
     True
     >>> print(s1 == t.endState)
@@ -99,14 +99,26 @@ class CloseChannelTransition(AbstractTransition):
 
     TYPE = "CloseChannelTransition"
 
-    def __init__(self, startState, endState, _id=None, name=None):
+    def __init__(self, startState, endState, name=None):
         super(CloseChannelTransition, self).__init__(
             CloseChannelTransition.TYPE,
             startState,
             endState,
-            _id,
             name,
             priority=20)
+
+        self.description = "CloseChannelTransition"
+
+    def duplicate(self):
+        transition = CloseChannelTransition(startState=None,
+                                            endState=self.endState,
+                                            name=self.name)
+        transition._startState = self.startState
+        transition.description = self.description
+        transition.active = self.active
+        transition.priority = self.priority
+        transition.cbk_modify_symbol = self.cbk_modify_symbol
+        return transition
 
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer, actor):
@@ -163,10 +175,17 @@ class CloseChannelTransition(AbstractTransition):
         actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
         return self.endState
 
-    @public_api
-    @property
-    def description(self):
-        if self._description is not None:
-            return self._description
-        else:
-            return "CloseChannelTransition"
+
+def _test():
+    r"""
+
+    # Test duplicate()
+
+    >>> from netzob.all import *
+    >>> s0 = State()
+    >>> s1 = State()
+    >>> t = CloseChannelTransition(s0, s1, name="transition")
+    >>> t.duplicate()
+    transition
+
+    """

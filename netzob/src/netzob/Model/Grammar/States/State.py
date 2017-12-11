@@ -93,6 +93,13 @@ class State(AbstractState):
         super(State, self).__init__(name=name)
         self.__transitions = []
 
+    def duplicate(self):
+        state = State(name=self.name)
+        state.transitions = self.transitions
+        state.active = self.active
+        state.cbk_modify_transition = self.cbk_modify_transition
+        return state
+
     @typeCheck(AbstractionLayer)
     def executeAsInitiator(self, abstractionLayer, actor):
         """This method picks the next available transition and executes it.
@@ -361,9 +368,13 @@ class State(AbstractState):
     def transitions(self):
         return self.__transitions
 
+    @transitions.setter  # type: ignore
+    def transitions(self, transitions):
+        self.__transitions = transitions
+
 
 def _test():
-    """
+    r"""
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s0.name
@@ -382,4 +393,15 @@ def _test():
     'State'
     >>> s0.transitions[0].endState.name
     'S1'
+
+
+    # Test duplicate()
+
+    >>> from netzob.all import *
+    >>> s0 = State(name="s0")
+    >>> s1 = State(name="s1")
+    >>> t = CloseChannelTransition(s0, s1, name="transition")
+    >>> s0.duplicate()
+    s0
+
     """

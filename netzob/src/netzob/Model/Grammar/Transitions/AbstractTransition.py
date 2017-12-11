@@ -68,20 +68,15 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                  _type,
                  startState,
                  endState,
-                 _id=None,
                  name=None,
                  priority=10,
                  description=None):
-        self.__startState = None
-        self.__endState = None
-
-        self.__startState = None
-        self.__endState = None
+        self._startState = None
+        self._endState = None
 
         self.type = _type
         self.startState = startState
         self.endState = endState
-        self.id = uuid.uuid4() if _id is None else _id
         self.name = name
         self.priority = priority
         self._description = description
@@ -102,6 +97,12 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def executeAsNotInitiator(self, abstractionLayer, visit_log):
+        pass
+
+    # Other methods
+
+    @abc.abstractmethod
+    def duplicate(self):
         pass
 
     # Priorities
@@ -137,7 +138,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         >>> s1 = State(name="S1")
         >>> s2 = State(name="S2")
         >>> t = Transition(s0, s1, name="T0")
-        >>> t.startState.name
+        >>> print(t.startState.name)
         S0
         >>> len(s0.transitions)
         1
@@ -148,16 +149,16 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         :type: :class:`~netzob.Model.Grammar.State.AbstractState.AbstractState`
         :raise: TypeError if type of param is not valid
         """
-        return self.__startState
+        return self._startState
 
     @startState.setter  # type: ignore
     def startState(self, startState):
-        if self.__startState is not None:
-            self.__startState.removeTransition(self)
+        if self._startState is not None:
+            self._startState.removeTransition(self)
         if startState is not None:
             startState.transitions.append(self)
 
-        self.__startState = startState
+        self._startState = startState
 
     @public_api
     @property
@@ -169,17 +170,17 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         >>> s0 = State(name="S0")
         >>> s1 = State(name="S1")
         >>> t = Transition(s0, s1, name="T0")
-        >>> t.endState.name
+        >>> print(t.endState.name)
         S1
 
         :type: :class:`~netzob.Model.Grammar.State.AbstractState.AbstractState`
         :raise: TypeError if type of param is not valid
         """
-        return self.__endState
+        return self._endState
 
     @endState.setter  # type: ignore
     def endState(self, endState):
-        self.__endState = endState
+        self._endState = endState
 
     @property
     def priority(self):
@@ -195,7 +196,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         >>> openTransition = OpenChannelTransition(s0, s1)
         >>> openTransition.priority
         0
-        >>> transition = Transition(s1, s1, priority=1)
+        >>> transition = Transition(s1, s1)
+        >>> transition.priority=1
         >>> transition.priority
         1
         >>> transition.priority = 50

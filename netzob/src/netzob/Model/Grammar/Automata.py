@@ -31,6 +31,7 @@
 import os
 import subprocess
 import tempfile
+import copy
 
 #+----------------------------------------------
 #| Related third party imports
@@ -41,6 +42,8 @@ import tempfile
 #+----------------------------------------------
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Grammar.States.State import State
+from netzob.Model.Grammar.Transitions.OpenChannelTransition import OpenChannelTransition
+from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition
 from netzob.Inference.Grammar.AutomataFactories.OneStateAutomataFactory import OneStateAutomataFactory
 from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
 from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAutomataFactory
@@ -101,6 +104,65 @@ class Automata(object):
         self.cbk_read_unexpected_symbol = None
         self.cbk_read_unknown_symbol = None
 
+    def duplicate(self):
+        r"""Duplicate the current automaton.
+
+        This method clones the states and transitions of the
+        automaton, but keeps references to the original callbacks and
+        symbols.
+
+        >>> # Creation of some states and transitions
+        >>> from netzob.all import *
+        >>> s0 = State(name="S0")
+        >>> s1 = State(name="S1")
+        >>> s2 = State(name="S2")
+        >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="open transition")
+        >>> inputSymbol = Symbol()
+        >>> outputSymbol = Symbol()
+        >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=inputSymbol, outputSymbols=[outputSymbol], name="main transition")
+        >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="close transition")
+        >>> # Creation of the automata
+        >>> automata = Automata(s0, [inputSymbol, outputSymbol])
+        >>> automata_bis = automata.duplicate()
+
+        """
+
+        map_new_states = {}  # Store mapping [original state -> cloned state]
+
+        for state in self.getStates():
+            new_transitions = []
+            for transition in state.transitions:
+
+                new_transition = transition.duplicate()
+                new_transitions.append(new_transition)
+
+                # Handle startState
+                if transition.startState in map_new_states.keys():
+                    new_transition._startState = map_new_states[transition.startState]
+                else:
+                    new_transition._startState = transition.startState.duplicate()
+                    map_new_states[transition.startState] = new_transition.startState
+
+                # Handle endState
+                if transition.endState in map_new_states.keys():
+                    new_transition.endState = map_new_states[transition.endState]
+                else:
+                    new_transition.endState = transition.endState.duplicate()
+                    map_new_states[transition.endState] = new_transition.endState
+
+            if state in map_new_states.keys():
+                map_new_states[state].transitions = new_transitions
+            else:
+                map_new_states[state] = state.duplicate()
+                map_new_states[state].transitions = new_transitions
+
+        automata = Automata(map_new_states[self.initialState], self.vocabulary)
+        automata.cbk_read_symbol_timeout = self.cbk_read_symbol_timeout
+        automata.cbk_read_unexpected_symbol = self.cbk_read_unexpected_symbol
+        automata.cbk_read_unknown_symbol = self.cbk_read_unknown_symbol
+
+        return automata
+
     def generateASCII(self):
         """Render the ASCII representation of the automaton.
         """
@@ -157,7 +219,7 @@ class Automata(object):
         dotCode.append("digraph G {")
 
         # First we include all the states declared in the automata
-        states = self.getAllStates()
+        states = self.getStates()
         for state in states:
             if state.active:
                 color = "red"
@@ -176,7 +238,7 @@ class Automata(object):
 
             dotCode.append(
                 '"{}" [shape={}, label="{}", style=filled, fillcolor={}, URL="{}"];'.
-                format(state.name, shape, descr, color, state.id))
+                format(state.name, shape, descr, color, id(state)))
 
         for inputState in states:
             for transition in inputState.transitions:
@@ -191,15 +253,20 @@ class Automata(object):
                     '"{}" -> "{}" [fontsize=5, label="{}", URL="{}"];'.
 
                     format(inputState.name, outputState.name,
-                           descr, transition.id))
+                           descr, id(transition)))
 
         dotCode.append("}")
 
         return '\n'.join(dotCode)
 
     @public_api
-    def getAllStates(self):
+    def getStates(self, main_states=False):
         """Visits the automata to discover all the available states.
+
+        :param main_states: Specify that all states except the initial state and the closing states are returned. Default value is ``False``, meaning that all states are returned.
+        :type main_states: :class:`bool`
+        :return: A list containing all the automaton states.
+        :rtype: a :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`
 
         >>> from netzob.all import *
         >>> # Create some states and transitions
@@ -213,14 +280,17 @@ class Automata(object):
         >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
         >>> # Create the automata
         >>> automata = Automata(s0, [inputSymbol, outputSymbol])
-        >>> for state in automata.getAllStates():
+        >>> for state in automata.getStates():
         ...    print(state)
         State 0
         State 1
         State 2
 
-        :return: A list containing all the discovered states.
-        :rtype: a :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`
+        >>> for state in automata.getStates(main_states=True):
+        ...    print(state)
+        State 1
+
+
         """
 
         states = []
@@ -231,21 +301,36 @@ class Automata(object):
             if currentState is not None:
                 found = False
                 for tmpState in states:
-                    if tmpState.id == currentState.id:
+                    if id(tmpState) == id(currentState):
                         found = True
+                        break
                 if not found:
                     for transition in currentState.transitions:
                         outputState = transition.endState
                         found = False
                         for tmpState in states:
-                            if tmpState.id == outputState.id:
+                            if id(tmpState) == id(outputState):
                                 found = True
+                                break
                         for tmpState in toAnalyze:
-                            if tmpState.id == outputState.id:
+                            if id(tmpState) == id(outputState):
                                 found = True
+                                break
                         if not found:
                             toAnalyze.append(outputState)
                     states.append(currentState)
+
+        states_to_drop = []
+        if main_states:
+            for state in states:
+                if len(state.transitions) == 1 and isinstance(state.transitions[0], OpenChannelTransition):
+                    states_to_drop.append(state)
+                else:
+                    for t in state.transitions:
+                        if isinstance(t, CloseChannelTransition):
+                            states_to_drop.append(t.endState)
+        for state in states_to_drop:
+            states.remove(state)
         return states
 
     @public_api
@@ -285,7 +370,7 @@ class Automata(object):
         >>> automata = Automata.generateChainedStatesAutomata(abstractSession, symbolList)
         >>> dotcode = automata.generateDotCode()
         >>> len(dotcode)
-        1115
+        926
         >>> print(dotcode) #doctest: +ELLIPSIS
         digraph G {
         "Start state" [shape=doubleoctagon, label="Start state", style=filled, fillcolor=white, URL="..."];
@@ -330,7 +415,7 @@ class Automata(object):
         >>> automata = Automata.generateOneStateAutomata(abstractSession, symbolList)
         >>> dotcode = automata.generateDotCode()
         >>> len(dotcode)
-        901
+        754
         >>> print(dotcode) #doctest: +ELLIPSIS
         digraph G {
         "Start state" [shape=doubleoctagon, label="Start state", style=filled, fillcolor=white, URL="..."];

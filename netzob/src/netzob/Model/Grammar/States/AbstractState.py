@@ -60,13 +60,16 @@ class AbstractState(object, metaclass=abc.ABCMeta):
     """
 
     def __init__(self, name=None):
-        self.__id = uuid.uuid4()
         self.name = name
         self.active = False
         self.cbk_modify_transition = []
 
     def __str__(self):
         return str(self.name)
+
+    def __repr__(self):
+        return str(self.name)
+
 
     # Execution abstract methods
 
@@ -78,23 +81,15 @@ class AbstractState(object, metaclass=abc.ABCMeta):
     def executeAsNotInitiator(self, abstractionLayer, visit_log):
         pass
 
+
+    # Other methods
+
+    @abc.abstractmethod
+    def duplicate(self):
+        pass
+
+
     # Properties
-
-    @property
-    def id(self):
-        """Unique identifier of the state
-
-        :type: :class:`uuid.UUID`
-        :raise: TypeError if not valid
-        """
-        return self.__id
-
-    @id.setter  # type: ignore
-    @typeCheck(uuid.UUID)
-    def id(self, _id):
-        if id is None:
-            raise TypeError("id cannot be None")
-        self.__id = _id
 
     @public_api
     @property
