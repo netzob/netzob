@@ -175,7 +175,7 @@ class Fuzz(object):
                           * Generator.NG_dsfmt = 'dsfmt'
 
                           A deterministic is also available
-                          (DeterministGenerator.NG_determinist), and
+                          (:attr:`DeterministGenerator.NG_determinist`), and
                           may be used in case where a domain has an
                           interval.
 
@@ -224,7 +224,10 @@ class Fuzz(object):
                               * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
                               * If it is a tuple of integers (min, max), the values will be generated between min and max.
 
-                              Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+                              Default value is dependant on the chosen generator: 
+
+                              * If the generator is :attr:`DeterministGenerator.NG_determinist`, default interval will be :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+                              * Else, default interval will be :attr:`MutatorInterval.FULL_INTERVAL`.
 
         lengthBitSize         The :class:`int` size in bits of the memory on which the generated values have to be encoded.
 
@@ -603,17 +606,17 @@ class Fuzz(object):
         b'\x02\x00E'
 
 
-        **Fuzzing and changing the default fuzzing strategy for types**
+        **Fuzzing and changing the default fuzzing parameters for types**
 
         >>> from netzob.all import *
         >>> fuzz = Fuzz()
         >>> f_data1 = Field(name="data1", domain=int8(2))
         >>> f_data2 = Field(name="data2", domain=int8(4))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-        >>> fuzz.set(Integer, seed=142)
-        >>> fuzz.set(f_data2)
+        >>> fuzz.set(Integer, interval=(10, 12))
+        >>> fuzz.set(symbol)
         >>> symbol.specialize(fuzz=fuzz)
-        b'\x02\x04'
+        b'\x0c\x0c'
 
 
         **Fuzzing configuration with a maximum number of mutations**
@@ -625,7 +628,7 @@ class Fuzz(object):
         >>> symbol = Symbol(name="sym", fields=[f_alt])
         >>> fuzz.set(f_alt)
         >>> symbol.specialize(fuzz=fuzz)
-        b'\x08'
+        b'E'
         >>> symbol.specialize(fuzz=fuzz)
         Traceback (most recent call last):
         Exception: Max mutation counter reached
@@ -931,7 +934,7 @@ def _test():
     >>> for _ in range(2000):
     ...     datas.add(symbol.specialize(fuzz=fuzz))
     >>> len(datas)
-    11
+    256
 
     >>> from netzob.all import *
     >>> fuzz = Fuzz()
@@ -942,7 +945,7 @@ def _test():
     >>> for _ in range(2000):
     ...     datas.add(symbol.specialize(fuzz=fuzz))
     >>> len(datas)
-    31
+    256
 
     >>> from netzob.all import *
     >>> fuzz = Fuzz()
@@ -953,7 +956,7 @@ def _test():
     >>> for _ in range(2000):
     ...     datas.add(symbol.specialize(fuzz=fuzz))
     >>> len(datas)
-    11
+    256
 
 
     # Test to verify that the RNG covers all values in specific ranges, with negatives and positives number, with a specific generator

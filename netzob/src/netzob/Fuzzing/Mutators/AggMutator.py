@@ -85,7 +85,7 @@ class AggMutator(DomainMutator):
     >>> fuzz.set(f_agg)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res
-    b'\x00\x04\x00\x08'
+    b'EuEu'
 
 
     **Fuzzing of an aggregate of variables with non-default fuzzing strategy (MutatorMode.MUTATE)**

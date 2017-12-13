@@ -113,7 +113,7 @@ class AltMutator(DomainMutator):
     >>> fuzz.set(f_alt)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res
-    b'\x00\x08'
+    b'Eu'
 
 
     **Fuzzing of an alternate of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
@@ -152,7 +152,7 @@ class AltMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> fuzz.set(f_alt, maxDepth=2)
     >>> symbol.specialize(fuzz=fuzz)
-    b'\x08'
+    b'E'
     >>> symbol.specialize(fuzz=fuzz)
     Traceback (most recent call last):
     ...

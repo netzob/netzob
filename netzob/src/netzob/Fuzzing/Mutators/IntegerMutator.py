@@ -242,7 +242,7 @@ class IntegerMutator(DomainMutator):
                  generator=Generator.NG_mt19937,
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
-                 interval=MutatorInterval.DEFAULT_INTERVAL,
+                 interval=None,
                  lengthBitSize=None):
 
         # Call parent init
@@ -252,6 +252,14 @@ class IntegerMutator(DomainMutator):
                          seed=seed,
                          counterMax=counterMax,
                          lengthBitSize=lengthBitSize)
+
+        # Handle default interval depending on type of generator
+        if generator == DeterministGenerator.name or isinstance(generator, DeterministGenerator):
+            if interval is None:
+                interval = MutatorInterval.DEFAULT_INTERVAL
+        else:
+            if interval is None:
+                interval = MutatorInterval.FULL_INTERVAL
 
         # Initialize generator
         self.initializeGenerator(interval)
@@ -448,7 +456,6 @@ def _test_determinist_generator_1():
     >>> expected_values.add(1)
     >>> expected_values
     {0, 1, 9, 10, 11, 19, 20, 21, -1}
-
 
     >>> all(x in generated_values for x in expected_values)
     True
