@@ -64,6 +64,8 @@ class AutomataMutatorStrategy(Enum):
     """At each state of the automaton, it is possible to reach any states with any input symbols."""
     ONESTATE = 3
     """Build an automaton with one main state that accepts every symbols."""
+    TARGETED = 4
+    """Build an automaton similar to the original one, where a list of targeted states, given in parameters, will accept every symbols."""
 
 
 class AutomataMutator(Mutator):
@@ -77,7 +79,7 @@ class AutomataMutator(Mutator):
                  seed=Mutator.SEED_DEFAULT):
         super().__init__(mode=MutatorMode.MUTATE, generator=generator, seed=seed)
 
-        # Handle parameters
+        # Initialize variable from parameters
         self.automata = automata
 
         # Initialize random generator
@@ -89,34 +91,26 @@ class AutomataMutator(Mutator):
     @public_api
     def mutate(self,
                strategy=AutomataMutatorStrategy.RANDOM,  # type: AutomataMutatorStrategy
-               startingState=None,               # type: State
-               endingState=None                  # type: State
+               target_states=None
                ) -> Automata:
-        """This is the mutation method of the automaton. This method returns
+        r"""This is the mutation method of the automaton. This method returns
         a new automaton that may be used for fuzzing purpose.
 
         The mutate method expects some parameters:
 
         :param strategy: The strategy used to build the new automaton.
 
-                         The following strategys are available:
+                         The following strategies are available:
 
                          * :attr:`AutomataMutatorStrategy.RANDOM`: Randomly insert and remove transitions between states of the original automaton,
                          * :attr:`AutomataMutatorStrategy.FULL`: At each state of the automaton, it is possible to reach any states,
                          * :attr:`AutomataMutatorStrategy.ONESTATE`: Build an automaton with one main state that accepts every symbols.
+                         * :attr:`AutomataMutatorStrategy.TARGETED`: Build an automaton similar to the original one, where a targeted state, given in parameters, will accept every symbols.
 
                          Default strategy is :attr:`AutomataMutatorStrategy.RANDOM`.
-        :param startingState: The state in the automaton from which to
-                              start the fuzzing of message formats
-                              (i.e. symbols). By default, no
-                              startingState is defined.
-        :param endingState: The state in the automaton from which to
-                            end the fuzzing of message formats
-                            (i.e. symbols). By default, no
-                            endingState is defined.
+        :param target_states: The states considered for targeted fuzzing (should be used with :attr:`AutomataMutatorStrategy.TARGETED`).
         :type strategy: :class:`AutomataMutatorStrategy`, optional
-        :type startingState: :class:`State <netzob.Model.Grammar.States.State>`, optional
-        :type endingState: :class:`State <netzob.Model.Grammar.States.State>`, optional
+        :type target_states: :class:`list` of :class:`str`, optional
         :return: The mutated automata.
         :rtype: :class:`Automata <netzob.Model.Grammar.Automata>`
 
@@ -129,8 +123,10 @@ class AutomataMutator(Mutator):
         random transitions between the existing states:
 
         >>> from netzob.all import *
-        >>> sym1 = Symbol([Field("test1")], name='Sym1')
-        >>> sym2 = Symbol([Field("test2")], name='Sym2')
+        >>> import time
+        >>> sym1 = Symbol([Field(String(nbChars=3))], name='Sym1')
+        >>> sym2 = Symbol([Field(String(nbChars=5))], name='Sym2')
+        >>> vocabulary = [sym1, sym2]
         >>> s0 = State(name="s0")
         >>> s1 = State(name="s1")
         >>> s2 = State(name="s2")
@@ -150,7 +146,7 @@ class AutomataMutator(Mutator):
         >>> t4 = CloseChannelTransition(startState=s2, endState=s4,
         ...                             name="t4")
         >>>
-        >>> automata = Automata(s0, vocabulary=[sym1, sym2])
+        >>> automata = Automata(s0, vocabulary=vocabulary)
         >>> automata_ascii = automata.generateASCII()
         >>> print(automata_ascii)
                                          #========================#
@@ -214,6 +210,8 @@ class AutomataMutator(Mutator):
         >>> mutator = AutomataMutator(automata)
         >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.FULL)
         >>>
+        >>> # The ASCII representation is not displayed as it is too big
+        >>>
         >>> # Generate an automaton with one main state
         >>>
         >>> mutator = AutomataMutator(automata)
@@ -232,6 +230,33 @@ class AutomataMutator(Mutator):
           +-----------------------------> |                        | <-----------------------------+
                                           +------------------------+
         <BLANKLINE>
+        >>>
+        >>> # Generate an automaton with targeted fuzzing on one specific state
+        >>>
+        >>> mutator = AutomataMutator(automata)
+        >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.TARGETED, target_states=['s2'])
+        >>> automata_ascii_2 = mutatedAutomata.generateASCII()
+        >>> print(automata_ascii_2)
+                                          #========================#
+                                          H           s0           H
+                                          #========================#
+                                            |
+                                            | OpenChannelTransition
+                                            v
+                                          +------------------------+   t1 (Sym1;{Sym1})
+                                          |                        | ------------------------------+
+                                          |           s1           |                               |
+                                          |                        | <-----------------------------+
+                                          +------------------------+
+                                            |
+                                            | t2 (Sym2;{Sym2})
+                                            v
+            t_random (Sym2;{Sym1,Sym2})   +------------------------+   t_random (Sym1;{Sym1,Sym2})
+          +------------------------------ |                        | ------------------------------+
+          |                               |           s2           |                               |
+          +-----------------------------> |                        | <-----------------------------+
+                                          +------------------------+
+        <BLANKLINE>
 
 
         **Combining message formats and automata fuzzing**
@@ -240,33 +265,100 @@ class AutomataMutator(Mutator):
         to fuzz specific message formats at specific states in the
         automaton.
 
-        The following code shows the creation of the new automaton with
-        random transitions between the existing states, and with a
-        precision concerning the states between which fuzzing of message
-        formats will be performed:
+        The following code shows the creation of a mutated automaton
+        (based on the previous example automaton) with targeted
+        automaton mutations at state 's2', and with a precision concerning the
+        state at which fuzzing of message formats will be
+        performed. Here, the message format fuzzing only applies at
+        state 's2'. An actor is also created to simulate a target.
 
-        >>> # Symbol definition
-        >>> f1 = Field(String())
-        >>> f2 = Field(Integer())
-        >>> symbol = Symbol(fields=[f1, f2])
-        >>>
-        >>> # Automaton definition
-        >>> s1 = State()
-        >>> s2 = State()
-        >>> automata = Automata(s1, vocabulary=[symbol])
-        >>>
         >>> # Creation of a mutated automaton
         >>> mutator = AutomataMutator(automata, seed=42)
-        >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.RANDOM, startingState=s1, endingState=s2)  # doctest: +SKIP
-        >>> assert isinstance(mutatedAutomata, Automata)  # doctest: +SKIP
+        >>> mutatedAutomata = mutator.mutate(strategy=AutomataMutatorStrategy.TARGETED, target_states=[s2.name])
+        >>>
+        >>> # Define fuzzing configuration
+        >>> fuzz = Fuzz()
+        >>> fuzz.set(sym1)
+        >>> fuzz.set(sym2)
         >>>
         >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
-        >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-        >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-        >>> visitor = Actor(automata=mutatedAutomata, initiator=True, abstractionLayer=abstractionLayer)  # doctest: +SKIP
+        >>> bob_channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+        >>> bob_abstractionLayer = AbstractionLayer(bob_channel, vocabulary)
+        >>> bob_actor = Actor(automata=mutatedAutomata, initiator=True, abstractionLayer=bob_abstractionLayer, fuzz=fuzz, fuzz_states=[s2.name], name='Fuzzer')
+        >>> bob_actor.nbMaxTransitions = 3
+        >>>
+        >>> # Create Alice's automaton
+        >>> alice_s0 = State(name="s0")
+        >>> alice_s1 = State(name="s1")
+        >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+        >>> alice_transition1 = Transition(startState=alice_s1, endState=alice_s1,
+        ...                                inputSymbol=sym1, outputSymbols=[sym1, sym2],
+        ...                                name="T1")
+        >>> alice_transition2 = Transition(startState=alice_s1, endState=alice_s1,
+        ...                                inputSymbol=sym2, outputSymbols=[sym2, sym2],
+        ...                                name="T2")
+        >>> alice_automata = Automata(alice_s0, vocabulary)
+        >>>
+        >>> # Creation of an automaton visitor/actor and a channel on which to receive the fuzzing traffic
+        >>> alice_channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+        >>> alice_abstractionLayer = AbstractionLayer(alice_channel, vocabulary)
+        >>>
+        >>> # Creation of a callback function that returns a new transition
+        >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
+        ...                          last_sent_symbol, last_sent_message,
+        ...                          last_received_symbol, last_received_message):
+        ...     if nextTransition is None:
+        ...         return t2
+        ...     else:
+        ...         return nextTransition
+        >>>
+        >>> alice_automata.getState('s1').add_cbk_modify_transition(cbk_modifyTransition)
+        >>>
+        >>> alice_actor = Actor(automata=alice_automata, initiator=False, abstractionLayer=alice_abstractionLayer, name='Target')
+        >>>
+        >>> # We start the targeted actor
+        >>> alice_actor.start()
+        >>> time.sleep(0.5)
         >>>
         >>> # We start the visitor, thus the fuzzing of message formats will be applied when specific states are reached
-        >>> visitor.start()  # doctest: +SKIP
+        >>> bob_actor.start()
+        >>> time.sleep(1)
+        >>>
+        >>> bob_actor.stop()
+        >>> alice_actor.stop()
+        >>>
+        >>> print(bob_actor.generateLog())
+        Activity log for actor 'Fuzzer':
+          [+] At state 's0'
+          [+]   Picking transition 't0'
+          [+]   Transition 't0' lead to state 's1'
+          [+] At state 's1'
+          [+]   Picking transition 't2'
+          [+]   During transition 't2', sending input symbol 'Sym2'
+          [+]   During transition 't2', receiving expected output symbol 'Sym2'
+          [+]   Transition 't2' lead to state 's2'
+          [+] At state 's2'
+          [+]   Picking transition 't_random'
+          [+]   During transition 't_random', sending input symbol 'Sym1'
+          [+]   During transition 't_random', fuzzing activated
+          [+]   During transition 't_random', receiving expected output symbol 'Sym2'
+          [+]   Transition 't_random' lead to state 's2'
+          [+] At state 's2', we reached the max number of transitions (3), so we stop
+        >>> print(alice_actor.generateLog())
+        Activity log for actor 'Target':
+          [+] At state 's0'
+          [+]   Picking transition 'Open'
+          [+]   Transition 'Open' lead to state 's1'
+          [+] At state 's1'
+          [+]   Receiving input symbol 'Sym2', which corresponds to transition 'T2'
+          [+]   Changing transition to 'T2', through callback
+          [+]   During transition 'T2', choosing output symbol 'Sym2'
+          [+]   Transition 'T2' lead to state 's1'
+          [+] At state 's1'
+          [+]   Receiving input symbol 'Unknown message b'$ENV{"HOME"}\x00       '', which corresponds to transition 'None'
+          [+]   Changing transition to 't2', through callback
+          [+]   During transition 't2', choosing output symbol 'Sym2'
+          [+]   Transition 't2' lead to state 's2'
 
         """
         if strategy == AutomataMutatorStrategy.RANDOM:
@@ -275,6 +367,10 @@ class AutomataMutator(Mutator):
             return self._mutate_full()
         elif strategy == AutomataMutatorStrategy.ONESTATE:
             return self._mutate_onestate()
+        elif strategy == AutomataMutatorStrategy.TARGETED:
+            if target_states is None:
+                raise Exception("'target_states' parameter should be a list of State named, not None")
+            return self._mutate_targeted(target_states)
         else:
             raise ValueError("Unknown automata mutator strategy: '{}'".format(strategy))
 
@@ -368,6 +464,35 @@ class AutomataMutator(Mutator):
                        name="t_random")
 
         return Automata(init_state, self.automata.vocabulary)
+
+    def _mutate_targeted(self, target_states):
+        r"""Build an automaton similar to the original one, where a targeted
+        state, given in parameters, will accept every symbols.
+        """
+
+        if not isinstance(target_states, list):
+            raise TypeError("'target_states' parameter should be a list of state names, not '{}' of type '{}'".format(target_states, type(target_states)))
+        if not all(isinstance(x, str) for x in target_states):
+            raise TypeError("'target_states' parameter should be a list of state names, not '{}'".format(target_states))
+
+        new_automata = self.automata.duplicate()
+        new_states = new_automata.getStates(main_states=True)
+
+        for state in new_states:
+
+            if state.name not in target_states:
+                continue
+
+            state.transitions = []
+
+            for symbol in new_automata.vocabulary:
+
+                # Create a transition between current state and selected end state
+                Transition(startState=state, endState=state,
+                           inputSymbol=symbol, outputSymbols=new_automata.vocabulary,
+                           name="t_random")
+
+        return new_automata
 
     def generate(self):
         raise NotImplementedError

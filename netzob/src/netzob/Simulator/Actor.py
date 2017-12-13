@@ -48,6 +48,7 @@ import time
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Grammar.Automata import Automata
 from netzob.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Fuzzing.Fuzz import Fuzz
 
 
 @NetzobLogger
@@ -68,11 +69,25 @@ class Actor(threading.Thread):
                       value is :const:`True`. The value can be changed
                       during a communication, in order to reverse the
                       way the actors communicate together.
+    :param fuzz: A fuzzing configuration used during the
+                 specialization process when writing symbols over the
+                 abstraction layer. Values in this configuration will
+                 override any field definition, constraints,
+                 relationship dependencies or parameterized
+                 fields. See :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
+                 for a complete explanation of its use for fuzzing
+                 purpose. The default value is :const:`None`.
+    :param fuzz_states: A list of states on which format message
+                        fuzzing is applied. Default is ``[]``,
+                        which means that the fuzzing configuration
+                        is applied on each state.
     :param name: The name of the actor. Default value is 'Actor'.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
                     required
     :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`, required
     :type initiator: :class:`bool`, optional
+    :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
+    :param fuzz_states: :class:`dict` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
     :type name: :class:`str`, optional
 
 
@@ -1585,18 +1600,316 @@ class Actor(threading.Thread):
       [+]   During transition 'T1', choosing output symbol 'Hello2'
       [+]   Transition 'T1' lead to state 'S1'
 
+
+    **Example of message format fuzzing from an actor**
+
+    This example shows the creation of a fuzzing actor, Bob, that will
+    exchange messages with a Target, Alice. Messages generated from
+    'Symbol 1' will be specifically fuzzed, but not messages generated from
+    'Symbol 2'.
+
+    >>> from netzob.all import *
+    >>> import time
+    >>>
+    >>> # First we create the symbols
+    >>> symbol1 = Symbol([Field(uint8(interval=(4, 8)))], name="Symbol 1")
+    >>> symbol2 = Symbol([Field(uint8(interval=(10, 12)))], name="Symbol 2")
+    >>> symbolList = [symbol1, symbol2]
+    >>>
+    >>> # Create Bob's automaton
+    >>> bob_s0 = State(name="S0")
+    >>> bob_s1 = State(name="S1")
+    >>> bob_s2 = State(name="S2")
+    >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+    >>> bob_firstTransition = Transition(startState=bob_s1, endState=bob_s2,
+    ...                                  inputSymbol=symbol1, outputSymbols=[symbol1, symbol2],
+    ...                                  name="T1")
+    >>> bob_secondTransition = Transition(startState=bob_s2, endState=bob_s2,
+    ...                                   inputSymbol=symbol2, outputSymbols=[symbol1, symbol2],
+    ...                                   name="T2")
+    >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> automata_ascii = bob_automata.generateASCII()
+    >>> print(automata_ascii)
+    #====================================#
+    H                 S0                 H
+    #====================================#
+      |
+      | OpenChannelTransition
+      v
+    +------------------------------------+
+    |                 S1                 |
+    +------------------------------------+
+      |
+      | T1 (Symbol 1;{Symbol 1,Symbol 2})
+      v
+    +------------------------------------+   T2 (Symbol 2;{Symbol 1,Symbol 2})
+    |                                    | ------------------------------------+
+    |                 S2                 |                                     |
+    |                                    | <-----------------------------------+
+    +------------------------------------+
+    <BLANKLINE>
+    >>>
+    >>> # Create Alice's automaton
+    >>> alice_s0 = State(name="S0")
+    >>> alice_s1 = State(name="S1")
+    >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+    >>> alice_transition1 = Transition(startState=alice_s1, endState=alice_s1,
+    ...                                inputSymbol=symbol1, outputSymbols=[symbol1],
+    ...                                name="T1")
+    >>> alice_transition2 = Transition(startState=alice_s1, endState=alice_s1,
+    ...                                inputSymbol=symbol2, outputSymbols=[symbol2],
+    ...                                name="T2")
+    >>> alice_automata = Automata(alice_s0, symbolList)
+    >>>
+    >>> # Creation of a callback function that always returns alice_transition2 to handle reception of fuzzed messages
+    >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
+    ...                          last_sent_symbol, last_sent_message,
+    ...                          last_received_symbol, last_received_message):
+    ...     if nextTransition is None:
+    ...         return alice_transition2
+    ...     else:
+    ...         return nextTransition
+    >>>
+    >>> alice_automata.getState('S1').add_cbk_modify_transition(cbk_modifyTransition)
+    >>>
+    >>> automata_ascii = alice_automata.generateASCII()
+    >>> print(automata_ascii)
+                                   #============================#
+                                   H             S0             H
+                                   #============================#
+                                     |
+                                     | OpenChannelTransition
+                                     v
+        T2 (Symbol 2;{Symbol 2})   +----------------------------+   T1 (Symbol 1;{Symbol 1})
+      +--------------------------- |                            | ---------------------------+
+      |                            | S1 [CBK modify transition] |                            |
+      +--------------------------> |                            | <--------------------------+
+                                   +----------------------------+
+    <BLANKLINE>
+    >>>
+    >>> # Define fuzzing configuration
+    >>> fuzz = Fuzz()
+    >>> fuzz.set(symbol1)
+    >>>
+    >>> # Create Bob actor (a client)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, fuzz=fuzz, name="Bob")
+    >>> bob.nbMaxTransitions = 3
+    >>>
+    >>> # Create Alice actor (a server)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>>
+    >>> alice.start()
+    >>> time.sleep(0.5)
+    >>> bob.start()
+    >>>
+    >>> time.sleep(1)
+    >>>
+    >>> bob.stop()
+    >>> alice.stop()
+    >>>
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'Symbol 1'
+      [+]   During transition 'T1', fuzzing activated
+      [+]   During transition 'T1', receiving expected output symbol 'Symbol 2'
+      [+]   Transition 'T1' lead to state 'S2'
+      [+] At state 'S2'
+      [+]   Picking transition 'T2'
+      [+]   During transition 'T2', sending input symbol 'Symbol 2'
+      [+]   During transition 'T2', fuzzing activated
+      [+]   During transition 'T2', receiving expected output symbol 'Symbol 2'
+      [+]   Transition 'T2' lead to state 'S2'
+      [+] At state 'S2', we reached the max number of transitions (3), so we stop
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Unknown message b'\xc5'', which corresponds to transition 'None'
+      [+]   Changing transition to 'T2', through callback
+      [+]   During transition 'T2', choosing output symbol 'Symbol 2'
+      [+]   Transition 'T2' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Symbol 2', which corresponds to transition 'T2'
+      [+]   Changing transition to 'T2', through callback
+      [+]   During transition 'T2', choosing output symbol 'Symbol 2'
+      [+]   Transition 'T2' lead to state 'S1'
+
+
+    **Example of message format fuzzing from an actor, at a specific state**
+
+    This example shows the creation of a fuzzing actor, Bob, that will
+    exchange messages with a Target, Alice. Only messages sent at a
+    specific state, S2, will be fuzzed.
+
+    >>> from netzob.all import *
+    >>> import time
+    >>>
+    >>> # First we create the symbols
+    >>> symbol1 = Symbol([Field(uint8(interval=(4, 8)))], name="Symbol 1")
+    >>> symbol2 = Symbol([Field(uint8(interval=(10, 12)))], name="Symbol 2")
+    >>> symbolList = [symbol1, symbol2]
+    >>>
+    >>> # Create Bob's automaton
+    >>> bob_s0 = State(name="S0")
+    >>> bob_s1 = State(name="S1")
+    >>> bob_s2 = State(name="S2")
+    >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+    >>> bob_firstTransition = Transition(startState=bob_s1, endState=bob_s2,
+    ...                                  inputSymbol=symbol1, outputSymbols=[symbol1, symbol2],
+    ...                                  name="T1")
+    >>> bob_secondTransition = Transition(startState=bob_s2, endState=bob_s2,
+    ...                                   inputSymbol=symbol2, outputSymbols=[symbol1, symbol2],
+    ...                                   name="T2")
+    >>> bob_thirdTransition = Transition(startState=bob_s2, endState=bob_s2,
+    ...                                  inputSymbol=symbol1, outputSymbols=[symbol1, symbol2],
+    ...                                  name="T3")
+    >>> bob_automata = Automata(bob_s0, symbolList)
+    >>>
+    >>> automata_ascii = bob_automata.generateASCII()
+    >>> print(automata_ascii)
+                                            #====================================#
+                                            H                 S0                 H
+                                            #====================================#
+                                              |
+                                              | OpenChannelTransition
+                                              v
+                                            +------------------------------------+
+                                            |                 S1                 |
+                                            +------------------------------------+
+                                              |
+                                              | T1 (Symbol 1;{Symbol 1,Symbol 2})
+                                              v
+        T3 (Symbol 1;{Symbol 1,Symbol 2})   +------------------------------------+   T2 (Symbol 2;{Symbol 1,Symbol 2})
+      +------------------------------------ |                                    | ------------------------------------+
+      |                                     |                 S2                 |                                     |
+      +-----------------------------------> |                                    | <-----------------------------------+
+                                            +------------------------------------+
+    <BLANKLINE>
+    >>>
+    >>> # Create Alice's automaton
+    >>> alice_s0 = State(name="S0")
+    >>> alice_s1 = State(name="S1")
+    >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+    >>> alice_transition1 = Transition(startState=alice_s1, endState=alice_s1,
+    ...                                inputSymbol=symbol1, outputSymbols=[symbol1],
+    ...                                name="T1")
+    >>> alice_transition2 = Transition(startState=alice_s1, endState=alice_s1,
+    ...                                inputSymbol=symbol2, outputSymbols=[symbol2],
+    ...                                name="T2")
+    >>> alice_automata = Automata(alice_s0, symbolList)
+    >>>
+    >>> # Creation of a callback function that always returns alice_transition2 to handle reception of fuzzed messages
+    >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
+    ...                          last_sent_symbol, last_sent_message,
+    ...                          last_received_symbol, last_received_message):
+    ...     if nextTransition is None:
+    ...         return alice_transition2
+    ...     else:
+    ...         return nextTransition
+    >>>
+    >>> alice_automata.getState('S1').add_cbk_modify_transition(cbk_modifyTransition)
+    >>>
+    >>> automata_ascii = alice_automata.generateASCII()
+    >>> print(automata_ascii)
+                                   #============================#
+                                   H             S0             H
+                                   #============================#
+                                     |
+                                     | OpenChannelTransition
+                                     v
+        T2 (Symbol 2;{Symbol 2})   +----------------------------+   T1 (Symbol 1;{Symbol 1})
+      +--------------------------- |                            | ---------------------------+
+      |                            | S1 [CBK modify transition] |                            |
+      +--------------------------> |                            | <--------------------------+
+                                   +----------------------------+
+    <BLANKLINE>
+    >>>
+    >>> # Define fuzzing configuration
+    >>> fuzz = Fuzz()
+    >>> fuzz.set(symbol1)
+    >>> fuzz.set(symbol2)
+    >>>
+    >>> # Create Bob actor (a client)
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, fuzz=fuzz, fuzz_states=['S2'], name="Bob")
+    >>> bob.nbMaxTransitions = 3
+    >>>
+    >>> # Create Alice actor (a server)
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
+    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>>
+    >>> alice.start()
+    >>> time.sleep(0.5)
+    >>> bob.start()
+    >>>
+    >>> time.sleep(1)
+    >>>
+    >>> bob.stop()
+    >>> alice.stop()
+    >>>
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T1'
+      [+]   During transition 'T1', sending input symbol 'Symbol 1'
+      [+]   During transition 'T1', receiving expected output symbol 'Symbol 1'
+      [+]   Transition 'T1' lead to state 'S2'
+      [+] At state 'S2'
+      [+]   Picking transition 'T2'
+      [+]   During transition 'T2', sending input symbol 'Symbol 2'
+      [+]   During transition 'T2', fuzzing activated
+      [+]   During transition 'T2', receiving expected output symbol 'Symbol 2'
+      [+]   Transition 'T2' lead to state 'S2'
+      [+] At state 'S2', we reached the max number of transitions (3), so we stop
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Symbol 1', which corresponds to transition 'T1'
+      [+]   Changing transition to 'T1', through callback
+      [+]   During transition 'T1', choosing output symbol 'Symbol 1'
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Unknown message b'\xc5'', which corresponds to transition 'None'
+      [+]   Changing transition to 'T2', through callback
+      [+]   During transition 'T2', choosing output symbol 'Symbol 2'
+      [+]   Transition 'T2' lead to state 'S1'
+
     """
 
     def __init__(self,
                  automata,          # type: Automata
                  abstractionLayer,  # type: AbstractionLayer
                  initiator=True,    # type: bool
+                 fuzz=None,         # type: Fuzz
+                 fuzz_states=[],    # type: dict
                  name="Actor",      # type: str
                  ):
         # type: (...) -> None
         super(Actor, self).__init__()
         self.automata = automata
         self.initiator = initiator
+        self.fuzz = fuzz
+        self.fuzz_states = fuzz_states
         self.name = name
         self.abstractionLayer = abstractionLayer
         self.__stopEvent = threading.Event()
@@ -1630,11 +1943,11 @@ class Actor(threading.Thread):
                 self._currentnbTransitions += 1
                 if self.nbMaxTransitions is not None and self._currentnbTransitions >= self.nbMaxTransitions:
                     self._logger.debug("[actor='{}'] Max number of transitions ({}) reached".format(self.name, self.nbMaxTransitions))
-                    self.visit_log.append("  [+] At state '{}', we reached the max number of transitions ({}), so we stop".format(currentState.name, self.nbMaxTransitions))
+                    self.visit_log.append("  [+] At state '{}', we reached the max number of transitions ({}), so we stop".format(currentState, self.nbMaxTransitions))
                     self.stop()
 
             except Exception as e:
-                self._logger.debug("Exception raised for actor '{}' when on the execution of state {}.".format(self.name, currentState.name))
+                self._logger.debug("Exception raised for actor '{}' when on the execution of state {}.".format(self.name, currentState))
                 self._logger.error("Exception error for actor '{}': {}".format(self.name, str(e)))
                 self._logger.warn(traceback.format_exc())
                 self.stop()
@@ -1714,6 +2027,24 @@ class Actor(threading.Thread):
         if initiator is None:
             raise TypeError("Initiator  cannot be None")
         self.__initiator = initiator
+
+    @property
+    def fuzz(self):
+        return self.__fuzz
+
+    @fuzz.setter  # type: ignore
+    @typeCheck(Fuzz)
+    def fuzz(self, fuzz):
+        self.__fuzz = fuzz
+
+    @property
+    def fuzz_states(self):
+        return self.__fuzz_states
+
+    @fuzz_states.setter  # type: ignore
+    @typeCheck(list)
+    def fuzz_states(self, fuzz_states):
+        self.__fuzz_states = fuzz_states
 
     @public_api
     @property

@@ -249,7 +249,12 @@ class Transition(AbstractTransition):
             self._logger.debug("[actor='{}'] Nothing to write on abstraction layer (inputSymbol is an EmptySymbol)".format(str(actor)))    
         else:
             try:
-                abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
+                if actor.fuzz is not None and (len(actor.fuzz_states) == 0 or self.startState.name in actor.fuzz_states):
+                    self._logger.debug("[actor='{}'] Fuzzing activated at transition".format(str(actor)))
+                    actor.visit_log.append("  [+]   During transition '{}', fuzzing activated".format(self.name))
+                    abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets, fuzz=actor.fuzz)
+                else:
+                    abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
             except socket.timeout:
                 self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
                 self.active = False
@@ -277,6 +282,7 @@ class Transition(AbstractTransition):
 
                 return nextState
             else:
+                actor.visit_log.append("  [+]   During transition '{}', timeout in reception of a symbol, leading to state '{}'".format(self.name, str(self.startState)))
                 # Return the start state so that we accept a new message
                 return self.startState
 
@@ -370,7 +376,12 @@ class Transition(AbstractTransition):
 
         # Emit the symbol
         try:
-            abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
+            if actor.fuzz is not None and (len(actor.fuzz_states) == 0 or self.startState in actor.fuzz_states):
+                self._logger.debug("[actor='{}'] Fuzzing activated at transition".format(str(actor)))
+                actor.visit_log.append("  [+]   During transition '{}', fuzzing activated".format(self.name))
+                abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets, fuzz=actor.fuzz)
+            else:
+                abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
         except socket.timeout:
             self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
             self.active = False
