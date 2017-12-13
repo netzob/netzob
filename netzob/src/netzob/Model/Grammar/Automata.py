@@ -334,16 +334,23 @@ class Automata(object):
         return states
 
     @public_api
-    def getState(self, stateName):
+    @typeCheck(str)
+    def getState(self, name):
         """Returns the State object of the given name.
 
-        :param stateName: The name of the State object
-        :type stateName: :class:`str`, required
+        :param name: The name of the State object
+        :type name: :class:`str`, required
         :return: The State object with stateName as name.
         :rtype: :class:`State <netzob.Model.Grammar.States.State.State>`
         :raise: :class:`KeyError` if the name is not found.
         """
-        raise NotImplementedError
+
+        states = self.getStates()
+        for state in states:
+            if state.name == name:
+                return state
+        else:
+            raise KeyError("State with name '{}' does not exist".format(name))
 
     @staticmethod
     @typeCheck(list, list)
