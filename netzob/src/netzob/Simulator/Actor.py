@@ -1240,7 +1240,7 @@ class Actor(threading.Thread):
 
     The following example shows how to specify a global behavior, on
     all states and transitions, in order to catch timeouts when
-    listening for symbols. In this example, we set a callback through the method ''set_cbk_read_symbol_timeout''. when a timeout occurs on
+    listening for symbols. In this example, we set a callback through the method :meth:`set_cbk_read_symbol_timeout`. when a timeout occurs on
     reception of a symbol, the defined callback will move the current
     position in the state machine to a specific state called
     'error_state'.
@@ -1338,7 +1338,7 @@ class Actor(threading.Thread):
     **Example on how to catch all receptions of unexpected symbols**
 
     The following example shows how to specify a global behavior, on
-    all states and transitions, in order to catch reception of unexpected symbols (i.e. symbols that are known but not expected at this state/transition). In this example, we set a callback through the method ''set_cbk_read_unexpected_symbol''. When an unexpected symbol is received, the defined callback will move the current
+    all states and transitions, in order to catch reception of unexpected symbols (i.e. symbols that are known but not expected at this state/transition). In this example, we set a callback through the method :meth:`set_cbk_read_unexpected_symbol`. When an unexpected symbol is received, the defined callback will move the current
     position in the state machine to a specific state called
     'error_state'.
 
@@ -1471,7 +1471,7 @@ class Actor(threading.Thread):
     **Example on how to catch all receptions of unknown messages**
 
     The following example shows how to specify a global behavior, on
-    all states and transitions, in order to catch reception of unknown messages (i.e. messages that cannot be abstracted to a symbol). In this example, we set a callback through the method ''set_cbk_read_unknown_symbol''. When an unknown message is received, the defined callback will move the current
+    all states and transitions, in order to catch reception of unknown messages (i.e. messages that cannot be abstracted to a symbol). In this example, we set a callback through the method :meth:`set_cbk_read_unknown_symbol`. When an unknown message is received, the defined callback will move the current
     position in the state machine to a specific state called
     'error_state'.
 

@@ -95,11 +95,8 @@ class Fuzz(object):
 
     The Fuzz class provides the following public variables:
 
-    :var counterMax: The max number of mutations to produce (a :class:`int`
-                       should be used to represent an absolute value, whereas a
-                       :class:`float` should be used to represent a ratio in
-                       percent).
-    :vartype counterMax: :class:`int` or :class:`float`, optional
+    :var counterMax: The max number of mutations to produce.
+    :vartype counterMax: :class:`int` or :class:`float`
 
     """
 
