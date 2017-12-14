@@ -284,3 +284,69 @@ called, first")
             raise RecursionException("Max depth reached ({})".format(self.maxDepth))
 
         return int(next(self.generator) * len(self.domain.children))
+
+
+def _test_alt_mutator():
+    r"""
+    # Test if AltMutator generate a pseudo-random type between those defined
+
+    >>> from netzob.all import *
+
+    >>> fuzz = Fuzz()
+    >>> f_alt = Field(name="alt", domain=Alt([Integer(42), int8(interval=(8,8)), int16(interval=(16,16))]))
+    >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> fuzz.set(f_alt)
+    >>> res = []
+    >>> res.append(symbol.specialize(fuzz=fuzz))
+    >>> res.append(symbol.specialize(fuzz=fuzz))
+    >>> res.append(symbol.specialize(fuzz=fuzz))
+    >>> b'\x2a' in res
+    True
+    >>> b'\x08' in res
+    True
+    >>> b'\x00\x10' in res
+    True
+
+    """
+
+def _test_alt_use_mutator():
+    r"""
+    # AltMutator can be set to use another mutator's option for mutation
+
+    >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+
+    >>> fuzz = Fuzz()
+    >>> mapping = {}
+    >>> f_alt = Field(name="alt", domain=Alt([Integer(42), int8(interval=(8,8))]))
+    >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> mapping[Integer] = {'lengthBitSize' : UnitSize.SIZE_16}
+    >>> fuzz.set(f_alt, mappingTypesMutators=mapping)
+    >>> symbol.specialize(fuzz=fuzz)
+    b'\x00\x08'
+    >>> symbol.specialize(fuzz=fuzz)
+    b'\x00*'
+
+    """
+
+def _test_alt_max_depth():
+    r"""
+    # AltMutator can be set to limit the number of mutations
+
+    >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+
+    >>> fuzz = Fuzz()
+    >>> f_alt = Field(name="alt", domain=Alt([Integer(42)]))
+    >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> fuzz.set(f_alt, maxDepth=3)
+    >>> symbol.specialize(fuzz=fuzz)
+    b'*'
+    >>> symbol.specialize(fuzz=fuzz)
+    b'*'
+    >>> symbol.specialize(fuzz=fuzz)
+    Traceback (most recent call last):
+    ...
+    netzob.Fuzzing.Mutators.AltMutator.RecursionException: Max depth reached (3)
+
+    """
