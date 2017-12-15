@@ -72,13 +72,8 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     """
 
     def __init__(self, varType, dataType=None, targets=None, name=None):
-        super(AbstractRelationVariableLeaf, self).__init__(
-            varType, name, svas=SVAS.VOLATILE)
 
-        self.targets = targets
-        self._missing_targets = set()
-
-        # Handle dataType
+        # Verify dataType
         if dataType is None:
             dataType = Raw(nbBytes=1)
         elif isinstance(dataType, AbstractType):
@@ -86,7 +81,13 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 raise Exception("Relation dataType should not have a constant value: '{}'.".format(dataType))
         else:
             raise Exception("Relation dataType has a wrong type: '{}'.".format(dataType))
-        self.dataType = dataType
+
+        # Call super
+        super(AbstractRelationVariableLeaf, self).__init__(
+            varType, name, dataType=dataType, svas=SVAS.VOLATILE)
+
+        self.targets = targets
+        self._missing_targets = set()
 
     def __key(self):
         return (self.dataType)
@@ -387,23 +388,3 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         if isinstance(targets, (AbstractField, AbstractVariable)):
             targets = [targets]
         self.__targets = targets
-
-    @property
-    def dataType(self):
-        """The datatype used to encode the result of the computed relation field.
-
-        :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
-        """
-
-        return self.__dataType
-
-    @dataType.setter  # type: ignore
-    @typeCheck(AbstractType)
-    def dataType(self, dataType):
-        if dataType is None:
-            raise TypeError("Datatype cannot be None")
-        (minSize, maxSize) = dataType.size
-        if maxSize is None:
-            raise ValueError(
-                "The datatype of a relation field must declare its length")
-        self.__dataType = dataType

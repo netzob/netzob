@@ -44,9 +44,10 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 @NetzobLogger
@@ -59,9 +60,11 @@ class AbstractVariableLeaf(AbstractVariable):
 
     """
 
-    def __init__(self, varType, name=None, svas=None):
+    def __init__(self, varType, name=None, dataType=None, svas=None):
         super(AbstractVariableLeaf, self).__init__(
             varType, name=name, svas=svas)
+
+        self.dataType = dataType
 
     def isnode(self):
         return False
@@ -209,3 +212,26 @@ class AbstractVariableLeaf(AbstractVariable):
             return super().getFixedBitSize()
 
         return self.dataType.getFixedBitSize()
+
+
+    ## Properties
+
+    @property
+    def dataType(self):
+        """The datatype used to encode the result of the computed relation field.
+
+        :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
+        """
+
+        return self.__dataType
+
+    @dataType.setter  # type: ignore
+    @typeCheck(AbstractType)
+    def dataType(self, dataType):
+        if dataType is None:
+            raise TypeError("Datatype cannot be None")
+        (minSize, maxSize) = dataType.size
+        if maxSize is None:
+            raise ValueError(
+                "The datatype of a relation field must declare its length")
+        self.__dataType = dataType
