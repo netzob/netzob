@@ -549,3 +549,37 @@ class NetUtils(object):
             if NetUtils.getLocalMacAddress(networkInterface) == MacInBytes:
                 return networkInterface
         return None
+
+    @staticmethod
+    def getMtu(localInterface):
+        """
+        Retrieve the MTU of the given network interface.
+
+        :param localInterface: The local network interface
+        :type localInterface: :class:`str`
+        :return: The MTU value.
+        :type: :class:`int`
+        """
+
+        ifname = bytes(localInterface, 'utf-8')
+        s = socket.socket(type=socket.SOCK_DGRAM)
+        response = ioctl(s,
+                         0x8921,  # SIOCGIFMTU
+                         struct.pack("16s16x", ifname))
+        mtu = struct.unpack("16xh6s8x", response)[0]
+        return mtu
+
+    @staticmethod
+    def setMtu(localInterface, mtu):
+        """
+        Set the MTU of the given network interface.
+
+        :param localInterface: The local network interface
+        :type localInterface: :class:`str`
+        """
+
+        ifname = bytes(localInterface, 'utf-8')
+        s = socket.socket(type=socket.SOCK_DGRAM)
+        ioctl(s,
+              0x8922,  # SIOCSIFMTU
+              struct.pack("16s16x", ifname))
