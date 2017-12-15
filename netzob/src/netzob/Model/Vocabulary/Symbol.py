@@ -98,9 +98,9 @@ class Symbol(AbstractField):
     >>> symbol = Symbol(fields=[f0, f1, f2])
     >>> for f in symbol.fields:
     ...     print("{} - {}".format(f, f.domain))
-    Field - Data (String=aaaa ((None, None)))
-    Field - Data (String= #  ((None, None)))
-    Field - Data (String=bbbbbb ((None, None)))
+    Field - Data (String('aaaa'))
+    Field - Data (String(' # '))
+    Field - Data (String('bbbbbb'))
 
     .. ifconfig:: scope in ('netzob')
 
@@ -176,7 +176,6 @@ class Symbol(AbstractField):
         return hash(frozenset(self.name))
 
     @public_api
-    @typeCheck(Memory, object)
     def specialize(self, presets=None, fuzz=None, memory=None):
         r"""The :meth:`specialize()` method generates a :class:`bytes` sequence whose
         content follows the symbol definition.
@@ -265,10 +264,10 @@ class Symbol(AbstractField):
         b'\x0b\xaa\xbb'
 
         >>> presets = {}
-        >>> presets["udp.dport"] = Integer(11)        # udp.dport expects an int or an Integer
+        >>> presets["udp.dport"] = uint16(11)        # udp.dport expects an int or an Integer
         >>> presets["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
         >>> symbol_udp.specialize(presets=presets)
-        b'\x0b\xaa\xbb'
+        b'\x00\x0b\xaa\xbb'
 
         >>> presets = {}
         >>> presets["udp.dport"] = bitarray('00001011', endian='big')

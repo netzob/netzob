@@ -141,7 +141,8 @@ class BitArrayMutator(DomainMutator):
         else:
             raise Exception("Length generator not initialized")
 
-        length = center(length, self._minLength, self._maxLength)
+        if not isinstance(self._lengthGenerator, DeterministGenerator):
+            length = center(length, self._minLength, self._maxLength)
 
         # Generate random data
         value_bits = bitarray('')

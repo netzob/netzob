@@ -104,7 +104,7 @@ class Raw(AbstractType):
     >>> from netzob.all import *
     >>> r = Raw(b'\x01\x02\x03')
     >>> print(r)
-    Raw=b'\x01\x02\x03' ((None, None))
+    Raw(b'\x01\x02\x03')
 
     The alphabet optional argument can be used to limit the bytes that
     can participate in the domain value:
@@ -143,7 +143,7 @@ class Raw(AbstractType):
         if value is None:
             nbBits = self._convertNbBytesinNbBits(nbBytes)
         else:
-            nbBits = (None, None)
+            nbBits = (len(value), len(value))
 
         self.alphabet = alphabet
 
@@ -157,11 +157,13 @@ class Raw(AbstractType):
 
     def __str__(self):
         if self.value is not None:
-            return "{0}={1} ({2})".format(self.typeName,
-                                          repr(self.value.tobytes()),
-                                          self.size)
+            return "{}({})".format(self.typeName,
+                                          repr(self.value.tobytes()))
         else:
-            return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
+            if self.size[0] == self.size[1]:
+                return "{}(nbBytes={})".format(self.typeName, int(self.size[0] / 8))
+            else:
+                return "{}(nbBytes=({},{}))".format(self.typeName, int(self.size[0] / 8), int(self.size[1] / 8))
 
     def __repr__(self):
         r"""
@@ -351,6 +353,25 @@ class Raw(AbstractType):
 
 def _test(self):
     r"""
+
+    >>> from netzob.all import *
+    >>> t = Raw()
+    >>> print(t)
+    Raw(nbBytes=(0,8192))
+    >>> t.size
+    (0, 65536)
+    >>> t.unitSize
+    UnitSize.SIZE_16
+
+    >>> t = Raw(nbBytes=4)
+    >>> print(t)
+    Raw(nbBytes=4)
+
+    >>> t = Raw(b"abcd")
+    >>> print(t)
+    Raw(b'abcd')
+
+
     from netzob.all import Field, Symbol
     domains = [
         Raw(b"xxxx"), Raw(nbBytes=2),

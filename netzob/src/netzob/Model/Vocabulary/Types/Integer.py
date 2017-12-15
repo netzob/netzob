@@ -208,7 +208,7 @@ class Integer(AbstractType):
     >>> i1, i2
     (42, 42)
     >>> print(i1, i2)
-    Integer=42 ((None, None)) Integer=42 ((None, None))
+    Integer(42) Integer(42)
     >>> i1 == i2
     False
 
@@ -238,13 +238,13 @@ class Integer(AbstractType):
 
     >>> from netzob.all import *
     >>> i = int16le(12)
-    >>> str(i)
-    'Integer=12 ((None, None))'
+    >>> print(i)
+    Integer(12)
 
     >>> from netzob.all import *
     >>> i = int16le()
-    >>> str(i)
-    'Integer=None ((-32768, 32767))'
+    >>> print(i)
+    Integer(-32768,32767)
 
 
     **Encoding of Integer type objects**
@@ -267,7 +267,7 @@ class Integer(AbstractType):
     def __init__(self,
                  value=None,
                  interval=None,
-                 unitSize=AbstractType.defaultUnitSize(),
+                 unitSize=UnitSize.SIZE_16,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
 
@@ -294,10 +294,8 @@ class Integer(AbstractType):
                 dst_endianness=endianness,
                 dst_sign=sign)
 
-        if value is None:
-            interval = self._normalizeInterval(interval, unitSize, sign)
-        else:
-            interval = (None, None)
+        # Handle interval
+        interval = self._normalizeInterval(interval, unitSize, sign)
 
         super().__init__(
             self.__class__.__name__,
@@ -306,6 +304,16 @@ class Integer(AbstractType):
             unitSize=unitSize,
             endianness=endianness,
             sign=sign)
+
+    def __str__(self):
+        if self.value is not None:
+            return "{}({})".format(self.typeName, Integer.encode(self.value.tobytes(), unitSize=self.unitSize, endianness=self.endianness, sign=self.sign))
+        else:
+            if self.size[0] == self.size[1]:
+                self._logger.fatal("PAN")
+                return "{}(interval={})".format(self.typeName, self.size[0])
+            else:
+                return "{}({},{})".format(self.typeName, self.size[0], self.size[1])
 
     def _normalizeInterval(self, interval, unitSize, sign):
 
@@ -374,9 +382,6 @@ class Integer(AbstractType):
         >>> Integer().canParse(10)
         True
 
-        >>> Integer().canParse(TypeConverter.convert(10, Integer, BitArray))
-        True
-
         >>> Integer(10).canParse(11)
         False
 
@@ -386,14 +391,14 @@ class Integer(AbstractType):
         >>> Integer().canParse(-128)
         True
 
-        >>> Integer().canParse(-129)
+        >>> Integer().canParse(32768)
         Traceback (most recent call last):
         ...
-        struct.error: byte format requires -128 <= number <= 127
+        struct.error: 'h' format requires -32768 <= number <= 32767
 
         To specify a bigger storage, the unitSize should be used:
 
-        >>> Integer(unitSize=UnitSize.SIZE_16).canParse(-129)
+        >>> Integer(unitSize=UnitSize.SIZE_32).canParse(32768)
         True
 
         """
@@ -644,13 +649,14 @@ class Integer(AbstractType):
 
         >>> from netzob.all import *
         >>> v1 = Integer(interval=(-10, -1)).generate()
-        >>> assert v1[0] is True  # sign bit (MSB) is set
+        >>> v1[0] is True  # sign bit (MSB) is set
+        True
         >>> v1
-        bitarray('11111100')
+        bitarray('1111111111111100')
 
         >>> v2 = Integer(42, sign=Sign.UNSIGNED)
         >>> v2.generate()
-        bitarray('00101010')
+        bitarray('0000000000101010')
 
         >>> v3 = uint16be(0xff00)
         >>> v3.generate()
@@ -764,6 +770,25 @@ uint8, uint16, uint32, uint64 = uint8be, uint16be, uint32be, uint64be
 
 def _test():
     r"""
+
+    >>> from netzob.all import *
+    >>> t = Integer()
+    >>> print(t)
+    Integer(-32768,32767)
+    >>> t.size
+    (-32768, 32767)
+    >>> t.unitSize
+    UnitSize.SIZE_16
+
+    >>> t = Integer(interval=(4, 16))
+    >>> print(t)
+    Integer(4,16)
+
+    >>> t = Integer(4)
+    >>> print(t)
+    Integer(4)
+
+
     Examples of Integer internal attribute access
 
     >>> from netzob.all import *
@@ -773,13 +798,13 @@ def _test():
     >>> cDec.typeName
     'Integer'
     >>> cDec.value
-    bitarray('00010100')
+    bitarray('0000000000010100')
 
     The required size in bits is automatically computed following the specifications:
 
     >>> dec = Integer(10)
     >>> dec.size
-    (None, None)
+    (-32768, 32767)
 
     >>> dec = Integer(interval=(-120, 10))
     >>> dec.size

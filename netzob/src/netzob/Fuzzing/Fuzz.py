@@ -924,7 +924,7 @@ def _test():
 
     >>> from netzob.all import *
     >>> fuzz = Fuzz()
-    >>> f_data = Field(domain=Integer(interval=(10, 20)))
+    >>> f_data = Field(domain=int8(interval=(10, 20)))
     >>> symbol = Symbol(fields=[f_data])
     >>> fuzz.set(f_data)
     >>> datas = set()
@@ -935,7 +935,7 @@ def _test():
 
     >>> from netzob.all import *
     >>> fuzz = Fuzz()
-    >>> f_data = Field(domain=Integer(interval=(-10, 20)))
+    >>> f_data = Field(domain=int8(interval=(-10, 20)))
     >>> symbol = Symbol(fields=[f_data])
     >>> fuzz.set(f_data)
     >>> datas = set()
@@ -946,7 +946,7 @@ def _test():
 
     >>> from netzob.all import *
     >>> fuzz = Fuzz()
-    >>> f_data = Field(domain=Integer(interval=(-20, -10)))
+    >>> f_data = Field(domain=int8(interval=(-20, -10)))
     >>> symbol = Symbol(fields=[f_data])
     >>> fuzz.set(f_data)
     >>> datas = set()

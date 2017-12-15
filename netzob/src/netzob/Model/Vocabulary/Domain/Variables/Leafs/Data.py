@@ -103,7 +103,7 @@ class Data(AbstractVariableLeaf):
     >>> data.currentValue.tobytes()
     b'hello'
     >>> print(data.dataType)
-    String=None ((None, None))
+    String(nbChars=(0,8192))
     >>> data.name
     'pseudo'
 

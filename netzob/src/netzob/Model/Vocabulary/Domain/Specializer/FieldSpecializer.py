@@ -96,9 +96,9 @@ class FieldSpecializer(object):
     >>> print(fpayload.str_structure())
     Field
     |--  f1
-         |--   Data (String=hello  ((None, None)))
+         |--   Data (String('hello '))
     |--  f2
-         |--   Data (String=kurt! ((None, None)))
+         |--   Data (String('kurt!'))
     >>> fs = FieldSpecializer(fpayload)
     >>> result = fs.specialize()[0]
     >>> TypeConverter.convert(result.getData(fpayload.domain), BitArray, String)

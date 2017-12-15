@@ -186,8 +186,16 @@ class RepeatMutator(DomainMutator):
         self.mappingTypesMutators = mappingTypesMutators
 
         # Initialize the length generator
-        model_min = self.domain.nbRepeat[0]
-        model_max = self.domain.nbRepeat[1]
+        if isinstance(self.domain.nbRepeat, tuple):
+            model_min = self.domain.nbRepeat[0]
+            model_max = self.domain.nbRepeat[1]
+        elif isinstance(self.domain.nbRepeat, int):
+            model_min = self.domain.nbRepeat
+            model_max = self.domain.nbRepeat
+        else:
+            model_min = 0
+            model_max = Repeat.MAX_REPEAT
+
         model_unitSize = self.domain.UNIT_SIZE
         self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
 

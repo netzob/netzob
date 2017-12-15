@@ -185,7 +185,7 @@ class StringMutator(DomainMutator):
         else:
             raise Exception("Length generator not initialized")
 
-        if not isinstance(self._lengthGenerator, DeterministGenerator): 
+        if not isinstance(self._lengthGenerator, DeterministGenerator):
             if self._minLength is not None and self._maxLength is not None:
                 length = center(length, self._minLength, self._maxLength)
 

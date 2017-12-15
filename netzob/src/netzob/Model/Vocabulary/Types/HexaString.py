@@ -132,7 +132,7 @@ class HexaString(AbstractType):
         if value is None:
             nbBits = self._convertNbBytesinNbBits(nbBytes)
         else:
-            nbBits = (None, None)
+            nbBits = (len(value), len(value))
 
         super(HexaString, self).__init__(
             self.__class__.__name__,
@@ -141,6 +141,16 @@ class HexaString(AbstractType):
             unitSize=unitSize,
             endianness=endianness,
             sign=sign)
+
+    def __str__(self):
+        if self.value is not None:
+            return "{}({})".format(self.typeName,
+                                          repr(self.value.tobytes()))
+        else:
+            if self.size[0] == self.size[1]:
+                return "{}(nbBytes={})".format(self.typeName, int(self.size[0] / 8))
+            else:
+                return "{}(nbBytes=({},{}))".format(self.typeName, int(self.size[0] / 8), int(self.size[1] / 8))
 
     def _convertNbBytesinNbBits(self, nbBytes):
         nbMinBit = None
@@ -341,9 +351,26 @@ class HexaString(AbstractType):
 
 def _test():
     r"""
-    # test abstraction of arbitrary values
 
     >>> from netzob.all import *
+    >>> t = HexaString()
+    >>> print(t)
+    HexaString(nbBytes=(0,8192))
+    >>> t.size
+    (0, 65536)
+    >>> t.unitSize
+    UnitSize.SIZE_16
+
+    >>> t = HexaString(nbBytes=4)
+    >>> print(t)
+    HexaString(nbBytes=4)
+
+    >>> t = HexaString(b"abcd")
+    >>> print(t)
+    HexaString(b'\xab\xcd')
+
+    # test abstraction of arbitrary values
+
     >>> domains = [
     ...     HexaString(b"aabb"), HexaString(nbBytes=4),
     ... ]

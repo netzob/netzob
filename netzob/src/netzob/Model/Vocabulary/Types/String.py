@@ -210,7 +210,7 @@ class String(AbstractType):
         if value is None:
             nbBits = self._normalizeNbChars(nbChars)
         else:
-            nbBits = (None, None)
+            nbBits = (len(value), len(value))
 
         super(String, self).__init__(
             self.__class__.__name__,
@@ -219,6 +219,15 @@ class String(AbstractType):
             unitSize=unitSize,
             endianness=endianness,
             sign=sign)
+
+    def __str__(self):
+        if self.value is not None:
+            return "{}('{}')".format(self.typeName, self.value.tobytes().decode(self.encoding))
+        else:
+            if self.size[0] == self.size[1]:
+                return "{}(nbChars={})".format(self.typeName, int(self.size[0] / 8))
+            else:
+                return "{}(nbChars=({},{}))".format(self.typeName, int(self.size[0] / 8), int(self.size[1] / 8))
 
     def _normalizeNbChars(self, nbChars):
         nbMinBits = None
@@ -605,12 +614,32 @@ class String(AbstractType):
 
 def _test(self):
     r"""
+
+    >>> from netzob.all import *
+    >>> t = String()
+    >>> print(t)
+    String(nbChars=(0,8192))
+    >>> t.size
+    (0, 65536)
+    >>> t.unitSize
+    UnitSize.SIZE_16
+
+    >>> t = String(nbChars=4)
+    >>> print(t)
+    String(nbChars=4)
+    >>> t.size
+    (32, 32)
+
+    >>> t = String("abcd")
+    >>> print(t)
+    String('abcd')
+
     Examples of string internal attributes access:
 
     >>> from netzob.all import *
     >>> cAscii = String("hello")
     >>> print(cAscii)
-    String=hello ((None, None))
+    String('hello')
     >>> cAscii.typeName
     'String'
     >>> cAscii.value

@@ -143,13 +143,48 @@ class IPv4(AbstractType):
 
         self.network = network
 
+        size = (0, 1 << unitSize.value)
+
         super(IPv4, self).__init__(
             self.__class__.__name__,
             value,
-            (None, None),
+            size,
             unitSize=UnitSize.SIZE_32,
             endianness=AbstractType.defaultEndianness(),
             sign=AbstractType.defaultSign())
+
+    def __str__(self):
+        if self.value is not None:
+            return "{}(\"{}\")".format(self.typeName, IPv4.encode(self.value.tobytes()))
+        elif self.network is not None:
+            return "{}(\"{}\")".format(self.typeName, self.network)
+        else:
+            return "{}()".format(self.typeName)
+
+    def count(self, presets=None, fuzz=None):
+        r"""
+
+        >>> from netzob.all import *
+        >>> IPv4("127.0.0.1").count()
+        1
+
+        >>> IPv4().count()
+        4294967296
+
+        >>> IPv4(network='192.168.0.0/24').count()
+        256
+
+        >>> IPv4(network='192.168.0.0/23').count()
+        512
+
+        """
+
+        if self.value is not None:
+            return 1
+        if self.network is not None:
+            return self.network.size
+        else:
+            return (1 << self.unitSize.value)
 
     def getMinStorageValue(self):
             return 0
@@ -412,9 +447,27 @@ class IPv4(AbstractType):
 
 def _test():
     r"""
-    # test abstraction arbitrary values
 
     >>> from netzob.all import *
+    >>> t = IPv4()
+    >>> print(t)
+    IPv4()
+    >>> t.size
+    (0, 4294967296)
+    >>> t.unitSize
+    UnitSize.SIZE_32
+
+    >>> t = IPv4(network="192.168.0.0/24")
+    >>> print(t)
+    IPv4("192.168.0.0/24")
+
+    >>> t = IPv4("192.168.1.1")
+    >>> print(t)
+    IPv4("192.168.1.1")
+
+
+    # test abstraction arbitrary values
+
     >>> domains = [
     ...    IPv4("1.2.3.4"), IPv4(),
     ... ]

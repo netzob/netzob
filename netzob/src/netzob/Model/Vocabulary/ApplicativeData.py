@@ -54,7 +54,7 @@ class ApplicativeData(object):
 
     >>> app1 = ApplicativeData("Email", String("contact@netzob.org"))
     >>> print(app1.value)
-    String=contact@netzob.org ((None, None))
+    String('contact@netzob.org')
 
     """
 

@@ -759,14 +759,14 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> print(symbol.str_structure())
         symbol_name
         |--  field1
-             |--   Data (String=None ((None, None)))
+             |--   Data (String(nbChars=(0,8192)))
         |--  field2
-             |--   Data (Integer=None ((10, 100)))
+             |--   Data (Integer(10,100))
         |--  field3
-             |--   Data (Raw=None ((112, 112)))
+             |--   Data (Raw(nbBytes=14))
         >>> print(f1.str_structure())
         field1
-        |--   Data (String=None ((None, None)))
+        |--   Data (String(nbChars=(0,8192)))
 
         """
         tab = ["|--  " for x in range(deepness)]

@@ -503,7 +503,7 @@ def _test():
     >>> f2 = Field(Size([f1], dataType=uint16(0)))
     Traceback (most recent call last):
     ...
-    Exception: Relation dataType should not have a constant value: 'Integer=0 ((None, None))'.
+    Exception: Relation dataType should not have a constant value: 'Integer(0)'.
 
 
 

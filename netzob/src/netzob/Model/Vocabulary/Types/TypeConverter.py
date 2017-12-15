@@ -126,7 +126,7 @@ class TypeConverter(object):
         IPAddress('10.0.168.192')
 
         """
-        # is the two formats supported ?
+        # are the two formats supported ?
         if not issubclass(sourceType, tuple(TypeConverter.supportedTypes())):
             raise TypeError(
                 "The source type ({0}) is not supported".format(sourceType))

@@ -229,15 +229,15 @@ class SVAS(Enum):
       >>> Symbol.abstract("john", [s], memory=m)
       (S0, OrderedDict([('f1', b'john')]))
       >>> print(m)
-      Data (String=None ((32, 80))): b'john'
+      Data (String(nbChars=(4,10))): b'john'
       >>> Symbol.abstract("john", [s], memory=m)
       (S0, OrderedDict([('f1', b'john')]))
       >>> print(m)
-      Data (String=None ((32, 80))): b'john'
+      Data (String(nbChars=(4,10))): b'john'
       >>> Symbol.abstract("kurt", [s], memory=m)
       (S0, OrderedDict([('f1', b'kurt')]))
       >>> print(m)
-      Data (String=None ((32, 80))): b'kurt'
+      Data (String(nbChars=(4,10))): b'kurt'
 
 
       The following examples show the **specialization of ephemeral

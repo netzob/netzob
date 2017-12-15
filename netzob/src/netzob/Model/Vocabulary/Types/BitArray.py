@@ -176,7 +176,7 @@ class BitArray(AbstractType):
         if value is None:
             nbBits = self._normalizeNbBits(nbBits)
         else:
-            nbBits = (None, None)
+            nbBits = (len(value), len(value))
 
         super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
         self.constants = None  # A list of named constant used to access the bitarray elements
@@ -377,9 +377,23 @@ class BitArray(AbstractType):
 
 def _test():
     r"""
-    # test abstraction arbitrary values
 
     >>> from netzob.all import *
+    >>> t = BitArray()
+    >>> print(t)
+    BitArray(nbBits=(0,65536)
+    >>> t.size
+    (0, 65536)
+    >>> t.unitSize
+    UnitSize.SIZE_16
+
+    >>> t = BitArray('01010001')
+    >>> print(t)
+    BitArray=bitarray('01010001')
+
+
+    # test abstraction arbitrary values
+
     >>> domains = [
     ...     BitArray(nbBits=8),  # BitArray(bitarray("00001111" "1")), BitArray(nbBits=7),
     ... ]

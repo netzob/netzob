@@ -123,9 +123,9 @@ class Alt(AbstractVariableNode):
     >>> domain.varType
     'Alt'
     >>> print(domain.children[0].dataType)
-    Raw=None ((0, 65536))
+    Raw(nbBytes=(0,8192))
     >>> print(domain.children[1].dataType)
-    String=None ((None, None))
+    String(nbChars=(0,8192))
 
 
     **Example of a deterministic Alt computation**

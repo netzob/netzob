@@ -125,7 +125,7 @@ class Memory(object):
         >>> memory = Memory()
         >>> memory.memorize(variable, String("hello").value)
         >>> print(memory)
-        Data (String=None ((None, None))): b'hello'
+        Data (String(nbChars=(0,8192))): b'hello'
 
         """
         self.memory[variable] = value
@@ -202,10 +202,10 @@ class Memory(object):
         :rtype: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
 
         >>> from netzob.all import *
-        >>> d1 = Data(Integer())
+        >>> d1 = Data(uint8())
         >>> d2 = Data(String())
         >>> m = Memory()
-        >>> m.memorize(d1, Integer(100).value)
+        >>> m.memorize(d1, uint8(100).value)
         >>> m.memorize(d2, String("hello").value)
         >>> m.getValue(d1)
         bitarray('01100100')

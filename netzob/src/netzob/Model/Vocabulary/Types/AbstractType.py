@@ -215,12 +215,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                  sign=None):
         self.id = uuid.uuid4()
         self.typeName = typeName
-
-        # If 'value' is defined, 'size' should not
-        if value is not None:
-            if not(isinstance(size, tuple) and len(size) == 2 and size[0] is None and size[1] is None):
-                raise Exception("'value' and 'size' parameters cannot be defined at the same time for a type: value={}, size={}".format(value, size))
-
         self.value = value
         self.size = size
 
@@ -260,12 +254,15 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         from netzob.Model.Vocabulary.Types.BitArray import BitArray
         if self.value is not None:
-            return "{0}={1} ({2})".format(
+            return "{}={}".format(
                 self.typeName,
                 TypeConverter.convert(self.value, BitArray,
-                                      self.__class__), self.size)
+                                      self.__class__))
         else:
-            return "{0}={1} ({2})".format(self.typeName, self.value, self.size)
+            if self.size[0] == self.size[1]:
+                return "{}(nbBits={})".format(self.typeName, self.size[0])
+            else:
+                return "{}(nbBits=({},{})".format(self.typeName, self.size[0], self.size[1])
 
     def __repr__(self):
         if self.value is not None:
@@ -415,11 +412,39 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         r"""Return a UnitSize that permits to encode the provided length.
 
         >>> from netzob.Model.Vocabulary.Types.BitArray import BitArray
+        >>> from netzob.Model.Vocabulary.Types.Raw import Raw
+        >>> from netzob.Model.Vocabulary.Types.HexaString import HexaString
+        >>> from netzob.Model.Vocabulary.Types.String import String
+        >>> from netzob.Model.Vocabulary.Types.Integer import Integer
         >>> b = BitArray('0')
         >>> b.unitSize
         UnitSize.SIZE_4
         >>> len(b.generate())
         1
+
+        >>> b = Raw(b'a')
+        >>> b.unitSize
+        UnitSize.SIZE_4
+        >>> len(b.generate())
+        8
+
+        >>> b = HexaString(b'aa')
+        >>> b.unitSize
+        UnitSize.SIZE_4
+        >>> len(b.generate())
+        8
+
+        >>> b = String('a')
+        >>> b.unitSize
+        UnitSize.SIZE_4
+        >>> len(b.generate())
+        8
+
+        >>> b = Integer(1)
+        >>> b.unitSize
+        UnitSize.SIZE_16
+        >>> len(b.generate())
+        16
 
         >>> b = BitArray('00')
         >>> b.unitSize
@@ -491,12 +516,12 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         >>> t = Integer(100)
         >>> print(t.mutate())
-        OrderedDict([('bits(bigEndian)', bitarray('01100100')), ('bits(littleEndian)', bitarray('00100110'))])
+        OrderedDict([('bits(bigEndian)', bitarray('0000000001100100')), ('bits(littleEndian)', bitarray('0000000000100110'))])
 
         >>> t = Integer()
         >>> mutations = t.mutate()
         >>> print(len(mutations['bits(littleEndian)']))
-        8
+        16
 
         :keyword prefixDescription: prefix to attach to the description of the generated mutation.
         :type prefixDescription: :class:`str`
@@ -612,7 +637,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
          >>> from netzob.all import *
          >>> f = Field(String(nbChars=(10,None)))
          >>> f.domain.dataType.size
-         (80, None)
+         (80, 65536)
 
          while to create a Raw field which content has no specific limits:
 
@@ -629,12 +654,18 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def size(self, size):
 
         if size is None:
-            size = (None, None)
+            size = (0, AbstractType.MAXIMUM_GENERATED_DATA_SIZE)
         elif isinstance(size, int):
             size = (size, size)
 
         if isinstance(size, tuple):
             minSize, maxSize = size
+
+            if minSize is None:
+                minSize = 0
+
+            if maxSize is None:
+                maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
 
             if minSize is not None and not isinstance(minSize, int):
                 raise TypeError("Size must be defined with a tuple of int")
@@ -705,7 +736,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         >>> data.currentValue.tobytes()
         b'hello john !'
         >>> print(data.dataType)
-        String=hello john ! ((None, None))
+        String('hello john !')
 
         :return: a Data of the current type
         :rtype: :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leads.Data.Data>`

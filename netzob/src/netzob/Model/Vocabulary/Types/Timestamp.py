@@ -185,7 +185,7 @@ class Timestamp(AbstractType):
     >>> timestamp = time.mktime(date.timetuple())
     >>> time = Timestamp(timestamp)
     >>> time.size
-    (None, None)
+    (0, 4294967296)
     >>> time.value
     bitarray('01010110000110010011010010011010')
     >>> time.sign
@@ -248,19 +248,38 @@ class Timestamp(AbstractType):
         self.epoch = epoch
         self.unity = unity
 
-        # Handle data size if value is None
-        if value is None:
-            nbBits = (unitSize.value, unitSize.value)
-        else:
-            nbBits = (None, None)
+        size = (0, 1 << unitSize.value)
 
         super(Timestamp, self).__init__(
             self.__class__.__name__,
             value,
-            nbBits,
+            size,
             unitSize=unitSize,
             endianness=endianness,
             sign=sign)
+
+    def __str__(self):
+        if self.value is not None:
+            return "{}({})".format(self.typeName, int.from_bytes(self.value.tobytes(), byteorder='big'))
+        else:
+            return "{}()".format(self.typeName)
+
+    def count(self, presets=None, fuzz=None):
+        r"""
+
+        >>> from netzob.all import *
+        >>> Timestamp().count()
+        4294967296
+
+        >>> Timestamp(1444494130).count()
+        1
+
+        """
+
+        if self.value is not None:
+            return 1
+        else:
+            return (1 << self.unitSize.value)
 
     def canParse(self,
                  data,
@@ -418,9 +437,22 @@ class Timestamp(AbstractType):
 
 def _test():
     r"""
-    # test abstraction of arbitrary values
 
     >>> from netzob.all import *
+    >>> t = Timestamp()
+    >>> print(t)
+    Timestamp()
+    >>> t.size
+    (0, 4294967296)
+    >>> t.unitSize
+    UnitSize.SIZE_32
+
+    >>> t = Timestamp(1444494130)
+    >>> print(t)
+    Timestamp(1444494130)
+
+    # test abstraction of arbitrary values
+
     >>> domains = [
     ...     Timestamp(), Timestamp(1444737333),
     ... ]
