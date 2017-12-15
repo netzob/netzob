@@ -87,6 +87,7 @@ from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Mutators.IPv4Mutator import IPv4Mutator
 from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator
+from netzob.Fuzzing.Mutators.OptMutator import OptMutator
 from netzob.Fuzzing.Mutators.StringMutator import StringMutator
 from netzob.Fuzzing.Mutators.TimestampMutator import TimestampMutator
 
@@ -220,6 +221,7 @@ def getSuite():
         AggMutator.__module__,
         AutomataMutator.__module__,
         RepeatMutator.__module__,
+        OptMutator.__module__,
         DeterministGenerator.__module__,
         Generator.__module__,
         IntegerMutator.__module__,
