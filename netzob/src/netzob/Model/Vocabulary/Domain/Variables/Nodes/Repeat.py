@@ -137,8 +137,11 @@ class Repeat(AbstractVariableNode):
     The callback function is called each time the child element is
     seen.
 
-    The callback function should return a boolean telling if the
-    expected number of repetitions is reached (True) or not (False).
+    The callback function should return one of the following values:
+
+    * :attr:`RepeatResult.CONTINUE`: this tells to continue the repetition.
+    * :attr:`RepeatResult.STOP_BEFORE`: this tells to stop the repetition before the current value of the child.
+    * :attr:`RepeatResult.STOP_AFTER`: this tells to stop the repetition after the current value of the child.
 
 
     **Basic usage of Repeat**
@@ -209,10 +212,10 @@ class Repeat(AbstractVariableNode):
 
     The following example shows how to create a Repeat variable whose
     number of repetitions is handled by calling a callback function
-    which returns a boolean telling if the expected number of
-    repetitions is reached. Here, in parsing mode, the repeat stops
-    when the `b'B'` byte is encountered. In specialization mode, the
-    repeat stops at the first iteration.
+    telling if the expected number of repetitions is reached. Here, in
+    parsing mode, the repeat stops when the `b'B'` byte is
+    encountered. In specialization mode, the repeat stops at the first
+    iteration.
 
     >>> from netzob.all import *
     >>> def cbk(nb_repeat, data, path, child, remaining=None):
