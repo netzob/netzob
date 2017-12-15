@@ -44,13 +44,12 @@
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 
 
-class Optional(Repeat):
-    """The Optional class is a node variable that represents a variable
+class Opt(Repeat):
+    """The Opt class is a node variable that represents a variable
     that may or may not produce a value, either in abstraction or
     specialization.
 
-    The Optional constructor expects some parameters:
-
+    The Opt constructor expects some parameters:
 
     :param child: The optional variable element.
     :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
@@ -58,13 +57,10 @@ class Optional(Repeat):
 
     >>> from netzob.all import *
     >>> f0 = Field(String("a"), "f0")
-    >>> f1 = Field(Optional(String("b")), "f1")
+    >>> f1 = Field(Opt(String("b")), "f1")
     >>> assert Symbol([f0, f1]).specialize() in (b"a", b"ab")
 
     """
 
     def __init__(self, child):
-        super(Optional, self).__init__(child, (0, 1))
-
-
-Opt = Optional
+        super(Opt, self).__init__(child, (0, 1))

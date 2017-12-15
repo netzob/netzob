@@ -124,7 +124,7 @@ def getSuite():
         Alt.__module__,
         Agg.__module__,
         Repeat.__module__,
-        Optional.__module__,
+        Opt.__module__,
         Data.__module__,
         FieldSplitStatic.__module__,
         FieldSplitAligned,
