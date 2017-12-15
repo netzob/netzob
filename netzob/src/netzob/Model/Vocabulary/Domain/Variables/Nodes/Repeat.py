@@ -300,6 +300,50 @@ class Repeat(AbstractVariableNode):
         self.nbRepeat = nbRepeat  # type: nbRepeatType
         self.delimiter = delimiter
 
+    def count(self, fuzz=None):
+        r"""
+
+        >>> from netzob.all import *
+        >>> d = Repeat(uint8(), nbRepeat=3)
+        >>> d.count()
+        16777216
+
+        >>> d = Repeat(uint8(), nbRepeat=(1, 2))
+        >>> d.count()
+        65536
+
+        >>> def cbk(nb_repeat, data, path, child, remaining=None):
+        ...     return RepeatResult.STOP_AFTER
+        >>> d = Repeat(uint8(), nbRepeat=cbk)
+        >>> d.count()
+        86400000000
+
+        """
+
+        from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.GENERATE:
+            # Retrieve the mutator
+            mutator = fuzz.get(self)
+            return mutator.count()
+        else:
+            # Handle max repeat
+            if isinstance(self.nbRepeat, tuple):
+                max_repeat = self.nbRepeat[1]
+            elif isinstance(self.nbRepeat, int):
+                max_repeat = self.nbRepeat
+            else:
+                max_repeat = Repeat.MAX_REPEAT
+
+            # Handle count() of children
+            count = self.children[0].count(fuzz=fuzz)
+
+            # Result
+            count = count ** max_repeat
+            if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+                return AbstractType.MAXIMUM_POSSIBLE_VALUES
+            else:
+                return count
+
     @typeCheck(ParsingPath)
     def parse(self, parsingPath, **kwargs):
         """Parse the content with the definition domain of the Repeat

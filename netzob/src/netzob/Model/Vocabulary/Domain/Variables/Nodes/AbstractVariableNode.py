@@ -67,6 +67,36 @@ class AbstractVariableNode(AbstractVariable):
     def isnode(self):
         return True
 
+    def count(self, fuzz=None):
+        r"""
+
+        >>> from netzob.all import *
+        >>> 
+        >>> d = Agg([uint8(), uint8()])
+        >>> d.count()
+        65536
+
+        >>> d = Alt([uint8(), uint8()])
+        >>> d.count()
+        65536
+
+        >>> d = Repeat(uint8(), nbRepeat=3)
+        >>> d.count()
+        65536
+
+        """
+
+        from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.GENERATE:
+            # Retrieve the mutator
+            mutator = fuzz.get(self)
+            return mutator.count(fuzz=fuzz)
+        else:
+            count = 1
+            for t in self.children:
+                count *= t.count(fuzz=fuzz)
+            return count
+
     @property
     def children(self):
         """Sorted typed list of children attached to the variable node.

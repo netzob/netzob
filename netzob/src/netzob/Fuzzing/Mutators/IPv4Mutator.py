@@ -103,6 +103,30 @@ class IPv4Mutator(DomainMutator):
                          seed=seed,
                          counterMax=counterMax)
 
+    def count(self):
+        r"""
+
+        >>> from netzob.all import *
+        >>> f = Field(IPv4("127.0.0.1"))
+        >>> IPv4Mutator(f.domain).count()
+        4294967296
+
+        >>> f = Field(IPv4())
+        >>> IPv4Mutator(f.domain).count()
+        4294967296
+
+        >>> f = Field(IPv4(network='192.168.0.0/24'))
+        >>> IPv4Mutator(f.domain).count()
+        4294967296
+
+        >>> f = Field(IPv4(network='192.168.0.0/23'))
+        >>> IPv4Mutator(f.domain).count()
+        4294967296
+
+        """
+
+        return (1 << self.domain.dataType.unitSize.value)
+
     def generate(self):
         """This is the mutation method of the IPv4 type.
         It uses a PRNG to produce the value corresponding to the domain.

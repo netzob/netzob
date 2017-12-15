@@ -49,7 +49,7 @@ from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
-from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 
 
 class HexaStringMutator(DomainMutator):
@@ -121,6 +121,43 @@ class HexaStringMutator(DomainMutator):
         model_max = int(self.domain.dataType.size[1] / 8)
         model_unitSize = self.domain.dataType.unitSize
         self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
+
+    def count(self):
+        r"""
+
+        >>> from netzob.all import *
+        >>> f = Field(HexaString())
+        >>> HexaStringMutator(f.domain).count()
+        86400000000
+
+        >>> f = Field(HexaString(nbBytes=4))
+        >>> HexaStringMutator(f.domain).count()
+        4294967296
+
+        >>> f = Field(HexaString(nbBytes=1))
+        >>> HexaStringMutator(f.domain).count()
+        256
+
+        >>> f = Field(HexaString(nbBytes=(1, 3)))
+        >>> HexaStringMutator(f.domain).count()
+        16843008
+
+        >>> f = Field(HexaString(b"abcd"))
+        >>> HexaStringMutator(f.domain).count()
+        65536
+
+        """
+
+        range_min = int(self.domain.dataType.size[0] / 8)
+        range_max = int(self.domain.dataType.size[1] / 8)
+        permitted_values = 256
+        count = 0
+        for i in range(range_min, range_max + 1):
+            count += permitted_values ** i
+        if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+            return AbstractType.MAXIMUM_POSSIBLE_VALUES
+        else:
+            return count
 
     def generate(self):
         """This is the fuzz generation method of the raw field.

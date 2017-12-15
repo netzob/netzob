@@ -66,6 +66,15 @@ class AbstractVariableLeaf(AbstractVariable):
     def isnode(self):
         return False
 
+    def count(self, fuzz=None):
+        from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.GENERATE:
+            # Retrieve the mutator
+            mutator = fuzz.get(self)
+            return mutator.count()
+        else:
+            return self.dataType.count()
+
     def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """@toto TO BE DOCUMENTED"""
 

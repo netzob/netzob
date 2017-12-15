@@ -109,6 +109,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     # 65536 bits (which equals to 2^16 bits) is a completly arbitrary value used to limit data generation
     MAXIMUM_GENERATED_DATA_SIZE = 1 << 16
 
+    # This value fixes a limit to the possible values a type can
+    # generate. This limit corresponds to 1 day of data generation
+    # based on a generation bandwith of 1 millions per seconds. Therefore: max = 1.000.000 * 3600 * 24
+    MAXIMUM_POSSIBLE_VALUES = 86400000000
+
     @staticmethod
     def supportedTypes():
         """Official list of supported types"""
@@ -290,6 +295,10 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     def __hash__(self):
         return hash(self.__key())
+
+    @abc.abstractmethod
+    def count(self, presets=None, fuzz=None):
+        raise NotImplementedError("Method count() is not implemented")
 
     @public_api
     @typeCheck(type)

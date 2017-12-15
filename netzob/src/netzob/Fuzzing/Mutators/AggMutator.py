@@ -150,6 +150,21 @@ class AggMutator(DomainMutator):
         self.mutateChild = mutateChild
         self.mappingTypesMutators = mappingTypesMutators
 
+    def count(self, fuzz=None):
+        r"""
+
+        >>> from netzob.all import *
+        >>> 
+        >>> d = Agg([uint8(), uint8()])
+        >>> AggMutator(d).count()
+        65536
+
+        """
+        count = 1
+        for t in self.domain.children:
+            count *= t.count(fuzz=fuzz)
+        return count
+
     @property
     def mutateChild(self):
         """

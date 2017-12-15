@@ -203,6 +203,40 @@ class Raw(AbstractType):
 
         return (nbMinBit, nbMaxBit)
 
+    def count(self, presets=None, fuzz=None):
+        r"""
+
+        >>> from netzob.all import *
+        >>> Raw().count()
+        86400000000
+
+        >>> Raw(nbBytes=4).count()
+        4294967296
+
+        >>> Raw(nbBytes=1).count()
+        256
+
+        >>> Raw(nbBytes=(1, 3)).count()
+        16843008
+
+        >>> Raw(b"abcd").count()
+        1
+
+        """
+        if self.value is not None:
+            return 1
+        else:
+            range_min = int(self.size[0] / 8)
+            range_max = int(self.size[1] / 8)
+            permitted_values = 256
+            count = 0
+            for i in range(range_min, range_max + 1):
+                count += permitted_values ** i
+            if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+                return AbstractType.MAXIMUM_POSSIBLE_VALUES
+            else:
+                return count
+
     def generate(self, generationStrategy=None):
         """Generates a random Raw that respects the requested size or the
         predefined value.

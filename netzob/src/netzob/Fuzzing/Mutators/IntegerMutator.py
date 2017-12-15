@@ -313,7 +313,34 @@ class IntegerMutator(DomainMutator):
         # Else instanciate the other kind of generator
         else:
             self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
-                
+
+    def count(self):
+        r"""
+
+        >>> from netzob.all import *
+        >>> f = Field(Integer())
+        >>> IntegerMutator(f.domain).count()
+        65536
+
+        >>> f = Field(Integer(4))
+        >>> IntegerMutator(f.domain).count()
+        65536
+
+        >>> f = Field(Integer(interval=(1, 10)))
+        >>> IntegerMutator(f.domain).count()
+        65536
+
+        >>> f = Field(uint8(interval=(1, 10)))
+        >>> IntegerMutator(f.domain).count()
+        256
+
+        """
+
+        if isinstance(self.generator, DeterministGenerator):
+            return len(self.generator._values)
+        else:
+            return self._maxLength - self._minLength + 1
+
     def generate(self):
         """This is the mutation method of the integer type.
         It uses a PRNG to produce the value between minValue and maxValue.

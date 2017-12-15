@@ -199,6 +199,44 @@ class RepeatMutator(DomainMutator):
         model_unitSize = self.domain.UNIT_SIZE
         self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
 
+    def count(self, fuzz=None):
+        r"""
+
+        >>> from netzob.all import *
+        >>> d = Repeat(uint8(), nbRepeat=3)
+        >>> RepeatMutator(d).count()
+        16777216
+
+        >>> d = Repeat(uint8(), nbRepeat=(1, 2))
+        >>> RepeatMutator(d).count()
+        65536
+
+        >>> def cbk(nb_repeat, data, path, child, remaining=None):
+        ...     return RepeatResult.STOP_AFTER
+        >>> d = Repeat(uint8(), nbRepeat=cbk)
+        >>> RepeatMutator(d).count()
+        86400000000
+
+        """
+
+        # Handle max repeat
+        if isinstance(self.domain.nbRepeat, tuple):
+            max_repeat = self.domain.nbRepeat[1]
+        elif isinstance(self.domain.nbRepeat, int):
+            max_repeat = self.domain.nbRepeat
+        else:
+            max_repeat = Repeat.MAX_REPEAT
+
+        # Handle count() of children
+        count = self.domain.children[0].count(fuzz=fuzz)
+
+        # Result
+        count = count ** max_repeat
+        if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+            return AbstractType.MAXIMUM_POSSIBLE_VALUES
+        else:
+            return count
+
     @property
     def mutateChild(self):
         """

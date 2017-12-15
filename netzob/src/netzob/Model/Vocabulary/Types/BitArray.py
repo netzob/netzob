@@ -225,6 +225,41 @@ class BitArray(AbstractType):
 
         return (nbMinBit, nbMaxBit)
 
+    def count(self, presets=None, fuzz=None):
+        r"""
+
+        >>> from netzob.all import *
+        >>> BitArray().count()
+        86400000000
+
+        >>> BitArray(nbBits=4).count()
+        16
+
+        >>> BitArray(nbBits=1).count()
+        2
+
+        >>> BitArray(nbBits=(1, 3)).count()
+        14
+
+        >>> BitArray("0101").count()
+        1
+
+        """
+
+        if self.value is not None:
+            return 1
+        else:
+            range_min = self.size[0]
+            range_max = self.size[1]
+            permitted_values = 2
+            count = 0
+            for i in range(range_min, range_max + 1):
+                count += permitted_values ** i
+            if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+                return AbstractType.MAXIMUM_POSSIBLE_VALUES
+            else:
+                return count
+
     def canParse(self,
                  data,
                  unitSize=AbstractType.defaultUnitSize(),

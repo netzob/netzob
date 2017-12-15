@@ -252,6 +252,38 @@ class String(AbstractType):
 
         return (nbMinBits, nbMaxBits)
 
+    def count(self, presets=None, fuzz=None):
+        r"""
+
+        >>> from netzob.all import *
+        >>> String().count()
+        86400000000
+
+        >>> String(nbChars=4).count()
+        100000000
+
+        >>> String(nbChars=(1, 2)).count()
+        10100
+
+        >>> String("hello").count()
+        1
+
+        """
+
+        if self.value is not None:
+            return 1
+        else:
+            range_min = int(self.size[0] / 8)
+            range_max = int(self.size[1] / 8)
+            permitted_values = len(string.printable)
+            count = 0
+            for i in range(range_min, range_max + 1):
+                count += permitted_values ** i
+            if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+                return AbstractType.MAXIMUM_POSSIBLE_VALUES
+            else:
+                return count
+
     def generate(self, generationStrategy=None):
         """Generates a random String that respects the requested size.
 

@@ -369,6 +369,18 @@ class Field(AbstractField):
 
         return specializingPath.getData(self.domain).tobytes()
 
+    def count(self, presets=None, fuzz=None):
+        count = 1
+        if len(self.fields) > 0:
+            for field in self.fields:
+                if presets is not None and field in presets.keys():
+                    pass
+                else:
+                    count *= field.count(presets=presets, fuzz=fuzz)
+        else:
+            count = self.domain.count(fuzz=fuzz)
+        return count
+
     @property
     def domain(self):
         """This defines the definition domain of a field.

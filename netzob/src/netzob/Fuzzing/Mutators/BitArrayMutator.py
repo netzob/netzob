@@ -124,6 +124,43 @@ class BitArrayMutator(DomainMutator):
         # Initialize data generator
         self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
 
+    def count(self):
+        r"""
+
+        >>> from netzob.all import *
+        >>> f = Field(BitArray())
+        >>> BitArrayMutator(f.domain).count()
+        86400000000
+
+        >>> f = Field(BitArray(nbBits=4))
+        >>> BitArrayMutator(f.domain).count()
+        16
+
+        >>> f = Field(BitArray(nbBits=1))
+        >>> BitArrayMutator(f.domain).count()
+        2
+
+        >>> f = Field(BitArray(nbBits=(1, 3)))
+        >>> BitArrayMutator(f.domain).count()
+        14
+
+        >>> f = Field(BitArray("0101"))
+        >>> BitArrayMutator(f.domain).count()
+        16
+
+        """
+
+        range_min = self.domain.dataType.size[0]
+        range_max = self.domain.dataType.size[1]
+        permitted_values = 2
+        count = 0
+        for i in range(range_min, range_max + 1):
+            count += permitted_values ** i
+        if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+            return AbstractType.MAXIMUM_POSSIBLE_VALUES
+        else:
+            return count
+
     def generate(self):
         """This is the fuzz generation method of the binary sequence field.
         It uses lengthMutator to get a sequence length, then a PRNG to produce

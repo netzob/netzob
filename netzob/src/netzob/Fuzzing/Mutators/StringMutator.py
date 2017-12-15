@@ -36,6 +36,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 from typing import Tuple  # noqa: F401
+import string
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -51,7 +52,7 @@ from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Field import Field
@@ -165,6 +166,39 @@ class StringMutator(DomainMutator):
 
 
     ## API methods
+
+    def count(self):
+        r"""
+
+        >>> from netzob.all import *
+        >>> f = Field(String())
+        >>> StringMutator(f.domain).count()
+        86400000000
+
+        >>> f = Field(String(nbChars=4))
+        >>> StringMutator(f.domain).count()
+        100000000
+        
+        >>> f = Field(String(nbChars=(1, 2)))
+        >>> StringMutator(f.domain).count()
+        10100
+
+        >>> f = Field(String("hello"))
+        >>> StringMutator(f.domain).count()
+        10000000000
+
+        """
+
+        range_min = int(self.domain.dataType.size[0] / 8)
+        range_max = int(self.domain.dataType.size[1] / 8)
+        permitted_values = len(string.printable)
+        count = 0
+        for i in range(range_min, range_max + 1):
+            count += permitted_values ** i
+        if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+            return AbstractType.MAXIMUM_POSSIBLE_VALUES
+        else:
+            return count
 
     def generate(self):
         """This is the fuzz generation method of the string field.

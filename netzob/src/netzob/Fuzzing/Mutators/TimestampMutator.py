@@ -107,6 +107,22 @@ class TimestampMutator(DomainMutator):
                          seed=seed,
                          counterMax=counterMax)
 
+    def count(self):
+        r"""
+
+        >>> from netzob.all import *
+        >>> f = Field(Timestamp())
+        >>> TimestampMutator(f.domain).count()
+        4294967296
+
+        >>> f = Field(Timestamp(1444494130))
+        >>> TimestampMutator(f.domain).count()
+        4294967296
+
+        """
+
+        return (1 << self.domain.dataType.unitSize.value)
+
     def generate(self):
         """This is the mutation method of the Timestamp type.
         It uses a PRNG to produce the value corresponding to the domain.

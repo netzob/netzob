@@ -38,6 +38,7 @@
 import random
 from enum import Enum
 from typing import Type  # noqa: F401
+import abc
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -121,6 +122,17 @@ class DomainMutator(Mutator):
         self._lengthGenerator = None
         self._minLength = None
         self._maxLength = None
+
+    @abc.abstractmethod
+    def count(self):
+        r"""Computes the expected number of unique values produced, considering
+        the fuzzing parameters on the targeted data.
+
+        :return: The number of unique values the fuzzing can produce.
+        :rtype: a :class:`int`
+
+        """
+        pass
 
     def mutate(self, data):
         """This is the mutation method of the field domain. It has to be

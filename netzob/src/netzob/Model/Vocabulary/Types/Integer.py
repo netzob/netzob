@@ -339,6 +339,32 @@ class Integer(AbstractType):
 
         return min_interval, max_interval
 
+    def count(self, presets=None, fuzz=None):
+        r"""
+
+        >>> from netzob.all import *
+        >>> Integer().count()
+        65536
+
+        >>> Integer(4).count()
+        1
+
+        >>> Integer(interval=(1, 10)).count()
+        10
+
+        >>> uint8(interval=(1, 10)).count()
+        10
+
+        >>> uint8().count()
+        256
+
+        """
+
+        if self.value is not None:
+            return 1
+        else:
+            return self.getMaxValue() - self.getMinValue() + 1
+
     def getMinValue(self):
         if self.value is None:
             return self.size[0]

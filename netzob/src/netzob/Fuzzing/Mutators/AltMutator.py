@@ -189,6 +189,21 @@ class AltMutator(DomainMutator):
         # Internal structure used to determine the position to select at each call to generate()
         self._currentDepth = 0
 
+    def count(self, fuzz=None):
+        r"""
+
+        >>> from netzob.all import *
+        >>> 
+        >>> d = Alt([uint8(), uint8()])
+        >>> AltMutator(d).count()
+        65536
+
+        """
+        count = 1
+        for t in self.domain.children:
+            count *= t.count(fuzz=fuzz)
+        return count
+
     @property
     def maxDepth(self):
         """

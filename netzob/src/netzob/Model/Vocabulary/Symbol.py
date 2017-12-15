@@ -326,8 +326,7 @@ class Symbol(AbstractField):
             return spePath.generatedContent.tobytes()
 
     @public_api
-    @typeCheck(Memory, object, (int, float))
-    def specialize_count(self, presets=None, fuzz=None, timeout=None):
+    def specialize_count(self, presets=None, fuzz=None):
         r"""The :meth:`specialize_count` method computes the expected number of unique
         messages produced, considering the initial symbol model, the
         preset fields and the fuzzed fields.
@@ -346,41 +345,56 @@ class Symbol(AbstractField):
                      :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
                      purpose. The default value is :const:`None`.
-        :param timeout: The computation time beyond which :const:`-1` is returned.
-                        Default value is :const:`None` (no time limit).
         :type presets: ~typing.Dict[~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
                        ~typing.Union[~bitarray.bitarray,bytes,
                        ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
                        optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
-        :type timeout: :class:`float` or :class:`int` in seconds
         :return: The number of unique values the symbol specialization can produce.
         :rtype: a :class:`int`
 
         .. note::
-           The theoretical value returned by :meth:`~specialize_count` may be huge
-           and hard to compute considering the number of variables involved.
-           Beyond :attr:`timeout` the computation would return the special
-           value :const:`-1` indicating a value too large to compute.
+           The theoretical value returned by :meth:`~specialize_count`
+           may be huge. Therefore, we force the returned value to be
+           :attr:`MAXIMUM_POSSIBLE_VALUES` (86400000000), if the
+           theoretical result is beyond this threshold. This limit
+           corresponds to 1 day of data generation based on a generation
+           bandwith of 1 million per second.
 
         >>> # Symbol definition
         >>> from netzob.all import *
+        >>> from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
         >>> f1 = Field(uint16(interval=(50, 1000)))
         >>> f2 = Field(uint8())
         >>> f3 = Field(uint8())
         >>> symbol = Symbol(fields=[f1, f2, f3])
         >>>
-        >>> # Specify the preset fields
-        >>> presetValues = {f1: bitarray('1111111111111111')}
-        >>>
         >>> # Count the expected number of unique produced messages
-        >>> symbol.specialize_count(presets=presetValues) # doctest: +SKIP
-        65536
+        >>> symbol.specialize_count()
+        62324736
+        >>>
+        >>> # Specify a preset for field 'f3'
+        >>> presetValues = {f3: bitarray('11111111')}
+        >>>
+        >>> symbol.specialize_count(presets=presetValues)
+        243456
+        >>>
+        >>> # Specify a fuzz configuration for field 'f2'
+        >>> fuzz = Fuzz()
+        >>> fuzz.set(f2, generator=DeterministGenerator.NG_determinist)
+        >>>
+        >>> symbol.specialize_count(presets=presetValues, fuzz=fuzz)
+        27579
 
         """
 
-        # TODO
-        pass
+        count = 1
+        for field in self.fields:
+            if presets is not None and field in presets.keys():
+                pass
+            else:
+                count *= field.count(presets=presets, fuzz=fuzz)
+        return count
 
     def clearMessages(self):
         """Delete all the messages attached to the current symbol"""
