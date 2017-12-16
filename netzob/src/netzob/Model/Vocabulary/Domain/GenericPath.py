@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import uuid
 from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
@@ -61,7 +60,6 @@ class GenericPath(object):
                  memory=None,
                  dataAssignedToVariable=None,
                  variablesCallbacks=None):
-        self.name = str(uuid.uuid4())
         self.memory = memory
 
         if variablesCallbacks is not None:
@@ -123,14 +121,16 @@ class GenericPath(object):
 
         if variable is None:
             raise Exception("Variable cannot be None")
-        if variable.id in self._dataAssignedToVariable:
-            return self._dataAssignedToVariable[variable.id]
+        if variable in self._dataAssignedToVariable:
+            return self._dataAssignedToVariable[variable]
         elif self.memory is not None and self.memory.hasValue(variable):
             return self.memory.getValue(variable)
 
         raise Exception(
-            "No data assigned to variable '{}', which is linked to field '{}'".format(variable.name,
-                                                                                      variable.field))
+            "In path '{}', no data assigned to variable '{}' (id={}), which is linked to field '{}'".format(self,
+                                                                                                            variable,
+                                                                                                            id(variable),
+                                                                                                            variable.field))
 
     @typeCheck(AbstractVariable)
     def hasData(self, variable):
@@ -139,7 +139,7 @@ class GenericPath(object):
 
         if variable is None:
             raise Exception("Variable cannot be None")
-        if variable.id in self._dataAssignedToVariable:
+        if variable in self._dataAssignedToVariable:
             return True
         if self.memory is not None:
             return self.memory.hasValue(variable)
@@ -156,10 +156,10 @@ class GenericPath(object):
         if variable is None:
             raise Exception("Variable cannot be None")
 
-        if variable.id in self._dataAssignedToVariable:
-            self._logger.debug("Replacing '{}' by '{}' for variable '{}'".format(self._dataAssignedToVariable[variable.id].tobytes(), data.tobytes(), variable))
+        if variable in self._dataAssignedToVariable:
+            self._logger.debug("Replacing '{}' by '{}' for variable '{}'".format(self._dataAssignedToVariable[variable].tobytes(), data.tobytes(), variable))
 
-        self._dataAssignedToVariable[variable.id] = data
+        self._dataAssignedToVariable[variable] = data
 
     @typeCheck(AbstractVariable)
     def removeData(self, variable):
@@ -167,7 +167,7 @@ class GenericPath(object):
         if variable is None:
             raise Exception("Variable cannot be None")
 
-        del self._dataAssignedToVariable[variable.id]
+        del self._dataAssignedToVariable[variable]
 
     @typeCheck(AbstractVariable)
     def removeDataRecursively(self, variable):
@@ -177,8 +177,8 @@ class GenericPath(object):
         if variable is None:
             raise Exception("Variable cannot be None")
 
-        if variable.id in self._dataAssignedToVariable:
-            del self._dataAssignedToVariable[variable.id]
+        if variable in self._dataAssignedToVariable:
+            del self._dataAssignedToVariable[variable]
 
         if self.memory is not None and self.memory.hasValue(variable):
             self.memory.forget(variable)
@@ -257,7 +257,7 @@ class GenericPath(object):
     def show(self):
         self._logger.debug("Variables registered for genericPath: '{}':".format(self))
         for (var, val) in self._dataAssignedToVariable.items():
-            self._logger.debug("  [+] Variable: '{}' - Value: '{}'".format(var, val))
+            self._logger.debug("  [+] Variable: '{}' (id={}), with value: '{}', is linked to field '{}'".format(var, id(var), val.tobytes(), var.field))
 
     @property
     def name(self):
