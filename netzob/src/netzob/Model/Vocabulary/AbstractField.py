@@ -554,8 +554,10 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
                     for i, field_value in enumerate(fields_value):
                         structured_data[alignedData.headers[i]] = field_value
                 return (field, structured_data)
-            except:
-                pass
+            except Exception as e:
+                import logging
+                logging.debug(e)
+                #logging.warn(traceback.format_exc())
 
         from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
         from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
