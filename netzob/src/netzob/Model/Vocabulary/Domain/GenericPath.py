@@ -86,7 +86,7 @@ class GenericPath(object):
         >>> var = Data(dataType=String())
         >>> print(path.hasData(var))
         False
-        >>> path.addResult(var, String("test").value)
+        >>> path.addResult(var, String("test").value)[0]
         True
         >>> print(path.hasData(var))
         True
@@ -99,7 +99,7 @@ class GenericPath(object):
 
         if notify:
             return self._triggerVariablesCallbacks(variable)
-        return True
+        return (True, [self])
 
     def hasResult(self, variable):
         return variable in self._variablesWithResult
@@ -208,6 +208,7 @@ class GenericPath(object):
     def _triggerVariablesCallbacks(self, triggeringVariable):
         from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 
+        resultingPaths = [self]
         for _ in range(len(self._variablesCallbacks)):
 
             callBackToExecute = None
@@ -243,7 +244,7 @@ class GenericPath(object):
 
             # fail when not any path is valid
             if not any(path.ok for path in resultingPaths):
-                return False
+                return (False, resultingPaths)
             else:
                 self._variablesWithResult.append(currentVariable)
 
@@ -252,7 +253,7 @@ class GenericPath(object):
             if remove_cb_cond and callBackToExecute in self._variablesCallbacks:
                 self._variablesCallbacks.remove(callBackToExecute)
 
-        return True
+        return (True, resultingPaths)
 
     def show(self):
         self._logger.debug("Variables registered for genericPath: '{}':".format(self))

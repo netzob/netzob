@@ -220,8 +220,8 @@ class Data(AbstractVariableLeaf):
         results = []
         if len(content) >= len(expectedValue) and content[:len(
                 expectedValue)].tobytes() == expectedValue.tobytes():
-            parsingPath.addResult(self, content[:len(expectedValue)].copy())
-            results.append(parsingPath)
+            (addresult_succeed, addresult_parsingPaths) = parsingPath.addResult(self, content[:len(expectedValue)].copy())
+            results.extend(addresult_parsingPaths)
             self._logger.debug("Data '{}' can be parsed with variable {}".format(content.tobytes(), self))
         else:
             self._logger.debug("Data '{}' cannot be parsed with variable {}".format(content.tobytes(), self))
@@ -265,10 +265,11 @@ class Data(AbstractVariableLeaf):
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
                     newParsingPath = parsingPath.duplicate()
-                    addresult_succeed = newParsingPath.addResult(self, content[:size].copy())
+                    (addresult_succeed, addresult_parsingPaths) = newParsingPath.addResult(self, content[:size].copy())
                     if addresult_succeed:
-                        newParsingPath.memory.memorize(self, content[:size].copy())
-                        yield newParsingPath
+                        for addresult_parsingPath in addresult_parsingPaths:
+                            addresult_parsingPath.memory.memorize(self, content[:size].copy())
+                            yield addresult_parsingPath
                     else:
                         self._logger.debug("Parsed data does not respect a relation")
 
