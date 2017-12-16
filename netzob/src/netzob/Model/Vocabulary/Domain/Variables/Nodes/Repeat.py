@@ -67,7 +67,7 @@ class RepeatResult(IntEnum):
 nbRepeatCbkType = Callable[[int, bitarray, Optional[bitarray],
                             Optional[GenericPath], Optional[AbstractVariable]],
                            RepeatResult]
-nbRepeatType = Union[int, Tuple[int, int], nbRepeatCbkType]
+nbRepeatType = Union[int, Tuple[int, int], nbRepeatCbkType, AbstractVariable]
 
 
 @NetzobLogger
@@ -369,7 +369,20 @@ class Repeat(AbstractVariableNode):
 
         if callable(self.nbRepeat):
             gen = self._parse_callback
+        elif isinstance(self.nbRepeat, AbstractVariable):
+            if parsingPath.hasData(self.nbRepeat):
+                i_repeat = parsingPath.getData(self.nbRepeat)
+                i_repeat = TypeConverter.convert(i_repeat, BitArray, Integer)
+                kwargs['min_nb_repeat'] = i_repeat - 1
+                kwargs['max_nb_repeat'] = i_repeat
+            else:
+                kwargs['min_nb_repeat'] = 0
+                kwargs['max_nb_repeat'] = Repeat.MAX_REPEAT
+                parsingPath.registerVariablesCallBack([self.nbRepeat], self, parsingCB=True)
+            gen = self._parse_without_callback
         else:
+            kwargs['min_nb_repeat'] = self.nbRepeat[0] - 1
+            kwargs['max_nb_repeat'] = self.nbRepeat[1]
             gen = self._parse_without_callback
 
         # result generator
@@ -387,9 +400,7 @@ class Repeat(AbstractVariableNode):
 
         return valid_results
 
-    def _parse_without_callback(self, parsingPath, dataToParse, carnivorous=False):
-        min_nb_repeat = self.nbRepeat[0] - 1
-        max_nb_repeat = self.nbRepeat[1]
+    def _parse_without_callback(self, parsingPath, dataToParse, min_nb_repeat=0, max_nb_repeat=0, carnivorous=False, acceptCallBack=True):
 
         for nb_repeat in range(max_nb_repeat, min_nb_repeat, -1):
 
@@ -503,7 +514,7 @@ class Repeat(AbstractVariableNode):
         yield from newParsingPaths
 
     @typeCheck(SpecializingPath)
-    def specialize(self, originalSpecializingPath, fuzz=None):
+    def specialize(self, originalSpecializingPath, fuzz=None, acceptCallBack=True):
         """Specializes a Repeat"""
 
         if originalSpecializingPath is None:
@@ -511,6 +522,9 @@ class Repeat(AbstractVariableNode):
 
         # initialy, there is a unique path to specialize (the provided one)
         specializingPaths = []
+
+        newSpecializingPath = originalSpecializingPath   #.duplicate()
+        newSpecializingPaths = [newSpecializingPath]
 
         # If we are in a fuzzing mode
         if fuzz is not None and fuzz.get(self) is not None:
@@ -525,11 +539,15 @@ class Repeat(AbstractVariableNode):
         else:
             if callable(self.nbRepeat):
                 i_repeat = Repeat.MAX_REPEAT
+            elif isinstance(self.nbRepeat, AbstractVariable):
+                if newSpecializingPath.hasData(self.nbRepeat):
+                    i_repeat = newSpecializingPath.getData(self.nbRepeat)
+                    i_repeat = TypeConverter.convert(i_repeat, BitArray, Integer)
+                else:
+                    i_repeat = 0
+                    newSpecializingPath.registerVariablesCallBack([self.nbRepeat], self, parsingCB=False)
             else:
                 i_repeat = random.randint(self.nbRepeat[0], self.nbRepeat[1])
-
-        newSpecializingPath = originalSpecializingPath.duplicate()
-        newSpecializingPaths = [newSpecializingPath]
 
         if i_repeat == 0:
             newSpecializingPath.addResult(self, bitarray())
@@ -593,6 +611,7 @@ class Repeat(AbstractVariableNode):
         if isinstance(nbRepeat, int):
             nbRepeat = (nbRepeat, nbRepeat)
 
+        from netzob.Model.Vocabulary.Field import Field
         if isinstance(nbRepeat, tuple):
             minNbRepeat, maxNbRepeat = nbRepeat
 
@@ -616,6 +635,10 @@ class Repeat(AbstractVariableNode):
             self.__nbRepeat = (minNbRepeat, maxNbRepeat)
         elif callable(nbRepeat):
             self.__nbRepeat = nbRepeat
+        elif isinstance(nbRepeat, AbstractVariable):
+            self.__nbRepeat = nbRepeat
+        elif isinstance(nbRepeat, Field):
+            self.__nbRepeat = nbRepeat.domain
         else:
             raise TypeError(
                 "nbRepeat is of wrong type: '{}'.".format(nbRepeat))
@@ -828,5 +851,31 @@ def _test():
     b'AAAAAA'
     >>> Symbol.abstract(d, [s])
     (Symbol, OrderedDict([('f1', b'AAA'), ('f2', b'AAA')]))
+
+
+    # Repeat variable whose nbRepeat is a field/variable on the left
+
+    >>> f1 = Field(uint8(4), name='Nb repeat')
+    >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
+    >>> s = Symbol([f1, f2])
+    >>> d = s.specialize()
+    >>> d
+    b'\x04AAAA'
+    >>>
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('Nb repeat', b'\x04'), ('Repeat', b'AAAA')]))
+
+
+    # Repeat variable whose nbRepeat is a field/variable on the right
+
+    >>> f2 = Field(uint8(4), name='Size field')
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f2), name='Repeat field')
+    >>> s = Symbol([f1, f2])
+    >>> d = s.specialize()
+    >>> d
+    b'AAAA\x04'
+    >>>
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('Repeat field', b'AAAA'), ('Size field', b'\x04')]))
 
     """

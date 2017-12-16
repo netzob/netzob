@@ -207,6 +207,7 @@ class GenericPath(object):
 
     def _triggerVariablesCallbacks(self, triggeringVariable):
         from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
+        from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 
         resultingPaths = [self]
         for _ in range(len(self._variablesCallbacks)):
@@ -249,7 +250,7 @@ class GenericPath(object):
                 self._variablesWithResult.append(currentVariable)
 
             remove_cb_cond = self.hasResult(currentVariable)
-            remove_cb_cond &= isinstance(currentVariable, Data)
+            remove_cb_cond &= isinstance(currentVariable, (Data, Repeat))
             if remove_cb_cond and callBackToExecute in self._variablesCallbacks:
                 self._variablesCallbacks.remove(callBackToExecute)
 
