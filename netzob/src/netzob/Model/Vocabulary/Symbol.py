@@ -481,4 +481,28 @@ def _test_many_relation_abstractions():
     >>> for k in presets:
     ...    assert d[k] == presets[k]
 
+
+    # Test abstraction of ARP message
+
+    >>> data = b"\x00\x01\x08\x00\x06\x04\x00\x02\x00\x22\x4d\x56\x4d\xac\xc0\xa8\xc8\xab\x84\x8f\x69\xc9\x28\x91\xc0\xa8\xc8\xe2"
+
+    >>> arp_hrd = Field(uint16(), "arp.hrd") # Hardware address space (1 for Ethernet)
+    >>> arp_pro = Field(uint16(), "arp.pro") # Protocol address space (2048 for IP)
+    >>> arp_hln = Field(uint8(), "arp.hln")  # byte length of each hardware address
+    >>> arp_pln = Field(uint8(), "arp.pln")  # byte length of each protocol address
+    >>> arp_op = Field(uint16(), "arp.op")   # opcode (1 for request, 2 for reply)
+
+    >>> arp_ip_sha = Field(Raw(nbBytes=6), "arp.sha")
+    >>> arp_ip_spa = Field(Raw(nbBytes=4), "arp.spa")
+    >>> arp_ip_tha = Field(Raw(nbBytes=6), "arp.tha")
+    >>> arp_ip_tpa = Field(Raw(nbBytes=4), "arp.tpa")
+
+    >>> arp_ip_symbol = Symbol(name="arp.ip", fields=([
+    ...     arp_hrd, arp_pro, arp_hln, arp_pln, arp_op,
+    ...     arp_ip_sha, arp_ip_spa, arp_ip_tha, arp_ip_tpa]))
+
+    >>> AbstractField.abstract(data, [arp_ip_symbol])
+    (arp.ip, OrderedDict([('arp.hrd', b'\x00\x01'), ('arp.pro', b'\x08\x00'), ('arp.hln', b'\x06'), ('arp.pln', b'\x04'), ('arp.op', b'\x00\x02'), ('arp.sha', b'\x00"MVM\xac'), ('arp.spa', b'\xc0\xa8\xc8\xab'), ('arp.tha', b'\x84\x8fi\xc9(\x91'), ('arp.tpa', b'\xc0\xa8\xc8\xe2')]))
+
+
     """
