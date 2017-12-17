@@ -372,7 +372,13 @@ class Repeat(AbstractVariableNode):
         elif isinstance(self.nbRepeat, AbstractVariable):
             if parsingPath.hasData(self.nbRepeat):
                 i_repeat = parsingPath.getData(self.nbRepeat)
-                i_repeat = TypeConverter.convert(i_repeat, BitArray, Integer)
+                i_repeat = TypeConverter.convert(i_repeat, BitArray, Integer,
+                                                 src_unitSize=self.nbRepeat.dataType.unitSize,
+                                                 src_endianness=self.nbRepeat.dataType.endianness,
+                                                 src_sign=self.nbRepeat.dataType.sign,
+                                                 dst_unitSize=self.nbRepeat.dataType.unitSize,
+                                                 dst_endianness=self.nbRepeat.dataType.endianness,
+                                                 dst_sign=self.nbRepeat.dataType.sign)
                 kwargs['min_nb_repeat'] = i_repeat - 1
                 kwargs['max_nb_repeat'] = i_repeat
             else:
@@ -542,7 +548,13 @@ class Repeat(AbstractVariableNode):
             elif isinstance(self.nbRepeat, AbstractVariable):
                 if newSpecializingPath.hasData(self.nbRepeat):
                     i_repeat = newSpecializingPath.getData(self.nbRepeat)
-                    i_repeat = TypeConverter.convert(i_repeat, BitArray, Integer)
+                    i_repeat = TypeConverter.convert(i_repeat, BitArray, Integer,
+                                                     src_unitSize=self.nbRepeat.dataType.unitSize,
+                                                     src_endianness=self.nbRepeat.dataType.endianness,
+                                                     src_sign=self.nbRepeat.dataType.sign,
+                                                     dst_unitSize=self.nbRepeat.dataType.unitSize,
+                                                     dst_endianness=self.nbRepeat.dataType.endianness,
+                                                     dst_sign=self.nbRepeat.dataType.sign)
                 else:
                     i_repeat = 0
                     newSpecializingPath.registerVariablesCallBack([self.nbRepeat], self, parsingCB=False)
@@ -865,6 +877,27 @@ def _test():
     >>> Symbol.abstract(d, [s])
     (Symbol, OrderedDict([('Nb repeat', b'\x04'), ('Repeat', b'AAAA')]))
 
+    >>> f1 = Field(uint8(), name='Nb repeat')
+    >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
+    >>> s = Symbol([f1, f2])
+    >>> d = s.specialize()
+    >>> d
+    b'\x9eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    >>>
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('Nb repeat', b'\x9e'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')]))
+
+    >>> f1 = Field(uint8(), name='Nb repeat')
+    >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
+    >>> f3 = Field(Raw(b"A"))
+    >>> s = Symbol([f1, f2, f3])
+    >>> d = s.specialize()
+    >>> d
+    b'2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    >>>
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('Nb repeat', b'2'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A')]))
+
 
     # Repeat variable whose nbRepeat is a field/variable on the right
 
@@ -877,5 +910,24 @@ def _test():
     >>>
     >>> Symbol.abstract(d, [s])
     (Symbol, OrderedDict([('Repeat field', b'AAAA'), ('Size field', b'\x04')]))
+
+    >>> f2 = Field(uint8(), name='Size field')
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f2), name='Repeat field')
+    >>> s = Symbol([f1, f2])
+    >>> d = s.specialize()
+    >>> d
+    b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Size field', b'%')]))
+
+    >>> f3 = Field(uint8(), name='Size field')
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f3), name='Repeat field')
+    >>> f2 = Field(Raw(b"A"))
+    >>> s = Symbol([f1, f2, f3])
+    >>> d = s.specialize()
+    >>> d
+    b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xa9'
+    >>> Symbol.abstract(d, [s])
+    (Symbol, OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A'), ('Size field', b'\xa9')]))
 
     """
