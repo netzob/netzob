@@ -145,10 +145,9 @@ class RawMutator(DomainMutator):
         count = 0
         for i in range(range_min, range_max + 1):
             count += permitted_values ** i
-        if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
-            return AbstractType.MAXIMUM_POSSIBLE_VALUES
-        else:
-            return count
+            if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+                return AbstractType.MAXIMUM_POSSIBLE_VALUES
+        return count
 
     def generate(self):
         """This is the fuzz generation method of the raw field.
