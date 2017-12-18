@@ -94,8 +94,8 @@ deploy:
     - develop
   script:
     - cd netzob
-    - sudo python3 -m pip install -r requirements.txt
-    - sudo python3 -m pip install .
+    - sudo -H python3 -m pip install -r requirements.txt
+    - sudo -H python3 -m pip install .
   after_script:
     - 'sudo find -uid 0 -delete || true'
   dependencies:
