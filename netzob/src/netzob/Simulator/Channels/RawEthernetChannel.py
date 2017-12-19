@@ -182,10 +182,9 @@ class RawEthernetChannel(AbstractChannel):
         if self._socket is None:
             raise Exception("socket is not available")
 
-        packet = data
         len_data = self._socket.sendto(
-            packet, (self.interface,
-                     RawEthernetChannel.ETH_P_ALL))
+            data, (self.interface,
+                   RawEthernetChannel.ETH_P_ALL))
         return len_data
 
     # Properties
