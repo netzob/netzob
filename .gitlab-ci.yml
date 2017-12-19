@@ -13,7 +13,7 @@ stages:
   ssh-add <(echo "$GITHUB_SSH_PRIVATE_KEY")
   mkdir -p ~/.ssh
   echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-  python3 -m pip install --force-reinstall numpy Cython
+  python3 -m pip install --force-reinstall numpy Cython coverage
 
 .apt_sys_deps_template: &apt_sys_deps_definition |
   apt-get update -y
