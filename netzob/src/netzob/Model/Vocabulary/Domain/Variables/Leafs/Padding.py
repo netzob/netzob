@@ -69,6 +69,9 @@ class Padding(AbstractRelationVariableLeaf):
                    will be computed so that the whole structure aligns
                    to this value. This typically corresponds to a
                    block size in cryptography.
+    :param once: If True, the padding is applied only if the total size of the
+                 targeted fields is smaller than the modulo value.
+                 Default value is ``False``.
     :param factor: Specify that the length of the targeted structure (always
                    expressed in bits) should be
                    divided by this factor. The default value is ``1.0``.
@@ -224,11 +227,13 @@ class Padding(AbstractRelationVariableLeaf):
                  targets,
                  data,
                  modulo,
+                 once=False,
                  factor=1.,
                  offset=0,
                  name=None):
         super(Padding, self).__init__(self.__class__.__name__, targets=targets, name=name)
         self.modulo = modulo
+        self.once = once
         self.factor = factor
         self.offset = offset
 
@@ -327,6 +332,9 @@ class Padding(AbstractRelationVariableLeaf):
             # Compute length to pad
             mod = size % self.modulo
             length_to_pad = self.modulo - mod if mod > 0 else 0
+
+            if self.once and size > self.modulo:
+                length_to_pad = 0
 
             # Handle factor parameter
             length_to_pad = length_to_pad / self.factor
