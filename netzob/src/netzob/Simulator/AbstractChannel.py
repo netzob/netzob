@@ -272,17 +272,16 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
             raise Exception("Max write counter reached ({})"
                             .format(self.__writeCounterMax))
 
-        rate_text = "unlimited"
-        rate_unlimited = True
-        if type(rate) is int and rate > 0:
-            rate_text = "{} ko/s".format(round(rate / 1024, 2))
-            rate_unlimited = False
-
         self.__writeCounter += 1
         len_data = 0
         if duration is None:
             len_data = self.writePacket(data)
         else:
+            rate_text = "unlimited"
+            rate_unlimited = True
+            if type(rate) is int and rate > 0:
+                rate_text = "{} ko/s".format(round(rate / 1024, 2))
+                rate_unlimited = False
 
             t_start = time.time()
             t_elapsed = 0
