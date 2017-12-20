@@ -45,7 +45,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode, center
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
@@ -101,7 +101,7 @@ class BitArrayMutator(DomainMutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  interval=MutatorInterval.FULL_INTERVAL,
@@ -115,14 +115,14 @@ class BitArrayMutator(DomainMutator):
                          counterMax=counterMax,
                          lengthBitSize=lengthBitSize)
 
+        # Initialize data generator
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=255)  # 255 in order to cover all values of a byte
+
         # Initialize length generator
         model_min = self.domain.dataType.size[0]
         model_max = self.domain.dataType.size[1]
         model_unitSize = self.domain.dataType.unitSize
-        self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
-
-        # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
+        self._initializeLengthGenerator(generator, interval, (model_min, model_max), model_unitSize)
 
     def count(self):
         r"""
@@ -172,13 +172,7 @@ class BitArrayMutator(DomainMutator):
         super().generate()
 
         # Generate length of random data
-        if self._lengthGenerator is not None:
-            length = next(self._lengthGenerator)
-        else:
-            raise Exception("Length generator not initialized")
-
-        if not isinstance(self._lengthGenerator, DeterministGenerator):
-            length = center(length, self._minLength, self._maxLength)
+        length = next(self._lengthGenerator)
 
         # Generate random data
         value_bits = bitarray('')
@@ -186,8 +180,8 @@ class BitArrayMutator(DomainMutator):
             return value_bits.tobytes()
         while True:
             # Generate random sequence of bits, octet per octet
-            data_int = int(next(self.generator) * 255)
-            data_bytes = data_int.to_bytes(length=1, byteorder='big')
+            data_int = next(self.generator)
+            data_bytes = data_int.to_bytes(1, byteorder='big')
             data_bits = bitarray()
             data_bits.frombytes(data_bytes)
 
@@ -227,7 +221,7 @@ def _test():
     >>> mutator.lengthBitSize
     UnitSize.SIZE_16
     >>> len(mutator.generate())
-    4
+    2
 
 
     # Default BitArray type and fuzzing with specific interval, and specific length bit size
@@ -241,7 +235,7 @@ def _test():
     >>> mutator.lengthBitSize
     UnitSize.SIZE_8
     >>> len(mutator.generate())
-    4
+    2
 
 
     # Default BitArray type and fuzzing with full storage size

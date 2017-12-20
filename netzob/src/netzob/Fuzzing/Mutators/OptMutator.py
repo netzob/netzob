@@ -43,7 +43,7 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode, center
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
@@ -85,12 +85,21 @@ class OptMutator(DomainMutator):
     >>> fieldOpt = Field(Opt(child))
     >>> mutator = OptMutator(fieldOpt.domain)
     >>> mutator.generate()
+    0
+    >>> mutator.generate()
+    0
+    >>> mutator.generate()
+    0
+    >>> mutator.generate()
+    0
+    >>> mutator.generate()
+    1
+    >>> mutator.generate()
     1
     >>> mutator.generate()
     0
     >>> mutator.generate()
     1
-
 
     **Constant definitions**:
     """
@@ -101,7 +110,7 @@ class OptMutator(DomainMutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  mutateChild=True,
@@ -118,6 +127,9 @@ class OptMutator(DomainMutator):
         # Variables from parameters
         self.mutateChild = mutateChild
         self.mappingTypesMutators = mappingTypesMutators
+
+        # Initialize data generator
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=255)  # Arbitrarily maxValue
 
     def count(self, fuzz=None):
         r"""
@@ -184,7 +196,7 @@ class OptMutator(DomainMutator):
         super().generate()
 
         # Randomely decide if we create a transition
-        if (round(next(self.generator)) % 2) == 0:
+        if next(self.generator) % 2 == 0:
             return 0
         else:
             return 1

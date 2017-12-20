@@ -43,7 +43,7 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode, center
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
@@ -165,7 +165,7 @@ class RepeatMutator(DomainMutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  mutateChild=True,
@@ -197,7 +197,7 @@ class RepeatMutator(DomainMutator):
             model_max = Repeat.MAX_REPEAT
 
         model_unitSize = self.domain.UNIT_SIZE
-        self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
+        self._initializeLengthGenerator(generator, interval, (model_min, model_max), model_unitSize)
 
     def count(self, fuzz=None):
         r"""

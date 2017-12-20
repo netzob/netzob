@@ -43,7 +43,7 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode, center
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Fuzzing.Generator import Generator
@@ -93,7 +93,7 @@ class RawMutator(DomainMutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  interval=MutatorInterval.FULL_INTERVAL,
@@ -107,11 +107,14 @@ class RawMutator(DomainMutator):
                          counterMax=counterMax,
                          lengthBitSize=lengthBitSize)
 
+        # Initialize data generator
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=255)  # 255 in order to cover all values of a byte
+
         # Initialize length generator
         model_min = int(self.domain.dataType.size[0] / 8)
         model_max = int(self.domain.dataType.size[1] / 8)
         model_unitSize = self.domain.dataType.unitSize
-        self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
+        self._initializeLengthGenerator(generator, interval, (model_min, model_max), model_unitSize)
 
     def count(self):
         r"""
@@ -161,22 +164,14 @@ class RawMutator(DomainMutator):
         super().generate()
 
         # Generate length of random data
-        if self._lengthGenerator is not None:
-            length = next(self._lengthGenerator)
-        else:
-            raise Exception("Length generator not initialized")
-
-        # Do not align length to min,max if the generator is determinist
-        if not isinstance(self._lengthGenerator, DeterministGenerator): 
-            length = center(length, self._minLength, self._maxLength)
+        length = next(self._lengthGenerator)
 
         valueBytes = bytes()
         if length == 0:
             return valueBytes
         while True:
-            spanBytes = 2  # generate a 2-bytes value
-            valueInt = int(next(self.generator) * (2 ** (8 * spanBytes) - 1))
-            valueBytes += valueInt.to_bytes(spanBytes, byteorder='big')
+            valueInt = next(self.generator)
+            valueBytes += valueInt.to_bytes(1, byteorder='big')
             if len(valueBytes) >= length:
                 break
         return valueBytes[:length]

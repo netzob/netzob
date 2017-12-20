@@ -45,7 +45,7 @@ import string
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode, center
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 from netzob.Fuzzing.Generator import Generator
@@ -110,11 +110,12 @@ class StringMutator(DomainMutator):
     >>> fieldString = Field(String(nbChars=(5, 8)))
     >>> mutator = StringMutator(fieldString.domain, interval=(5, 12), seed=10)
     >>> mutator.generate()
-    b'$ENV\x00'
+    b'Syste\x00'
     >>> mutator.generate()
-    b'<img \\x00\x00'
+    b'$ENV{"\x00'
     >>> mutator.generate()
-    b'%x("l\x00'
+    b'%x("\x00'
+
 
     Constant definitions:
     """
@@ -137,7 +138,7 @@ class StringMutator(DomainMutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  endChar=DEFAULT_END_CHAR,  # type: str
@@ -158,11 +159,14 @@ class StringMutator(DomainMutator):
         self.naughtyStrings = naughtyStrings
         self.endChar = endChar
 
+        # Initialize data generator
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=len(self.naughtyStrings) - 1)
+
         # Initialize length generator
         model_min = int(self.domain.dataType.size[0] / 8)
         model_max = int(self.domain.dataType.size[1] / 8)
         model_unitSize = self.domain.dataType.unitSize
-        self._initializeLengthGenerator(interval, (model_min, model_max), model_unitSize)
+        self._initializeLengthGenerator(generator, interval, (model_min, model_max), model_unitSize)
 
 
     ## API methods
@@ -209,18 +213,11 @@ class StringMutator(DomainMutator):
         super().generate()
 
         # Choose the string to mutate
-        index = int(next(self.generator) * len(self.naughtyStrings))
+        index = next(self.generator)
         value = self.naughtyStrings[index] + self.endChar
 
         # Generate length of random data
-        if self._lengthGenerator is not None:
-            length = next(self._lengthGenerator)
-        else:
-            raise Exception("Length generator not initialized")
-
-        if not isinstance(self._lengthGenerator, DeterministGenerator):
-            if self._minLength is not None and self._maxLength is not None:
-                length = center(length, self._minLength, self._maxLength)
+        length = next(self._lengthGenerator)
 
         # Adapt the initial value according to the final length
         if length > 0:

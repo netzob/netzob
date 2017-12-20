@@ -93,7 +93,11 @@ from netzob.Fuzzing.Mutators.TimestampMutator import TimestampMutator
 
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
+from netzob.Fuzzing.Generators.XorShiftGenerator import XorShiftGenerator
+from netzob.Fuzzing.Generators.WrapperGenerator import WrapperGenerator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -222,8 +226,11 @@ def getSuite():
         AutomataMutator.__module__,
         RepeatMutator.__module__,
         OptMutator.__module__,
-        DeterministGenerator.__module__,
         Generator.__module__,
+        DeterministGenerator.__module__,
+        WrapperGenerator.__module__,
+        XorShiftGenerator.__module__,
+        GeneratorFactory.__module__,
         IntegerMutator.__module__,
         BitArrayMutator.__module__,
         StringMutator.__module__,

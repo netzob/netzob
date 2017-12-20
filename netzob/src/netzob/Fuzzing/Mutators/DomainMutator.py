@@ -102,7 +102,7 @@ class DomainMutator(Mutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,  # type: MutatorMode
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  lengthBitSize=None):
@@ -157,14 +157,14 @@ class DomainMutator(Mutator):
 
     # Internal methods
 
-    def _initializeLengthGenerator(self, fuzzing_interval, model_interval, model_unitSize):
+    def _initializeLengthGenerator(self, generator, fuzzing_interval, model_interval, model_unitSize):
         """Initialize a DeterministGenerator according to the given parameter.
 
         """
 
         # Identify min and max interval from default datatype storage size
         if fuzzing_interval == MutatorInterval.FULL_INTERVAL:
-            generator = DeterministGenerator.NG_determinist
+            generator = 'determinist'
 
             if self.lengthBitSize is None:
                 self.lengthBitSize = model_unitSize  # Use default bitsize
@@ -174,8 +174,6 @@ class DomainMutator(Mutator):
             self._logger.debug("Computed fuzzing interval from datatype storage size: ({}, {})".format(self._minLength, self._maxLength))
 
         else:
-            generator = self.generator
-
             # Identify min and max interval from default datatype interval
             if fuzzing_interval == MutatorInterval.DEFAULT_INTERVAL:
                 self._minLength = model_interval[0]
@@ -266,11 +264,11 @@ def _test():
     >>> type(d)
     <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
 
-    >>> d = IntegerMutator(domain, generator=Generator.NG_mt19937)
+    >>> d = IntegerMutator(domain, generator='mt19937')
     >>> type(d)
     <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
     >>> type(d.generator)
-    <class 'itertools.starmap'>
+    <class 'netzob.Fuzzing.Generators.WrapperGenerator.WrapperGenerator'>
 
     >>> d = IntegerMutator(domain, seed=42)
     >>> type(d)

@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import abc
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -44,32 +43,110 @@ import abc
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Fuzzing.Generator import Generator
 
 
-class Generator(object, metaclass=abc.ABCMeta):
-    """Generates values. Abstract class.
+@NetzobLogger
+class WrapperGenerator(Generator):
+    """Wrapper for generating integer values.
+
     """
 
-    def __init__(self, seed=0):
-        self.seed = seed
+    name = "wrapper"
 
-    @abc.abstractmethod
+    def __init__(self,
+                 iterator,
+                 minValue=None,
+                 maxValue=None,
+                 bitsize=None,
+                 signed=False):
+
+        # Call parent init
+        super().__init__()
+
+        # Initialize variables
+        self._iterator = iterator
+        self.minValue = minValue
+        self.maxValue = maxValue
+        self.bitsize = bitsize  # Not used
+        self.signed = signed    # Not used
+
     def __iter__(self):
-        """The iterator interface."""
+        return self
 
-    @abc.abstractmethod
     def __next__(self):
-        """The iterator interface."""
+        """This is the method to get the next value in the generated list.
+        
+        :return: a generated int value
+        :rtype: :class:`int`
+
+        """
+        result = next(self._iterator)
+
+        if self._minValue is not None and self._maxValue is not None:
+            result = center(result, self._minValue, self._maxValue)
+
+        return result
+
+
+    ## Properties
 
     @property
-    def seed(self):
-        """The seed used to initialize the generator.
+    def minValue(self):
+        return self._minValue
 
-        :type: :class:`int`
-        """
-        return self._seed
+    @minValue.setter  # type: ignore
+    def minValue(self, minValue):
+        if minValue is None:
+            self._minValue = 0
+        else:
+            self._minValue = minValue
 
-    @seed.setter  # type: ignore
-    def seed(self, seed):
-        self._seed = seed
+    @property
+    def maxValue(self):
+        return self._maxValue
+
+    @maxValue.setter  # type: ignore
+    def maxValue(self, maxValue):
+        if maxValue is None:
+            self._maxValue = 1 << 16
+        else:
+            self._maxValue = maxValue
+
+    @property
+    def bitsize(self):
+        return self._bitsize
+
+    @bitsize.setter  # type: ignore
+    def bitsize(self, bitsize):
+        if bitsize is None:
+            self._bitsize = 16
+        else:
+            self._bitsize = bitsize
+
+    @property
+    def signed(self):
+        return self._signed
+
+    @signed.setter  # type: ignore
+    def signed(self, signed):
+        self._signed = signed
+
+
+## Utility functions
+
+def center(val, lower, upper):
+    """
+    Center :attr:`val` between :attr:`lower` and :attr:`upper`.
+    """
+
+    number_values = float(upper) - float(lower) + 1.0
+    result = lower + int(val * number_values)
+
+    # Ensure the produced value is in the range of the permitted values of the domain datatype
+    if result > upper:
+        result = upper
+    elif result < lower:
+        result = lower
+    return result

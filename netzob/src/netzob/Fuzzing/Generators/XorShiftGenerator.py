@@ -43,29 +43,59 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Fuzzing.Generator import Generator
-from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 
 
-class DeterministGenerator(Generator):
+## Parameters taken from reference: "Xorshift RNGs" from George Marsaglia (https://www.jstatsoft.org/article/view/v008i14)
+
+def xorshift8(state):
+    state ^= (state << 7) & 0xff
+    state ^= (state >> 5) & 0xff
+    state ^= (state << 3) & 0xff
+    return state
+
+def xorshift16(state):
+    state ^= (state << 13) & 0xffff
+    state ^= (state >> 9) & 0xffff
+    state ^= (state << 7) & 0xffff
+    return state
+
+def xorshift32(state):
+    state ^= (state << 13) & 0xffffffff
+    state ^= (state >> 17) & 0xffffffff
+    state ^= (state << 5) & 0xffffffff
+    return state
+
+def xorshift64(state):
+    state ^= (state << 11) & 0xffffffffffffffff
+    state ^= (state >> 5) & 0xffffffffffffffff
+    state ^= (state << 32) & 0xffffffffffffffff
+    return state
+
+
+@NetzobLogger
+class XorShiftGenerator(Generator):
     """Generates integer values from a list determined with the size of an
     Integer field.
 
     >>> from netzob.all import *
     >>> seed = 14
-    >>> g = DeterministGenerator(seed, minValue=0, maxValue=255, bitsize=8)
+    >>> g = XorShiftGenerator(seed, minValue=0, maxValue=255)
     >>> next(g)
-    255
+    0
     >>> next(g)
-    254
+    126
     >>> next(g)
-    253
+    149
+
     """
 
-    name = "determinist"
+    name = "xorshift"
 
     def __init__(self,
-                 seed=0,
+                 seed=1,
                  minValue=None,
                  maxValue=None,
                  bitsize=None,
@@ -74,100 +104,68 @@ class DeterministGenerator(Generator):
         # Call parent init
         super().__init__(seed=seed)
 
-        # Initialize other variables
-        self._currentPos = 0
-        self._values = []
+        if seed == 0:
+            raise ValueError("A seed=0 is not compatible with the generator XorShiftGenerator")
 
+        # Initialize variables
+        self._state = seed
         self.minValue = minValue
         self.maxValue = maxValue
         self.bitsize = bitsize
-        
-        # Initialize deterministic values
-        self._createValues(signed)
+        self.signed = signed
+        self._firstCall = True  # Tells if the generator is called for the first time
+
+        # Handle bitsize
+        bitsize = AbstractType.computeUnitSize(abs(self._maxValue - self._minValue) + 1)  # Compute unit size according to the maximum length
+        bitsize = bitsize.value
+
+        if bitsize == 8 or bitsize == 4:
+            self.xorshift = xorshift8
+        elif bitsize == 16:
+            self.xorshift = xorshift16
+        elif bitsize == 32:
+            self.xorshift = xorshift32
+        elif bitsize == 64:
+            self.xorshift = xorshift64
+        else:
+            raise ValueError("Bitsize value '{}' not supported".format(bitsize))
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        """This is the method to get the next value in the generated list.
+        """This is the method to get the next value.
         
-        :return: a generated int value
+        :return: A generated int value.
         :rtype: :class:`int`
-        :raise: ValueError if values is empty
 
         """
-        if len(self._values) == 0:
-            raise ValueError("Value list is empty.")
 
-        self._currentPos = self._currentPos % len(self._values)
-
-        value = self._values[self._currentPos]
-        self._currentPos += 1
-        return value
-    
-    def _createValues(self, signed):
-        self._currentPos = 0
-        signedShift = 0
-
-        if not signed:
-            # on 8 bits : -1 = 0b11111111 = 255 = -1 + 2^8
-            signedShift = 2**self.bitsize
-
-        self._values = list()
-        self._values.append(self.maxValue)  # Q
-        self._values.append(self.minValue)  # P
-        if (self.minValue-1) & ((2**self.bitsize) -1) == self.minValue-1:
-            self._values.append(self.minValue-1)  # P-1
-        self._values.append(self.maxValue-1)  # Q-1
-        self._values.append(self.minValue+1)  # P+1
-        if signed:
-            if (self.maxValue+1) & (2**(self.bitsize-1) - 1) == self.maxValue+1:
-                self._values.append(self.maxValue+1)  # Q+1
+        if self._firstCall:
+            # We force the first iteration to return 0, as it is never reached by xorshift generator
+            self._firstCall = False
+            result = 0
         else:
-            if (self.maxValue+1) & ((2**self.bitsize) - 1) == self.maxValue+1:
-                self._values.append(self.maxValue+1)  # Q+1
-        self._values.append(0)  # 0
-        self._values.append(-1 + signedShift)  # -1
-        self._values.append(1)  # 1
+            self._state = self.xorshift(self._state)
+            result = self._state
 
-        self._values.append(-1 + signedShift)  # -2^0 = -1
-        self._values.append(-2 + signedShift)  # -2^0 - 1 = -2
-        self._values.append(0)  # -2^0 + 1 = 0
-        self._values.append(1)  # 2^0 = 1
-        self._values.append(0)  # 2^0 - 1 = 0
-        self._values.append(2)  # 2^0 + 1 = 2
-        for k in range(1, self.bitsize-2):  # k in [0..N-2]
-            self._values.append(-2**k + signedShift)  # -2^k
-            self._values.append(-2**k - 1 + signedShift)  # -2^k - 1
-            self._values.append(-2**k + 1 + signedShift)  # -2^k + 1
-
-            self._values.append(2**k)  # 2^k
-            self._values.append(2**k - 1)  # 2^k - 1
-            self._values.append(2**k + 1)  # 2^k + 1
-
-        # Removing duplicates
-        self._values = sorted(set(self._values))
-
-        # Order by greater values first
-        self._values.reverse()
-
-        # Update seed value
-        self.seed = self.seed % len(self._values)
-
-    def getValueAt(self, pos):
-        """Returns the value set at postion 'pos' from the generated list.
-
-        :return: a generated int value
-        :rtype: :class:`int`
-        :raise: ValueError if values is empty
-        """
-        if len(self._values) == 0:
-            raise ValueError("Value list is empty.")
-
-        if pos < len(self._values):
-            return self._values(pos)
+        # We respect the interval
+        if self.signed:
+            # Convert uint to int
+            result = result.to_bytes(int(self.bitsize/8), byteorder='big')
+            result = int.from_bytes(result, byteorder='big', signed=True)
+            
+            if result > self.maxValue:
+                result = next(self)
+            elif result < self.minValue:
+                result = next(self)
         else:
-            return None
+            if result > self.maxValue:
+                result = next(self)
+            elif result < self.minValue:
+                result = next(self)
+
+        return result
 
 
     ## Properties
@@ -202,8 +200,12 @@ class DeterministGenerator(Generator):
 
     @bitsize.setter  # type: ignore
     def bitsize(self, bitsize):
-        if bitsize is None:
-            raise ValueError("bitsize should not be None")
-        if not isinstance(bitsize, int):
-            raise ValueError("bitsize should be an int, not: '{}'".format(type(bitsize)))
         self._bitsize = bitsize
+
+    @property
+    def signed(self):
+        return self._signed
+
+    @signed.setter  # type: ignore
+    def signed(self, signed):
+        self._signed = signed

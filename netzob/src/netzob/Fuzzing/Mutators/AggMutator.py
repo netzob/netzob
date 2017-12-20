@@ -85,7 +85,7 @@ class AggMutator(DomainMutator):
     >>> fuzz.set(f_agg)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res
-    b'EuEu'
+    b'\x00\x00\x00\x00'
 
 
     **Fuzzing of an aggregate of variables with non-default fuzzing strategy (MutatorMode.MUTATE)**
@@ -133,7 +133,7 @@ class AggMutator(DomainMutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  mutateChild=True,
@@ -149,6 +149,9 @@ class AggMutator(DomainMutator):
         # Variables from parameters
         self.mutateChild = mutateChild
         self.mappingTypesMutators = mappingTypesMutators
+
+        # Initialize data generator
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=1)
 
     def count(self, fuzz=None):
         r"""

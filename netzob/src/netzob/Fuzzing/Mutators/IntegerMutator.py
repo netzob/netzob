@@ -43,14 +43,15 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode, center
-from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Vocabulary.Types.AbstractType import Sign, UnitSize
 from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
-from netzob.Model.Vocabulary.Types.AbstractType import Sign
+from netzob.Fuzzing.Generators.XorShiftGenerator import XorShiftGenerator
 
 
 @NetzobLogger
@@ -77,7 +78,7 @@ class IntegerMutator(DomainMutator):
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param generator: The name of the generator to use. Set 'determinist' for the determinist generator, else among those
         available in :mod:`randomstate.prng` for a pseudo-random generator.
-        Default value is :attr:`NG_mt19937`.
+        Default value is ``'xorshift'``.
     :param seed: The seed used in pseudo-random Mutator.
         Default value is :attr:`SEED_DEFAULT <netzob.Fuzzing.Mutator.Mutator.SEED_DEFAULT>`.
     :type domain: :class:`AbstractVariable
@@ -119,7 +120,7 @@ class IntegerMutator(DomainMutator):
 
     >>> from netzob.all import *
     >>> fieldInt = Field(uint8())
-    >>> mutator = IntegerMutator(fieldInt.domain, generator=GeneratorFactory.buildGenerator(seed=4321), interval=(10, 20))
+    >>> mutator = IntegerMutator(fieldInt.domain, interval=(10, 20))
     >>> d = mutator.generate()
     >>> 10 <= int.from_bytes(d, byteorder='big') <= 20
     True
@@ -130,7 +131,7 @@ class IntegerMutator(DomainMutator):
 
     >>> from netzob.all import *
     >>> fieldInt1 = Field(Integer())
-    >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=52)
+    >>> mutator = IntegerMutator(fieldInt1.domain, generator='determinist', seed=52)
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
     32767
@@ -141,7 +142,7 @@ class IntegerMutator(DomainMutator):
 
     >>> from netzob.all import *
     >>> fieldInt1 = Field(uint8())
-    >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=1234, interval=(10, 20))
+    >>> mutator = IntegerMutator(fieldInt1.domain, generator='determinist', seed=1234, interval=(10, 20))
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
     255
@@ -152,7 +153,7 @@ class IntegerMutator(DomainMutator):
 
     >>> from netzob.all import *
     >>> fieldInt1 = Field(Integer(interval=(-10, 5)))
-    >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=1234)
+    >>> mutator = IntegerMutator(fieldInt1.domain, generator='determinist', seed=1234)
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
     8193
@@ -163,7 +164,7 @@ class IntegerMutator(DomainMutator):
 
     >>> from netzob.all import *
     >>> fieldInt1 = Field(Integer(unitSize=UnitSize.SIZE_16))
-    >>> mutator = IntegerMutator(fieldInt1.domain, generator=DeterministGenerator.NG_determinist, seed=430)
+    >>> mutator = IntegerMutator(fieldInt1.domain, generator='determinist', seed=430)
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
     32767
@@ -239,7 +240,7 @@ class IntegerMutator(DomainMutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  interval=None,
@@ -262,9 +263,9 @@ class IntegerMutator(DomainMutator):
                 interval = MutatorInterval.FULL_INTERVAL
 
         # Initialize generator
-        self.initializeGenerator(interval)
+        self._initializeGenerator(interval)
 
-    def initializeGenerator(self, interval):
+    def _initializeGenerator(self, interval):
 
         # Find min and max potential values for the datatype interval
         self._minLength = 0
@@ -282,37 +283,30 @@ class IntegerMutator(DomainMutator):
         else:
             raise Exception("Not enough information to generate the mutated data.")
 
-        # Initialize either the determinist number generator
-        if self.generator == DeterministGenerator.name or isinstance(self.generator, DeterministGenerator):
+        # Check bitsize
+        if self.lengthBitSize is not None:
+            if not isinstance(self.lengthBitSize, UnitSize):
+                raise ValueError("{} is not a valid bitsize value".format(self.lengthBitSize))
+        if self.lengthBitSize is None:
+            self.lengthBitSize = self.domain.dataType.unitSize
 
-            # Check bitsize
-            if self.lengthBitSize is not None:
-                if not isinstance(self.lengthBitSize, int) or self.lengthBitSize <= 0:
-                    raise ValueError("{} is not a valid bitsize value".format(self.lengthBitSize))
-            if self.lengthBitSize is None:
-                self.lengthBitSize = self.domain.dataType.unitSize
-
-            # Check minValue and maxValue consistency according to the bitsize value
-            if self._minLength >= 0:
-                if self._maxLength > 2**self.lengthBitSize.value - 1:
-                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self._maxLength, self.lengthBitSize))
-            else:
-                if self._maxLength > 2**(self.lengthBitSize.value - 1) - 1:
-                    raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self._maxLength, self.lengthBitSize))
-                if self._minLength < -2**(self.lengthBitSize.value - 1):
-                    raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self._minLength, self.lengthBitSize.value))
-
-            # Build the generator
-            self.generator = GeneratorFactory.buildGenerator(DeterministGenerator.NG_determinist,
-                                                             seed = self.seed,
-                                                             minValue = self._minLength,
-                                                             maxValue = self._maxLength,
-                                                             bitsize = self.lengthBitSize.value,
-                                                             signed = self.domain.dataType.sign == Sign.SIGNED)
-
-        # Else instanciate the other kind of generator
+        # Check minValue and maxValue consistency according to the bitsize value
+        if self._minLength >= 0:
+            if self._maxLength > (1 << self.lengthBitSize.value) - 1:
+                raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self._maxLength, self.lengthBitSize))
         else:
-            self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
+            if self._maxLength > (1 << (self.lengthBitSize.value - 1)) - 1:
+                raise ValueError("The upper bound {} is too large and cannot be encoded on {} bits".format(self._maxLength, self.lengthBitSize))
+            if self._minLength < -(1 << (self.lengthBitSize.value - 1)):
+                raise ValueError("The lower bound {} is too small and cannot be encoded on {} bits".format(self._minLength, self.lengthBitSize.value))
+
+        # Build the generator
+        self.generator = GeneratorFactory.buildGenerator(self.generator,
+                                                         seed = self.seed,
+                                                         minValue = self._minLength,
+                                                         maxValue = self._maxLength,
+                                                         bitsize = self.lengthBitSize.value,
+                                                         signed = self.domain.dataType.sign == Sign.SIGNED)
 
     def count(self):
         r"""
@@ -353,7 +347,7 @@ class IntegerMutator(DomainMutator):
 
         # Generate and return a random value in the interval
         dom_type = self.domain.dataType
-        value = self.generateInt()
+        value = next(self.generator)
 
         # Handle redefined bitsize
         if self.lengthBitSize is not None:
@@ -366,20 +360,6 @@ class IntegerMutator(DomainMutator):
                                endianness=dom_type.endianness,
                                sign=dom_type.sign)
         return value
-
-    def generateInt(self):
-        """This is the mutation method of the integer type.
-        It uses a random generator to produce the value in interval.
-
-        :return: the generated int value
-        :rtype: :class:`int`
-        """
-        v = next(self.generator)
-
-        if not isinstance(self.generator, DeterministGenerator):
-            v = center(v, self._minLength, self._maxLength)
-
-        return v
 
 
 def _test_endianness():
@@ -394,13 +374,22 @@ def _test_endianness():
     >>> mutator = IntegerMutator(fieldInt.domain)
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='little')
-    197
+    0
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='little')
+    90
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='little')
+    152
 
     >>> fieldInt = Field(uint8be())
     >>> mutator = IntegerMutator(fieldInt.domain)
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
-    197
+    0
+    >>> d = mutator.generate()
+    >>> int.from_bytes(d, byteorder='big')
+    90
 
     """
 
@@ -462,7 +451,7 @@ def _test_determinist_generator_1():
 
     >>> v = int8(interval=(10, 20))
     >>> f = Field(v)
-    >>> mutator = IntegerMutator(f.domain, generator=DeterministGenerator.NG_determinist)
+    >>> mutator = IntegerMutator(f.domain, generator='determinist')
     >>> generated_values = set()
     >>> for _ in range(30):
     ...     d = mutator.generate()
@@ -526,5 +515,52 @@ def _test_determinist_generator_2():
     
     >>> all(x in generated_values for x in expected_values)
     True
+
+    """
+
+def _test_coverage():
+    r"""
+
+    # Test to verify that the RNG covers all 8 bits values
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f_data = Field(uint8())
+    >>> symbol = Symbol([f_data])
+    >>> fuzz.set(f_data, generator='xorshift')
+    >>> datas = set()
+    >>> for _ in range(symbol.count()):
+    ...     datas.add(symbol.specialize(fuzz=fuzz))
+    >>> len(datas)
+    256
+
+    Test to verify that the RNG covers all 16 bits values
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f_data = Field(uint16())
+    >>> symbol = Symbol([f_data])
+    >>> fuzz.set(f_data, generator='xorshift')
+    >>> datas = set()
+    >>> for _ in range(symbol.count()):
+    ...     datas.add(symbol.specialize(fuzz=fuzz))
+    >>> len(datas)
+    65536
+
+
+    # Test to verify that the RNG covers all values in a specific interval
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f_data = Field(uint8(interval=(10, 20)))
+    >>> symbol = Symbol([f_data])
+    >>> fuzz.set(f_data, interval=MutatorInterval.DEFAULT_INTERVAL, generator='xorshift')
+    >>> datas = set()
+    >>> symbol.count()
+    11
+    >>> for _ in range(symbol.count()):
+    ...     datas.add(symbol.specialize(fuzz=fuzz))
+    >>> len(datas)
+    11
 
     """

@@ -86,14 +86,14 @@ class Mutator(metaclass=abc.ABCMeta):
 
     # Class constants
     SEED_DEFAULT = 10  #: the default seed value
-    COUNTER_MAX_DEFAULT = Constant(2 ** 16)  #: the default max counter value (65536)
+    COUNTER_MAX_DEFAULT = Constant(1 << 32)  #: the default max counter value
 
     # Class variables
     globalCounterMax = COUNTER_MAX_DEFAULT
 
     def __init__(self,
                  mode=MutatorMode.GENERATE,  # type: MutatorMode
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=SEED_DEFAULT,
                  counterMax=COUNTER_MAX_DEFAULT):
         # type: (...) -> None
@@ -107,9 +107,6 @@ class Mutator(metaclass=abc.ABCMeta):
         # Public variables
         self.currentCounter = 0
         self.currentState = 0
-
-        # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
 
 
     # API methods
@@ -210,20 +207,3 @@ class Mutator(metaclass=abc.ABCMeta):
     def currentState(self, currentState):
         self._currentState = currentState
 
-
-## Utility functions
-
-def center(val, lower, upper):
-    """
-    Center :attr:`val` between :attr:`lower` and :attr:`upper`.
-    """
-
-    number_values = float(upper) - float(lower) + 1.0
-    result = lower + int(val * number_values)
-
-    # Ensure the produced value is in the range of the permitted values of the domain datatype
-    if result > upper:
-        result = upper
-    elif result < lower:
-        result = lower
-    return result

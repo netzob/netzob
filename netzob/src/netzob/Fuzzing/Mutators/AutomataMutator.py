@@ -75,7 +75,7 @@ class AutomataMutator(Mutator):
 
     def __init__(self,
                  automata,  # type: Automata
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=Mutator.SEED_DEFAULT):
         super().__init__(mode=MutatorMode.MUTATE, generator=generator, seed=seed)
 
@@ -83,7 +83,7 @@ class AutomataMutator(Mutator):
         self.automata = automata
 
         # Initialize random generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=65535)  # Arbitrarily maxValue
 
 
     ## Public API
@@ -180,29 +180,29 @@ class AutomataMutator(Mutator):
         >>> mutatedAutomata = mutator.mutate()
         >>> automata_ascii_2 = mutatedAutomata.generateASCII()
         >>> print(automata_ascii_2)
-                                                #==============================#
-                                                H              s0              H
-                                                #==============================#
-                                                  |
-                                                  | OpenChannelTransition
-                                                  v
-                  t_random (Sym2;{Sym1,Sym2})   +------------------------------+   t1 (Sym1;{Sym1})
-                +------------------------------ |                              | -------------------+
-                |                               |              s1              |                    |
-                +-----------------------------> |                              | <------------------+
-                                                +------------------------------+
-                                                  |
-                                                  | t2 (Sym2;{Sym2})
-                                                  v
-        +----+  CloseChannelTransition          +------------------------------+
-        | s4 | <------------------------------- |              s2              | -+
-        +----+                                  +------------------------------+  |
-                                                  |                               |
-                                                  | t_random (Sym2;{Sym1,Sym2})   | t3 (Sym1;{Sym1})
-                                                  v                               |
-                                                +------------------------------+  |
-                                                |              s3              | <+
-                                                +------------------------------+
+        #========================#
+        H           s0           H
+        #========================#
+          |
+          | OpenChannelTransition
+          v
+        +----------------------------------------------------------------------------------------+   t1 (Sym1;{Sym1})
+        |                                                                                        | -------------------+
+        |                                           s1                                           |                    |
+        |                                                                                        | <------------------+
+        +----------------------------------------------------------------------------------------+
+          |                         ^                               ^
+          | t2 (Sym2;{Sym2})        | t_random (Sym1;{Sym1,Sym2})   | t_random (Sym2;{Sym1,Sym2})
+          v                         |                               |
+        +----------------------------------------------------------------------------------------+
+        |                                           s2                                           |
+        +----------------------------------------------------------------------------------------+
+          |                                                         |
+          | t3 (Sym1;{Sym1})                                        | CloseChannelTransition
+          v                                                         v
+        +------------------------+                                +------------------------------+
+        |           s3           |                                |              s4              |
+        +------------------------+                                +------------------------------+
         <BLANKLINE>
         >>>
         >>> # Generate a full automaton
@@ -566,7 +566,7 @@ class AutomataMutator(Mutator):
         for state in states:
 
             # Randomely decide if we create a transition
-            if (round(next(self.generator)) % 2) == 0:
+            if next(self.generator) % 3 == 0:
                 continue
 
             # Randomely select an end state

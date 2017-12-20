@@ -326,12 +326,12 @@ class Symbol(AbstractField):
             return spePath.generatedContent.tobytes()
 
     @public_api
-    def specialize_count(self, presets=None, fuzz=None):
-        r"""The :meth:`specialize_count` method computes the expected number of unique
+    def count(self, presets=None, fuzz=None):
+        r"""The :meth:`count` method computes the expected number of unique
         messages produced, considering the initial symbol model, the
         preset fields and the fuzzed fields.
 
-        The :meth:`specialize_count` method expects the same parameters as the :meth:`specialize` method:
+        The :meth:`count` method expects the same parameters as the :meth:`specialize` method:
 
         :param presets: A dictionary of keys:values used to preset
                         (parameterize) fields during symbol
@@ -354,7 +354,7 @@ class Symbol(AbstractField):
         :rtype: a :class:`int`
 
         .. note::
-           The theoretical value returned by :meth:`~specialize_count`
+           The theoretical value returned by :meth:`~count`
            may be huge. Therefore, we force the returned value to be
            :attr:`MAXIMUM_POSSIBLE_VALUES` (86400000000), if the
            theoretical result is beyond this threshold. This limit
@@ -370,20 +370,20 @@ class Symbol(AbstractField):
         >>> symbol = Symbol(fields=[f1, f2, f3])
         >>>
         >>> # Count the expected number of unique produced messages
-        >>> symbol.specialize_count()
+        >>> symbol.count()
         62324736
         >>>
         >>> # Specify a preset for field 'f3'
         >>> presetValues = {f3: bitarray('11111111')}
         >>>
-        >>> symbol.specialize_count(presets=presetValues)
+        >>> symbol.count(presets=presetValues)
         243456
         >>>
         >>> # Specify a fuzz configuration for field 'f2'
         >>> fuzz = Fuzz()
-        >>> fuzz.set(f2, generator=DeterministGenerator.NG_determinist)
+        >>> fuzz.set(f2, generator='determinist')
         >>>
-        >>> symbol.specialize_count(presets=presetValues, fuzz=fuzz)
+        >>> symbol.count(presets=presetValues, fuzz=fuzz)
         27579
 
         """

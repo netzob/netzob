@@ -137,7 +137,7 @@ class Fuzz(object):
     def set(self,
             key,
             mode=MutatorMode.GENERATE,
-            generator=Generator.NG_mt19937,
+            generator='xorshift',
             seed=Mutator.SEED_DEFAULT,
             counterMax=Mutator.COUNTER_MAX_DEFAULT,
             **kwargs):
@@ -159,24 +159,26 @@ class Fuzz(object):
                           pseudo-random or deterministic
                           values.
 
+                          Default generator is ``'xorshift'``, which is
+                          efficient to produce unique pseudo-random
+                          numbers.
+
                           Available generators from :class:`randomstate` module are:
 
-                          * Generator.NG_mt19937 = 'mt19937'
-                          * Generator.NG_mlfg_1279_861 = 'mlfg_1279_861'
-                          * Generator.NG_mrg32k3a = 'mrg32k3a'
-                          * Generator.NG_pcg32 = 'pcg32'
-                          * Generator.NG_pcg64 = 'pcg64'
-                          * Generator.NG_xorshift128 = 'xorshift128'
-                          * Generator.NG_xoroshiro128plus = 'xoroshiro128plus'
-                          * Generator.NG_xorshift1024 = 'xorshift1024'
-                          * Generator.NG_dsfmt = 'dsfmt'
+                          * ``'mt19937'``
+                          * ``'mlfg_1279_861'``
+                          * ``'mrg32k3a'``
+                          * ``'pcg32'``
+                          * ``'pcg64'``
+                          * ``'xorshift128'``
+                          * ``'xoroshiro128plus'``
+                          * ``'xorshift1024'``
+                          * ``'dsfmt'``
 
                           A deterministic is also available
-                          (:attr:`DeterministGenerator.NG_determinist`), and
+                          (``generator='determinist'``), and
                           may be used in case where a domain has an
                           interval.
-
-                          Default generator is :attr:`Generator.NG_mt19937` from the :class:`randomstate` module.
 
         :param seed: An integer used to initialize the underlying
                      generator.
@@ -223,10 +225,10 @@ class Fuzz(object):
 
                               Default value is dependant on the chosen generator: 
 
-                              * If the generator is :attr:`DeterministGenerator.NG_determinist`, default interval will be :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+                              * If the generator is `determinist`, default interval will be :attr:`MutatorInterval.DEFAULT_INTERVAL`.
                               * Else, default interval will be :attr:`MutatorInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The :class:`int` size in bits of the memory on which the generated values have to be encoded.
+        lengthBitSize         The size in bits of the memory on which the generated values have to be encoded.
 
                               The following sizes are available:
 
@@ -259,7 +261,7 @@ class Fuzz(object):
 
                               Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate String with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate String with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
@@ -306,7 +308,7 @@ class Fuzz(object):
 
                               Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate Raw data with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate Raw data with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
@@ -336,7 +338,7 @@ class Fuzz(object):
 
                               Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate HexaStrings with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate HexaStrings with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
@@ -366,7 +368,7 @@ class Fuzz(object):
 
                               Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate BitArrays with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate BitArrays with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
@@ -459,7 +461,7 @@ class Fuzz(object):
 
                               Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The :class:`int` size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate a Repeat with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate a Repeat with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
@@ -501,7 +503,7 @@ class Fuzz(object):
         >>> symbol = Symbol(fields=[f_data])
         >>> fuzz.set(f_data)
         >>> symbol.specialize(fuzz=fuzz)
-        b'E'
+        b'\x00'
 
 
         **Fuzzing example of a field that contains an integer**
@@ -512,7 +514,7 @@ class Fuzz(object):
         >>> symbol = Symbol(name="sym", fields=[f_data])
         >>> fuzz.set(f_data, interval=(20, 32000))
         >>> symbol.specialize(fuzz=fuzz)
-        b'`o'
+        b'U*'
 
 
         **Fuzzing example of a field that contains a size relationship with another field**
@@ -524,7 +526,7 @@ class Fuzz(object):
         >>> symbol = Symbol(name="sym", fields=[f_data, f_size])
         >>> fuzz.set(f_size, interval=(20, 32000))
         >>> symbol.specialize(fuzz=fuzz)
-        b'\x00\x03`o'
+        b'\x00\x03U*'
 
 
         **Fuzzing example in mutation mode of a field that contains an integer**
@@ -550,7 +552,7 @@ class Fuzz(object):
         >>> result = set()
         >>> for i in range(nbFuzz):
         ...     result.add(symbol.specialize(fuzz=fuzz))
-        >>> len(result) == 985
+        >>> len(result) == 1000
         True
 
 
@@ -564,7 +566,7 @@ class Fuzz(object):
         >>> symbol = Symbol(name="sym", fields=[f_parent])
         >>> fuzz.set(f_parent)
         >>> symbol.specialize(fuzz=fuzz)
-        b'EEu'
+        b'\x00\x00\x00'
 
 
         **Fuzzing of a whole symbol, and covering all field storage spaces with default fuzzing strategy per types**
@@ -576,7 +578,7 @@ class Fuzz(object):
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
         >>> fuzz.set(symbol, interval=MutatorInterval.FULL_INTERVAL)
         >>> symbol.specialize(fuzz=fuzz)
-        b'EE'
+        b'\x00\x00'
 
 
         **Fuzzing and covering full storage space of a field**
@@ -588,7 +590,7 @@ class Fuzz(object):
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
         >>> fuzz.set(f_data2, interval=MutatorInterval.FULL_INTERVAL)
         >>> symbol.specialize(fuzz=fuzz)
-        b'\x02E'
+        b'\x02\x00'
 
 
         **Fuzzing and covering full storage space of a field, after redefining its storage space from 8 to 16 bits**
@@ -600,7 +602,7 @@ class Fuzz(object):
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
         >>> fuzz.set(f_data2, interval=MutatorInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_16)
         >>> symbol.specialize(fuzz=fuzz)
-        b'\x02\x00E'
+        b'\x02\x00\x00'
 
 
         **Fuzzing and changing the default fuzzing parameters for types**
@@ -625,12 +627,21 @@ class Fuzz(object):
         >>> symbol = Symbol(name="sym", fields=[f_alt])
         >>> fuzz.set(f_alt)
         >>> symbol.specialize(fuzz=fuzz)
-        b'E'
+        b'\x00'
         >>> symbol.specialize(fuzz=fuzz)
         Traceback (most recent call last):
         Exception: Max mutation counter reached
         >>> fuzz = Fuzz()  # This is needed to restore globalCounterMax default value for unit test purpose
 
+
+        **Fuzzing configuration with a maximum number of mutations, expressed with a ratio**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz(counterMax=1)
+        >>> field = Field(Agg([uint8(), uint8()]))
+        >>> symbol = Symbol([field], name="sym")
+        >>> fuzz.set(symbol)
+        >>> symbol.count()
 
         """
 
@@ -686,7 +697,7 @@ class Fuzz(object):
         >>> fuzz.set(symbol, interval=MutatorInterval.FULL_INTERVAL)
         >>> fuzz.unset(f_data2)
         >>> symbol.specialize(fuzz=fuzz)
-        b'E\x04'
+        b'\x00\x04'
 
 
         """
@@ -918,7 +929,7 @@ class Fuzz(object):
 
 
 def _test():
-    """
+    r"""
 
     # Test to verify that the RNG covers all values in specific ranges, with negatives and positives number
 
@@ -1017,6 +1028,5 @@ def _test():
     # ...     datas.add(symbol.specialize(fuzz=fuzz))
     # >>> len(datas)
     # 65536
-
 
     """

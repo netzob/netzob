@@ -91,11 +91,11 @@ class AltMutator(DomainMutator):
     >>> data_alt = Alt([Integer(34), data_subAlt])
     >>> mutator = AltMutator(data_alt, seed=10)
     >>> mutator.generate()
-    1
+    0
     >>> mutator.currentDepth
     1
     >>> mutator.generate()
-    0
+    1
     >>> mutator.currentDepth
     2
     >>> mutator.generate()
@@ -111,9 +111,8 @@ class AltMutator(DomainMutator):
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> fuzz.set(f_alt)
-    >>> res = symbol.specialize(fuzz=fuzz)
-    >>> res
-    b'Eu'
+    >>> symbol.specialize(fuzz=fuzz)
+    b'\x00\x00'
 
 
     **Fuzzing of an alternate of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
@@ -139,7 +138,7 @@ class AltMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> fuzz.set(f_alt, mutateChild=False)
     >>> res = symbol.specialize(fuzz=fuzz)
-    >>> 5 <= ord(res) <= 8
+    >>> 1 <= ord(res) <= 4
     True
 
 
@@ -152,7 +151,7 @@ class AltMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> fuzz.set(f_alt, maxDepth=2)
     >>> symbol.specialize(fuzz=fuzz)
-    b'E'
+    b'\x00'
     >>> symbol.specialize(fuzz=fuzz)
     Traceback (most recent call last):
     ...
@@ -167,7 +166,7 @@ class AltMutator(DomainMutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT,
                  mutateChild=True,
@@ -188,6 +187,9 @@ class AltMutator(DomainMutator):
 
         # Internal structure used to determine the position to select at each call to generate()
         self._currentDepth = 0
+
+        # Initialize data generator
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=len(self.domain.children) - 1)
 
     def count(self, fuzz=None):
         r"""
@@ -298,7 +300,7 @@ called, first")
         if self._currentDepth >= self.maxDepth:
             raise RecursionException("Max depth reached ({})".format(self.maxDepth))
 
-        return int(next(self.generator) * len(self.domain.children))
+        return next(self.generator)
 
 
 def _test_alt_mutator():

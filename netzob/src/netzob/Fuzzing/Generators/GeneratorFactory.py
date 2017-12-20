@@ -50,60 +50,58 @@ from itertools import repeat, starmap
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
+from netzob.Fuzzing.Generators.XorShiftGenerator import XorShiftGenerator
+from netzob.Fuzzing.Generators.WrapperGenerator import WrapperGenerator
 
 
 class GeneratorFactory(object):
     """The :class:`GeneratorFactory` is a factory that creates specific
     instances of the class :class:`Generator`.
 
-    >>> g = GeneratorFactory.buildGenerator(seed=0)
+    >>> g = GeneratorFactory.buildGenerator(seed=1, minValue=0, maxValue=255, bitsize=8)
     >>> type(g)
-    <class 'itertools.starmap'>
+    <class 'netzob.Fuzzing.Generators.XorShiftGenerator.XorShiftGenerator'>
     >>> next(g)
-    0.5488135039273248
+    0
+    >>> next(g)
+    173
 
-    >>> g = GeneratorFactory.buildGenerator(Generator.NG_xorshift128, seed=0)
+    >>> g = GeneratorFactory.buildGenerator('xorshift128', seed=1)
     >>> type(g)
-    <class 'itertools.starmap'>
+    <class 'netzob.Fuzzing.Generators.WrapperGenerator.WrapperGenerator'>
     >>> next(g)
-    0.00803961132200437
+    39742
 
-    >>> g = GeneratorFactory.buildGenerator('xorshift128', seed=0)
-    >>> type(g)
-    <class 'itertools.starmap'>
-    >>> next(g)
-    0.00803961132200437
-
-    >>> g = GeneratorFactory.buildGenerator(DeterministGenerator.NG_determinist, seed=0, minValue=10, maxValue=20, signed=True)
+    >>> g = GeneratorFactory.buildGenerator('determinist', seed=0, minValue=10, maxValue=20, bitsize=8, signed=True)
     >>> type(g)
     <class 'netzob.Fuzzing.Generators.DeterministGenerator.DeterministGenerator'>
     >>> next(g)
-    8193
+    33
 
-    >>> g = GeneratorFactory.buildGenerator('determinist', seed=0, minValue=10, maxValue=20, signed=True)
+    >>> g = GeneratorFactory.buildGenerator('determinist', seed=0, minValue=10, maxValue=20, bitsize=8, signed=True)
     >>> type(g)
     <class 'netzob.Fuzzing.Generators.DeterministGenerator.DeterministGenerator'>
     >>> next(g)
-    8193
+    33
 
     >>> from itertools import cycle
     >>> g = GeneratorFactory.buildGenerator(cycle(range(4, 12)))
     >>> type(g)
-    <class 'itertools.cycle'>
+    <class 'netzob.Fuzzing.Generators.WrapperGenerator.WrapperGenerator'>
     >>> next(g)
-    4
+    65536
 
     >>> import random
     >>> g = GeneratorFactory.buildGenerator(repeatfunc(random.random))
     >>> type(g)
-    <class 'itertools.starmap'>
-    >>> isinstance(next(g), float)
+    <class 'netzob.Fuzzing.Generators.WrapperGenerator.WrapperGenerator'>
+    >>> isinstance(next(g), int)
     True
 
     """
 
     @staticmethod
-    def buildGenerator(generator=Generator.NG_mt19937, **kwargs):
+    def buildGenerator(generator='xorshift', seed=1, **kwargs):
         """
         Provide a generator using either a name
         (compatible with :class:`randomstate.Randomstate`), an :class:`Iterable
@@ -127,17 +125,17 @@ class GeneratorFactory(object):
                     prng_module = __import__('randomstate.prng', globals(), locals(), [modname], 0)
                     generator_module = prng_module.__dict__[modname]
                     generator_class = generator_module.RandomState
-                    generator_instance = generator_class(**kwargs)
-                    return repeatfunc(generator_instance.random_sample)
+                    generator_instance = generator_class(seed=seed)
+                    return WrapperGenerator(repeatfunc(generator_instance.random_sample), **kwargs)
 
-            # Else check if we want a number generator from this Generator package
+            # Else check if we want a sub-generator from this Generator package
             for subclass in Generator.__subclasses__():
                 if generator == subclass.name:
-                    return subclass(**kwargs)
+                    return subclass(seed=seed, **kwargs)
 
         # Check if the generator is already an iterator
         elif isinstance(generator, typing.Iterable):
-            return iter(generator)
+            return WrapperGenerator(iter(generator), **kwargs)
 
         else:
             raise ValueError("Generator not supported: '{}'".format(generator))

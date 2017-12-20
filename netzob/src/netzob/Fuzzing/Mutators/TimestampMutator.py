@@ -66,7 +66,7 @@ class TimestampMutator(DomainMutator):
         Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
     :param generator: The name of the generator to use, among those
         available in :mod:`randomstate.prng`.
-        Default value is :attr:`PRNG_mt19937`.
+        Default value is ``'xorshift'``.
     :param seed: The seed used in pseudo-random Mutator.
         Default value is :attr:`SEED_DEFAULT <netzob.Fuzzing.Mutator.Mutator.SEED_DEFAULT>`.
     :type domain: :class:`AbstractVariable
@@ -96,7 +96,7 @@ class TimestampMutator(DomainMutator):
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,
-                 generator=Generator.NG_mt19937,
+                 generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=Mutator.COUNTER_MAX_DEFAULT):
 
@@ -106,6 +106,9 @@ class TimestampMutator(DomainMutator):
                          generator=generator,
                          seed=seed,
                          counterMax=counterMax)
+
+        # Initialize data generator
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
 
     def count(self):
         r"""
