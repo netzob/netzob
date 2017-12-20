@@ -555,7 +555,7 @@ class AutomataMutator(Mutator):
             raise ValueError("Unknown automata mutator strategy: '{}'".format(strategy))
 
     def _mutate_random(self):
-        r"""Generate an automaton that randomely links states together, and
+        r"""Generate an automaton that randomly links states together, and
         where a transition is accepted for every symbols.
 
         """
@@ -565,11 +565,11 @@ class AutomataMutator(Mutator):
 
         for state in states:
 
-            # Randomely decide if we create a transition
+            # Randomly decide if we create a transition
             if next(self.generator) % 3 == 0:
                 continue
 
-            # Randomely select an end state
+            # Randomly select an end state
             ending_state_idx = (next(self.generator) * len(states)) % len(states)
             ending_state = states[int(ending_state_idx)]
 
