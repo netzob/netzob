@@ -525,17 +525,17 @@ class AutomataMutator(Mutator):
           [+]   During transition 'T1', choosing output symbol 'Sym1'
           [+]   Transition 'T1' lead to state 's1'
           [+] At state 's1'
-          [+]   Receiving input symbol 'Unknown message b'$ENV{"HOME"}\x00       '', which corresponds to transition 'None'
-          [+]   Changing transition to 'T2', through callback
-          [+]   During transition 'T2', choosing output symbol 'Sym2'
-          [+]   Transition 'T2' lead to state 's1'
-          [+] At state 's1'
           [+]   Receiving input symbol 'Unknown message b'System("ls -al /")\x00 '', which corresponds to transition 'None'
           [+]   Changing transition to 'T2', through callback
           [+]   During transition 'T2', choosing output symbol 'Sym2'
           [+]   Transition 'T2' lead to state 's1'
           [+] At state 's1'
-          [+]   Receiving input symbol 'Unknown message b'<img \\x00src=x onerr'', which corresponds to transition 'None'
+          [+]   Receiving input symbol 'Unknown message b'$ENV{"HOME"}\x00       '', which corresponds to transition 'None'
+          [+]   Changing transition to 'T2', through callback
+          [+]   During transition 'T2', choosing output symbol 'Sym2'
+          [+]   Transition 'T2' lead to state 's1'
+          [+] At state 's1'
+          [+]   Receiving input symbol 'Unknown message b'%x("ls -al /")\x00     '', which corresponds to transition 'None'
           [+]   Changing transition to 'T2', through callback
           [+]   During transition 'T2', choosing output symbol 'Sym2'
           [+]   Transition 'T2' lead to state 's1'

@@ -1736,7 +1736,7 @@ class Actor(threading.Thread):
       [+]   Picking transition 'Open'
       [+]   Transition 'Open' lead to state 'S1'
       [+] At state 'S1'
-      [+]   Receiving input symbol 'Unknown message b'\xc5'', which corresponds to transition 'None'
+      [+]   Receiving input symbol 'Unknown message b'\x00'', which corresponds to transition 'None'
       [+]   Changing transition to 'T2', through callback
       [+]   During transition 'T2', choosing output symbol 'Symbol 2'
       [+]   Transition 'T2' lead to state 'S1'
@@ -1889,7 +1889,7 @@ class Actor(threading.Thread):
       [+]   During transition 'T1', choosing output symbol 'Symbol 1'
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
-      [+]   Receiving input symbol 'Unknown message b'\xc5'', which corresponds to transition 'None'
+      [+]   Receiving input symbol 'Unknown message b'\x00'', which corresponds to transition 'None'
       [+]   Changing transition to 'T2', through callback
       [+]   During transition 'T2', choosing output symbol 'Symbol 2'
       [+]   Transition 'T2' lead to state 'S1'
