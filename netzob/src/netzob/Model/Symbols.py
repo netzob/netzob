@@ -57,7 +57,8 @@ class Symbols(dict):
     's2'
     """
 
-    def __init__(self, *symbols: Symbol):
+    def __init__(self, *symbols):
+        # type: (Symbol) -> None
         super().__init__()
 
         # handle iterable at first argument
@@ -69,6 +70,9 @@ class Symbols(dict):
                 raise ValueError("Symbols only accept Symbol object, not '{}'"
                                  .format(type(symbol).__name__))
             self[symbol.name] = symbol
+
+    def __iter__(self):
+        return iter(self.values())
 
     def __repr__(self):
         return "Symbols({})".format(', '.join(map(repr, self.values())))
