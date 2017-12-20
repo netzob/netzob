@@ -134,7 +134,8 @@ class EthernetChannel(AbstractChannel):
                                       eth_type,
                                       eth_payload],
                                      data=Raw(nbBytes=1),
-                                     modulo=8*60)
+                                     modulo=8*60,
+                                     once=True)
         eth_padding = Field(ethPaddingVariable, "eth.padding")
         self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
                                                             eth_src,
