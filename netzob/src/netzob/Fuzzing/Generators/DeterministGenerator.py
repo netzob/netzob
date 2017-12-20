@@ -65,10 +65,10 @@ class DeterministGenerator(Generator):
     name = "determinist"
 
     def __init__(self,
-                 seed=0,
-                 minValue=None,
-                 maxValue=None,
-                 bitsize=None,
+                 seed,
+                 minValue,
+                 maxValue,
+                 bitsize,
                  signed=False):
 
         # Call parent init
