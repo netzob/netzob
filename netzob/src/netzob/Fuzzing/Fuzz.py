@@ -642,6 +642,7 @@ class Fuzz(object):
         >>> symbol = Symbol([field], name="sym")
         >>> fuzz.set(symbol)
         >>> symbol.count()
+        65536
 
         """
 
