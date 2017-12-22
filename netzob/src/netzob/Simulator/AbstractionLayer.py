@@ -271,10 +271,15 @@ class AbstractionLayer(object):
                 # Show some log every seconds
                 if t_delta > 1:
                     t_delta = 0
-                    self._logger.debug("Rate rule: {} ko/s, current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(round(rate / 1024, 2),
-                                                                                                                                    round((len_data / t_elapsed) / 1024, 2),
-                                                                                                                                    round(len_data / 1024, 2),
-                                                                                                                                    round(t_elapsed, 2)))
+                    if rate is None:
+                        self._logger.debug("Current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(round((len_data / t_elapsed) / 1024, 2),
+                                                                                                                    round(len_data / 1024, 2),
+                                                                                                                    round(t_elapsed, 2)))
+                    else:
+                        self._logger.debug("Rate rule: {} ko/s, current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(round(rate / 1024, 2),
+                                                                                                                                        round((len_data / t_elapsed) / 1024, 2),
+                                                                                                                                        round(len_data / 1024, 2),
+                                                                                                                                        round(t_elapsed, 2)))
         return len_data
 
     def _writeSymbol(self, symbol, presets=None, fuzz=None):
