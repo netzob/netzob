@@ -63,7 +63,7 @@ class GeneratorFactory(object):
     >>> next(g)
     173
 
-    >>> g = GeneratorFactory.buildGenerator('xorshift128', seed=1)
+    >>> g = GeneratorFactory.buildGenerator('xorshift128', minValue=0, maxValue=1<<16, seed=1)
     >>> type(g)
     <class 'netzob.Fuzzing.Generators.WrapperGenerator.WrapperGenerator'>
     >>> next(g)
@@ -86,10 +86,10 @@ class GeneratorFactory(object):
     >>> type(g)
     <class 'netzob.Fuzzing.Generators.WrapperGenerator.WrapperGenerator'>
     >>> next(g)
-    65536
+    4
 
     >>> import random
-    >>> g = GeneratorFactory.buildGenerator(repeatfunc(random.random))
+    >>> g = GeneratorFactory.buildGenerator(repeatfunc(random.random), minValue=0, maxValue=1<<16)
     >>> type(g)
     <class 'netzob.Fuzzing.Generators.WrapperGenerator.WrapperGenerator'>
     >>> isinstance(next(g), int)
@@ -134,8 +134,7 @@ class GeneratorFactory(object):
         elif isinstance(generator, typing.Iterable):
             return WrapperGenerator(iter(generator), **kwargs)
 
-        else:
-            raise ValueError("Generator not supported: '{}'".format(generator))
+        raise ValueError("Generator not supported: '{}'".format(generator))
 
 
 def repeatfunc(func, times=None, *args):

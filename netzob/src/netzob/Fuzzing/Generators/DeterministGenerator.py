@@ -84,9 +84,6 @@ class DeterministGenerator(Generator):
         # Initialize deterministic values
         self._createValues(signed)
 
-    def __iter__(self):
-        return self
-
     def __next__(self):
         """This is the method to get the next value in the generated list.
 
@@ -98,11 +95,45 @@ class DeterministGenerator(Generator):
         if len(self._values) == 0:
             raise ValueError("Value list is empty.")
 
-        self._currentPos = self._currentPos % len(self._values)
+        self._currentPos %= len(self._values)
 
         value = self._values[self._currentPos]
         self._currentPos += 1
         return value
+
+    def get_state(self):
+        # type: () -> int
+        """
+        Return an integer representing the internal state of the generator.
+
+        >>> gen = DeterministGenerator(minValue=0, maxValue=100, seed=1, bitsize=8)
+        >>> gen.get_state()  # before consuming generator
+        0
+        >>> next(gen)
+        255
+        >>> gen.get_state()  # after consuming generator
+        1
+        """
+        return self._currentPos
+
+    def set_state(self, state):
+        # type: (int) -> None
+        """
+        Set the internal state of the generator from an integer.
+
+        >>> gen = DeterministGenerator(minValue=0, maxValue=100, seed=1, bitsize=8)
+        >>> next(gen) # blank shot
+        255
+        >>> state = gen.get_state()
+        >>> next(gen); next(gen)
+        254
+        253
+        >>> gen.set_state(state)
+        >>> next(gen); next(gen)
+        254
+        253
+        """
+        self._currentPos = state
 
     def _createValues(self, signed):
         self._currentPos = 0

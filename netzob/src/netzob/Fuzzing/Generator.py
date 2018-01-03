@@ -53,13 +53,27 @@ class Generator(object, metaclass=abc.ABCMeta):
     def __init__(self, seed=0):
         self.seed = seed
 
-    @abc.abstractmethod
     def __iter__(self):
         """The iterator interface."""
+        return self
 
     @abc.abstractmethod
     def __next__(self):
         """The iterator interface."""
+
+    @abc.abstractmethod
+    def get_state(self):
+        """
+        Return an object representing the internal state of the generator.
+        """
+
+    @abc.abstractmethod
+    def set_state(self, state):
+        """
+        Set the internal state of the generator.
+        """
+
+    # Properties
 
     @property
     def seed(self):

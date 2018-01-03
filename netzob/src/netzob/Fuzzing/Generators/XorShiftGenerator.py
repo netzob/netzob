@@ -35,6 +35,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+from typing import Tuple  # noqa: F401
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -43,9 +44,9 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Fuzzing.Generator import Generator
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 ## Parameters taken from reference: "Xorshift RNGs" from George Marsaglia (https://www.jstatsoft.org/article/view/v008i14)
@@ -56,17 +57,20 @@ def xorshift8(state):
     state ^= (state << 3) & 0xff
     return state
 
+
 def xorshift16(state):
     state ^= (state << 13) & 0xffff
     state ^= (state >> 9) & 0xffff
     state ^= (state << 7) & 0xffff
     return state
 
+
 def xorshift32(state):
     state ^= (state << 13) & 0xffffffff
     state ^= (state >> 17) & 0xffffffff
     state ^= (state << 5) & 0xffffffff
     return state
+
 
 def xorshift64(state):
     state ^= (state << 11) & 0xffffffffffffffff
@@ -119,23 +123,20 @@ class XorShiftGenerator(Generator):
         bitsize = AbstractType.computeUnitSize(abs(self._maxValue - self._minValue) + 1)  # Compute unit size according to the maximum length
         bitsize = bitsize.value
 
-        if bitsize == 8 or bitsize == 4:
-            self.xorshift = xorshift8
+        if bitsize in (4, 8):
+            self._xorshift_func = xorshift8
         elif bitsize == 16:
-            self.xorshift = xorshift16
+            self._xorshift_func = xorshift16
         elif bitsize == 32:
-            self.xorshift = xorshift32
+            self._xorshift_func = xorshift32
         elif bitsize == 64:
-            self.xorshift = xorshift64
+            self._xorshift_func = xorshift64
         else:
             raise ValueError("Bitsize value '{}' not supported".format(bitsize))
 
-    def __iter__(self):
-        return self
-
     def __next__(self):
         """This is the method to get the next value.
-        
+
         :return: A generated int value.
         :rtype: :class:`int`
 
@@ -146,27 +147,56 @@ class XorShiftGenerator(Generator):
             self._firstCall = False
             result = 0
         else:
-            self._state = self.xorshift(self._state)
-            result = self._state
+            result = self.xorshift()
 
         # We respect the interval
         if self.signed:
             # Convert uint to int
-            result = result.to_bytes(int(self.bitsize/8), byteorder='big')
+            result = result.to_bytes(self.bitsize // 8, byteorder='big')
             result = int.from_bytes(result, byteorder='big', signed=True)
-            
-            if result > self.maxValue:
-                result = next(self)
-            elif result < self.minValue:
-                result = next(self)
-        else:
-            if result > self.maxValue:
-                result = next(self)
-            elif result < self.minValue:
-                result = next(self)
+
+        if not self.minValue <= result <= self.maxValue:
+            result = next(self)
 
         return result
 
+    def get_state(self):
+        # type: () -> Tuple[int, bool]
+        """
+        Return a tuple representing the internal state of the generator.
+
+        >>> gen = XorShiftGenerator(minValue=0, maxValue=100, seed=1)
+        >>> gen.get_state()  # before consuming generator
+        (1, True)
+        >>> next(gen)
+        0
+        >>> gen.get_state()  # after consuming generator
+        (1, False)
+        """
+        return (self._state, self._firstCall)
+
+    def set_state(self, state):
+        # type: (Tuple[int, bool]) -> None
+        """
+        Set the internal state of the generator from a tuple.
+
+        >>> gen = XorShiftGenerator(minValue=0, maxValue=100, seed=1)
+        >>> next(gen) # blank shot
+        0
+        >>> state = gen.get_state()
+        >>> next(gen); next(gen)
+        76
+        62
+        >>> gen.set_state(state)
+        >>> next(gen); next(gen)
+        76
+        62
+        """
+        (self._state, self._firstCall) = state
+
+    def xorshift(self):
+        self._state = self._xorshift_func(self._state)
+        return self._state
 
     ## Properties
 

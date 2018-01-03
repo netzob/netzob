@@ -35,6 +35,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+import pickle
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -72,9 +73,6 @@ class WrapperGenerator(Generator):
         self.bitsize = bitsize  # Not used
         self.signed = signed    # Not used
 
-    def __iter__(self):
-        return self
-
     def __next__(self):
         """This is the method to get the next value in the generated list.
 
@@ -84,34 +82,48 @@ class WrapperGenerator(Generator):
         """
         result = next(self._iterator)
 
-        if self._minValue is not None and self._maxValue is not None:
-            result = center(result, self._minValue, self._maxValue)
+        if self.minValue is not None and self.maxValue is not None:
+            result = center(result, self.minValue, self.maxValue)
 
         return result
 
+    def get_state(self):
+        # type: () -> bytes
+        r"""
+        Return a :class:`bytes` representing the internal state of the generator.
+
+        >>> it = iter(range(10))
+        >>> gen = WrapperGenerator(it)
+        >>> gen.get_state()  # doctest: +ELLIPSIS
+        b'\x80\x03cbuiltins\niter...\x00b.'
+        >>> next(gen)
+        0
+        >>> gen.get_state()  # doctest: +ELLIPSIS
+        b'\x80\x03cbuiltins\niter...\x01b.'
+        """
+        return pickle.dumps(self._iterator)
+
+    def set_state(self, state):
+        # type: (bytes) -> None
+        """
+        Set the internal state of the generator from a :class:`bytes`.
+
+        >>> it = iter(range(10))
+        >>> gen = WrapperGenerator(it)
+        >>> next(gen) # blank shot
+        0
+        >>> state = gen.get_state()
+        >>> next(gen); next(gen)
+        1
+        2
+        >>> gen.set_state(state)
+        >>> next(gen); next(gen)
+        1
+        2
+        """
+        self._iterator = pickle.loads(state)
+
     ## Properties
-
-    @property
-    def minValue(self):
-        return self._minValue
-
-    @minValue.setter  # type: ignore
-    def minValue(self, minValue):
-        if minValue is None:
-            self._minValue = 0
-        else:
-            self._minValue = minValue
-
-    @property
-    def maxValue(self):
-        return self._maxValue
-
-    @maxValue.setter  # type: ignore
-    def maxValue(self, maxValue):
-        if maxValue is None:
-            self._maxValue = 1 << 16
-        else:
-            self._maxValue = maxValue
 
     @property
     def bitsize(self):
