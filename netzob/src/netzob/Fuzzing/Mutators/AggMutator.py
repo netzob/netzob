@@ -45,10 +45,8 @@
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
-from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 
 
 class AggMutator(DomainMutator):
@@ -157,7 +155,6 @@ class AggMutator(DomainMutator):
         r"""
 
         >>> from netzob.all import *
-        >>> 
         >>> d = Agg([uint8(), uint8()])
         >>> AggMutator(d).count()
         65536

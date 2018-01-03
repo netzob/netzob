@@ -47,17 +47,10 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
-from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
-from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
-from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.Types.Integer import uint16le
-from netzob.Model.Vocabulary.Types.Integer import Integer
-from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Sign, UnitSize
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Common.Utils.Decorators import NetzobLogger
 
 
 @NetzobLogger

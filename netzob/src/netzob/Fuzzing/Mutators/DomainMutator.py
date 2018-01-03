@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import random
 from enum import Enum
 from typing import Type  # noqa: F401
 import abc
@@ -47,22 +46,19 @@ import abc
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable  # noqa: F401
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.Mutator import MutatorMode
-from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
-from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
 
 
 class MutatorInterval(Enum):
     """Mutator Fuzzing intervals"""
     DEFAULT_INTERVAL = 0  #: We use the legitimate domain interval (ex: DeterminitMutator(interval=MutatorInterval.DEFAULT_INTERVAL)
-    FULL_INTERVAL    = 1  #: We cover the whole storage space of the domain (ex: DeterminitMutator(interval=MutatorInterval.FULL_INTERVAL)
+    FULL_INTERVAL = 1  #: We cover the whole storage space of the domain (ex: DeterminitMutator(interval=MutatorInterval.FULL_INTERVAL)
     # else, we consider the tuple passed as parameter to override the domain interval (ex: DeterminitMutator(interval=(10, 42))
 
 
@@ -154,7 +150,6 @@ class DomainMutator(Mutator):
         data[idx] = not data[idx]
         return data
 
-
     # Internal methods
 
     def _initializeLengthGenerator(self, generator, fuzzing_interval, model_interval, model_unitSize):
@@ -201,13 +196,12 @@ class DomainMutator(Mutator):
         self._logger.debug("Computed fuzzing interval: ({}, {}) with lengthBitSize: {}".format(self._minLength, self._maxLength, self.lengthBitSize))
 
         # Build the length generator
-        self._lengthGenerator = GeneratorFactory.buildGenerator(generator = generator,
-                                                                seed = self.seed,
-                                                                minValue = self._minLength,
-                                                                maxValue = self._maxLength,
-                                                                bitsize = self.lengthBitSize.value,
-                                                                signed = False)
-
+        self._lengthGenerator = GeneratorFactory.buildGenerator(generator=generator,
+                                                                seed=self.seed,
+                                                                minValue=self._minLength,
+                                                                maxValue=self._maxLength,
+                                                                bitsize=self.lengthBitSize.value,
+                                                                signed=False)
 
     ## Properties
 
@@ -247,7 +241,7 @@ class DomainMutator(Mutator):
 
 
 ## Unit tests
-    
+
 def _test():
     """
 

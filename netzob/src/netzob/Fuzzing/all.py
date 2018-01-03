@@ -32,6 +32,8 @@
 #|       - Rémy Delion <remy.delion (a) amossys.fr>                          |
 #+---------------------------------------------------------------------------+
 
+# flake8: noqa
+
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
@@ -39,3 +41,5 @@
 from netzob.Fuzzing.Fuzz import Fuzz
 from netzob.Fuzzing.Mutator import MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import MutatorInterval
+
+from netzob.Fuzzing.Generators.all import *

@@ -32,6 +32,7 @@
 #|       - Rémy Delion <remy.delion (a) amossys.fr>                          |
 #+---------------------------------------------------------------------------+
 
+# flake8: noqa
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html

@@ -44,7 +44,6 @@ import abc
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
 
 
 class Generator(object, metaclass=abc.ABCMeta):

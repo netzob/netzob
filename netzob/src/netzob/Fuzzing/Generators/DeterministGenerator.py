@@ -44,7 +44,6 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Generator import Generator
-from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 
 
 class DeterministGenerator(Generator):
@@ -81,7 +80,7 @@ class DeterministGenerator(Generator):
         self.minValue = minValue
         self.maxValue = maxValue
         self.bitsize = bitsize
-        
+
         # Initialize deterministic values
         self._createValues(signed)
 
@@ -90,7 +89,7 @@ class DeterministGenerator(Generator):
 
     def __next__(self):
         """This is the method to get the next value in the generated list.
-        
+
         :return: a generated int value
         :rtype: :class:`int`
         :raise: ValueError if values is empty
@@ -104,7 +103,7 @@ class DeterministGenerator(Generator):
         value = self._values[self._currentPos]
         self._currentPos += 1
         return value
-    
+
     def _createValues(self, signed):
         self._currentPos = 0
         signedShift = 0
@@ -116,16 +115,16 @@ class DeterministGenerator(Generator):
         self._values = list()
         self._values.append(self.maxValue)  # Q
         self._values.append(self.minValue)  # P
-        if (self.minValue-1) & ((2**self.bitsize) -1) == self.minValue-1:
-            self._values.append(self.minValue-1)  # P-1
-        self._values.append(self.maxValue-1)  # Q-1
-        self._values.append(self.minValue+1)  # P+1
+        if (self.minValue - 1) & ((2**self.bitsize) - 1) == self.minValue - 1:
+            self._values.append(self.minValue - 1)  # P-1
+        self._values.append(self.maxValue - 1)  # Q-1
+        self._values.append(self.minValue + 1)  # P+1
         if signed:
-            if (self.maxValue+1) & (2**(self.bitsize-1) - 1) == self.maxValue+1:
-                self._values.append(self.maxValue+1)  # Q+1
+            if (self.maxValue + 1) & (2**(self.bitsize - 1) - 1) == self.maxValue + 1:
+                self._values.append(self.maxValue + 1)  # Q+1
         else:
-            if (self.maxValue+1) & ((2**self.bitsize) - 1) == self.maxValue+1:
-                self._values.append(self.maxValue+1)  # Q+1
+            if (self.maxValue + 1) & ((2**self.bitsize) - 1) == self.maxValue + 1:
+                self._values.append(self.maxValue + 1)  # Q+1
         self._values.append(0)  # 0
         self._values.append(-1 + signedShift)  # -1
         self._values.append(1)  # 1
@@ -136,7 +135,7 @@ class DeterministGenerator(Generator):
         self._values.append(1)  # 2^0 = 1
         self._values.append(0)  # 2^0 - 1 = 0
         self._values.append(2)  # 2^0 + 1 = 2
-        for k in range(1, self.bitsize-2):  # k in [0..N-2]
+        for k in range(1, self.bitsize - 2):  # k in [0..N-2]
             self._values.append(-2**k + signedShift)  # -2^k
             self._values.append(-2**k - 1 + signedShift)  # -2^k - 1
             self._values.append(-2**k + 1 + signedShift)  # -2^k + 1
@@ -169,7 +168,6 @@ class DeterministGenerator(Generator):
         else:
             return None
 
-
     ## Properties
 
     @property
@@ -181,7 +179,8 @@ class DeterministGenerator(Generator):
         if minValue is None:
             raise ValueError("minValue should not be None")
         if not isinstance(minValue, int):
-            raise ValueError("minValue should be an integer, not: '{}'".format(type(minValue)))
+            raise ValueError("minValue should be an integer, not: '{}'"
+                             .format(type(minValue)))
         self._minValue = minValue
 
     @property
@@ -193,7 +192,8 @@ class DeterministGenerator(Generator):
         if maxValue is None:
             raise ValueError("maxValue should not be None")
         if not isinstance(maxValue, int):
-            raise ValueError("maxValue should be an integer, not: '{}'".format(type(maxValue)))
+            raise ValueError("maxValue should be an integer, not: '{}'"
+                             .format(type(maxValue)))
         self._maxValue = maxValue
 
     @property
@@ -205,5 +205,6 @@ class DeterministGenerator(Generator):
         if bitsize is None:
             raise ValueError("bitsize should not be None")
         if not isinstance(bitsize, int):
-            raise ValueError("bitsize should be an int, not: '{}'".format(type(bitsize)))
+            raise ValueError("bitsize should be an int, not: '{}'"
+                             .format(type(bitsize)))
         self._bitsize = bitsize

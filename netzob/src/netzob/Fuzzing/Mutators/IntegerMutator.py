@@ -43,15 +43,13 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Model.Vocabulary.Types.AbstractType import Sign, UnitSize
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
-from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
-from netzob.Fuzzing.Generators.XorShiftGenerator import XorShiftGenerator
 
 
 @NetzobLogger
@@ -302,11 +300,11 @@ class IntegerMutator(DomainMutator):
 
         # Build the generator
         self.generator = GeneratorFactory.buildGenerator(self.generator,
-                                                         seed = self.seed,
-                                                         minValue = self._minLength,
-                                                         maxValue = self._maxLength,
-                                                         bitsize = self.lengthBitSize.value,
-                                                         signed = self.domain.dataType.sign == Sign.SIGNED)
+                                                         seed=self.seed,
+                                                         minValue=self._minLength,
+                                                         maxValue=self._maxLength,
+                                                         bitsize=self.lengthBitSize.value,
+                                                         signed=self.domain.dataType.sign == Sign.SIGNED)
 
     def count(self):
         r"""
@@ -439,6 +437,7 @@ def _test_pseudo_rand_interval():
 
     """
 
+
 def _test_determinist_generator_1():
     r"""
 
@@ -477,6 +476,7 @@ def _test_determinist_generator_1():
     True
 
     """
+
 
 def _test_determinist_generator_2():
     r"""
@@ -517,6 +517,7 @@ def _test_determinist_generator_2():
     True
 
     """
+
 
 def _test_coverage():
     r"""

@@ -47,10 +47,7 @@ from itertools import repeat, starmap
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Fuzzing.Generator import Generator
-from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
-from netzob.Fuzzing.Generators.XorShiftGenerator import XorShiftGenerator
 from netzob.Fuzzing.Generators.WrapperGenerator import WrapperGenerator
 
 

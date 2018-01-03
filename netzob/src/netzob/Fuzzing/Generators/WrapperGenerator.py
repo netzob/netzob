@@ -77,7 +77,7 @@ class WrapperGenerator(Generator):
 
     def __next__(self):
         """This is the method to get the next value in the generated list.
-        
+
         :return: a generated int value
         :rtype: :class:`int`
 
@@ -88,7 +88,6 @@ class WrapperGenerator(Generator):
             result = center(result, self._minValue, self._maxValue)
 
         return result
-
 
     ## Properties
 

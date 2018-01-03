@@ -47,15 +47,10 @@ import string
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
-from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
-from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
-from netzob.Model.Vocabulary.Types.Integer import uint16le
+from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.String import String
-from netzob.Model.Vocabulary.Field import Field
 
 
 @NetzobLogger
@@ -168,7 +163,6 @@ class StringMutator(DomainMutator):
         model_unitSize = self.domain.dataType.unitSize
         self._initializeLengthGenerator(generator, interval, (model_min, model_max), model_unitSize)
 
-
     ## API methods
 
     def count(self):
@@ -182,7 +176,7 @@ class StringMutator(DomainMutator):
         >>> f = Field(String(nbChars=4))
         >>> StringMutator(f.domain).count()
         100000000
-        
+
         >>> f = Field(String(nbChars=(1, 2)))
         >>> StringMutator(f.domain).count()
         10100
@@ -227,19 +221,18 @@ class StringMutator(DomainMutator):
                 value = value + (" " * (length - len(value)))
             else:
                 # truncate the too long string value to length characters
-                value = value[:length-1] + self.endChar
+                value = value[:length - 1] + self.endChar
         else:
             value = ""
 
         # Conversion
         return String.decode(value,
-                             unitSize = self.domain.dataType.unitSize,
-                             endianness = self.domain.dataType.endianness,
-                             sign = self.domain.dataType.sign)
+                             unitSize=self.domain.dataType.unitSize,
+                             endianness=self.domain.dataType.endianness,
+                             sign=self.domain.dataType.sign)
 
     def mutate(self, data):
         raise NotImplementedError
-
 
     ## Properties
 
@@ -272,6 +265,7 @@ class StringMutator(DomainMutator):
 def _test():
     r"""
 
+    >>> from netzob.all import *
     >>> f = Field(String(nbChars=(35, 60)))
     >>> f.domain.dataType.unitSize
     UnitSize.SIZE_16

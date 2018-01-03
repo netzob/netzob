@@ -44,14 +44,12 @@ from enum import Enum
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
+from netzob.Common.Utils.Decorators import public_api
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
-from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Model.Grammar.Automata import Automata
 from netzob.Model.Grammar.Transitions.Transition import Transition
 from netzob.Model.Grammar.Transitions.OpenChannelTransition import OpenChannelTransition
-from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition
 from netzob.Model.Grammar.States.State import State  # noqa: F401
 
 
@@ -77,6 +75,7 @@ class AutomataMutator(Mutator):
                  automata,  # type: Automata
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT):
+        # type: (...) -> None
         super().__init__(mode=MutatorMode.MUTATE, generator=generator, seed=seed)
 
         # Initialize variable from parameters
@@ -84,7 +83,6 @@ class AutomataMutator(Mutator):
 
         # Initialize random generator
         self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=65535)  # Arbitrarily maxValue
-
 
     ## Public API
 
@@ -634,7 +632,7 @@ class AutomataMutator(Mutator):
         """
         init_state = State("Initial state")
         state = State(name="Main state")
-        t = OpenChannelTransition(startState=init_state, endState=state, name='Transition open channel')
+        OpenChannelTransition(startState=init_state, endState=state, name='Transition open channel')
 
         for symbol in self.automata.vocabulary:
 
@@ -802,9 +800,8 @@ class AutomataMutator(Mutator):
     def generate(self):
         raise NotImplementedError
 
-
     ## Properties
-    
+
     @property
     def automata(self):
         return self._automata

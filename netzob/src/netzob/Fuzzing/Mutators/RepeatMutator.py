@@ -45,16 +45,9 @@
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
-from netzob.Fuzzing.Generator import Generator
-from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
-from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.Types.Integer import uint16le
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
-from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
-from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 
 
 class RepeatMutator(DomainMutator):

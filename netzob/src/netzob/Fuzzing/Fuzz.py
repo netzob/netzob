@@ -61,7 +61,6 @@ from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
-from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Mutators.AltMutator import AltMutator
 from netzob.Fuzzing.Mutators.AggMutator import AggMutator
 from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator

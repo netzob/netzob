@@ -44,11 +44,9 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
-from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
-from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.AbstractType import Sign
 
@@ -138,6 +136,6 @@ class TimestampMutator(DomainMutator):
         timeValue = next(self.generator) * (2**self.domain.dataType.unitSize.value - 1)
 
         return Integer.decode(timeValue,
-                              unitSize = self.domain.dataType.unitSize,
-                              endianness = self.domain.dataType.endianness,
-                              sign = Sign.UNSIGNED)
+                              unitSize=self.domain.dataType.unitSize,
+                              endianness=self.domain.dataType.endianness,
+                              sign=Sign.UNSIGNED)

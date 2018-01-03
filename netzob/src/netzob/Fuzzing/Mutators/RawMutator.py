@@ -46,10 +46,8 @@
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
 from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
-from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 class RawMutator(DomainMutator):

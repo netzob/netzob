@@ -46,14 +46,8 @@ from typing import Dict  # noqa: F401
 # +---------------------------------------------------------------------------+
 from netzob.Fuzzing.Mutator import Mutator, MutatorMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
-from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-from netzob.Fuzzing.Generator import Generator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
-from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Types.Integer import uint16le
 
 
 class RecursionException(Exception):
@@ -195,7 +189,6 @@ class AltMutator(DomainMutator):
         r"""
 
         >>> from netzob.all import *
-        >>> 
         >>> d = Alt([uint8(), uint8()])
         >>> AltMutator(d).count()
         65536
