@@ -84,6 +84,8 @@ class XorShiftGenerator(Generator):
     """Generates integer values from a list determined with the size of an
     Integer field.
 
+    # Generation of integers from an interval
+
     >>> from netzob.all import *
     >>> seed = 14
     >>> g = XorShiftGenerator(seed, minValue=0, maxValue=255)
@@ -94,6 +96,25 @@ class XorShiftGenerator(Generator):
     >>> next(g)
     149
 
+
+    # Generation of signed integers from an interval
+
+    >>> seed = 14
+    >>> g = XorShiftGenerator(seed, minValue=-128, maxValue=127, signed=True)
+    >>> a = set()
+    >>> for _ in range(256):
+    ...     a.add(next(g))
+    >>> len(a)
+    256
+
+
+    # If incompatible parameters are passed to the generator, it should return None
+
+    >>> seed = 14
+    >>> g = XorShiftGenerator(seed, minValue=-20, maxValue=-20, signed=False)
+    >>> print(next(g))
+    None
+
     """
 
     name = "xorshift"
@@ -102,7 +123,7 @@ class XorShiftGenerator(Generator):
                  seed=1,
                  minValue=None,
                  maxValue=None,
-                 bitsize=None,
+                 bitsize=None,  # Not used
                  signed=False):
 
         # Call parent init
@@ -115,48 +136,69 @@ class XorShiftGenerator(Generator):
         self._state = seed
         self.minValue = minValue
         self.maxValue = maxValue
-        self.bitsize = bitsize
         self.signed = signed
-        self._firstCall = True  # Tells if the generator is called for the first time
+        self._firstCall = True  # Tells if this is the first time we call this generator
+        self._nbCall = 0
 
         # Handle bitsize
         bitsize = AbstractType.computeUnitSize(abs(self._maxValue - self._minValue) + 1)  # Compute unit size according to the maximum length
-        bitsize = bitsize.value
+        self.bitsize = bitsize.value
 
-        if bitsize in (4, 8):
+        # Bitsize of 4 should be converted to 8, as there is no xorshift function for 4 bytes
+        if self.bitsize == 4:
+            self.bitsize = 8
+
+        # Select xorshift according to bitsize
+        if self.bitsize == 8:
             self._xorshift_func = xorshift8
-        elif bitsize == 16:
+        elif self.bitsize == 16:
             self._xorshift_func = xorshift16
-        elif bitsize == 32:
+        elif self.bitsize == 32:
             self._xorshift_func = xorshift32
-        elif bitsize == 64:
+        elif self.bitsize == 64:
             self._xorshift_func = xorshift64
         else:
-            raise ValueError("Bitsize value '{}' not supported".format(bitsize))
+            raise ValueError("Bitsize value '{}' not supported".format(self.bitsize))
 
     def __next__(self):
         """This is the method to get the next value.
 
         :return: A generated int value.
-        :rtype: :class:`int`
+        :rtype: :class:`int` or None
 
         """
 
+        if self._nbCall == 0:
+            self._firstCall = True
+            self._state = self.seed
+        else:
+            self._firstCall = False
+
+        nb_values = abs(self._maxValue - self._minValue) + 1
+        self._nbCall = (self._nbCall + 1) % nb_values
+        return self.__inner_next__()
+
+    def __inner_next__(self):
+        
         if self._firstCall:
             # We force the first iteration to return 0, as it is never reached by xorshift generator
-            self._firstCall = False
             result = 0
+            self._firstCall = False
         else:
             result = self.xorshift()
 
         # We respect the interval
         if self.signed:
             # Convert uint to int
-            result = result.to_bytes(self.bitsize // 8, byteorder='big')
+            result = result.to_bytes(self.bitsize // 8, byteorder='big', signed=False)
             result = int.from_bytes(result, byteorder='big', signed=True)
 
-        if not self.minValue <= result <= self.maxValue:
-            result = next(self)
+        # If the value does not match the expected interval, we recursively call for the next value
+        try:
+            if not self.minValue <= result <= self.maxValue:
+                result = self.__inner_next__()
+        except RecursionError as e:
+            return None
 
         return result
 
