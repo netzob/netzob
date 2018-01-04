@@ -453,12 +453,9 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         return result
 
     @abc.abstractmethod
-    def specialize(self, mutator=None):
+    def specialize(self):
         """Specialize and generate a :class:`bytes` object which content
         follows the field definitions attached to current element.
-
-        :keyword mutator: if set, the mutator will be used to mutate the field definitions
-        :type mutator: :class:`Mutator <netzob.Fuzzing.Mutator>`
 
         :return: The produced content after the specializion process.
         :rtype: :class:`bytes`
