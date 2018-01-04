@@ -256,10 +256,10 @@ class Alt(AbstractVariableNode):
                                format(newSpecializingPath, child))
         else:
             self._logger.debug("Path {} on child {} succeed ({}).".format(
-                newSpecializingPath, child, self.id))
+                newSpecializingPath, child, id(self)))
             for childSpecializingPath in childSpecializingPaths:
                 value = childSpecializingPath.getData(child)
-                self._logger.debug("Generated value for {}: {} ({})".format(self, value, self.id))
+                self._logger.debug("Generated value for {}: {} ({})".format(self, value, id(self)))
                 childSpecializingPath.addResult(self, value)
 
             specializingPaths.extend(childSpecializingPaths)
