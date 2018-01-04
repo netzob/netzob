@@ -93,7 +93,7 @@ class AltMutator(DomainMutator):
     >>> mutator.currentDepth
     2
     >>> mutator.generate()
-    1
+    0
     >>> mutator.currentDepth
     3
 

@@ -225,7 +225,7 @@ class IntegerMutator(DomainMutator):
     0
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
-    255
+    1
     >>> d = mutator.generate()
     >>> int.from_bytes(d, byteorder='big')
     0
