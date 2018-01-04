@@ -76,7 +76,7 @@ class AutomataMutator(Mutator):
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT):
         # type: (...) -> None
-        super().__init__(mode=MutatorMode.MUTATE, generator=generator, seed=seed)
+        super().__init__(generator=generator, seed=seed)
 
         # Initialize variable from parameters
         self.automata = automata

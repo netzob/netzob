@@ -135,7 +135,7 @@ class StringMutator(DomainMutator):
                  mode=MutatorMode.GENERATE,
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
-                 counterMax=Mutator.COUNTER_MAX_DEFAULT,
+                 counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
                  endChar=DEFAULT_END_CHAR,  # type: str
                  interval=MutatorInterval.FULL_INTERVAL,
                  lengthBitSize=None,

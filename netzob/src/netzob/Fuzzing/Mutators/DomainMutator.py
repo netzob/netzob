@@ -47,6 +47,7 @@ import abc
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable  # noqa: F401
+from netzob.Common.Utils.Constant import Constant
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Fuzzing.Mutator import Mutator
@@ -85,39 +86,67 @@ class DomainMutator(Mutator):
         called in order to produce the fuzzing value.
         If set to :attr:`MutatorMode.MUTATE`, :meth:`Mutator.mutate()` will be called in order to
         mutate the current value. Default value is :attr:`MutatorMode.GENERATE`.
+    :param generator: The underlying generator used to produce pseudo-random or deterministic values.
+    :param seed: The seed value of the mutator used to initialize the generator.
+    :param counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be used to represent a ratio in percent). Default value is :attr:`COUNTER_MAX_DEFAULT` = 2**32.
+    :param lengthBitSize: The storage size in bits of the integer used to generate the length of the data.
+        Default value is `None`, which indicates to use the unit size set in the field domain.
     :type domain: :class:`AbstractVariable
-        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
     :type mode: :class:`MutatorMode`, optional
+    :type generator: :class:`iter`, optional
+    :type seed: :class:`int`, optional
+    :type counterMax: :class:`int` or :class:`float`, optional
+    :type lengthBitSize: :class:`int`, optional
+
+    The DomainMutator class provides the following public variables:
+
+    :var mode: The mode of fuzzing (either MutationMode.GENERATE or MutationMode.MUTATE)
+    :var generator: The underlying generator used to produce pseudo-random or deterministic values.
+    :var seed: The seed value of the mutator used to initialize the generator.
+    :var counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be used to represent a ratio in percent).
+    :vartype mode: :class:`MutatorMode`
+    :vartype generator: :class:`iter`
+    :vartype seed: :class:`int`
+    :vartype counterMax: :class:`int` or :class:`float`
 
     """
 
     # Constants
     DOMAIN_TYPE = None    # type: Type[AbstractVariable]
     DATA_TYPE = None      # type: Type[AbstractType]
+    COUNTER_MAX_DEFAULT = Constant(1 << 32)  #: the default max counter value
+
+    # Class variables
+    globalCounterMax = COUNTER_MAX_DEFAULT
 
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,  # type: MutatorMode
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
-                 counterMax=Mutator.COUNTER_MAX_DEFAULT,
+                 counterMax=COUNTER_MAX_DEFAULT,
                  lengthBitSize=None):
         # type: (...) -> None
 
         # Call parent init
-        super().__init__(mode=mode,
-                         generator=generator,
-                         seed=seed,
-                         counterMax=counterMax)
-
-        # Variables initialized from parameters
-        self.domain = domain
-        self.lengthBitSize = lengthBitSize
+        super().__init__(generator=generator, seed=seed)
 
         # Internal variables
         self._lengthGenerator = None
         self._minLength = None
         self._maxLength = None
+        self._effectiveCounterMax = 0
+        self._currentCounter = 0
+
+        # Variables initialized from parameters
+        self.domain = domain
+        self.mode = mode
+        self.counterMax = counterMax
+        self.lengthBitSize = lengthBitSize
+
+
+    # API methods
 
     @abc.abstractmethod
     def count(self):
@@ -129,6 +158,25 @@ class DomainMutator(Mutator):
 
         """
         pass
+
+    def generate(self):
+        """This is the fuzz generation method of the field domain. It has to
+        be overridden by all the inherited mutators which call the
+        :meth:`generate` function.
+
+        :return: a generated content represented with bytes
+        :rtype: :class:`bytes`
+        :raises: :class:`Exception` when **currentCounter** reaches
+                 :attr:`Mutator.counterMax`.
+        """
+
+        if self._currentCounter >= self._effectiveCounterMax:
+            raise Exception("Max mutation counter reached")
+
+        if self._currentCounter >= DomainMutator.globalCounterMax:
+            raise Exception("Max mutation counter reached")
+
+        self._currentCounter += 1
 
     def mutate(self, data):
         """This is the mutation method of the field domain. It has to be
@@ -228,6 +276,31 @@ class DomainMutator(Mutator):
                                 .format(self.DATA_TYPE, domain_datatype))
 
         self._domain = domain
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter  # type: ignore
+    def mode(self, mode):
+        # Sanity checks on mutator mode
+        if not isinstance(mode, MutatorMode):
+            raise TypeError("Mutator mode should be of type '{}'. Received object: '{}'"
+                            .format(MutatorMode, mode))
+        self._mode = mode
+
+    @property
+    def counterMax(self):
+        return self._counterMax
+
+    @counterMax.setter  # type: ignore
+    def counterMax(self, counterMax):
+        if isinstance(counterMax, float):
+            self._effectiveCounterMax = int(counterMax * self.domain.count())
+        else:
+            self._effectiveCounterMax = counterMax
+
+        self._counterMax = counterMax
 
     @property
     def lengthBitSize(self):

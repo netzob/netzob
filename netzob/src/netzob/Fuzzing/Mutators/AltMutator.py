@@ -162,7 +162,7 @@ class AltMutator(DomainMutator):
                  mode=MutatorMode.GENERATE,
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
-                 counterMax=Mutator.COUNTER_MAX_DEFAULT,
+                 counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
                  mutateChild=True,
                  mappingTypesMutators={},
                  maxDepth=DEFAULT_MAX_DEPTH):

@@ -89,7 +89,7 @@ class Fuzz(object):
                        a :class:`float` should be used to represent a ratio in
                        percent).
     :type counterMax: :class:`int` or :class:`float`, optional, default to
-                      :attr:`COUNTER_MAX_DEFAULT` = 65536
+                      :attr:`COUNTER_MAX_DEFAULT` = 2**32
 
 
     The Fuzz class provides the following public variables:
@@ -119,7 +119,7 @@ class Fuzz(object):
         Fuzz.mappingTypesMutators[Alt] = (AltMutator, {})
         Fuzz.mappingTypesMutators[Agg] = (AggMutator, {})
 
-    def __init__(self, counterMax=Mutator.COUNTER_MAX_DEFAULT):
+    def __init__(self, counterMax=DomainMutator.COUNTER_MAX_DEFAULT):
         # type: (Union[int, float]) -> None
 
         # Initialize variables from parameters
@@ -138,7 +138,7 @@ class Fuzz(object):
             mode=MutatorMode.GENERATE,
             generator='xorshift',
             seed=Mutator.SEED_DEFAULT,
-            counterMax=Mutator.COUNTER_MAX_DEFAULT,
+            counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
             **kwargs):
         r"""The :meth:`set <.Fuzz.set>` method specifies the fuzzing
         strategy for a symbol, a field, a variable or a type.
@@ -187,7 +187,7 @@ class Fuzz(object):
         :param counterMax: An integer used to limit the number of
                            mutations.
 
-                           Defaults value is :attr:`COUNTER_MAX_DEFAULT`.
+                           Defaults value is :attr:`COUNTER_MAX_DEFAULT` = 2**32.
 
         :param kwargs: Some context dependent parameters (see below)
                        (optional).
@@ -917,15 +917,16 @@ class Fuzz(object):
 
         return tmp_new_keys
 
+
     # PROPERTIES ##
 
     @property
     def counterMax(self):
-        return Mutator.globalCounterMax
+        return DomainMutator.globalCounterMax
 
     @counterMax.setter  # type: ignore
     def counterMax(self, counterMax):
-        Mutator.globalCounterMax = counterMax
+        DomainMutator.globalCounterMax = counterMax
 
 
 def _test():

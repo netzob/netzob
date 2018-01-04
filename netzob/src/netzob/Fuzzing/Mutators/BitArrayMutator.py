@@ -96,7 +96,7 @@ class BitArrayMutator(DomainMutator):
                  mode=MutatorMode.GENERATE,
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
-                 counterMax=Mutator.COUNTER_MAX_DEFAULT,
+                 counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
                  interval=MutatorInterval.FULL_INTERVAL,
                  lengthBitSize=None):
 
