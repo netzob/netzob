@@ -177,7 +177,6 @@ class MessageParser(object):
         if message is None:
             raise Exception("Specified message is None")
 
-        # self._logger.debug("Parse message '{0}' according to symbol {1}".format(message.id, symbol.name))
         # we only consider the message data
         dataToParse = message.data
 

@@ -55,7 +55,6 @@ class VariableSpecializer():
         self.variable = variable
         self.fuzz = fuzz
 
-    @typeCheck(SpecializingPath)
     def specialize(self, specializingPath):
         """Execute the specialize operation"""
 
@@ -65,10 +64,4 @@ class VariableSpecializer():
             raise Exception("Variable cannot be None")
 
         # we create the initial parser path
-        variableSpecializingPaths = self.variable.specialize(specializingPath, fuzz=self.fuzz)
-
-        self._logger.debug(
-            "Specializing variable '{0}' generated '{1}' valid paths".format(
-                self.variable, len(variableSpecializingPaths)))
-
-        return variableSpecializingPaths
+        return self.variable.specialize(specializingPath, fuzz=self.fuzz)

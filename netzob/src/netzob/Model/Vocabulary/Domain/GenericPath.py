@@ -104,7 +104,6 @@ class GenericPath(object):
     def hasResult(self, variable):
         return variable in self._variablesWithResult
 
-    @typeCheck(AbstractVariable)
     def getData(self, variable):
         """Return the data that is assigned to the specified variable.
 
@@ -132,7 +131,6 @@ class GenericPath(object):
                                                                                                             id(variable),
                                                                                                             variable.field))
 
-    @typeCheck(AbstractVariable)
     def hasData(self, variable):
         """Return True if a data has been assigned to the specified variable.
         """
@@ -145,7 +143,6 @@ class GenericPath(object):
             return self.memory.hasValue(variable)
         return False
 
-    @typeCheck(bitarray, AbstractVariable)
     def assignData(self, data, variable):
         """Assign a data to the specified variable.
 
@@ -156,12 +153,11 @@ class GenericPath(object):
         if variable is None:
             raise Exception("Variable cannot be None")
 
-        if variable in self._dataAssignedToVariable:
-            self._logger.debug("Replacing '{}' by '{}' for variable '{}'".format(self._dataAssignedToVariable[variable].tobytes(), data.tobytes(), variable))
+        # if variable in self._dataAssignedToVariable:
+        #     self._logger.debug("Replacing '{}' by '{}' for variable '{}'".format(self._dataAssignedToVariable[variable].tobytes(), data.tobytes(), variable))
 
         self._dataAssignedToVariable[variable] = data
 
-    @typeCheck(AbstractVariable)
     def removeData(self, variable):
         self._logger.debug("Remove assigned data to variable: {}".format(variable))
         if variable is None:
@@ -169,7 +165,6 @@ class GenericPath(object):
 
         del self._dataAssignedToVariable[variable]
 
-    @typeCheck(AbstractVariable)
     def removeDataRecursively(self, variable):
         from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import SELF
 

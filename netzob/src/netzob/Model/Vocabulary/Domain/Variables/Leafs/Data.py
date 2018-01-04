@@ -136,7 +136,6 @@ class Data(AbstractVariableLeaf):
         return (self.__class__.__name__, self.currentValue, self.dataType,
                 self.svas, self.name)
 
-    @typeCheck(GenericPath)
     def isDefined(self, path):
         """Checks if a value is available either in data's definition or in memory
 
@@ -161,7 +160,6 @@ class Data(AbstractVariableLeaf):
 
         return memory.hasValue(self)
 
-    @typeCheck(ParsingPath)
     def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """Checks if the value assigned to this variable could be parsed against
         the definition domain of the data.
@@ -193,7 +191,6 @@ class Data(AbstractVariableLeaf):
                     newParsingPath.addResult(self, content[:size].copy())
                     yield newParsingPath
 
-    @typeCheck(ParsingPath)
     def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
@@ -227,7 +224,6 @@ class Data(AbstractVariableLeaf):
             self._logger.debug("Data '{}' cannot be parsed with variable {}".format(content.tobytes(), self))
         return results
 
-    @typeCheck(ParsingPath)
     def learn(self, parsingPath, acceptCallBack=True, carnivorous=False):
 
         if parsingPath is None:
@@ -273,7 +269,6 @@ class Data(AbstractVariableLeaf):
                     else:
                         self._logger.debug("Parsed data does not respect a relation")
 
-    @typeCheck(SpecializingPath)
     def use(self, variableSpecializerPath, acceptCallBack=True):
         """This method participates in the specialization proces.
 
@@ -300,7 +295,6 @@ class Data(AbstractVariableLeaf):
 
         return result
 
-    @typeCheck(SpecializingPath)
     def regenerate(self, variableSpecializerPath, acceptCallBack=True):
         """This method participates in the specialization proces.
 
@@ -320,7 +314,6 @@ class Data(AbstractVariableLeaf):
         variableSpecializerPath.addResult(self, newValue)
         return [variableSpecializerPath]
 
-    @typeCheck(SpecializingPath)
     def regenerateAndMemorize(self,
                               variableSpecializerPath,
                               acceptCallBack=True):

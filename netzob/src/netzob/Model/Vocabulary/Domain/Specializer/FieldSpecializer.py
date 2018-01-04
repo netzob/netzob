@@ -122,7 +122,6 @@ class FieldSpecializer(object):
         else:
             self.arbitraryValue = None
 
-    @typeCheck(SpecializingPath)
     def specialize(self, specializingPath=None):
         """Execute the specialize operation"""
 

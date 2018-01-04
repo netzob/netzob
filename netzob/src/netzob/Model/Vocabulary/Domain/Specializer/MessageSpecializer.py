@@ -109,7 +109,6 @@ class MessageSpecializer(object):
         self.presets = presets
         self.fuzz = fuzz
 
-    @typeCheck(Symbol)
     def specializeSymbol(self, symbol):
         """This method generates a message based on the provided symbol definition.
 
@@ -206,7 +205,6 @@ class MessageSpecializer(object):
             if field.isPseudoField is True:
                 continue
 
-            # TODO: only support one level of children... must be improved
             if len(field.fields) > 0:
                 d = None
                 for child in field.fields:
