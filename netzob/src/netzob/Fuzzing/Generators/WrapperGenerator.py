@@ -50,7 +50,21 @@ from netzob.Fuzzing.Generator import Generator
 
 @NetzobLogger
 class WrapperGenerator(Generator):
-    """Wrapper for generating integer values.
+    """Wrapper for generating integer values, from various underlying
+    iterators or generators. This wrapper ensures that the returns
+    integers fit into the expected interval.
+
+    >>> from itertools import cycle
+    >>> from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
+    >>> g = GeneratorFactory.buildGenerator(cycle(range(20, 42)))
+    >>> type(g)
+    <class 'netzob.Fuzzing.Generators.WrapperGenerator.WrapperGenerator'>
+    >>> next(g)
+    20
+    >>> next(g)
+    21
+    >>> next(g)
+    22
 
     """
 
@@ -80,12 +94,23 @@ class WrapperGenerator(Generator):
         :rtype: :class:`int`
 
         """
+        # Get next value
         result = next(self._iterator)
 
         if self.minValue is not None and self.maxValue is not None:
-            result = center(result, self.minValue, self.maxValue)
 
-        return result
+            # Specification expanding for floats
+            if isinstance(result, float):
+                number_values = float(self.maxValue) - float(self.minValue) + 1.0
+                result = self.minValue + int(result * number_values)
+
+            # Ensure the produced value is in the range of the permitted values of the domain datatype
+            if result > self.maxValue:
+                result = self.maxValue
+            elif result < self.minValue:
+                result = self.minValue
+
+        return int(result)
 
     def get_state(self):
         # type: () -> bytes
@@ -143,21 +168,3 @@ class WrapperGenerator(Generator):
     @signed.setter  # type: ignore
     def signed(self, signed):
         self._signed = signed
-
-
-## Utility functions
-
-def center(val, lower, upper):
-    """
-    Center :attr:`val` between :attr:`lower` and :attr:`upper`.
-    """
-
-    number_values = float(upper) - float(lower) + 1.0
-    result = lower + int(val * number_values)
-
-    # Ensure the produced value is in the range of the permitted values of the domain datatype
-    if result > upper:
-        result = upper
-    elif result < lower:
-        result = lower
-    return result
