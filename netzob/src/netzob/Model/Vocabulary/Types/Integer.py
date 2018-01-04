@@ -68,8 +68,8 @@ class Integer(AbstractType):
 
       * UnitSize.SIZE_1
       * UnitSize.SIZE_4
-      * UnitSize.SIZE_8 (default unit size)
-      * UnitSize.SIZE_16
+      * UnitSize.SIZE_8
+      * UnitSize.SIZE_16 (default unit size)
       * UnitSize.SIZE_24
       * UnitSize.SIZE_32
       * UnitSize.SIZE_64
