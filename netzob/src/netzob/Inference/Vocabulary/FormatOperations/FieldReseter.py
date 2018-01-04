@@ -102,7 +102,7 @@ class FieldReseter(object):
                 "The field to reset must be specified and cannot be None")
 
         self._logger.debug("Reset the definition of field {0} ({1})".format(
-            field.name, field.id))
+            field.name, id(field)))
         field.clearFields()
 
         if isinstance(field, Symbol):

@@ -106,7 +106,6 @@ class Transition(AbstractTransition):
                       execution of the transition.
     :var outputSymbols: Output symbols that can be generated when
                         the current transition is executed.
-    :var id: The unique identifier of the transition.
     :var description: description of the transition. If not explicitly set,
                       it is generated from the input and output symbols
     :var inputSymbolReactionTime: The timeout value in seconds to wait for the
@@ -122,7 +121,6 @@ class Transition(AbstractTransition):
     :vartype name: :class:`str`
     :vartype inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype outputSymbols: :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
-    :vartype id: :class:`uuid.UUID`
     :vartype description: :class:`str`
     :vartype inputSymbolReactionTime: :class:`float`
     :vartype outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
@@ -298,7 +296,7 @@ class Transition(AbstractTransition):
         # Computes the next state following the received symbol
         for outputSymbol in self.outputSymbols:
             self._logger.debug("[actor='{}'] Possible output symbol: '{}' (id={}).".
-                               format(str(actor), str(outputSymbol), outputSymbol.id))
+                               format(str(actor), str(outputSymbol), id(outputSymbol)))
 
         if received_symbol in self.outputSymbols:
             self.active = False

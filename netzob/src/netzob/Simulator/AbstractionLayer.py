@@ -310,7 +310,7 @@ class AbstractionLayer(object):
             self._logger.debug("Symbol to write is an EmptySymbol. So nothing to do.".format(symbol.name))
             return len_data
 
-        self._logger.debug("Specializing symbol '{0}' (id={1}).".format(symbol.name, symbol.id))
+        self._logger.debug("Specializing symbol '{0}' (id={1}).".format(symbol.name, id(symbol)))
 
         self.specializer.presets = presets
         self.specializer.fuzz = fuzz

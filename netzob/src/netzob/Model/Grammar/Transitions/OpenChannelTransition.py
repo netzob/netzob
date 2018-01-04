@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -70,14 +69,12 @@ class OpenChannelTransition(AbstractTransition):
     :var active: Represents the current execution status of the transition.
                  If a transition is active, it means it has not yet finished executing it.
     :var name: The name of the transition. The default value is `None`.
-    :var id: The unique identifier of the transition.
     :var description: description of the transition. If not explicitly set,
                       its value is 'OpenChannelTransition'
     :vartype startState: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype endState: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype active: :class:`bool`
     :vartype name: :class:`str`
-    :vartype id: :class:`uuid.UUID`
     :vartype description: :class:`str`
 
 

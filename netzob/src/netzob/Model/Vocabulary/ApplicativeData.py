@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -58,12 +57,9 @@ class ApplicativeData(object):
 
     """
 
-    def __init__(self, name, value, _id=None):
+    def __init__(self, name, value):
         self.name = name
         self.value = value
-        if _id is None:
-            _id = uuid.uuid4()
-        self.id = _id
 
     @property
     def name(self):
@@ -79,21 +75,6 @@ class ApplicativeData(object):
         if name is None:
             raise TypeError("Name cannot be None")
         self.__name = name
-
-    @property
-    def id(self):
-        """The unique id of the applicative data.
-
-        :type: :class:`uuid.UUID`
-        """
-        return self.__id
-
-    @id.setter  # type: ignore
-    @typeCheck(uuid.UUID)
-    def id(self, _id):
-        if _id is None:
-            raise TypeError("Id cannot be None")
-        self.__id = _id
 
     @property
     def value(self):

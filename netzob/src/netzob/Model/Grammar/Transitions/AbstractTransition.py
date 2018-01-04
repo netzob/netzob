@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import uuid
 import abc
 
 #+---------------------------------------------------------------------------+
@@ -55,12 +54,10 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     :param str _type: the type of the transition
     :param startState: The initial state of the transition.
     :param endState: The end state of the transition
-    :param _id: The unique identifier of the transition.
     :param str name: The name of the transition
     :param int priority: the priority of the transition
     :type startState: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
     :type endState: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
-    :type _id: :class:`uuid.UUID`
 
     """
 

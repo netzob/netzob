@@ -206,7 +206,7 @@ class State(AbstractState):
             # Find the transition which accepts the received symbol as an input symbol
             nextTransition = None
             for transition in self.transitions:
-                if transition.type == Transition.TYPE and transition.inputSymbol.id == received_symbol.id:
+                if transition.type == Transition.TYPE and id(transition.inputSymbol) == id(received_symbol):
                     nextTransition = transition
                     break
 

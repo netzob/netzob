@@ -29,7 +29,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -71,14 +70,11 @@ class Session(object):
 
     def __init__(self,
                  messages=None,
-                 _id=None,
                  applicativeData=None,
                  name="Session"):
         """
         :parameter messages: the messages exchanged in the current session
         :type data: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
-        :parameter _id: the unique identifier of the session
-        :type _id: :class:`uuid.UUID`
         :keyword applicativeData: a list of :class:`ApplicativeData <netzob.Model.Vocabulary.ApplicaticeData.ApplicativeData>`
         """
         self.__messages = SortedTypedList(AbstractMessage)
@@ -87,28 +83,10 @@ class Session(object):
         if messages is None:
             messages = []
         self.messages = messages
-        if _id is None:
-            _id = uuid.uuid4()
-        self.id = _id
         if applicativeData is None:
             applicativeData = []
         self.applicativeData = applicativeData
         self.name = name
-
-    @property
-    def id(self):
-        """The unique identifier of the session.
-
-        :type: :class:`uuid.UUID`
-        """
-        return self.__id
-
-    @id.setter  # type: ignore
-    @typeCheck(uuid.UUID)
-    def id(self, _id):
-        if _id is None:
-            raise TypeError("Id cannot be None")
-        self.__id = _id
 
     @property
     def messages(self):

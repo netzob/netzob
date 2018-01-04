@@ -35,7 +35,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import uuid
 import abc
 import socket
 import os
@@ -337,9 +336,8 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
 
     # Internal methods ##
 
-    def __init__(self, _id=None, timeout=ChannelInterface.DEFAULT_TIMEOUT):
+    def __init__(self, timeout=ChannelInterface.DEFAULT_TIMEOUT):
         super().__init__(timeout=timeout)
-        self.id = uuid.uuid4() if _id is None else _id
         self._isOpened = False
         self.header = None  # A Symbol corresponding to the protocol header
         self.header_presets = {}  # A dict used to parameterize the header Symbol
@@ -375,23 +373,6 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     @typeCheck(bool)
     def isOpen(self, isOpen):
         self._isOpened = isOpen
-
-    @property
-    def id(self):
-        """
-        Property (getter.setter  # type: ignore).
-        The unique identifier of the channel.
-
-        :type: :class:`uuid.UUID`
-        """
-        return self.__id
-
-    @id.setter  # type: ignore
-    @typeCheck(uuid.UUID)
-    def id(self, _id):
-        if _id is None:
-            raise TypeError("ID cannot be None")
-        self.__id = _id
 
 
 # Utilitary methods ##

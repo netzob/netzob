@@ -220,7 +220,7 @@ class ClusterByAlignment(object):
             maxScore = self.scores[max_i][max_j]
         while len(self.scores) > 1 and maxScore >= self.minEquivalence:
 
-            symbols_uid = [str(s.id)
+            symbols_uid = [str(id(s))
                            for s in symbols]  # List of the UID in of symbols
             (i_maximum, j_maximum) = (symbols_uid.index(max_i),
                                       symbols_uid.index(max_j))
@@ -264,7 +264,7 @@ class ClusterByAlignment(object):
         # Append th new symbol to the "symbols" structure
         symbols.append(newSymbol)
 
-        return str(newSymbol.id)
+        return str(id(newSymbol))
 
     def _updateScore(self,
                      symbols,

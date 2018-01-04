@@ -150,14 +150,14 @@ def typeCheck(*types):
     ::
         @id.setter  # type: ignore
         def id(self, id):
-            if not isinstance(id, uuid.UUID):
-               raise TypeError("Invalid types for argument id, must be an UUID")
+            if not isinstance(id, str):
+               raise TypeError("Invalid types for argument id, must be an str")
             self.__id = id
 
     with:
     ::
         @id.setter  # type: ignore
-        @typeCheck(uuid.UUID)
+        @typeCheck(str)
         def id(self, id):
            self.__id = id
 

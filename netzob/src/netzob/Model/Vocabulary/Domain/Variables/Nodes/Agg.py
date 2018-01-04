@@ -416,7 +416,7 @@ class Agg(AbstractVariableNode):
 
             for parsingPath in parsingPaths:
                 self._logger.debug(
-                    "Parse {0} with {1}".format(current_child.id, parsingPath))
+                    "Parse {0} with {1}".format(id(current_child), parsingPath))
                 value_before_parsing = parsingPath.getData(
                     current_child).copy()
                 childParsingPaths = current_child.parse(

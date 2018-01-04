@@ -35,7 +35,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import uuid
 import abc
 import logging
 from collections import OrderedDict
@@ -84,7 +83,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     """Represents all the different classes which participates in field definitions of a message format."""
 
     def __init__(self, name=None):
-        self.id = uuid.uuid4()
         self.name = name
         self.description = ""
 
@@ -820,25 +818,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         return str(result)
 
     # PROPERTIES
-
-    @property
-    def id(self):
-        """Unique identifier of the field.
-
-        This value must be a unique UUID instance (generated with uuid.uuid4()).
-
-        :type: :class:`uuid.UUID`
-        :raises: :class:`TypeError`, :class:`ValueError`
-        """
-
-        return self.__id
-
-    @id.setter  # type: ignore
-    @typeCheck(uuid.UUID)
-    def id(self, id):
-        if id is None:
-            raise ValueError("id is Mandatory.")
-        self.__id = id
 
     @property
     def name(self):

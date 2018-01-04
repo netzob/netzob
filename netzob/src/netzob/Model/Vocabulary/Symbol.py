@@ -170,7 +170,7 @@ class Symbol(AbstractField):
         return other.name != self.name
 
     def __key(self):
-        return self.id
+        return id(self)
 
     def __hash__(self):
         return hash(frozenset(self.name))

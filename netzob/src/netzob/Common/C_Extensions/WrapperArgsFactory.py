@@ -61,7 +61,7 @@ class WrapperArgsFactory(object):
     def computeSimilarityMatrix(self, symbols):
         self.args = []
         for s in symbols:
-            self.args.append(WrapperMessage(s.messages[0], str(s.id)))
+            self.args.append(WrapperMessage(s.messages[0], str(id(s))))
 
     def alignMessages(self, values):
         self.args = []

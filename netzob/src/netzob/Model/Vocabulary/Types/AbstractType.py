@@ -36,7 +36,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import abc
-import uuid
 from bitarray import bitarray
 import random
 import collections
@@ -218,7 +217,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                  unitSize=None,
                  endianness=None,
                  sign=None):
-        self.id = uuid.uuid4()
         self.typeName = typeName
         self.value = value
         self.size = size
@@ -779,25 +777,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             return self.size[0]
         raise ValueError("Cannot determine a fixed size for type '{}'"
                          .format(self))
-
-    @property
-    def id(self):
-        """Unique identifier of the type.
-
-        This value must be a unique UUID instance (generated with uuid.uuid4()).
-
-        :type: :class:`uuid.UUID`
-        :raises: :class:`TypeError`, :class:`ValueError`
-        """
-
-        return self.__id
-
-    @id.setter  # type: ignore
-    @typeCheck(uuid.UUID)
-    def id(self, id):
-        if id is None:
-            raise ValueError("id is Mandatory.")
-        self.__id = id
 
     @property
     def typeName(self):

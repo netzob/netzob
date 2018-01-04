@@ -179,8 +179,8 @@ class RelationFinder(object):
                     (x_fields, x_attribute) = attributeValues_headers[i]
                     (y_fields, y_attribute) = attributeValues_headers[j]
                     # The relation should not apply on the same field
-                    if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[
-                            0].id == y_fields[0].id:
+                    if len(x_fields) == 1 and len(y_fields) == 1 and id(x_fields[
+                            0]) == id(y_fields[0]):
                         continue
                     relation_type = self._findRelationType(x_attribute,
                                                            y_attribute)

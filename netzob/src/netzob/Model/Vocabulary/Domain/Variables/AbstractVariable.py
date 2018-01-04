@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import uuid
 import abc
 from typing import Iterable
 
@@ -56,26 +55,19 @@ class AbstractVariable(object):
     This class is abstract and so should not be instantiated directly.
     """
 
-    def __init__(self, varType, varId=None, name=None, svas=None):
+    def __init__(self, varType, name=None, svas=None):
         """Constructor
 
         :param varType: the type of the variable. we highly recommend using the __class_.__name__
         :type varType: :class:`str`
-        :keywork varId: the id of the variable
-        :type varId: :class:`uuid.UUID`
-        :keyword name: the optional name of the variable, if not set its the varId
+        :keyword name: the optional name of the variable
         :raise: :class:`TypeError` if parameters type are not valid
 
         """
-        if varId is None:
-            self.id = uuid.uuid4()
-        else:
-            self.id = varId
-
         if name is not None:
             self.name = name
         else:
-            self.name = str(self.id)
+            self.name = str(id(self))
 
         self.__varType = varType
         if svas is None:
@@ -131,7 +123,7 @@ class AbstractVariable(object):
     #| Special Functions                                                         |
     #+---------------------------------------------------------------------------+
     def __key(self):
-        return (self.id)
+        return id(self)
 
     def __eq__(x, y):
         try:
@@ -140,7 +132,7 @@ class AbstractVariable(object):
             raise e
 
     def __hash__(self):
-        return hash(self.__key())
+        return self.__key()
 
     def __str__(self):
         """The str method, mostly for debugging purpose."""
@@ -149,15 +141,6 @@ class AbstractVariable(object):
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |
     #+---------------------------------------------------------------------------+
-    @property
-    def id(self):
-        return self.__id
-
-    @id.setter  # type: ignore
-    @typeCheck(uuid.UUID)
-    def id(self, varId):
-        self.__id = varId
-
     @property
     def varType(self):
         """The type of the variable (Read-only).

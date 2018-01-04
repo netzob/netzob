@@ -131,8 +131,8 @@ class CorrelationFinder(object):
                     (x_fields, x_attribute) = attributeValues_headers[i]
                     (y_fields, y_attribute) = attributeValues_headers[j]
                     # The relation should not apply on the same field
-                    if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[
-                            0].id == y_fields[0].id:
+                    if len(x_fields) == 1 and len(y_fields) == 1 and id(x_fields[
+                            0]) == id(y_fields[0]):
                         continue
                     pearson = numpy.corrcoef(values_x, values_y)[0, 1]
                     if not numpy.isnan(pearson):
