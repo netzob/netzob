@@ -665,7 +665,7 @@ class Fuzz(object):
         elif isinstance(key, (AbstractField, AbstractVariable)):
 
             self.mappingFieldsMutators[key] = kwargs
-            self._normalize_mappingFieldsMutators()
+            self._normalize_mappingFieldsMutators(key)
 
         else:
             raise TypeError("Unsupported type for key: '{}'".format(type(key)))
@@ -782,7 +782,7 @@ class Fuzz(object):
 
         return mutatorInstance
 
-    def _normalize_mappingFieldsMutators(self):
+    def _normalize_mappingFieldsMutators(self, new_key):
         """Normalize the fuzzing configuration.
 
         Fields described with field name are converted into field
@@ -792,53 +792,78 @@ class Fuzz(object):
         """
 
         # Normalize fuzzing keys
-        self._normalizeKeys()
+        normalized_new_keys = self._normalizeKeys(new_key=new_key)
 
         # Normalize fuzzing values
-        self._normalizeValues()
+        self._normalizeValues(new_keys=normalized_new_keys)
 
         # Second loop, to handle cases where domains are complex (Alt, Agg or Repeat)
-        new_keys = {}
+        keys = {}
         for k, v in self.mappingFieldsMutators.items():
-            new_keys[k] = v
+            keys[k] = v
             if isinstance(k, AbstractVariableNode):
-                new_keys.update(self._propagateMutation(k, v))
-        self.mappingFieldsMutators.update(new_keys)
+                keys.update(self._propagateMutation(k, v))
+        self.mappingFieldsMutators.update(keys)
 
         # Second loop to normalize fuzzing values, after handling complex domains (that may have added news keys:values)
-        self._normalizeValues()
+        self._normalizeValues(new_keys=normalized_new_keys)
 
-    def _normalizeKeys(self):
+    def _normalizeKeys(self, new_key):
+        """Normalize the keys of the dict containing he relationships between
+        domain and mutators.
+
+        This method expects the new_key (a symbol, a field or a
+        variable) that triggered the process of normalization, and
+        should return the impacted new keys issued form this
+        symbol/field/variable.
+
+        """
         # Normalize fuzzing keys
         new_keys = {}
         keys_to_remove = []
+        normalized_new_keys = []
         for k, v in self.mappingFieldsMutators.items():
 
             # Handle case where k is a Variable -> nothing to do
             if isinstance(k, AbstractVariable):
-                pass
+                if new_key == k:
+                    normalized_new_keys.append(k)
 
             # Handle case where k is a Field containing sub-Fields -> we retrieve all its field variables
             elif isinstance(k, Field) and len(k.fields) > 0:
                 subfields = k.fields
                 keys_to_remove.append(k)
                 for f in subfields:
+
+                    # We force the replacement of the new key
+                    if new_key == k:
+                        new_keys[f.domain] = v
+                        normalized_new_keys.append(f.domain)
+
                     # We check if the variable is not already present in the variables to mutate
-                    if f.domain not in self.mappingFieldsMutators.keys():
+                    elif f.domain not in self.mappingFieldsMutators.keys():
                         new_keys[f.domain] = v
 
             # Handle case where k is a Field -> retrieve the associated variable
             elif isinstance(k, Field):
                 keys_to_remove.append(k)
                 new_keys[k.domain] = v
+                if new_key == k:
+                    normalized_new_keys.append(k.domain)
 
             # Handle case where k is a Symbol -> we retrieve all its field variables
             elif isinstance(k, Symbol):
                 subfields = k.getLeafFields(includePseudoFields=True)
                 keys_to_remove.append(k)
                 for f in subfields:
+
+                    # We force the replacement of the new key
+                    if new_key == k:
+                        new_keys[f.domain] = v
+                        normalized_new_keys.append(f.domain)
+
                     # We check if the variable is not already present in the variables to mutate
-                    if f.domain not in self.mappingFieldsMutators.keys():
+                    elif f.domain not in self.mappingFieldsMutators.keys():
                         new_keys[f.domain] = v
 
             else:
@@ -850,7 +875,9 @@ class Fuzz(object):
             self.mappingFieldsMutators.pop(old_key)
         self.mappingFieldsMutators.update(new_keys)
 
-    def _normalizeValues(self):
+        return normalized_new_keys
+
+    def _normalizeValues(self, new_keys):
         # Normalize fuzzing values
         keys_to_update = {}
         keys_to_remove = []
@@ -880,11 +907,14 @@ class Fuzz(object):
 
         tmp_new_keys = {}
 
+        # Propagate also the mutator mode and the seed
+        kwargs = {'mode': mutator.mode, 'seed': mutator.seed}
+
         if isinstance(variable, Repeat) and isinstance(mutator, RepeatMutator) and mutator.mutateChild:
 
             # We check if the variable is not already present in the variables to mutate
             if variable.children[0] not in self.mappingFieldsMutators.keys():
-                mut_inst = Fuzz._retrieveDefaultMutator(domain=variable.children[0], mapping=mutator.mappingTypesMutators)
+                mut_inst = Fuzz._retrieveDefaultMutator(domain=variable.children[0], mapping=mutator.mappingTypesMutators, **kwargs)
                 tmp_new_keys[variable.children[0]] = mut_inst
 
                 # Propagate mutation to the child if it is a complex domain
@@ -896,7 +926,7 @@ class Fuzz(object):
             for child in variable.children:
                 # We check if the variable is not already present in the variables to mutate
                 if child not in self.mappingFieldsMutators.keys():
-                    mut_inst = Fuzz._retrieveDefaultMutator(domain=child, mapping=mutator.mappingTypesMutators)
+                    mut_inst = Fuzz._retrieveDefaultMutator(domain=child, mapping=mutator.mappingTypesMutators, **kwargs)
                     tmp_new_keys[child] = mut_inst
 
                     # Propagate mutation to the child if it is a complex domain
@@ -908,7 +938,7 @@ class Fuzz(object):
             for child in variable.children:
                 # We check if the variable is not already present in the variables to mutate
                 if child not in self.mappingFieldsMutators.keys():
-                    mut_inst = Fuzz._retrieveDefaultMutator(domain=child, mapping=mutator.mappingTypesMutators)
+                    mut_inst = Fuzz._retrieveDefaultMutator(domain=child, mapping=mutator.mappingTypesMutators, **kwargs)
                     tmp_new_keys[child] = mut_inst
 
                     # Propagate mutation to the child if it is a complex domain
