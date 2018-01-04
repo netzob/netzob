@@ -565,7 +565,7 @@ class NetUtils(object):
         response = ioctl(s,
                          0x8921,  # SIOCGIFMTU
                          struct.pack("16s16x", ifname))
-        mtu = struct.unpack("16xh6s8x", response)[0]
+        mtu = struct.unpack("16xH14x", response)[0]
         return mtu
 
     @staticmethod
@@ -581,4 +581,4 @@ class NetUtils(object):
         s = socket.socket(type=socket.SOCK_DGRAM)
         ioctl(s,
               0x8922,  # SIOCSIFMTU
-              struct.pack("16s16x", ifname))
+              struct.pack("16sH14x", ifname, mtu))
