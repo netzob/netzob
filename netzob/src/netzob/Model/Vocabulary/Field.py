@@ -315,11 +315,30 @@ class Field(AbstractField):
         self.isPseudoField = isPseudoField
 
     @public_api
-    def specialize(self):
+    def specialize(self, presets=None, fuzz=None):
         r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose
         content follows the symbol definition.
 
-        :return: The produced content after specializing the symbol.
+        :param presets: A dictionary of keys:values used to preset
+                        (parameterize) fields during field
+                        specialization. Values in this dictionary will
+                        override any field definition, constraints or
+                        relationship dependencies. See
+                        :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+                        for a complete explanation of its use. The default value is :const:`None`.
+        :param fuzz: A fuzzing configuration used during the specialization process. Values
+                     in this configuration will override any field
+                     definition, constraints, relationship
+                     dependencies or parameterized fields. See
+                     :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
+                     for a complete explanation of its use for fuzzing
+                     purpose. The default value is :const:`None`.
+        :type presets: ~typing.Dict[~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
+                       ~typing.Union[~bitarray.bitarray,bytes,
+                       ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
+                       optional
+        :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
+        :return: The produced content after specializing the field.
         :rtype: :class:`bytes`
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
 
@@ -341,6 +360,8 @@ class Field(AbstractField):
 
         """
         self._logger.debug("Specializes field {0}".format(self.name))
+
+        # Sanity check
         if self.__domain is None and len(self.fields) == 0:
             raise InvalidDomainException("No domain or sub-fields are defined.")
 
