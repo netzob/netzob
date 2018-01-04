@@ -74,7 +74,7 @@ class Padding(AbstractRelationVariableLeaf):
                  Default value is ``False``.
     :param factor: Specify that the length of the targeted structure (always
                    expressed in bits) should be
-                   divided by this factor. The default value is ``1.0``.
+                   multiplied by this factor. The default value is ``1.0``.
                    For example, to express a length in bytes, the factor should
                    be ``1.0/8``, whereas to express a length in bits, the
                    factor should be ``1.0``.
@@ -161,7 +161,7 @@ class Padding(AbstractRelationVariableLeaf):
     120
 
     The following code illustrates a padding with the use of the
-    ``factor`` parameter, where the targeted field sizes are divided by 2
+    ``factor`` parameter, where the targeted field sizes are multiplied by ``1.0/2``
     before computing the padding value length.
 
     >>> from netzob.all import *
