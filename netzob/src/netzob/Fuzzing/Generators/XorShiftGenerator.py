@@ -46,6 +46,12 @@ from typing import Tuple  # noqa: F401
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.xorshift import (
+    native_xorshift8,
+    native_xorshift16,
+    native_xorshift32,
+    native_xorshift64
+)
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
@@ -150,13 +156,13 @@ class XorShiftGenerator(Generator):
 
         # Select xorshift according to bitsize
         if self.bitsize == 8:
-            self._xorshift_func = xorshift8
+            self._xorshift_func = native_xorshift8
         elif self.bitsize == 16:
-            self._xorshift_func = xorshift16
+            self._xorshift_func = native_xorshift16
         elif self.bitsize == 32:
-            self._xorshift_func = xorshift32
+            self._xorshift_func = native_xorshift32
         elif self.bitsize == 64:
-            self._xorshift_func = xorshift64
+            self._xorshift_func = native_xorshift64
         else:
             raise ValueError("Bitsize value '{}' not supported".format(self.bitsize))
 

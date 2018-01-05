@@ -34,6 +34,7 @@ import os
 import uuid
 
 from setuptools import setup, Extension, find_packages
+from Cython.Build import cythonize
 
 sys.path.insert(0, 'src/')
 from netzob import release
@@ -174,6 +175,12 @@ moduleLibRelation = Extension('netzob._libRelation',
                               include_dirs=includes,
                               libraries=["dl"])
 
+# Cython extensions
+cythonModules = cythonize([
+    "src/netzob/Fuzzing/Generators/xorshift.pyx"
+])
+
+
 # +----------------------------------------------------------------------------
 # | Definition of the dependencies
 # +----------------------------------------------------------------------------
@@ -230,7 +237,8 @@ setup(
     package_dir={
         "": "src",
     },
-    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRelation],
+    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation,
+                 moduleLibInterface, moduleLibRelation] + cythonModules,
     data_files=data_files,
     scripts=["netzob"],
     install_requires=get_dependencies(),
