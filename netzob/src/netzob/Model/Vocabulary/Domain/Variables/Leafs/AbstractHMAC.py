@@ -122,14 +122,3 @@ class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
                                        src_sign=Sign.UNSIGNED)
 
         return result
-
-    @property
-    def key(self):
-        return self.__key
-
-    @key.setter  # type: ignore
-    @typeCheck(bytes)
-    def key(self, key):
-        if key is None:
-            raise TypeError("key cannot be None")
-        self.__key = key

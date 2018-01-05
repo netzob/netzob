@@ -132,10 +132,6 @@ class Data(AbstractVariableLeaf):
     def __str__(self):
         return "Data ({0})".format(self.dataType)
 
-    def __key(self):
-        return (self.__class__.__name__, self.currentValue, self.dataType,
-                self.svas, self.name)
-
     def isDefined(self, path):
         """Checks if a value is available either in data's definition or in memory
 

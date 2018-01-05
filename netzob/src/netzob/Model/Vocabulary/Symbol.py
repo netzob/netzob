@@ -173,7 +173,7 @@ class Symbol(AbstractField):
         return id(self)
 
     def __hash__(self):
-        return hash(frozenset(self.name))
+        return self.__key()
 
     @public_api
     def specialize(self, presets=None, fuzz=None, memory=None):

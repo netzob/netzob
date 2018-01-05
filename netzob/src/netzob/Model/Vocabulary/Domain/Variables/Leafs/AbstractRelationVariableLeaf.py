@@ -89,18 +89,6 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         self.targets = targets
         self._missing_targets = set()
 
-    def __key(self):
-        return (self.dataType)
-
-    def __eq__(x, y):
-        try:
-            return x.__key() == y.__key()
-        except Exception:
-            return False
-
-    def __hash__(self):
-        return hash(self.__key())
-
     def __str__(self):
         """The str method."""
         return "Relation({0}) - Type:{1}".format(

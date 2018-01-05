@@ -250,18 +250,6 @@ class Size(AbstractRelationVariableLeaf):
         self.factor = factor
         self.offset = offset
 
-    def __key(self):
-        return (self.dataType, self.factor, self.offset)
-
-    def __eq__(x, y):
-        try:
-            return x.__key() == y.__key()
-        except Exception:
-            return False
-
-    def __hash__(self):
-        return hash(self.__key())
-
     def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables):
         """
         Compute the total size of targets

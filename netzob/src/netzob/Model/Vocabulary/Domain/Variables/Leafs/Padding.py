@@ -244,18 +244,6 @@ class Padding(AbstractRelationVariableLeaf):
             self.dataType = data
             self.data_callback = None
 
-    def __key(self):
-        return (self.dataType, self.factor, self.offset)
-
-    def __eq__(x, y):
-        try:
-            return x.__key() == y.__key()
-        except Exception:
-            return False
-
-    def __hash__(self):
-        return hash(self.__key())
-
     def compareValues(self, content, expectedSize, computedValue):
         return len(content) >= len(computedValue)
 
