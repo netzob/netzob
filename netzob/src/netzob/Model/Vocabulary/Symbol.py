@@ -172,9 +172,6 @@ class Symbol(AbstractField):
     def __key(self):
         return id(self)
 
-    def __hash__(self):
-        return self.__key()
-
     @public_api
     def specialize(self, presets=None, fuzz=None, memory=None):
         r"""The :meth:`specialize()` method generates a :class:`bytes` sequence whose
