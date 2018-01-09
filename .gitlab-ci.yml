@@ -141,4 +141,7 @@ trigger_build:
     - master
     - develop
   script:
-    - "curl -X POST -F token=a834221352fb888809588e90908d43 -F ref=develop https://gitlab.amossys.fr/api/v3/projects/37/trigger/builds"
+    - "sudo apt-get install --no-install-recommends -y curl"
+    - "curl -X POST -F token=$COTTONTAIL_CI_TOKEN -F ref=develop https://gitlab.amossys.fr/api/v3/projects/37/trigger/builds"
+  tags:
+    - ubuntu
