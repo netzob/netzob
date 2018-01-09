@@ -134,3 +134,11 @@ deploy-htmlcov:
     - test:host
   tags:
     - ubuntu
+
+trigger_build:
+  stage: deploy
+  only:
+    - master
+    - develop
+  script:
+    - "curl -X POST -F token=a834221352fb888809588e90908d43 -F ref=develop https://gitlab.amossys.fr/api/v3/projects/37/trigger/builds"
