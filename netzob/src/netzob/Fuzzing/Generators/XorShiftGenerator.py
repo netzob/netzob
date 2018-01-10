@@ -118,8 +118,10 @@ class XorShiftGenerator(Generator):
 
     >>> seed = 14
     >>> g = XorShiftGenerator(seed, minValue=-20, maxValue=-20, signed=False)
-    >>> print(next(g))
-    None
+    Traceback (most recent call last):
+    ...
+    ValueError: negative values implies signed=True
+
 
     """
 
@@ -138,12 +140,17 @@ class XorShiftGenerator(Generator):
         if seed == 0:
             raise ValueError("A seed=0 is not compatible with the generator XorShiftGenerator")
 
+        if minValue > maxValue:
+            raise ValueError("maxValue must be greater than minValue")
+
+        if minValue < 0 and maxValue < 0 and not signed:
+            raise ValueError("negative values implies signed=True")
+
         # Initialize variables
         self._state = seed
         self.minValue = minValue
         self.maxValue = maxValue
         self.signed = signed
-        self._firstCall = True  # Tells if this is the first time we call this generator
         self._nbCall = 0
 
         # Handle bitsize
@@ -166,7 +173,7 @@ class XorShiftGenerator(Generator):
         else:
             raise ValueError("Bitsize value '{}' not supported".format(self.bitsize))
 
-    def __next__(self):
+    def __iter__(self):
         """This is the method to get the next value.
 
         :return: A generated int value.
@@ -174,39 +181,31 @@ class XorShiftGenerator(Generator):
 
         """
 
-        if self._nbCall == 0:
-            self._firstCall = True
-            self._state = self.seed
-        else:
-            self._firstCall = False
+        self._state = self.seed
 
-        nb_values = abs(self._maxValue - self._minValue) + 1
-        self._nbCall = (self._nbCall + 1) % nb_values
-        return self.__inner_next__()
+        result = 0  # initial value (first call)
 
-    def __inner_next__(self):
-        
-        if self._firstCall:
-            # We force the first iteration to return 0, as it is never reached by xorshift generator
-            result = 0
-            self._firstCall = False
-        else:
+        while True:
+            # We respect the interval
+            if self.signed:
+                # Convert uint to int
+                result = result.to_bytes(self.bitsize // 8, byteorder='big', signed=False)
+                result = int.from_bytes(result, byteorder='big', signed=True)
+
+            # If the value does not match the expected interval, we recursively call for the next value
+            if self.minValue <= result <= self.maxValue:
+                yield result
+
             result = self.xorshift()
 
-        # We respect the interval
-        if self.signed:
-            # Convert uint to int
-            result = result.to_bytes(self.bitsize // 8, byteorder='big', signed=False)
-            result = int.from_bytes(result, byteorder='big', signed=True)
-
-        # If the value does not match the expected interval, we recursively call for the next value
-        try:
-            if not self.minValue <= result <= self.maxValue:
-                result = self.__inner_next__()
-        except RecursionError as e:
-            return None
-
-        return result
+    def __next__(self):
+        nb_values = abs(self._maxValue - self._minValue) + 1
+        value = super().__next__()
+        self._nbCall = (self._nbCall + 1) % nb_values
+        if self._nbCall == 0:
+            # reset iterator after a full cycle to include 0 again
+            self._reset_iterator()
+        return value
 
     def get_state(self):
         # type: () -> Tuple[int, bool]
@@ -214,14 +213,12 @@ class XorShiftGenerator(Generator):
         Return a tuple representing the internal state of the generator.
 
         >>> gen = XorShiftGenerator(minValue=0, maxValue=100, seed=1)
-        >>> gen.get_state()  # before consuming generator
-        (1, True)
-        >>> next(gen)
-        0
-        >>> gen.get_state()  # after consuming generator
-        (1, False)
+        >>> val = next(gen)
+        >>> val = next(gen)
+        >>> val == gen.get_state()
+        True
         """
-        return (self._state, self._firstCall)
+        return self._state
 
     def set_state(self, state):
         # type: (Tuple[int, bool]) -> None
@@ -229,18 +226,12 @@ class XorShiftGenerator(Generator):
         Set the internal state of the generator from a tuple.
 
         >>> gen = XorShiftGenerator(minValue=0, maxValue=100, seed=1)
-        >>> next(gen) # blank shot
-        0
+        >>> val = next(gen) # blank shot
         >>> state = gen.get_state()
-        >>> next(gen); next(gen)
-        76
-        62
+        >>> val = next(gen)
         >>> gen.set_state(state)
-        >>> next(gen); next(gen)
-        76
-        62
         """
-        (self._state, self._firstCall) = state
+        self._state = state
 
     def xorshift(self):
         self._state = self._xorshift_func(self._state)

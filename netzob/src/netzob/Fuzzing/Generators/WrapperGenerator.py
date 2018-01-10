@@ -87,30 +87,31 @@ class WrapperGenerator(Generator):
         self.bitsize = bitsize  # Not used
         self.signed = signed    # Not used
 
-    def __next__(self):
-        """This is the method to get the next value in the generated list.
+    def __iter__(self):
+        """Iterate over generated values
 
-        :return: a generated int value
-        :rtype: :class:`int`
+        :return: a generated int value iterator
+        :rtype: :class:`int` iterator
 
         """
-        # Get next value
-        result = next(self._iterator)
+        while True:
+            # Get next value
+            result = next(self._iterator)
 
-        if self.minValue is not None and self.maxValue is not None:
+            if self.minValue is not None and self.maxValue is not None:
 
-            # Specification expanding for floats
-            if isinstance(result, float):
-                number_values = float(self.maxValue) - float(self.minValue) + 1.0
-                result = self.minValue + int(result * number_values)
+                # Specification expanding for floats
+                if isinstance(result, float):
+                    number_values = float(self.maxValue) - float(self.minValue) + 1.0
+                    result = self.minValue + int(result * number_values)
 
-            # Ensure the produced value is in the range of the permitted values of the domain datatype
-            if result > self.maxValue:
-                result = self.maxValue
-            elif result < self.minValue:
-                result = self.minValue
+                # Ensure the produced value is in the range of the permitted values of the domain datatype
+                if result > self.maxValue:
+                    result = self.maxValue
+                elif result < self.minValue:
+                    result = self.minValue
 
-        return int(result)
+            yield int(result)
 
     def get_state(self):
         # type: () -> bytes

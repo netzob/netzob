@@ -36,6 +36,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import abc
+import collections.abc
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -46,20 +47,20 @@ import abc
 # +---------------------------------------------------------------------------+
 
 
-class Generator(object, metaclass=abc.ABCMeta):
+class Generator(collections.abc.Iterator):
     """Generates values. Abstract class.
     """
 
     def __init__(self, seed=0):
         self.seed = seed
+        self._reset_iterator()
 
-    def __iter__(self):
-        """The iterator interface."""
-        return self
-
-    @abc.abstractmethod
     def __next__(self):
         """The iterator interface."""
+        return next(self.__it)
+
+    def _reset_iterator(self):
+        self.__it = self.__iter__()
 
     @abc.abstractmethod
     def get_state(self):

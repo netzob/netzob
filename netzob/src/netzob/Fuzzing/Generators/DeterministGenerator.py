@@ -84,22 +84,23 @@ class DeterministGenerator(Generator):
         # Initialize deterministic values
         self._createValues(signed)
 
-    def __next__(self):
-        """This is the method to get the next value in the generated list.
+    def __iter__(self):
+        """Iterate over generated values
 
-        :return: a generated int value
-        :rtype: :class:`int`
+        :return: a generated int value iterator
+        :rtype: :class:`int` iterator
         :raise: ValueError if values is empty
 
         """
-        if len(self._values) == 0:
-            raise ValueError("Value list is empty.")
+        while True:
+            if len(self._values) == 0:
+                raise ValueError("Value list is empty.")
 
-        self._currentPos %= len(self._values)
+            self._currentPos %= len(self._values)
 
-        value = self._values[self._currentPos]
-        self._currentPos += 1
-        return value
+            value = self._values[self._currentPos]
+            self._currentPos += 1
+            yield value
 
     def get_state(self):
         # type: () -> int
