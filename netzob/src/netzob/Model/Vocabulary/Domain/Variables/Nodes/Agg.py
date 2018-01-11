@@ -222,29 +222,28 @@ class Agg(AbstractVariableNode):
        *invalid syntaxes:*
 
        .. productionlist::
-          A: (* recursion on the left side *)
-           : [ A ], integer
-          B: "(", B | ".", ")"
-           : (* recursion on the middle *)
+          A: [A] integer
+           : <recursion on the left side>
+          B: ( "(" B ) | ( "." ")" )
+           : <recursion on the middle>
 
        *valid adaptations from above examples*:
 
        .. productionlist::
-          A: (* recursion is replaced by a repeat approach *)
-           : integer, [ integer ]*
-          B: (* split the statement ... *)
-           : B', ")"
-          B': (* to transform a direct recursion into an
-            : indirect recursion on the right side *)
-            : "(", B | "."
+          A: integer+
+           : <recursion is replaced by a repeat approach>
+          B: B' ")"
+           : <split the statement ...>
+          B': ( "(" B ) | "."
+            : <to transform a direct recursion into an indirect recursion on the right side>
 
        *valid recursion examples*:
 
        .. productionlist::
-          C: (* a string with one or more dot characters *)
-           : ".", C*
-          D: (* a string with zero or more dot characters *)
-           : [ D | "." ]*
+          C: "." C*
+           :  <a string with one or more dot characters>
+          D: ( D | "." )*
+           :  <a string with zero or more dot characters>
 
     **Modeling direct recursion, simple example**
 
@@ -275,15 +274,15 @@ class Agg(AbstractVariableNode):
     The BNF syntax of this model would be:
 
     .. productionlist::
-       parentheses: "(", parentheses | "+" , ")"
+       parentheses: ( "(" parentheses)  | ( "+"  ")" )
 
     This syntax introduces a recursivity in the middle of the `left` statement,
     which **is not supported**. Instead, this syntax could be adapted to move
     the recursivity to the right.
 
     .. productionlist::
-       parentheses: left, right
-       left: "(", parentheses | "+"
+       parentheses: left right
+       left: ( "(" parentheses ) | "+"
        right: ")"
 
     The following models describe this issue and provide a workaround.
@@ -338,12 +337,12 @@ class Agg(AbstractVariableNode):
     to 9 and two arithmetic operators ('+' and '*').
 
     .. productionlist::
-       num: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9
+       num: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
        operator: "+" | "*"
-       operation: left, right
-       left: subop, ")"
-       right: operator, operation
-       subop: "(", operation
+       operation: left right?
+       left: num | subop
+       right: operator operation
+       subop: "(" operation ")"
 
     The following examples **should** be compatible with these expressions::
 
