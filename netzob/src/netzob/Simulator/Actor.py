@@ -1605,7 +1605,7 @@ class Actor(threading.Thread):
 
     This example shows the creation of a fuzzing actor, Bob, that will
     exchange messages with a Target, Alice. Messages generated from
-    'Symbol 1' will be specifically fuzzed, but not messages generated from
+    'Symbol 1' will be specifically fuzzed, but not those generated from
     'Symbol 2'.
 
     >>> from netzob.all import *

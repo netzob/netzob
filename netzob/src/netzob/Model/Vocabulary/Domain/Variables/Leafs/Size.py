@@ -94,7 +94,7 @@ class Size(AbstractRelationVariableLeaf):
 
     The Size class provides the following public variables:
 
-    :var: targets: The list of variables that are required before computing
+    :var targets: The list of variables that are required before computing
                    the value of this relation
     :var dataType: The type of the data.
     :var factor: Defines the multiplication factor to apply to the targeted

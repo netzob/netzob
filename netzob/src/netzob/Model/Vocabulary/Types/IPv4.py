@@ -107,7 +107,7 @@ class IPv4(AbstractType):
        10
 
     It is also possible to specify an IPv4 type that accepts a range
-    of IP addresses, through the `network=` parameter, as shown in the
+    of IP addresses, through the :attr:`network` parameter, as shown in the
     following example:
 
     >>> from netzob.all import *

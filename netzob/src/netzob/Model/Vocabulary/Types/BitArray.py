@@ -54,12 +54,12 @@ class BitArray(AbstractType):
     r"""This class defines a BitArray type.
 
     The BitArray type describes an object that contains a
-    sequence of bits of arbitrary sizes.
+    sequence of bits of arbitrary size.
 
     The BitArray constructor expects some parameters:
 
     :param value: This parameter is used to describe a fixed array of bits. If None, the constructed BitArray will accept a random sequence of bits, whose size may be specified (see :attr:`nbBits` parameter).
-    :param nbBits: The amount of permitted bits. If None, the accepted sizes will range from 0 to 65535*8.
+    :param nbBits: The amount of permitted bits. If None, the accepted sizes will range from 0 to 65535.
     :type value: :class:`bitarray`, optional
     :type nbBits: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
 

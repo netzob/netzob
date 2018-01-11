@@ -71,8 +71,8 @@ class Value(AbstractRelationVariableLeaf):
 
     The Value class provides the following public variables:
 
-    :var: target: The variable that is required before computing
-                  the value of this relation.
+    :var target: The variable that is required before computing
+                 the value of this relation.
     :var operation: Defines the operation to be performed on the found value.
                     The prototype of this callback is detailed below.
     :var varType: The type of the variable (Read-only).

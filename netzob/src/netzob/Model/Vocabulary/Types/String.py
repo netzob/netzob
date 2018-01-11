@@ -97,7 +97,7 @@ class String(AbstractType):
     :type eos: a :class:`list` of :class:`str`
 
 
-    Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_
+    Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_.
 
 
     Strings can be either static, dynamic with fixed sizes or even

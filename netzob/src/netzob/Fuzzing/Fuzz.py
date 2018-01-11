@@ -187,7 +187,7 @@ class Fuzz(object):
         :param counterMax: An integer used to limit the number of
                            mutations.
 
-                           Defaults value is :attr:`COUNTER_MAX_DEFAULT` = 2**32.
+                           Default value is :attr:`COUNTER_MAX_DEFAULT` = 2**32.
 
         :param kwargs: Some context dependent parameters (see below)
                        (optional).

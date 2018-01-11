@@ -52,7 +52,7 @@ class Raw(AbstractType):
     r"""This class defines a Raw type.
 
     The Raw type describes a sequence of bytes of arbitrary
-    sizes.
+    size.
 
     The Raw constructor expects some parameters:
 

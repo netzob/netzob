@@ -62,8 +62,8 @@ class Transition(AbstractTransition):
 
     The Transition constructor expects some parameters:
 
-    :param startState: The initial state of the transition.
-    :param endState: The end state of the transition.
+    :param startState: This parameter is the initial state of the transition.
+    :param endState: This parameter is the end state of the transition.
     :param inputSymbol: The input symbol which triggers the execution of the
                         transition.
                         The default value is `None`, which means that no symbol
@@ -86,11 +86,13 @@ class Transition(AbstractTransition):
     :type name: :class:`str`, optional
     :param inputSymbolReactionTime: The timeout value in seconds to wait for the
                                     input value (only used in a receiving context).
+                                    The default value is None (blocking).
     :param outputSymbolsReactionTime: A :class:`dict` containing, for each output
                                       symbol, the timeout value in seconds to
                                       wait for the output value (only used in a
                                       sending context).
-    :type inputSymbolReactionTime: :class:`float`
+                                      The default value is None (blocking).
+    :type inputSymbolReactionTime: :class:`float`, optional
     :type outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}, optional
 
 
@@ -101,7 +103,7 @@ class Transition(AbstractTransition):
     :var active: Represents the current execution status of the transition.
                  If a transition is active, it means it has not yet finished
                  executing it.
-    :var name: The name of the transition. The default value is `None`.
+    :var name: The name of the transition.
     :var inputSymbol: The input symbol is the symbol which triggers the
                       execution of the transition.
     :var outputSymbols: Output symbols that can be generated when
@@ -110,11 +112,10 @@ class Transition(AbstractTransition):
                       it is generated from the input and output symbols
     :var inputSymbolReactionTime: The timeout value in seconds to wait for the
                                   input value (only used in a receiving context).
-                                  Default value is None (blocking).
     :var outputSymbolsReactionTime: A :class:`dict` containing, for each output
                                     symbol, the timeout value in seconds to
                                     wait for the output value (only used in a
-                                    sending context). Default value is None (blocking).
+                                    sending context).
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype active: :class:`bool`

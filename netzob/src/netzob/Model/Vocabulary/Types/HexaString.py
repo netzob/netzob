@@ -53,7 +53,7 @@ class HexaString(AbstractType):
     r"""This class defines a HexaString type.
 
     The HexaString type describes a sequence of bytes of
-    arbitrary sizes with the hexastring notation (e.g. ``b'aabbcc'``
+    arbitrary size with the hexastring notation (e.g. ``b'aabbcc'``
     instead of the raw notation ``b'\xaa\xbb\xcc'``).
 
     The HexaString constructor expects some parameters:

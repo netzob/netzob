@@ -54,8 +54,8 @@ class OpenChannelTransition(AbstractTransition):
 
     The OpenChannelTransition expects some parameters:
 
-    :param startState: The initial state of the transition.
-    :param endState: The end state of the transition.
+    :param startState: This parameter is the initial state of the transition.
+    :param endState: This parameter is the end state of the transition.
     :param name: The name of the transition. The default value is `None`.
     :type startState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type endState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
@@ -68,9 +68,9 @@ class OpenChannelTransition(AbstractTransition):
     :var endState: The end state of the transition.
     :var active: Represents the current execution status of the transition.
                  If a transition is active, it means it has not yet finished executing it.
-    :var name: The name of the transition. The default value is `None`.
+    :var name: The name of the transition.
     :var description: description of the transition. If not explicitly set,
-                      its value is 'OpenChannelTransition'
+                      its value is 'OpenChannelTransition'.
     :vartype startState: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype endState: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype active: :class:`bool`
