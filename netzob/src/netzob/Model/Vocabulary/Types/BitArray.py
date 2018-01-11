@@ -444,3 +444,43 @@ def _test():
     ValueError: A BitArray should have either its value or its nbBits set, but not both
 
     """
+
+def _test_bit_size():
+    r"""
+
+    # small test to check BitArray size
+
+    >>> from netzob.all import *
+
+    >>> len(BitArray(nbBits=1).generate())
+    1
+    >>> len(BitArray(nbBits=10).generate())
+    10
+    >>> len(BitArray(nbBits=32).generate())
+    32
+    >>> len(BitArray(nbBits=64).generate())
+    64
+
+    """
+
+def _test_bit_named_const():
+    r"""
+    # test of named constant on BitArray
+
+    >>> from netzob.all import *
+
+    >>> b = BitArray('00000000')
+    >>> b.constants[7] = 'first'
+    >>> b.constants[6] = 'second'
+    >>> b.constants[5] = 'third'
+    >>> b.constants[0] = 'last'
+    >>> b['first'] = 1
+    >>> b
+    bitarray('00000001')
+    >>> b['second'] = True
+    >>> b['third'] = 1
+    >>> b['last'] = 1
+    >>> b
+    bitarray('10000111')
+
+    """

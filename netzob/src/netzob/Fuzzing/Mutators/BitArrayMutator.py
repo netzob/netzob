@@ -342,14 +342,14 @@ def _test_bitarray_length():
     >>> mutator = BitArrayMutator(fieldBits.domain)
     
     >>> len_list = []
-    >>> duplicata_count = 0
+    >>> different_count = 0
     >>> for _ in range(20):
     ...     curr_len = len(mutator.generate())
-    ...     if curr_len in len_list:
-    ...         duplicata_count += 1
+    ...     if curr_len not in len_list:
+    ...         different_count += 1
     ...     len_list.append(curr_len)
 
-    >>> duplicata_count < 5
+    >>> different_count < 10
     True
 
     """
@@ -365,13 +365,13 @@ def _test_bitarray_length_2():
 
     >>> fieldBits = Field(BitArray())
     >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_16)
-    >>> len(mutator.generate())
+    >>> len(mutator.generate()) * 8
     65536
     >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_8)
-    >>> len(mutator.generate())
+    >>> len(mutator.generate()) * 8
     256
     >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_4)
-    >>> len(mutator.generate())
+    >>> len(mutator.generate()) * 8
     16
 
     """

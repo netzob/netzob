@@ -463,3 +463,181 @@ class Field(AbstractField):
         if isPseudoField is None:
             isPseudoField = False
         self.__isPseudoField = isPseudoField
+
+
+def _test_field_integer():
+    r"""
+
+    # test field can define integer: signed and unsigned, represented in little/big endian and represented on 8/16/24/32/64 bit
+
+    >>> from netzob.all import *
+
+    >>> i1 = Integer(1, unitSize=UnitSize.SIZE_8, sign=Sign.UNSIGNED)
+    >>> i2 = Integer(255, unitSize=UnitSize.SIZE_8, sign=Sign.UNSIGNED)
+    >>> i3 = Integer(-2, unitSize=UnitSize.SIZE_8, sign=Sign.SIGNED)
+    >>> i4 = Integer(255, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)
+    >>> i5 = Integer(255, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
+    >>> i6 = Integer(255, unitSize=UnitSize.SIZE_24) # doctest: +SKIP
+    >>> i7 = Integer(255, unitSize=UnitSize.SIZE_32)
+    >>> i8 = Integer(255, unitSize=UnitSize.SIZE_64)
+
+    >>> field = Field(domain=[i1, i2, i3, i4, i5, i7, i8])
+    >>> s = Symbol([field])
+    >>> list = []
+    >>> for _ in range(40):
+    ...     list.append(s.specialize())
+
+    # i1
+    >>> b'\x01' in list
+    True
+
+    # i2
+    >>> b'\xff' in list
+    True
+
+    # i3
+    >>> b'\xfe' in list
+    True
+
+    # i4
+    >>> b'\x00\xff' in list
+    True
+
+    # i5
+    >>> b'\xff\x00' in list
+    True
+
+    # i6
+    >>> b'\x00\x00\xff' in list # doctest: +SKIP
+    True
+
+    # i7
+    >>> b'\x00\x00\x00\xff' in list
+    True
+    
+    # i8
+    >>> b'\x00\x00\x00\x00\x00\x00\x00\xff' in list
+    True
+    
+    """
+
+def _test_field_bitarray():
+    r"""
+
+    # test field representation on bit array data with variable length
+
+    >>> from netzob.all import *
+
+    >>> Field(BitArray('00000000')).specialize()
+    b'\x00'
+    >>> Field(BitArray('00000001')).specialize()
+    b'\x01'
+    >>> Field(BitArray('00000010')).specialize()
+    b'\x02'
+    >>> Field(BitArray('00000100')).specialize()
+    b'\x04'
+    >>> Field(BitArray('11111111')).specialize()
+    b'\xff'
+    >>> Field(BitArray('1111111100000000')).specialize()
+    b'\xff\x00'
+
+    >>> len(Field(BitArray(nbBits=32)).specialize())
+    4
+    >>> len(Field(BitArray(nbBits=64)).specialize())
+    8
+
+    """
+
+def _test_field_string():
+    r"""
+
+    # test field representation on string data (ASCII & Unicode) (output is hex of UTF-8 encoding)
+
+    >>> from netzob.all import *
+
+    >>> Field(domain=String('abcdef')).specialize()
+    b'abcdef'
+    >>> Field(domain=String('Ω')).specialize()
+    b'\xce\xa9'
+    >>> Field(domain=String('abcdefΩ')).specialize()
+    b'abcdef\xce\xa9'
+
+    >>> Field(domain=String('abcdef', eos=['123'])).specialize() # doctest: +SKIP
+    b'abcdef123'
+
+    """
+
+def _test_field_padding():
+    r"""
+    # test field with Padding
+
+    >>> from netzob.all import *
+
+    >>> f_str = Field(String("abcdef"))
+    >>> f_pad = Field(Padding(f_str, data=String('*'), modulo=64))
+    >>> a = Field([f_str, f_pad]).specialize()
+    >>> a
+    b'abcdef**'
+    >>> len(a) * 8
+    64
+    >>> f_pad = Field(Padding(f_str, data=String('*'), modulo=128))
+    >>> len(Field([f_str, f_pad]).specialize()) * 8
+    128
+    >>> f_pad = Field(Padding(f_str, data=String('*'), modulo=256))
+    >>> len(Field([f_str, f_pad]).specialize()) * 8
+    256
+
+    """
+
+def _test_field_padding_callback():
+    r"""
+    # test field with Padding with the use of a callback function that determine the data value
+
+    >>> from netzob.all import *
+    >>> f0 = Field(Raw(nbBytes=10))
+    >>> f1 = Field(Raw(b"##"))
+    >>> def cbk_data(current_length, modulo):
+    ...     length_to_pad = modulo - (current_length % modulo)  # Length in bits
+    ...     length_to_pad = int(length_to_pad / 8)  # Length in bytes
+    ...     res_bytes = b"".join([t.to_bytes(1, byteorder='big') for t in list(range(length_to_pad))])
+    ...     res_bits = bitarray(endian='big')
+    ...     res_bits.frombytes(res_bytes)
+    ...     return res_bits
+    >>> f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))
+    >>> f = Field([f0, f1, f2])
+    >>> d = f.specialize()
+    >>> d[12:]
+    b'\x00\x01\x02\x03'
+    >>> len(d) * 8
+    128
+
+    """
+
+def _test_field_multi_type():
+    r"""
+    # test field with several different type
+
+    >>> from netzob.all import *
+    >>> f_int = Field([42, Integer(43)])
+    >>> f_str = Field(["abc", String("def")])
+    >>> f_bit = Field([BitArray('11111111'), Raw(b'##')])
+    >>> f_f = Field([f_int, f_str, f_bit])
+    >>> f = Field([f_f])
+    >>> b = f.specialize()
+    >>> for _ in range(10):
+    ...     b += f.specialize()
+
+    >>> b.find(b'\x2A') != -1 # 42 in hexa
+    True
+    >>> b.find(b'\x2B') != -1 # 43 in hexa
+    True
+    >>> b.find(b'abc') != -1
+    True
+    >>> b.find(b'def') != -1
+    True
+    >>> b.find(b'\xff') != -1 # BitArray('11111111')
+    True
+    >>> b.find(b'##') != -1
+    True
+
+    """

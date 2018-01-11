@@ -303,18 +303,25 @@ def _test_alt_mutator():
     >>> from netzob.all import *
 
     >>> fuzz = Fuzz()
-    >>> f_alt = Field(name="alt", domain=Alt([Integer(42), int8(interval=(8,8)), int16(interval=(16,16))]))
+    >>> f_alt = Field(name="alt", domain=Alt([Raw(), int8(), int16()]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> fuzz.set(f_alt)
-    >>> res = []
-    >>> res.append(symbol.specialize(fuzz=fuzz))
-    >>> res.append(symbol.specialize(fuzz=fuzz))
-    >>> res.append(symbol.specialize(fuzz=fuzz))
-    >>> b'\x2a' in res
+    >>> have_int8 = False
+    >>> have_int16 = False
+    >>> have_raw = False
+    >>> for _ in range(10):
+    ...     tmp = len(symbol.specialize(fuzz=fuzz))
+    ...     if tmp == 1:
+    ...         have_int8 = True
+    ...     elif tmp == 2:
+    ...         have_int16 = True
+    ...     elif tmp > 2:
+    ...         have_raw = True
+    >>> have_int8
     True
-    >>> b'\x08' in res
+    >>> have_int16
     True
-    >>> b'\x00\x10' in res
+    >>> have_raw
     True
 
     """
@@ -328,14 +335,15 @@ def _test_alt_use_mutator():
 
     >>> fuzz = Fuzz()
     >>> mapping = {}
-    >>> f_alt = Field(name="alt", domain=Alt([Integer(42), int8(interval=(8,8))]))
+    >>> f_alt = Field(name="alt", domain=Alt([Integer(), Raw()]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> mapping[Integer] = {'lengthBitSize' : UnitSize.SIZE_16}
+    >>> mapping[Integer] = {'lengthBitSize' : UnitSize.SIZE_64}
     >>> fuzz.set(f_alt, mappingTypesMutators=mapping)
-    >>> symbol.specialize(fuzz=fuzz)
-    b'\x00\x08'
-    >>> symbol.specialize(fuzz=fuzz)
-    b'\x00*'
+    >>> res = []
+    >>> res.append(len(symbol.specialize(fuzz=fuzz)))
+    >>> res.append(len(symbol.specialize(fuzz=fuzz)))
+    >>> 8 in res
+    True
 
     """
 
