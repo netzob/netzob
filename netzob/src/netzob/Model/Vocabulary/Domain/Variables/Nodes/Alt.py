@@ -86,24 +86,29 @@ class Alt(AbstractVariableNode):
     A callback function can be used to determine the child index to select.
     The callback function has the following prototype:
 
-    ``def callback(path, children):``
+    .. function:: callback(path, children)
+       :noindex:
 
-    Where:
+       :param path: data structure that allows access to the values of the
+                    :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+                    elements.
+       :type path: object, required
+       :param children: children of the
+                        :class:`~netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt`
+                        variable.
+       :type children: ~typing.List[~netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt], required
 
-    * ``path`` is a data structure that allows access to the values
-      of the ``Variable`` elements.
-    * ``children`` is the `list of the children of the ``Alt`` variable.
-
-    Access to :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-    values is done through the ``path``, thanks to its methods ``hasData``
-    and ``getData``:
+    Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+    values is done through the ``path``, thanks to its methods
+    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.hasData` and
+    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.getData`:
 
     * ``path.hasData(child)`` will return a :class:`bool` telling if a data has
       been specialized or parsed for the child
-      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+      :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
     * ``path.getData(child)`` will return a :class:`bitarray` that corresponds
       to the value specialized or parsed for the child
-      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+      :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
 
     The following code denotes an alternate object that

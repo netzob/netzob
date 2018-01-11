@@ -87,26 +87,29 @@ class Value(AbstractRelationVariableLeaf):
     relationship. The callback function that can be used in the
     ``operation`` parameter has the following prototype:
 
-    ``def cbk_operation(data, path, value):``
+    .. function:: cbk_operation(data, path, value)
+       :noindex:
 
-    Where:
+       :param data: contains the value of the targeted field.
+       :type data: ~bitarray.bitarray, required
+       :param path: data structure that allows access to the values of the
+                    :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+                    elements.
+       :type path: object, required
+       :param value: the variable
+       :type value: ~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value, required
 
-    * ``data`` is a :class:`bitarray <bitarray>` that contains the value of the
-      targeted field.
-    * ``path`` is a data structure that allows access to the values
-      of the ``Variable`` elements.
-    * ``value`` is the ``Value`` variable
-
-    Access to :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-    values is done through the ``path``, thanks to its methods ``hasData``
-    and ``getData``:
+    Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+    values is done through the ``path``, thanks to its methods
+    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.hasData` and
+    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.getData`:
 
     * ``path.hasData(child)`` will return a :class:`bool` telling if a data has
       been specialized or parsed for the child
-      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+      :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
     * ``path.getData(child)`` will return a :class:`bitarray` that corresponds
       to the value specialized or parsed for the child
-      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+      :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
     The callback function is expected to implement relationship
     operations based on the provided data.
@@ -114,7 +117,7 @@ class Value(AbstractRelationVariableLeaf):
     The callback function should return a :class:`bitarray <bitarray>`
     representing the matching data during specialization or
     abstraction. In the latter case, if the callback function does not
-    succeed to parse the data, it should return the ``None`` value.
+    succeed to parse the data, it should return the :const:`None` value.
 
 
     **Value usage**
@@ -222,7 +225,7 @@ class Value(AbstractRelationVariableLeaf):
     (f, OrderedDict([('f0', b'\x01'), ('f1', b'\x80')]))
 
     If the targeted field (``f0``) does not contain the expected data,
-    the callback function should return ``None``, indicating that the
+    the callback function should return :const:`None`, indicating that the
     relationship does not apply. In this case, the abstraction process
     will not succeed.
 

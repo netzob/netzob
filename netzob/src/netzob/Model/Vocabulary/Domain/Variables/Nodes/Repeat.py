@@ -102,37 +102,40 @@ class Repeat(AbstractVariableNode):
     The callback function that can be used in the ``nbRepeat``
     parameter has the following prototype:
 
-    ``def cbk_nbRepeat(nb_repeat, data, path, child, remaining=None)``
+    .. function:: cbk_nbRepeat(nb_repeat, data, path, child, remaining=None)
+       :noindex:
 
-    Where:
-
-    * ``nb_repeat`` is an :class:`int` that corresponds
-      to the amount of time the child element has been parsed or specialized.
-    * ``data`` is a :class:`bitarray` that corresponds to the already parsed or
-      specialized data.
-    * ``path`` is a data structure that allows access to the values of the
-      parsed :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-      elements.
-    * ``child`` is a :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-      that corresponds to the repeated element.
-    * ``remaining`` is a :class:`bitarray` that corresponds to the remaining
-      data to be parsed. Only set in parsing mode. In specialization mode, this
-      parameter will have a `None` value. This parameter can therefore be used
-      to identify the current mode.
+       :param nb_repeat: the amount of time the child element has been parsed
+                          or specialized.
+       :type nb_repeat: int, required
+       :param data: the already parsed or specialized data.
+       :type data: ~bitarray.bitarray, required
+       :param path: data structure that allows access to the values of the
+                    parsed :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+                    elements.
+       :type path: object, required
+       :param child: the repeated element.
+       :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
+       :param remaining: the remaining data to be parsed.
+                         Only set in parsing mode. In specialization mode, this
+                         parameter will have a :const:`None` value. This parameter can
+                         therefore be used to identify the current mode.
+       :type remaining: ~bitarray.bitarray, required
 
     The ``child`` parameter allows access to the root of a tree structure.
-    The ``child`` :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+    The ``child`` :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     can have children.
-    Access to :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-    values is done through the ``path``, thanks to its methods ``hasData``
-    and ``getData``:
+    Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+    values is done through the ``path``, thanks to its methods
+    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.hasData` and
+    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.getData`:
 
     * ``path.hasData(child)`` will return a :class:`bool` telling if a data has
       been specialized or parsed for the child
-      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+      :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
     * ``path.getData(child)`` will return a :class:`bitarray` that corresponds
       to the value specialized or parsed for the child
-      :class:`Variable <Netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+      :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
     The callback function is called each time the child element is
     seen.
