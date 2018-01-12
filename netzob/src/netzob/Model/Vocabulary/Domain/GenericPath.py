@@ -36,6 +36,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 from bitarray import bitarray
+import logging
 
 # +---------------------------------------------------------------------------+
 # | related third party imports                                               |
@@ -74,6 +75,8 @@ class GenericPath(object):
         else:
             self._dataAssignedToVariable = dataAssignedToVariable
 
+        self._current_callbacks_operation = []
+
     def addResult(self, variable, result, notify=True):
         """
         This method can be used to register the bitarray obtained after having parsed a variable.
@@ -99,7 +102,7 @@ class GenericPath(object):
 
         if notify:
             return self._triggerVariablesCallbacks(variable)
-        return (True, [self])
+        return (True, (self, ))
 
     def hasResult(self, variable):
         return variable in self._variablesWithResult
@@ -204,39 +207,66 @@ class GenericPath(object):
         from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
         from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 
-        resultingPaths = [self]
+        resultingPaths = (self, )
+        tested_callbacks = []
         for _ in range(len(self._variablesCallbacks)):
 
             callBackToExecute = None
 
             for (targetVariables, currentVariable, parsingCB) in self._variablesCallbacks:
 
+                if (targetVariables, currentVariable, parsingCB) in tested_callbacks:
+                    continue
+
+                if (targetVariables, currentVariable, parsingCB) in self._current_callbacks_operation:
+                    continue
+
                 if triggeringVariable == currentVariable:
+                    self._logger.debug("Potential callback triggered by the variable concerned by the resolution")
+                    tested_callbacks.append((targetVariables, currentVariable, parsingCB))
                     break
 
                 found = False
                 for v in targetVariables:
-                    if not isinstance(v, AbstractVariable):
-                        break
                     if v == triggeringVariable:
                         found = True
                         break
                 if found:
-                    self._logger.debug("Found a callback that should be able to trigger")
                     callBackToExecute = (targetVariables, currentVariable, parsingCB)
+
+                    if callBackToExecute in tested_callbacks:
+                        self._logger.debug("Potential callback already tested")
+                        callBackToExecute = None
+                        continue
+
+                    self._logger.debug("Found a callback that should be able to be computed due to triggering variable '{}' from field '{}'".format(triggeringVariable, triggeringVariable.field))
+
                     variablesToCheck = set(targetVariables)
                     variablesToCheck.remove(triggeringVariable)
                     if not currentVariable.check_may_miss_dependencies(variablesToCheck):
+                        self._logger.debug("The callback linked with variable '{}' from field '{}' seems to contain all the needed information to compute".format(currentVariable, currentVariable.field))
                         break
+                    else:
+                        self._logger.debug("The callback linked with variable '{}' from field '{}' does not contain all the needed information to compute".format(currentVariable, currentVariable.field))
+                        break
+                        #callBackToExecute = None
+                else:
+                    self._logger.debug("Callback no concerned by the triggering variable")
 
             if callBackToExecute is None:
-                break
+                continue
+
+            tested_callbacks.append(callBackToExecute)
+
+            self._current_callbacks_operation.append(callBackToExecute)
 
             (targetVariables, currentVariable, parsingCB) = callBackToExecute
             if parsingCB:
                 resultingPaths = currentVariable.parse(self, acceptCallBack=True)
             else:
                 resultingPaths = currentVariable.specialize(self, acceptCallBack=True)
+
+            self._current_callbacks_operation.remove(callBackToExecute)
 
             # fail when not any path is valid
             if not any(path.ok for path in resultingPaths):

@@ -122,7 +122,6 @@ class XorShiftGenerator(Generator):
     ...
     ValueError: negative values implies signed=True
 
-
     """
 
     name = "xorshift"
@@ -152,24 +151,45 @@ class XorShiftGenerator(Generator):
         self.maxValue = maxValue
         self.signed = signed
         self._nbCall = 0
+        self.nb_values_full = False
+
+        # Compute the number of uniq possible values
+        self.nb_values = abs(self._maxValue - self._minValue) + 1
 
         # Handle bitsize
-        bitsize = AbstractType.computeUnitSize(abs(self._maxValue - self._minValue) + 1)  # Compute unit size according to the maximum length
+        bitsize = AbstractType.computeUnitSize(self.nb_values)  # Compute unit size according to the maximum length
         self.bitsize = bitsize.value
 
-        # Bitsize of 4 should be converted to 8, as there is no xorshift function for 4 bytes
+        # Bitsize of 4 should be converted to 8, as there is no xorshift function for 4 bits
         if self.bitsize == 4:
             self.bitsize = 8
+
+        # Bitsize of 24 should be converted to 32, as there is no xorshift function for 24 bits
+        if self.bitsize == 24:
+            self.bitsize = 32
+
+        # Specific case for min == max
+        if self.minValue == self.maxValue:
+            self._xorshift_func = lambda x: self.maxValue
+            return
 
         # Select xorshift according to bitsize
         if self.bitsize == 8:
             self._xorshift_func = native_xorshift8
+            if self.nb_values == 1<<8:
+                self.nb_values_full = True
         elif self.bitsize == 16:
             self._xorshift_func = native_xorshift16
+            if self.nb_values == 1<<16:
+                self.nb_values_full = True
         elif self.bitsize == 32:
             self._xorshift_func = native_xorshift32
+            if self.nb_values == 1<<32:
+                self.nb_values_full = True
         elif self.bitsize == 64:
             self._xorshift_func = native_xorshift64
+            if self.nb_values == 1<<64:
+                self.nb_values_full = True
         else:
             raise ValueError("Bitsize value '{}' not supported".format(self.bitsize))
 
@@ -236,6 +256,7 @@ class XorShiftGenerator(Generator):
     def xorshift(self):
         self._state = self._xorshift_func(self._state)
         return self._state
+
 
     ## Properties
 

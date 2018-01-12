@@ -143,7 +143,7 @@ class TypeEncodingFunction(EncodingFunction):
     def type(self, _type):
         if _type is None:
             raise TypeError("Type cannot be None")
-        if _type not in AbstractType.supportedTypes():
+        if not issubclass(_type, AbstractType):
             raise TypeError(
                 "The type is not supported, please refer to the list of supported type in AbstractType.supportedTypes()"
             )

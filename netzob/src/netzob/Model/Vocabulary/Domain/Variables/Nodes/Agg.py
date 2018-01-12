@@ -35,6 +35,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import random
+from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -303,8 +304,8 @@ class Agg(AbstractVariableNode):
     >>> parentheses.children += [left, right]
     >>>
     >>> symbol = Symbol([Field(parentheses)])
-    >>> symbol.specialize()  # doctest: +SKIP
-    b'(((+)))'
+    >>> symbol.specialize()
+    b'((+))'
 
 
     **Modeling indirect recursion, simple example**
@@ -464,86 +465,79 @@ class Agg(AbstractVariableNode):
         return parsingPaths
 
     @typeCheck(SpecializingPath)
-    def specialize(self, originalSpecializingPath, fuzz=None):
+    def specialize(self, specializingPath, fuzz=None):
         """Specializes an Agg"""
 
-        # initialy, there is a unique path to specialize (the provided one)
-        specializingPaths = [originalSpecializingPath]
+        # If we are in a fuzzing mode
+        if fuzz is not None and fuzz.get(self) is not None:
+
+            # Retrieve the mutator
+            mutator = fuzz.get(self)
+
+            # Just call the generate() method
+            mutator.generate()
+
+        yield from self._inner_specialize(specializingPath, 0, fuzz)
+
+    def _inner_specialize(self, specializingPath, idx, fuzz):
+
+        # Select the child to specialize
+        child = self.children[idx]
+        self._logger.debug("Specialize {0} child with {1}".format(child, specializingPath))
+
         specialize_last_child = True
+        if len(self.children) - 1 == idx and self._last_optional:
+            self._logger.debug("Last child is optional")
 
-        # we parse all the children with the specializerPaths produced by previous children
-        for idx, child in enumerate(self.children):
-            newSpecializingPaths = []
+            # Randomely select if we are going to specialize the last child
+            specialize_last_child = random.choice([True, False])
+            if specialize_last_child:
+                self._logger.debug("Last child is optional, and this option is taken")
+            else:
+                self._logger.debug("Last child is optional, and this option is not taken")
+                self._produce_data(specializingPath, specialize_last_child)
+                yield specializingPath
+                return
 
-            self._logger.debug("Specializing AGG child with {0} paths".format(len(specializingPaths)))
+        # Handle self recursivity
+        if type(child) == type and child == SELF:
+            # Nothing to specialize in this case (the recursive specialization is done later)
+            childSpecializingPaths = (specializingPath, )
+        else:
+            childSpecializingPaths = child.specialize(specializingPath, fuzz=fuzz)
 
-            if len(self.children) - 1 == idx and self._last_optional:
-                self._logger.debug("Last child is optional")
-
-                # Randomely select if we are going to specialize the last child
-                specialize_last_child = random.choice([True, False])
-                if specialize_last_child:
-                    self._logger.debug("Last child is optional, and this option is taken")
-                else:
-                    self._logger.debug("Last child is optional, and this option is not taken")
-                    break
-
-            for specializingPath in specializingPaths:
-                self._logger.debug("Specialize {0} with {1}".format(child, specializingPath))
-
-                if type(child) == type and child == SELF:
-                    # Nothing to specialize in this case (the recursive specialization is done later)
-                    childSpecializingPaths = [specializingPath]
-                else:
-                    childSpecializingPaths = child.specialize(specializingPath, fuzz=fuzz)
-
-                if len(childSpecializingPaths) > 0:
-                    # at least one child path managed to specialize, we save the valid paths it produced
-                    for childSpecializingPath in childSpecializingPaths:
-                        newSpecializingPaths.append(childSpecializingPath)
-
-            specializingPaths = newSpecializingPaths
-
-        self._logger.debug("Specializing AGG child has produced {0} paths".format(len(specializingPaths)))
-
-        if len(specializingPaths) == 0:
-            self._logger.debug("Children {0} didn't apply to any of the specializer path we have, we stop Agg specializer".format(child))
-            return []  # return no valid paths
-
-        # Retrieve specialized data
-        for specializingPath in specializingPaths:
-            value = None
-            for idx, child in enumerate(self.children):
-
-                if type(child) == type and child == SELF:
-                    # Nothing to retrieve in this case (the recursive specialization is done later)
-                    continue
-
-                if specializingPath.hasData(child):
-                    child_data = specializingPath.getData(child)
-                    if value is None:
-                        value = child_data
-                    else:
-                        value = value + child_data
-
-            self._logger.debug("Generated value for {}: {}".format(self, value.tobytes()))
+        for path in childSpecializingPaths:
 
             # Handle recursive mode
             if type(child) == type and child == SELF and specialize_last_child:
-                childSpecializingPaths = self.specialize(specializingPath, fuzz=fuzz)
+                if path.hasData(self):
+                    newResult = path.getData(self)
+                else:
+                    newResult = bitarray('')
+                for inner_path in self._inner_specialize(path, idx, fuzz):
 
-                if len(childSpecializingPaths) > 0:
-                    specializingPath = childSpecializingPaths[0]
-                    if specializingPath.hasData(self):
-                        current_value = specializingPath.getData(self)
-                        value = value + current_value
-                        self._logger.debug("Cumulative generated value for {}: {}".format(self, value.tobytes()))
+                    if inner_path.hasData(self):
+                        current_value = inner_path.getData(self)
+                        newResult = newResult + current_value
+                        self._logger.debug("Cumulative generated value for {}: {}".format(self, newResult.tobytes()))
 
-            # Final Agg value
-            specializingPath.addResult(self, value)
+            if idx == len(self.children) - 1:
+                self._produce_data(path, specialize_last_child)
+                yield path
+            else:
+                yield from self._inner_specialize(path, idx + 1, fuzz)
 
-        # ok we managed to parse all the children, and it produced some valid specializer paths. We return them
-        return specializingPaths
+    def _produce_data(self, path, specialize_last_child):
+        data = bitarray()
+        for idx, child in enumerate(self.children):
+            if len(self.children) - 1 == idx and not specialize_last_child:
+                pass
+            elif type(child) == type and child == SELF:
+                pass
+            else:
+                data += path.getData(child)
+        self._logger.debug("Generated value for {}: {}".format(self, data.tobytes()))
+        path.addResult(self, data)
 
 
 def _test():

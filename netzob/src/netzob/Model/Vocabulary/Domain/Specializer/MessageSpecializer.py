@@ -88,12 +88,12 @@ class MessageSpecializer(object):
     >>> f23 = Field(domain=Value(f13), name="F23")
     >>> s2 = Symbol(fields=[f21, f22, f23])
 
-    >>> ms = MessageSpecializer()
-    >>> m1 = TypeConverter.convert(ms.specializeSymbol(s1).generatedContent, BitArray, String)
+    >>> ms = MessageSpecializer(memory=Memory())
+    >>> m1 = TypeConverter.convert(next(ms.specializeSymbol(s1)).generatedContent, BitArray, String)
     >>> m1.startswith("hello;")
     True
 
-    >>> m2 = TypeConverter.convert(ms.specializeSymbol(s2).generatedContent, BitArray, String)
+    >>> m2 = TypeConverter.convert(next(ms.specializeSymbol(s2)).generatedContent, BitArray, String)
     >>> m2.startswith("master>")
     True
 
@@ -103,8 +103,6 @@ class MessageSpecializer(object):
     """
 
     def __init__(self, memory=None, presets=None, fuzz=None):
-        if memory is None:
-            memory = Memory()
         self.memory = memory
         self.presets = presets
         self.fuzz = fuzz
@@ -117,13 +115,13 @@ class MessageSpecializer(object):
         >>> f2 = Field(name="Value", domain=Raw(nbBytes=10))
         >>> f1 = Field(name="Length", domain = Size(f2, dataType = Raw(nbBytes=3, unitSize = UnitSize.SIZE_32)))
         >>> s = Symbol(fields = [f0, f1, f2])
-        >>> generated_data = TypeConverter.convert(MessageSpecializer().specializeSymbol(s).generatedContent, BitArray, Raw)
+        >>> generated_data = TypeConverter.convert(next(MessageSpecializer().specializeSymbol(s)).generatedContent, BitArray, Raw)
         >>> len(generated_data) > 4
         True
 
         # we can use presets to arbitrary fix the value of one field
         >>> presets = { "Value": "hello" }
-        >>> TypeConverter.convert(MessageSpecializer(presets = presets).specializeSymbol(s).generatedContent, BitArray, Raw)
+        >>> TypeConverter.convert(next(MessageSpecializer(presets = presets).specializeSymbol(s)).generatedContent, BitArray, Raw)
         b'\\x01\\x00\\x00\\x05hello'
 
         """
@@ -164,78 +162,78 @@ class MessageSpecializer(object):
                 for specializingPath in specializingPaths:
                     specializingPath.addResult(field.domain, self.presets[field])
 
-        # Third, we specialize the other fields (no presets)
-        for field in symbol.fields:
-            self._logger.debug("Specializing field {0}".format(field.name))
+        # Convert list into generator
+        new_paths = (new_path for new_path in specializingPaths)
 
-            fieldDomain = field.domain
-            if fieldDomain is None:
-                raise Exception(
-                    "Cannot specialize field '{0}' since it defines no domain".
-                    format(fieldDomain))
+        # Iterate over each possibility of specialization
+        i_current_field = 0
+        return self._inner_specialize(new_paths, symbol.fields, i_current_field, symbol)
 
-            newSpecializingPaths = []
+    def _inner_specialize(self, paths, fields, i_current_field, symbol):
 
-            if self.presets is not None and field in self.presets.keys():
-                pass
+        self._logger.debug("Specializing field: '{}'".format(fields[i_current_field]))
+
+        field = fields[i_current_field]
+        fieldDomain = field.domain
+
+        if self.presets is not None and field in self.presets.keys():
+            if i_current_field < len(fields) - 1:
+                self._logger.debug("More fields remaining")
+                yield from self._inner_specialize(paths, fields, i_current_field + 1, symbol)
             else:
+                self._logger.debug("In last field")
+                for path in paths:
+                    self._produce_data(path, symbol)
+                    yield path
+        else:
 
-                fs = FieldSpecializer(field, presets=self.presets, fuzz=self.fuzz)
+            fs = FieldSpecializer(field, presets=self.presets, fuzz=self.fuzz)
 
-                for specializingPath in specializingPaths:
-                    newSpecializingPaths.extend(fs.specialize(specializingPath))
+            for specializingPath in paths:
+                new_paths = fs.specialize(specializingPath)
 
-                    specializingPaths = newSpecializingPaths
+                if i_current_field < len(fields) - 1:
+                    self._logger.debug("More fields remaining")
+                    yield from self._inner_specialize(new_paths, fields, i_current_field + 1, symbol)
+                else:
+                    self._logger.debug("In last field")
+                    for path in new_paths:
+                        self._produce_data(path, symbol)
+                        yield path
 
-        if len(specializingPaths) > 1:
-            self._logger.info(
-                "TODO: multiple valid paths found when specializing this message."
-            )
+    def _produce_data(self, retainedPath, symbol):
+        first_pass = True  # Tells if the retained path has already a generated content
 
-        if len(specializingPaths) == 0:
-            raise Exception("Cannot specialize this symbol.")
-
-        retainedPath = specializingPaths[0]
-
-        generatedContent = None
         # let's configure the generated content
+
         for field in symbol.fields:
 
             # do no produce content if it is a pseudo field
             if field.isPseudoField is True:
                 continue
 
-            if len(field.fields) > 0:
-                d = None
+            if len(field.fields) == 0:
+                if first_pass:
+                    first_pass = False
+                    retainedPath.generatedContent = retainedPath.getData(field.domain)
+                else:
+                    retainedPath.generatedContent += retainedPath.getData(field.domain)
+            else:
                 for child in field.fields:
 
                     # do no produce content if it is a pseudo field
                     if child.isPseudoField is True:
                         continue
 
-                    if d is None:
-                        d = retainedPath.getData(
-                            child.domain).copy()
+                    if first_pass:
+                        first_pass = False
+                        retainedPath.generatedContent = retainedPath.getData(child.domain).copy()
                     else:
-                        d += retainedPath.getData(
-                            child.domain).copy()
+                        retainedPath.generatedContent += retainedPath.getData(child.domain).copy()
 
-            else:
-                d = retainedPath.getData(field.domain)
-
-            if generatedContent is None:
-                generatedContent = d.copy()
-            else:
-                generatedContent += d.copy()
-
-        retainedPath.generatedContent = generatedContent
-
-        self._logger.debug("Specialized message: {0}".format(
-            TypeConverter.convert(retainedPath.generatedContent, BitArray,
-                                  String)))
-        self.memory = retainedPath.memory
-
-        return retainedPath
+        # Only make persistent the memory if it has one at the start
+        if self.memory is not None:
+            self.memory = retainedPath.memory
 
     @property
     def memory(self):
@@ -249,8 +247,6 @@ class MessageSpecializer(object):
     @memory.setter  # type: ignore
     @typeCheck(Memory)
     def memory(self, memory):
-        if memory is None:
-            raise ValueError("Memory cannot be None")
         self.__memory = memory
 
     @property

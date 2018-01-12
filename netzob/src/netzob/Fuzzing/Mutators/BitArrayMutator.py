@@ -109,7 +109,7 @@ class BitArrayMutator(DomainMutator):
                          lengthBitSize=lengthBitSize)
 
         # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=255)  # 255 in order to cover all values of a byte
+        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=(1<<32)-1)  # in order to generate 4 bytes of random data at each call
 
         # Initialize length generator
         model_min = self.domain.dataType.size[0]
@@ -174,7 +174,7 @@ class BitArrayMutator(DomainMutator):
         while True:
             # Generate random sequence of bits, octet per octet
             data_int = next(self.generator)
-            data_bytes = data_int.to_bytes(1, byteorder='big')
+            data_bytes = data_int.to_bytes(4, byteorder='big')
             data_bits = bitarray()
             data_bits.frombytes(data_bytes)
 

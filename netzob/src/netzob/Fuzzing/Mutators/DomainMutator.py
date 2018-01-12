@@ -193,9 +193,12 @@ class DomainMutator(Mutator):
         if data is None or len(data) == 0:
             return data
 
-        # The current implementation makes a bitflip at a random position
-        idx = int(next(self.generator) % len(data))
-        data[idx] = not data[idx]
+        # The current implementation makes a bitflip at a random positions
+        nb_flips = next(self.generator) % 5  # Arbitrary value for 5
+
+        for _ in range(nb_flips):
+            idx = next(self.generator) % len(data)
+            data[idx] = not data[idx]
         return data
 
     # Internal methods

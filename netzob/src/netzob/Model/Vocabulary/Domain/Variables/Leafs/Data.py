@@ -149,12 +149,10 @@ class Data(AbstractVariableLeaf):
             return True
 
         # we check if memory referenced its value (memory is priority)
-        memory = path.memory
-
-        if memory is None:
-            raise Exception("Provided path has no memory attached.")
-
-        return memory.hasValue(self)
+        if path.memory is not None:
+            return path.memory.hasValue(self)
+        else:
+            return False
 
     def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """Checks if the value assigned to this variable could be parsed against
@@ -194,12 +192,8 @@ class Data(AbstractVariableLeaf):
         expectedValue = self.currentValue
 
         # we check a value is available in memory
-        memory = parsingPath.memory
-        if memory is None:
-            raise Exception("No memory available")
-
-        if memory.hasValue(self):
-            expectedValue = memory.getValue(self)
+        if parsingPath.memory is not None and parsingPath.memory.hasValue(self):
+            expectedValue = parsingPath.memory.getValue(self)
 
         if expectedValue is None:
             raise Exception(
@@ -260,7 +254,8 @@ class Data(AbstractVariableLeaf):
                     (addresult_succeed, addresult_parsingPaths) = newParsingPath.addResult(self, content[:size].copy())
                     if addresult_succeed:
                         for addresult_parsingPath in addresult_parsingPaths:
-                            addresult_parsingPath.memory.memorize(self, content[:size].copy())
+                            if addresult_parsingPath.memory is not None:
+                                addresult_parsingPath.memory.memorize(self, content[:size].copy())
                             yield addresult_parsingPath
                     else:
                         self._logger.debug("Parsed data does not respect a relation")
@@ -278,18 +273,12 @@ class Data(AbstractVariableLeaf):
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
-        memory = variableSpecializerPath.memory
-
-        result = []
-
-        if memory.hasValue(self):
-            variableSpecializerPath.addResult(self, memory.getValue(self))
-            result.append(variableSpecializerPath)
+        if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
+            variableSpecializerPath.addResult(self, variableSpecializerPath.memory.getValue(self))
         elif self.currentValue is not None:
             variableSpecializerPath.addResult(self, self.currentValue)
-            result.append(variableSpecializerPath)
 
-        return result
+        yield variableSpecializerPath
 
     def regenerate(self, variableSpecializerPath, acceptCallBack=True):
         """This method participates in the specialization proces.
@@ -308,7 +297,7 @@ class Data(AbstractVariableLeaf):
         self._logger.debug("Generated value for {}: {}".format(self, newValue))
 
         variableSpecializerPath.addResult(self, newValue)
-        return [variableSpecializerPath]
+        yield variableSpecializerPath
 
     def regenerateAndMemorize(self,
                               variableSpecializerPath,
@@ -317,7 +306,7 @@ class Data(AbstractVariableLeaf):
         It memorizes the value present in the path of the variable
         """
 
-        self._logger.debug("Regenerate and memorize variable {0}".format(self))
+        self._logger.debug("Regenerate and memorize variable '{}' for field '{}'".format(self, self.field))
 
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
@@ -326,10 +315,11 @@ class Data(AbstractVariableLeaf):
 
         self._logger.debug("Generated value for {}: {}".format(self, newValue.tobytes()))
 
-        variableSpecializerPath.memory.memorize(self, newValue)
+        if variableSpecializerPath.memory is not None:
+            variableSpecializerPath.memory.memorize(self, newValue)
 
         variableSpecializerPath.addResult(self, newValue)
-        return [variableSpecializerPath]
+        yield variableSpecializerPath
 
     @public_api
     @property

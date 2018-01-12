@@ -139,25 +139,28 @@ class AbstractVariableLeaf(AbstractVariable):
             # Retrieve the mutator
             mutator = fuzz.get(self)
 
-            # Mutate a value according to the current field attributes
-            generated_value = mutator.generate()
+            def fuzz_generate():
+                for _ in range(self.count(fuzz=fuzz)):
 
-            # Convert the return bytes into bitarray
-            value = bitarray(endian='big')
-            value.frombytes(generated_value)
-            arbitraryValue = value
+                    # Mutate a value according to the current field attributes
+                    generated_value = mutator.generate()
 
-            # Associate the generated value to the current variable
-            newParsingPaths = []
-            parsingPath.addResult(self, arbitraryValue)
-            newParsingPaths.append(parsingPath)
-            return newParsingPaths
+                    # Convert the return bytes into bitarray
+                    value = bitarray(endian='big')
+                    value.frombytes(generated_value)
+                    arbitraryValue = value
+
+                    # Associate the generated value to the current variable
+                    newParsingPath = parsingPath.duplicate()
+                    newParsingPath.addResult(self, arbitraryValue)
+                    yield newParsingPath
+
+            return fuzz_generate()
 
         if self.svas is None:
             raise Exception(
                 "Cannot specialize if the variable has no assigned SVAS.")
 
-        newParsingPaths = []
         if self.isDefined(parsingPath):
             if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
                 newParsingPaths = self.use(parsingPath, acceptCallBack)
@@ -170,7 +173,7 @@ class AbstractVariableLeaf(AbstractVariable):
                 self._logger.debug(
                     "Cannot specialize '{0}' as svas is CONSTANT and no value is available.".
                     format(self))
-                newParsingPaths = []
+                newParsingPaths = iter(())
             elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
                 newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack)
             elif self.svas == SVAS.VOLATILE:
@@ -178,22 +181,23 @@ class AbstractVariableLeaf(AbstractVariable):
 
         if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.MUTATE:
 
-            if len(newParsingPaths) == 0:
-                self._logger.warn("No data generated for the field: '{}'".format(self.field))
-            else:
-                # We only consider the first specialized path, as it is the usual behavior of Netzob (see MessageSpecializer)
-                generatedData = newParsingPaths[0].getData(self)
+            def fuzz_mutate():
+                for path in newParsingPaths:
+                    generatedData = path.getData(self)
 
-                # Retrieve the mutator
-                mutator = fuzz.get(self)
+                    # Retrieve the mutator
+                    mutator = fuzz.get(self)
 
-                # Mutate a value according to the current field attributes
-                mutated_value = mutator.mutate(generatedData)
+                    while True:
+                        # Mutate a value according to the current field attributes
+                        mutated_value = mutator.mutate(generatedData)
 
-                # Replace the legitimate value with the mutated value
-                newParsingPaths[0].assignData(mutated_value, self)
-
-        return newParsingPaths
+                        # Replace the legitimate value with the mutated value
+                        path.assignData(mutated_value, self)
+                        yield path
+            return fuzz_mutate()
+        else:
+            return newParsingPaths
 
     def str_structure(self, deepness=0):
         """Returns a string which denotes

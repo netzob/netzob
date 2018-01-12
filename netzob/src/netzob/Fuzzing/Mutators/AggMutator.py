@@ -81,8 +81,7 @@ class AggMutator(DomainMutator):
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
     >>> fuzz.set(f_agg)
-    >>> res = symbol.specialize(fuzz=fuzz)
-    >>> res
+    >>> next(symbol.specialize(fuzz=fuzz))
     b'\x00\x00\x00\x00'
 
 
@@ -93,7 +92,7 @@ class AggMutator(DomainMutator):
     ...                                       int16(2)]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
     >>> fuzz.set(f_agg, mode=MutatorMode.MUTATE)
-    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res = next(symbol.specialize(fuzz=fuzz))
     >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
 
@@ -108,7 +107,7 @@ class AggMutator(DomainMutator):
     >>> mapping = {}
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> fuzz.set(f_agg, mappingTypesMutators=mapping)
-    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res = next(symbol.specialize(fuzz=fuzz))
     >>> res
     b' \x01 \x01'
 
@@ -120,7 +119,7 @@ class AggMutator(DomainMutator):
     ...                                       int8(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
     >>> fuzz.set(f_agg, mutateChild=False)
-    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res = next(symbol.specialize(fuzz=fuzz))
     >>> 1 <= res[0] <= 4
     True
     >>> 5 <= res[1] <= 8

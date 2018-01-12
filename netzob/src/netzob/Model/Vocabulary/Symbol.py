@@ -43,7 +43,7 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, public_api
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
@@ -51,6 +51,7 @@ from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 
 
+@NetzobLogger
 class Symbol(AbstractField):
     """The Symbol class is a main component of the Netzob protocol model.
 
@@ -320,10 +321,20 @@ class Symbol(AbstractField):
 
         from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
         msg = MessageSpecializer(presets=presets, fuzz=fuzz, memory=memory)
-        spePath = msg.specializeSymbol(self)
 
-        if spePath is not None:
-            return spePath.generatedContent.tobytes()
+        if fuzz is None:
+            try:
+                specializing_path = next(msg.specializeSymbol(self))
+            except StopIteration:
+                raise Exception("Cannot specialize this symbol.")
+            return specializing_path.generatedContent.tobytes()
+        else:
+            specializing_paths = msg.specializeSymbol(self)
+            return self._inner_specialize(specializing_paths)
+
+    def _inner_specialize(self, specializing_paths):
+        for specializing_path in specializing_paths:
+            yield specializing_path.generatedContent.tobytes()
 
     @public_api
     def count(self, presets=None, fuzz=None):

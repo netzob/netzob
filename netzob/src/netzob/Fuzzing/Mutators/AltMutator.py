@@ -105,7 +105,7 @@ class AltMutator(DomainMutator):
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> fuzz.set(f_alt)
-    >>> symbol.specialize(fuzz=fuzz)
+    >>> next(symbol.specialize(fuzz=fuzz))
     b'\x00\x00'
 
 
@@ -119,7 +119,7 @@ class AltMutator(DomainMutator):
     >>> mapping = {}
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> fuzz.set(f_alt, mappingTypesMutators=mapping)
-    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res = next(symbol.specialize(fuzz=fuzz))
     >>> res
     b' \x01'
 
@@ -131,7 +131,7 @@ class AltMutator(DomainMutator):
     ...                                       int8(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> fuzz.set(f_alt, mutateChild=False)
-    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res = next(symbol.specialize(fuzz=fuzz))
     >>> 1 <= ord(res) <= 4
     True
 
@@ -144,9 +144,9 @@ class AltMutator(DomainMutator):
     >>> f_alt = Field(name="alt", domain=outer_domain)
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> fuzz.set(f_alt, maxDepth=2)
-    >>> symbol.specialize(fuzz=fuzz)
+    >>> next(symbol.specialize(fuzz=fuzz))
     b'\x00'
-    >>> symbol.specialize(fuzz=fuzz)
+    >>> next(symbol.specialize(fuzz=fuzz))
     Traceback (most recent call last):
     ...
     netzob.Fuzzing.Mutators.AltMutator.RecursionException: Max depth reached (2)

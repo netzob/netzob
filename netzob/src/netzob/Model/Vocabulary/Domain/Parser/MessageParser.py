@@ -264,7 +264,7 @@ class MessageParser(object):
                                 must_consume_everything=True):
         self._logger.debug(
             "_parseBitArrayWithField executed for field {} with path : {}".
-            format(i_current_field, parsingPath))
+            format(fields[i_current_field], parsingPath))
         currentField = fields[i_current_field]
 
         carnivorous_parsing = (i_current_field == len(fields) - 1)

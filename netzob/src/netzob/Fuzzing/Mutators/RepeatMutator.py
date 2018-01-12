@@ -99,7 +99,8 @@ class RepeatMutator(DomainMutator):
     >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=2))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> fuzz.set(f_rep)
-    >>> len(symbol.specialize(fuzz=fuzz))
+    >>> gen = symbol.specialize(fuzz=fuzz)
+    >>> len(next(gen))
     512
 
 
@@ -109,10 +110,8 @@ class RepeatMutator(DomainMutator):
     >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> fuzz.set(f_rep)
-    >>> len(symbol.specialize(fuzz=fuzz))
+    >>> len(next(symbol.specialize(fuzz=fuzz)))
     512
-    >>> len(symbol.specialize(fuzz=fuzz))
-    510
 
 
     **Fuzzing of an alternate of variables with non-default fuzzing strategy (MutatorMode.MUTATE)**
@@ -135,7 +134,7 @@ class RepeatMutator(DomainMutator):
     >>> mapping = {}
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> fuzz.set(f_repeat, mappingTypesMutators=mapping)
-    >>> len(symbol.specialize(fuzz=fuzz))
+    >>> len(next(symbol.specialize(fuzz=fuzz)))
     512
 
 
@@ -145,7 +144,7 @@ class RepeatMutator(DomainMutator):
     >>> f_repeat = Field(name="rep", domain=Repeat(int8(interval=(5, 8)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_repeat])
     >>> fuzz.set(f_repeat, mutateChild=False)
-    >>> res = symbol.specialize(fuzz=fuzz)
+    >>> res = next(symbol.specialize(fuzz=fuzz))
     >>> for i in range(int(len(res))):
     ...     assert 5 <= ord(res[i:i+1]) <= 8
 

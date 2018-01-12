@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Types.Integer import Integer, uint8
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 
 
@@ -192,7 +192,8 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"), name="f1", )
     >>> f0 = Field(Size(f2), name="f0")
     >>> f = Field([f0, f1, f2])
-    >>> 3 <= len(f.specialize()) <= 6
+    >>> d = f.specialize()
+    >>> 3 <= len(d) <= 6
     True
 
 
@@ -246,6 +247,10 @@ class Size(AbstractRelationVariableLeaf):
                  factor=1. / 8,
                  offset=0,
                  name=None):
+
+        if dataType is None:
+            dataType = uint8()
+
         super(Size, self).__init__(self.__class__.__name__, dataType=dataType, targets=targets, name=name)
         self.factor = factor
         self.offset = offset
@@ -287,10 +292,10 @@ class Size(AbstractRelationVariableLeaf):
 
         self._logger.debug("Cannot compute the relation, because "
                            "the following targets are missing: {}"
-                           .format(self._missing_targets))
+                           .format([t.field for t in self._missing_targets]))
         raise Exception("Expected value cannot be computed, some "
-                        "dependencies are missing for domain {0}"
-                        .format(self))
+                        "dependencies are missing for domain '{}', from field '{}'"
+                        .format(self, self.field))
 
     def __computeExpectedValue_stage2(self, parsingPath, remainingVariables):
         """
@@ -321,7 +326,7 @@ class Size(AbstractRelationVariableLeaf):
 
     @typeCheck(GenericPath)
     def computeExpectedValue(self, parsingPath):
-        self._logger.debug("Compute expected value for Size variable")
+        self._logger.debug("Compute expected value for Size variable '{}' from field '{}'".format(self, self.field))
 
         # first checks the pointed fields all have a value
         remainingVariables = []
@@ -497,6 +502,7 @@ def _test():
 
     # Example with UDP inner relationships (2 Size fields with a CRC)
 
+    >>> from netzob.all import *
     >>> # UDP header fields
     >>> udp_sport = Field(uint16(), "udp.sport")
     >>> udp_dport = Field(uint16(), "udp.dport")

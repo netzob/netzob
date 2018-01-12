@@ -114,34 +114,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     MAXIMUM_POSSIBLE_VALUES = 86400000000
 
     @staticmethod
-    def supportedTypes():
-        """Official list of supported types"""
-        from netzob.Model.Vocabulary.Types.String import String
-        from netzob.Model.Vocabulary.Types.Raw import Raw
-        from netzob.Model.Vocabulary.Types.BitArray import BitArray
-        from netzob.Model.Vocabulary.Types.Integer import Integer
-        from netzob.Model.Vocabulary.Types.HexaString import HexaString
-        from netzob.Model.Vocabulary.Types.IPv4 import IPv4
-        from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
-
-        return [
-            # an array of bits: [1,0,0,1,1,0..]
-            BitArray,
-            # original python way of encoding data, raw data
-            Raw,
-            # string data
-            String,
-            # integer
-            Integer,
-            # hexstring
-            HexaString,
-            # IPv4
-            IPv4,
-            # Timestamp
-            Timestamp
-        ]
-
-    @staticmethod
     def supportedUnitSizes():
         """Official unit sizes"""
         return [
@@ -310,32 +282,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         :param typeClass: The Netzob type class to which the current data
                           must be converted.
-        :param dst_unitSize: The unitsize of the destination
-                             value. The following unit sizes are available:
-
-          * UnitSize.SIZE_1
-          * UnitSize.SIZE_4
-          * UnitSize.SIZE_8 (default value)
-          * UnitSize.SIZE_16
-          * UnitSize.SIZE_24
-          * UnitSize.SIZE_32
-          * UnitSize.SIZE_64
-
-        :param dst_endianness: The endianness of the destination
-                               value. The following endiannesses are available:
-
-          * Endianness.BIG (default value)
-          * Endianness.LITTLE
-
-        :param dst_sign: The sign of the destination. The following signs are available:
-
-          * Sign.SIGNED (default value)
-          * Sign.UNSIGNED
-
         :type typeClass: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, required
-        :type dst_unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
-        :type dst_endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
-        :type dst_sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
         :return: The converted current value in the specified data type.
         :rtype: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
 
@@ -343,11 +290,17 @@ class AbstractType(object, metaclass=abc.ABCMeta):
            If :attr:`dst_unitSize`, :attr:`dst_endianness` or :attr:`dst_sign` parameters are used,
            they will override the default parameters of the :attr:`typeClass` object.
 
+        >>> from netzob.all import *
+        >>> i = uint8(42)
+        >>> r = i.convert(Raw)
+        >>> r
+        b'*'
+
         """
 
         if typeClass is None:
             raise TypeError("TypeClass cannot be None")
-        if typeClass not in AbstractType.supportedTypes():
+        if not issubclass(typeClass, AbstractType):
             raise TypeError("Requested typeClass ({0}) is not supported.".
                             format(typeClass))
 

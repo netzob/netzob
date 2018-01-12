@@ -62,30 +62,30 @@ class FieldSpecializer(object):
 
     >>> f = Field("Hello")
     >>> fs = FieldSpecializer(f)
-    >>> print(TypeConverter.convert(fs.specialize()[0].getData(f.domain), BitArray, Raw))
+    >>> print(TypeConverter.convert(next(fs.specialize()).getData(f.domain), BitArray, Raw))
     b'Hello'
 
     >>> f = Field(String(nbChars=10))
     >>> fs = FieldSpecializer(f)
-    >>> print(len(fs.specialize()[0].getData(f.domain)))
+    >>> print(len(next(fs.specialize()).getData(f.domain)))
     80
 
     >>> f = Field(String(nbChars=(4, 10)))
     >>> fs = FieldSpecializer(f)
-    >>> print(32<=len(fs.specialize()[0].getData(f.domain))<=80)
+    >>> print(32<=len(next(fs.specialize()).getData(f.domain))<=80)
     True
 
     >>> d = Alt([String("john"), String("kurt")])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
-    >>> val = set([TypeConverter.convert(fs.specialize()[0].getData(f.domain), BitArray, String) for x in range(100)])
+    >>> val = set([TypeConverter.convert(next(fs.specialize()).getData(f.domain), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
     ['john', 'kurt']
 
     >>> d = Agg([String("hello"), String(" "), Alt([String("john"), String("kurt")])])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
-    >>> val = set([TypeConverter.convert(fs.specialize()[0].getData(f.domain), BitArray, String) for x in range(100)])
+    >>> val = set([TypeConverter.convert(next(fs.specialize()).getData(f.domain), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
     ['hello john', 'hello kurt']
 
@@ -100,7 +100,7 @@ class FieldSpecializer(object):
     |--  f2
          |--   Data (String('kurt!'))
     >>> fs = FieldSpecializer(fpayload)
-    >>> result = fs.specialize()[0]
+    >>> result = next(fs.specialize())
     >>> TypeConverter.convert(result.getData(fpayload.domain), BitArray, String)
     'hello kurt!'
     >>> TypeConverter.convert(result.getData(f1.domain), BitArray, String)
@@ -133,85 +133,58 @@ class FieldSpecializer(object):
         # We look at where to retrieve the data used for specializing the current field
         specializingPaths = []
         if self.arbitraryValue is not None:
+
             # In case an arbitrary value is specified, we consider it for field specialization
             specializingPath.addResult(self.field.domain, self.arbitraryValue)
             specializingPaths = [specializingPath]
+
+            # Convert list into generator
+            specializingPaths = (path for path in specializingPaths)
+
         elif len(self.field.fields) > 0:
+
             # If no arbitrary value is specified, we specialize the sub-fields if there are any
-            specializingPaths = self._specializeFieldWithChildren(specializingPath)
+            specializingPaths = self._specializeFieldWithChildren(specializingPath, 0)
+
+            # Convert list into generator
+            specializingPaths = (path for path in specializingPaths)
+
         else:
             # Else, we specialize the current field
             specializingPaths = self._specializeField(specializingPath)
 
         return specializingPaths
 
-    @typeCheck(SpecializingPath)
-    def _specializeFieldWithChildren(self, specializingPath=None):
+    def _specializeFieldWithChildren(self, specializingPath, idx):
 
-        if specializingPath is None:
-            specializingPath = SpecializingPath(memory=Memory())
+        child = self.field.fields[idx]
+        fs = FieldSpecializer(child, presets=self.presets, fuzz=self.fuzz)
+        paths = fs.specialize(specializingPath)
 
-        resultPaths = [specializingPath]
-        for child in self.field.fields:
-            fs = FieldSpecializer(child, presets=self.presets, fuzz=self.fuzz)
+        for path in paths:
 
-            tmpResultPaths = []
-            for path in resultPaths:
-                tmpResultPaths.extend(fs.specialize(path))
-            resultPaths = tmpResultPaths
+            if idx == len(self.field.fields) - 1:
 
-        for resultPath in resultPaths:
-            value = None
-            for child in self.field.fields:
+                for f in self.field.fields:
+                    # do no produce content if it is a pseudo field
+                    if path.hasData(f.domain) and not f.isPseudoField:
+                        value = path.getData(f.domain)
+                        if path.hasData(self.field.domain):
+                            value = path.getData(self.field.domain) + value
+                        path.addResult(self.field.domain, value)
 
-                # do no produce content if it is a pseudo field
-                if child.isPseudoField is True:
-                    continue
+                yield path
+            else:
+                yield from self._specializeFieldWithChildren(path, idx + 1)
 
-                try:
-                    childResult = resultPath.getData(child.domain)
-                except Exception as e:
-                    self._logger.debug(
-                        "Value not available in the relation dependencies, a "
-                        "callback function is created to compute later: {}".
-                        format(e))
-                    childResult = None
-
-                if childResult is not None:
-                    if value is None:
-                        value = childResult.copy()
-                    else:
-                        value += childResult.copy()
-
-            resultPath.addResult(self.field.domain, value)
-
-        return resultPaths
-
-    @typeCheck(SpecializingPath)
-    def _specializeField(self, specializingPath=None):
-
-        if specializingPath is None:
-            specializingPath = SpecializingPath(memory=Memory())
+    def _specializeField(self, specializingPath):
 
         # we retrieve the field definition domain
         domain = self.field.domain
 
-        # and check it exists
-        if domain is None:
-            raise Exception(
-                "No definition domain specified for field '{0}', cannnot parse the content against it.".
-                format(self.field.name))
-
         # we create a first VariableParser and uses it to parse the domain
         variableSpecializer = VariableSpecializer(domain, fuzz=self.fuzz)
         resultSpecializingPaths = variableSpecializer.specialize(specializingPath)
-
-        for resultSpecializingPath in resultSpecializingPaths:
-            if resultSpecializingPath.hasData(self.field.domain):
-                assignedData = resultSpecializingPath.getData(self.field.domain)
-                resultSpecializingPath.addResult(self.field.domain, assignedData)
-                self._logger.debug(
-                   "FieldSpecializer Result: {0}".format(assignedData.tobytes()))
 
         return resultSpecializingPaths
 

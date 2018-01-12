@@ -314,7 +314,7 @@ class AbstractionLayer(object):
 
         self.specializer.presets = presets
         self.specializer.fuzz = fuzz
-        dataBin = self.specializer.specializeSymbol(symbol).generatedContent
+        dataBin = next(self.specializer.specializeSymbol(symbol)).generatedContent
         self.specializer.presets = None  # This is needed, in order to avoid applying the preset configuration on an already preseted symbol
         # Regarding the fuzz attribute, as its behavior is different from preset, we don't have to set it to None
 

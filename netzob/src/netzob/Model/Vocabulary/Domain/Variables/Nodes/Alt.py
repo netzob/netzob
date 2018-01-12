@@ -255,27 +255,12 @@ class Alt(AbstractVariableNode):
 
         newSpecializingPath = specializingPath.duplicate()
 
-        childSpecializingPaths = child.specialize(newSpecializingPath, fuzz=fuzz)
-        if len(childSpecializingPaths) == 0:
-            self._logger.debug("Path {0} on child {1} didn't succeed.".
-                               format(newSpecializingPath, child))
-        else:
-            self._logger.debug("Path {} on child {} succeed ({}).".format(
-                newSpecializingPath, child, id(self)))
-            for childSpecializingPath in childSpecializingPaths:
-                value = childSpecializingPath.getData(child)
-                self._logger.debug("Generated value for {}: {} ({})".format(self, value, id(self)))
-                childSpecializingPath.addResult(self, value)
+        for childSpecializingPath in child.specialize(newSpecializingPath, fuzz=fuzz):
+            value = childSpecializingPath.getData(child)
+            self._logger.debug("Generated value for {}: {} ({})".format(self, value, id(self)))
+            childSpecializingPath.addResult(self, value)
 
-            specializingPaths.extend(childSpecializingPaths)
-
-        if len(specializingPaths) == 0:
-            self._logger.debug(
-                "No children of {0} successfuly specialized".format(self))
-
-        # lets shuffle this ( :) ) >>> by default we only consider the first valid parsing path.
-        random.shuffle(specializingPaths)
-        return specializingPaths
+            yield childSpecializingPath
 
 def _test(self):
     r"""

@@ -501,7 +501,7 @@ class Fuzz(object):
         >>> f_data = Field(domain=int8())
         >>> symbol = Symbol(fields=[f_data])
         >>> fuzz.set(f_data)
-        >>> symbol.specialize(fuzz=fuzz)
+        >>> next(symbol.specialize(fuzz=fuzz))
         b'\x00'
 
 
@@ -512,7 +512,7 @@ class Fuzz(object):
         >>> f_data = Field(name="data", domain=int16(interval=(1, 4)))
         >>> symbol = Symbol(name="sym", fields=[f_data])
         >>> fuzz.set(f_data, interval=(20, 32000))
-        >>> symbol.specialize(fuzz=fuzz)
+        >>> next(symbol.specialize(fuzz=fuzz))
         b'U*'
 
 
@@ -524,7 +524,7 @@ class Fuzz(object):
         >>> f_size = Field(name="size", domain=Size([f_data], Integer(unitSize=UnitSize.SIZE_16)))
         >>> symbol = Symbol(name="sym", fields=[f_data, f_size])
         >>> fuzz.set(f_size, interval=(20, 32000))
-        >>> symbol.specialize(fuzz=fuzz)
+        >>> next(symbol.specialize(fuzz=fuzz))
         b'\x00\x03U*'
 
 
@@ -535,7 +535,7 @@ class Fuzz(object):
         >>> f_data = Field(name="data", domain=int16(2))
         >>> symbol = Symbol(name="sym", fields=[f_data])
         >>> fuzz.set(f_data, mode=MutatorMode.MUTATE, interval=(20, 32000))
-        >>> res = symbol.specialize(fuzz=fuzz)
+        >>> res = next(symbol.specialize(fuzz=fuzz))
         >>> res != b'\x00\x02'
         True
 
@@ -550,7 +550,7 @@ class Fuzz(object):
         >>> nbFuzz = 1000
         >>> result = set()
         >>> for i in range(nbFuzz):
-        ...     result.add(symbol.specialize(fuzz=fuzz))
+        ...     result.add(next(symbol.specialize(fuzz=fuzz)))
         >>> len(result) == 1000
         True
 
@@ -564,7 +564,7 @@ class Fuzz(object):
         >>> f_parent = Field(name="parent", domain=[f_data1, f_data2])
         >>> symbol = Symbol(name="sym", fields=[f_parent])
         >>> fuzz.set(f_parent)
-        >>> symbol.specialize(fuzz=fuzz)
+        >>> next(symbol.specialize(fuzz=fuzz))
         b'\x00\x00\x00'
 
 
@@ -576,7 +576,7 @@ class Fuzz(object):
         >>> f_data2 = Field(name="data2", domain=int8(interval=(5, 8)))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
         >>> fuzz.set(symbol, interval=MutatorInterval.FULL_INTERVAL)
-        >>> symbol.specialize(fuzz=fuzz)
+        >>> next(symbol.specialize(fuzz=fuzz))
         b'\x00\x00'
 
 
@@ -588,7 +588,7 @@ class Fuzz(object):
         >>> f_data2 = Field(name="data2", domain=int8(interval=(10, 20)))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
         >>> fuzz.set(f_data2, interval=MutatorInterval.FULL_INTERVAL)
-        >>> symbol.specialize(fuzz=fuzz)
+        >>> next(symbol.specialize(fuzz=fuzz))
         b'\x02\x00'
 
 
@@ -600,7 +600,7 @@ class Fuzz(object):
         >>> f_data2 = Field(name="data2", domain=int8(interval=(10, 20)))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
         >>> fuzz.set(f_data2, interval=MutatorInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_16)
-        >>> symbol.specialize(fuzz=fuzz)
+        >>> next(symbol.specialize(fuzz=fuzz))
         b'\x02\x00\x00'
 
 
@@ -613,11 +613,11 @@ class Fuzz(object):
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
         >>> fuzz.set(Integer, interval=(10, 12))
         >>> fuzz.set(symbol)
-        >>> symbol.specialize(fuzz=fuzz)
+        >>> next(symbol.specialize(fuzz=fuzz))
         b'\x0c\x0c'
 
 
-        **Fuzzing configuration with a maximum number of mutations**
+        **Fuzzing configuration with a global maximum number of mutations**
 
         >>> from netzob.all import *
         >>> fuzz = Fuzz(counterMax=1)
@@ -625,23 +625,43 @@ class Fuzz(object):
         ...                                       int8(interval=(5, 8))]))
         >>> symbol = Symbol(name="sym", fields=[f_alt])
         >>> fuzz.set(f_alt)
-        >>> symbol.specialize(fuzz=fuzz)
+        >>> next(symbol.specialize(fuzz=fuzz))
         b'\x00'
-        >>> symbol.specialize(fuzz=fuzz)
+        >>> next(symbol.specialize(fuzz=fuzz))
         Traceback (most recent call last):
         Exception: Max mutation counter reached
         >>> fuzz = Fuzz()  # This is needed to restore globalCounterMax default value for unit test purpose
 
 
-        **Fuzzing configuration with a maximum number of mutations, expressed with a ratio**
+        **Fuzzing configuration with a maximum number of mutations, expressed with a, absolute limit, on a symbol**
 
         >>> from netzob.all import *
-        >>> fuzz = Fuzz(counterMax=1)
+        >>> fuzz = Fuzz()
         >>> field = Field(Agg([uint8(), uint8()]))
         >>> symbol = Symbol([field], name="sym")
-        >>> fuzz.set(symbol)
         >>> symbol.count()
         65536
+        >>> fuzz.set(symbol, counterMax=80)
+        >>> for i in range(80):
+        ...     data = next(symbol.specialize(fuzz=fuzz))
+        >>> fuzz.set(symbol, counterMax=200)
+        >>> for i in range(80):
+        ...     data = next(symbol.specialize(fuzz=fuzz))
+
+
+        **Fuzzing configuration with a maximum number of mutations, expressed with a ratio, on a symbol**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> field = Field(Agg([uint8(), uint8()]))
+        >>> symbol = Symbol([field], name="sym")
+        >>> symbol.count()
+        65536
+        >>> int(symbol.count() * 0.001)
+        65
+        >>> fuzz.set(symbol, counterMax=0.001)
+        >>> for i in range(65):
+        ...     data = next(symbol.specialize(fuzz=fuzz))
 
         """
 
@@ -696,7 +716,7 @@ class Fuzz(object):
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
         >>> fuzz.set(symbol, interval=MutatorInterval.FULL_INTERVAL)
         >>> fuzz.unset(f_data2)
-        >>> symbol.specialize(fuzz=fuzz)
+        >>> next(symbol.specialize(fuzz=fuzz))
         b'\x00\x04'
 
 
@@ -971,7 +991,7 @@ def _test():
     >>> fuzz.set(f_data)
     >>> datas = set()
     >>> for _ in range(2000):
-    ...     datas.add(symbol.specialize(fuzz=fuzz))
+    ...     datas.add(next(symbol.specialize(fuzz=fuzz)))
     >>> len(datas)
     256
 
@@ -982,7 +1002,7 @@ def _test():
     >>> fuzz.set(f_data)
     >>> datas = set()
     >>> for _ in range(2000):
-    ...     datas.add(symbol.specialize(fuzz=fuzz))
+    ...     datas.add(next(symbol.specialize(fuzz=fuzz)))
     >>> len(datas)
     256
 
@@ -993,7 +1013,7 @@ def _test():
     >>> fuzz.set(f_data)
     >>> datas = set()
     >>> for _ in range(2000):
-    ...     datas.add(symbol.specialize(fuzz=fuzz))
+    ...     datas.add(next(symbol.specialize(fuzz=fuzz)))
     >>> len(datas)
     256
 
@@ -1007,7 +1027,7 @@ def _test():
     >>> fuzz.set(f_data, generator=(0., 0.5, 1.))
     >>> datas = set()
     >>> for _ in range(3):
-    ...     datas.add(symbol.specialize(fuzz=fuzz))
+    ...     datas.add(next(symbol.specialize(fuzz=fuzz)))
     >>> len(datas)
     3
     >>> datas = sorted(datas)
@@ -1024,7 +1044,7 @@ def _test():
     >>> fuzz.set(f_data, generator=(0., 0.5, 1.))
     >>> datas = set()
     >>> for _ in range(3):
-    ...     datas.add(symbol.specialize(fuzz=fuzz))
+    ...     datas.add(next(symbol.specialize(fuzz=fuzz)))
     >>> len(datas)
     3
     >>> datas = sorted(datas)
@@ -1034,30 +1054,44 @@ def _test():
     127
     -128
 
-    # Test to verify that the RNG covers all 8 bits values
 
     >>> from netzob.all import *
     >>> fuzz = Fuzz()
-    >>> f_data = Field(domain=uint8())
-    >>> symbol = Symbol(fields=[f_data])
-    >>> fuzz.set(f_data)
-    >>> datas = set()
-    >>> for _ in range(2000):
-    ...     datas.add(symbol.specialize(fuzz=fuzz))
-    >>> len(datas)
-    256
+    >>> f1 = Field(uint8())
+    >>> f2 = Field(uint8(interval=(0, 254)))
+    >>> symbol = Symbol([f1, f2])
+    >>> fuzz.set(symbol, interval=MutatorInterval.DEFAULT_INTERVAL)
+    >>> g = symbol.specialize(fuzz=fuzz)
+    >>> a = []
+    >>> for i in range(symbol.count()):
+    ...     data = next(g)
+    ...     a.append(data)
+    >>> len(a)
+    65280
+    >>> len(set(a))
+    65280
+    >>> symbol.count()
+    65280
 
-    # Test to verify that the RNG covers all 16 bits values (commented, as it takes 2 minutes to compute)
 
-    # >>> from netzob.all import *
-    # >>> fuzz = Fuzz()
-    # >>> f_data = Field(domain=uint16())
-    # >>> symbol = Symbol(fields=[f_data])
-    # >>> fuzz.set(f_data)
-    # >>> datas = set()
-    # >>> for _ in range(800000):
-    # ...     datas.add(symbol.specialize(fuzz=fuzz))
-    # >>> len(datas)
-    # 65536
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(uint8(interval=(0, 3)))    #Alt([uint8(interval=(0, 3)), uint8(interval=(4, 8))]))
+    >>> f2 = Field(Size(f1))
+    >>> symbol = Symbol([f1, f2])
+    >>> fuzz.set(Integer, interval=MutatorInterval.DEFAULT_INTERVAL)
+    >>> fuzz.set(f1)
+    >>> g = symbol.specialize(fuzz=fuzz)
+    >>> a = []
+    >>> for i in range(symbol.count()):
+    ...     a.append(next(g))
+    >>> len(a)
+    4
+    >>> a
+    [b'\x00\x01', b'\x03\x01', b'\x01\x01', b'\x02\x01']
+    >>> len(set(a))
+    4
+    >>> symbol.count()
+    4
 
     """

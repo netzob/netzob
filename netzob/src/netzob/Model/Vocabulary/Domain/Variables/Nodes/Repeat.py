@@ -529,11 +529,7 @@ class Repeat(AbstractVariableNode):
         if originalSpecializingPath is None:
             raise Exception("Specializing path cannot be None")
 
-        # initialy, there is a unique path to specialize (the provided one)
-        specializingPaths = []
-
         newSpecializingPath = originalSpecializingPath   #.duplicate()
-        newSpecializingPaths = [newSpecializingPath]
 
         # If we are in a fuzzing mode
         if fuzz is not None and fuzz.get(self) is not None:
@@ -566,53 +562,46 @@ class Repeat(AbstractVariableNode):
 
         if i_repeat == 0:
             newSpecializingPath.addResult(self, bitarray())
+            yield newSpecializingPath
+        else:
+            yield from self._inner_specialize(newSpecializingPath, 0, i_repeat, fuzz)
 
-        for i in range(i_repeat):
-            break_repeat = RepeatResult.CONTINUE
-            childSpecializingPaths = []
-            for newSpecializingPath in newSpecializingPaths:
+    def _inner_specialize(self, newSpecializingPath, i_repeat, max_repeat, fuzz):
 
-                child = self.children[0]
-                for path in child.specialize(newSpecializingPath, fuzz=fuzz):
+        break_repeat = RepeatResult.CONTINUE
 
-                    oldResult = bitarray()
-                    if path.hasData(self):
-                        oldResult += path.getData(self)
-                        if self.delimiter is not None:
-                            oldResult += self.delimiter
-                    newResult = oldResult + path.getData(child)
+        child = self.children[0]
+        for path in child.specialize(newSpecializingPath, fuzz=fuzz):
 
-                    if callable(self.nbRepeat):
-                        break_repeat = self.nbRepeat(i + 1, newResult,
-                                                     path, child, None)
+            oldResult = bitarray()
+            if path.hasData(self):
+                oldResult += path.getData(self)
+                if self.delimiter is not None:
+                    oldResult += self.delimiter
+            newResult = oldResult + path.getData(child)
 
-                    if break_repeat is RepeatResult.STOP_BEFORE:
-                        # save previous result, then notify
-                        path.addResult(self, oldResult, notify=True)
-                    elif break_repeat is RepeatResult.STOP_AFTER:
-                        # save last result, then notify
-                        path.addResult(self, newResult, notify=True)
-                    else:
-                        # save last result, then notify on last iteration only
-                        last_round = (i == i_repeat - 1)
-                        path.addResult(self, newResult, notify=last_round)
+            if callable(self.nbRepeat):
+                break_repeat = self.nbRepeat(i_repeat + 1, newResult,
+                                             path, child, None)
 
-                    # We forget the assigned data to the child variable and its children
-                    path.removeDataRecursively(child)
+            if break_repeat is RepeatResult.STOP_BEFORE:
+                # save previous result, then notify
+                path.addResult(self, oldResult, notify=True)
+            elif break_repeat is RepeatResult.STOP_AFTER:
+                # save last result, then notify
+                path.addResult(self, newResult, notify=True)
+            else:
+                # save last result, then notify on last iteration only
+                last_round = (i_repeat == max_repeat - 1)
+                path.addResult(self, newResult, notify=last_round)
 
-                    childSpecializingPaths.append(path)
+            # We forget the assigned data to the child variable and its children
+            path.removeDataRecursively(child)
 
-            newSpecializingPaths = childSpecializingPaths
-
-            if break_repeat is not RepeatResult.CONTINUE:
-                break
-
-        specializingPaths.extend(newSpecializingPaths)
-
-        # lets shuffle this ( :) ) >>> by default we only consider the first valid parsing path.
-        random.shuffle(specializingPaths)
-
-        return specializingPaths
+            if break_repeat is not RepeatResult.CONTINUE or i_repeat == max_repeat - 1:
+                yield path
+            else:
+                yield from self._inner_specialize(path, i_repeat + 1, max_repeat, fuzz)
 
     @property
     def nbRepeat(self):

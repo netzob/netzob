@@ -45,14 +45,6 @@ class TypeConverter(object):
     """
 
     @staticmethod
-    def supportedTypes():
-        """Official list of supported types
-
-        @deprecated: please use directly the AbstractType.supportedTypes() method instead of this wrapper.
-        """
-        return AbstractType.supportedTypes()
-
-    @staticmethod
     def __directEncoding():
         return {
             # (String, bitarray):TypeConverter.__encodeStringToBitarray,
@@ -127,10 +119,10 @@ class TypeConverter(object):
 
         """
         # are the two formats supported ?
-        if not issubclass(sourceType, tuple(TypeConverter.supportedTypes())):
+        if not issubclass(sourceType, AbstractType):
             raise TypeError(
                 "The source type ({0}) is not supported".format(sourceType))
-        if not issubclass(destinationType, tuple(TypeConverter.supportedTypes())):
+        if not issubclass(destinationType, AbstractType):
             raise TypeError("The destination type ({0}) is not supported".
                             format(destinationType))
         if data is None:

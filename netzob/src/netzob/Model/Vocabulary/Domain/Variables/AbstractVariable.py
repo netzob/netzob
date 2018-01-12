@@ -67,7 +67,7 @@ class AbstractVariable(object):
         if name is not None:
             self.name = name
         else:
-            self.name = str(id(self))
+            self.name = str(varType)
 
         self.__varType = varType
         if svas is None:
@@ -117,7 +117,7 @@ class AbstractVariable(object):
                  passed as argument, else ``False``.
         :rtype: bool
         """
-        return True
+        return False
 
     #+---------------------------------------------------------------------------+
     #| Special Functions                                                         |
@@ -136,7 +136,7 @@ class AbstractVariable(object):
 
     def __str__(self):
         """The str method, mostly for debugging purpose."""
-        return "{0}".format(self.varType)
+        return "{0}".format(self.name)
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |

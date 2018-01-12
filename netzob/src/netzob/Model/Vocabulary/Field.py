@@ -374,21 +374,21 @@ class Field(AbstractField):
                     field.domain.normalize_targets()
 
         from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
-        fs = FieldSpecializer(self)
-        specializingPaths = fs.specialize()
+        fs = FieldSpecializer(self, presets=presets, fuzz=fuzz)
 
-        if len(specializingPaths) < 1:
-            raise Exception("Cannot specialize this field.")
+        if fuzz is None:
+            try:
+                specializing_path = next(fs.specialize())
+            except StopIteration:
+                raise Exception("Cannot specialize this field.")
+            return specializing_path.getData(self.domain).tobytes()
+        else:
+            specializing_paths = fs.specialize()
+            return self._inner_specialize(specializing_paths)
 
-        specializingPath = specializingPaths[0]
-
-        self._logger.debug("Field specializing done: {0}".format(specializingPath))
-        if specializingPath is None:
-            raise Exception(
-                "The specialization of the field {0} returned no result.".
-                format(self.name))
-
-        return specializingPath.getData(self.domain).tobytes()
+    def _inner_specialize(self, specializing_paths):
+        for specializing_path in specializing_paths:
+            yield specializing_path.getData(self.domain).tobytes()
 
     def count(self, presets=None, fuzz=None):
         count = 1
@@ -464,6 +464,46 @@ class Field(AbstractField):
             isPseudoField = False
         self.__isPseudoField = isPseudoField
 
+
+def _test():
+    r"""
+
+    # Test field specialization
+
+    >>> from netzob.all import *
+    >>> f = Field(String("hello"))
+    >>> f.specialize()
+    b'hello'
+
+
+    # Test field specialization with sub-fields
+
+    >>> from netzob.all import *
+    >>> f1 = Field(String("hello"))
+    >>> f2 = Field(String(" john"))
+    >>> f = Field([f1, f2])
+    >>> f.specialize()
+    b'hello john'
+
+
+    # Test field specialization with presets
+
+    >>> from netzob.all import *
+    >>> f = Field(String("hello"))
+    >>> presets = {f: bitarray('01111000')}
+    >>> f.specialize(presets=presets)
+    b'x'
+
+
+    # Test field specialization with fuzz
+
+    >>> from netzob.all import *
+    >>> f = Field(String("hello"))
+    >>> fuzz = Fuzz()
+    >>> fuzz.set(f)
+    >>> next(f.specialize(fuzz=fuzz))
+    b'System("ls -al /")\x00                                                                                                                                                                                                                                             '
+    """
 
 def _test_field_integer():
     r"""

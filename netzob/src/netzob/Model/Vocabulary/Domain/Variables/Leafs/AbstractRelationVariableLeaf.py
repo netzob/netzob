@@ -94,6 +94,15 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         return "Relation({0}) - Type:{1}".format(
             str([v.name for v in self.targets]), self.dataType)
 
+    def count(self, fuzz=None):
+        from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.GENERATE:
+            # Retrieve the mutator
+            mutator = fuzz.get(self)
+            return mutator.count()
+        else:
+            return 1
+
     def check_may_miss_dependencies(self, variables):
         """
         Verify that this variable **may** fail to process against some targets
@@ -169,12 +178,10 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             raise Exception("Path cannot be None")
 
         # we check if memory referenced its value (memory is priority)
-        memory = path.memory
-
-        if memory is None:
-            raise Exception("Provided path has no memory attached.")
-
-        return memory.hasValue(self)
+        if path.memory is not None:
+            return path.memory.hasValue(self)
+        else:
+            return False
 
     @typeCheck(ParsingPath)
     def valueCMP(self, parsingPath, carnivorous=False):
@@ -292,7 +299,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         errorMessage = ""
         for variable in self.targets:
             if variable is not self and not parsingPath.hasData(variable):
-                errorMessage = "The following variable has no value: '{}' {}".format(variable, variable.field)
+                errorMessage = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)
                 self._logger.debug(errorMessage)
                 hasValue = False
 
@@ -333,7 +340,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         generated value that follows the definition of the Data
 
         """
-        self._logger.debug("Regenerate relation domain {0}".format(self))
+        self._logger.debug("Regenerate relation domain '{}' for field '{}'".format(self, self.field))
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
@@ -341,7 +348,11 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             newValue = self.computeExpectedValue(variableSpecializerPath)
 
             if newValue is not None:
-                variableSpecializerPath.addResult(self, newValue.copy())
+                (addresult_succeed, addresult_newpaths) = variableSpecializerPath.addResult(self, newValue.copy())
+                if addresult_succeed:
+                    return addresult_newpaths
+                else:
+                    self._logger.debug("addResult() dit not succeed")
             else:
                 raise Exception("Target value is not defined currently")
         except Exception as e:
@@ -356,7 +367,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             else:
                 raise
 
-        return [variableSpecializerPath]
+            return (variableSpecializerPath, )
 
     @abc.abstractmethod
     def relationOperation(self, data):

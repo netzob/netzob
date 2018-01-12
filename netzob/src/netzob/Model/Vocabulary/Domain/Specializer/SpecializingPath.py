@@ -66,8 +66,13 @@ class SpecializingPath(GenericPath):
 
         fCall = [x for x in self._variablesCallbacks]
 
+        if self.memory is not None:
+            memory = self.memory.duplicate()
+        else:
+            memory = None
+            
         result = SpecializingPath(
-            memory=self.memory.duplicate(),
+            memory=memory,
             dataAssignedToVariable=dVariable,
             variablesCallbacks=fCall,
             ok=self.ok)
