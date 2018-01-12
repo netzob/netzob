@@ -65,11 +65,11 @@ class AbstractionLayer(object):
 
     The AbstractionLayer constructor expects some parameters:
 
-    :param channel: The underlying communication channel (such as IPChannel,
+    :param channel: This parameter is the underlying communication channel (such as IPChannel,
                     UDPClient...).
-    :param symbols: The list of permitted symbols during translation from/to
+    :param symbols: This parameter is the list of permitted symbols during translation from/to
                     concrete messages.
-    :param memory: A memory used to store variable values during specialization
+    :param memory: This parameter is a memory used to store variable values during specialization
                    and abstraction of successive symbols, especially to handle
                    inter-symbol relationships. If None, a local memory is
                    created by default and used internally.
@@ -86,8 +86,7 @@ class AbstractionLayer(object):
                   concrete messages.
     :var memory: A memory used to store variable values during specialization
                  and abstraction of successive symbols, especially to handle
-                 inter-symbol relationships. If None, a local memory is
-                 created by default and used internally.
+                 inter-symbol relationships.
     :vartype channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`
     :vartype symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`
     :vartype memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`

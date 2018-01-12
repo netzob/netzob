@@ -67,8 +67,8 @@ class Automata(object):
 
     The Automata class provides the following public variables:
 
-    :var initialState: The initial state of the automaton.
-    :var vocabulary: The list of permitted symbols for every transition of the automaton.
+    :var initialState: This parameter is the initial state of the automaton.
+    :var vocabulary: This parameter is the list of permitted symbols for every transition of the automaton.
     :vartype initialState: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype vocabulary: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
 

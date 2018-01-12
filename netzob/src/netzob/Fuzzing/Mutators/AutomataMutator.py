@@ -88,9 +88,10 @@ class AutomataMutator(Mutator):
 
     @public_api
     def mutate(self,
-               strategy=AutomataMutatorStrategy.RANDOM,  # type: AutomataMutatorStrategy
+               strategy=AutomataMutatorStrategy.RANDOM,
                target=None
-               ) -> Automata:
+               ):
+        # type: (AutomataMutatorStrategy, ...) -> Automata
         r"""This is the mutation method of the automaton. This method returns
         a new automaton that may be used for fuzzing purpose.
 

@@ -65,7 +65,7 @@ class Protocol(object):
 
     The Protocol class provides the following public variables:
 
-    :var name: The name of the protocol.
+    :var name: This parameter defines the name of the protocol.
     :var symbols: The defined symbols for the protocol.
     :var automata: The automaton defined for the protocol.
     :vartype name: :class:`str`

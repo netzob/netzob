@@ -105,7 +105,7 @@ class Repeat(AbstractVariableNode):
     .. function:: cbk_nbRepeat(nb_repeat, data, path, child, remaining=None)
        :noindex:
 
-       :param nb_repeat: the amount of time the child element has been parsed
+       :param nb_repeat: the number of times the child element has been parsed
                           or specialized.
        :type nb_repeat: int, required
        :param data: the already parsed or specialized data.

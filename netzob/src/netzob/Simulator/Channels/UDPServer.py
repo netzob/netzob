@@ -60,8 +60,8 @@ class UDPServer(AbstractChannel):
 
     The UDPServer constructor expects some parameters:
 
-    :param localIP: The local IP address.
-    :param localPort: The local IP port.
+    :param localIP: This parameter is the local IP address.
+    :param localPort: This parameter is the local IP port.
     :param timeout: The default timeout of the channel for global
                     connection. Default value is blocking (None).
     :type localIP: :class:`str`, required

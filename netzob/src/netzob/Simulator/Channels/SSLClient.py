@@ -60,8 +60,8 @@ class SSLClient(AbstractChannel):
 
     The SSLClient constructor expects some parameters:
 
-    :param remoteIP: The remote IP address to connect to.
-    :param remotePort: The remote IP port.
+    :param remoteIP: This parameter is the remote IP address to connect to.
+    :param remotePort: This parameter is the remote IP port.
     :param localIP: The local IP address. Default value is the local
                     IP address corresponding to the network interface that
                     will be used to send the packet.
@@ -94,23 +94,18 @@ class SSLClient(AbstractChannel):
 
     :var remoteIP: The remote IP address to connect to.
     :var remotePort: The remote IP port.
-    :var localIP: The local IP address. Default value is the local
-                    IP address corresponding to the network interface that
-                    will be used to send the packet.
-    :var localPort: The local IP port. Default value in a random
-                     valid integer chosen by the kernel.
+    :var localIP: The local IP address.
+    :var localPort: The local IP port.
     :var server_cert_file: The path to a single file in PEM format
                              containing the certificate as well as any
                              number of CA certificates needed to
                              establish the certificate's
-                             authenticity. Default value is None,
-                             meaning that no verification is made on
-                             the certificate given by the peer.
+                             authenticity.
     :var alpn_protocols: Specify which protocols the socket should
-                           advertise during the SSL/TLS handshake. It
-                           should be a list of strings, like
-                           ['http/1.1', 'spdy/2'], ordered by
-                           preference. Default value is None.
+                         advertise during the SSL/TLS handshake. It
+                         should be a list of strings, like
+                         ['http/1.1', 'spdy/2'], ordered by
+                         preference.
     :vartype remoteIP: :class:`str`
     :vartype remotePort: :class:`int`
     :vartype localIP: :class:`str`

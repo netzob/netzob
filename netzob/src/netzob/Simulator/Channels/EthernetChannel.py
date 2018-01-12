@@ -63,8 +63,8 @@ class EthernetChannel(AbstractChannel):
 
     The EthernetChannel constructor expects some parameters:
 
-    :param remoteMac: The remote MAC address to connect to.
-    :param localMac: The local MAC address.
+    :param remoteMac: This parameter is the remote MAC address to connect to.
+    :param localMac: This parameter is the local MAC address.
     :param timeout: The default timeout of the channel for global
                     connection. Default value is blocking (None).
     :type remoteMac: :class:`str` or :class:`netaddr.EUI`, required

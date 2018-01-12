@@ -71,7 +71,7 @@ class RawIPChannel(AbstractChannel):
 
     The RawIPChannel constructor expects some parameters:
 
-    :param remoteIP: The remote IP address to connect to.
+    :param remoteIP: This parameter is the remote IP address to connect to.
     :param localIP: The local IP address. Default value is the local
                     IP address corresponding to the network interface that
                     will be used to send the packet.
@@ -90,11 +90,8 @@ class RawIPChannel(AbstractChannel):
     following public variables:
 
     :var remoteIP: The remote IP address to connect to.
-    :var localIP: The local IP address. Default value is the local
-                    IP address corresponding to the interface that
-                    will be used to send the packet.
+    :var localIP: The local IP address.
     :var upperProtocol: The protocol following the IP header.
-                          Default value is socket.IPPROTO_TCP.
     :vartype remoteIP: :class:`str`
     :vartype localIP: :class:`str`
     :vartype upperProtocol: :class:`int`

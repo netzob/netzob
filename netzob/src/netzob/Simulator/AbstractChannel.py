@@ -209,9 +209,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     :vartype header_presets: ~typing.Dict[
                              ~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
                              ~typing.Union[~bitarray.bitarray,bytes,
-                             ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
-                             optional
-
+                             ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]]
 
     """
 
@@ -255,7 +253,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
 
         :param data: The data to write on the channel.
         :param rate: This specifies the bandwidth in octets to respect during
-                     traffic emission (should be used with duration= parameter).
+                     traffic emission (should be used with :attr:`duration` parameter).
         :param duration: This indicates for how many seconds the data is continuously
                          written on the channel.
         :type data: bytes, required

@@ -59,8 +59,8 @@ class TCPClient(AbstractChannel):
 
     The TCPClient constructor expects some parameters:
 
-    :param remoteIP: The remote IP address to connect to.
-    :param remotePort: The remote IP port.
+    :param remoteIP: This parameter is the remote IP address to connect to.
+    :param remotePort: This parameter is the remote IP port.
     :param localIP: The local IP address. Default value is the local
                     IP address corresponding to the network interface that
                     will be used to send the packet.
@@ -80,11 +80,8 @@ class TCPClient(AbstractChannel):
 
     :var remoteIP: The remote IP address to connect to.
     :var remotePort: The remote IP port.
-    :var localIP: The local IP address. Default value is the local
-                    IP address corresponding to the network interface that
-                    will be used to send the packet.
-    :var localPort: The local IP port. Default value in a random
-                    valid integer chosen by the kernel.
+    :var localIP: The local IP address.
+    :var localPort: The local IP port.
     :vartype remoteIP: :class:`str`
     :vartype remotePort: :class:`int`
     :vartype localIP: :class:`str`
