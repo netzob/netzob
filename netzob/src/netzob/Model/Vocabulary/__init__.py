@@ -43,8 +43,15 @@ def partialclass(klass, *args, **keywords):
         kwargs.update(fkeywords)
         klass.__init__(self, *(args + fargs), **kwargs)
 
+    def reduce_klass(self):
+        # simply use base class type and update its __dict__
+        return (klass, (), self.__dict__)
+
     klass_dict = klass.__dict__.copy()
-    klass_dict['__init__'] = init_klass
+    klass_dict.update({
+        '__init__': init_klass,
+        '__reduce__': reduce_klass
+    })
     return type(klass.__name__, (klass,), klass_dict)
 
 
