@@ -36,22 +36,21 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import abc
-import socket
-import os
-import fcntl
-import struct
-import time
-import arpreq
-import binascii
-from fcntl import ioctl
-import subprocess
-from typing import Any, Callable, List, Type  # noqa: F401
 import array
+import binascii
+import socket
+import struct
+import subprocess
 import sys
+import time
+from fcntl import ioctl
+from itertools import repeat
+from typing import Any, Callable, List, Type  # noqa: F401
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+import arpreq
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -219,7 +218,8 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     # Abstract methods ##
 
     @abc.abstractstaticmethod
-    def getBuilder():  # type: () -> Type[ChannelBuilder]
+    def getBuilder():
+        # type: () -> Type[ChannelBuilder]
         """
         Provide the builder specific to an :class:`AbstractChannel`
         """
@@ -258,11 +258,11 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
                      traffic emission (should be used with duration= parameter).
         :param duration: This indicates for how many seconds the data is continuously
                          written on the channel.
-        :type data: :class:`bytes`, required
-        :type rate: :class:`int`, optional
-        :type duration: :class:`int`, optional
+        :type data: bytes, required
+        :type rate: int, optional
+        :type duration: int, optional
         :return: The amount of written data, in bytes.
-        :rtype: :class:`int`
+        :rtype: int
 
         """
 
@@ -279,7 +279,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
             rate_text = "unlimited"
             rate_unlimited = True
             if type(rate) is int and rate > 0:
-                rate_text = "{} ko/s".format(round(rate / 1024, 2))
+                rate_text = "{:.2f} kBps".format(rate / 1024)
                 rate_unlimited = False
 
             t_start = time.time()
@@ -307,10 +307,12 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
                 # Show some log every seconds
                 if t_delta > 1:
                     t_delta = 0
-                    self._logger.debug("Rate rule: {}, current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(rate_text,
-                                                                                                                               round((len_data / t_elapsed) / 1024, 2),
-                                                                                                                               round(len_data / 1024, 2),
-                                                                                                                               round(t_elapsed, 2)))
+                    self._logger.debug("Rate rule: {}, current rate: {:.2f} kBps, "
+                                       "sent data: {:.2f} kB, nb seconds elapsed: "
+                                       "{:.2f}".format(rate_text,
+                                                       len_data / t_elapsed / 1024,
+                                                       len_data / 1024,
+                                                       t_elapsed, 2))
         return len_data
 
     @public_api
@@ -323,9 +325,9 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         a callback
 
         :param predicate: the function used to validate the received data
-        :param args: positional arguments passed to :attr:`predicate`
-        :param kwargs: named arguments passed to :attr:`predicate`
-        :type predicate: Callable[[bytes], bool], required
+        :param args: positional arguments passed to ``predicate``
+        :param kwargs: named arguments passed to ``predicate``
+        :type predicate: ~typing.Callable[[bytes], bool], required
         """
         if not callable(predicate):
             raise ValueError("The predicate attribute must be a callable "
@@ -438,7 +440,7 @@ class NetUtils(object):
         """
 
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        return socket.inet_ntoa(fcntl.ioctl(
+        return socket.inet_ntoa(ioctl(
             s.fileno(),
             0x8915,  # SIOCGIFADDR
             struct.pack('256s', bytes(ifname[:15], 'utf-8'))
@@ -493,7 +495,7 @@ class NetUtils(object):
             names = array.array('B')
             for i in range(0, _bytes):
                 names.append(0)
-            outbytes = struct.unpack('iL', fcntl.ioctl(
+            outbytes = struct.unpack('iL', ioctl(
                 s.fileno(),
                 0x8912,  # SIOCGIFCONF
                 struct.pack('iL', _bytes, names.buffer_info()[0])
