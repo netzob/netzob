@@ -265,7 +265,26 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         :rtype: int
 
         """
+        return self.write_map(repeat(data), rate=rate, duration=duration)
 
+    @public_api
+    def write_map(self, data_iterator, rate=None, duration=None):
+        """Write to the communication channel the successive data values,
+        either once, or in a loop according to the `rate` and `duration`
+        parameters.
+
+        :param data_iterator: data iterator used to write on the channel.
+        :param rate: This specifies the bandwidth in octets to respect during
+                     traffic emission (should be used with duration= parameter).
+        :param duration: This indicates for how many seconds the data is continuously
+                         written on the channel.
+        :type data_iterator: ~typing.Iterator[bytes], required
+        :type rate: int, optional
+        :type duration: int, optional
+        :return: The amount of written data, count in bytes.
+        :rtype: int
+
+        """
         if ((self.__writeCounterMax > 0) and
            (self.__writeCounter > self.__writeCounterMax)):
             raise Exception("Max write counter reached ({})"
@@ -274,7 +293,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         self.__writeCounter += 1
         len_data = 0
         if duration is None:
-            len_data = self.writePacket(data)
+            len_data = self.writePacket(next(data_iterator))
         else:
             rate_text = "unlimited"
             rate_unlimited = True
@@ -292,7 +311,7 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
                     break
 
                 # Specialize the symbol and send it over the channel
-                len_data += self.writePacket(data)
+                len_data += self.writePacket(next(data_iterator))
 
                 while True:
                     t_tmp = t_elapsed
