@@ -169,12 +169,13 @@ class DomainMutator(Mutator):
         :raises: :class:`Exception` when **currentCounter** reaches
                  :attr:`Mutator.counterMax`.
         """
+        from netzob.Fuzzing.Fuzz import MaxFuzzingException
 
         if self._currentCounter >= self._effectiveCounterMax:
-            raise Exception("Max mutation counter reached")
+            raise MaxFuzzingException()
 
         if self._currentCounter >= DomainMutator.globalCounterMax:
-            raise Exception("Max mutation counter reached")
+            raise MaxFuzzingException()
 
         self._currentCounter += 1
 

@@ -162,6 +162,10 @@ class AggMutator(DomainMutator):
         count = 1
         for t in self.domain.children:
             count *= t.count(fuzz=fuzz)
+        if isinstance(self._effectiveCounterMax, float):
+            count = count * self._effectiveCounterMax
+        else:
+            count = min(count, self._effectiveCounterMax)
         return count
 
     @property

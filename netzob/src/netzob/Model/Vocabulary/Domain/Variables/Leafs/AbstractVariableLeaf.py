@@ -130,7 +130,9 @@ class AbstractVariableLeaf(AbstractVariable):
         raise NotImplementedError("method learn is not implemented")
 
     def specialize(self, parsingPath, fuzz=None, acceptCallBack=True):
-        """@todo TO BE DOCUMENTED"""
+        """Specializes a Leaf"""
+
+        from netzob.Fuzzing.Fuzz import MaxFuzzingException
 
         # Fuzzing has priority over generating a legitimate value
         from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
@@ -142,18 +144,22 @@ class AbstractVariableLeaf(AbstractVariable):
             def fuzz_generate():
                 for _ in range(self.count(fuzz=fuzz)):
 
-                    # Mutate a value according to the current field attributes
-                    generated_value = mutator.generate()
+                    try:
+                        # Mutate a value according to the current field attributes
+                        generated_value = mutator.generate()
+                    except MaxFuzzingException:
+                        self._logger.debug("Maximum mutation counter reached")
+                        break
+                    else:
+                        # Convert the return bytes into bitarray
+                        value = bitarray(endian='big')
+                        value.frombytes(generated_value)
+                        arbitraryValue = value
 
-                    # Convert the return bytes into bitarray
-                    value = bitarray(endian='big')
-                    value.frombytes(generated_value)
-                    arbitraryValue = value
-
-                    # Associate the generated value to the current variable
-                    newParsingPath = parsingPath.duplicate()
-                    newParsingPath.addResult(self, arbitraryValue)
-                    yield newParsingPath
+                        # Associate the generated value to the current variable
+                        newParsingPath = parsingPath.duplicate()
+                        newParsingPath.addResult(self, arbitraryValue)
+                        yield newParsingPath
 
             return fuzz_generate()
 

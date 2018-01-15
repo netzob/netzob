@@ -329,9 +329,14 @@ class IntegerMutator(DomainMutator):
         """
 
         if isinstance(self.generator, DeterministGenerator):
-            return len(self.generator._values)
+            count = len(self.generator._values) 
         else:
-            return self._maxLength - self._minLength + 1
+            count = self._maxLength - self._minLength + 1
+        if isinstance(self._effectiveCounterMax, float):
+            count = count * self._effectiveCounterMax
+        else:
+            count = min(count, self._effectiveCounterMax)
+        return count
 
     def generate(self):
         """This is the mutation method of the integer type.

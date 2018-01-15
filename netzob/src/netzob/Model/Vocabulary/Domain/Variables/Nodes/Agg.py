@@ -468,16 +468,27 @@ class Agg(AbstractVariableNode):
     def specialize(self, specializingPath, fuzz=None):
         """Specializes an Agg"""
 
+        from netzob.Fuzzing.Fuzz import MaxFuzzingException
+
         # If we are in a fuzzing mode
         if fuzz is not None and fuzz.get(self) is not None:
 
             # Retrieve the mutator
             mutator = fuzz.get(self)
 
-            # Just call the generate() method
-            mutator.generate()
+            for path in self._inner_specialize(specializingPath, 0, fuzz):
 
-        yield from self._inner_specialize(specializingPath, 0, fuzz)
+                try:
+                    # Just call the generate() method to increment the counter of mutation
+                    mutator.generate()
+                except MaxFuzzingException:
+                    self._logger.debug("Maximum mutation counter reached")
+                    break
+
+                yield path
+
+        else:
+            yield from self._inner_specialize(specializingPath, 0, fuzz)
 
     def _inner_specialize(self, specializingPath, idx, fuzz):
 

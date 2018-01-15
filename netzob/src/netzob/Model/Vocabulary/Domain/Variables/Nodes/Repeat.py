@@ -330,6 +330,7 @@ class Repeat(AbstractVariableNode):
         """
 
         from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
+
         if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.GENERATE:
             # Retrieve the mutator
             mutator = fuzz.get(self)
@@ -526,6 +527,8 @@ class Repeat(AbstractVariableNode):
     def specialize(self, originalSpecializingPath, fuzz=None, acceptCallBack=True):
         """Specializes a Repeat"""
 
+        from netzob.Fuzzing.Fuzz import MaxFuzzingException
+
         if originalSpecializingPath is None:
             raise Exception("Specializing path cannot be None")
 
@@ -537,8 +540,12 @@ class Repeat(AbstractVariableNode):
             # Retrieve the mutator
             mutator = fuzz.get(self)
 
-            # Chose the child according to the integer returned by the mutator
-            i_repeat = mutator.generate()
+            try:
+                # Chose the child according to the integer returned by the mutator
+                i_repeat = mutator.generate()
+            except MaxFuzzingException:
+                self._logger.debug("Maximum mutation counter reached")
+                return
 
         # Else, randomly chose the child
         else:

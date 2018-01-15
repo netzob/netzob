@@ -75,6 +75,10 @@ from netzob.Fuzzing.Mutators.HexaStringMutator import HexaStringMutator
 from netzob.Common.Utils.Decorators import NetzobLogger
 
 
+class MaxFuzzingException(Exception):
+    pass
+
+
 @NetzobLogger
 class Fuzz(object):
     r"""The Fuzz class is the entry point for the fuzzing component.
@@ -629,11 +633,10 @@ class Fuzz(object):
         b'\x00'
         >>> next(symbol.specialize(fuzz=fuzz))
         Traceback (most recent call last):
-        Exception: Max mutation counter reached
-        >>> fuzz = Fuzz()  # This is needed to restore globalCounterMax default value for unit test purpose
+        StopIteration
 
 
-        **Fuzzing configuration with a maximum number of mutations, expressed with a, absolute limit, on a symbol**
+        **Fuzzing configuration with a maximum number of mutations, expressed with an absolute limit, on a symbol**
 
         >>> from netzob.all import *
         >>> fuzz = Fuzz()
@@ -642,11 +645,12 @@ class Fuzz(object):
         >>> symbol.count()
         65536
         >>> fuzz.set(symbol, counterMax=80)
-        >>> for i in range(80):
-        ...     data = next(symbol.specialize(fuzz=fuzz))
-        >>> fuzz.set(symbol, counterMax=200)
-        >>> for i in range(80):
-        ...     data = next(symbol.specialize(fuzz=fuzz))
+        >>> idx = 0
+        >>> for data in symbol.specialize(fuzz=fuzz):
+        ...     # use data
+        ...     idx += 1
+        >>> print(idx)
+        80
 
 
         **Fuzzing configuration with a maximum number of mutations, expressed with a ratio, on a symbol**
@@ -660,8 +664,14 @@ class Fuzz(object):
         >>> int(symbol.count() * 0.001)
         65
         >>> fuzz.set(symbol, counterMax=0.001)
-        >>> for i in range(65):
-        ...     data = next(symbol.specialize(fuzz=fuzz))
+        >>> idx = 0
+        >>> for data in symbol.specialize(fuzz=fuzz):
+        ...     # use data
+        ...     idx += 1
+        >>> print(idx)
+        65
+        >>> fuzz = Fuzz()  # This is needed to restore globalCounterMax default value for unit test purpose
+
 
         """
 
@@ -928,7 +938,7 @@ class Fuzz(object):
         tmp_new_keys = {}
 
         # Propagate also the mutator mode and the seed
-        kwargs = {'mode': mutator.mode, 'seed': mutator.seed}
+        kwargs = {'mode': mutator.mode, 'seed': mutator.seed}#, 'counterMax' : mutator.counterMax}
 
         if isinstance(variable, Repeat) and isinstance(mutator, RepeatMutator) and mutator.mutateChild:
 
@@ -1076,7 +1086,7 @@ def _test():
 
     >>> from netzob.all import *
     >>> fuzz = Fuzz()
-    >>> f1 = Field(uint8(interval=(0, 3)))    #Alt([uint8(interval=(0, 3)), uint8(interval=(4, 8))]))
+    >>> f1 = Field(uint8(interval=(0, 3)))
     >>> f2 = Field(Size(f1))
     >>> symbol = Symbol([f1, f2])
     >>> fuzz.set(Integer, interval=MutatorInterval.DEFAULT_INTERVAL)

@@ -51,6 +51,7 @@ from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
+
 altCbkType = Callable[[GenericPath, List[AbstractVariable]], AbstractVariable]
 
 
@@ -219,6 +220,8 @@ class Alt(AbstractVariableNode):
     def specialize(self, specializingPath, fuzz=None):
         """Specializes an Alt"""
 
+        from netzob.Fuzzing.Fuzz import MaxFuzzingException
+
         if specializingPath is None:
             raise Exception("SpecializingPath cannot be None")
 
@@ -233,8 +236,12 @@ class Alt(AbstractVariableNode):
             # Retrieve the mutator
             mutator = fuzz.get(self)
 
-            # Chose the child according to the integer returned by the mutator
-            generated_value = mutator.generate()
+            try:
+                # Chose the child according to the integer returned by the mutator
+                generated_value = mutator.generate()
+            except MaxFuzzingException:
+                self._logger.debug("Maximum mutation counter reached")
+                return
 
             if 0 <= generated_value < len(self.children):
                 child = self.children[generated_value]

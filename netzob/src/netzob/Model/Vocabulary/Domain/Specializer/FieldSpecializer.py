@@ -139,7 +139,7 @@ class FieldSpecializer(object):
             specializingPaths = [specializingPath]
 
             # Convert list into generator
-            specializingPaths = (path for path in specializingPaths)
+            specializingPaths = iter(specializingPaths)
 
         elif len(self.field.fields) > 0:
 
@@ -147,7 +147,7 @@ class FieldSpecializer(object):
             specializingPaths = self._specializeFieldWithChildren(specializingPath, 0)
 
             # Convert list into generator
-            specializingPaths = (path for path in specializingPaths)
+            specializingPaths = iter(specializingPaths)
 
         else:
             # Else, we specialize the current field
