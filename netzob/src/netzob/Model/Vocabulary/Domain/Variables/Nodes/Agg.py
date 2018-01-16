@@ -340,7 +340,7 @@ class Agg(AbstractVariableNode):
     .. productionlist::
        num: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
        operator: "+" | "*"
-       operation: left right?
+       operation: left [right]
        left: num | subop
        right: operator operation
        subop: "(" operation ")"
@@ -367,15 +367,14 @@ class Agg(AbstractVariableNode):
     `operation` statement, called in the `subop` statement.
 
     >>> from netzob.all import *
-    >>> num = Alt("0123456789")
+    >>> num = Alt(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
     >>> operator = Alt([" + ", " * "])
     >>> operation = Agg([], last_optional=True)
-    >>> subop1 = Agg(["(", operation])
-    >>> subop2 = Agg([subop1, ")"])
-    >>> left = Alt([num, subop2])
+    >>> subop = Agg(["(", operation, ")"])
+    >>> left = Alt([num, subop])
     >>> right = Agg([operator, operation])
     >>> operation.children += [left, right]
-    >>> sym = Symbol([Field(operation)])  # doctest: +SKIP
+    >>> sym = Symbol([Field(operation)])
     >>> sym.specialize()  # doctest: +SKIP
     b'((((4 * 8 * 4) + 5 + 9 + 0) * 7 * 0 + (4 + 9 + (3 * 4 + 2) * 0) * 9) + 4 * 7)'
 
