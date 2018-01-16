@@ -286,9 +286,6 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         :return: The converted current value in the specified data type.
         :rtype: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
 
-        .. note::
-           If :attr:`dst_unitSize`, :attr:`dst_endianness` or :attr:`dst_sign` parameters are used,
-           they will override the default parameters of the :attr:`typeClass` object.
 
         >>> from netzob.all import *
         >>> i = uint8(42)

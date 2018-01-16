@@ -58,8 +58,8 @@ class BitArray(AbstractType):
 
     The BitArray constructor expects some parameters:
 
-    :param value: This parameter is used to describe a fixed array of bits. If None, the constructed BitArray will accept a random sequence of bits, whose size may be specified (see :attr:`nbBits` parameter).
-    :param nbBits: The amount of permitted bits. If None, the accepted sizes will range from 0 to 65535.
+    :param value: This parameter is used to describe a domani that contains a fixed array of bits. If None, the constructed BitArray will accept a random sequence of bits, whose size may be specified (see :attr:`nbBits` parameter).
+    :param nbBits: This parameter is used to describe a domani that contains an amount of bits. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.
     :type value: :class:`bitarray`, optional
     :type nbBits: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
 
@@ -80,6 +80,19 @@ class BitArray(AbstractType):
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype constants: a :class:`list` of :class:`str`
+
+
+    The creation of a BitArray type with no parameter will create a bytes
+    object whose length ranges from 0 to 65535:
+
+    >>> from netzob.all import *
+    >>> i = BitArray()
+    >>> len(i.generate().tobytes())
+    6312
+    >>> len(i.generate().tobytes())
+    4487
+    >>> len(i.generate().tobytes())
+    7335
 
     The following example shows how to define a BitArray
     containing a fixed constant.

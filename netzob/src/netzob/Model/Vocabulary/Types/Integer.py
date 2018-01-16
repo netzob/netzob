@@ -58,9 +58,9 @@ class Integer(AbstractType):
 
     The Integer constructor expects some parameters:
 
-    :param value: This parameter is used to describe a fixed integer. If None, the constructed Integer will represent an interval of values (see :attr:`interval` parameter).
+    :param value: This parameter is used to describe a domain that contains a fixed integer. If None, the constructed Integer will represent an interval of values (see :attr:`interval` parameter).
     :type value: :class:`bitarray` or :class:`int`, optional
-    :param interval: The interval of permitted values for the Integer. This information is used to compute the storage size of the Integer. If None, the interval will range from the minimum value to the maximum value that an integer can encode, according to its unit size, endianness and sign attributes.
+    :param interval: This parameter is used to describe a domain that contains an interval of permitted values. This information is used to compute the storage size of the Integer. If None, the interval will range from the minimum value to the maximum value that an integer can encode, according to its unit size, endianness and sign attributes.
     :type interval: an :class:`int` or a tuple with the min and the max values specified as :class:`int`, optional
     :param unitSize: The unitsize, in bits, of the storage area used to encode the integer. Values must be one of UnitSize.SIZE_*.
 
@@ -118,6 +118,14 @@ class Integer(AbstractType):
 
 
     **Examples of Integer object instantiations**
+
+    The creation of an Integer with no parameter will create a signed,
+    big-endian integer of 16 bits:
+
+    >>> from netzob.all import *
+    >>> i = Integer()
+    >>> i.generate().tobytes()  # doctest: +SKIP
+    b'\x94\xba'
 
     The following example shows how to define an integer encoded in
     sequences of 8 bits and with a default value of 12 (thus producing

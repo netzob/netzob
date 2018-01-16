@@ -58,8 +58,8 @@ class HexaString(AbstractType):
 
     The HexaString constructor expects some parameters:
 
-    :param value: This parameter is used to describe a fixed hexastring. If None, the constructed hexastring will accept a random sequence of bytes, whose size may be specified (see :attr:`nbBytes` parameter).
-    :param nbBytes: The amount of permitted bytes. If None, the accepted sizes will range from 0 to 65535.
+    :param value: This parameter is used to describe a domain that contains a fixed hexastring. If None, the constructed hexastring will accept a random sequence of bytes, whose size may be specified (see :attr:`nbBytes` parameter).
+    :param nbBytes: This parameter is used to describe a domain that contains an amount of bytes. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.
     :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
 
@@ -79,6 +79,18 @@ class HexaString(AbstractType):
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
 
+
+    The creation of a HexaString type with no parameter will create a bytes
+    object whose length ranges from 0 to 65535:
+
+    >>> from netzob.all import *
+    >>> i = HexaString()
+    >>> len(i.generate().tobytes())
+    6312
+    >>> len(i.generate().tobytes())
+    4487
+    >>> len(i.generate().tobytes())
+    7335
 
     The following example shows how to define a hexastring object with
     a constant value, and the use of the generation method to produce

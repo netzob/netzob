@@ -61,9 +61,9 @@ class IPv4(AbstractType):
 
     The IPv4 constructor expects some parameters:
 
-    :param value: An IP value expressed in standard dot notation
+    :param value: This parameter is used to describe a domain that contains an IP value expressed in standard dot notation
                   (ex: "192.168.0.10"). The default value is None.
-    :param network: A network address expressed in standard
+    :param network: This parameter is used to describe a domain that contains a network address expressed in standard
                     dot notation (ex: "192.168.0.0/24"). The default value is None.
     :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
     :type value: :class:`str` or :class:`netaddr.IPAddress`, optional
@@ -84,6 +84,14 @@ class IPv4(AbstractType):
     :vartype value: :class:`bitarray`
     :vartype network: :class:`str` or :class:`netaddr.IPNetwork`
 
+
+    The creation of an IPv4 type with no parameter will create a random bytes
+    object of 4 bytes:
+
+    >>> from netzob.all import *
+    >>> i = IPv4()
+    >>> i.generate().tobytes()
+    b'\xd9c\xc3\xe4'
 
     The following examples show the use of an IPv4 type:
 
@@ -113,7 +121,7 @@ class IPv4(AbstractType):
     >>> from netzob.all import *
     >>> ip = IPv4(network="10.10.10.0/27")
     >>> IPv4(ip.generate())  # initialize with the generated bitarray value
-    10.10.10.19
+    10.10.10.21
 
     """
 

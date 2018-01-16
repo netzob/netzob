@@ -87,7 +87,7 @@ class Timestamp(AbstractType):
 
     The Timestamp constructor expects some parameters:
 
-    :param value: The raw value of the timestamp (in seconds by default).
+    :param value: This parameter is used to describe a domain that contains a fixed timestamp (in seconds by default).
                   If ``None``, the default generated value is the current time
                   in UTC.
     :param epoch: The initial date expressed in UTC from which
@@ -136,7 +136,7 @@ class Timestamp(AbstractType):
                Instead of a tuple, an integer can be used to represent both min and max values.
     :var unitSize: The unitsize of the current value.
     :var epoch: The initial date expressed in UTC from which
-                timestamp is measured.
+                timestamp is measured. Default value is :attr:`Epoch.UNIX'.
     :var unity: This specifies the unity of the timestamp (seconds,
                 milliseconds, nanoseconds).
     :var sign: The sign of the current value.
@@ -174,6 +174,15 @@ class Timestamp(AbstractType):
     * Unity.MILLISECOND = 1000
     * Unity.MICROSECOND = 1000000
     * Unity.NANOSECOND = 10000000000
+
+
+    The creation of a Timestamp type with no parameter will create a bytes
+    object of 4 bytes containing the current time in seconds from :attr:`Epoch.UNIX':
+
+    >>> from netzob.all import *
+    >>> i = Timestamp()
+    >>> len(i.generate().tobytes())
+    4
 
     In the following example, a Timestamp data is created from a datetime
     and represented as 32 bits:
