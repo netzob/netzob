@@ -58,8 +58,8 @@ class BitArray(AbstractType):
 
     The BitArray constructor expects some parameters:
 
-    :param value: This parameter is used to describe a domani that contains a fixed array of bits. If None, the constructed BitArray will accept a random sequence of bits, whose size may be specified (see :attr:`nbBits` parameter).
-    :param nbBits: This parameter is used to describe a domani that contains an amount of bits. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.
+    :param value: This parameter is used to describe a domain that contains a fixed array of bits. If None, the constructed BitArray will accept a random sequence of bits, whose size may be specified (see :attr:`nbBits` parameter).
+    :param nbBits: This parameter is used to describe a domain that contains an amount of bits. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.
     :type value: :class:`bitarray`, optional
     :type nbBits: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
 
