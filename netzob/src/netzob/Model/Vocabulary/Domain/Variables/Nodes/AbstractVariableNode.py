@@ -146,7 +146,6 @@ class AbstractVariableNode(AbstractVariable):
     def field(self, field):
         self.__field = field
         for child in self.children:
-            try:
-                child.field = field
-            except RecursionError as e:
-                pass
+            if getattr(child, 'field', None) is field:
+                continue
+            child.field = field
