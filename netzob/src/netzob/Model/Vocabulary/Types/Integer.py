@@ -76,7 +76,7 @@ class Integer(AbstractType):
 
     :type unitSize: :class:`UnitSize <netzob.Model.Vocabulary.Types.AbstractType.UnitSize>`, optional
 
-    :param endianness: The endianness of the current value.
+    :param endianness: The endianness of the value.
 
       The following endiannesses are available:
 
@@ -85,7 +85,7 @@ class Integer(AbstractType):
 
     :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
 
-    :param sign: The sign of the current value.
+    :param sign: The sign of the value.
 
       The following signs are available:
 

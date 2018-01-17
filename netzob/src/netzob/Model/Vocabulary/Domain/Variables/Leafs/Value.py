@@ -96,7 +96,7 @@ class Value(AbstractRelationVariableLeaf):
                     :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
                     elements.
        :type path: object, required
-       :param value: the variable
+       :param value: the variable.
        :type value: ~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value, required
 
     Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`

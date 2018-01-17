@@ -92,7 +92,7 @@ class Timestamp(AbstractType):
                   in UTC.
     :param epoch: The initial date expressed in UTC from which
                   timestamp is measured. Default value is :attr:`Epoch.UNIX`.
-    :param unity: This specifies the unity of the timestamp (seconds,
+    :param unity: This specifies the unity of the value (seconds,
                   milliseconds, nanoseconds). The default value is
                   :attr:`Unity.SECOND`.
     :param unitSize: The unitsize of the current value. Values must be one of
@@ -136,7 +136,7 @@ class Timestamp(AbstractType):
                Instead of a tuple, an integer can be used to represent both min and max values.
     :var unitSize: The unitsize of the current value.
     :var epoch: The initial date expressed in UTC from which
-                timestamp is measured. Default value is :attr:`Epoch.UNIX'.
+                timestamp is measured.
     :var unity: This specifies the unity of the timestamp (seconds,
                 milliseconds, nanoseconds).
     :var sign: The sign of the current value.
@@ -177,7 +177,7 @@ class Timestamp(AbstractType):
 
 
     The creation of a Timestamp type with no parameter will create a bytes
-    object of 4 bytes containing the current time in seconds from :attr:`Epoch.UNIX':
+    object of 4 bytes containing the current time in seconds from :attr:`Epoch.UNIX`:
 
     >>> from netzob.all import *
     >>> i = Timestamp()
