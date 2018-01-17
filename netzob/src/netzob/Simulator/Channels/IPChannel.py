@@ -126,14 +126,13 @@ class IPChannel(AbstractChannel):
         """
 
         super().open(timeout=timeout)
-
         self._socket = socket.socket(socket.AF_INET,
                                       socket.SOCK_RAW,
                                       self.upperProtocol)
         self._socket.settimeout(timeout or self.timeout)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2**30)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
-        self._socket.bind((self.localIP, self.upperProtocol))
+        self._socket.bind((self.localIP, 0))
         self.isOpen = True
 
     def close(self):
@@ -147,7 +146,10 @@ class IPChannel(AbstractChannel):
         """
         if self._socket is not None:
             (data, _) = self._socket.recvfrom(65535)
-
+            # Remove IP header from received data
+            ipHeaderLen = (data[0] & 15) * 4  # (Bitwise AND 00001111) x 4bytes --> see RFC-791
+            if len(data) > ipHeaderLen:
+                data = data[ipHeaderLen:]
             return data
         else:
             raise Exception("socket is not available")
@@ -185,12 +187,8 @@ class IPChannel(AbstractChannel):
             while stopWaitingResponse is False:
                 dataReceived = self.read()
 
-                # IHL = (Bitwise AND 00001111) x 4bytes
-                ipHeaderLen = (dataReceived[0] & 15) * 4
-                portSrcRx = (dataReceived[ipHeaderLen] * 256) + \
-                    dataReceived[ipHeaderLen + 1]
-                portDstRx = (dataReceived[ipHeaderLen + 2] * 256) + \
-                    dataReceived[ipHeaderLen + 3]
+                portSrcRx = (dataReceived[0] * 256) + dataReceived[1]
+                portDstRx = (dataReceived[2] * 256) + dataReceived[3]
 
                 stopWaitingResponse = (portSrcTx == portDstRx) and \
                     (portDstTx == portSrcRx)

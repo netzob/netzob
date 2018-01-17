@@ -161,11 +161,6 @@ class RawIPChannel(AbstractChannel):
         """
         if self._socket is not None:
             (data, _) = self._socket.recvfrom(65535)
-
-            # Remove IP header from received data
-            ipHeaderLen = (data[0] & 15) * 4  # (Bitwise AND 00001111) x 4bytes --> see RFC-791
-            if len(data) > ipHeaderLen:
-                data = data[ipHeaderLen:]
             return data
         else:
             raise Exception("socket is not available")
@@ -200,8 +195,14 @@ class RawIPChannel(AbstractChannel):
             self.write(data)
             while stopWaitingResponse is False:
                 dataReceived = self.read()
-                portSrcRx = (dataReceived[0] * 256) + dataReceived[1]
-                portDstRx = (dataReceived[2] * 256) + dataReceived[3]
+
+                # IHL = (Bitwise AND 00001111) x 4bytes
+                ipHeaderLen = (dataReceived[0] & 15) * 4
+                portSrcRx = (dataReceived[ipHeaderLen] * 256) + \
+                    dataReceived[ipHeaderLen + 1]
+                portDstRx = (dataReceived[ipHeaderLen + 2] * 256) + \
+                    dataReceived[ipHeaderLen + 3]
+
                 stopWaitingResponse = (portSrcTx == portDstRx) and (portDstTx == portSrcRx)
                 if stopWaitingResponse:  # and not timeout
                     responseOk = True
