@@ -310,7 +310,7 @@ def _test_alt_mutator():
     >>> have_int16 = False
     >>> have_raw = False
     >>> for _ in range(10):
-    ...     tmp = len(symbol.specialize(fuzz=fuzz))
+    ...     tmp = len(next(symbol.specialize(fuzz=fuzz)))
     ...     if tmp == 1:
     ...         have_int8 = True
     ...     elif tmp == 2:
@@ -340,8 +340,8 @@ def _test_alt_use_mutator():
     >>> mapping[Integer] = {'lengthBitSize' : UnitSize.SIZE_64}
     >>> fuzz.set(f_alt, mappingTypesMutators=mapping)
     >>> res = []
-    >>> res.append(len(symbol.specialize(fuzz=fuzz)))
-    >>> res.append(len(symbol.specialize(fuzz=fuzz)))
+    >>> res.append(len(next(symbol.specialize(fuzz=fuzz))))
+    >>> res.append(len(next(symbol.specialize(fuzz=fuzz))))
     >>> 8 in res
     True
 
@@ -357,12 +357,10 @@ def _test_alt_max_depth():
     >>> fuzz = Fuzz()
     >>> f_alt = Field(name="alt", domain=Alt([Integer(42)]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
-    >>> fuzz.set(f_alt, maxDepth=3)
-    >>> symbol.specialize(fuzz=fuzz)
-    b'*'
-    >>> symbol.specialize(fuzz=fuzz)
-    b'*'
-    >>> symbol.specialize(fuzz=fuzz)
+    >>> fuzz.set(f_alt, maxDepth=3, generator='mt19937')
+    >>> tmp = next(symbol.specialize(fuzz=fuzz))
+    >>> tmp = next(symbol.specialize(fuzz=fuzz))
+    >>> tmp = next(symbol.specialize(fuzz=fuzz))
     Traceback (most recent call last):
     ...
     netzob.Fuzzing.Mutators.AltMutator.RecursionException: Max depth reached (3)
