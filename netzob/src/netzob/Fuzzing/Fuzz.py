@@ -278,22 +278,25 @@ class Fuzz(object):
                               * ``UnitSize.SIZE_64``
         naughtyStrings        The :class:`list` of potentially dangerous :class:`str` elements.
 
-                              Default value is :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS`:
-
-                              .. code-block:: python
-
-                                  DEFAULT_NAUGHTY_STRINGS = [
-                                        'System("ls -al /")',
-                                        '`ls -al /`',
-                                        'Kernel.exec("ls -al /")',
-                                        'Kernel.exit(1)',
-                                        '%x("ls -al /")',
-                                        '<img \\x00src=x onerror="alert(1)">',
-                                        '$ENV{"HOME"}',
-                                        '%d',
-                                        '%s']
+                              Default value is :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS`.
 
         ====================  =================================================
+
+        The :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS` default value is the following:
+
+        .. code-block:: python
+
+           DEFAULT_NAUGHTY_STRINGS = [
+                 'System("ls -al /")',
+                 '`ls -al /`',
+                 'Kernel.exec("ls -al /")',
+                 'Kernel.exit(1)',
+                 '%x("ls -al /")',
+                 '<img \\x00src=x onerror="alert(1)">',
+                 '$ENV{"HOME"}',
+                 '%d',
+                 '%s']
+
 
 
         Raw options:

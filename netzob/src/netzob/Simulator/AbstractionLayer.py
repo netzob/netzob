@@ -200,7 +200,7 @@ class AbstractionLayer(object):
         :param symbol: The symbol to write on the channel.
         :param rate: This specifies the bandwidth in octets to respect
                      during traffic emission (should be used with
-                     duration= parameter). Default value is None (no
+                     :attr:`duration` parameter). Default value is None (no
                      rate).
         :param duration: This indicates for how many seconds the symbol is
                          continuously written on the channel. Default
@@ -227,7 +227,7 @@ class AbstractionLayer(object):
                        ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
                        optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
-        :raise: :class:`TypeError` if a parameter is not valid and Exception if an exception occurs.
+        :raise: :class:`TypeError` if a parameter is not valid and :class:`Exception` if an exception occurs.
 
         """
 
@@ -300,7 +300,7 @@ class AbstractionLayer(object):
         :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         :type presets: :class:`dict`, optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
-        :raise: :class:`TypeError` if parameter is not valid and Exception if an exception occurs.
+        :raise: :class:`TypeError` if parameter is not valid and :class:`Exception` if an exception occurs.
 
         """
 

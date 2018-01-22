@@ -329,7 +329,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             sign=dst_sign)
 
     @public_api
-    def generate(self, generationStrategy=None):
+    def generate(self):
         """Generates random data that respects the current data type.
 
         :return: The value produced.

@@ -69,7 +69,7 @@ class UDPServer(AbstractChannel):
     :type timeout: :class:`float`, optional
 
 
-    Adding to AbstractChannel variables, the UDPClient class provides the
+    Adding to AbstractChannel variables, the UDPServer class provides the
     following public variables:
 
     :var localIP: The local IP address.

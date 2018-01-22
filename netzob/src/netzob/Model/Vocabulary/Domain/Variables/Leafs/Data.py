@@ -66,7 +66,7 @@ class Data(AbstractVariableLeaf):
     :param dataType: The type of the data (for example Integer,
                      Raw, String, ...).
     :param originalValue: The original value of the data (can be
-                          None, which is the default behavior). The default value is None.
+                          None, which is the default behavior).
     :param name: The name of the data (if None, the name will
                  be generated).
     :param svas: The SVAS strategy defining how the Data value is

@@ -151,7 +151,7 @@ class Field(AbstractField):
     >>> f = Field(10)
 
     If these fields are equivalent, this is because the first
-    parameter of the Field constructor is *domain=*, thus its name can
+    parameter of the Field constructor is :attr:`domain`, thus its name can
     be omitted. Besides, the domain parameter will be parsed by a
     factory, which accepts either the canonical form of a definition
     domain (such as `domain=Data(Integer(10))`) or a shortened form

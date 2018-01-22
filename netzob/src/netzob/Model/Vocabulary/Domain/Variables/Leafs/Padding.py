@@ -114,16 +114,18 @@ class Padding(AbstractRelationVariableLeaf):
     The callback function that can be used in the ``data``
     parameter has the following prototype:
 
-    ``def cbk_data(current_length, modulo)``
+    .. function:: cbk_data(current_length, modulo)
+       :noindex:
 
-    Where:
+       :param current_length: corresponds to the current size in bits of
+                              the targeted structure.
+       :type current_length: :class:`int`, required
 
-    * ``current_length`` is an :class:`int` that corresponds to the
-      current size in bits of the targeted structure.
-    * ``modulo`` is an :class:`int` that corresponds to the expected
-      modulo size in bits.
+       :param modulo: corresponds to the expected modulo size in bits.
+       :type modulo: :class:`int`, required
 
-    The callback function should return a :class:`bitarray`.
+       :return: The padding value.
+       :rtype: :class:`bitarray`
 
 
     **Padding examples**

@@ -170,7 +170,7 @@ class String(AbstractType):
 
     The ``eos`` attribute specifies a list of values that are used as
     potential terminal characters. Terminal characters can be a
-    constant (such as ``'\n`` in the previous example).
+    constant (such as ``'\n'`` in the previous example).
 
     """
 
