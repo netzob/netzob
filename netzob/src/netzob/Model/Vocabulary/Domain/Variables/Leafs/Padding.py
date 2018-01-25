@@ -239,6 +239,12 @@ class Padding(AbstractRelationVariableLeaf):
         self.factor = factor
         self.offset = offset
 
+        # Internal variable used to store current value of length to pad for further usage in self.compareValue()
+        self._current_length_to_pad = 0
+
+        # Internal variable used to tell if the padding is random (if so, parsing will be less constrained)
+        self._is_padding_random = True
+
         # Handle the data parameter which can be a dataType or a method that return the padding data
         if callable(data):
             self.data_callback = data
@@ -247,7 +253,7 @@ class Padding(AbstractRelationVariableLeaf):
             self.data_callback = None
 
     def compareValues(self, content, expectedSize, computedValue):
-        return len(content) >= len(computedValue)
+        return len(content[:self._current_length_to_pad]) == len(computedValue)
 
     def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables):
         """
@@ -303,6 +309,9 @@ class Padding(AbstractRelationVariableLeaf):
     def computeExpectedValue(self, parsingPath):
         self._logger.debug("Compute expected value for Padding variable")
 
+        # Reinitialize current length size
+        self._current_length_to_pad = 0
+
         # first checks the pointed fields all have a value
         remainingVariables = []
 
@@ -313,9 +322,12 @@ class Padding(AbstractRelationVariableLeaf):
         # Compute the padding value according to the current size
         padding_value = bitarray(endian='big')
 
+        length_to_pad = 0
         if self.data_callback is not None:
             if callable(self.data_callback):
-                padding_value.extend(self.data_callback(size, self.modulo))
+                data_to_extend = self.data_callback(size, self.modulo)
+                length_to_pad += len(data_to_extend)
+                padding_value.extend(data_to_extend)
             else:
                 raise TypeError("Callback parameter is not callable.")
         else:
@@ -329,11 +341,17 @@ class Padding(AbstractRelationVariableLeaf):
             # Handle factor parameter
             length_to_pad = length_to_pad / self.factor
 
+            if self.dataType.value is not None:
+                self._is_padding_random = False
+
             # Add potential padding
             while len(padding_value) < length_to_pad:
                 padding_value.extend(self.dataType.generate())
 
         self._logger.debug("Computed padding for {}: '{}'".format(self, padding_value.tobytes()))
+
+        # Save current value of length to pad for further usage in self.compareValue()
+        self._current_length_to_pad = int(length_to_pad)
         return padding_value
 
     def __str__(self):
