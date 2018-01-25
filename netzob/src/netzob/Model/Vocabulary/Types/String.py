@@ -168,6 +168,17 @@ class String(AbstractType):
     >>> data[-1:] == b'\n'
     True
 
+    Strings with a constant value and a terminal character are also supported.
+    The following example show the usage of this case.
+
+    >>> from netzob.all import *
+    >>> s = String("abcdef", eos=["123"])
+    >>> s.generate().tobytes()
+    b'abcdef123'
+    >>> Field(s).specialize()
+    b'abcdef123'
+
+
     The ``eos`` attribute specifies a list of values that are used as
     potential terminal characters. Terminal characters can be a
     constant (such as ``'\n'`` in the previous example).
