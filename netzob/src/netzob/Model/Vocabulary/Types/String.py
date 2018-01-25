@@ -309,9 +309,6 @@ class String(AbstractType):
         True
 
         """
-        if self.value is not None:
-            return self.value
-
         from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
@@ -331,8 +328,12 @@ class String(AbstractType):
             final_character = random.choice(self.eos)
 
         # Generate the sufficient amount of data
-        random_content = ""
-        while len(random_content) < generatedSize:
+        if self.value is not None:
+            random_content = self.value.tobytes().decode(self.encoding)
+        else:
+            random_content = ""
+        # Compare the length of the *unicode* value against the targeted size
+        while len(random_content.encode(self.encoding)) < generatedSize:
             random_content += random.choice(permitted_characters)
 
             # Be sure that the potential terminal characters are not present in the first part of the generated string
@@ -349,8 +350,11 @@ class String(AbstractType):
 
         # Handle terminal character ('end of string')
         if final_character is not None:
-            # Remove the size of the added terminal character to the original random_content, and add the final character
-            random_content = random_content[:len(random_content) - len(final_character)] + final_character
+            if self.value is None:
+                # Remove the size of the added terminal character to the original random_content, and add the final character
+                random_content = random_content[:len(random_content) - len(final_character)] + final_character
+            else:
+                random_content += final_character
 
         return TypeConverter.convert(random_content, String, BitArray)
 
