@@ -166,7 +166,8 @@ class GenericPath(object):
         if variable is None:
             raise Exception("Variable cannot be None")
 
-        del self._dataAssignedToVariable[variable]
+        if variable in self._dataAssignedToVariable:
+            del self._dataAssignedToVariable[variable]
 
     def removeDataRecursively(self, variable):
         from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import SELF
@@ -204,80 +205,95 @@ class GenericPath(object):
             self._variablesCallbacks.append(newCB)
 
     def _triggerVariablesCallbacks(self, triggeringVariable):
-        from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
-        from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+        """Returns a tuple, where the first element tell if the callback
+        computation has been successful, and where the second element is a
+        generator/list of the new computed parsingPaths.
 
-        resultingPaths = (self, )
+        """
+
+        callBackToExecute = None
         tested_callbacks = []
         for _ in range(len(self._variablesCallbacks)):
 
-            callBackToExecute = None
+            for callBackToExecute in self._variablesCallbacks:
 
-            for (targetVariables, currentVariable, parsingCB) in self._variablesCallbacks:
-
-                if (targetVariables, currentVariable, parsingCB) in tested_callbacks:
+                if callBackToExecute in tested_callbacks:
+                    self._logger.debug("Potential callback already tested")
+                    callBackToExecute = None
                     continue
 
-                if (targetVariables, currentVariable, parsingCB) in self._current_callbacks_operation:
+                # Add current callback to a list of callbacks that have already been tested
+                tested_callbacks.append(callBackToExecute)
+
+                if callBackToExecute in self._current_callbacks_operation:
+                    self._logger.debug("Potential callback is currently tested")
+                    callBackToExecute = None
                     continue
+
+                # Retrieve callback elements
+                (targetVariables, currentVariable, parsingCB) = callBackToExecute
 
                 if triggeringVariable == currentVariable:
                     self._logger.debug("Potential callback triggered by the variable concerned by the resolution")
-                    tested_callbacks.append((targetVariables, currentVariable, parsingCB))
-                    break
+                    callBackToExecute = None
+                    continue
 
+                # Test if triggeringVariable may help in computing the
+                # callbacl (i.e. it is in the list of the targeted
+                # variables of the currentVariable)
                 found = False
                 for v in targetVariables:
                     if v == triggeringVariable:
                         found = True
                         break
                 if found:
-                    callBackToExecute = (targetVariables, currentVariable, parsingCB)
-
-                    if callBackToExecute in tested_callbacks:
-                        self._logger.debug("Potential callback already tested")
-                        callBackToExecute = None
-                        continue
-
-                    self._logger.debug("Found a callback that should be able to be computed due to triggering variable '{}' from field '{}'".format(triggeringVariable, triggeringVariable.field))
-
-                    variablesToCheck = set(targetVariables)
-                    variablesToCheck.remove(triggeringVariable)
-                    if not currentVariable.check_may_miss_dependencies(variablesToCheck):
-                        self._logger.debug("The callback linked with variable '{}' from field '{}' seems to contain all the needed information to compute".format(currentVariable, currentVariable.field))
-                        break
-                    else:
-                        self._logger.debug("The callback linked with variable '{}' from field '{}' does not contain all the needed information to compute".format(currentVariable, currentVariable.field))
-                        break
-                        #callBackToExecute = None
+                    self._logger.debug("Found a callback on '{}' that should be able to be computed due to triggering variable '{}' from field '{}'".format(currentVariable, triggeringVariable, triggeringVariable.field))
+                    break
                 else:
-                    self._logger.debug("Callback no concerned by the triggering variable")
-
-            if callBackToExecute is None:
+                    self._logger.debug("Callback not concerned by the triggering variable")
+                    callBackToExecute = None
+                    continue
+            if callBackToExecute is not None:
+                break
+            else:
                 continue
 
-            tested_callbacks.append(callBackToExecute)
+        if callBackToExecute is not None:
+            return self._processCallback(callBackToExecute)
+        else:
+            resultingPaths = (self, )
+            return (True, resultingPaths)
 
-            self._current_callbacks_operation.append(callBackToExecute)
+    def _processCallback(self, callBackToExecute):
+        from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
+        from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 
-            (targetVariables, currentVariable, parsingCB) = callBackToExecute
-            if parsingCB:
-                resultingPaths = currentVariable.parse(self, acceptCallBack=True)
-            else:
-                resultingPaths = currentVariable.specialize(self, acceptCallBack=True)
+        # Retrieve callback elements
+        (targetVariables, currentVariable, parsingCB) = callBackToExecute
 
-            self._current_callbacks_operation.remove(callBackToExecute)
+        # Add current callback to a list of callbacks that are currently being executed (recursively).
+        # This avoids computing a callback that is being already computing
+        self._current_callbacks_operation.append(callBackToExecute)
 
-            # fail when not any path is valid
-            if not any(path.ok for path in resultingPaths):
-                return (False, resultingPaths)
-            else:
-                self._variablesWithResult.append(currentVariable)
+        # Callback computation
+        if parsingCB:
+            resultingPaths = currentVariable.parse(self, acceptCallBack=True)
+        else:
+            resultingPaths = currentVariable.specialize(self, acceptCallBack=True)
 
-            remove_cb_cond = self.hasResult(currentVariable)
-            remove_cb_cond &= isinstance(currentVariable, (Data, Repeat))
-            if remove_cb_cond and callBackToExecute in self._variablesCallbacks:
-                self._variablesCallbacks.remove(callBackToExecute)
+        self._current_callbacks_operation.remove(callBackToExecute)
+
+        # Fails when not all paths are valid
+        if not any(path.ok for path in resultingPaths):
+            return (False, resultingPaths)
+        else:
+            self._variablesWithResult.append(currentVariable)
+
+        # If needed, remove the callback from the list of callbacks
+        remove_cb_cond = self.hasResult(currentVariable)
+        remove_cb_cond &= isinstance(currentVariable, (Data, Repeat))
+        if remove_cb_cond and callBackToExecute in self._variablesCallbacks:
+            self._variablesCallbacks.remove(callBackToExecute)
 
         return (True, resultingPaths)
 
