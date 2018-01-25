@@ -226,7 +226,14 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         return []
 
     def compareValues(self, content, expectedSize, computedValue):
-        return content[:expectedSize] == computedValue
+        if content[:expectedSize] == computedValue:
+            msg = "The current variable data '{}' contain the expected value '{}'".format(content[:expectedSize].tobytes(), computedValue.tobytes())
+            self._logger.debug(msg)
+            return True
+        else:
+            msg = "The current variable data '{}' does not contain the expected value '{}'".format(content[:expectedSize].tobytes(), computedValue.tobytes())
+            self._logger.debug(msg)
+            return False
 
     @typeCheck(ParsingPath)
     def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
@@ -267,8 +274,6 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 parsingPath.addResult(self, content[:len(expectedValue)])
                 results.append(parsingPath)
             else:
-                msg = "The current variable data '{}' do not contain the expected value '{}'".format(possibleValue.tobytes(), expectedValue.tobytes())
-                self._logger.debug(msg)
                 raise RelationException()
         except RelationException as e:
             parsingPath.ok = False
@@ -278,7 +283,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 # we add a callback
                 self._addCallBacksOnUndefinedVariables(parsingPath)
                 # register the remaining data
-                parsingPath.addResult(self, possibleValue.copy())
+                parsingPath.addResult(self, possibleValue.copy(), notify=False)
                 results.append(parsingPath)
 
         return results
