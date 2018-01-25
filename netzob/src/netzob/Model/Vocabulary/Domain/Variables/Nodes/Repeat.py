@@ -54,7 +54,7 @@ from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
-from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
 
@@ -399,13 +399,13 @@ class Repeat(AbstractVariableNode):
         results = gen(parsingPath, dataToParse, **kwargs)
 
         # filter on results having a data for this variable
-        valid_results = [result for result in results if result.hasData(self)]
+        valid_results = [result for result in results if result.hasData(self) and result.ok]
 
         # if no valid result if found, provide a fallback parsing path with
         # an empty result
         if len(valid_results) == 0:
             newParsingPath = parsingPath.duplicate()
-            newParsingPath.addResult(self, bitarray())
+            newParsingPath.addResult(self, bitarray(), notify=False)
             valid_results.append(newParsingPath)
 
         return valid_results
@@ -424,7 +424,16 @@ class Repeat(AbstractVariableNode):
                 tmp_results = []
                 break_repeat = RepeatResult.CONTINUE
                 for newParsingPath in newParsingPaths:
-                    for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
+
+                    # Parse child
+                    try:
+                        childParsingPaths = self.children[0].parse(newParsingPath, carnivorous=carnivorous)
+                    except ParsingException:
+                        self._logger.debug("Error in parsing of child")
+                        continue
+
+                    # Handle child parsing results
+                    for childParsingPath in childParsingPaths:
 
                         newResult = bitarray()
                         if childParsingPath.hasData(self):
@@ -433,7 +442,10 @@ class Repeat(AbstractVariableNode):
 
                         remainingDataToParse = dataToParse[len(newResult):]
 
-                        childParsingPath.addResult(self, newResult)
+                        childParsingPath.ok = True
+                        (addresult_succeed, addresult_parsingPaths) = childParsingPath.addResult(self, newResult)
+                        if not addresult_succeed:
+                            childParsingPath.ok = False
 
                         childParsingPath.assignData(remainingDataToParse, self.children[0])
 
@@ -473,18 +485,29 @@ class Repeat(AbstractVariableNode):
 
         break_repeat = RepeatResult.CONTINUE
         for i_repeat in range(self.MAX_REPEAT):
+            self._logger.debug("Repeat iteration: {}".format(i_repeat))
             if break_repeat is not RepeatResult.CONTINUE:
                 break
 
             tmp_results = []
             break_repeat = RepeatResult.STOP_AFTER
             for newParsingPath in newParsingPaths:
-                for childParsingPath in self.children[0].parse(newParsingPath, carnivorous=carnivorous):
+
+                # Parse child
+                try:
+                    childParsingPaths = self.children[0].parse(newParsingPath, carnivorous=carnivorous)
+                except ParsingException:
+                    self._logger.debug("Error in parsing of child")
+                    continue
+
+                for childParsingPath in childParsingPaths:
 
                     newResult = bitarray()
                     if childParsingPath.hasData(self):
                         newResult += childParsingPath.getData(self)
-                    newResult += childParsingPath.getData(self.children[0])
+
+                    if childParsingPath.hasData(self.children[0]):
+                        newResult += childParsingPath.getData(self.children[0])
 
                     remainingDataToParse = dataToParse[len(newResult):]
 
@@ -494,7 +517,11 @@ class Repeat(AbstractVariableNode):
                                                  self.children[0],
                                                  remainingDataToParse)
 
-                    childParsingPath.addResult(self, newResult)
+                    childParsingPath.ok = True
+                    (addresult_succeed, addresult_parsingPaths) = childParsingPath.addResult(self, newResult)
+                    if not addresult_succeed:
+                        childParsingPath.ok = False
+
                     childParsingPath.assignData(remainingDataToParse, self.children[0])
 
                     # apply delimiter if necessary
@@ -520,6 +547,9 @@ class Repeat(AbstractVariableNode):
                 newParsingPaths = tmp_results
             if break_repeat is RepeatResult.STOP_AFTER:
                 break
+            if break_repeat is RepeatResult.CONTINUE:
+                for res in tmp_results:
+                    res.ok = True
 
         yield from newParsingPaths
 
