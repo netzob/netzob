@@ -48,7 +48,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
-from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
 
@@ -206,15 +206,19 @@ class Alt(AbstractVariableNode):
         # parse each child according to its definition
         for i_child, child in enumerate(self.children):
             parsingPath = parserPaths[i_child]
-            self._logger.debug("ALT Parse of {0}/{1} with {2}".format(
-                i_child + 1, len(self.children), parsingPath))
+            self._logger.debug("Start Alt parsing of {0}/{1} with {2}".format(i_child + 1, len(self.children), parsingPath))
 
-            childParsingPaths = child.parse(parsingPath)
-            for childParsingPath in childParsingPaths:
-                childParsingPath.addResult(
-                    self,
-                    childParsingPath.getData(child))
-                yield childParsingPath
+            try:
+                childParsingPaths = child.parse(parsingPath)
+            except ParsingException:
+                self._logger.debug("Error in parsing of child")
+            else:
+                for childParsingPath in childParsingPaths:
+                    data_parsed = childParsingPath.getData(child)
+                    self._logger.debug("End of Alt parsing of {}/{} with {}. Data parsed: '{}'".format(i_child + 1, len(self.children), parsingPath, data_parsed))
+                    childParsingPath.addResult(self, data_parsed)
+                    yield childParsingPath
+        self._logger.debug("End of parsing of Alt variable")
 
     @typeCheck(SpecializingPath)
     def specialize(self, specializingPath, fuzz=None):
