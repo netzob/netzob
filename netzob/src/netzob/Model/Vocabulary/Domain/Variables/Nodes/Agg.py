@@ -46,7 +46,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
-from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
 
@@ -390,78 +390,72 @@ class Agg(AbstractVariableNode):
         """Parse the content with the definition domain of the aggregate.
         """
         dataToParse = parsingPath.getData(self).copy()
-        self._logger.debug("Parse '{}' as {} with parser path '{}'".format(
-            dataToParse.tobytes(), self, parsingPath))
+        self._logger.debug("Parse '{}' as {} with parser path '{}'".format(dataToParse.tobytes(), self, parsingPath))
+
+        # Clean parsed data associated to children (needed if we are in a iteration of a Repeat)
+        for child in self.children:
+            if parsingPath.hasData(child):
+                parsingPath.removeData(child)
 
         # initialy, there is a unique path to test (the provided one)
         parsingPath.assignData(dataToParse.copy(), self.children[0])
-        parsingPaths = [parsingPath]
 
-        # we parse all the children with the parserPaths produced by previous children
-        all_parsed = False
-        for i_child in range(len(self.children)):
+        #parsingPaths = [parsingPath]
 
-            # Handle optional field situation, where all data may have already been parsed before the last field
-            if all_parsed is True:
-                break
-
-            current_child = self.children[i_child]
-            if i_child < len(self.children) - 1:
-                next_child = self.children[i_child + 1]
-            else:
-                next_child = None
-
-            newParsingPaths = []
-
-            for parsingPath in parsingPaths:
-                self._logger.debug(
-                    "Parse {0} with {1}".format(id(current_child), parsingPath))
-                value_before_parsing = parsingPath.getData(
-                    current_child).copy()
-                childParsingPaths = current_child.parse(
-                    parsingPath, carnivorous=carnivorous)
-
-                for childParsingPath in childParsingPaths:
-                    value_after_parsing = childParsingPath.getData(
-                        current_child).copy()
-                    remainingValue = value_before_parsing[len(
-                        value_after_parsing):].copy()
-
-                    if next_child is not None:
-                        # Handle optional field
-                        if len(remainingValue) == 0 and i_child == len(self.children) - 2 and self._last_optional:
-                            all_parsed = True
-                        # Else send the remaining data to the last field
-                        else:
-                            childParsingPath.assignData(
-                                remainingValue, next_child)
-
-                    # at least one child path managed to parse, we save the valid paths it produced
-                    self._logger.debug(
-                        "Children {0} succesfuly applied with the parsingPath {1}".
-                        format(current_child, parsingPath))
-                    newParsingPaths.append(childParsingPath)
-
-            parsingPaths = newParsingPaths
-
-            if len(parsingPaths) == 0:
-                self._logger.debug("Children {0} didn't apply to any of the parser path we have, we stop Agg parser".format(current_child))
-                return []  # return no valid paths
-
-        # ok we managed to parse all the children, and it produced some valid parser paths. We return them
-        for parsingPath in parsingPaths:
+        for path in  self._inner_parse(parsingPath, 0, False, carnivorous):
             parsedData = None
             for child in self.children:
-                if parsingPath.hasData(child):
-                    child_data = parsingPath.getData(child).copy()
+                if path.hasData(child):
+                    child_data = path.getData(child).copy()
                     if parsedData is None:
                         parsedData = child_data
                     else:
-                        parsedData = parsedData + child_data
+                        parsedData += child_data
 
-            self._logger.debug("Data successfuly parsed with {}: '{}'".format(self, parsedData.tobytes()))
-            parsingPath.addResult(self, parsedData)
-        return parsingPaths
+            self._logger.debug("Alt data successfuly parsed with {}: '{}'".format(self, parsedData.tobytes()))
+            path.addResult(self, parsedData)
+            yield path
+
+    def _inner_parse(self, parsingPath, i_child, all_parsed, carnivorous):
+        # we parse all the children with the parserPaths produced by previous children
+
+        # Handle optional field situation, where all data may have already been parsed before the last field
+        if all_parsed is True:
+            yield parsingPath
+
+        current_child = self.children[i_child]
+        if i_child < len(self.children) - 1:
+            next_child = self.children[i_child + 1]
+        else:
+            next_child = None
+
+        self._logger.debug("Parse {} (child {}/{}) with {}".format(current_child, i_child + 1, len(self.children), parsingPath))
+        value_before_parsing = parsingPath.getData(current_child).copy()
+
+        try:
+            childParsingPaths = current_child.parse(parsingPath, carnivorous=carnivorous)
+        except ParsingException:
+            self._logger.debug("Error in parsing of child")
+            return
+
+        for childParsingPath in childParsingPaths:
+            value_after_parsing = childParsingPath.getData(current_child).copy()
+            remainingValue = value_before_parsing[len(value_after_parsing):].copy()
+
+            self._logger.debug("Children {} succesfuly applied with the parsingPath {}".format(current_child, childParsingPath))
+
+            if next_child is not None:
+
+                # Handle optional field
+                if len(remainingValue) == 0 and i_child == len(self.children) - 2 and self._last_optional:
+                    all_parsed = True
+                # Else send the remaining data to the last field
+                else:
+                    childParsingPath.assignData(remainingValue, next_child)
+
+                yield from self._inner_parse(childParsingPath, i_child + 1, all_parsed, carnivorous)
+            else:
+                yield childParsingPath
 
     @typeCheck(SpecializingPath)
     def specialize(self, specializingPath, fuzz=None):
