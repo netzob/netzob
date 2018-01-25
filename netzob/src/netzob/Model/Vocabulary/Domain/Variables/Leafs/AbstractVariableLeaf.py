@@ -47,6 +47,7 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
@@ -85,28 +86,32 @@ class AbstractVariableLeaf(AbstractVariable):
             raise Exception(
                 "Cannot parse if the variable has no assigned SVAS.")
 
-        if self.isDefined(parsingPath):
-            if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
-                return self.valueCMP(
-                    parsingPath, acceptCallBack, carnivorous=carnivorous)
-            elif self.svas == SVAS.EPHEMERAL:
-                return self.learn(
-                    parsingPath, acceptCallBack, carnivorous=carnivorous)
-            elif self.svas == SVAS.VOLATILE:
-                return self.domainCMP(
-                    parsingPath, acceptCallBack, carnivorous=carnivorous)
-        else:
-            if self.svas == SVAS.CONSTANT:
-                self._logger.debug(
-                    "Cannot parse '{0}' as svas is CONSTANT and no value is available.".
-                    format(self))
-                return []
-            elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
-                return self.learn(
-                    parsingPath, acceptCallBack, carnivorous=carnivorous)
-            elif self.svas == SVAS.VOLATILE:
-                return self.domainCMP(
-                    parsingPath, acceptCallBack, carnivorous=carnivorous)
+        try:
+            if self.isDefined(parsingPath):
+                if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
+                    return self.valueCMP(
+                        parsingPath, acceptCallBack, carnivorous=carnivorous)
+                elif self.svas == SVAS.EPHEMERAL:
+                    return self.learn(
+                        parsingPath, acceptCallBack, carnivorous=carnivorous)
+                elif self.svas == SVAS.VOLATILE:
+                    return self.domainCMP(
+                        parsingPath, acceptCallBack, carnivorous=carnivorous)
+            else:
+                if self.svas == SVAS.CONSTANT:
+                    self._logger.debug(
+                        "Cannot parse '{0}' as svas is CONSTANT and no value is available.".
+                        format(self))
+                    return []
+                elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
+                    return self.learn(
+                        parsingPath, acceptCallBack, carnivorous=carnivorous)
+                elif self.svas == SVAS.VOLATILE:
+                    return self.domainCMP(
+                        parsingPath, acceptCallBack, carnivorous=carnivorous)
+        except ParsingException:
+            self._logger.info("Error in parsing of variable")
+            return []
 
         raise Exception("Not yet implemented: {0}.".format(self.svas))
 

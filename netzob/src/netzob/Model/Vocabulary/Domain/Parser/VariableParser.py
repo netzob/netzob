@@ -44,7 +44,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 
 
 @NetzobLogger
@@ -68,7 +68,12 @@ class VariableParser(object):
         self._logger.debug("Parse '{}' with variable '{}' specifications".
                            format(dataToParse.tobytes(), self.variable))
 
-        return self.variable.parse(parsingPath, carnivorous=carnivorous)
+        try:
+            paths = self.variable.parse(parsingPath, carnivorous=carnivorous)
+        except ParsingException:
+            return iter(())
+        else:
+            return paths
 
     @property
     def variable(self):

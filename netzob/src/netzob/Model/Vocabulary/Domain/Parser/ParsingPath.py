@@ -49,6 +49,10 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 
 
+class ParsingException(Exception):
+    pass
+
+
 @NetzobLogger
 class ParsingPath(GenericPath):
     def __init__(self,
