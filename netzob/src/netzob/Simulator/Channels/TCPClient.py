@@ -219,9 +219,17 @@ class TCPClient(AbstractChannel):
     def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
-        """
 
-        raise NotImplementedError("Not yet implemented")
+        :param data: the data to write on the channel
+        :type data: :class:`bytes`
+
+        """
+        if self._socket is not None:
+            self.write(data)
+            dataReceived = self.read()
+            return dataReceived
+        else:
+            raise Exception("socket is not available")
 
     # Management methods
 
