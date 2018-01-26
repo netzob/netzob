@@ -288,11 +288,7 @@ class Size(AbstractRelationVariableLeaf):
 
         if len(missing_variables) == 0:
             return size
-        self._missing_targets = set(missing_variables)
 
-        self._logger.debug("Cannot compute the relation, because "
-                           "the following targets are missing: {}"
-                           .format([t.field for t in self._missing_targets]))
         raise Exception("Expected value cannot be computed, some "
                         "dependencies are missing for domain '{}', from field '{}'"
                         .format(self, self.field))
@@ -310,11 +306,6 @@ class Size(AbstractRelationVariableLeaf):
                 value = self.dataType.generate()
             else:
                 value = parsingPath.getData(variable)
-
-            try:
-                self._missing_targets.remove(variable)
-            except KeyError:
-                pass
 
             if value is None:
                 break

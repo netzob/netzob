@@ -87,7 +87,6 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             varType, name, dataType=dataType, svas=SVAS.VOLATILE)
 
         self.targets = targets
-        self._missing_targets = set()
 
     def __str__(self):
         """The str method."""
@@ -102,26 +101,6 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             return mutator.count()
         else:
             return 1
-
-    def check_may_miss_dependencies(self, variables):
-        """
-        Verify that this variable **may** fail to process against some targets
-        (both specialization or abstraction).
-        :attr:`variables` are filtered against missing targets.
-
-        :param variables: an iterable of variables
-        :type variables: Iterable[~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable]
-        :return: ``True`` if the result is not empty or no variable have been
-                 passed as argument, else ``False``.
-        :rtype: bool
-        """
-        if self._missing_targets:
-            if len(variables) > 0:
-                missing_targets = self._missing_targets & set(variables)
-            else:
-                missing_targets = self._missing_targets
-            return len(missing_targets) > 0
-        return super().check_may_miss_dependencies(variables)
 
     def normalize_targets(self):
         # Normalize targets (so that targets now only contain variables)
