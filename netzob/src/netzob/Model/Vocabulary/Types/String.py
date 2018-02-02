@@ -46,6 +46,8 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
+from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 
@@ -274,6 +276,33 @@ class String(AbstractType):
                     nbMaxBits = nbChars[1] * 8
 
         return (nbMinBits, nbMaxBits)
+
+    def buildDataRepresentation(self):
+        """It creates a :class:`~netzob.Model.Vocabulary.Domain.Variables.Leafs.Data.Data` following the specified type.
+
+        for instance, user can specify a domain with its type which is much more simple than creating a Data with the type
+
+        >>> from netzob.all import *
+        >>> ascii = String("hello john !")
+        >>> ascii.typeName
+        'String'
+        >>> data = ascii.buildDataRepresentation()
+        >>> data.currentValue.tobytes()
+        b'hello john !'
+        >>> print(data.dataType)
+        String('hello john !')
+
+        :return: a Data of the current type
+        :rtype: :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leads.Data.Data>`
+
+        """
+        svas = SVAS.EPHEMERAL
+
+        # Do not use constant when some EOS values has been set
+        if self.value is not None and not self.eos:
+            svas = SVAS.CONSTANT
+
+        return Data(dataType=self, originalValue=self.value, svas=svas)
 
     def count(self, presets=None, fuzz=None):
         r"""
