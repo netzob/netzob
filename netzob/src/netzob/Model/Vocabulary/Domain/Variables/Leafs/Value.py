@@ -240,6 +240,19 @@ class Value(AbstractRelationVariableLeaf):
             self.__class__.__name__, targets=[target], name=name)
         self.operation = operation
 
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        if self.targets[0] in map_objects.keys():
+            new_target = map_objects[self.targets[0]]
+        else:
+            new_target = target.clone(map_objects)
+            map_objects[self.targets[0]] = new_target
+        new_value = Value(new_target, name=self.name, operation=self.operation)
+        map_objects[self] = new_value
+        return new_value
+
     @typeCheck(GenericPath)
     def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         self._logger.debug("ValueCMP")
@@ -270,7 +283,7 @@ class Value(AbstractRelationVariableLeaf):
 
             for size in range(min(maxSizeDep, len(content)), minSizeDep - 1, -1):
                 # we create a new parsing path and returns it
-                newParsingPath = parsingPath.duplicate()
+                newParsingPath = parsingPath.clone()
                 newParsingPath.addResult(self, content[:size].copy())
                 self._addCallBacksOnUndefinedVariables(newParsingPath)
                 results.append(newParsingPath)

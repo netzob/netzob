@@ -106,7 +106,7 @@ class OpenChannelTransition(AbstractTransition):
 
         self.description = "OpenChannelTransition"
 
-    def duplicate(self):
+    def clone(self):
         transition = OpenChannelTransition(startState=None,
                                            endState=self.endState,
                                            name=self.name)
@@ -176,13 +176,13 @@ class OpenChannelTransition(AbstractTransition):
 def _test():
     r"""
 
-    # Test duplicate()
+    # Test clone()
 
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> t = OpenChannelTransition(s0, s1, name="transition")
-    >>> t.duplicate()
+    >>> t.clone()
     transition
 
     """

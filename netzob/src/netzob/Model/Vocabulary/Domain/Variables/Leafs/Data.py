@@ -129,6 +129,14 @@ class Data(AbstractVariableLeaf):
         self.dataType = dataType
         self.currentValue = originalValue
 
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        new_data = Data(self.dataType, originalValue=self.currentValue, name=self.name, svas=self.svas)
+        map_objects[self] = new_data
+        return new_data
+
     def __str__(self):
         return "Data ({0})".format(self.dataType)
 
@@ -180,7 +188,7 @@ class Data(AbstractVariableLeaf):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
-                    newParsingPath = parsingPath.duplicate()
+                    newParsingPath = parsingPath.clone()
 
                     newParsingPath.addResult(self, content[:size].copy())
                     yield newParsingPath
@@ -250,7 +258,7 @@ class Data(AbstractVariableLeaf):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
-                    newParsingPath = parsingPath.duplicate()
+                    newParsingPath = parsingPath.clone()
                     (addresult_succeed, addresult_parsingPaths) = newParsingPath.addResult(self, content[:size].copy())
                     if addresult_succeed:
                         for addresult_parsingPath in addresult_parsingPaths:

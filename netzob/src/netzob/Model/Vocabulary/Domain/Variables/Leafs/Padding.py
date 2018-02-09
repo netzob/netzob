@@ -252,6 +252,28 @@ class Padding(AbstractRelationVariableLeaf):
             self.dataType = data
             self.data_callback = None
 
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        new_targets = []
+        for target in self.targets:
+            if target in map_objects.keys():
+                new_targets.append(map_objects[target])
+            else:
+                new_target = target.clone(map_objects)
+                new_targets.append(new_target)
+                map_objects[target] = new_target
+
+        if self.dataType is not None:
+            new_data = self.dataType
+        else:
+            new_data = self.data_callback
+
+        new_padding = Padding(new_targets, new_data, self.modulo, once=self.once, factor=self.factor, offset=self.offset)
+        map_objects[self] = new_padding
+        return new_padding
+
     def compareValues(self, content, expectedSize, computedValue):
         return len(content[:self._current_length_to_pad]) == len(computedValue)
 

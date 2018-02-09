@@ -93,7 +93,7 @@ class State(AbstractState):
         super(State, self).__init__(name=name)
         self.__transitions = []
 
-    def duplicate(self):
+    def clone(self):
         state = State(name=self.name)
         state.transitions = self.transitions
         state.active = self.active
@@ -395,13 +395,13 @@ def _test():
     'S1'
 
 
-    # Test duplicate()
+    # Test clone()
 
     >>> from netzob.all import *
     >>> s0 = State(name="s0")
     >>> s1 = State(name="s1")
     >>> t = CloseChannelTransition(s0, s1, name="transition")
-    >>> s0.duplicate()
+    >>> s0.clone()
     s0
 
     """

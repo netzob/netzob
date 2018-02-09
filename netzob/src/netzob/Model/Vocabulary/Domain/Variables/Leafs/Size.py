@@ -255,6 +255,22 @@ class Size(AbstractRelationVariableLeaf):
         self.factor = factor
         self.offset = offset
 
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        new_targets = []
+        for target in self.targets:
+            if target in map_objects.keys():
+                new_targets.append(map_objects[target])
+            else:
+                new_target = target.clone(map_objects)
+                new_targets.append(new_target)
+                map_objects[target] = new_target
+        new_size = Size(new_targets, dataType=self.dataType, factor=self.factor, offset=self.offset, name=self.name)
+        map_objects[self] = new_size
+        return new_size
+
     def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables):
         """
         Compute the total size of targets

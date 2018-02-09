@@ -314,6 +314,22 @@ class Field(AbstractField):
 
         self.isPseudoField = isPseudoField
 
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        if self.domain is None:
+            new_domain = []
+            for f in self.fields:
+                new_sub_field = f.clone(map_objects)
+                new_domain.append(new_sub_field)
+        else:
+            new_domain = self.domain.clone(map_objects)
+
+        new_field = Field(domain=new_domain, name=self.name, isPseudoField=self.isPseudoField)
+        map_objects[self] = new_field
+        return new_field
+
     @public_api
     def specialize(self, presets=None, fuzz=None):
         r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose

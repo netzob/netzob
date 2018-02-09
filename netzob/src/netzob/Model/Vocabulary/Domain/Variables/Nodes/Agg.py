@@ -385,6 +385,23 @@ class Agg(AbstractVariableNode):
 
         self._last_optional = last_optional
 
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        new_children = []
+        for child in self.children:
+            if child in map_objects.keys():
+                new_children.append(map_objects[child])
+            else:
+                new_child = child.clone(map_objects)
+                new_children.append(new_child)
+                map_objects[child] = new_child
+
+        new_agg = Agg(new_children, last_optional=self._last_optional)
+        map_objects[self] = new_agg
+        return new_agg
+
     @typeCheck(ParsingPath)
     def parse(self, parsingPath, carnivorous=False):
         """Parse the content with the definition domain of the aggregate.

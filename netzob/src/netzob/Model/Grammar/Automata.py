@@ -104,8 +104,8 @@ class Automata(object):
         self.cbk_read_unexpected_symbol = None
         self.cbk_read_unknown_symbol = None
 
-    def duplicate(self):
-        r"""Duplicate the current automaton.
+    def clone(self):
+        r"""Clone the current automaton.
 
         This method clones the states and transitions of the
         automaton, but keeps references to the original callbacks and
@@ -123,7 +123,7 @@ class Automata(object):
         >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="close transition")
         >>> # Creation of the automata
         >>> automata = Automata(s0, [inputSymbol, outputSymbol])
-        >>> automata_bis = automata.duplicate()
+        >>> automata_bis = automata.clone()
 
         """
 
@@ -133,27 +133,27 @@ class Automata(object):
             new_transitions = []
             for transition in state.transitions:
 
-                new_transition = transition.duplicate()
+                new_transition = transition.clone()
                 new_transitions.append(new_transition)
 
                 # Handle startState
                 if transition.startState in map_new_states.keys():
                     new_transition._startState = map_new_states[transition.startState]
                 else:
-                    new_transition._startState = transition.startState.duplicate()
+                    new_transition._startState = transition.startState.clone()
                     map_new_states[transition.startState] = new_transition.startState
 
                 # Handle endState
                 if transition.endState in map_new_states.keys():
                     new_transition.endState = map_new_states[transition.endState]
                 else:
-                    new_transition.endState = transition.endState.duplicate()
+                    new_transition.endState = transition.endState.clone()
                     map_new_states[transition.endState] = new_transition.endState
 
             if state in map_new_states.keys():
                 map_new_states[state].transitions = new_transitions
             else:
-                map_new_states[state] = state.duplicate()
+                map_new_states[state] = state.clone()
                 map_new_states[state].transitions = new_transitions
 
         automata = Automata(map_new_states[self.initialState], self.vocabulary)

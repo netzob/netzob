@@ -95,6 +95,14 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         self._variable = None
 
+    @abc.abstractmethod
+    def clone(self, map_objects={}):
+        """Clone the current object as well as all its dependencies. This
+        method returns a new object of the same type.
+
+        """
+        raise NotImplementedError("Method clone() is not implemented")
+
     @typeCheck(bool, bool, bool)
     def getCells(self, encoded=True, styled=True, transposed=False):
         """Returns a matrix with a different line for each messages attached to the symbol of the current element.

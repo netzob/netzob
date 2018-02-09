@@ -59,7 +59,7 @@ class SpecializingPath(GenericPath):
         else:
             self.__ok = ok
 
-    def duplicate(self):
+    def clone(self):
         dVariable = {}
         for key, value in list(self._dataAssignedToVariable.items()):
             dVariable[key] = value.copy()
@@ -67,7 +67,7 @@ class SpecializingPath(GenericPath):
         fCall = [x for x in self._variablesCallbacks]
 
         if self.memory is not None:
-            memory = self.memory.duplicate()
+            memory = self.memory.clone()
         else:
             memory = None
             

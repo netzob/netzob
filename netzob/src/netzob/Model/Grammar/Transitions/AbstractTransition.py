@@ -99,7 +99,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     # Other methods
 
     @abc.abstractmethod
-    def duplicate(self):
+    def clone(self):
         pass
 
     # Priorities

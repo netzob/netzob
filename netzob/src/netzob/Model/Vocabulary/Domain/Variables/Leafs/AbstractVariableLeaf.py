@@ -162,7 +162,7 @@ class AbstractVariableLeaf(AbstractVariable):
                         arbitraryValue = value
 
                         # Associate the generated value to the current variable
-                        newParsingPath = parsingPath.duplicate()
+                        newParsingPath = parsingPath.clone()
                         newParsingPath.addResult(self, arbitraryValue)
                         yield newParsingPath
 

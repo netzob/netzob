@@ -64,3 +64,16 @@ class Opt(Repeat):
 
     def __init__(self, child):
         super(Opt, self).__init__(child, (0, 1))
+
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        if self.children[0] in map_objects.keys():
+            new_children = map_objects[self.children[0]]
+        else:
+            new_children = self.children[0].clone(map_objects)
+
+        new_opt = Opt(new_children)
+        map_objects[self] = new_opt
+        return new_opt

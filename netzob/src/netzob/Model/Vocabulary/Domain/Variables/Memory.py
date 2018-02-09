@@ -195,8 +195,8 @@ class Memory(object):
             self.memory.pop(variable, None)
 
     @public_api
-    def duplicate(self):
-        """Duplicates the current memory in a new memory.
+    def clone(self):
+        """Clone the current memory in a new memory.
 
         :return: A new memory containing the same entries as the current memory.
         :rtype: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
@@ -209,7 +209,7 @@ class Memory(object):
         >>> m.memorize(d2, String("hello").value)
         >>> m.getValue(d1)
         bitarray('01100100')
-        >>> m2 = m.duplicate()
+        >>> m2 = m.clone()
         >>> m2.getValue(d1)
         bitarray('01100100')
         >>> m.getValue(d1).bytereverse()
@@ -219,10 +219,10 @@ class Memory(object):
         bitarray('01100100')
 
         """
-        duplicatedMemory = Memory()
+        clonedMemory = Memory()
         for k in list(self.memory.keys()):
-            duplicatedMemory.memory[k] = self.memory[k].copy()
-        return duplicatedMemory
+            clonedMemory.memory[k] = self.memory[k].copy()
+        return clonedMemory
 
     def __str__(self):
         result = []

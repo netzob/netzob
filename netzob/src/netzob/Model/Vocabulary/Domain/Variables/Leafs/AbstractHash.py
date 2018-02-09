@@ -98,6 +98,23 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
                                            targets=targets,
                                            name=name)
 
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        new_targets = []
+        for target in self.targets:
+            if target in map_objects.keys():
+                new_targets.append(map_objects[target])
+            else:
+                new_target = target.clone(map_objects)
+                new_targets.append(new_target)
+                map_objects[target] = new_target
+
+        new_hash = self.__class__(new_targets, dataType=self.dataType, name=self.name)
+        map_objects[self] = new_hash
+        return new_hash
+
     def getByteSize(self):
         return int(self.getBitSize() / 8)
 

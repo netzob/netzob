@@ -181,7 +181,7 @@ class Transition(AbstractTransition):
         self.outputSymbolsReactionTime = outputSymbolsReactionTime
         self.description = None
 
-    def duplicate(self):
+    def clone(self):
         transition = Transition(startState=None,
                                 endState=self.endState,
                                 inputSymbol=self.inputSymbol,
@@ -568,13 +568,13 @@ class Transition(AbstractTransition):
 def _test():
     r"""
 
-    # Test duplicate()
+    # Test clone()
 
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> t = Transition(s0, s1, name="transition")
-    >>> t.duplicate()
+    >>> t.clone()
     transition
 
     """

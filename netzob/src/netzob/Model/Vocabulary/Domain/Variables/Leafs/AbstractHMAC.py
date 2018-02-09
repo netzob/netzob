@@ -99,6 +99,23 @@ class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
                                            name=name)
         self.key = key
 
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        new_targets = []
+        for target in self.targets:
+            if target in map_objects.keys():
+                new_targets.append(map_objects[target])
+            else:
+                new_target = target.clone(map_objects)
+                new_targets.append(new_target)
+                map_objects[target] = new_target
+
+        new_hmac = self.__class__(new_targets, key=self.key, dataType=self.dataType, name=self.name)
+        map_objects[self] = new_hmac
+        return new_hmac
+
     def getByteSize(self):
         return int(self.getBitSize() / 8)
 

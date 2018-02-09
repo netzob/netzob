@@ -309,6 +309,31 @@ class Repeat(AbstractVariableNode):
         self.nbRepeat = nbRepeat  # type: nbRepeatType
         self.delimiter = delimiter
 
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        new_children = []
+        for child in self.children:
+            if child in map_objects.keys():
+                new_children.append(map_objects[child])
+            else:
+                new_child = child.clone(map_objects)
+                new_children.append(new_child)
+                map_objects[child] = new_child
+
+        if isinstance(self.nbRepeat, AbstractVariable):
+            if self.nbRepeat in map_objects.keys():
+                new_nbRepeat = map_objects[self.nbRepeat]
+            else:
+                new_nbRepeat = self.nbRepeat.clone(map_objects)
+        else:
+            new_nbRepeat = self.nbRepeat
+
+        new_repeat = Repeat(new_children, new_nbRepeat, self.delimiter)
+        map_objects[self] = new_repeat
+        return new_repeat
+
     def count(self, fuzz=None):
         r"""
 
@@ -404,7 +429,7 @@ class Repeat(AbstractVariableNode):
         # if no valid result if found, provide a fallback parsing path with
         # an empty result
         if len(valid_results) == 0:
-            newParsingPath = parsingPath.duplicate()
+            newParsingPath = parsingPath.clone()
             newParsingPath.addResult(self, bitarray(), notify=False)
             valid_results.append(newParsingPath)
 
@@ -415,7 +440,7 @@ class Repeat(AbstractVariableNode):
         for nb_repeat in range(max_nb_repeat, min_nb_repeat, -1):
 
             # initiate a new parsing path based on the current one
-            newParsingPath = parsingPath.duplicate()
+            newParsingPath = parsingPath.clone()
             newParsingPath.assignData(dataToParse, self.children[0])
             newParsingPaths = [newParsingPath]
 
@@ -479,7 +504,7 @@ class Repeat(AbstractVariableNode):
 
     def _parse_callback(self, parsingPath, dataToParse, carnivorous=False):
         # initiate a new parsing path based on the current one
-        newParsingPath = parsingPath.duplicate()
+        newParsingPath = parsingPath.clone()
         newParsingPath.assignData(dataToParse, self.children[0])
         newParsingPaths = [newParsingPath]
 
@@ -562,7 +587,7 @@ class Repeat(AbstractVariableNode):
         if originalSpecializingPath is None:
             raise Exception("Specializing path cannot be None")
 
-        newSpecializingPath = originalSpecializingPath   #.duplicate()
+        newSpecializingPath = originalSpecializingPath
 
         # If we are in a fuzzing mode
         if fuzz is not None and fuzz.get(self) is not None:

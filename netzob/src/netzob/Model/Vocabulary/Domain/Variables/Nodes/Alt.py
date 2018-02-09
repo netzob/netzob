@@ -180,6 +180,23 @@ class Alt(AbstractVariableNode):
         super(Alt, self).__init__(self.__class__.__name__, children)
         self.callback = callback  # type: altCbkType
 
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        new_children = []
+        for child in self.children:
+            if child in map_objects.keys():
+                new_children.append(map_objects[child])
+            else:
+                new_child = child.clone(map_objects)
+                new_children.append(new_child)
+                map_objects[child] = new_child
+
+        new_alt = Alt(new_children, callback=self.callback)
+        map_objects[self] = new_alt
+        return new_alt
+
     @typeCheck(ParsingPath)
     def parse(self, parsingPath, carnivorous=False):
         """Parse the content with the definition domain of the alternate."""
@@ -199,7 +216,7 @@ class Alt(AbstractVariableNode):
         # create a path for each child
         if len(self.children) > 1:
             for child in self.children[1:]:
-                newParsingPath = parsingPath.duplicate()
+                newParsingPath = parsingPath.clone()
                 newParsingPath.assignData(dataToParse.copy(), child)
                 parserPaths.append(newParsingPath)
 
@@ -264,7 +281,7 @@ class Alt(AbstractVariableNode):
         else:
             child = random.choice(self.children)
 
-        newSpecializingPath = specializingPath.duplicate()
+        newSpecializingPath = specializingPath.clone()
 
         for childSpecializingPath in child.specialize(newSpecializingPath, fuzz=fuzz):
             value = childSpecializingPath.getData(child)

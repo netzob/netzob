@@ -78,6 +78,14 @@ class AbstractVariable(object):
         self.field = None
 
     @abc.abstractmethod
+    def clone(self, map_objects={}):
+        """Clone the current object as well as all its dependencies. This
+        method returns a new object of the same type.
+
+        """
+        raise NotImplementedError("Method clone() is not implemented")
+
+    @abc.abstractmethod
     def specialize(self, originalSpecializingPath, fuzz=None):
         """Specializes the current variable."""
         raise NotImplementedError("Method specialize() is not implemented")

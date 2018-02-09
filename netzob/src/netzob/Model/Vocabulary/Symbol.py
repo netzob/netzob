@@ -156,6 +156,18 @@ class Symbol(AbstractField):
             fields = [Field()]
         self.fields = fields
 
+    def clone(self, map_objects={}):
+        if self in map_objects:
+            return map_objects[self]
+
+        new_fields = []
+        for f in self.fields:
+            new_field = f.clone(map_objects)
+            new_fields.append(new_field)
+        new_symbol = Symbol(fields=new_fields, messages=self.messages, name=self.name)
+        map_objects[self] = new_symbol
+        return new_symbol
+
     def __eq__(self, other):
         if not isinstance(other, Symbol):
             return False
@@ -514,6 +526,103 @@ def _test_many_relation_abstractions():
 
     >>> AbstractField.abstract(data, [arp_ip_symbol])
     (arp.ip, OrderedDict([('arp.hrd', b'\x00\x01'), ('arp.pro', b'\x08\x00'), ('arp.hln', b'\x06'), ('arp.pln', b'\x04'), ('arp.op', b'\x00\x02'), ('arp.sha', b'\x00"MVM\xac'), ('arp.spa', b'\xc0\xa8\xc8\xab'), ('arp.tha', b'\x84\x8fi\xc9(\x91'), ('arp.tpa', b'\xc0\xa8\xc8\xe2')]))
+
+
+    # Test Symbol cloning
+
+    >>> f1 = Field(Raw())
+    >>> f2 = Field(Size(f1))
+    >>> f3 = Field(Value(f2))
+    >>> f4 = Field(CRC16([f2]))
+    >>> f5 = Field(MD5([f2]))
+    >>> f6 = Field(HMAC_MD5([f2], key="\x00"))
+    >>> v1 = Data(int8(2))
+    >>> f7 = Field(Agg([Raw(), v1]))
+    >>> f8 = Field(Alt([Raw(), Raw()]))
+    >>> f9 = Field(Repeat(Raw(), nbRepeat=1))
+    >>> f10 = Field(Repeat(Raw(), nbRepeat=v1))
+    >>> f11 = Field(Opt(Raw()))
+    >>> s = Symbol([f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11])
+    >>> print(s.str_structure())
+    Symbol
+    |--  Field
+         |--   Data (Raw(nbBytes=(0,8192)))
+    |--  Field
+         |--   Size(['Field']) - Type:Integer(0,255)
+    |--  Field
+         |--   Value(Field)
+    |--  Field
+         |--   Relation(['Field']) - Type:Raw(nbBytes=2)
+    |--  Field
+         |--   Relation(['Field']) - Type:Raw(nbBytes=16)
+    |--  Field
+         |--   Relation(['Field']) - Type:Raw(nbBytes=16)
+    |--  Field
+         |--   Agg
+               |--   Data (Raw(nbBytes=(0,8192)))
+               |--   Data (Integer(2))
+    |--  Field
+         |--   Alt
+               |--   Data (Raw(nbBytes=(0,8192)))
+               |--   Data (Raw(nbBytes=(0,8192)))
+    |--  Field
+         |--   Repeat
+               |--   Data (Raw(nbBytes=(0,8192)))
+    |--  Field
+         |--   Repeat
+               |--   Data (Raw(nbBytes=(0,8192)))
+    |--  Field
+         |--   Opt
+               |--   Data (Raw(nbBytes=(0,8192)))
+    >>> ids = set()
+    >>> for f in s.getLeafFields():
+    ...     ids.add(id(f))
+    ...     ids.add(id(f.domain))
+    ...     if f.domain.isnode():
+    ...         for v in f.domain.children:
+    ...             ids.add(id(v))
+    
+    >>> s_bis = s.clone()
+    >>> print(s_bis.str_structure())
+    Symbol
+    |--  Field
+         |--   Data (Raw(nbBytes=(0,8192)))
+    |--  Field
+         |--   Size(['Field']) - Type:Integer(0,255)
+    |--  Field
+         |--   Value(Field)
+    |--  Field
+         |--   Relation(['Field']) - Type:Raw(nbBytes=2)
+    |--  Field
+         |--   Relation(['Field']) - Type:Raw(nbBytes=16)
+    |--  Field
+         |--   Relation(['Field']) - Type:Raw(nbBytes=16)
+    |--  Field
+         |--   Agg
+               |--   Data (Raw(nbBytes=(0,8192)))
+               |--   Data (Integer(2))
+    |--  Field
+         |--   Alt
+               |--   Data (Raw(nbBytes=(0,8192)))
+               |--   Data (Raw(nbBytes=(0,8192)))
+    |--  Field
+         |--   Repeat
+               |--   Data (Raw(nbBytes=(0,8192)))
+    |--  Field
+         |--   Repeat
+               |--   Data (Raw(nbBytes=(0,8192)))
+    |--  Field
+         |--   Opt
+               |--   Data (Raw(nbBytes=(0,8192)))
+    >>> ids_bis = set()
+    >>> for f in s_bis.getLeafFields():
+    ...     ids_bis.add(id(f))
+    ...     ids_bis.add(id(f.domain))
+    ...     if f.domain.isnode():
+    ...         for v in f.domain.children:
+    ...             ids_bis.add(id(v))
+    >>> ids.intersection(ids_bis)
+    set()
 
 
     """

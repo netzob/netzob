@@ -212,7 +212,7 @@ class FlowParser(object):
                     if len(remainings_bitarray) > 0:
                         self._logger.debug("Try to parse the remaining data '{}' with another symbol".format(remainings_bitarray.tobytes()))
                         try:
-                            child_flow_parsings = self._parseFlow_internal(remainings_bitarray, symbols, memory.duplicate())
+                            child_flow_parsings = self._parseFlow_internal(remainings_bitarray, symbols, memory.clone())
                             for child_flow_parsing in child_flow_parsings:
                                 flow_parsing_results = [(symbol, parse_result)] + child_flow_parsing
 
