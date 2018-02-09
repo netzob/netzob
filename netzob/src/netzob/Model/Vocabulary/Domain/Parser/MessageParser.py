@@ -236,7 +236,8 @@ class MessageParser(object):
                 self._logger.debug("Parsing status: {}".format(parsingResult.ok))
                 msg = "The parsed data do not match with the field '{}'".format(field.name)
                 self._logger.debug(msg)
-                raise InvalidParsingPathException(msg)
+                #raise InvalidParsingPathException(msg)
+                continue
 
             result = []
             for field in fields:
