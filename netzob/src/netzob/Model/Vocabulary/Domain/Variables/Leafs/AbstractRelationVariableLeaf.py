@@ -249,7 +249,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             expectedValue = self.computeExpectedValue(parsingPath)
             if self.compareValues(content, expectedSize, expectedValue):
                 self._logger.debug("The target variables contain the expected value '{}'".format(expectedValue.tobytes()))
-                parsingPath.ok = True
+                parsingPath.ok &= True
                 parsingPath.addResult(self, content[:len(expectedValue)])
                 results.append(parsingPath)
             else:
