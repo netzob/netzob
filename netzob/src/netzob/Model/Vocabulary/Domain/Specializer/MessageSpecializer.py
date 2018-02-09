@@ -133,7 +133,7 @@ class MessageSpecializer(object):
         # Normalize presets definition: fields described with field
         # name are converted into field object, and preseting values
         # are converted into bitarray.
-        self._normalize_presets(symbol)
+        self.presets = symbol.normalize_presets(self.presets)
 
         # Remove preset fields when they are concerned with fuzzing
         self._filterPresetsWithFuzz(symbol)
@@ -274,77 +274,6 @@ class MessageSpecializer(object):
 
         for k, v in presets.items():
             self.__presets[k] = v
-
-    @typeCheck(Symbol)
-    def _normalize_presets(self, symbol):
-        """Update the presets dict, according to the symbol definition.
-
-        Fields described with field name are converted into field
-        object, and preseting values are converted into bitarray.
-
-        """
-
-        if self.presets is None:
-            return
-
-        new_keys = {}
-        old_keys = []
-        for k, v in self.presets.items():
-
-            # Handle case where k is a Field
-            if isinstance(k, Field):
-                if isinstance(v, bitarray):
-                    continue
-                elif hasattr(k.domain, "dataType"):
-                    if isinstance(v, AbstractType):
-                        self.presets[k] = v.value
-                    else:  # v should be basic python type, such as an int, str, ...
-                        self.presets[k] = TypeConverter.convert(v, k.domain.dataType.__class__, BitArray,
-                                                                src_unitSize=k.domain.dataType.unitSize,
-                                                                dst_unitSize=k.domain.dataType.unitSize,
-                                                                src_sign=k.domain.dataType.sign,
-                                                                dst_sign=k.domain.dataType.sign,
-                                                                src_endianness=k.domain.dataType.endianness,
-                                                                dst_endianness=k.domain.dataType.endianness)
-                else:
-                    raise Exception("Cannot find the default dataType for field '{}'".format(k))
-
-            # Handle case where k is a string
-            elif isinstance(k, str):
-
-                # Retrieve associated Field based on its string name
-                for f in symbol.getLeafFields(includePseudoFields=True):
-                    if f.name == k:
-                        if isinstance(v, bitarray):
-                            new_keys[f] = v
-                            old_keys.append(k)
-                        elif isinstance(v, bytes):
-                            valbits = bitarray(endian='big')
-                            valbits.frombytes(v)
-                            new_keys[f] = valbits
-                            old_keys.append(k)
-                        elif hasattr(f.domain, "dataType"):
-                            if isinstance(v, AbstractType):
-                                new_keys[f] = v.value
-                            else:  # v should be basic python type, such as an int, str, ...
-                                new_keys[f] = TypeConverter.convert(v, f.domain.dataType.__class__, BitArray,
-                                                                    src_unitSize=f.domain.dataType.unitSize,
-                                                                    dst_unitSize=f.domain.dataType.unitSize,
-                                                                    src_sign=f.domain.dataType.sign,
-                                                                    dst_sign=f.domain.dataType.sign,
-                                                                    src_endianness=f.domain.dataType.endianness,
-                                                                    dst_endianness=f.domain.dataType.endianness)
-                            old_keys.append(k)
-                        else:
-                            raise Exception("Cannot find the default dataType for field '{}'".format(f))
-                        break
-            else:
-                raise Exception("Preset's keys must be of Field or string types")
-
-        # Replace string keys by their equivalent Field keys
-        for old_key in old_keys:
-            self.presets.pop(old_key)
-        self.presets.update(new_keys)
 
     @typeCheck(Symbol)
     def _filterPresetsWithFuzz(self, symbol):

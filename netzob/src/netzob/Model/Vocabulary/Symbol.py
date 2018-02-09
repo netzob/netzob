@@ -35,6 +35,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -48,6 +49,9 @@ from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 
 
@@ -347,6 +351,78 @@ class Symbol(AbstractField):
     def _inner_specialize(self, specializing_paths):
         for specializing_path in specializing_paths:
             yield specializing_path.generatedContent.tobytes()
+
+    def normalize_presets(self, presets):
+        """Update the presets dict, according to the symbol definition.
+
+        Fields described with field name are converted into field
+        object, and preseting values are converted into bitarray.
+
+        """
+
+        if presets is None:
+            return None
+
+        new_keys = {}
+        old_keys = []
+        for k, v in presets.items():
+
+            # Handle case where k is a Field
+            if isinstance(k, Field):
+                if isinstance(v, bitarray):
+                    continue
+                elif hasattr(k.domain, "dataType"):
+                    if isinstance(v, AbstractType):
+                        presets[k] = v.value
+                    else:  # v should be basic python type, such as an int, str, ...
+                        presets[k] = TypeConverter.convert(v, k.domain.dataType.__class__, BitArray,
+                                                                src_unitSize=k.domain.dataType.unitSize,
+                                                                dst_unitSize=k.domain.dataType.unitSize,
+                                                                src_sign=k.domain.dataType.sign,
+                                                                dst_sign=k.domain.dataType.sign,
+                                                                src_endianness=k.domain.dataType.endianness,
+                                                                dst_endianness=k.domain.dataType.endianness)
+                else:
+                    raise Exception("Cannot find the default dataType for field '{}'".format(k))
+
+            # Handle case where k is a string
+            elif isinstance(k, str):
+
+                # Retrieve associated Field based on its string name
+                for f in self.getLeafFields(includePseudoFields=True):
+                    if f.name == k:
+                        if isinstance(v, bitarray):
+                            new_keys[f] = v
+                            old_keys.append(k)
+                        elif isinstance(v, bytes):
+                            valbits = bitarray(endian='big')
+                            valbits.frombytes(v)
+                            new_keys[f] = valbits
+                            old_keys.append(k)
+                        elif hasattr(f.domain, "dataType"):
+                            if isinstance(v, AbstractType):
+                                new_keys[f] = v.value
+                            else:  # v should be basic python type, such as an int, str, ...
+                                new_keys[f] = TypeConverter.convert(v, f.domain.dataType.__class__, BitArray,
+                                                                    src_unitSize=f.domain.dataType.unitSize,
+                                                                    dst_unitSize=f.domain.dataType.unitSize,
+                                                                    src_sign=f.domain.dataType.sign,
+                                                                    dst_sign=f.domain.dataType.sign,
+                                                                    src_endianness=f.domain.dataType.endianness,
+                                                                    dst_endianness=f.domain.dataType.endianness)
+                            old_keys.append(k)
+                        else:
+                            raise Exception("Cannot find the default dataType for field '{}'".format(f))
+                        break
+            else:
+                raise Exception("Preset's keys must be of Field or string types")
+
+        # Replace string keys by their equivalent Field keys
+        for old_key in old_keys:
+            presets.pop(old_key)
+        presets.update(new_keys)
+
+        return presets
 
     @public_api
     def count(self, presets=None, fuzz=None):
