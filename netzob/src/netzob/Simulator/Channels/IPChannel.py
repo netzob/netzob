@@ -174,30 +174,35 @@ class IPChannel(AbstractChannel):
         :type data: :class:`bytes`
 
         """
-        if self._socket is not None:
+        if self._socket is None:
+            raise Exception("socket is not available")
+
+        usePorts = False
+        if self.upperProtocol == socket.IPPROTO_TCP or \
+           self.upperProtocol == socket.IPPROTO_UDP:
+            usePorts = True
             # get the ports from message to identify the good response
             #  (in TCP or UDP)
 
             portSrcTx = (data[0] * 256) + data[1]
             portDstTx = (data[2] * 256) + data[3]
 
-            responseOk = False
-            stopWaitingResponse = False
-            self.write(data)
-            while stopWaitingResponse is False:
-                dataReceived = self.read()
+        self.write(data)
+        while True:
+            dataReceived = self.read()
 
+            if usePorts:
                 portSrcRx = (dataReceived[0] * 256) + dataReceived[1]
                 portDstRx = (dataReceived[2] * 256) + dataReceived[3]
 
-                stopWaitingResponse = (portSrcTx == portDstRx) and \
-                    (portDstTx == portSrcRx)
-                if stopWaitingResponse:  # and not timeout
-                    responseOk = True
-            if responseOk:
-                return dataReceived
-        else:
-            raise Exception("socket is not available")
+                if (portSrcTx == portDstRx) and \
+                   (portDstTx == portSrcRx):
+                    break
+            else:
+                # Any response is the good one
+                break
+
+        return dataReceived
 
     # Management methods
 
