@@ -231,6 +231,7 @@ class MessageParser(object):
             i_current_field,
             must_consume_everything=must_consume_everything)
 
+        has_result = False
         for parsingResult in parsingResults:
             if parsingResult.ok is False:
                 self._logger.debug("Parsing status: {}".format(parsingResult.ok))
@@ -239,23 +240,29 @@ class MessageParser(object):
                 continue
 
             result = []
+            field_data_missing = False
             for field in fields:
                 if parsingResult.hasData(field.domain):
                     field_data = parsingResult.getData(field.domain)
+                    result.append(field_data)
                 else:
                     msg = "The parsed data do not match with the field '{}'".format(field.name)
                     self._logger.debug(msg)
-                    raise InvalidParsingPathException(msg)
-                result.append(field_data)
+                    field_data_missing = True
+                    break
+            if field_data_missing:
+                continue
 
             # We update the internal memory
             self.memory.memory = parsingResult.memory.memory
 
+            has_result = True
             yield result
 
-        raise InvalidParsingPathException(
-            "No parsing path returned while parsing '{}'".format(
-                TypeConverter.convert(bitArrayToParse, BitArray, Raw)))
+        if not has_result:
+            raise InvalidParsingPathException(
+                "No parsing path returned while parsing '{}'".format(
+                    TypeConverter.convert(bitArrayToParse, BitArray, Raw)))
 
     def _parseBitArrayWithField(self,
                                 parsingPath,

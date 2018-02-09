@@ -225,4 +225,5 @@ class FlowParser(object):
                         yield flow_parsing_results
 
             except InvalidParsingPathException:
+                # XXX: Do we really want to silently bypass this exception ?
                 pass
