@@ -197,8 +197,9 @@ class MessageSpecializer(object):
                     yield from self._inner_specialize(new_paths, fields, i_current_field + 1, symbol)
                 else:
                     self._logger.debug("In last field")
-                    for path in new_paths:
-                        self._produce_data(path, symbol)
+                    for idx, path in enumerate(new_paths):
+                        if idx == 0:  # Do not produce when itering new_paths, as the generatedContent has already been set
+                            self._produce_data(path, symbol)
                         yield path
 
     def _produce_data(self, retainedPath, symbol):
