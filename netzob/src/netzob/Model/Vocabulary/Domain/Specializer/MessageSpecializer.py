@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -46,10 +45,6 @@ from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Field import Field
 
 
@@ -111,6 +106,7 @@ class MessageSpecializer(object):
         """This method generates a message based on the provided symbol definition.
 
         >>> from netzob.all import *
+        >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         >>> f0 = Field(name="Type", domain=Raw(b"\x01"))
         >>> f2 = Field(name="Value", domain=Raw(nbBytes=10))
         >>> f1 = Field(name="Length", domain = Size(f2, dataType = Raw(nbBytes=3, unitSize = UnitSize.SIZE_32)))
@@ -198,8 +194,15 @@ class MessageSpecializer(object):
                 else:
                     self._logger.debug("In last field")
                     for idx, path in enumerate(new_paths):
-                        if idx == 0:  # Do not produce when itering new_paths, as the generatedContent has already been set
+                        if field.domain.isnode() or i_current_field > 0:
                             self._produce_data(path, symbol)
+                        else:
+                            # Do not produce when itering new_paths,
+                            # as the generatedContent has already been
+                            # set (only works when symbal has one
+                            # field and the field domain is a leaf)
+                            if idx == 0:
+                                self._produce_data(path, symbol)
                         yield path
 
     def _produce_data(self, retainedPath, symbol):
