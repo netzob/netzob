@@ -44,7 +44,7 @@ from typing import Callable, List
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
@@ -178,7 +178,7 @@ class Alt(AbstractVariableNode):
 
     def __init__(self, children=None, callback=None):
         super(Alt, self).__init__(self.__class__.__name__, children)
-        self.callback = callback  # type: altCbkType
+        self._callback = callback  # type: altCbkType
 
     def clone(self, map_objects={}):
         if self in map_objects:
@@ -289,6 +289,23 @@ class Alt(AbstractVariableNode):
             childSpecializingPath.addResult(self, value)
 
             yield childSpecializingPath
+
+    @public_api
+    @property
+    def callback(self):
+        """A callback function can be used to determine the child index to
+        select, during specialization (see 'Callback prototype' above
+        for further explanation).
+
+        """
+        return self._callback
+
+    @callback.setter  # type: ignore
+    def callback(self, callback):
+        if not callable(callback):
+            raise TypeError("Callback function should be a callable, not a '{}'".format(callback))
+        self._callback = callback
+
 
 def _test(self):
     r"""
