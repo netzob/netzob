@@ -318,16 +318,26 @@ class Field(AbstractField):
         if self in map_objects:
             return map_objects[self]
 
-        if self.domain is None:
+        new_field = Field(domain=None, name=self.name, isPseudoField=self.isPseudoField)
+        map_objects[self] = new_field
+
+        if len(self.fields) > 0:
             new_domain = []
             for f in self.fields:
-                new_sub_field = f.clone(map_objects)
-                new_domain.append(new_sub_field)
+                if f in map_objects.keys():
+                    new_domain.append(map_objects[f])
+                else:
+                    new_sub_field = f.clone(map_objects)
+                    new_domain.append(new_sub_field)
+            new_field.fields = new_domain
+            new_field.domain = None
         else:
-            new_domain = self.domain.clone(map_objects)
+            if self.domain in map_objects.keys():
+                new_domain = map_objects[self.domain]
+            else:
+                new_domain = self.domain.clone(map_objects)
+            new_field.domain = new_domain
 
-        new_field = Field(domain=new_domain, name=self.name, isPseudoField=self.isPseudoField)
-        map_objects[self] = new_field
         return new_field
 
     @public_api

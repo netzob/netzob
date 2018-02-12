@@ -164,12 +164,18 @@ class Symbol(AbstractField):
         if self in map_objects:
             return map_objects[self]
 
+        new_symbol = Symbol(fields=[], messages=self.messages, name=self.name)
+        map_objects[self] = new_symbol
+
         new_fields = []
         for f in self.fields:
-            new_field = f.clone(map_objects)
-            new_fields.append(new_field)
-        new_symbol = Symbol(fields=new_fields, messages=self.messages, name=self.name)
-        map_objects[self] = new_symbol
+            if f in map_objects.keys():
+                new_fields.append(map_objects[f])
+            else:
+                new_field = f.clone(map_objects)
+                new_fields.append(new_field)
+
+        new_symbol.fields = new_fields
         return new_symbol
 
     def __eq__(self, other):

@@ -256,6 +256,14 @@ class Padding(AbstractRelationVariableLeaf):
         if self in map_objects:
             return map_objects[self]
 
+        if self.dataType is not None:
+            new_data = self.dataType
+        else:
+            new_data = self.data_callback
+
+        new_padding = Padding([], new_data, self.modulo, once=self.once, factor=self.factor, offset=self.offset)
+        map_objects[self] = new_padding
+
         new_targets = []
         for target in self.targets:
             if target in map_objects.keys():
@@ -263,15 +271,8 @@ class Padding(AbstractRelationVariableLeaf):
             else:
                 new_target = target.clone(map_objects)
                 new_targets.append(new_target)
-                map_objects[target] = new_target
 
-        if self.dataType is not None:
-            new_data = self.dataType
-        else:
-            new_data = self.data_callback
-
-        new_padding = Padding(new_targets, new_data, self.modulo, once=self.once, factor=self.factor, offset=self.offset)
-        map_objects[self] = new_padding
+        new_padding.targets = new_targets
         return new_padding
 
     def compareValues(self, content, expectedSize, computedValue):

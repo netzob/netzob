@@ -184,6 +184,9 @@ class Alt(AbstractVariableNode):
         if self in map_objects:
             return map_objects[self]
 
+        new_alt = Alt([], callback=self.callback)
+        map_objects[self] = new_alt
+
         new_children = []
         for child in self.children:
             if child in map_objects.keys():
@@ -191,10 +194,8 @@ class Alt(AbstractVariableNode):
             else:
                 new_child = child.clone(map_objects)
                 new_children.append(new_child)
-                map_objects[child] = new_child
 
-        new_alt = Alt(new_children, callback=self.callback)
-        map_objects[self] = new_alt
+        new_alt.children = new_children
         return new_alt
 
     @typeCheck(ParsingPath)

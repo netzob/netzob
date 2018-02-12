@@ -244,13 +244,15 @@ class Value(AbstractRelationVariableLeaf):
         if self in map_objects:
             return map_objects[self]
 
+        new_value = Value([], name=self.name, operation=self.operation)
+        map_objects[self] = new_value
+
         if self.targets[0] in map_objects.keys():
             new_target = map_objects[self.targets[0]]
         else:
             new_target = target.clone(map_objects)
-            map_objects[self.targets[0]] = new_target
-        new_value = Value(new_target, name=self.name, operation=self.operation)
-        map_objects[self] = new_value
+
+        new_value.targets = [new_target]
         return new_value
 
     @typeCheck(GenericPath)

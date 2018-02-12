@@ -42,6 +42,8 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
+from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
 class Opt(Repeat):
@@ -69,11 +71,13 @@ class Opt(Repeat):
         if self in map_objects:
             return map_objects[self]
 
+        new_opt = Opt(Data(Raw()))
+        map_objects[self] = new_opt
+
         if self.children[0] in map_objects.keys():
             new_children = map_objects[self.children[0]]
         else:
             new_children = self.children[0].clone(map_objects)
 
-        new_opt = Opt(new_children)
-        map_objects[self] = new_opt
+        new_opt.children = [new_children]
         return new_opt

@@ -389,6 +389,9 @@ class Agg(AbstractVariableNode):
         if self in map_objects:
             return map_objects[self]
 
+        new_agg = Agg([], last_optional=self._last_optional)
+        map_objects[self] = new_agg
+
         new_children = []
         for child in self.children:
             if child in map_objects.keys():
@@ -396,10 +399,8 @@ class Agg(AbstractVariableNode):
             else:
                 new_child = child.clone(map_objects)
                 new_children.append(new_child)
-                map_objects[child] = new_child
 
-        new_agg = Agg(new_children, last_optional=self._last_optional)
-        map_objects[self] = new_agg
+        new_agg.children = new_children
         return new_agg
 
     @typeCheck(ParsingPath)

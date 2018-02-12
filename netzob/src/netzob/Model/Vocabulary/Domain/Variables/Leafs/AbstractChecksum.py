@@ -104,6 +104,9 @@ class AbstractChecksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
         if self in map_objects:
             return map_objects[self]
 
+        new_checksum = self.__class__([], dataType=self.dataType, name=self.name)
+        map_objects[self] = new_checksum
+
         new_targets = []
         for target in self.targets:
             if target in map_objects.keys():
@@ -111,10 +114,8 @@ class AbstractChecksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
             else:
                 new_target = target.clone(map_objects)
                 new_targets.append(new_target)
-                map_objects[target] = new_target
 
-        new_checksum = self.__class__(new_targets, dataType=self.dataType, name=self.name)
-        map_objects[self] = new_checksum
+        new_checksum.targets = new_targets
         return new_checksum
 
     def getByteSize(self):

@@ -51,7 +51,9 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Integer import Integer
+from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
@@ -313,15 +315,6 @@ class Repeat(AbstractVariableNode):
         if self in map_objects:
             return map_objects[self]
 
-        new_children = []
-        for child in self.children:
-            if child in map_objects.keys():
-                new_children.append(map_objects[child])
-            else:
-                new_child = child.clone(map_objects)
-                new_children.append(new_child)
-                map_objects[child] = new_child
-
         if isinstance(self.nbRepeat, AbstractVariable):
             if self.nbRepeat in map_objects.keys():
                 new_nbRepeat = map_objects[self.nbRepeat]
@@ -330,8 +323,18 @@ class Repeat(AbstractVariableNode):
         else:
             new_nbRepeat = self.nbRepeat
 
-        new_repeat = Repeat(new_children, new_nbRepeat, self.delimiter)
+        new_repeat = Repeat(Data(Raw()), new_nbRepeat, self.delimiter)
         map_objects[self] = new_repeat
+
+        new_children = []
+        for child in self.children:
+            if child in map_objects.keys():
+                new_children.append(map_objects[child])
+            else:
+                new_child = child.clone(map_objects)
+                new_children.append(new_child)
+
+        new_repeat.children = [new_children]
         return new_repeat
 
     def count(self, fuzz=None):
