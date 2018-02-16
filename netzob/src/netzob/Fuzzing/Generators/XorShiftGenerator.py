@@ -139,11 +139,12 @@ class XorShiftGenerator(Generator):
         if seed == 0:
             raise ValueError("A seed=0 is not compatible with the generator XorShiftGenerator")
 
-        if minValue > maxValue:
-            raise ValueError("maxValue must be greater than minValue")
+        if not (minValue is None or maxValue is None):
+            if minValue > maxValue:
+                raise ValueError("maxValue must be greater than minValue")
 
-        if minValue < 0 and maxValue < 0 and not signed:
-            raise ValueError("negative values implies signed=True")
+            if minValue < 0 and maxValue < 0 and not signed:
+                raise ValueError("negative values implies signed=True")
 
         # Initialize variables
         self._state = seed
