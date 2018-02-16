@@ -291,7 +291,12 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         self.__writeCounter += 1
         len_data = 0
         if duration is None:
-            len_data = self.writePacket(next(data_iterator))
+            try:
+                data = next(data_iterator)
+            except StopIteration:
+                len_data = 0
+            else:
+                len_data = self.writePacket(data)
         else:
             rate_text = "unlimited"
             rate_unlimited = True
@@ -302,14 +307,14 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
             t_start = time.time()
             t_elapsed = 0
             t_delta = 0
-            while True:
+            for data in data_iterator:
 
                 t_elapsed = time.time() - t_start
                 if t_elapsed > duration:
                     break
 
                 # Specialize the symbol and send it over the channel
-                len_data += self.writePacket(next(data_iterator))
+                len_data += self.writePacket(data)
 
                 while True:
                     t_tmp = t_elapsed
