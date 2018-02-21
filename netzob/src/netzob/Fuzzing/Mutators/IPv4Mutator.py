@@ -81,8 +81,9 @@ class IPv4Mutator(DomainMutator):
     >>> from netzob.all import *
     >>> fieldIPv4 = Field(IPv4())
     >>> mutator = IPv4Mutator(fieldIPv4.domain, seed=4321)
-    >>> mutator.generate()
-    b'\x12 #$'
+    >>> mutator.generate(); mutator.generate()
+    b'\x00\x00\x00\x00'
+    b'A\x9a\x0c\x0f'
     """
 
     DATA_TYPE = IPv4
@@ -102,7 +103,8 @@ class IPv4Mutator(DomainMutator):
                          counterMax=counterMax)
 
         # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
+        self.generator = GeneratorFactory.buildGenerator(self.generator,\
+            seed=self.seed, minValue=0, maxValue=2**32-1, signed=False)
 
     def count(self):
         r"""
@@ -137,7 +139,7 @@ class IPv4Mutator(DomainMutator):
         """
 
         # Generate a random integer between 0 and 2**32-1
-        ipv4Value = next(self.generator) * (2**UnitSize.SIZE_32.value - 1)
+        ipv4Value = next(self.generator)
 
         return Integer.decode(ipv4Value,
                               unitSize=UnitSize.SIZE_32,

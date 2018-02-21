@@ -81,9 +81,11 @@ class TimestampMutator(DomainMutator):
     >>> from netzob.all import *
     >>> fieldTimestamp = Field(Timestamp())
     >>> mutator = TimestampMutator(fieldTimestamp.domain, seed=4321)
+    >>> mutator.generate()
+    b'\x00\x00\x00\x00'
     >>> d = mutator.generate()
     >>> d
-    b'\x12 #$'
+    b'A\x9a\x0c\x0f'
     >>> len(d)
     4
 
@@ -106,7 +108,8 @@ class TimestampMutator(DomainMutator):
                          counterMax=counterMax)
 
         # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed)
+        self.generator = GeneratorFactory.buildGenerator(self.generator,\
+            seed=self.seed, minValue=0, maxValue=2**32-1, signed=False)
 
     def count(self):
         r"""
@@ -133,7 +136,7 @@ class TimestampMutator(DomainMutator):
         """
 
         # Generate a random integer between 0 and 2**unitsize-1
-        timeValue = next(self.generator) * (2**self.domain.dataType.unitSize.value - 1)
+        timeValue = next(self.generator)
 
         return Integer.decode(timeValue,
                               unitSize=self.domain.dataType.unitSize,
