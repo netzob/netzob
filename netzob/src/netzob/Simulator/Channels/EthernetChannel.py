@@ -208,25 +208,6 @@ class EthernetChannel(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-    def write(self, data, upperProtocol=0x0800, rate=None, duration=None):
-        """Write to the communication channel the specified data.
-
-        :param data: The data to write on the channel.
-        :param rate: This specifies the bandwidth in octets to respect during
-                     traffic emission (should be used with duration= parameter).
-        :param upperProtocol: The protocol following Ethernet in the stack.
-                              Default value is IPv4 (0x0800)
-        :param duration: This tells how much seconds the symbol is continuously
-                         written on the channel.
-        :type data: :class:`bytes`, required
-        :type upperProtocol: :class:`int`, optional
-        :type rate: :class:`int`, optional
-        :type duration: :class:`int`, optional
-        :return: The amount of written data, in bytes.
-        :rtype: :class:`int`
-        """
-        self._setProtocol(upperProtocol)
-        return super().write(data, rate=rate, duration=duration)
 
     def writePacket(self, data):
         """Write on the communication channel the specified data
@@ -339,3 +320,7 @@ class EthernetChannelBuilder(ChannelBuilder):
 
     def set_dst_addr(self, value):
         self.attrs['remoteMac'] = value
+
+    def set_protocol(self, value):
+        cb = lambda channel: channel._setProtocol(value)
+        self.after_init_callbacks.append(cb)
