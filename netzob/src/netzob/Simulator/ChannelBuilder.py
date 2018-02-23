@@ -64,6 +64,7 @@ class ChannelBuilder(object):
     def __init__(self, kind):
         self.kind = kind  # type: Type[AbstractChannel]
         self.attrs = {}
+        self.after_init_callbacks = []
 
     def set(self, key, value):
         """
@@ -104,4 +105,7 @@ class ChannelBuilder(object):
         """
         Generate the final object instance
         """
-        return self.kind(**self.attrs)
+        channel = self.kind(**self.attrs)
+        for cb in self.after_init_callbacks:
+            cb(channel)
+        return channel
