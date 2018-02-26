@@ -124,11 +124,16 @@ class EthernetChannel(AbstractChannel):
         return EthernetChannelBuilder
 
     def initHeader(self):
-        eth_dst = Field(name='eth.dst', domain=Raw(self.macToBitarray(self.remoteMac)))
-        eth_src = Field(name='eth.src', domain=Raw(self.macToBitarray(self.localMac)))
-        eth_type = Field(name='eth.type', domain=uint16be())
-        eth_payload = Field(name='eth.payload', domain=Raw())
-        # PADDING field is present if frame length < 60 bytes (+ 4 optional CRC bytes)
+        eth_dst = Field(name='eth.dst',
+                        domain=Raw(self.macToBitarray(self.remoteMac)))
+        eth_src = Field(name='eth.src',
+                        domain=Raw(self.macToBitarray(self.localMac)))
+        eth_type = Field(name='eth.type',
+                         domain=uint16be(0x800))  # default: IPv4
+        eth_payload = Field(name='eth.payload',
+                            domain=Raw())
+        # PADDING field is present if frame length < 60 bytes
+        # (+ 4 optional CRC bytes)
         ethPaddingVariable = Padding([eth_dst,
                                       eth_src,
                                       eth_type,
@@ -251,7 +256,7 @@ class EthernetChannel(AbstractChannel):
         return bitarray(binary)
 
     @typeCheck(int)
-    def _setProtocol(self, upperProtocol):
+    def setProtocol(self, upperProtocol):
         if upperProtocol < 0 or upperProtocol > 0xffff:
             raise TypeError("Upper protocol should be between 0 and 0xffff")
 
@@ -322,5 +327,5 @@ class EthernetChannelBuilder(ChannelBuilder):
         self.attrs['remoteMac'] = value
 
     def set_protocol(self, value):
-        cb = lambda channel: channel._setProtocol(value)
+        cb = lambda channel: channel.setProtocol(value)
         self.after_init_callbacks.append(cb)
