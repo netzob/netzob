@@ -144,7 +144,6 @@ class BitArray(AbstractType):
 
     Bitarray element names can be changed:
 
-    >>> from netzob.all import *
     >>> b.constants[0] = 'Urgent flag'
     >>> b.constants[1] = 'Data flag'
     >>> b.constants
@@ -152,7 +151,6 @@ class BitArray(AbstractType):
 
     Bitarray elements can be accessed in read or write mode:
 
-    >>> from netzob.all import *
     >>> b['Urgent flag']
     False
     >>> b['Urgent flag'] = True
@@ -161,7 +159,6 @@ class BitArray(AbstractType):
 
     Bitarray elements can be used with binary operators:
 
-    >>> from netzob.all import *
     >>> b['Urgent flag'] |= b['Data flag']
     >>> b['Urgent flag']
     True
