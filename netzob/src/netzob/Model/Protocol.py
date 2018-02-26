@@ -48,8 +48,10 @@ from os.path import join
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Symbols import Symbols
 from netzob.Model.Grammar.Automata import Automata
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 
 
+@NetzobLogger
 class Protocol(object):
     """The Protocol class provides a wrapper for the state machine model
     and the format messages model (i.e. the permitted symbols) of a
@@ -132,26 +134,28 @@ class Protocol(object):
 
     def __init__(self, name, path_zdl=None):
         self.__name = name
-        self.definition = [{}, None]
+        self.__path_zdl = path_zdl
+        self.definition = [{}, None, None]
 
         if self.name in Protocol.definitions:
             self.definition = Protocol.definitions[self.name]
         else:
-            format_zdl = None
-            automata_zdl = None
             Protocol.definitions[self.name] = self.definition
 
-            if path_zdl is not None:
-                format_zdl = join(path_zdl, name + "_format.zdl")
-                automata_zdl = join(path_zdl, name + "_automata.zdl")
+            if self.path_zdl is not None:
+                self._load_zdl_files()
 
-                if len(format_zdl) > 0:
-                    self._initializeSymbols(format_zdl)
-                    self.definition[Protocol.SYMBOLS] = self.symbols
+    def _load_zdl_files(self):
+        format_zdl = join(self.path_zdl, self.name + "_format.zdl")
+        automata_zdl = join(self.path_zdl, self.name + "_automata.zdl")
 
-                if len(automata_zdl) > 0:
-                    self._initializeAutomata(automata_zdl)
-                    self.definition[Protocol.AUTOMATA] = self.automata
+        if len(format_zdl) > 0:
+            self._initializeSymbols(format_zdl)
+            self.definition[Protocol.SYMBOLS] = self.symbols
+
+        if len(automata_zdl) > 0:
+            self._initializeAutomata(automata_zdl)
+            self.definition[Protocol.AUTOMATA] = self.automata
 
     def _initializeSymbols(self, path, modLoaded=None):
         """Parse a dictionary of symbols from a ZDL file.
@@ -177,14 +181,22 @@ class Protocol(object):
     @property
     def name(self):
         """
-        Property (getter).
         The name of the protocol (ex: "ICMP", "HTTP", ...).
 
         :type: a :class:`str`, read-only
         """
         return self.__name
 
-    # Note: name attribute is read-only, that's why no.setter  # type: ignore is implemented
+    @property
+    def path_zdl(self):
+        """
+        The path to the ZDL files.
+
+        :type: a :class:`str`, read-only
+        """
+        return self.__path_zdl
+
+    # Note: name and path_zdl attributes are read-only, that's why no.setter  # type: ignore is implemented
 
     @property
     def symbols(self):
