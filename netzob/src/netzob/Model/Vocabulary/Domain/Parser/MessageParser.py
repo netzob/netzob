@@ -219,7 +219,7 @@ class MessageParser(object):
 
         # building a new parsing path
         currentParsingPath = ParsingPath(bitArrayToParse.copy(),
-                                         self.memory.clone())
+                                         self.memory)
         currentParsingPath.assignData(bitArrayToParse.copy(), fields[0].domain)
 
         # field iterator

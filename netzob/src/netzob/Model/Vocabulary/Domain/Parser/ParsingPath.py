@@ -84,7 +84,7 @@ class ParsingPath(GenericPath):
 
         result = ParsingPath(
             self.originalDataToParse,
-            memory=self.memory.clone(),
+            memory=self.memory,
             dataAssignedToVariable=dVariable,
             variablesCallbacks=fCall,
             ok=self.ok)

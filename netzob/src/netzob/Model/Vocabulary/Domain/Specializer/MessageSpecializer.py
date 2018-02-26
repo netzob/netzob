@@ -156,7 +156,7 @@ class MessageSpecializer(object):
                 self._logger.debug("Specializing field {0} with preset value".format(field.name))
 
                 for specializingPath in specializingPaths:
-                    specializingPath.addResult(field.domain, self.presets[field])
+                    specializingPath.addResult(field.domain, self.presets[field].copy())
 
         # Convert list into generator
         new_paths = (new_path for new_path in specializingPaths)

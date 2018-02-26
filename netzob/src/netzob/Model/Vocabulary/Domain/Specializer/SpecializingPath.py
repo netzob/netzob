@@ -67,7 +67,7 @@ class SpecializingPath(GenericPath):
         fCall = [x for x in self._variablesCallbacks]
 
         if self.memory is not None:
-            memory = self.memory.clone()
+            memory = self.memory
         else:
             memory = None
             

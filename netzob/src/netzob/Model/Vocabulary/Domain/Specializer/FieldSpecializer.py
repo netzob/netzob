@@ -118,7 +118,7 @@ class FieldSpecializer(object):
         self.fuzz = fuzz
 
         if self.presets is not None and self.field in self.presets.keys():
-            self.arbitraryValue = self.presets[self.field]
+            self.arbitraryValue = self.presets[self.field].copy()
         else:
             self.arbitraryValue = None
 
