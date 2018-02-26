@@ -174,6 +174,30 @@ class Memory(object):
         return self.memory[variable]
 
     @public_api
+    @typeCheck(str)
+    def getVariable(self, name):
+        """Returns the variable memorized which has the provided name.
+
+        :param name: The name for which we want to retrieve the variable in memory.
+        :type name: :class:`str`, required
+        :return: The variable in memory.
+        :rtype: :class:`Variable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`
+
+        >>> from netzob.all import *
+        >>> variable = Data(String(), name="var1")
+        >>> memory = Memory()
+        >>> memory.memorize(variable, String("hello").value)
+        >>> memory.getVariable("var1")
+        b'hello'
+
+        """
+
+        for variable in self.memory.keys():
+            if variable.name == name:
+                return variable
+        return None
+
+    @public_api
     @typeCheck(AbstractVariable)
     def forget(self, variable):
         """Forgets any memorized value of the provided variable
