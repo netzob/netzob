@@ -45,7 +45,7 @@ from enum import Enum
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import public_api
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Model.Grammar.Automata import Automata
 from netzob.Model.Grammar.Transitions.Transition import Transition
@@ -486,19 +486,19 @@ class AutomataMutator(Mutator):
           [+]   Transition 't5' lead to state 's6'
           [+] At state 's6'
           [+]   Picking transition 't_random'
-          [+]   During transition 't_random', sending input symbol 'Sym2'
+          [+]   During transition 't_random', sending input symbol 'Sym1'
           [+]   During transition 't_random', fuzzing activated
           [+]   During transition 't_random', receiving expected output symbol 'Sym2'
           [+]   Transition 't_random' lead to state 's6'
           [+] At state 's6'
           [+]   Picking transition 't_random'
-          [+]   During transition 't_random', sending input symbol 'Sym2'
+          [+]   During transition 't_random', sending input symbol 'Sym1'
           [+]   During transition 't_random', fuzzing activated
           [+]   During transition 't_random', receiving expected output symbol 'Sym2'
           [+]   Transition 't_random' lead to state 's6'
           [+] At state 's6'
           [+]   Picking transition 't_random'
-          [+]   During transition 't_random', sending input symbol 'Sym2'
+          [+]   During transition 't_random', sending input symbol 'Sym1'
           [+]   During transition 't_random', fuzzing activated
           [+]   During transition 't_random', receiving expected output symbol 'Sym2'
           [+]   Transition 't_random' lead to state 's6'
