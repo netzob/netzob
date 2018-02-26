@@ -106,7 +106,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         # Normalize targets (so that targets now only contain variables)
         new_targets = []
 
-        if self.targets is None:
+        if self.targets is None or self.targets == []:
             pass
 
         elif isinstance(self.targets, AbstractField):
@@ -368,6 +368,8 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
     @targets.setter  # type: ignore
     def targets(self, targets):
-        if isinstance(targets, (AbstractField, AbstractVariable)):
+        from netzob.Model.Vocabulary.Field import Field
+
+        if isinstance(targets, (Field, AbstractVariable)):
             targets = [targets]
         self.__targets = targets
