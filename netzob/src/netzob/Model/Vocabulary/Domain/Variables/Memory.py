@@ -187,8 +187,8 @@ class Memory(object):
         >>> variable = Data(String(), name="var1")
         >>> memory = Memory()
         >>> memory.memorize(variable, String("hello").value)
-        >>> memory.getVariable("var1")
-        b'hello'
+        >>> print(memory.getVariable("var1"))
+        Data (String(nbChars=(0,8192)))
 
         """
 
