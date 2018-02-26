@@ -40,6 +40,6 @@
 
 from netzob.Fuzzing.Fuzz import Fuzz
 from netzob.Fuzzing.Mutator import MutatorMode
-from netzob.Fuzzing.Mutators.DomainMutator import MutatorInterval
+from netzob.Fuzzing.Mutators.all import *
 
 from netzob.Fuzzing.Generators.all import *
