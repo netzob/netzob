@@ -38,3 +38,4 @@
 # see docs.python.org/2/tutorial/modules.html
 
 from netzob.Fuzzing.Mutators.DomainMutator import MutatorInterval
+from netzob.Fuzzing.Mutators.AutomataMutator import AutomataMutator, AutomataMutatorStrategy
