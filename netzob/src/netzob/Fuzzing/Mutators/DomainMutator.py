@@ -195,14 +195,15 @@ class DomainMutator(Mutator):
             return data
 
         # The current implementation makes a bitflip at a random positions
-        nb_flips = next(self.generator) % 5  # Arbitrary value for 5
+        #nb_flips = next(self.generator) % 5  # Arbitrary value for 5 bit flips per call
+        #for _ in range(nb_flips):
 
-        for _ in range(nb_flips):
-            idx = next(self.generator) % len(data)
-            data[idx] = not data[idx]
-        return data
+        # Note: only one bit flip per call
+        idx = next(self.generator) % len(data)
+        data[idx] = not data[idx]
 
-    # Internal methods
+
+    ## Internal methods
 
     def _initializeLengthGenerator(self, generator, fuzzing_interval, model_interval, model_unitSize):
         """Initialize a DeterministGenerator according to the given parameter.
