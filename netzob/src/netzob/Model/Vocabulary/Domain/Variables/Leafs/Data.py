@@ -319,14 +319,16 @@ class Data(AbstractVariableLeaf):
         if variableSpecializerPath is None:
             raise Exception("VariableSpecializerPath cannot be None")
 
-        newValue = self.dataType.generate()
+        if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
+            newValue = variableSpecializerPath.memory.getValue(self)
+        else:
+            newValue = self.dataType.generate()
+            if variableSpecializerPath.memory is not None:
+                variableSpecializerPath.memory.memorize(self, newValue)
 
         self._logger.debug("Generated value for {}: {}".format(self, newValue.tobytes()))
 
-        if variableSpecializerPath.memory is not None:
-            variableSpecializerPath.memory.memorize(self, newValue)
-
-        variableSpecializerPath.addResult(self, newValue)
+        variableSpecializerPath.addResult(self, newValue.copy())
         yield variableSpecializerPath
 
     @public_api
