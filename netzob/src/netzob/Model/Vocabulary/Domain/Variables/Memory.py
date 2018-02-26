@@ -248,6 +248,24 @@ class Memory(object):
             clonedMemory.memory[k] = self.memory[k].copy()
         return clonedMemory
 
+    @public_api
+    def clear(self):
+        """Clear the current memory.
+        """
+        self.memory.clear()
+
+    @public_api
+    def save(self):
+        """Clear the current memory.
+        """
+        return self.memory.copy()
+
+    @public_api
+    def restore(self, memory):
+        """Clear the current memory.
+        """
+        self.memory = memory
+
     def __str__(self):
         result = []
         for var, value in list(self.memory.items()):
