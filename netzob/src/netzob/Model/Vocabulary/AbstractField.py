@@ -627,7 +627,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         <class 'netzob.Model.Vocabulary.Field.Field'>
 
         """
-        for field in self.fields:
+        for field in self.getLeafFields():
             if field_name == field.name:
                 return field
 
