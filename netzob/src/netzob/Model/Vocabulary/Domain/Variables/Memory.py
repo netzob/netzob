@@ -125,7 +125,7 @@ class Memory(object):
         >>> memory = Memory()
         >>> memory.memorize(variable, String("hello").value)
         >>> print(memory)
-        Data (String(nbChars=(0,8192))): b'hello'
+        Data (String(nbChars=(0,8192))) from field 'None': b'hello'
 
         """
         self.memory[variable] = value
@@ -269,8 +269,8 @@ class Memory(object):
     def __str__(self):
         result = []
         for var, value in list(self.memory.items()):
-            result.append("{0}: {1}".format(
-                var, TypeConverter.convert(value, BitArray, Raw)))
+            result.append("{} from field '{}': {}".format(
+                var, var.field, TypeConverter.convert(value, BitArray, Raw)))
         return '\n'.join(result)
 
     def __len__(self):
