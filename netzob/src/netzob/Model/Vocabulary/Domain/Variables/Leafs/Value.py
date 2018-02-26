@@ -87,28 +87,28 @@ class Value(AbstractRelationVariableLeaf):
     relationship. The callback function that can be used in the
     ``operation`` parameter has the following prototype:
 
-    .. function:: cbk_operation(data, path, value)
+    .. function:: cbk_operation(data, path, variable)
        :noindex:
 
-       :param data: contains the value of the targeted field.
+       :param data: contains the current data of the targeted field.
        :type data: ~bitarray.bitarray, required
        :param path: data structure that allows access to the values of the
                     :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-                    elements.
+                    element.
        :type path: object, required
-       :param value: the variable.
-       :type value: ~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value, required
+       :param variable: the current Value variable.
+       :type variable: ~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value, required
 
     Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     values is done through the ``path``, thanks to its methods
     :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.hasData` and
     :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.getData`:
 
-    * ``path.hasData(child)`` will return a :class:`bool` telling if a data has
-      been specialized or parsed for the child
+    * ``path.hasData(variable)`` will return a :class:`bool` telling if a data has
+      been specialized or parsed for the Value variable
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
-    * ``path.getData(child)`` will return a :class:`bitarray` that corresponds
-      to the value specialized or parsed for the child
+    * ``path.getData(variable)`` will return a :class:`bitarray` that corresponds
+      to the data specialized or parsed for the Value variable
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
     The callback function is expected to implement relationship
@@ -235,24 +235,31 @@ class Value(AbstractRelationVariableLeaf):
 
     """
 
-    def __init__(self, target, name=None, operation=None):
+    def __init__(self, target=None, name=None, operation=None):
+
+        if target is not None:
+            targets = [target]
+        else:
+            targets = []
+
         super(Value, self).__init__(
-            self.__class__.__name__, targets=[target], name=name)
+            self.__class__.__name__, targets=targets, name=name)
         self.operation = operation
 
     def clone(self, map_objects={}):
         if self in map_objects:
             return map_objects[self]
 
-        new_value = Value([], name=self.name, operation=self.operation)
+        new_value = Value(name=self.name, operation=self.operation)
         map_objects[self] = new_value
 
-        if self.targets[0] in map_objects.keys():
-            new_target = map_objects[self.targets[0]]
-        else:
-            new_target = target.clone(map_objects)
+        if len(self.targets) > 0:
+            if self.targets[0] in map_objects.keys():
+                new_target = map_objects[self.targets[0]]
+            else:
+                new_target = target.clone(map_objects)
+            new_value.targets = [new_target]
 
-        new_value.targets = [new_target]
         return new_value
 
     @typeCheck(GenericPath)
@@ -269,29 +276,29 @@ class Value(AbstractRelationVariableLeaf):
         # we verify we have access to the expected value
         expectedValue = self.computeExpectedValue(parsingPath)
 
-        self._logger.debug("Expected value to parse: {0}".format(expectedValue))
-
         if expectedValue is None:
-            self._logger.debug("Let's compute what could be the possible value based on the target datatype")
-            if self.target.isnode():
-                minSizeDep = 0
-                maxSizeDep = len(content)
-            else:
-                (minSizeDep, maxSizeDep) = self.target.dataType.size
+            if len(self.targets) > 0:
+                self._logger.debug("Let's compute what could be the possible value based on the target datatype")
+                if self.targets[0].isnode():
+                    minSizeDep = 0
+                    maxSizeDep = len(content)
+                else:
+                    (minSizeDep, maxSizeDep) = self.targets[0].dataType.size
 
-                if minSizeDep > len(content):
-                    self._logger.debug("Size of the content to parse is smaller than the min expected size of the dependency field")
-                    return results
+                    if minSizeDep > len(content):
+                        self._logger.debug("Size of the content to parse is smaller than the min expected size of the dependency field")
+                        return results
 
-            for size in range(min(maxSizeDep, len(content)), minSizeDep - 1, -1):
-                # we create a new parsing path and returns it
-                newParsingPath = parsingPath.clone()
-                newParsingPath.addResult(self, content[:size].copy())
-                self._addCallBacksOnUndefinedVariables(newParsingPath)
-                results.append(newParsingPath)
+                for size in range(min(maxSizeDep, len(content)), minSizeDep - 1, -1):
+                    # we create a new parsing path and returns it
+                    newParsingPath = parsingPath.clone()
+                    newParsingPath.addResult(self, content[:size].copy())
+                    self._addCallBacksOnUndefinedVariables(newParsingPath)
+                    results.append(newParsingPath)
 
         # If the expectedValue contains data
         else:
+            self._logger.debug("Expected value to parse: {0}".format(expectedValue.tobytes()))
             if content[:len(expectedValue)] == expectedValue:
                 self._logger.debug("add result: {0}".format(expectedValue.copy().tobytes()))
                 parsingPath.addResult(self, content[:len(expectedValue)].copy())
@@ -311,30 +318,29 @@ class Value(AbstractRelationVariableLeaf):
         return self.valueCMP(parsingPath, acceptCallBack)
 
     def computeExpectedValue(self, parsingPath):
-        self._logger.debug("Compute expected value for Value field")
+        self._logger.debug("Compute expected value for Value field '{}'".format(self.field))
 
-        variable = self.target
-        if variable is None:
-            raise Exception("No dependency field specified.")
+        # Check target variable consistency
+        target_data = None
+        if len(self.targets) > 0 and parsingPath.hasData(self.targets[0]):
+            target_data = parsingPath.getData(self.targets[0])
 
-        if not parsingPath.hasData(variable):
-            return None
-        else:
-            return self._applyOperation(parsingPath.getData(variable),
-                                        parsingPath)
-
-    def _applyOperation(self, data, path):
-        """This method can be used to apply the specified operation function.
-        If no operation function is known, the data parameter is returned."""
-
+        # Check if a callback operation is defined
         if self.__operation is None:
-            return data
-
-        return self.__operation(data, path, self)
+            if len(self.targets) == 0:
+                raise Exception("No dependency field specified.")
+            else:
+                return target_data
+        else:
+            self._logger.debug("Use callback to compute expected value")
+            return self.__operation(target_data, parsingPath, self)
 
     def __str__(self):
         """The str method."""
-        return "Value({0})".format(str(self.target.name))
+        if len(self.targets) > 0:
+            return "Value({0})".format(str(self.targets[0].name))
+        else:
+            return "Value()"
 
     @property
     def operation(self):
@@ -353,10 +359,6 @@ class Value(AbstractRelationVariableLeaf):
         if operation is not None and not callable(operation):
             raise TypeError("Operation must be a function")
         self.__operation = operation
-
-    @property
-    def target(self):
-        return self.targets[0]
 
     def _test(self):
         """
