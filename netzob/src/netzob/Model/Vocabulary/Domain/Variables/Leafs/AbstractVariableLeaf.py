@@ -201,11 +201,9 @@ class AbstractVariableLeaf(AbstractVariable):
 
                     while True:
                         # Mutate a value according to the current field attributes
-                        mutated_value = mutator.mutate(generatedData)
-
-                        # Replace the legitimate value with the mutated value
-                        path.assignData(mutated_value, self)
+                        mutator.mutate(generatedData)
                         yield path
+
             return fuzz_mutate()
         else:
             return newParsingPaths
