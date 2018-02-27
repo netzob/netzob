@@ -256,10 +256,12 @@ class State(AbstractState):
             nextTransition = cbk(availableTransitions,
                                  nextTransition,
                                  self,
-                                 abstractionLayer.last_sent_symbol,
-                                 abstractionLayer.last_sent_message,
-                                 abstractionLayer.last_received_symbol,
-                                 abstractionLayer.last_received_message)
+                                 actor.abstractionLayer.last_sent_symbol,
+                                 actor.abstractionLayer.last_sent_message,
+                                 actor.abstractionLayer.last_sent_structure,
+                                 actor.abstractionLayer.last_received_symbol,
+                                 actor.abstractionLayer.last_received_message,
+                                 actor.abstractionLayer.last_received_structure)
 
             actor.visit_log.append("  [+]   Changing transition to '{}', through callback".format(str(nextTransition)))
         else:
@@ -338,10 +340,12 @@ class State(AbstractState):
             nextTransition = cbk(availableTransitions,
                                  nextTransition,
                                  self,
-                                 abstractionLayer.last_sent_symbol,
-                                 abstractionLayer.last_sent_message,
-                                 abstractionLayer.last_received_symbol,
-                                 abstractionLayer.last_received_message)
+                                 actor.abstractionLayer.last_sent_symbol,
+                                 actor.abstractionLayer.last_sent_message,
+                                 actor.abstractionLayer.last_sent_structure,
+                                 actor.abstractionLayer.last_received_symbol,
+                                 actor.abstractionLayer.last_received_message,
+                                 actor.abstractionLayer.last_received_structure)
             actor.visit_log.append("  [+]   Changing transition to '{}', through callback".format(str(nextTransition)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at state '{}'".format(str(actor), self.name))

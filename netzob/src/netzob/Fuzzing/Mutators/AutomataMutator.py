@@ -442,8 +442,8 @@ class AutomataMutator(Mutator):
         >>>
         >>> # Creation of a callback function that returns a new transition
         >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
-        ...                          last_sent_symbol, last_sent_message,
-        ...                          last_received_symbol, last_received_message):
+        ...                          last_sent_symbol, last_sent_message, last_sent_structure,
+        ...                          last_received_symbol, last_received_message, last_received_structure):
         ...     if nextTransition is None:
         ...         return alice_transition2
         ...     else:

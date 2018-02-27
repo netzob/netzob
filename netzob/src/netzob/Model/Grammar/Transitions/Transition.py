@@ -234,11 +234,14 @@ class Transition(AbstractTransition):
             self._logger.debug("[actor='{}'] A callback function is defined at transition '{}'".format(str(actor), self.name))
             (symbol_to_send, symbol_presets) = cbk([symbol_to_send],
                                                    symbol_to_send,
+                                                   symbol_presets,
                                                    self.startState,
-                                                   abstractionLayer.last_sent_symbol,
-                                                   abstractionLayer.last_sent_message,
-                                                   abstractionLayer.last_received_symbol,
-                                                   abstractionLayer.last_received_message)
+                                                   actor.abstractionLayer.last_sent_symbol,
+                                                   actor.abstractionLayer.last_sent_message,
+                                                   actor.abstractionLayer.last_sent_structure,
+                                                   actor.abstractionLayer.last_received_symbol,
+                                                   actor.abstractionLayer.last_received_message,
+                                                   actor.abstractionLayer.last_received_structure)
             actor.visit_log.append("  [+]   During transition '{}', modifying input symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))
@@ -461,11 +464,14 @@ class Transition(AbstractTransition):
             self._logger.debug("[actor='{}'] A callback function is executed at transition '{}'".format(str(actor), self.name))
             (symbol_to_send, symbol_presets) = cbk(self.outputSymbols,
                                                    symbol_to_send,
+                                                   symbol_presets,
                                                    self.startState,
-                                                   abstractionLayer.last_sent_symbol,
-                                                   abstractionLayer.last_sent_message,
-                                                   abstractionLayer.last_received_symbol,
-                                                   abstractionLayer.last_received_message)
+                                                   actor.abstractionLayer.last_sent_symbol,
+                                                   actor.abstractionLayer.last_sent_message,
+                                                   actor.abstractionLayer.last_sent_structure,
+                                                   actor.abstractionLayer.last_received_symbol,
+                                                   actor.abstractionLayer.last_received_message,
+                                                   actor.abstractionLayer.last_received_structure)
             actor.visit_log.append("  [+]   During transition '{}', modifying output symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))

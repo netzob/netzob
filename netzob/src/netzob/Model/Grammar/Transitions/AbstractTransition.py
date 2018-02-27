@@ -254,8 +254,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         :attr:`cbk_method` should have the following prototype:
 
         .. function:: cbk_method(available_symbols, current_symbol, current_state,\
-                                 last_sent_symbol, last_sent_message,\
-                                 last_received_symbol, last_received_message)
+                                 last_sent_symbol, last_sent_message, last_sent_structure,\
+                                 last_received_symbol, last_received_message, last_received_structure)
            :noindex:
 
            :param available_symbols:
@@ -263,6 +263,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :param current_symbol:
                   Currently selected symbol that will be sent, either the initial
                   symbol or the symbol returned by the previous callback.
+           :param current_symbol_presets:
+                  Presets configuration associated to selected symbol.
            :param current_state:
                   Current state in the automaton.
            :param last_sent_symbol:
@@ -272,6 +274,10 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                   Last sent message on the abstraction layer, and thus making
                   it possible to create relationships with the previously sent
                   message.
+           :param last_sent_structure:
+                  Last sent message structure on the abstraction layer,
+                  and thus making it possible to create relationships with
+                  the previously sent message structure.
            :param last_received_symbol:
                   Last received symbol on the abstraction layer, and thus
                   making it possible to create relationships with the
@@ -280,14 +286,21 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                   Last received message (:class:`bitarray`) on the abstraction layer,
                   and this makes it possible to create relationships with
                   received message.
+           :param last_received_structure:
+                  Last received message structure on the abstraction
+                  layer, and thus making it possible to create relationships
+                  with the previously received message structure.
 
            :type available_symbols: ~typing.List[~netzob.Model.Vocabulary.Symbol.Symbol], required
            :type current_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
+           :type current_symbol_presets: :class:`dict`, required
            :type current_state: :class:`~netzob.Model.Grammar.States.State.State`, required
            :type last_sent_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
            :type last_sent_message: :class:`~bitarray.bitarray`, required
+           :type last_sent_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`, required
            :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
            :type last_received_message: :class:`~bitarray.bitarray`, required
+           :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`, required
 
            :return:
              * The symbol that will be sent. This could be the same as the
