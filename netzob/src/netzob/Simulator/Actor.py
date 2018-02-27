@@ -2047,6 +2047,21 @@ class Actor(threading.Thread):
 
     @public_api
     @property
+    def memory(self):
+        if self.abstractionLayer is not None:
+            return self.abstractionLayer.memory
+        else:
+            return None
+
+    @memory.setter  # type: ignore
+    @typeCheck(Memory)
+    def memory(self, memory):
+        if memory is None:
+            raise TypeError("Memory cannot be None")
+        self.abstractionLayer.memory = memory
+
+    @public_api
+    @property
     def initiator(self):
         return self.__initiator
 
