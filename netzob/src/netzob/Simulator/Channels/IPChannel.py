@@ -90,6 +90,7 @@ class IPChannel(AbstractChannel):
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
+    15
     >>> client.close()
 
     """
