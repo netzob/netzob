@@ -236,7 +236,10 @@ class IPChannel(AbstractChannel):
     @localIP.setter  # type: ignore
     @typeCheck(str)
     def localIP(self, localIP):
-        self.__localIP = localIP
+        if localIP is not None:
+            self.__localIP = localIP
+        else:
+            self.__localIP = "0.0.0.0"
 
     @property
     def upperProtocol(self):
