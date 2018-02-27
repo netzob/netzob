@@ -53,6 +53,10 @@ from netzob.Simulator.AbstractionLayer import AbstractionLayer
 from netzob.Fuzzing.Fuzz import Fuzz
 
 
+class ActorStopException(Exception):
+    pass
+
+
 @NetzobLogger
 class Actor(threading.Thread):
     r"""An actor is an instance of a traffic generator which, given a

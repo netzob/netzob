@@ -52,7 +52,7 @@ from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransiti
 from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
-from netzob.Simulation.AbstractionLayer import Operation
+from netzob.Simulator.AbstractionLayer import Operation
 
 
 @NetzobLogger
@@ -184,8 +184,9 @@ class State(AbstractState):
         # Else, we wait to receive a symbol
         received_symbol = None
         received_message = None
+        from netzob.Simulator.Actor import ActorStopException
         try:
-            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol()
+            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(actor=actor)
 
             if received_symbol is None:
                 raise Exception("The abstraction layer returned a None received symbol")
@@ -201,6 +202,8 @@ class State(AbstractState):
             actor.visit_log.append("  [+] At state '{}'".format(self.name))
             actor.visit_log.append("  [+]   Receiving input symbol '{}', which corresponds to transition '{}'".format(str(received_symbol), str(nextTransition)))
 
+        except ActorStopException:
+            raise
         except socket.timeout:
             self._logger.debug("[actor='{}'] In state '{}', timeout on abstractionLayer.readSymbol()".format(str(actor), self.name))
 
@@ -280,12 +283,13 @@ class State(AbstractState):
                                                               received_symbol=received_symbol,
                                                               received_message=received_message)
                 else:
-                    raise Exception("The received symbol did not match any of expected symbols")
+                    raise Exception("The received symbol did not match any of expected symbols, for actor '{}'".format(actor))
 
         else:
 
-            if nextTransition.cbk_action is not None:
-                nextTransition.cbk_action(received_symbol, received_message, received_structure, Operation.READ, actor)
+            for cbk in nextTransition.cbk_action:
+                self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), nextTransition.name))
+                cbk(received_symbol, received_message, received_structure, Operation.READ, actor)
 
             nextState = nextTransition.executeAsNotInitiator(actor)
             self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(nextTransition), str(nextState)))

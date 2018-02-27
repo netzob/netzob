@@ -220,7 +220,7 @@ class AbstractionLayer(object):
 
     @public_api
     @typeCheck(Symbol)
-    def writeSymbol(self, symbol, rate=None, duration=None, presets=None, fuzz=None, actor=None, cbk_action=None):
+    def writeSymbol(self, symbol, rate=None, duration=None, presets=None, fuzz=None, actor=None, cbk_action=[]):
         """Write the specified symbol on the communication channel
         after specializing it into a contextualized message.
 
@@ -317,7 +317,7 @@ class AbstractionLayer(object):
                                                                                                                                         round(t_elapsed, 2)))
         return (data, data_len, data_structure)
 
-    def _writeSymbol(self, symbol, presets=None, fuzz=None, actor=None, cbk_action=None):
+    def _writeSymbol(self, symbol, presets=None, fuzz=None, actor=None, cbk_action=[]):
         """Write the specified symbol on the communication channel after
         specializing it into a contextualized message.
 
@@ -431,7 +431,7 @@ class AbstractionLayer(object):
         return (symbols, data)
 
     @public_api
-    def readSymbol(self, symbols_presets=None, timeout=5.0):
+    def readSymbol(self, symbols_presets=None, timeout=5.0, actor=None):
         """Read a message from the abstraction layer and abstract it
         into a symbol.
 

@@ -50,8 +50,8 @@ from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
-from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition, Operation
-from netzob.Simulator.AbstractionLayer import SymbolBadSettingsException
+from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
+from netzob.Simulator.AbstractionLayer import SymbolBadSettingsException, Operation
 
 
 @NetzobLogger
@@ -296,8 +296,11 @@ class Transition(AbstractTransition):
             return self.endState
 
         # Waits for the reception of a symbol
+        from netzob.Simulator.Actor import ActorStopException
         try:
-            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(self.outputSymbolsPresets)
+            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(self.outputSymbolsPresets, actor=actor)
+        except ActorStopException:
+            raise
         except socket.timeout:
             self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.readSymbol()".format(str(actor), self.name))
             self.active = False
