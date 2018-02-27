@@ -473,6 +473,10 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         thread as cleanly as possible.
 
         """
+
+        # Stop channel
+        self.close()
+
         self.__stopEvent.set()
 
     @public_api
