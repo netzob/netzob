@@ -47,6 +47,7 @@ import socket
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
@@ -192,13 +193,17 @@ class AbstractionLayer(object):
 
     """
 
-    def __init__(self, channel, symbols, memory=None):
+    def __init__(self, channel, symbols, memory=None, presets=None, cbk_data=None):
         self.channel = channel
         self.symbols = symbols
         if memory is None:
             self.memory = Memory()
         else:
             self.memory = memory
+        self.presets = presets
+        self.cbk_data = cbk_data
+
+        # Instanciate inner instance variables
         self.specializer = MessageSpecializer(memory=self.memory)
         self.parser = MessageParser(memory=self.memory)
         self.flow_parser = FlowParser(memory=self.memory)
@@ -256,9 +261,17 @@ class AbstractionLayer(object):
         if symbol is None:
             raise TypeError("The symbol to write on the channel cannot be None")
 
-        len_data = 0
+        if self.presets is not None:
+            if presets is not None:
+                presets.update(self.presets)
+            else:
+                presets = self.presets
+
+        data = b''
+        data_len = 0
+        data_structure = {}
         if duration is None:
-            len_data = self._writeSymbol(symbol, presets=presets, fuzz=fuzz)
+            (data, data_len, data_structure) = self._writeSymbol(symbol, presets=presets, fuzz=fuzz, actor=actor, cbk_action=cbk_action)
         else:
 
             t_start = time.time()
@@ -271,7 +284,8 @@ class AbstractionLayer(object):
                     break
 
                 # Specialize the symbol and send it over the channel
-                len_data += self._writeSymbol(symbol, presets=presets, fuzz=fuzz)
+                (data, data_len_tmp, data_structure) = self._writeSymbol(symbol, presets=presets, fuzz=fuzz, actor=actor, cbk_action=cbk_action)
+                data_len += data_len_tmp
 
                 if rate is None:
                     t_tmp = t_elapsed
@@ -284,7 +298,7 @@ class AbstractionLayer(object):
                         t_elapsed = time.time() - t_start
                         t_delta += t_elapsed - t_tmp
 
-                        if (len_data / t_elapsed) > rate:
+                        if (data_len / t_elapsed) > rate:
                             time.sleep(0.001)
                         else:
                             break
@@ -293,17 +307,17 @@ class AbstractionLayer(object):
                 if t_delta > 1:
                     t_delta = 0
                     if rate is None:
-                        self._logger.debug("Current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(round((len_data / t_elapsed) / 1024, 2),
-                                                                                                                    round(len_data / 1024, 2),
+                        self._logger.debug("Current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(round((data_len / t_elapsed) / 1024, 2),
+                                                                                                                    round(data_len / 1024, 2),
                                                                                                                     round(t_elapsed, 2)))
                     else:
-                        self._logger.debug("Rate rule: {} ko/s, current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(round(rate / 1024, 2),
-                                                                                                                                        round((len_data / t_elapsed) / 1024, 2),
-                                                                                                                                        round(len_data / 1024, 2),
+                        self._logger.fatal("Rate rule: {} ko/s, current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(round(rate / 1024, 2),
+                                                                                                                                        round((data_len / t_elapsed) / 1024, 2),
+                                                                                                                                        round(data_len / 1024, 2),
                                                                                                                                         round(t_elapsed, 2)))
-        return len_data
+        return (data, data_len, data_structure)
 
-    def _writeSymbol(self, symbol, presets=None, fuzz=None):
+    def _writeSymbol(self, symbol, presets=None, fuzz=None, actor=None, cbk_action=None):
         """Write the specified symbol on the communication channel after
         specializing it into a contextualized message.
 
@@ -325,29 +339,39 @@ class AbstractionLayer(object):
         :raise: :class:`TypeError` if parameter is not valid and :class:`Exception` if an exception occurs.
 
         """
-
-        len_data = 0
+        data_len = 0
         if isinstance(symbol, EmptySymbol):
             self._logger.debug("Symbol to write is an EmptySymbol. So nothing to do.".format(symbol.name))
-            return len_data
+            return (b'', data_len, OrderedDict())
 
         self._logger.debug("Specializing symbol '{0}' (id={1}).".format(symbol.name, id(symbol)))
 
         self.specializer.presets = presets
         self.specializer.fuzz = fuzz
-        dataBin = next(self.specializer.specializeSymbol(symbol)).generatedContent
+        path = next(self.specializer.specializeSymbol(symbol))
+
+        data = path.generatedContent.tobytes()
+
+        # Build data structure (i.e. a dict containing data content for each field)
+        data_structure = OrderedDict()
+        for field in symbol.getLeafFields():
+            if path.hasData(field.domain):
+                field_data = path.getData(field.domain)
+            else:
+                field_data = b''
+            data_structure[field.name] = field_data
+
         self.specializer.presets = None  # This is needed, in order to avoid applying the preset configuration on an already preseted symbol
         # Regarding the fuzz attribute, as its behavior is different from preset, we don't have to set it to None
 
         self.memory = self.specializer.memory
         self.parser.memory = self.memory
-        data = dataBin.tobytes()
 
         self._logger.debug("Writing the following data to the commnunication channel: '{}'".format(data))
         self._logger.debug("Writing the following symbol to the commnunication channel: '{}'".format(symbol.name))
 
         try:
-            len_data = self.channel.write(data)
+            data_len = self.channel.write(data)
         except socket.timeout:
             self._logger.debug("Timeout on channel.write(...)")
             raise
@@ -407,8 +431,7 @@ class AbstractionLayer(object):
         return (symbols, data)
 
     @public_api
-    @typeCheck(int)
-    def readSymbol(self):
+    def readSymbol(self, symbols_presets=None, timeout=5.0):
         """Read a message from the abstraction layer and abstract it
         into a symbol.
 
@@ -433,12 +456,13 @@ class AbstractionLayer(object):
         self._logger.debug("Received: {}".format(repr(data)))
 
         symbol = None
+        data_structure = {}
 
         # if we read some bytes, we try to abstract them in a symbol
         if len(data) > 0:
             for potentialSymbol in self.symbols:
                 try:
-                    DataAlignment.align([data], potentialSymbol, encoded=False, messageParser=self.parser)
+                    aligned_data = DataAlignment.align([data], potentialSymbol, encoded=False, messageParser=self.parser)
 
                     symbol = potentialSymbol
                     self.memory = self.parser.memory
@@ -446,6 +470,13 @@ class AbstractionLayer(object):
                     break
                 except Exception as e:
                     self._logger.debug(e)
+
+        # Build data structure (i.e. a dict containing data content for each field)
+        if symbol is not None:
+            data_structure = OrderedDict()
+            for fields_value in aligned_data:
+                for i, field_value in enumerate(fields_value):
+                    data_structure[aligned_data.headers[i]] = field_value
 
         if symbol is None and len(data) > 0:
             msg = RawMessage(data)
@@ -455,10 +486,49 @@ class AbstractionLayer(object):
 
         self.last_received_symbol = symbol
         self.last_received_message = data
+        self.last_received_structure = data_structure
 
         self._logger.debug("Receiving the following data from the commnunication channel: '{}'".format(data))
         self._logger.debug("Receiving the following symbol from the commnunication channel: '{}'".format(symbol.name))
-        return (symbol, data)
+
+        # Check symbol regarding its expected presets
+        if not isinstance(symbol, (UnknownSymbol, EmptySymbol)):
+            if symbols_presets is not None:
+                if not self._check_presets(symbol, data_structure, symbols_presets):
+                    self._logger.debug("Receive good symbol but with wrong setting")
+                    raise SymbolBadSettingsException()
+
+        return (symbol, data, data_structure)
+
+    def _check_presets(self, symbol, data_structure, symbols_presets):
+        self._logger.debug("Checking symbol consistency regarding its expected presets, for symbol '{}'".format(symbol))
+
+        if symbol not in symbols_presets.keys():
+            return True
+
+        result = True
+        symbol_presets = symbols_presets[symbol]
+        for (field, field_presets) in symbol_presets.items():
+            if isinstance(field, Field):
+                field_name = field.name
+            else:
+                field_name = field
+            if field_name in data_structure.keys():
+                expected_value = field_presets.tobytes()
+                observed_value = data_structure[field_name]
+                self._logger.debug("Checking field consistence, for field '{}'".format(field_name))
+                if expected_value == observed_value:
+                    self._logger.debug("Field '{}' consistency is ok: expected value '{}' == observed value '{}'".format(field_name, expected_value, observed_value))
+                else:
+                    self._logger.debug("Field '{}' consistency is not ok: expected value '{}' != observed value '{}'".format(field_name, expected_value, observed_value))
+                    result = False
+                    break
+
+        if result:
+            self._logger.debug("Symbol '{}' consistency is ok".format(symbol))
+        else:
+            self._logger.debug("Symbol '{}' consistency is not ok".format(symbol))
+        return result
 
     @public_api
     def openChannel(self):

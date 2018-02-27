@@ -46,7 +46,9 @@ import time
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
+from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Grammar.Automata import Automata
+from netzob.Model.Grammar.States.AbstractState import AbstractState
 from netzob.Simulator.AbstractionLayer import AbstractionLayer
 from netzob.Fuzzing.Fuzz import Fuzz
 
@@ -60,6 +62,7 @@ class Actor(threading.Thread):
     The Actor constructor expects some parameters:
 
     :param automata: This parameter is the automaton the actor will visit.
+    :param channel: This corresponds to the underlying communication channel.
     :param initiator: If True, this parameter indicates that the actor is a client, and thus initiates the
                       communication and emits the input symbol.  If
                       False, it indicates that the actor is a server, and is thus waiting for
@@ -80,12 +83,25 @@ class Actor(threading.Thread):
                         which means that the fuzzing configuration
                         is applied on each state.
     :param name: The name of the actor. Default value is 'Actor'.
+    :param keep_open: Tells if the actor should be let active after reaching its targeted state or after reaching the maximum number of transitions. Default value is ``False``.
+    :param presets: A dictionary of keys:values used to preset
+                    (parameterize) fields during symbol
+                    specialization, for all symbols emitted by the actor. Values in this dictionary will
+                    override any field definition, constraints or
+                    relationship dependencies. The default value is :const:`None`.
+    :param cbk_data: A callback used to tell if the current actor is concerned by the received data on the communication channel. See description below.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
                     required
     :type initiator: :class:`bool`, optional
     :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
     :param fuzz_states: :class:`dict` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
     :type name: :class:`str`, optional
+    :type keep_open: :class:`bool`, optional
+    :type presets: ~typing.Dict[~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
+                   ~typing.Union[~bitarray.bitarray,bytes,
+                   ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
+                   optional
+    :type cbk_data: :class:`Callable <collections.abc.Callable>`
 
 
     The Actor class provides the following public variables:
@@ -101,11 +117,29 @@ class Actor(threading.Thread):
                     during a communication, in order to reverse the
                     way the actors communicate together.
     :var name: The name of the actor.
+    :var keep_open: Tells if the actor should be let active after reaching its targeted state or after reaching the maximum number of transitions.
     :vartype automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
     :vartype abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
     :vartype initiator: :class:`bool`
     :vartype name: :class:`str`
+    :vartype keep_open: :class:`bool`
 
+
+    **Callback prototype**
+
+    A callback function can be used to tell if the current actor is concerned by the received data on the communication channel. The callback function that can be used in the
+    ``cbk_data`` parameter has the following prototype:
+
+    .. function:: cbk_data(data)
+       :noindex:
+
+       :param data: contains the current data received on the communication channel.
+       :type data: :class:`bytes`, required
+
+    The callback function should return a :class:`bool` telling if the current actor is concerned by the received data.
+
+
+    **Actor methods**
 
     .. automethod:: netzob.Simulator.Actor.Actor.start
 
@@ -1870,11 +1904,14 @@ class Actor(threading.Thread):
 
     def __init__(self,
                  automata,          # type: Automata
-                 abstractionLayer,  # type: AbstractionLayer
+                 channel,           # type: AbstractType
                  initiator=True,    # type: bool
                  fuzz=None,         # type: Fuzz
                  fuzz_states=[],    # type: dict
                  name="Actor",      # type: str
+                 keep_open=False,   # type: bool
+                 presets=None,
+                 cbk_data=None
                  ):
         # type: (...) -> None
         super(Actor, self).__init__()
