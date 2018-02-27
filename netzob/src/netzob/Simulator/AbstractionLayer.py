@@ -315,7 +315,7 @@ class AbstractionLayer(object):
                                                                                                                     round(data_len / 1024, 2),
                                                                                                                     round(t_elapsed, 2)))
                     else:
-                        self._logger.fatal("Rate rule: {} ko/s, current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(round(rate / 1024, 2),
+                        self._logger.debug("Rate rule: {} ko/s, current rate: {} ko/s, sent data: {} ko, nb seconds elapsed: {}".format(round(rate / 1024, 2),
                                                                                                                                         round((data_len / t_elapsed) / 1024, 2),
                                                                                                                                         round(data_len / 1024, 2),
                                                                                                                                         round(t_elapsed, 2)))
@@ -460,7 +460,7 @@ class AbstractionLayer(object):
             if self.channel.threaded_mode:
                 elapsed_time = 0
                 while True:
-                    if actor is not None and not actor.isActive():
+                    if actor is not None and not actor.isActive() and not actor.keep_open:
                         self._logger.debug("Actor is not active, so we break the abstraction layer readSymbol() loop")
                         from netzob.Simulator.Actor import ActorStopException
                         raise ActorStopException()
