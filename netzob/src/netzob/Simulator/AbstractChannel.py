@@ -46,6 +46,11 @@ import time
 from fcntl import ioctl
 from itertools import repeat
 from typing import Any, Callable, List, Type  # noqa: F401
+from threading import Thread, Event
+#from multiprocessing import Process, Event
+from queue import Queue, Empty
+#from multiprocessing import Queue
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -189,7 +194,8 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
             self._socket.settimeout(self.timeout)
 
 
-class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
+@NetzobLogger
+class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
     """A communication channel is an element allowing the establishment of a
     connection to or from a remote device.
 
@@ -224,6 +230,13 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         """
 
     # Public API methods ##
+
+    def register_abstraction_layer(self, abstraction_layer):
+        self.registered_abstraction_layers.append(abstraction_layer)
+
+    def unregister_abstraction_layer(self, abstraction_layer):
+        if abstraction_layer in self.registered_abstraction_layers:
+            self.registered_abstraction_layers.remove(abstraction_layer)
 
     @public_api
     def setSendLimit(self, maxValue):
@@ -264,7 +277,12 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         :rtype: int
 
         """
-        return self.write_map(repeat(data), rate=rate, duration=duration)
+
+        if self.threaded_mode:
+            self.queue_output.put(data)
+            return len(data)
+        else:
+            return self.write_map(repeat(data), rate=rate, duration=duration)
 
     @public_api
     def write_map(self, data_iterator, rate=None, duration=None):
@@ -359,15 +377,23 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         return predicate(self.read(), *args, **kwargs)
 
 
-    # Internal methods ##
+    ## Internal methods ##
 
     def __init__(self, timeout=ChannelInterface.DEFAULT_TIMEOUT):
-        super().__init__(timeout=timeout)
+        Thread.__init__(self)
+        ChannelInterface.__init__(self, timeout=timeout)
         self._isOpened = False
         self.header = None  # A Symbol corresponding to the protocol header
         self.header_presets = {}  # A dict used to parameterize the header Symbol
         self.__writeCounter = 0
         self.__writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
+
+        self.registered_abstraction_layers = []
+
+        # Threading management
+        self.threaded_mode = False
+        self.__stopEvent = Event()
+        self.__queue_output = Queue()
 
     def __enter__(self):
         """Enter the runtime channel context.
@@ -381,7 +407,98 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
         self.close()
 
 
-    # Properties ##
+    ## Thread management ##
+
+    def run(self):
+        self._logger.debug("Starting channel thread")
+        self.threaded_mode = True
+
+        self.timeout = 0.1
+
+        self.open()
+
+        while not self.__stopEvent.is_set():
+
+            self.process_data_to_send()
+
+            data = self.check_incoming_data()
+
+            if data is not None and len(data) > 0:
+                self.process_incoming_data(data)
+        self._logger.debug("Exiting channel thread")
+
+    def process_data_to_send(self):
+        while not self.queue_output.empty():  # Test if the queue is not empty
+            self._logger.debug("Process data to send")
+            try:
+                data = self.queue_output.get()
+            except Empty:
+                self._logger.warning("Queue error")
+                raise
+            try:
+                self.writePacket(data)
+            except PermissionError as e:
+                self._logger.warning("Error on socket writing: '{}'".format(e))
+            self.queue_output.task_done()
+            self._logger.debug("Data sent")
+
+    def check_incoming_data(self):
+        try:
+            data = self.read()
+            self._logger.debug("Received : {}".format(repr(data)))
+        except socket.timeout:
+            data = None
+        except Exception as e:
+            if not self.isActive():
+                return
+            else:
+                self._logger.debug("Exception on read(): '{}'".format(e))
+            raise
+        else:
+            return data
+
+    def process_incoming_data(self, data):
+        #self._logger.debug("Processing read data")
+
+        for abstraction_layer in self.registered_abstraction_layers:
+            is_abstraction_layer_concerned = True
+
+            if abstraction_layer.cbk_data is not None:
+                is_abstraction_layer_concerned = abstraction_layer.cbk_data(data)
+
+            if is_abstraction_layer_concerned:
+                self._logger.debug("Adding received message to input queue of abstraction layer '{}'".format(id(abstraction_layer)))
+                abstraction_layer.queue_input.put(data)
+
+    @public_api
+    def stop(self):
+        """Stop the current thread.
+
+        This operation is not immediate because we try to stop the
+        thread as cleanly as possible.
+
+        """
+        self.__stopEvent.set()
+
+    @public_api
+    def wait(self):
+        """Wait for the current thread to finish processing.
+
+        """
+        while self.isActive():
+            time.sleep(0.5)
+
+    @public_api
+    def isActive(self):
+        """Indicate if the current thread is active.
+
+        :return: True if the thread execution has not finished.
+        :rtype: :class:`bool`
+        """
+        return not self.__stopEvent.is_set()
+
+
+    ## Properties ##
 
     @property
     def isOpen(self):
@@ -398,6 +515,14 @@ class AbstractChannel(ChannelInterface, metaclass=abc.ABCMeta):
     @typeCheck(bool)
     def isOpen(self, isOpen):
         self._isOpened = isOpen
+
+    @property
+    def queue_output(self):
+        return self.__queue_output
+
+    @queue_output.setter  # type: ignore
+    def queue_output(self, queue_output):
+        self.__queue_output = queue_output
 
 
 # Utilitary methods ##

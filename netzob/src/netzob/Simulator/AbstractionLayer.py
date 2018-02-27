@@ -37,6 +37,10 @@
 #+---------------------------------------------------------------------------+
 import time
 import socket
+from collections import OrderedDict
+from queue import Queue, Empty
+from enum import Enum
+#from multiprocessing import Queue
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -444,8 +448,29 @@ class AbstractionLayer(object):
 
         self._logger.debug("Reading data from communication channel...")
 
+        data = b""
         try:
-            data = self.channel.read()
+            if self.channel.threaded_mode:
+                elapsed_time = 0
+                while True:
+                    if actor is not None and not actor.isActive():
+                        self._logger.debug("Actor is not active, so we break the abstraction layer readSymbol() loop")
+                        from netzob.Simulator.Actor import ActorStopException
+                        raise ActorStopException()
+                    if not self.queue_input.empty():
+                        self._logger.debug("Poping data from input queue")
+                        data = self.queue_input.get()
+                        self.queue_input.task_done()
+                        break
+                    time.sleep(0.1)
+                    elapsed_time += 0.1
+                    if elapsed_time > timeout:
+                        break
+            else:
+                data = self.channel.read()
+        except Empty:
+            self._logger.debug("Error on queue_input poping")
+            raise
         except socket.timeout:
             self._logger.debug("Timeout on channel.read()")
             raise
@@ -536,8 +561,13 @@ class AbstractionLayer(object):
 
         """
 
-        self.channel.open()
-        self._logger.debug("Communication channel opened.")
+        if self.channel.threaded_mode:
+            # The channel should be already open
+            self.channel.register_abstraction_layer(self)
+            self._logger.debug("Registering current abstraction layer on underlying communication channel.")
+        else:
+            self.channel.open()
+            self._logger.debug("Communication channel opened.")
 
     @public_api
     def closeChannel(self):
@@ -545,8 +575,13 @@ class AbstractionLayer(object):
 
         """
 
-        self.channel.close()
-        self._logger.debug("Communication channel close.")
+        if self.channel.threaded_mode:
+            # The channel will be close later
+            self.channel.unregister_abstraction_layer(self)
+            self._logger.debug("Unregistering current abstraction layer from underlying communication channel.")
+        else:
+            self.channel.close()
+            self._logger.debug("Communication channel close.")
 
     @public_api
     def reset(self):
@@ -559,3 +594,132 @@ class AbstractionLayer(object):
         self.specializer = MessageSpecializer(memory=self.memory)
         self.parser = MessageParser(memory=self.memory)
         self.flow_parser = FlowParser(memory=self.memory)
+
+    @property
+    def queue_input(self):
+        return self.__queue_input
+
+    @queue_input.setter  # type: ignore
+    def queue_input(self, queue_input):
+        self.__queue_input = queue_input
+
+
+def _test():
+    """
+    >>> from netzob.all import *
+    >>> channel = IPChannel(remoteIP="127.0.0.1")
+    >>> automata = Automata(State(), [Symbol()])
+    >>> actor_c = Actor(automata, channel=channel)
+    >>> actor_d = Actor(automata, channel=channel)
+
+    # Verify that similar actors have the same channel
+    >>> id(actor_d.abstractionLayer.channel) == id(actor_c.abstractionLayer.channel)
+    True
+
+    # Verify that similar actors have different abstraction layers
+    >>> id(actor_d.abstractionLayer) != id(actor_c.abstractionLayer)
+    True
+
+
+    >>> from netzob.all import *
+    >>> import time
+    >>>
+    >>> # First we create the symbols
+    >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
+    >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
+    >>> symbolList = [aliceSymbol, bobSymbol]
+    >>>
+    >>> # Create the grammar
+    >>> s0 = State(name="S0")
+    >>> s1 = State(name="S1")
+    >>> s2 = State(name="S2")
+    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
+    >>> mainTransition = Transition(startState=s1, endState=s1,
+    ...                             inputSymbol=bobSymbol, outputSymbols=[aliceSymbol],
+    ...                             name="hello")
+    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
+    >>> automata = Automata(s0, symbolList)
+    >>>
+    >>> automata_ascii = automata.generateASCII()
+    >>> print(automata_ascii)
+    #=========================#
+    H           S0            H
+    #=========================#
+      |
+      | OpenChannelTransition
+      v
+    +-------------------------+   hello (Bob-Hello;{Alice-Hello})
+    |                         | ----------------------------------+
+    |           S1            |                                   |
+    |                         | <---------------------------------+
+    +-------------------------+
+      |
+      | CloseChannelTransition
+      v
+    +-------------------------+
+    |           S2            |
+    +-------------------------+
+    <BLANKLINE>
+    >>>
+    >>> def cbk_data_bob(data):
+    ...     if data[:6] == b"alice>":
+    ...         return True
+    ...     else:
+    ...         return False
+    >>>
+    >>> def cbk_data_alice(data):
+    ...     if data[:4] == b"bob>":
+    ...         return True
+    ...     else:
+    ...         return False
+    >>>
+    >>> # Create actors: Alice (a server) and Bob (a client)
+    >>> channel = IPChannel(localIP="127.0.0.1", remoteIP="127.0.0.1")
+    >>> alice = Actor(automata=automata, channel=channel, initiator=False, name='Alice', cbk_data=cbk_data_alice)
+    >>>
+    >>> bob = Actor(automata=automata, channel=channel, name='Bob', cbk_data=cbk_data_bob)
+    >>> bob.nbMaxTransitions = 3
+    >>>
+    >>> channel.start()
+    >>>
+    >>> alice.start()
+    >>> time.sleep(0.5)
+    >>> bob.start()
+    >>>
+    >>> time.sleep(1)
+    >>>
+    >>> bob.wait()
+    >>> alice.stop()
+    >>>
+    >>> channel.stop()
+    >>> print(bob.generateLog())
+    Activity log for actor 'Bob':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'hello'
+      [+]   During transition 'hello', sending input symbol 'Bob-Hello'
+      [+]   During transition 'hello', receiving expected output symbol 'Alice-Hello'
+      [+]   Transition 'hello' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'hello'
+      [+]   During transition 'hello', sending input symbol 'Bob-Hello'
+      [+]   During transition 'hello', receiving expected output symbol 'Alice-Hello'
+      [+]   Transition 'hello' lead to state 'S1'
+      [+] At state 'S1', we reached the max number of transitions (3), so we stop
+    >>> print(alice.generateLog())
+    Activity log for actor 'Alice':
+      [+] At state 'S0'
+      [+]   Picking transition 'Open'
+      [+]   Transition 'Open' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Bob-Hello', which corresponds to transition 'hello'
+      [+]   During transition 'hello', choosing output symbol 'Alice-Hello'
+      [+]   Transition 'hello' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Bob-Hello', which corresponds to transition 'hello'
+      [+]   During transition 'hello', choosing output symbol 'Alice-Hello'
+      [+]   Transition 'hello' lead to state 'S1'
+
+    """

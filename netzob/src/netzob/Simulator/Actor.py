@@ -34,7 +34,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import threading
+from threading import Thread, Event
+#from multiprocessing import Process, Event
 import traceback
 import time
 
@@ -58,7 +59,7 @@ class ActorStopException(Exception):
 
 
 @NetzobLogger
-class Actor(threading.Thread):
+class Actor(Thread):
     r"""An actor is an instance of a traffic generator which, given a
     grammar and a vocabulary, can visit the underlying automaton, and
     generate and parse messages from a specified abstraction layer.
@@ -1924,14 +1925,14 @@ class Actor(threading.Thread):
                  cbk_data=None
                  ):
         # type: (...) -> None
-        super(Actor, self).__init__()
-        self.automata = automata
+        Thread.__init__(self)
+        self.automata = automata.clone()
         self.initiator = initiator
         self.fuzz = fuzz
         self.fuzz_states = fuzz_states
         self.name = name
-        self.abstractionLayer = abstractionLayer
-        self.__stopEvent = threading.Event()
+        self.__stopEvent = Event()
+        self.keep_open = keep_open
 
         # Max number of transitions the actor can browse
         self.__nbMaxTransitions = None   # None means no limit
@@ -1946,38 +1947,57 @@ class Actor(threading.Thread):
         # Initiate visit log, which contains the information regarding the different transitions and states visited by the actor
         self.visit_log = []
 
+        # Create abstraction layer
+        self.abstractionLayer = AbstractionLayer(channel, self.automata.vocabulary, presets=presets, cbk_data=cbk_data)
+
     def __str__(self):
         return str(self.name)
 
     def run(self):
         """Start the visit of the automaton from its initial state."""
 
-        currentState = self.automata.initialState
-        while not self.__stopEvent.isSet():
+        self.current_state = self.automata.initialState
+        while not self.__stopEvent.is_set():
             try:
-                self._logger.debug("Current state for actor '{}': '{}'.".format(self.name, currentState))
-                if self.initiator:
-                    currentState = currentState.executeAsInitiator(self.abstractionLayer, self)
-                else:
-                    currentState = currentState.executeAsNotInitiator(self.abstractionLayer, self)
-
-                if currentState is None:
-                    self._logger.debug("The execution of transition did not returned a state, for actor '{}'".format(self.name))
+                do_stop = self.execute_transition()
+                if do_stop:
                     self.stop()
-
-                self._currentnbTransitions += 1
-                if self.nbMaxTransitions is not None and self._currentnbTransitions >= self.nbMaxTransitions:
-                    self._logger.debug("[actor='{}'] Max number of transitions ({}) reached".format(self.name, self.nbMaxTransitions))
-                    self.visit_log.append("  [+] At state '{}', we reached the max number of transitions ({}), so we stop".format(currentState, self.nbMaxTransitions))
-                    self.stop()
-
+                    break
+            except ActorStopException:
+                break
             except Exception as e:
-                self._logger.debug("Exception raised for actor '{}' when on the execution of state {}.".format(self.name, currentState))
+                self._logger.debug("Exception raised for actor '{}' when on the execution of state {}.".format(self.name, self.current_state))
                 self._logger.error("Exception error for actor '{}': {}".format(self.name, str(e)))
                 self._logger.warn(traceback.format_exc())
                 self.stop()
-
+                break
         self._logger.debug("Actor '{}' has finished to execute".format(self.name))
+
+    @public_api
+    def execute_transition(self):
+        self._logger.debug("Current state for actor '{}': '{}'.".format(self.name, self.current_state))
+
+        if self.initiator:
+            self.current_state = self.current_state.executeAsInitiator(self)
+        else:
+            self.current_state = self.current_state.executeAsNotInitiator(self)
+
+        if self.current_state is None:
+            self._logger.debug("The execution of transition did not returned a state, for actor '{}'".format(self.name))
+            return True
+
+        if self.current_state is not None and self.target_state is not None and self.target_state.name == self.current_state.name:
+            self._logger.debug("[actor='{}'] Reaching the targeted state '{}'".format(self.name, self.target_state))
+            self.visit_log.append("  [+] At state '{}', we reached the targeted state '{}', so we stop".format(self.current_state, self.target_state))
+            return True
+
+        self._currentnbTransitions += 1
+        if self.nbMaxTransitions is not None and self._currentnbTransitions >= self.nbMaxTransitions:
+            self._logger.debug("[actor='{}'] Max number of transitions ({}) reached".format(self.name, self.nbMaxTransitions))
+            self.visit_log.append("  [+] At state '{}', we reached the max number of transitions ({}), so we stop".format(self.current_state, self.nbMaxTransitions))
+            return True
+
+        return False
 
     @public_api
     def stop(self):
