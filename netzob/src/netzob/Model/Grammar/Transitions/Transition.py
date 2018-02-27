@@ -284,6 +284,17 @@ class Transition(AbstractTransition):
                 self._logger.debug(errorMessage)
                 raise Exception(errorMessage)
 
+        if len(self.outputSymbols) == 0:
+            self.active = False
+            actor.visit_log.append("  [+]   During transition '{}', receiving no symbol which was expected".format(self.name))
+            actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
+
+            if self.inverseInitiator:
+                actor.initiator = not actor.initiator
+                actor.visit_log.append("  [+]   Transition '{}' triggers inversion of initiator flag (now: {})".format(self.name, actor.initiator))
+
+            return self.endState
+
         # Waits for the reception of a symbol
         try:
             (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(self.outputSymbolsPresets)
