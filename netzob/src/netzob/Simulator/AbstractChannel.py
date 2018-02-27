@@ -55,7 +55,7 @@ import arpreq
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, public_api
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Simulator.ChannelBuilder import ChannelBuilder  # noqa: F401
 
 
@@ -63,6 +63,7 @@ class ChannelDownException(Exception):
     pass
 
 
+@NetzobLogger
 class ChannelInterface(object, metaclass=abc.ABCMeta):
     """The ChannelInterface class specifies the methods to implement in
     order to create a new communication channel.

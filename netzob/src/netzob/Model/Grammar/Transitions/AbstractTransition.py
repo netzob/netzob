@@ -89,11 +89,11 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     # Execution abstract methods
 
     @abc.abstractmethod
-    def executeAsInitiator(self, abstractionLayer, visit_log):
+    def executeAsInitiator(self, actor):
         pass
 
     @abc.abstractmethod
-    def executeAsNotInitiator(self, abstractionLayer, visit_log):
+    def executeAsNotInitiator(self, actor):
         pass
 
     # Other methods

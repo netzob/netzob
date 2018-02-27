@@ -60,8 +60,6 @@ class Actor(threading.Thread):
     The Actor constructor expects some parameters:
 
     :param automata: This parameter is the automaton the actor will visit.
-    :param abstractionLayer: This parameter is the underlying abstraction layer used to abstract
-                             and specialize symbols.
     :param initiator: If True, this parameter indicates that the actor is a client, and thus initiates the
                       communication and emits the input symbol.  If
                       False, it indicates that the actor is a server, and is thus waiting for
@@ -84,7 +82,6 @@ class Actor(threading.Thread):
     :param name: The name of the actor. Default value is 'Actor'.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
                     required
-    :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`, required
     :type initiator: :class:`bool`, optional
     :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
     :param fuzz_states: :class:`dict` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
@@ -176,12 +173,10 @@ class Actor(threading.Thread):
     >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=automata, abstractionLayer=abstractionLayer, initiator=False, name='Alice')
+    >>> alice = Actor(automata=automata, channel=channel, initiator=False, name='Alice')
     >>>
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=automata, abstractionLayer=abstractionLayer, name='Bob')
+    >>> bob = Actor(automata=automata, channel=channel, name='Bob')
     >>> bob.nbMaxTransitions = 3
     >>>
     >>> alice.start()
@@ -316,14 +311,12 @@ class Actor(threading.Thread):
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
     >>> bob.nbMaxTransitions = 3
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -485,14 +478,12 @@ class Actor(threading.Thread):
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
     >>> bob.nbMaxTransitions = 10
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -658,14 +649,12 @@ class Actor(threading.Thread):
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
     >>> bob.nbMaxTransitions = 10
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
     >>>
     >>> alice.start()
     >>> bob.start()
@@ -843,14 +832,12 @@ class Actor(threading.Thread):
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
     >>> bob.nbMaxTransitions = 10
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -1008,14 +995,12 @@ class Actor(threading.Thread):
     >>>
     >>> # Create Bob actor (a server)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
     >>> bob.nbMaxTransitions = 10
     >>>
     >>> # Create Alice actor (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -1178,17 +1163,15 @@ class Actor(threading.Thread):
     >>> # Create actors: Alice (a UDP server) and Bob (a UDP client)
     >>> # Alice
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, allSymbols)
-    >>> abstractionLayer.timeout = .5
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer,
+    >>> alice = Actor(automata=alice_automata, channel=channel,
     ...               initiator=False, name="Alice")
+    >>> alice.abstractionLayer.timeout = .5
     >>>
     >>> # Bob
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=3.)
-    >>> abstractionLayer = AbstractionLayer(channel, allSymbols)
-    >>> abstractionLayer.timeout = .5
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer,
+    >>> bob = Actor(automata=bob_automata, channel=channel,
     ...             initiator=True, name="Bob")
+    >>> bob.abstractionLayer.timeout = .5
     >>> bob.nbMaxTransitions = 10
     >>>
     >>> alice.start()
@@ -1295,12 +1278,10 @@ class Actor(threading.Thread):
     >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=automata, abstractionLayer=abstractionLayer, initiator=False, name='Alice')
+    >>> alice = Actor(automata=automata, channel=channel, initiator=False, name='Alice')
     >>>
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=automata, abstractionLayer=abstractionLayer, name='Bob')
+    >>> bob = Actor(automata=automata, channel=channel, name='Bob')
     >>> bob.nbMaxTransitions = 10
     >>>
     >>> alice.start()
@@ -1339,8 +1320,7 @@ class Actor(threading.Thread):
 
     The following example shows how to specify a global behavior, on
     all states and transitions, in order to catch reception of unexpected symbols (i.e. symbols that are known but not expected at this state/transition). In this example, we set a callback through the method :meth:`set_cbk_read_unexpected_symbol`. When an unexpected symbol is received, the defined callback will move the current
-    position in the state machine to a specific state called
-    'error_state'.
+    position in the state machine to a specific state called 'error_state'.
 
     >>> from netzob.all import *
     >>> import time
@@ -1427,14 +1407,12 @@ class Actor(threading.Thread):
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
     >>> bob.nbMaxTransitions = 10
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -1560,14 +1538,12 @@ class Actor(threading.Thread):
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
     >>> bob.nbMaxTransitions = 10
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -1694,14 +1670,12 @@ class Actor(threading.Thread):
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, fuzz=fuzz, name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, fuzz=fuzz, name="Bob")
     >>> bob.nbMaxTransitions = 3
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -1843,14 +1817,12 @@ class Actor(threading.Thread):
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> bob = Actor(automata=bob_automata, abstractionLayer=abstractionLayer, fuzz=fuzz, fuzz_states=['S2'], name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, fuzz=fuzz, fuzz_states=['S2'], name="Bob")
     >>> bob.nbMaxTransitions = 3
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> abstractionLayer = AbstractionLayer(channel, symbolList)
-    >>> alice = Actor(automata=alice_automata, abstractionLayer=abstractionLayer, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)

@@ -272,7 +272,7 @@ class Transition(AbstractTransition):
 
         # Waits for the reception of a symbol
         try:
-            (received_symbol, received_message) = abstractionLayer.readSymbol()
+            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(self.outputSymbolsPresets)
         except socket.timeout:
             self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.readSymbol()".format(str(actor), self.name))
             self.active = False
@@ -344,13 +344,9 @@ class Transition(AbstractTransition):
                     # Return the start state so that we accept a new message
                     return self.startState
 
-    @typeCheck(AbstractionLayer)
-    def executeAsNotInitiator(self, abstractionLayer, actor):
+    def executeAsNotInitiator(self, actor):
         """Execute the current transition as a not initiator.
 
-        :param abstractionLayer: The abstraction layer which provides access to
-                                 the channel.
-        :type abstractionLayer: :class:`~netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: The end state of the transition if not exception is raised.
         :rtype: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
 
@@ -359,13 +355,11 @@ class Transition(AbstractTransition):
         We only have to pick an output symbol and emit it.
 
         """
-        if abstractionLayer is None:
-            raise TypeError("Abstraction layer cannot be None")
 
         self.active = True
 
         # Pick the output symbol to emit
-        (symbol_to_send, symbol_presets) = self.__pickOutputSymbol(abstractionLayer, actor)
+        (symbol_to_send, symbol_presets) = self.__pickOutputSymbol(actor)
         if symbol_to_send is None:
             self._logger.debug("[actor='{}'] No output symbol to send, we pick an EmptySymbol as output symbol".format(str(actor)))
             symbol_to_send = EmptySymbol()
@@ -405,7 +399,7 @@ class Transition(AbstractTransition):
 
         return self.endState
 
-    def __pickOutputSymbol(self, abstractionLayer, actor):
+    def __pickOutputSymbol(self, actor):
         """Picks the output symbol to emit following their probability.
 
         It computes the probability of symbols which don't explicitly have one

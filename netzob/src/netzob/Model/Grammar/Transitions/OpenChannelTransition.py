@@ -44,7 +44,6 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
-from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
 
 @NetzobLogger
@@ -117,49 +116,37 @@ class OpenChannelTransition(AbstractTransition):
         transition.cbk_modify_symbol = self.cbk_modify_symbol
         return transition
 
-    @typeCheck(AbstractionLayer)
-    def executeAsInitiator(self, abstractionLayer, actor):
+    def executeAsInitiator(self, actor):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
-        :param abstractionLayer: the abstraction layer which provides access to the channel
-        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-        return self.__execute(abstractionLayer, actor)
+        return self.__execute(actor)
 
-    @typeCheck(AbstractionLayer)
-    def executeAsNotInitiator(self, abstractionLayer, actor):
+    def executeAsNotInitiator(self, actor):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
-        :param abstractionLayer: the abstraction layer which provides access to the channel
-        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-        return self.__execute(abstractionLayer, actor)
+        return self.__execute(actor)
 
-    @typeCheck(AbstractionLayer)
-    def __execute(self, abstractionLayer, actor):
+    def __execute(self, actor):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
-        :param abstractionLayer: the abstraction layer which provides access to the channel
-        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         :return: the end state of the transition if not exception is raised
         :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-
-        if abstractionLayer is None:
-            raise TypeError("The abstraction layer cannot be None")
 
         self.active = True
 
         # open the channel throught the abstraction layer
         try:
-            abstractionLayer.openChannel()
+            actor.abstractionLayer.openChannel()
         except Exception as e:
             self._logger.debug(
                 "[actor='{}'] An error occured which prevented the good execution of the open channel transition".format(actor.name)

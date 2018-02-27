@@ -406,8 +406,7 @@ class AutomataMutator(Mutator):
         >>>
         >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
         >>> bob_channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-        >>> bob_abstractionLayer = AbstractionLayer(bob_channel, vocabulary)
-        >>> bob_actor = Actor(automata=mutatedAutomata, initiator=True, abstractionLayer=bob_abstractionLayer, fuzz=fuzz, fuzz_states=[s6.name], name='Fuzzer')
+        >>> bob_actor = Actor(automata=mutatedAutomata, initiator=True, channel=bob_channel, fuzz=fuzz, fuzz_states=[s6.name], name='Fuzzer')
         >>> bob_actor.nbMaxTransitions = 7
         >>>
         >>> # Create Alice's automaton
@@ -438,7 +437,6 @@ class AutomataMutator(Mutator):
         >>>
         >>> # Creation of an automaton visitor/actor and a channel on which to receive the fuzzing traffic
         >>> alice_channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-        >>> alice_abstractionLayer = AbstractionLayer(alice_channel, vocabulary)
         >>>
         >>> # Creation of a callback function that returns a new transition
         >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
@@ -451,7 +449,7 @@ class AutomataMutator(Mutator):
         >>>
         >>> alice_automata.getState('s1').add_cbk_modify_transition(cbk_modifyTransition)
         >>>
-        >>> alice_actor = Actor(automata=alice_automata, initiator=False, abstractionLayer=alice_abstractionLayer, name='Target')
+        >>> alice_actor = Actor(automata=alice_automata, initiator=False, channel=alice_channel, name='Target')
         >>>
         >>> # We start the targeted actor
         >>> alice_actor.start()

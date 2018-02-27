@@ -46,8 +46,7 @@ import socket
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
-from netzob.Simulator.AbstractionLayer import AbstractionLayer
-from netzob.Model.Grammar.Transitions.Transition import Transition
+from netzob.Model.Grammar.Transitions.Transition import Transition, Operation
 from netzob.Model.Grammar.States.AbstractState import AbstractState
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
 from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition
@@ -100,23 +99,17 @@ class State(AbstractState):
         state.cbk_modify_transition = self.cbk_modify_transition
         return state
 
-    @typeCheck(AbstractionLayer)
-    def executeAsInitiator(self, abstractionLayer, actor):
+    def executeAsInitiator(self, actor):
         """This method picks the next available transition and executes it.
 
-        :parameter abstractionLayer: The abstraction layer that will be used to access to the channel.
-        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
         """
-        if abstractionLayer is None:
-            raise TypeError("AbstractionLayer cannot be None")
-
         self._logger.debug(
             "[actor='{}'] Execute state {} as an initiator".format(str(actor), self.name))
 
         self.active = True
 
         # Pick the next transition
-        nextTransition = self.__pickNextTransition(abstractionLayer, actor)
+        nextTransition = self.__pickNextTransition(actor)
         self._logger.debug("[actor='{}'] Next transition for state '{}': {}.".format(str(actor), self.name, nextTransition))
 
         if nextTransition is None:
@@ -125,7 +118,7 @@ class State(AbstractState):
 
         # Execute picked transition as an initiator
         try:
-            nextState = nextTransition.executeAsInitiator(abstractionLayer, actor)
+            nextState = nextTransition.executeAsInitiator(actor)
             self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(nextTransition), str(nextState)))
         except Exception as e:
             self.active = False
@@ -138,12 +131,8 @@ class State(AbstractState):
 
         return nextState
 
-    @typeCheck(AbstractionLayer)
-    def executeAsNotInitiator(self, abstractionLayer, actor):
+    def executeAsNotInitiator(self, actor):
         """This method executes the current state as not an initiator.
-
-        :param abstractionLayer: The abstraction layer from which it receives messages.
-        :type abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
 
         This method will wait for a maximum amount of time the
         reception of a symbol and will try to select the appropriate
@@ -151,9 +140,6 @@ class State(AbstractState):
         the end, if no exception occurs, it returns the next state.
 
         """
-        if abstractionLayer is None:
-            raise TypeError("AbstractionLayer cannot be None")
-
         self._logger.debug("[actor='{}'] Execute state {} as a non-initiator".format(str(actor), self.name))
 
         self.active = True
@@ -183,7 +169,7 @@ class State(AbstractState):
             actor.visit_log.append("  [+] At state '{}'".format(self.name))
             actor.visit_log.append("  [+]   Picking transition '{}'".format(str(nextTransition)))
 
-            nextState = nextTransition.executeAsNotInitiator(abstractionLayer, actor)
+            nextState = nextTransition.executeAsNotInitiator(actor)
             self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(
                 str(actor), str(nextTransition), str(nextState)))
             if nextState is None:
@@ -198,7 +184,8 @@ class State(AbstractState):
         received_symbol = None
         received_message = None
         try:
-            (received_symbol, received_message) = abstractionLayer.readSymbol()
+            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol()
+
             if received_symbol is None:
                 raise Exception("The abstraction layer returned a None received symbol")
             self._logger.debug("[actor='{}'] Input symbol: '{}'".format(str(actor), str(received_symbol)))
@@ -302,7 +289,7 @@ class State(AbstractState):
 
         return nextState
 
-    def __pickNextTransition(self, abstractionLayer, actor):
+    def __pickNextTransition(self, actor):
         """Returns the next transition by considering the priority
         and a random choice.
 
