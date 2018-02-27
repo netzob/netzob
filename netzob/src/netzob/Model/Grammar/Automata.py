@@ -352,6 +352,36 @@ class Automata(object):
         else:
             raise KeyError("State with name '{}' does not exist".format(name))
 
+    @public_api
+    def getTransitions(self):
+        """Visits the automata to discover all the available transitions.
+        """
+        states = self.getStates()
+        transitions = set()
+        for state in states:
+            for transition in state.transitions:
+                transitions.add(transition)
+        return list(transitions)
+
+    @public_api
+    @typeCheck(str)
+    def getTransition(self, name):
+        """Returns the Transition object of the given name.
+
+        :param name: The name of the Transition object
+        :type name: :class:`str`, required
+        :return: The Transition object.
+        :rtype: :class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`
+        :raise: :class:`KeyError` if the name is not found.
+        """
+
+        transitions = self.getTransitions()
+        for transition in transitions:
+            if transition.name == name:
+                return transition
+        else:
+            raise KeyError("Transition with name '{}' does not exist".format(name))
+
     @staticmethod
     @typeCheck(list, list)
     def generateChainedStatesAutomata(abstractSession, symbolList):
