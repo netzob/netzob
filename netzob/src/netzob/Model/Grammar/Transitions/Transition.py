@@ -159,10 +159,15 @@ class Transition(AbstractTransition):
                  startState,
                  endState,
                  inputSymbol=None,
+                 inputSymbolPresets=None,
                  outputSymbols=None,
+                 outputSymbolsPresets=None,  # type: Dict[Symbol,Dict]
                  name=None,
                  inputSymbolReactionTime=None,   # type: float
-                 outputSymbolsReactionTime=None  # type: Dict[Symbol,float]
+                 outputSymbolsReactionTime=None,  # type: Dict[Symbol,float]
+                 inverseInitiator=False,
+                 rate=None,
+                 duration=None
                  ):
         # type: (...) -> None
         super(Transition, self).__init__(Transition.TYPE,
@@ -175,11 +180,16 @@ class Transition(AbstractTransition):
             outputSymbols = []
 
         self.inputSymbol = inputSymbol
+        self.inputSymbolPresets = inputSymbolPresets
         self.outputSymbols = outputSymbols
+        self.outputSymbolsPresets = outputSymbolsPresets
         self.outputSymbolProbabilities = {}  # TODO: not yet exposed in the API
         self.inputSymbolReactionTime = inputSymbolReactionTime
         self.outputSymbolsReactionTime = outputSymbolsReactionTime
         self.description = None
+        self.inverseInitiator = inverseInitiator
+        self.rate = rate
+        self.duration = duration
 
     def clone(self):
         transition = Transition(startState=None,
@@ -188,12 +198,22 @@ class Transition(AbstractTransition):
                                 outputSymbols=self.outputSymbols,
                                 name=self.name,
                                 inputSymbolReactionTime=self.inputSymbolReactionTime,
-                                outputSymbolsReactionTime=self.outputSymbolsReactionTime)
+                                outputSymbolsReactionTime=self.outputSymbolsReactionTime,
+                                inverseInitiator=self.inverseInitiator)
         transition._startState = self.startState
         transition.description = self.description
         transition.active = self.active
         transition.priority = self.priority
         transition.cbk_modify_symbol = self.cbk_modify_symbol
+        transition.cbk_action = self.cbk_action
+        if self.inputSymbolPresets is not None:
+            transition.inputSymbolPresets = self.inputSymbolPresets.copy()
+        if self.outputSymbolsPresets is not None:
+            transition.outputSymbolsPresets = self.outputSymbolsPresets.copy()
+        transition.inverseInitiator = self.inverseInitiator
+        transition.rate = self.rate
+        transition.duration = self.duration
+
         return transition
 
     def executeAsInitiator(self, actor):
@@ -219,7 +239,7 @@ class Transition(AbstractTransition):
 
         # Retrieve the symbol to send
         symbol_to_send = self.inputSymbol
-        symbol_presets = {}
+        symbol_presets = self.inputSymbolPresets
         actor.visit_log.append("  [+]   During transition '{}', sending input symbol '{}'".format(self.name, str(symbol_to_send)))
 
         # If a callback is defined, we can change or modify the selected symbol
@@ -304,6 +324,14 @@ class Transition(AbstractTransition):
             self.active = False
             actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol '{}'".format(self.name, str(received_symbol)))
             actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
+
+            if self.inverseInitiator:
+                actor.initiator = not actor.initiator
+                actor.visit_log.append("  [+]   Transition '{}' triggers inversion of initiator flag (now: {})".format(self.name, actor.initiator))
+
+            for cbk in self.cbk_action:
+                self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), self.name))
+                cbk(received_symbol, received_message, received_structure, Operation.READ, actor)
 
             return self.endState
         else:
@@ -395,6 +423,10 @@ class Transition(AbstractTransition):
         # Update visit log
         actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
 
+        if self.inverseInitiator:
+            actor.initiator = not actor.initiator
+            actor.visit_log.append("  [+]   Transition '{}' triggers inversion of initiator flag (now: {})".format(self.name, actor.initiator))
+
         return self.endState
 
     def __pickOutputSymbol(self, actor):
@@ -443,9 +475,12 @@ class Transition(AbstractTransition):
             for outputSymbolsWithNoProbability in inner
         ]
 
-        # Random selection of the symbol
+        # Random selection of the symbol and its associated presets
         symbol_to_send = random.choice(distribution)
         symbol_presets = {}
+        if self.outputSymbolsPresets is not None and isinstance(self.outputSymbolsPresets, dict):
+            if symbol_to_send in self.outputSymbolsPresets:
+                symbol_presets = self.outputSymbolsPresets[symbol_to_send]
 
         # Update visit log
         actor.visit_log.append("  [+]   During transition '{}', choosing output symbol '{}'".format(self.name, str(symbol_to_send)))
@@ -493,6 +528,19 @@ class Transition(AbstractTransition):
 
     @public_api
     @property
+    def inputSymbolPresets(self):
+        return self.__inputSymbolPresets
+
+    @inputSymbolPresets.setter  # type: ignore
+    def inputSymbolPresets(self, inputSymbolPresets):
+        self.__inputSymbolPresets = None
+        # Normalize presets
+        if inputSymbolPresets is not None:
+            if not isinstance(self.inputSymbol, EmptySymbol):
+                self.__inputSymbolPresets = self.inputSymbol.normalize_presets(inputSymbolPresets)
+
+    @public_api
+    @property
     def outputSymbols(self):
         """Output symbols that can be generated when
         the current transition is executed.
@@ -527,6 +575,20 @@ class Transition(AbstractTransition):
             for symbol in outputSymbols:
                 if symbol is not None:
                     self.__outputSymbols.append(symbol)
+
+    @public_api
+    @property
+    def outputSymbolsPresets(self):
+        return self.__outputSymbolsPresets
+
+    @outputSymbolsPresets.setter  # type: ignore
+    def outputSymbolsPresets(self, outputSymbolsPresets):
+        self.__outputSymbolsPresets = {}
+        # Normalize presets
+        if outputSymbolsPresets is not None:
+            for outputSymbol, outputSymbolPresets in outputSymbolsPresets.items():
+                if not isinstance(outputSymbol, EmptySymbol):
+                    self.__outputSymbolsPresets[outputSymbol] = outputSymbol.normalize_presets(outputSymbolPresets)
 
     @public_api
     @property
