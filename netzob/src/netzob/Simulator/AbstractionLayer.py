@@ -393,6 +393,13 @@ class AbstractionLayer(object):
 
         return (data, data_len, data_structure)
 
+    def is_data_interesting(self, data):
+        """Tells if the current abstraction layer is concerned by the given data."""
+        if self.cbk_data is not None:
+            return self.cbk_data(data)
+        else:
+            return True
+
     @public_api
     def readSymbols(self):
         """Read a flow from the abstraction layer and abstract it in one or

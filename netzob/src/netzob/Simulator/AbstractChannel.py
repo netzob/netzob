@@ -461,12 +461,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         #self._logger.debug("Processing read data")
 
         for abstraction_layer in self.registered_abstraction_layers:
-            is_abstraction_layer_concerned = True
-
-            if abstraction_layer.cbk_data is not None:
-                is_abstraction_layer_concerned = abstraction_layer.cbk_data(data)
-
-            if is_abstraction_layer_concerned:
+            if abstraction_layer.is_data_interesting(data):
                 self._logger.debug("Adding received message to input queue of abstraction layer '{}'".format(id(abstraction_layer)))
                 abstraction_layer.queue_input.put(data)
 
