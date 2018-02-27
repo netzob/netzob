@@ -57,6 +57,17 @@ from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 
 
+class Operation(Enum):
+    """Tells the direction of the symbol.
+
+    """
+    READ = 'read'
+    """Indicates that the symbol has been received from the channel."""
+    WRITE = 'write'
+    """Indicates that the symbol has been sent on the channel."""
+    __repr__ = Enum.__str__
+
+
 @NetzobLogger
 class AbstractionLayer(object):
     """An abstraction layer specializes a symbol into a message before
@@ -106,9 +117,10 @@ class AbstractionLayer(object):
     >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889, timeout=1.)
     >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbol])
     >>> abstractionLayerOut.openChannel()
-    >>> abstractionLayerOut.writeSymbol(symbol)
+    >>> (data, data_len, data_structure) = abstractionLayerOut.writeSymbol(symbol)
+    >>> data_len
     12
-    >>> (received_symbol, received_data) = abstractionLayerIn.readSymbol()
+    >>> (received_symbol, received_data, received_structure) = abstractionLayerIn.readSymbol()
     >>> received_symbol.name
     'Symbol_Hello'
     >>> received_data
@@ -130,7 +142,8 @@ class AbstractionLayer(object):
     >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889, timeout=1.)
     >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbolflow])
     >>> abstractionLayerOut.openChannel()
-    >>> abstractionLayerOut.writeSymbol(symbolflow)
+    >>> (data, data_len, data_structure) = abstractionLayerOut.writeSymbol(symbolflow)
+    >>> data_len
     22
     >>> (received_symbols, received_data) = abstractionLayerIn.readSymbols()
     >>> received_symbols
@@ -164,9 +177,10 @@ class AbstractionLayer(object):
     >>> abstractionLayerOut.openChannel()
     >>>
     >>> # Sending of a symbol containing a data coming from the environment
-    >>> abstractionLayerOut.writeSymbol(symbol)
+    >>> (data, data_len, data_structure) = abstractionLayerOut.writeSymbol(symbol)
+    >>> data_len
     11
-    >>> (received_symbol, received_data) = abstractionLayerIn.readSymbol()
+    >>> (received_symbol, received_data, received_structure) = abstractionLayerIn.readSymbol()
     >>> received_symbol.name
     'Symbol_Hello'
     >>> received_data
@@ -188,12 +202,16 @@ class AbstractionLayer(object):
         # Variables used to keep track of the last sent and received symbols and associated messages
         self.last_sent_symbol = None
         self.last_sent_message = None
+        self.last_sent_structure = None
         self.last_received_symbol = None
         self.last_received_message = None
+        self.last_received_structure = None
+
+        self.__queue_input = Queue()
 
     @public_api
     @typeCheck(Symbol)
-    def writeSymbol(self, symbol, rate=None, duration=None, presets=None, fuzz=None):
+    def writeSymbol(self, symbol, rate=None, duration=None, presets=None, fuzz=None, actor=None, cbk_action=None):
         """Write the specified symbol on the communication channel
         after specializing it into a contextualized message.
 
@@ -335,11 +353,15 @@ class AbstractionLayer(object):
 
         self.last_sent_symbol = symbol
         self.last_sent_message = data
+        self.last_sent_structure = data_structure
 
-        return len_data
+        for cbk in cbk_action:
+            self._logger.debug("[actor='{}'] A callback function is defined at the end of the transition".format(str(actor)))
+            cbk(symbol, data, data_structure, Operation.WRITE, actor)
+
+        return (data, data_len, data_structure)
 
     @public_api
-    @typeCheck(int)
     def readSymbols(self):
         """Read a flow from the abstraction layer and abstract it in one or
         more consecutive symbols.

@@ -50,8 +50,8 @@ from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
-from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
-from netzob.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition, Operation
+from netzob.Simulator.AbstractionLayer import SymbolBadSettingsException
 
 
 @NetzobLogger
@@ -196,13 +196,9 @@ class Transition(AbstractTransition):
         transition.cbk_modify_symbol = self.cbk_modify_symbol
         return transition
 
-    @typeCheck(AbstractionLayer)
-    def executeAsInitiator(self, abstractionLayer, actor):
+    def executeAsInitiator(self, actor):
         """Execute the current transition as an initiator.
 
-        :param abstractionLayer: The abstraction layer which provides access
-                                 to the channel.
-        :type abstractionLayer: :class:`~netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: The end state of the transition if no exception is raised.
         :rtype: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
         :raise: TypeError if parameter are not valid and Exception if an error
@@ -218,8 +214,6 @@ class Transition(AbstractTransition):
         received symbol is not expected, it raises an exception.
 
         """
-        if abstractionLayer is None:
-            raise TypeError("Abstraction layer cannot be None")
 
         self.active = True
 
@@ -248,15 +242,15 @@ class Transition(AbstractTransition):
 
         # Write a symbol on the channel
         if isinstance(symbol_to_send, EmptySymbol):
-            self._logger.debug("[actor='{}'] Nothing to write on abstraction layer (inputSymbol is an EmptySymbol)".format(str(actor)))    
+            self._logger.debug("[actor='{}'] Nothing to write on abstraction layer (inputSymbol is an EmptySymbol)".format(str(actor)))
         else:
             try:
                 if actor.fuzz is not None and (len(actor.fuzz_states) == 0 or self.startState.name in actor.fuzz_states):
                     self._logger.debug("[actor='{}'] Fuzzing activated at transition".format(str(actor)))
                     actor.visit_log.append("  [+]   During transition '{}', fuzzing activated".format(self.name))
-                    abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets, fuzz=actor.fuzz)
+                    (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, fuzz=actor.fuzz, actor=actor, cbk_action=self.cbk_action)
                 else:
-                    abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
+                    (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, actor=actor, cbk_action=self.cbk_action)
             except socket.timeout:
                 self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
                 self.active = False
@@ -375,9 +369,9 @@ class Transition(AbstractTransition):
             if actor.fuzz is not None and (len(actor.fuzz_states) == 0 or self.startState in actor.fuzz_states):
                 self._logger.debug("[actor='{}'] Fuzzing activated at transition".format(str(actor)))
                 actor.visit_log.append("  [+]   During transition '{}', fuzzing activated".format(self.name))
-                abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets, fuzz=actor.fuzz)
+                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, fuzz=actor.fuzz, actor=actor, cbk_action=self.cbk_action)
             else:
-                abstractionLayer.writeSymbol(symbol_to_send, presets=symbol_presets)
+                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, actor=actor, cbk_action=self.cbk_action)
         except socket.timeout:
             self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
             self.active = False

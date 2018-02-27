@@ -51,11 +51,12 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
     The AbstractTransition constructor expects some parameters:
 
-    :param str _type: the type of the transition
+    :param str _type: the type of the transition.
     :param startState: The initial state of the transition.
-    :param endState: The end state of the transition
-    :param str name: The name of the transition
-    :param int priority: the priority of the transition
+    :param endState: The end state of the transition.
+    :param str name: The name of the transition.
+    :param int priority: the priority of the transition.
+    :param str description: The description of the transition.
     :type startState: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
     :type endState: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
 
@@ -79,6 +80,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         self._description = description
         self.active = False
         self.cbk_modify_symbol = []
+        self.cbk_action = []
 
     def __str__(self):
         return str(self.name)
@@ -316,3 +318,42 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         if not callable(cbk_method):
             raise TypeError("'cbk_method' should be a callable function")
         self.cbk_modify_symbol.append(cbk_method)
+
+    def add_cbk_action(self, cbk_method):
+        """Function called after sending or receiving a symbol in the
+        transition. This function could be used to change memory or actor behavior.
+
+        :param cbk_method: the callback function
+        :type cbk_method: ~typing.Callable, required
+        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
+
+        :attr:`cbk_method` should have the following prototype:
+
+        .. function:: cbk_method(symbol, data, data_structure, operation, actor)
+           :noindex:
+
+           :param symbol:
+                  Corresponds to the last sent or received symbol.
+           :param data:
+                  Corresponds to the last sent or received data.
+           :param data_structure:
+                  Corresponds to the last sent or received data structure.
+           :param operation:
+                  Tells the direction of the symbol: either
+                  :attr:`Operation.READ` for received symbols or
+                  :attr:`Operation.WRITE` for send symbols.
+           :param actor:
+                  The actor that is sending or receiving the symbol.
+
+           :type symbol_to_send: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
+           :type data: :class:`str`, required
+           :type data_structure: :class:`dict`, required
+           :type operation: :class:`~netzob.Simulation.AbstractionLayer.Operation`, required
+           :type actor: :class:`~netzob.Simulation.Actor.Actor`, required
+
+        The callback method is not expected to return something.
+
+        """
+        if not callable(cbk_method):
+            raise TypeError("'cbk_method' should be a callable function")
+        self.cbk_action.append(cbk_method)

@@ -46,12 +46,13 @@ import socket
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
-from netzob.Model.Grammar.Transitions.Transition import Transition, Operation
+from netzob.Model.Grammar.Transitions.Transition import Transition
 from netzob.Model.Grammar.States.AbstractState import AbstractState
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
 from netzob.Model.Grammar.Transitions.CloseChannelTransition import CloseChannelTransition
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
+from netzob.Simulation.AbstractionLayer import Operation
 
 
 @NetzobLogger
@@ -282,7 +283,11 @@ class State(AbstractState):
                     raise Exception("The received symbol did not match any of expected symbols")
 
         else:
-            nextState = nextTransition.executeAsNotInitiator(abstractionLayer, actor)
+
+            if nextTransition.cbk_action is not None:
+                nextTransition.cbk_action(received_symbol, received_message, received_structure, Operation.READ, actor)
+
+            nextState = nextTransition.executeAsNotInitiator(actor)
             self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(nextTransition), str(nextState)))
 
         self.active = False
