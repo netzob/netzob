@@ -157,7 +157,18 @@ class RawIPChannel(AbstractChannel):
         self.isOpen = False
 
     def read(self):
-        """Read the next message on the communication channel.
+        """Read the next message on the communication channel, and return the
+        IP payload.
+
+        """
+        ip_packet = self._inner_read()
+        ip_header_len = (ip_packet[0] & 15) * 4
+        return ip_packet[ip_header_len:]
+
+    def _inner_read(self):
+        """Read the next message on the communication channel, and return the
+        IP packet.
+
         """
         if self._socket is not None:
             (data, _) = self._socket.recvfrom(65535)
@@ -194,7 +205,7 @@ class RawIPChannel(AbstractChannel):
             stopWaitingResponse = False
             self.write(data)
             while stopWaitingResponse is False:
-                dataReceived = self.read()
+                dataReceived = self._inner_read()
 
                 # IHL = (Bitwise AND 00001111) x 4bytes
                 ipHeaderLen = (dataReceived[0] & 15) * 4
@@ -207,7 +218,7 @@ class RawIPChannel(AbstractChannel):
                 if stopWaitingResponse:  # and not timeout
                     responseOk = True
             if responseOk:
-                return dataReceived
+                return dataReceived[ipHeaderLen:]
         else:
             raise Exception("socket is not available")
 
