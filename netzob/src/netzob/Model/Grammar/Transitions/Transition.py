@@ -285,6 +285,10 @@ class Transition(AbstractTransition):
         except OSError as e:
             self._logger.debug("[actor='{}'] The underlying abstraction channel seems to be closed, so we stop the current actor".format(str(actor)))
             return
+        except SymbolBadSettingsException:
+            actor.visit_log.append("  [+]   During transition '{}', received expected symbol with wrong settings, leading to state '{}'".format(self.name, str(self.startState)))
+            # Return the start state so that we accept a new message
+            return self.startState
         except Exception as e:
             self.active = False
             errorMessage = "[actor='{}'] An error occured while executing the transition {} as an initiator: {}".format(str(actor), self.name, e)

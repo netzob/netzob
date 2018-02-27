@@ -57,6 +57,10 @@ from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 
 
+class SymbolBadSettingsException(Exception):
+    pass
+
+
 class Operation(Enum):
     """Tells the direction of the symbol.
 
