@@ -118,11 +118,17 @@ class Actor(threading.Thread):
                     way the actors communicate together.
     :var name: The name of the actor.
     :var keep_open: Tells if the actor should be let active after reaching its targeted state or after reaching the maximum number of transitions.
+    :var nbMaxTransitions: The maximum number of transitions the actor will travel.
+    :var current_state: The current state of the actor.
+    :var target_state: A state at which position the actor will stop execution.
     :vartype automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
     :vartype abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
     :vartype initiator: :class:`bool`
     :vartype name: :class:`str`
     :vartype keep_open: :class:`bool`
+    :vartype nbMaxTransitions: :class:`int`
+    :vartype current_state: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype target_state: :class:`State <netzob.Model.Grammar.States.State.State>`
 
 
     **Callback prototype**
@@ -1927,6 +1933,12 @@ class Actor(threading.Thread):
         self.__nbMaxTransitions = None   # None means no limit
         self._currentnbTransitions = 0
 
+        # Variable used to lead the actor to a specific state
+        self.__target_state = None
+
+        # Variable used to keep track of the current state
+        self.__current_state = None
+
         # Initiate visit log, which contains the information regarding the different transitions and states visited by the actor
         self.visit_log = []
 
@@ -1974,6 +1986,10 @@ class Actor(threading.Thread):
         self._logger.debug("[actor='{}'] Stopping the current actor".format(self.name))
 
         self.__stopEvent.set()
+
+        if self.keep_open:
+            return
+
         try:
             self.abstractionLayer.closeChannel()
         except Exception as e:
@@ -2076,3 +2092,23 @@ class Actor(threading.Thread):
     @typeCheck(int)
     def nbMaxTransitions(self, nbMaxTransitions):
         self.__nbMaxTransitions = nbMaxTransitions
+
+    @public_api
+    @property
+    def target_state(self):
+        return self.__target_state
+
+    @target_state.setter  # type: ignore
+    @typeCheck(AbstractState)
+    def target_state(self, target_state):
+        self.__target_state = target_state
+
+    @public_api
+    @property
+    def current_state(self):
+        return self.__current_state
+
+    @current_state.setter  # type: ignore
+    @typeCheck(AbstractState)
+    def current_state(self, current_state):
+        self.__current_state = current_state
