@@ -494,3 +494,27 @@ def _test_bit_named_const():
     bitarray('10000111')
 
     """
+
+def _test_bit_operations():
+    r"""
+    # test capability to affect value to named bits, potentially with boolean operators
+
+    >>> from netzob.all import *
+    >>> b = BitArray('00')
+    >>> b.constants
+    ['item_0', 'item_1']
+    >>> b.constants[0] = 'Urgent flag'
+    >>> b.constants[1] = 'Data flag'
+    >>> b.constants
+    ['Urgent flag', 'Data flag']
+    >>> b['Urgent flag'] = True
+    >>> b['Data flag'] = True
+    >>> b['Urgent flag'] |= b['Data flag']
+    >>> b['Urgent flag']
+    True
+    >>> b['Urgent flag'] = False
+    >>> b['Data flag'] = True
+    >>> b['Urgent flag'] |= b['Data flag']
+    >>> b['Urgent flag']
+    True
+    """
