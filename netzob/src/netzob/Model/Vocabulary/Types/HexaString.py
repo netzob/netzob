@@ -178,7 +178,7 @@ class HexaString(AbstractType):
                     nbMaxBit = nbBytes[1] * 8
         return (nbMinBit, nbMaxBit)
 
-    def count(self, presets=None, fuzz=None):
+    def count(self):
         r"""
 
         >>> from netzob.all import *

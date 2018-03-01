@@ -273,7 +273,7 @@ class Timestamp(AbstractType):
         else:
             return "{}()".format(self.typeName)
 
-    def count(self, presets=None, fuzz=None):
+    def count(self):
         r"""
 
         >>> from netzob.all import *

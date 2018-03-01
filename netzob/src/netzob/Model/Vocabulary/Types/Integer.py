@@ -347,7 +347,7 @@ class Integer(AbstractType):
 
         return min_interval, max_interval
 
-    def count(self, presets=None, fuzz=None):
+    def count(self):
         r"""
 
         >>> from netzob.all import *

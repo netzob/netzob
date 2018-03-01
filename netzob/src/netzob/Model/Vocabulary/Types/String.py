@@ -304,7 +304,7 @@ class String(AbstractType):
 
         return Data(dataType=self, originalValue=self.value, svas=svas)
 
-    def count(self, presets=None, fuzz=None):
+    def count(self):
         r"""
 
         >>> from netzob.all import *

@@ -110,6 +110,12 @@ class DomainMutator(Mutator):
     :vartype seed: :class:`int`
     :vartype counterMax: :class:`int` or :class:`float`
 
+    In order to create a new mutator, the following methods have to be implemented:
+
+    * :meth:`~.count`
+    * :meth:`~.generate`
+    * :meth:`~.mutate`
+
     """
 
     # Constants

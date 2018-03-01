@@ -216,7 +216,7 @@ class Raw(AbstractType):
 
         return (nbMinBit, nbMaxBit)
 
-    def count(self, presets=None, fuzz=None):
+    def count(self):
         r"""
 
         >>> from netzob.all import *

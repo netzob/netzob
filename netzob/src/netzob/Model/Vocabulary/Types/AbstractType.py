@@ -267,7 +267,14 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         return hash(self.__key())
 
     @abc.abstractmethod
-    def count(self, presets=None, fuzz=None):
+    def count(self):
+        r"""The :meth:`count` method computes the number of unique
+        elements the data type can produce.
+
+        :return: The number of unique elements the data type can produce.
+        :rtype: :class:`int`
+
+        """
         raise NotImplementedError("Method count() is not implemented")
 
     @public_api
@@ -330,10 +337,10 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     @public_api
     def generate(self):
-        """Generates random data that respects the current data type.
+        """This method should generates data that respects the current data type.
 
-        :return: The value produced.
-        :rtype: :class:`bitarray`
+        :return: The data produced.
+        :rtype: :class:`bitarray <bitarray.bitarray>`
 
 
         >>> from netzob.all import *
@@ -515,20 +522,20 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     @staticmethod
     @abc.abstractmethod
     def decode(data, unitSize=None, endianness=None, sign=None):
-        """This method convert the specified data in python raw format.
+        """This method convert the data from its current encoding to :class:`bytes`.
 
-        :param data: The data encoded in current type which will be decoded in raw.
+        :param data: The data encoded in current type which will be decoded in :class:`bytes`.
         :param unitSize: The unit size of the specified data.
         :param endianness: The endianness of the specified data.
         :param sign: The sign of the specified data.
-        :type data: the current type
-        :type unitSize: :class:`int`
-        :type endianness: :class:`str`
-        :type sign: :class:`str`
+        :type data: the current type of the data, required
+        :type unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional
+        :type endianness: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Endianness`, optional
+        :type sign: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`, optional
 
-        :return: data encoded in python raw
-        :rtype: python raw
-        :raise: TypeError if parameters are not valid.
+        :return: Data encoded in :class:`bytes`
+        :rtype: :class:`bytes`
+        :raise: :class:`TypeError` if parameters are not valid.
         """
         raise NotImplementedError(
             "Internal Error: 'decode' method not implemented")
@@ -536,16 +543,16 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     @staticmethod
     @abc.abstractmethod
     def encode(data, unitSize=None, endianness=None, sign=None):
-        """This method convert the python raw data to the current type.
+        """This method convert data from :class:`bytes` to its type.
 
-        :param data: The data encoded in python raw which will be encoded in current type.
+        :param data: The data encoded in :class:`bytes` which will be encoded in its current type.
         :param unitSize: The unit size of the specified data.
         :param endianness: The endianness of the specified data.
         :param sign: The sign of the specified data.
-        :type data: python raw
-        :type unitSize: :class:`int`
-        :type endianness: :class:`str`
-        :type sign: :class:`str`
+        :type data: :class:`bytes`, required
+        :type unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional
+        :type endianness: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Endianness`, optional
+        :type sign: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`, optional
         :return: data encoded in python raw
         :rtype: python raw
         :raise: TypeError if parameters are not valid.
@@ -555,13 +562,13 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def canParse(self, data):
-        """This method computes if the specified data can be parsed
-        with the current type and its contraints
+        """This method tells if the specified data can be parsed
+        with the current type and its contraints.
 
-        :param data: the data encoded in python raw to check
-        :type data: python raw
-        :return: True if the data can be parsed will the curren type
-        :rtype: bool
+        :param data: The data to parse.
+        :type data: :class:`bitarray <bitarray.bitarray>`, required
+        :return: ``True`` if the data can be parsed will the current type
+        :rtype: :class:`bool`
         """
         raise NotImplementedError(
             "Internal Error: 'canParse' method not implemented")
