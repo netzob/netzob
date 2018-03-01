@@ -337,7 +337,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
     @public_api
     def generate(self):
-        """This method should generates data that respects the current data type.
+        """This method should generate data that respects the current data type.
 
         :return: The data produced.
         :rtype: :class:`bitarray <bitarray.bitarray>`
@@ -563,7 +563,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def canParse(self, data):
         """This method tells if the specified data can be parsed
-        with the current type and its contraints.
+        with the current type and its constraints.
 
         :param data: The data to parse.
         :type data: :class:`bitarray <bitarray.bitarray>`, required
