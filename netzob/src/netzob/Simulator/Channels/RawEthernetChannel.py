@@ -72,14 +72,13 @@ class RawEthernetChannel(AbstractChannel):
                     with the local MAC address. Read only variable.
     :vartype interface: :class:`str`
 
-
     >>> from netzob.all import *
     >>> from binascii import hexlify
     >>> client = RawEthernetChannel(interface="lo")
     >>> client.open()
-    >>> symbol = Symbol([Field("ABC")])
+    >>> symbol = Symbol([Field(Raw(b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00"))])
     >>> client.write(symbol.specialize())
-    17
+    14
     >>> client.close()
 
     """

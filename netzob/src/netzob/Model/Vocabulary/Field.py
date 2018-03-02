@@ -681,7 +681,7 @@ def _test_field_padding_callback():
 
 def _test_field_multi_type():
     r"""
-    # test field with several different type
+    # test field with several different types
 
     >>> from netzob.all import *
     >>> f_int = Field([42, Integer(43)])

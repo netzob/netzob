@@ -562,7 +562,7 @@ class Agg(AbstractVariableNode):
         path.addResult(self, data)
 
 
-def _test():
+def _test_agg():
     r"""
 
     >>> from netzob.all import *

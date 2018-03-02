@@ -722,7 +722,7 @@ class Repeat(AbstractVariableNode):
         self.__delimiter = delimiter
 
 
-def _test():
+def _test_repeat():
     r"""
 
     >>> from netzob.all import *

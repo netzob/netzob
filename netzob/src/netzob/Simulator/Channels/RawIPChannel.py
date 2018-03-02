@@ -105,6 +105,7 @@ class RawIPChannel(AbstractChannel):
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
+    35
     >>> client.close()
 
     """
@@ -374,3 +375,56 @@ class RawIPChannelBuilder(ChannelBuilder):
 
     def set_protocol(self, value):
         self.attrs['upperProtocol'] = value
+
+
+def _test_write_read_with_same_channel():
+    r"""
+
+    >>> from netzob.all import *
+    >>> client = RawIPChannel(remoteIP='127.0.0.1', timeout=1.)
+    >>> client.open()
+    >>> symbol = Symbol([Field("Hello everyone!")])
+    >>> client.write(symbol.specialize())
+    35
+    >>> client.read()
+    b'Hello everyone!'
+    >>> client.close()
+
+    """
+
+
+def _test_write_read_with_different_channels():
+    r"""
+
+    >>> from netzob.all import *
+    >>> client = RawIPChannel(remoteIP='127.0.0.1', timeout=1.)
+    >>> client.open()
+    >>> server = RawIPChannel(remoteIP='127.0.0.1', timeout=1.)
+    >>> server.open()
+    >>> symbol = Symbol([Field("Hello everyone!")])
+    >>> client.write(symbol.specialize())
+    35
+    >>> server.read()
+    b'Hello everyone!'
+    >>> client.close()
+    >>> server.close()
+
+    """
+
+
+def _test_read_before_send():
+    r"""
+
+    >>> from netzob.all import *
+    >>> client = RawIPChannel(remoteIP='127.0.0.1', timeout=1.)
+    >>> client.open()
+    >>> symbol = Symbol([Field("Hello everyone!")])
+    >>> client.write(b"some data")
+    29
+    >>> client.read()
+    b'some data'
+    >>> client.write(symbol.specialize())
+    35
+    >>> client.close()
+
+    """

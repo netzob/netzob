@@ -360,20 +360,21 @@ class Value(AbstractRelationVariableLeaf):
             raise TypeError("Operation must be a function")
         self.__operation = operation
 
-    def _test(self):
-        """
 
-        The following example shows how to define a field with a copy of
-        another field value:
+def _test_value():
+    """
 
-        >>> from netzob.all import *
-        >>> data = "john;john!"
-        >>> f3 = Field(String(nbChars=4), name="f3")
-        >>> f1 = Field(Value(f3), name="f1")
-        >>> f2 = Field(String(";"), name="f2")
-        >>> f4 = Field(String("!"), name="f4")
-        >>> s = Symbol(fields=[f1, f2, f3, f4])
-        >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-        (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
+    The following example shows how to define a field with a copy of
+    another field value:
 
-        """
+    >>> from netzob.all import *
+    >>> data = "john;john!"
+    >>> f3 = Field(String(nbChars=4), name="f3")
+    >>> f1 = Field(Value(f3), name="f1")
+    >>> f2 = Field(String(";"), name="f2")
+    >>> f4 = Field(String("!"), name="f4")
+    >>> s = Symbol(fields=[f1, f2, f3, f4])
+    >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
+    (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
+
+    """

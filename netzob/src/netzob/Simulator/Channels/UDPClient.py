@@ -300,3 +300,63 @@ class UDPClientBuilder(ChannelBuilder):
 
     def set_dst_port(self, value):
         self.attrs['remotePort'] = value
+
+
+def _test_udp():
+    r"""
+
+    >>> from netzob.all import *
+    >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999, timeout=1.)
+    >>> client.open()
+    >>> symbol = Symbol([Field("Hello everyone!")])
+    >>> client.write(symbol.specialize())
+    15
+    >>> client.close()
+
+    """
+
+
+def _test_udp_write_read():
+    r"""
+
+    >>> from netzob.all import *
+    >>> import time
+    >>> symbol = Symbol([Field("Hello everyone!")])
+    >>> s0 = State("s0")
+    >>> s1 = State("s1")
+    >>> s2 = State("s2")
+    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name='open channel')
+    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol], name='main transition')
+    >>> automata = Automata(s0, [symbol])
+
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8883, timeout=1.)
+    >>> server = Actor(automata = automata, initiator = False, channel=channel)
+
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8883, timeout=1.)
+    >>> client = Actor(automata = automata, initiator = True, channel=channel)
+    >>> client.nbMaxTransitions = 3
+
+    >>> server.start()
+    >>> client.start()
+
+    >>> time.sleep(1)
+    >>> client.stop()
+    >>> server.stop()
+    >>> print(client.generateLog())
+    Activity log for actor 'Actor':
+      [+] At state 's0'
+      [+]   Picking transition 'open channel'
+      [+]   Transition 'open channel' lead to state 's1'
+      [+] At state 's1'
+      [+]   Picking transition 'main transition'
+      [+]   During transition 'main transition', sending input symbol 'Symbol'
+      [+]   During transition 'main transition', receiving expected output symbol 'Symbol'
+      [+]   Transition 'main transition' lead to state 's1'
+      [+] At state 's1'
+      [+]   Picking transition 'main transition'
+      [+]   During transition 'main transition', sending input symbol 'Symbol'
+      [+]   During transition 'main transition', receiving expected output symbol 'Symbol'
+      [+]   Transition 'main transition' lead to state 's1'
+      [+] At state 's1', we reached the max number of transitions (3), so we stop
+
+    """

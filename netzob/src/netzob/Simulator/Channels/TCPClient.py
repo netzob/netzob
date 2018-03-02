@@ -323,3 +323,91 @@ class TCPClientBuilder(ChannelBuilder):
 
     def set_dst_port(self, value):
         self.attrs['remotePort'] = value
+
+
+def _test_tcp_write_read():
+    r"""
+
+    >>> from netzob.all import *
+    >>> import time
+    >>> import subprocess
+
+    >>> cmd = "echo 'hello' | nc -l 8884 >/dev/null"
+    >>> process = subprocess.Popen(cmd, shell=True)
+
+    >>> symbol = Symbol([Field("hello\n")])
+    >>> s0 = State("s0")
+    >>> s1 = State("s1")
+    >>> s2 = State("s2")
+    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name='open channel')
+    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol], name='main transition')
+    >>> automata = Automata(s0, [symbol])
+
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8884, timeout=1.)
+    >>> client = Actor(automata = automata, initiator = True, channel=channel, name='Client')
+    >>> client.nbMaxTransitions = 2
+
+    >>> client.start()
+    >>> time.sleep(1)
+    >>> client.wait()
+
+    >>> process.wait()
+    0
+
+    >>> print(client.generateLog())
+    Activity log for actor 'Client':
+      [+] At state 's0'
+      [+]   Picking transition 'open channel'
+      [+]   Transition 'open channel' lead to state 's1'
+      [+] At state 's1'
+      [+]   Picking transition 'main transition'
+      [+]   During transition 'main transition', sending input symbol 'Symbol'
+      [+]   During transition 'main transition', receiving expected output symbol 'Symbol'
+      [+]   Transition 'main transition' lead to state 's1'
+      [+] At state 's1', we reached the max number of transitions (2), so we stop
+
+    """
+
+
+def _test_tcp_write_read_large_packet():
+    r"""
+
+    >>> from netzob.all import *
+    >>> import time
+    >>> import subprocess
+
+    >>> cmd = "echo {} | nc -l 8884 >/dev/null".format("a" * 4096)
+    >>> process = subprocess.Popen(cmd, shell=True)
+
+    >>> symbol = Symbol([Field("a" * 4096 + "\n")])
+    >>> s0 = State("s0")
+    >>> s1 = State("s1")
+    >>> s2 = State("s2")
+    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name='open channel')
+    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol], name='main transition')
+    >>> automata = Automata(s0, [symbol])
+
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8884, timeout=1.)
+    >>> client = Actor(automata = automata, initiator = True, channel=channel, name='Client')
+    >>> client.nbMaxTransitions = 2
+
+    >>> client.start()
+    >>> time.sleep(1)
+    >>> client.wait()
+
+    >>> process.wait()
+    0
+
+    >>> print(client.generateLog())
+    Activity log for actor 'Client':
+      [+] At state 's0'
+      [+]   Picking transition 'open channel'
+      [+]   Transition 'open channel' lead to state 's1'
+      [+] At state 's1'
+      [+]   Picking transition 'main transition'
+      [+]   During transition 'main transition', sending input symbol 'Symbol'
+      [+]   During transition 'main transition', receiving expected output symbol 'Symbol'
+      [+]   Transition 'main transition' lead to state 's1'
+      [+] At state 's1', we reached the max number of transitions (2), so we stop
+
+    """

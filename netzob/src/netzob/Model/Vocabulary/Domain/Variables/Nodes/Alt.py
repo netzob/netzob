@@ -308,7 +308,7 @@ class Alt(AbstractVariableNode):
         self._callback = callback
 
 
-def _test(self):
+def _test_alt(self):
     r"""
 
     >>> from netzob.all import *

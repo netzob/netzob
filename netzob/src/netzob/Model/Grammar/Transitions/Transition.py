@@ -379,7 +379,7 @@ class Transition(AbstractTransition):
                     actor.visit_log.append("  [+]   During transition '{}', receiving unexpected symbol triggered a callback that lead to state '{}'".format(self.name, str(nextState)))
                     return nextState
                 else:
-                    actor.visit_log.append("  [+]   During transition '{}', receiving unexpected symbol, so we stay at state '{}'".format(self.name, str(self.startState)))
+                    actor.visit_log.append("  [+]   During transition '{}', receiving unexpected symbol '{}', so we stay at state '{}'".format(self.name, received_symbol, str(self.startState)))
 
                     # Return the start state so that we accept a new message
                     return self.startState

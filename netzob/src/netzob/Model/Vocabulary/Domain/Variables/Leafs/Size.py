@@ -424,7 +424,7 @@ class Size(AbstractRelationVariableLeaf):
                 "Offset cannot be None, use 0 if no offset should be applied.")
         self.__offset = offset
 
-def _test():
+def _test_size():
     r"""
     The following example shows a real example with an IP header with
     two Size fields:
