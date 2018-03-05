@@ -332,7 +332,7 @@ def _test_tcp_write_read():
     >>> import time
     >>> import subprocess
 
-    >>> cmd = "echo 'hello' | nc -l 8884 >/dev/null"
+    >>> cmd = "echo 'hello' | nc -l 8889 >/dev/null"
     >>> process = subprocess.Popen(cmd, shell=True)
 
     >>> symbol = Symbol([Field("hello\n")])
@@ -343,7 +343,7 @@ def _test_tcp_write_read():
     >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol], name='main transition')
     >>> automata = Automata(s0, [symbol])
 
-    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8884, timeout=1.)
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8889, timeout=1.)
     >>> client = Actor(automata = automata, initiator = True, channel=channel, name='Client')
     >>> client.nbMaxTransitions = 2
 
@@ -376,7 +376,7 @@ def _test_tcp_write_read_large_packet():
     >>> import time
     >>> import subprocess
 
-    >>> cmd = "echo {} | nc -l 8884 >/dev/null".format("a" * 4096)
+    >>> cmd = "echo {} | nc -l 8885 >/dev/null".format("a" * 4096)
     >>> process = subprocess.Popen(cmd, shell=True)
 
     >>> symbol = Symbol([Field("a" * 4096 + "\n")])
@@ -387,7 +387,7 @@ def _test_tcp_write_read_large_packet():
     >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol], name='main transition')
     >>> automata = Automata(s0, [symbol])
 
-    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8884, timeout=1.)
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885, timeout=1.)
     >>> client = Actor(automata = automata, initiator = True, channel=channel, name='Client')
     >>> client.nbMaxTransitions = 2
 
