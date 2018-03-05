@@ -141,7 +141,7 @@ class Fuzz(object):
             key,
             mode=MutatorMode.GENERATE,
             generator='xorshift',
-            seed=Mutator.SEED_DEFAULT,
+            seed=None,
             counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
             **kwargs):
         r"""The :meth:`set <.Fuzz.set>` method specifies the fuzzing
@@ -678,6 +678,10 @@ class Fuzz(object):
 
         """
 
+        # Handle seed value
+        if seed is None:
+            seed = Mutator.SEED_DEFAULT
+
         # Update kwargs with the first 4 parameters. This kwargs will be passed to Mutator constructors
         kwargs.update({'mode': mode, 'generator': generator, 'seed': seed, 'counterMax': counterMax})
 
@@ -1106,5 +1110,102 @@ def _test():
     4
     >>> symbol.count()
     4
+
+    """
+
+
+def _test_seed():
+    r"""
+    
+    This test verifies that the fuzzing seed ensures predictibility of generated values
+
+    >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Mutator import Mutator
+
+    >>> # Set seed for fuzzing generation
+    >>> saved_seed = Mutator.SEED_DEFAULT
+    >>> Mutator.SEED_DEFAULT = 42
+
+    >>> # Fuzz an integer
+    >>> fuzz = Fuzz()
+    >>> f_data = Field(domain=uint8())
+    >>> symbol = Symbol(fields=[f_data])
+    >>> fuzz.set(f_data)
+    >>> datas = []
+    >>> for _ in range(20):
+    ...     datas.append(next(symbol.specialize(fuzz=fuzz)))
+    >>> datas
+    [b'\x00', b's', b'T', b'\xe6', b'\xe9', b':', b'\xe3', b'`', b'{', b'\x1c', b'\xfc', b'#', b'\x96', b'\x02', b'\x12', b'\x82', b'\xb6', b'+', b'\xde', b'\x18']
+
+    >>> # Fuzz an integer
+    >>> fuzz = Fuzz()
+    >>> f_data = Field(domain=uint8())
+    >>> symbol = Symbol(fields=[f_data])
+    >>> fuzz.set(f_data)
+    >>> datas = []
+    >>> for _ in range(20):
+    ...     datas.append(next(symbol.specialize(fuzz=fuzz)))
+    >>> datas
+    [b'\x00', b's', b'T', b'\xe6', b'\xe9', b':', b'\xe3', b'`', b'{', b'\x1c', b'\xfc', b'#', b'\x96', b'\x02', b'\x12', b'\x82', b'\xb6', b'+', b'\xde', b'\x18']
+
+    >>> # Restore original seed value
+    >>> Mutator.SEED_DEFAULT = saved_seed
+
+    """
+
+
+def _test_max_mutations():
+    r"""
+
+    **Fuzzing configuration with a global maximum number of mutations**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz(counterMax=1)
+    >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
+    ...                                       int8(interval=(5, 8))]))
+    >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> fuzz.set(f_alt)
+    >>> next(symbol.specialize(fuzz=fuzz))
+    b'\x00'
+    >>> next(symbol.specialize(fuzz=fuzz))
+    Traceback (most recent call last):
+    StopIteration
+
+
+    **Fuzzing configuration with a maximum number of mutations, expressed with an absolute limit, on a symbol**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> field = Field(Agg([uint8(), uint8()]))
+    >>> symbol = Symbol([field], name="sym")
+    >>> symbol.count()
+    65536
+    >>> fuzz.set(symbol, counterMax=80)
+    >>> idx = 0
+    >>> for data in symbol.specialize(fuzz=fuzz):
+    ...     # use data
+    ...     idx += 1
+    >>> print(idx)
+    80
+
+
+    **Fuzzing configuration with a maximum number of mutations, expressed with a ratio, on a symbol**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> field = Field(Agg([uint8(), uint8()]))
+    >>> symbol = Symbol([field], name="sym")
+    >>> symbol.count()
+    65536
+    >>> int(symbol.count() * 0.001)
+    65
+    >>> fuzz.set(symbol, counterMax=0.001)
+    >>> idx = 0
+    >>> for data in symbol.specialize(fuzz=fuzz):
+    ...     # use data
+    ...     idx += 1
+    >>> print(idx)
+    65
+    >>> fuzz = Fuzz()  # This is needed to restore globalCounterMax default value for unit test purpose
 
     """
