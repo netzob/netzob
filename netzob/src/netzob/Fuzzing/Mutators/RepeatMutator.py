@@ -82,6 +82,7 @@ class RepeatMutator(DomainMutator):
 
 
     >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator
     >>> child = Data(dataType=String("abc"))
     >>> fieldRepeat = Field(Repeat(child, nbRepeat=3))
     >>> mutator = RepeatMutator(fieldRepeat.domain, interval=MutatorInterval.FULL_INTERVAL)
@@ -283,3 +284,22 @@ class RepeatMutator(DomainMutator):
             raise Exception("Length generator not initialized")
 
         return length
+
+
+def _test_fuzz_children_with_specific_mutator():
+    r"""
+
+    **Fuzzing of a repeat of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
+
+    >>> from netzob.all import *
+    >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+    >>> fuzz = Fuzz()
+    >>> f_repeat = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
+    >>> symbol = Symbol(name="sym", fields=[f_repeat])
+    >>> mapping = {}
+    >>> mapping[Integer] = {'generator':'determinist'}
+    >>> fuzz.set(f_repeat, mappingTypesMutators=mapping)
+    >>> len(next(symbol.specialize(fuzz=fuzz)))
+    512
+
+    """

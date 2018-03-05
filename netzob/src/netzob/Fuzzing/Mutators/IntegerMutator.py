@@ -527,7 +527,7 @@ def _test_determinist_generator_2():
 def _test_coverage():
     r"""
 
-    # Test to verify that the RNG covers all 8 bits values
+    # Test to verify that the RNG covers all 8 bits values without duplicate values
 
     >>> from netzob.all import *
     >>> fuzz = Fuzz()
