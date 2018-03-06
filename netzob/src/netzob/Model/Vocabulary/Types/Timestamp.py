@@ -45,13 +45,14 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger, public_api
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Sign, UnitSize
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Integer import Integer
 
 
+@public_api
 class Epoch(Enum):
     __repr__ = Enum.__str__
     WINDOWS = datetime(1601, 1, 1)
@@ -68,6 +69,7 @@ class Epoch(Enum):
     COCOA = datetime(2001, 1, 1)
 
 
+@public_api
 class Unity(Enum):
     __repr__ = Enum.__str__
     SECOND = 1
@@ -237,6 +239,7 @@ class Timestamp(AbstractType):
 
     """
 
+    @public_api
     def __init__(self,
                  value=None,
                  epoch=Epoch.UNIX,
@@ -273,6 +276,7 @@ class Timestamp(AbstractType):
         else:
             return "{}()".format(self.typeName)
 
+    @public_api
     def count(self):
         r"""
 

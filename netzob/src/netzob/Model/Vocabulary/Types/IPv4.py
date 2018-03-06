@@ -47,7 +47,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger, public_api
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
 
 
@@ -125,6 +125,7 @@ class IPv4(AbstractType):
 
     """
 
+    @public_api
     def __init__(self,
                  value=None,
                  network=None,
@@ -169,6 +170,7 @@ class IPv4(AbstractType):
         else:
             return "{}()".format(self.typeName)
 
+    @public_api
     def count(self):
         r"""
 

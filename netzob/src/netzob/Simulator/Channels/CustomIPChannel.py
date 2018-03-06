@@ -44,7 +44,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 from netzob.Model.Vocabulary.Field import Field
@@ -114,6 +114,7 @@ class CustomIPChannel(AbstractChannel):
 
     FAMILIES = ["ip"]
 
+    @public_api
     @typeCheck(str, int)
     def __init__(self,
                  remoteIP,
@@ -134,6 +135,7 @@ class CustomIPChannel(AbstractChannel):
     def getBuilder():
         return CustomIPChannelBuilder
 
+    @public_api
     def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel.
         :param timeout: The default timeout of the channel for opening
@@ -151,12 +153,14 @@ class CustomIPChannel(AbstractChannel):
         self._socket.bind((self.localIP, self.upperProtocol))
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
         if self._socket is not None:
             self._socket.close()
         self.isOpen = False
 
+    @public_api
     def read(self):
         """Read the next message on the communication channel, and return the
         IP payload.
@@ -189,6 +193,7 @@ class CustomIPChannel(AbstractChannel):
         len_data = self._socket.sendto(packet, (self.remoteIP, 0))
         return len_data
 
+    @public_api
     @typeCheck(bytes)
     def sendReceive(self, data):
         """Write on the communication channel the specified data and returns

@@ -244,6 +244,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     def description(self, description):
         self._description = description
 
+    @public_api
     def add_cbk_modify_symbol(self, cbk_method):
         """Function called during transition execution, to help
         choose/modify the output symbol to send (in a server

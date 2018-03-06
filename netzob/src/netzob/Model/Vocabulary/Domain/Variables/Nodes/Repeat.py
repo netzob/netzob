@@ -46,7 +46,7 @@ from enum import IntEnum
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
@@ -60,6 +60,7 @@ from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, Parsi
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 
 
+@public_api
 class RepeatResult(IntEnum):
     CONTINUE = 0
     STOP_BEFORE = 1
@@ -306,11 +307,13 @@ class Repeat(AbstractVariableNode):
     UNIT_SIZE = UnitSize.SIZE_8
     MAX_REPEAT = 2**UNIT_SIZE.value
 
+    @public_api
     def __init__(self, child, nbRepeat, delimiter=None):
         super(Repeat, self).__init__(self.__class__.__name__, [child])
         self.nbRepeat = nbRepeat  # type: nbRepeatType
         self.delimiter = delimiter
 
+    @public_api
     def clone(self, map_objects={}):
         if self in map_objects:
             return map_objects[self]

@@ -45,7 +45,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, public_api
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
@@ -122,6 +122,7 @@ class HexaString(AbstractType):
 
     """
 
+    @public_api
     def __init__(self,
                  value=None,
                  nbBytes=None,
@@ -178,6 +179,7 @@ class HexaString(AbstractType):
                     nbMaxBit = nbBytes[1] * 8
         return (nbMinBit, nbMaxBit)
 
+    @public_api
     def count(self):
         r"""
 

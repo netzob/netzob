@@ -95,6 +95,7 @@ class CloseChannelTransition(AbstractTransition):
 
     TYPE = "CloseChannelTransition"
 
+    @public_api
     def __init__(self, startState, endState, name=None):
         super(CloseChannelTransition, self).__init__(
             CloseChannelTransition.TYPE,
@@ -105,6 +106,7 @@ class CloseChannelTransition(AbstractTransition):
 
         self.description = "CloseChannelTransition"
 
+    @public_api
     def clone(self):
         transition = CloseChannelTransition(startState=None,
                                             endState=self.endState,

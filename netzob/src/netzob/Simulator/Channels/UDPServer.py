@@ -44,7 +44,7 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Simulator.AbstractChannel import AbstractChannel
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
@@ -121,6 +121,7 @@ class UDPServer(AbstractChannel):
 
     FAMILIES = ["udp"]
 
+    @public_api
     @typeCheck(str, int)
     def __init__(self,
                  localIP,
@@ -136,6 +137,7 @@ class UDPServer(AbstractChannel):
     def getBuilder():
         return UDPServerBuilder
 
+    @public_api
     def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel. This will open a UDP socket
         that listen for incoming messages.
@@ -155,12 +157,14 @@ class UDPServer(AbstractChannel):
         self._socket.bind((self.localIP, self.localPort))
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
         if self._socket is not None:
             self._socket.close()
         self.isOpen = False
 
+    @public_api
     def read(self):
         """Read the next message on the communication channel.
         """
@@ -183,6 +187,7 @@ class UDPServer(AbstractChannel):
             raise Exception(
                 "Socket is not available or remote address is not known.")
 
+    @public_api
     @typeCheck(bytes)
     def sendReceive(self, data):
         """Write on the communication channel the specified data and returns

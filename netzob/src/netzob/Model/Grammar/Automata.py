@@ -95,6 +95,7 @@ class Automata(object):
 
     """
 
+    @public_api
     @typeCheck(State, list)
     def __init__(self, initialState, vocabulary):
         self.initialState = initialState
@@ -104,6 +105,7 @@ class Automata(object):
         self.cbk_read_unexpected_symbol = None
         self.cbk_read_unknown_symbol = None
 
+    @public_api
     def clone(self):
         r"""Clone the current automaton.
 
@@ -163,6 +165,7 @@ class Automata(object):
 
         return automata
 
+    @public_api
     def generateASCII(self):
         """Render the ASCII representation of the automaton.
         """
@@ -186,6 +189,7 @@ class Automata(object):
 
         return result
 
+    @public_api
     def generateDotCode(self):
         """Generates the dot code representing the automaton.
 

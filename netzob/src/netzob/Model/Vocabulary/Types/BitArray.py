@@ -45,7 +45,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
@@ -165,6 +165,7 @@ class BitArray(AbstractType):
 
     """
 
+    @public_api
     def __init__(self, value=None, nbBits=None):
 
         if value is not None and nbBits is not None:
@@ -235,6 +236,7 @@ class BitArray(AbstractType):
 
         return (nbMinBit, nbMaxBit)
 
+    @public_api
     def count(self):
         r"""
 

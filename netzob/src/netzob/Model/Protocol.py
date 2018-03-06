@@ -132,6 +132,7 @@ class Protocol(object):
     # Static variables
     definitions = {}
 
+    @public_api
     def __init__(self, name, path_zdl=None):
         self.__name = name
         self.__path_zdl = path_zdl

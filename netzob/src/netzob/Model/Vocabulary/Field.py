@@ -289,6 +289,7 @@ class Field(AbstractField):
 
     """
 
+    @public_api
     def __init__(self, domain=None, name="Field", isPseudoField=False):
         super(Field, self).__init__(name)
 
@@ -314,6 +315,7 @@ class Field(AbstractField):
 
         self.isPseudoField = isPseudoField
 
+    @public_api
     def clone(self, map_objects={}):
         if self in map_objects:
             return map_objects[self]

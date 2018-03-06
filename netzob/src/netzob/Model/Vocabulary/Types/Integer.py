@@ -49,6 +49,7 @@ from typing import Iterable
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary import partialclass
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
+from netzob.Common.Utils.Decorators import public_api
 
 
 class Integer(AbstractType):
@@ -272,6 +273,7 @@ class Integer(AbstractType):
 
     """
 
+    @public_api
     def __init__(self,
                  value=None,
                  interval=None,
@@ -347,6 +349,7 @@ class Integer(AbstractType):
 
         return min_interval, max_interval
 
+    @public_api
     def count(self):
         r"""
 

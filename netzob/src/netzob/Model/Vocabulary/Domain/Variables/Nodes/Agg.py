@@ -44,7 +44,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
@@ -380,11 +380,13 @@ class Agg(AbstractVariableNode):
 
     """
 
+    @public_api
     def __init__(self, children=None, last_optional=False):
         super(Agg, self).__init__(self.__class__.__name__, children)
 
         self._last_optional = last_optional
 
+    @public_api
     def clone(self, map_objects={}):
         if self in map_objects:
             return map_objects[self]

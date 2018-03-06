@@ -42,7 +42,7 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
@@ -235,6 +235,7 @@ class Value(AbstractRelationVariableLeaf):
 
     """
 
+    @public_api
     def __init__(self, target=None, name=None, operation=None):
 
         if target is not None:
@@ -246,6 +247,7 @@ class Value(AbstractRelationVariableLeaf):
             self.__class__.__name__, targets=targets, name=name)
         self.operation = operation
 
+    @public_api
     def clone(self, map_objects={}):
         if self in map_objects:
             return map_objects[self]

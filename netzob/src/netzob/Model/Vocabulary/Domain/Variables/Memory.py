@@ -105,6 +105,7 @@ class Memory(object):
 
     """
 
+    @public_api
     def __init__(self):
         """Constructor of Memory"""
         self.memory = dict()

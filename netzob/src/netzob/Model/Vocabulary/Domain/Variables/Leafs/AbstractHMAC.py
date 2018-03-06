@@ -43,7 +43,7 @@ import abc
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger, public_api
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
@@ -90,6 +90,7 @@ class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
 
     ## Internal methods ##
 
+    @public_api
     def __init__(self, targets, key, dataType=None, name=None):
         if dataType is None:
             dataType = Raw(nbBytes=self.getByteSize())
@@ -99,6 +100,7 @@ class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
                                            name=name)
         self.key = key
 
+    @public_api
     def clone(self, map_objects={}):
         if self in map_objects:
             return map_objects[self]

@@ -44,7 +44,7 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Simulator.AbstractChannel import AbstractChannel, ChannelDownException
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
@@ -128,7 +128,7 @@ class TCPClient(AbstractChannel):
 
     FAMILIES = ["tcp"]
 
-
+    @public_api
     def __init__(self,
                  remoteIP,
                  remotePort,
@@ -145,6 +145,7 @@ class TCPClient(AbstractChannel):
     def getBuilder():
         return TCPClientBuilder
 
+    @public_api
     def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
@@ -168,12 +169,14 @@ class TCPClient(AbstractChannel):
         self._socket.connect((self.remoteIP, self.remotePort))
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
         if self._socket is not None:
             self._socket.close()
         self.isOpen = False
 
+    @public_api
     def read(self):
         """Reads the next message on the communication channel.
         Continues to read while it receives something.
@@ -213,6 +216,7 @@ class TCPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
+    @public_api
     @typeCheck(bytes)
     def sendReceive(self, data):
         """Write on the communication channel the specified data and returns

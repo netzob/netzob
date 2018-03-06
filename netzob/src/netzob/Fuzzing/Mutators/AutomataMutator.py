@@ -53,6 +53,7 @@ from netzob.Model.Grammar.Transitions.OpenChannelTransition import OpenChannelTr
 from netzob.Model.Grammar.States.State import State  # noqa: F401
 
 
+@public_api
 class AutomataMutatorStrategy(Enum):
     """The :class:`AutomataMutator` strategy enumeration."""
     __repr__ = Enum.__str__
@@ -71,6 +72,7 @@ class AutomataMutator(Mutator):
 
     """
 
+    @public_api
     def __init__(self,
                  automata,  # type: Automata
                  generator='xorshift',

@@ -45,7 +45,7 @@ from typing import Callable, Union
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Simulator.AbstractChannel import AbstractChannel
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
@@ -79,6 +79,7 @@ class DebugChannel(AbstractChannel):
         "stderr": sys.stderr
     }
 
+    @public_api
     @typeCheck((str, io.IOBase))
     def __init__(self,
                  stream,  # type: Union[str, io.IOBase]
@@ -92,6 +93,7 @@ class DebugChannel(AbstractChannel):
     def getBuilder():
         return DebugChannelBuilder
 
+    @public_api
     def open(self, timeout=5.):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
@@ -110,12 +112,14 @@ class DebugChannel(AbstractChannel):
             self._stream = open(self._stream, 'w')
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
         if self.isOpen:
             self._stream.close()
         self.isOpen = False
 
+    @public_api
     def read(self):
         """Do nothing
         """
@@ -128,6 +132,7 @@ class DebugChannel(AbstractChannel):
         """
         return self._stream.write(repr(data))
 
+    @public_api
     def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
@@ -139,6 +144,7 @@ class DebugChannel(AbstractChannel):
         self.write(data)
         return self.read()
 
+    @public_api
     def checkReceived(self,
                       predicate,  # type: Callable[..., bool]
                       *args, **kwargs):

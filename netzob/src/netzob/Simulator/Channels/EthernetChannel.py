@@ -45,7 +45,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 from netzob.Model.Vocabulary.Field import Field
@@ -103,6 +103,7 @@ class EthernetChannel(AbstractChannel):
     ETH_P_ALL = 3
     FAMILIES = ["ethernet"]
 
+    @public_api
     @typeCheck(str, str)
     def __init__(self,
                  remoteMac,
@@ -148,6 +149,7 @@ class EthernetChannel(AbstractChannel):
                                                             eth_payload,
                                                             eth_padding])
 
+    @public_api
     def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
@@ -170,12 +172,14 @@ class EthernetChannel(AbstractChannel):
         self._socket.bind((self.interface, EthernetChannel.ETH_P_ALL))
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
         if self._socket is not None:
             self._socket.close()
         self.isOpen = False
 
+    @public_api
     def read(self):
         """Read the next message on the communication channel.
         """
@@ -191,6 +195,7 @@ class EthernetChannel(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
+    @public_api
     def sendReceive(self, data):
         """Write on the communication channel and returns the next packet
         coming from the destination address.

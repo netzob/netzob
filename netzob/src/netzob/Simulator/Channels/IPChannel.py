@@ -43,7 +43,7 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Simulator.AbstractChannel import AbstractChannel
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
@@ -99,6 +99,7 @@ class IPChannel(AbstractChannel):
 
     FAMILIES = ["ip"]
 
+    @public_api
     @typeCheck(str, int)
     def __init__(self,
                  remoteIP,
@@ -114,6 +115,7 @@ class IPChannel(AbstractChannel):
     def getBuilder():
         return IPChannelBuilder
 
+    @public_api
     def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
@@ -136,12 +138,14 @@ class IPChannel(AbstractChannel):
         self._socket.bind((self.localIP, 0))
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
         if self._socket is not None:
             self._socket.close()
         self.isOpen = False
 
+    @public_api
     def read(self):
         """Read the next message on the communication channel.
         """
@@ -167,6 +171,7 @@ class IPChannel(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
+    @public_api
     def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.

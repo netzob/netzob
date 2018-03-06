@@ -1918,6 +1918,7 @@ class Actor(Thread):
 
     """
 
+    @public_api
     def __init__(self,
                  automata,          # type: Automata
                  channel,           # type: AbstractType

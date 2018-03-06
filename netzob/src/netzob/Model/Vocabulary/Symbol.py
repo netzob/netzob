@@ -36,6 +36,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 from bitarray import bitarray
+from typing import Dict, Union  # noqa: F401
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -53,6 +54,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
+from netzob.Fuzzing.Fuzz import Fuzz
 
 
 @NetzobLogger
@@ -149,6 +151,7 @@ class Symbol(AbstractField):
 
     """
 
+    @public_api
     def __init__(self, fields=None, messages=None, name="Symbol"):
         super(Symbol, self).__init__(name)
         self.__messages = TypedList(AbstractMessage)
@@ -160,6 +163,7 @@ class Symbol(AbstractField):
             fields = [Field()]
         self.fields = fields
 
+    @public_api
     def clone(self, map_objects={}):
         if self in map_objects:
             return map_objects[self]
@@ -199,7 +203,10 @@ class Symbol(AbstractField):
         return id(self)
 
     @public_api
-    def specialize(self, presets=None, fuzz=None, memory=None):
+    def specialize(self,
+                   presets: Dict[Union[str, Field], Union[bitarray, bytes, AbstractType]] = None,
+                   fuzz: Fuzz = None,
+                   memory: Memory = None) -> bytes:
         r"""The :meth:`specialize()` method generates a :class:`bytes` sequence whose
         content follows the symbol definition.
 

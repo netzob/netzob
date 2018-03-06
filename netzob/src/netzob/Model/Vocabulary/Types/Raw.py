@@ -46,6 +46,7 @@ from bitarray import bitarray
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Common.Utils.Decorators import public_api
 
 
 class Raw(AbstractType):
@@ -133,6 +134,7 @@ class Raw(AbstractType):
 
     """
 
+    @public_api
     def __init__(self,
                  value=None,
                  nbBytes=None,
@@ -216,6 +218,7 @@ class Raw(AbstractType):
 
         return (nbMinBit, nbMaxBit)
 
+    @public_api
     def count(self):
         r"""
 

@@ -49,7 +49,7 @@ from bitarray import bitarray
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
-from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
+from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck, public_api
 
 
 @NetzobLogger
@@ -187,6 +187,7 @@ class String(AbstractType):
 
     """
 
+    @public_api
     def __init__(self,
                  value=None,
                  nbChars=None,
@@ -304,6 +305,7 @@ class String(AbstractType):
 
         return Data(dataType=self, originalValue=self.value, scope=scope)
 
+    @public_api
     def count(self):
         r"""
 

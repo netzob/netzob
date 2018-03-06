@@ -43,9 +43,10 @@ from enum import Enum
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger, public_api
 
 
+@public_api
 @NetzobLogger
 class Scope(Enum):
     """This class represents the Assignment Strategy of a variable.

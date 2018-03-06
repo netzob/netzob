@@ -50,7 +50,6 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType  # noqa: F401
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.Integer import Integer
@@ -72,7 +71,7 @@ from netzob.Fuzzing.Mutators.IPv4Mutator import IPv4Mutator
 from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
 from netzob.Fuzzing.Mutators.RawMutator import RawMutator
 from netzob.Fuzzing.Mutators.HexaStringMutator import HexaStringMutator
-from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger, public_api
 
 
 class MaxFuzzingException(Exception):
@@ -123,6 +122,7 @@ class Fuzz(object):
         Fuzz.mappingTypesMutators[Alt] = (AltMutator, {})
         Fuzz.mappingTypesMutators[Agg] = (AggMutator, {})
 
+    @public_api
     def __init__(self, counterMax=DomainMutator.COUNTER_MAX_DEFAULT):
         # type: (Union[int, float]) -> None
 
@@ -137,6 +137,7 @@ class Fuzz(object):
         # Initialize mapping between Field/Symbols and Mutators
         self.mappingFieldsMutators = Fuzz.mappingFieldsMutators
 
+    @public_api
     def set(self,
             key,
             mode=MutatorMode.GENERATE,
@@ -707,6 +708,7 @@ class Fuzz(object):
         else:
             raise TypeError("Unsupported type for key: '{}'".format(type(key)))
 
+    @public_api
     def unset(self, key):
         r"""The :meth:`unset <.Fuzz.set>` method deactivates the fuzzing for a
         symbol, a field or a variable. It is not possible to unset the
@@ -738,6 +740,8 @@ class Fuzz(object):
 
 
         """
+
+        from netzob.Model.Vocabulary.Symbol import Symbol
 
         keys_to_remove = []
         # Handle case where k is a Variable -> nothing to do
@@ -855,6 +859,8 @@ class Fuzz(object):
         symbol/field/variable.
 
         """
+        from netzob.Model.Vocabulary.Symbol import Symbol
+
         # Normalize fuzzing keys
         new_keys = {}
         keys_to_remove = []
@@ -989,10 +995,18 @@ class Fuzz(object):
 
     @property
     def counterMax(self):
+        """The maximum number of mutations to produce.
+
+        :getter: Returns the maximum number of mutations.
+        :setter: Sets the maximum number of mutations.
+        :type: :class:`int` or :class:`float`
+
+        """
         return DomainMutator.globalCounterMax
 
+    @public_api
     @counterMax.setter  # type: ignore
-    def counterMax(self, counterMax):
+    def counterMax(self, counterMax: Integer):
         DomainMutator.globalCounterMax = counterMax
 
 

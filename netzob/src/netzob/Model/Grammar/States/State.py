@@ -89,10 +89,12 @@ class State(AbstractState):
 
     """
 
+    @public_api
     def __init__(self, name=None):
         super(State, self).__init__(name=name)
         self.__transitions = []
 
+    @public_api
     def clone(self):
         state = State(name=self.name)
         state.transitions = self.transitions

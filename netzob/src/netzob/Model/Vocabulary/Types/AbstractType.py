@@ -52,6 +52,7 @@ from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 
 
+@public_api
 class Endianness(Enum):
     """Enum class used to specify the endianness of a type.
     """
@@ -62,6 +63,7 @@ class Endianness(Enum):
     __repr__ = Enum.__str__
 
 
+@public_api
 class Sign(Enum):
     """Enum class used to specify the sign of a type.
     """
@@ -72,6 +74,7 @@ class Sign(Enum):
     __repr__ = Enum.__str__
 
 
+@public_api
 class UnitSize(Enum):
     """Enum class used to specify the unit size of a type (i.e. the space in bits that a unitary element takes up).
     """
@@ -182,6 +185,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """
         return Sign.SIGNED
 
+    @public_api
     def __init__(self,
                  typeName,
                  value,

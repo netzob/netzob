@@ -43,6 +43,7 @@ import abc
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Utils.Decorators import public_api
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
@@ -90,6 +91,7 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
 
     ## Internal methods ##
 
+    @public_api
     def __init__(self, targets, dataType=None, name=None):
         if dataType is None:
             dataType = Raw(nbBytes=self.getByteSize())
@@ -98,6 +100,7 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
                                            targets=targets,
                                            name=name)
 
+    @public_api
     def clone(self, map_objects={}):
         if self in map_objects:
             return map_objects[self]

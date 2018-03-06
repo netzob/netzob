@@ -155,6 +155,7 @@ class Transition(AbstractTransition):
 
     TYPE = "Transition"
 
+    @public_api
     def __init__(self,
                  startState,
                  endState,
@@ -191,6 +192,7 @@ class Transition(AbstractTransition):
         self.rate = rate
         self.duration = duration
 
+    @public_api
     def clone(self):
         transition = Transition(startState=None,
                                 endState=self.endState,

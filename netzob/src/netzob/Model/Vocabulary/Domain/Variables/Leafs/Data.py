@@ -122,6 +122,7 @@ class Data(AbstractVariableLeaf):
 
     """
 
+    @public_api
     def __init__(self, dataType, originalValue=None, name=None, scope=None):
         super(Data, self).__init__(
             self.__class__.__name__, name=name, scope=scope)
@@ -129,6 +130,7 @@ class Data(AbstractVariableLeaf):
         self.dataType = dataType
         self.currentValue = originalValue
 
+    @public_api
     def clone(self, map_objects={}):
         if self in map_objects:
             return map_objects[self]

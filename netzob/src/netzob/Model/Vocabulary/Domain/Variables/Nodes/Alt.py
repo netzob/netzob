@@ -176,10 +176,12 @@ class Alt(AbstractVariableNode):
 
     """
 
+    @public_api
     def __init__(self, children=None, callback=None):
         super(Alt, self).__init__(self.__class__.__name__, children)
         self._callback = callback  # type: altCbkType
 
+    @public_api
     def clone(self, map_objects={}):
         if self in map_objects:
             return map_objects[self]

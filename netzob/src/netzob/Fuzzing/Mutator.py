@@ -45,7 +45,6 @@ from enum import Enum
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Model.Grammar.Automata import Automata  # noqa: F401
 from netzob.Common.Utils.Constant import Constant
 from netzob.Common.Utils.Decorators import NetzobLogger
 

@@ -126,6 +126,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
             raise TypeError("The active info cannot be None")
         self.__active = active
 
+    @public_api
     def add_cbk_modify_transition(self, cbk_method):
         """Add a function called during state execution to help choose the
         next transition (in a client context) or modifying the current

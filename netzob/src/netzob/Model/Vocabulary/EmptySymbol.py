@@ -42,7 +42,7 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import public_api
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 
@@ -55,6 +55,7 @@ class EmptySymbol(Symbol):
 
     """
 
+    @public_api
     def __init__(self):
         super(EmptySymbol, self).__init__(
             fields=None, name="Empty Symbol", messages=[RawMessage()])

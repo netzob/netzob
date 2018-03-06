@@ -53,7 +53,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.Mutator import MutatorMode
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
-from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger, public_api
 
 
 class MutatorInterval(Enum):
@@ -126,6 +126,7 @@ class DomainMutator(Mutator):
     # Class variables
     globalCounterMax = COUNTER_MAX_DEFAULT
 
+    @public_api
     def __init__(self,
                  domain,
                  mode=MutatorMode.GENERATE,  # type: MutatorMode
@@ -154,6 +155,7 @@ class DomainMutator(Mutator):
 
     # API methods
 
+    @public_api
     @abc.abstractmethod
     def count(self):
         r"""Computes the expected number of unique values produced, considering
@@ -165,6 +167,7 @@ class DomainMutator(Mutator):
         """
         pass
 
+    @public_api
     def generate(self):
         """This is the fuzz generation method of the field domain. It has to
         be overridden by all the inherited mutators which call the
@@ -185,6 +188,7 @@ class DomainMutator(Mutator):
 
         self._currentCounter += 1
 
+    @public_api
     def mutate(self, data):
         """This is the mutation method of the field domain. It has to be
         overridden by all the inherited mutators which call the

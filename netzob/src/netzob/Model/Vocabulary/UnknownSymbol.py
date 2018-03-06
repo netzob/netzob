@@ -42,7 +42,7 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
@@ -82,6 +82,7 @@ class UnknownSymbol(Symbol):
 
     """
 
+    @public_api
     def __init__(self, message=None):
         self.message = message
         name_suffix = ""
