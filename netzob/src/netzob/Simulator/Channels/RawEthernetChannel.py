@@ -45,7 +45,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Simulator.AbstractChannel import AbstractChannel
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
@@ -88,6 +88,7 @@ class RawEthernetChannel(AbstractChannel):
     ETH_P_ALL = 3
     FAMILIES = ["ethernet"]
 
+    @public_api
     @typeCheck(str, str)
     def __init__(self,
                  interface,
@@ -99,6 +100,7 @@ class RawEthernetChannel(AbstractChannel):
     def getBuilder():
         return RawEthernetChannelBuilder
 
+    @public_api
     def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a client, it
         starts to connect to the specified server.
@@ -122,12 +124,14 @@ class RawEthernetChannel(AbstractChannel):
 
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
         if self._socket is not None:
             self._socket.close()
         self.isOpen = False
 
+    @public_api
     def read(self):
         """Read the next message on the communication channel.
         """
@@ -137,6 +141,7 @@ class RawEthernetChannel(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
+    @public_api
     def sendReceive(self, data):
         """Write on the communication channel and returns the next packet
         coming from the destination address.
@@ -154,22 +159,6 @@ class RawEthernetChannel(AbstractChannel):
                     return data
         else:
             raise Exception("socket is not available")
-
-    def write(self, data, rate=None, duration=None):
-        """Write to the communication channel the specified data.
-
-        :param data: The data to write on the channel.
-        :param rate: This specifies the bandwidth in octets to respect during
-                     traffic emission (should be used with duration=parameter).
-        :param duration: This tells how much seconds the symbol is continuously
-                         written on the channel.
-        :type data: :class:`bytes`, required
-        :type rate: :class:`int`, optional
-        :type duration: :class:`int`, optional
-        :return: The amount of written data, in bytes.
-        :rtype: :class:`int`
-        """
-        return super().write(data, rate=rate, duration=duration)
 
     def writePacket(self, data):
         """Write on the communication channel the specified data
