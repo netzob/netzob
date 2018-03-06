@@ -332,7 +332,7 @@ def _test_tcp_write_read():
     >>> import time
     >>> import subprocess
 
-    >>> cmd = "echo 'hello' | nc -l 8889 >/dev/null"
+    >>> cmd = "echo 'hello' | nc -lp 8889 >/dev/null"
     >>> process = subprocess.Popen(cmd, shell=True)
 
     >>> symbol = Symbol([Field("hello\n")])
@@ -376,7 +376,7 @@ def _test_tcp_write_read_large_packet():
     >>> import time
     >>> import subprocess
 
-    >>> cmd = "echo {} | nc -l 8885 >/dev/null".format("a" * 4096)
+    >>> cmd = "echo {} | nc -lp 8885 >/dev/null".format("a" * 4096)
     >>> process = subprocess.Popen(cmd, shell=True)
 
     >>> symbol = Symbol([Field("a" * 4096 + "\n")])
