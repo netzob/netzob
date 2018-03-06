@@ -2375,7 +2375,7 @@ def _test_context():
     >>> alice_symbolList = [alice_symbol_input]
     >>>
     >>> # Output symbol
-    >>> alice_var_integer = Data(uint32(), svas=SVAS.EPHEMERAL, name='Alice integer')
+    >>> alice_var_integer = Data(uint32(), scope=Scope.MESSAGE, name='Alice integer')
     >>> alice_f1_output = Field("hello", name="Alice Field f1")
     >>> alice_f2_output = Field(alice_var_integer, name="Alice Field f2")
     >>> alice_symbol_output = Symbol(name="Alice Output Symbol", fields=[alice_f1_output, alice_f2_output])

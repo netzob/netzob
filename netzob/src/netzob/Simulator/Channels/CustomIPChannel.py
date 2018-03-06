@@ -57,7 +57,7 @@ from netzob.Model.Vocabulary.Types.AbstractType import Endianness, Sign, UnitSiz
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Size import Size
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Checksums.InternetChecksum import InternetChecksum
-from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 
 
 
@@ -236,13 +236,13 @@ class CustomIPChannel(AbstractChannel):
             domain=Data(
                 dataType=BitArray(nbBits=8),
                 originalValue=bitarray('00000000'),
-                svas=SVAS.PERSISTENT))
+                scope=Scope.SESSION))
         ip_tot_len = Field(
             name='ip.len', domain=BitArray('0000000000000000'))
         ip_id = Field(name='ip.id', domain=BitArray(nbBits=16))
-        ip_flags = Field(name='ip.flags', domain=Data(dataType=BitArray(nbBits=3), originalValue=bitarray('000'), svas=SVAS.PERSISTENT))
-        ip_frag_off = Field(name='ip.fragment', domain=Data(dataType=BitArray(nbBits=13), originalValue=bitarray('0000000000000'), svas=SVAS.PERSISTENT))
-        ip_ttl = Field(name='ip.ttl', domain=Data(dataType=BitArray(nbBits=8), originalValue=bitarray('01000000'), svas=SVAS.PERSISTENT))
+        ip_flags = Field(name='ip.flags', domain=Data(dataType=BitArray(nbBits=3), originalValue=bitarray('000'), scope=Scope.SESSION))
+        ip_frag_off = Field(name='ip.fragment', domain=Data(dataType=BitArray(nbBits=13), originalValue=bitarray('0000000000000'), scope=Scope.SESSION))
+        ip_ttl = Field(name='ip.ttl', domain=Data(dataType=BitArray(nbBits=8), originalValue=bitarray('01000000'), scope=Scope.SESSION))
         ip_proto = Field(name='ip.proto', domain=Integer(value=self.upperProtocol, unitSize=UnitSize.SIZE_8, endianness=Endianness.BIG, sign=Sign.UNSIGNED))
         ip_checksum = Field(name='ip.checksum', domain=BitArray('0000000000000000'))
         ip_saddr = Field(name='ip.src', domain=IPv4(self.localIP))

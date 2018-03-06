@@ -47,33 +47,33 @@ from netzob.Common.Utils.Decorators import NetzobLogger
 
 
 @NetzobLogger
-class SVAS(Enum):
+class Scope(Enum):
     """This class represents the Assignment Strategy of a variable.
 
-    The State Variable Assignment Strategy (SVAS) of a variable
-    defines how its value is used while abstracting and specializing,
-    and therefore impacts the memorization strategy.
+    The scope of a variable defines how its value is used while
+    abstracting and specializing, and therefore impacts the
+    memorization strategy.
 
-    A `SVAS` strategy can be attached to a variable and is used both
-    when abstracting and specializing. A SVAS strategy describes the
+    A scope strategy can be attached to a variable and is used both
+    when abstracting and specializing. A scope strategy describes the
     set of memory operations that must be performed each time a
     variable is abstracted or specialized. These operations can be
     separated into two groups: those used during the abstraction and
     those used during the specialization.
 
-    The available SVAS strategies for a variable are:
+    The available scope strategies for a variable are:
 
-    * SVAS.CONSTANT
-    * SVAS.EPHEMERAL (the default strategy for variables)
-    * SVAS.VOLATILE
-    * SVAS.PERSISTENT
+    * Scope.CONSTANT
+    * Scope.MESSAGE (the default strategy for variables)
+    * Scope.NONE
+    * Scope.SESSION
 
     Those strategies are explained below. In addition, some following
     examples are shown in order to understand how the strategies can
     be applied during abstraction and specialization of Field with
     Data variables.
 
-    * **SVAS.CONSTANT**: A constant value denotes a static content
+    * **Scope.CONSTANT**: A constant value denotes a static content
       defined once and for all in the protocol. When abstracting, the
       concrete value is compared with the symbolic value, which is a
       constant and succeeds only if it matches. On the other hand, the
@@ -90,7 +90,7 @@ class SVAS(Enum):
       >>> from netzob.all import *
       >>> f = Field(name='f1')
       >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, svas=SVAS.CONSTANT)
+      >>> f.domain = Data(String(), originalValue=value, scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> Symbol.abstract("john", [s], memory=m)
@@ -103,7 +103,7 @@ class SVAS(Enum):
       >>> from netzob.all import *
       >>> f = Field(name='f1')
       >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, svas=SVAS.CONSTANT)
+      >>> f.domain = Data(String(), originalValue=value, scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> Symbol.abstract("kurt", [s], memory=m)
@@ -115,7 +115,7 @@ class SVAS(Enum):
       >>> from netzob.all import *
       >>> f = Field(name='f1')
       >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, svas=SVAS.CONSTANT)
+      >>> f.domain = Data(String(), originalValue=value, scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> s.specialize(memory=m)
@@ -131,7 +131,7 @@ class SVAS(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(5, 10)), svas=SVAS.CONSTANT)
+      >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> s.specialize(memory=m)
@@ -140,7 +140,7 @@ class SVAS(Enum):
       Exception: Cannot specialize this symbol.
 
 
-    * **SVAS.PERSISTENT**: A persistent value carries a value, such as
+    * **Scope.SESSION**: A persistent value carries a value, such as
       a session identifier, generated and memorized during its first
       specialization and reused as such in the remainder of the
       session. Conversely, the first time a persistent field such as this is
@@ -155,7 +155,7 @@ class SVAS(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(5, 10)), svas=SVAS.PERSISTENT)
+      >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.SESSION)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> Symbol.abstract("dylan", [s], memory=m)
@@ -169,7 +169,7 @@ class SVAS(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(5, 10)), svas=SVAS.PERSISTENT)
+      >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.SESSION)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> Symbol.abstract("kurt", [s], memory=m)
@@ -182,7 +182,7 @@ class SVAS(Enum):
       >>> from netzob.all import *
       >>> f = Field(name='f1')
       >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, svas=SVAS.PERSISTENT)
+      >>> f.domain = Data(String(), originalValue=value, scope=Scope.SESSION)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> s.specialize(memory=m)
@@ -192,7 +192,7 @@ class SVAS(Enum):
 
       >>> from netzob.all import *
       >>> f = Field()
-      >>> f.domain = Data(String(nbChars=5), svas=SVAS.PERSISTENT)
+      >>> f.domain = Data(String(nbChars=5), scope=Scope.SESSION)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> generated1 = s.specialize(memory=m)
@@ -207,7 +207,7 @@ class SVAS(Enum):
       True
   
 
-    * **SVAS.EPHEMERAL**: The value of an ephemeral variable is
+    * **Scope.MESSAGE**: The value of an ephemeral variable is
       regenerated each time it is specialized. The generated value is
       memorized, and can then be used afterwards to abstract or
       specialize other fields. During abstraction, the value of this
@@ -223,7 +223,7 @@ class SVAS(Enum):
   
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(4, 10)), svas=SVAS.EPHEMERAL)
+      >>> f.domain = Data(String(nbChars=(4, 10)), scope=Scope.MESSAGE)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> Symbol.abstract("john", [s], memory=m)
@@ -246,7 +246,7 @@ class SVAS(Enum):
       >>> from netzob.all import *
       >>> f = Field(name='f1')
       >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, svas=SVAS.EPHEMERAL)
+      >>> f.domain = Data(String(), originalValue=value, scope=Scope.MESSAGE)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> m.hasValue(f.domain)
@@ -259,7 +259,7 @@ class SVAS(Enum):
       True
 
 
-    * **SVAS.VOLATILE**: A volatile variable denotes a value which
+    * **Scope.NONE**: A volatile variable denotes a value which
       changes whenever it is specialized and is never
       memorized. It can be seen as an optimization of an ephemeral
       variable to reduce memory usage. Thus, the abstraction
@@ -273,7 +273,7 @@ class SVAS(Enum):
   
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(4, 10)), svas=SVAS.VOLATILE)
+      >>> f.domain = Data(String(nbChars=(4, 10)), scope=Scope.NONE)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> Symbol.abstract("john", [s], memory=m)
@@ -295,7 +295,7 @@ class SVAS(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(5,10)), svas=SVAS.VOLATILE)
+      >>> f.domain = Data(String(nbChars=(5,10)), scope=Scope.NONE)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> m.hasValue(f.domain)
@@ -306,7 +306,7 @@ class SVAS(Enum):
 
     """
 
-    CONSTANT = "Constant SVAS"
-    EPHEMERAL = "Ephemeral SVAS"
-    VOLATILE = "Volatile SVAS"
-    PERSISTENT = "Persistent SVAS"
+    CONSTANT = "Constant Scope"
+    SESSION = "Persistent Scope"
+    MESSAGE = "Ephemeral Scope"
+    NONE = "Volatile Scope"

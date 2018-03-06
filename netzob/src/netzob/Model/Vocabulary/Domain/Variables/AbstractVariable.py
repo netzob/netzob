@@ -46,7 +46,7 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 
 
 class AbstractVariable(object):
@@ -55,7 +55,7 @@ class AbstractVariable(object):
     This class is abstract and so should not be instantiated directly.
     """
 
-    def __init__(self, varType, name=None, svas=None):
+    def __init__(self, varType, name=None, scope=None):
         """Constructor
 
         :param varType: the type of the variable. we highly recommend using the __class_.__name__
@@ -70,9 +70,9 @@ class AbstractVariable(object):
             self.name = str(varType)
 
         self.__varType = varType
-        if svas is None:
-            svas = SVAS.EPHEMERAL
-        self.svas = svas
+        if scope is None:
+            scope = Scope.MESSAGE
+        self.scope = scope
 
         # Parent field
         self.field = None
@@ -165,18 +165,18 @@ class AbstractVariable(object):
         self.__name = name
 
     @property
-    def svas(self):
-        """The svas of the variable.
+    def scope(self):
+        """The scope of the variable.
 
         :type: :class:`object`
         """
-        return self.__svas
+        return self.__scope
 
-    @svas.setter  # type: ignore
-    def svas(self, svas):
-        if svas is None:
-            raise ValueError("svas cannot be None")
-        self.__svas = svas
+    @scope.setter  # type: ignore
+    def scope(self, scope):
+        if scope is None:
+            raise ValueError("scope cannot be None")
+        self.__scope = scope
 
     @property
     def field(self):

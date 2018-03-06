@@ -46,7 +46,7 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
@@ -61,9 +61,9 @@ class AbstractVariableLeaf(AbstractVariable):
 
     """
 
-    def __init__(self, varType, name=None, dataType=None, svas=None):
+    def __init__(self, varType, name=None, dataType=None, scope=None):
         super(AbstractVariableLeaf, self).__init__(
-            varType, name=name, svas=svas)
+            varType, name=name, scope=scope)
 
         self.dataType = dataType
 
@@ -82,38 +82,38 @@ class AbstractVariableLeaf(AbstractVariable):
     def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """@toto TO BE DOCUMENTED"""
 
-        if self.svas is None:
+        if self.scope is None:
             raise Exception(
-                "Cannot parse if the variable has no assigned SVAS.")
+                "Cannot parse if the variable has no assigned Scope.")
 
         try:
             if self.isDefined(parsingPath):
-                if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
+                if self.scope == Scope.CONSTANT or self.scope == Scope.SESSION:
                     return self.valueCMP(
                         parsingPath, acceptCallBack, carnivorous=carnivorous)
-                elif self.svas == SVAS.EPHEMERAL:
+                elif self.scope == Scope.MESSAGE:
                     return self.learn(
                         parsingPath, acceptCallBack, carnivorous=carnivorous)
-                elif self.svas == SVAS.VOLATILE:
+                elif self.scope == Scope.NONE:
                     return self.domainCMP(
                         parsingPath, acceptCallBack, carnivorous=carnivorous)
             else:
-                if self.svas == SVAS.CONSTANT:
+                if self.scope == Scope.CONSTANT:
                     self._logger.debug(
-                        "Cannot parse '{0}' as svas is CONSTANT and no value is available.".
+                        "Cannot parse '{0}' as scope is CONSTANT and no value is available.".
                         format(self))
                     return []
-                elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
+                elif self.scope == Scope.MESSAGE or self.scope == Scope.SESSION:
                     return self.learn(
                         parsingPath, acceptCallBack, carnivorous=carnivorous)
-                elif self.svas == SVAS.VOLATILE:
+                elif self.scope == Scope.NONE:
                     return self.domainCMP(
                         parsingPath, acceptCallBack, carnivorous=carnivorous)
         except ParsingException:
             self._logger.info("Error in parsing of variable")
             return []
 
-        raise Exception("Not yet implemented: {0}.".format(self.svas))
+        raise Exception("Not yet implemented: {0}.".format(self.scope))
 
     #
     # methods that must be defined to support the abstraction process
@@ -168,26 +168,26 @@ class AbstractVariableLeaf(AbstractVariable):
 
             return fuzz_generate()
 
-        if self.svas is None:
+        if self.scope is None:
             raise Exception(
-                "Cannot specialize if the variable has no assigned SVAS.")
+                "Cannot specialize if the variable has no assigned Scope.")
 
         if self.isDefined(parsingPath):
-            if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
+            if self.scope == Scope.CONSTANT or self.scope == Scope.SESSION:
                 newParsingPaths = self.use(parsingPath, acceptCallBack)
-            elif self.svas == SVAS.EPHEMERAL:
+            elif self.scope == Scope.MESSAGE:
                 newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack)
-            elif self.svas == SVAS.VOLATILE:
+            elif self.scope == Scope.NONE:
                 newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
         else:
-            if self.svas == SVAS.CONSTANT:
+            if self.scope == Scope.CONSTANT:
                 self._logger.debug(
-                    "Cannot specialize '{0}' as svas is CONSTANT and no value is available.".
+                    "Cannot specialize '{0}' as scope is CONSTANT and no value is available.".
                     format(self))
                 newParsingPaths = iter(())
-            elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
+            elif self.scope == Scope.MESSAGE or self.scope == Scope.SESSION:
                 newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack)
-            elif self.svas == SVAS.VOLATILE:
+            elif self.scope == Scope.NONE:
                 newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
 
         if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.MUTATE:

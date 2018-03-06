@@ -50,7 +50,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
@@ -84,7 +84,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
         # Call super
         super(AbstractRelationVariableLeaf, self).__init__(
-            varType, name, dataType=dataType, svas=SVAS.VOLATILE)
+            varType, name, dataType=dataType, scope=Scope.NONE)
 
         self.targets = targets
 

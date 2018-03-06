@@ -47,7 +47,7 @@ from bitarray import bitarray
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
-from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Common.Utils.Decorators import NetzobLogger, typeCheck
 
@@ -296,13 +296,13 @@ class String(AbstractType):
         :rtype: :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leads.Data.Data>`
 
         """
-        svas = SVAS.EPHEMERAL
+        scope = Scope.MESSAGE
 
         # Do not use constant when some EOS values has been set
         if self.value is not None and not self.eos:
-            svas = SVAS.CONSTANT
+            scope = Scope.CONSTANT
 
-        return Data(dataType=self, originalValue=self.value, svas=svas)
+        return Data(dataType=self, originalValue=self.value, scope=scope)
 
     def count(self):
         r"""

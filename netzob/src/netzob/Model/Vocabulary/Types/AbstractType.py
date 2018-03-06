@@ -49,7 +49,7 @@ from enum import Enum
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
-from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 
 
 class Endianness(Enum):
@@ -708,14 +708,14 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         """
         from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 
-        svas = None
+        scope = None
 
         if self.value is not None:
-            svas = SVAS.CONSTANT
+            scope = Scope.CONSTANT
         else:
-            svas = SVAS.EPHEMERAL
+            scope = Scope.MESSAGE
 
-        return Data(dataType=self, originalValue=self.value, svas=svas)
+        return Data(dataType=self, originalValue=self.value, scope=scope)
 
     def getFixedBitSize(self):
         """Provide the length of a theoretical value that would be generated.

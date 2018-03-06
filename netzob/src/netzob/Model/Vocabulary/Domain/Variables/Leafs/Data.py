@@ -69,13 +69,13 @@ class Data(AbstractVariableLeaf):
                           None, which is the default behavior).
     :param name: The name of the data (if None, the name will
                  be generated).
-    :param svas: The SVAS strategy defining how the Data value is
+    :param scope: The Scope strategy defining how the Data value is
                  used during the abstraction and specialization process.
-                 The default strategy is SVAS.EPHEMERAL.
+                 The default strategy is Scope.MESSAGE.
     :type dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, required
     :type originalValue: :class:`bitarray`, optional
     :type name: :class:`str`, optional
-    :type svas: :class:`~netzob.Model.Vocabulary.Domain.Variables.SVAS.SVAS`, optional
+    :type scope: :class:`~netzob.Model.Vocabulary.Domain.Variables.Scope.Scope`, optional
 
 
     The Data class provides the following public variables:
@@ -122,9 +122,9 @@ class Data(AbstractVariableLeaf):
 
     """
 
-    def __init__(self, dataType, originalValue=None, name=None, svas=None):
+    def __init__(self, dataType, originalValue=None, name=None, scope=None):
         super(Data, self).__init__(
-            self.__class__.__name__, name=name, svas=svas)
+            self.__class__.__name__, name=name, scope=scope)
 
         self.dataType = dataType
         self.currentValue = originalValue
@@ -133,7 +133,7 @@ class Data(AbstractVariableLeaf):
         if self in map_objects:
             return map_objects[self]
 
-        new_data = Data(self.dataType, originalValue=self.currentValue, name=self.name, svas=self.svas)
+        new_data = Data(self.dataType, originalValue=self.currentValue, name=self.name, scope=self.scope)
         map_objects[self] = new_data
         return new_data
 

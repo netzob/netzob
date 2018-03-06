@@ -62,7 +62,7 @@ from netzob.Inference.Vocabulary.FormatOperations import FieldOperations
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
 from netzob.Model.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
-from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 
 from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
 from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
@@ -172,7 +172,7 @@ def getSuite():
         GenericPath.__module__,
         VariableSpecializer.__module__,
         FieldSpecializer.__module__,
-        SVAS.__module__,
+        Scope.__module__,
 
         # Complex relationships
         HMAC_MD5.__module__,
