@@ -105,17 +105,11 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
     DEFAULT_WRITE_COUNTER_MAX = -1
     DEFAULT_TIMEOUT = None
 
-    def __init__(self, timeout=DEFAULT_TIMEOUT):
-        """
-        :param timeout: The default timeout of the channel for global
-                        connection. Default value is blocking (None).
-        :type timeout: :class:`float`, optional
-
-        """
-        self._socket = None
-        self.timeout = timeout
-
     # Interface methods ##
+
+    @public_api
+    def __init__(self):
+        pass
 
     @public_api
     @abc.abstractmethod
@@ -148,6 +142,7 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
 
         """
 
+    @public_api
     @abc.abstractmethod
     def writePacket(self, data):
         """Write on the communication channel the specified data.
@@ -169,31 +164,8 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
 
         """
 
-    @property
-    def timeout(self):
-        """The default timeout of the channel for opening connection and
-        waiting for a message. Default value is DEFAULT_TIMEOUT seconds
-        (float). To specify no timeout, None value is expected.
 
-        :rtype: :class:`float` or None
-        """
-        return self._timeout
-
-    @timeout.setter  # type: ignore
-    @typeCheck((int, float, type(None)))
-    def timeout(self, timeout):
-        """
-        :type timeout: :class:`float`, optional
-        """
-        self._timeout = None if timeout is None else float(timeout)
-        self.updateSocketTimeout()
-
-    def updateSocketTimeout(self):
-        """Update the timeout of the socket."""
-        if self._socket is not None:
-            self._socket.settimeout(self.timeout)
-
-
+@public_api
 @NetzobLogger
 class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
     """A communication channel is an element allowing the establishment of a
@@ -377,11 +349,19 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         return predicate(self.read(), *args, **kwargs)
 
 
-    ## Internal methods ##
-
+    @public_api
     def __init__(self, timeout=ChannelInterface.DEFAULT_TIMEOUT):
+        """
+        :param timeout: The default timeout of the channel for global
+                        connection. Default value is blocking (None).
+        :type timeout: :class:`float`, optional
+
+        """
+
         Thread.__init__(self)
-        ChannelInterface.__init__(self, timeout=timeout)
+        ChannelInterface.__init__(self)
+        self._socket = None
+        self.timeout = timeout
         self._isOpened = False
         self.header = None  # A Symbol corresponding to the protocol header
         self.header_presets = {}  # A dict used to parameterize the header Symbol
@@ -395,6 +375,9 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         self.__stopEvent = Event()
         self.__queue_output = Queue()
 
+
+    ## Internal methods ##
+
     def __enter__(self):
         """Enter the runtime channel context.
         """
@@ -405,6 +388,11 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         """Exit the runtime channel context.
         """
         self.close()
+
+    def updateSocketTimeout(self):
+        """Update the timeout of the socket."""
+        if self._socket is not None:
+            self._socket.settimeout(self.timeout)
 
 
     ## Thread management ##
@@ -522,6 +510,25 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
     @queue_output.setter  # type: ignore
     def queue_output(self, queue_output):
         self.__queue_output = queue_output
+
+    @property
+    def timeout(self):
+        """The default timeout of the channel for opening connection and
+        waiting for a message. Default value is DEFAULT_TIMEOUT seconds
+        (float). To specify no timeout, None value is expected.
+
+        :rtype: :class:`float` or None
+        """
+        return self._timeout
+
+    @timeout.setter  # type: ignore
+    @typeCheck((int, float, type(None)))
+    def timeout(self, timeout):
+        """
+        :type timeout: :class:`float`, optional
+        """
+        self._timeout = None if timeout is None else float(timeout)
+        self.updateSocketTimeout()
 
 
 # Utilitary methods ##
