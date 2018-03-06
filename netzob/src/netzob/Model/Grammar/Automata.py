@@ -174,7 +174,7 @@ class Automata(object):
         binary_path = '/usr/bin/graph-easy'
         if not os.path.isfile(binary_path):
             error_message = "Cannot generate ASCII graph as a dependency is missing: 'graph-easy' (see libgraph-easy-perl package)"
-            self._logger.warn(error_message)
+            self._logger.warning(error_message)
             return error_message
 
         cmd = [binary_path, '--input', f.name, '--as_ascii']

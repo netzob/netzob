@@ -1974,7 +1974,7 @@ class Actor(Thread):
             except Exception as e:
                 self._logger.debug("Exception raised for actor '{}' when on the execution of state {}.".format(self.name, self.current_state))
                 self._logger.error("Exception error for actor '{}': {}".format(self.name, str(e)))
-                self._logger.warn(traceback.format_exc())
+                self._logger.warning(traceback.format_exc())
                 self.stop()
                 break
         self._logger.debug("Actor '{}' has finished to execute".format(self.name))
