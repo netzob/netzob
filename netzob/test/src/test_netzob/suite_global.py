@@ -38,6 +38,7 @@ import sys
 from test_netzob import suite_Common
 from test_netzob import suite_Tutorials
 from test_netzob import suite_DocTests
+import test_netzob.test_public_api as test_public_api
 
 #from test_netzob import suite_Import
 from common.xmlrunner import XMLTestRunner
@@ -52,7 +53,7 @@ def getSuite():
         # suite_Common,
         # suite_Tutorials
     ]
-    # modulesOfTests = [test_NetzobGui]
+    modulesOfTests = [test_public_api]
 
     # Add individual tests
     for module in modulesOfTests:
