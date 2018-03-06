@@ -347,11 +347,12 @@ def _test_tcp_write_read():
     >>> client = Actor(automata = automata, initiator = True, channel=channel, name='Client')
     >>> client.nbMaxTransitions = 2
 
+    >>> time.sleep(.2)
     >>> client.start()
     >>> time.sleep(1)
     >>> client.wait()
 
-    >>> process.wait()
+    >>> process.wait()  # doctest: +SKIP
     0
 
     >>> print(client.generateLog())
@@ -391,11 +392,12 @@ def _test_tcp_write_read_large_packet():
     >>> client = Actor(automata = automata, initiator = True, channel=channel, name='Client')
     >>> client.nbMaxTransitions = 2
 
+    >>> time.sleep(.2)
     >>> client.start()
     >>> time.sleep(1)
     >>> client.wait()
 
-    >>> process.wait()
+    >>> process.wait()  # doctest: +SKIP
     0
 
     >>> print(client.generateLog())
