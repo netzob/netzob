@@ -62,14 +62,14 @@ from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
 
 
 @NetzobLogger
-class RawIPChannel(AbstractChannel):
-    """A RawIPChannel is a communication channel to send IP
+class CustomIPChannel(AbstractChannel):
+    """A CustomIPChannel is a communication channel that is used to send IP
     payloads. This **channel** is responsible for building the IP header. It is
     similar to the :class:`IPChannel <netzob.Simulator.Channels.IPChannel.IPChannel>`
     channel, except that with :class:`IPChannel` the OS kernel builds the IP header.
-    Therefore, with RawIPChannel, we **can** modify or fuzz the IP header fields.
+    Therefore, with CustomIPChannel, we **can** modify or fuzz the IP header fields.
 
-    The RawIPChannel constructor expects some parameters:
+    The CustomIPChannel constructor expects some parameters:
 
     :param remoteIP: This parameter is the remote IP address to connect to.
     :param localIP: The local IP address. Default value is the local
@@ -86,7 +86,7 @@ class RawIPChannel(AbstractChannel):
 
     .. todo:: add support of :class:`netaddr.IPAddress`
 
-    Adding to AbstractChannel variables, the RawIPChannel class provides the
+    Adding to AbstractChannel variables, the CustomIPChannel class provides the
     following public variables:
 
     :var remoteIP: The remote IP address to connect to.
@@ -97,11 +97,11 @@ class RawIPChannel(AbstractChannel):
     :vartype upperProtocol: :class:`int`
 
 
-    The following code shows the use of a :class:`~netzob.Simulator.Channels.RawIPChannel.RawIPChannel`
+    The following code shows the use of a :class:`~netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel`
     channel:
 
     >>> from netzob.all import *
-    >>> client = RawIPChannel(remoteIP='127.0.0.1', timeout=1.)
+    >>> client = CustomIPChannel(remoteIP='127.0.0.1', timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
@@ -120,7 +120,7 @@ class RawIPChannel(AbstractChannel):
                  localIP=None,
                  upperProtocol=socket.IPPROTO_TCP,
                  timeout=AbstractChannel.DEFAULT_TIMEOUT):
-        super(RawIPChannel, self).__init__(timeout=timeout)
+        super(CustomIPChannel, self).__init__(timeout=timeout)
         self.remoteIP = remoteIP
         if localIP is None:
             localIP = NetUtils.getLocalIP(remoteIP)
@@ -132,7 +132,7 @@ class RawIPChannel(AbstractChannel):
 
     @staticmethod
     def getBuilder():
-        return RawIPChannelBuilder
+        return CustomIPChannelBuilder
 
     def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel.
@@ -350,22 +350,22 @@ class RawIPChannel(AbstractChannel):
         self.__upperProtocol = upperProtocol
 
 
-class RawIPChannelBuilder(ChannelBuilder):
+class CustomIPChannelBuilder(ChannelBuilder):
     """
     This builder is used to create an
-    :class:`~netzob.Simulator.Channel.RawIPChannel.RawIPChannel` instance
+    :class:`~netzob.Simulator.Channel.CustomIPChannel.CustomIPChannel` instance
 
     >>> import socket
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(dst_addr="1.2.3.4",
     ...                   src_addr="4.3.2.1",
     ...                   protocol=socket.IPPROTO_TCP)
-    >>> chan = RawIPChannelBuilder().set_map(netinfo.getDict()).build()
-    >>> assert isinstance(chan, RawIPChannel)
+    >>> chan = CustomIPChannelBuilder().set_map(netinfo.getDict()).build()
+    >>> assert isinstance(chan, CustomIPChannel)
     """
 
     def __init__(self):
-        super().__init__(RawIPChannel)
+        super().__init__(CustomIPChannel)
 
     def set_src_addr(self, value):
         self.attrs['localIP'] = value
@@ -381,7 +381,7 @@ def _test_write_read_with_same_channel():
     r"""
 
     >>> from netzob.all import *
-    >>> client = RawIPChannel(remoteIP='127.0.0.1', timeout=1.)
+    >>> client = CustomIPChannel(remoteIP='127.0.0.1', timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
@@ -397,9 +397,9 @@ def _test_write_read_with_different_channels():
     r"""
 
     >>> from netzob.all import *
-    >>> client = RawIPChannel(remoteIP='127.0.0.1', timeout=1.)
+    >>> client = CustomIPChannel(remoteIP='127.0.0.1', timeout=1.)
     >>> client.open()
-    >>> server = RawIPChannel(remoteIP='127.0.0.1', timeout=1.)
+    >>> server = CustomIPChannel(remoteIP='127.0.0.1', timeout=1.)
     >>> server.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(symbol.specialize())
@@ -416,7 +416,7 @@ def _test_read_before_send():
     r"""
 
     >>> from netzob.all import *
-    >>> client = RawIPChannel(remoteIP='127.0.0.1', timeout=1.)
+    >>> client = CustomIPChannel(remoteIP='127.0.0.1', timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> client.write(b"some data")

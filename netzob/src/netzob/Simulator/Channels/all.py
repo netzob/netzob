@@ -36,7 +36,7 @@ from netzob.Simulator.Channels.UDPClient import UDPClient, UDPClientBuilder
 from netzob.Simulator.Channels.UDPServer import UDPServer, UDPServerBuilder
 from netzob.Simulator.Channels.SSLClient import SSLClient, SSLClientBuilder
 from netzob.Simulator.Channels.IPChannel import IPChannel, IPChannelBuilder
-from netzob.Simulator.Channels.RawIPChannel import RawIPChannel, RawIPChannelBuilder
+from netzob.Simulator.Channels.CustomIPChannel import CustomIPChannel, CustomIPChannelBuilder
 from netzob.Simulator.Channels.RawEthernetChannel import RawEthernetChannel, RawEthernetChannelBuilder
 from netzob.Simulator.Channels.DebugChannel import DebugChannel, DebugChannelBuilder
 from netzob.Simulator.Channels.EthernetChannel import EthernetChannel, EthernetChannelBuilder
