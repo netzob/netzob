@@ -408,7 +408,7 @@ def _test_pseudo_rand_interval():
 
     >>> v = int8()
     >>> f = Field(v)
-    >>> mutator = IntegerMutator(f.domain, generator=Generator.NG_mt19937)
+    >>> mutator = IntegerMutator(f.domain, generator='mt19937')
     >>> generated_values = set()
     >>> generated_values_signed = set()
     >>> for _ in range(30):
@@ -495,7 +495,7 @@ def _test_determinist_generator_2():
 
     >>> v = int8()
     >>> f = Field(v)
-    >>> mutator = IntegerMutator(f.domain, generator=DeterministGenerator.NG_determinist)
+    >>> mutator = IntegerMutator(f.domain, generator='determinist')
     >>> generated_values = set()
     >>> for _ in range(50):
     ...     d = mutator.generate()
@@ -503,7 +503,7 @@ def _test_determinist_generator_2():
 
     >>> v = int8()
     >>> f = Field(v)
-    >>> mutator = IntegerMutator(f.domain, generator=DeterministGenerator.NG_determinist)
+    >>> mutator = IntegerMutator(f.domain, generator='determinist')
     >>> generated_values = set()
     >>> for _ in range(50):
     ...     d = mutator.generate()
