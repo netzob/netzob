@@ -343,7 +343,7 @@ def _test_udp_write_read():
     >>> server.start()
     >>> client.start()
 
-    >>> time.sleep(1)
+    >>> time.sleep(2)
     >>> client.stop()
     >>> server.stop()
     >>> print(client.generateLog())
