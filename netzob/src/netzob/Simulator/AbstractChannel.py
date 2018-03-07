@@ -712,3 +712,15 @@ class NetUtils(object):
         ioctl(s,
               0x8922,  # SIOCSIFMTU
               struct.pack("16sH14x", ifname, mtu))
+
+    @staticmethod
+    def isUp(localInterface):
+        """
+        Check if the given network interface is up.
+
+        :param localInterface: The local network interface
+        :type localInterface: :class:`str`
+        """
+
+        with open('/sys/class/net/{}/operstate'.format(localInterface)) as fd:
+            return 'up' in fd.read()
