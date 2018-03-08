@@ -43,8 +43,8 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
-from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
+from netzob.Fuzzing.Mutator import Mutator, FuzzingMode
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, FuzzingInterval
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
@@ -57,11 +57,11 @@ class RepeatMutator(DomainMutator):
     The RepeatMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
+    :param mode: If set to :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`, :meth:`generate` will be
         used to produce the value.
-        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
+        If set to :attr:`FuzzingMode.MUTATE <netzob.Fuzzing.DomainMutator.FuzzingMode.MUTATE>`, :meth:`mutate` will be used to
         produce the value (not used yet).
-        Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
+        Default value is :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`.
     :param mutateChild: If true, sub-field has to be mutated.
         Default value is :const:`False`.
     :param mappingTypesMutators: Override the global default mapping of types with their default
@@ -85,7 +85,7 @@ class RepeatMutator(DomainMutator):
     >>> from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator
     >>> child = Data(dataType=String("abc"))
     >>> fieldRepeat = Field(Repeat(child, nbRepeat=3))
-    >>> mutator = RepeatMutator(fieldRepeat.domain, interval=MutatorInterval.FULL_INTERVAL)
+    >>> mutator = RepeatMutator(fieldRepeat.domain, interval=FuzzingInterval.FULL_INTERVAL)
     >>> mutator.generate()
     256
     >>> mutator.generate()
@@ -115,12 +115,12 @@ class RepeatMutator(DomainMutator):
     512
 
 
-    **Fuzzing of an alternate of variables with non-default fuzzing strategy (MutatorMode.MUTATE)**
+    **Fuzzing of an alternate of variables with non-default fuzzing strategy (FuzzingMode.MUTATE)**
 
     >>> fuzz = Fuzz()
     >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
-    >>> fuzz.set(f_rep, mode=MutatorMode.MUTATE)
+    >>> fuzz.set(f_rep, mode=FuzzingMode.MUTATE)
     >>> res = symbol.specialize(fuzz=fuzz)
     >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
@@ -157,13 +157,13 @@ class RepeatMutator(DomainMutator):
 
     def __init__(self,
                  domain,
-                 mode=MutatorMode.GENERATE,
+                 mode=FuzzingMode.GENERATE,
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
                  mutateChild=True,
                  mappingTypesMutators={},
-                 interval=MutatorInterval.FULL_INTERVAL,
+                 interval=FuzzingInterval.FULL_INTERVAL,
                  lengthBitSize=None):
 
         # Call parent init

@@ -45,11 +45,12 @@ from enum import Enum
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Constant import Constant
+from netzob.Common.Utils.Decorators import public_api
 from netzob.Common.Utils.Decorators import NetzobLogger
 
 
-class MutatorMode(Enum):
+@public_api
+class FuzzingMode(Enum):
     """Mutator Fuzzing modes"""
     MUTATE = 1  #: Fuzzing by mutation of a legitimate value
     GENERATE = 2  #: Fuzzing by generation

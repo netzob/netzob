@@ -43,7 +43,7 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Mutator import Mutator, FuzzingMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Common.Utils.Decorators import typeCheck
@@ -57,11 +57,11 @@ class OptMutator(DomainMutator):
     The OptMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
+    :param mode: If set to :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`, :meth:`generate` will be
         used to produce the value.
-        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
+        If set to :attr:`FuzzingMode.MUTATE <netzob.Fuzzing.DomainMutator.FuzzingMode.MUTATE>`, :meth:`mutate` will be used to
         produce the value (not used yet).
-        Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
+        Default value is :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`.
     :param mutateChild: If true, sub-field has to be mutated.
         Default value is :const:`False`.
     :param mappingTypesMutators: Override the global default mapping of types with their default
@@ -103,7 +103,7 @@ class OptMutator(DomainMutator):
 
     def __init__(self,
                  domain,
-                 mode=MutatorMode.GENERATE,
+                 mode=FuzzingMode.GENERATE,
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=DomainMutator.COUNTER_MAX_DEFAULT,

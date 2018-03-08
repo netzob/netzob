@@ -43,8 +43,8 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
-from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
+from netzob.Fuzzing.Mutator import Mutator, FuzzingMode
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, FuzzingInterval
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
@@ -57,11 +57,11 @@ class HexaStringMutator(DomainMutator):
     The HexaStringMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`,
+    :param mode: If set to :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`,
         :meth:`generate` will be used to produce the value.
-        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`,
+        If set to :attr:`FuzzingMode.MUTATE <netzob.Fuzzing.DomainMutator.FuzzingMode.MUTATE>`,
         :meth:`mutate` will be used to produce the value (not used yet).
-        Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
+        Default value is :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`.
     :param lengthBitSize: The size in bits of the memory on which the generated
         length will be encoded.
         Default value is UnitSize.SIZE_8.
@@ -99,11 +99,11 @@ class HexaStringMutator(DomainMutator):
 
     def __init__(self,
                  domain,
-                 mode=MutatorMode.GENERATE,
+                 mode=FuzzingMode.GENERATE,
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
-                 interval=MutatorInterval.FULL_INTERVAL,
+                 interval=FuzzingInterval.FULL_INTERVAL,
                  lengthBitSize=None):
 
         # Call parent init

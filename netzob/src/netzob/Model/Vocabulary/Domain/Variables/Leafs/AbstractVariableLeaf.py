@@ -71,8 +71,8 @@ class AbstractVariableLeaf(AbstractVariable):
         return False
 
     def count(self, fuzz=None):
-        from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.GENERATE:
+        from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
             # Retrieve the mutator
             mutator = fuzz.get(self)
             return mutator.count()
@@ -140,8 +140,8 @@ class AbstractVariableLeaf(AbstractVariable):
         from netzob.Fuzzing.Fuzz import MaxFuzzingException
 
         # Fuzzing has priority over generating a legitimate value
-        from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.GENERATE:
+        from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
 
             # Retrieve the mutator
             mutator = fuzz.get(self)
@@ -190,7 +190,7 @@ class AbstractVariableLeaf(AbstractVariable):
             elif self.scope == Scope.NONE:
                 newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
 
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.MUTATE:
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.MUTATE:
 
             def fuzz_mutate():
                 for path in newParsingPaths:

@@ -59,7 +59,7 @@ from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Mutator import Mutator, FuzzingMode
 from netzob.Fuzzing.Mutators.AltMutator import AltMutator
 from netzob.Fuzzing.Mutators.AggMutator import AggMutator
 from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator
@@ -140,7 +140,7 @@ class Fuzz(object):
     @public_api
     def set(self,
             key,
-            mode=MutatorMode.GENERATE,
+            mode=FuzzingMode.GENERATE,
             generator='xorshift',
             seed=None,
             counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
@@ -154,10 +154,10 @@ class Fuzz(object):
                     variable or a type).
         :param mode: The fuzzing strategy, which can be either:
 
-                     * ``MutatorMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied to it.
-                     * ``MutatorMode.GENERATE``: in this mode, the fuzzing component directly produces a random message.
+                     * ``FuzzingMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied to it.
+                     * ``FuzzingMode.GENERATE``: in this mode, the fuzzing component directly produces a random message.
 
-                     Default value is :attr:`MutatorMode.GENERATE`.
+                     Default value is :attr:`FuzzingMode.GENERATE`.
 
         :param generator: The underlying generator used to produce
                           pseudo-random or deterministic
@@ -223,14 +223,14 @@ class Fuzz(object):
         ====================  =================================================
         interval              The scope of values to generate.
 
-                              * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
-                              * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
                               * If it is a tuple of integers (min, max), the values will be generated between min and max.
 
                               Default value is dependant on the chosen generator: 
 
-                              * If the generator is `determinist`, default interval will be :attr:`MutatorInterval.DEFAULT_INTERVAL`.
-                              * Else, default interval will be :attr:`MutatorInterval.FULL_INTERVAL`.
+                              * If the generator is `determinist`, default interval will be :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
+                              * Else, default interval will be :attr:`FuzzingInterval.FULL_INTERVAL`.
 
         lengthBitSize         The size in bits of the memory on which the generated values have to be encoded.
 
@@ -259,13 +259,13 @@ class Fuzz(object):
                               Default value is :attr:`DEFAULT_END_CHAR`. It is used to set the eos parameter of :class:`String <netzob.Model.Vocabulary.Types.String>`.
         interval              The scope of values to generate.
 
-                              * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
-                              * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the String length.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the String length.
                               * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
 
-                              Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
+                              Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate String with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order to generate String with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
@@ -309,13 +309,13 @@ class Fuzz(object):
         ====================  =================================================
         interval              The scope of values to generate.
 
-                              * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
-                              * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the Raw data length.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the Raw data length.
                               * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
 
-                              Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
+                              Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate Raw data with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order to generate Raw data with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
@@ -339,13 +339,13 @@ class Fuzz(object):
         ====================  =================================================
         interval              The scope of values to generate.
 
-                              * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
-                              * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the HexaString length.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the HexaString length.
                               * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
 
-                              Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
+                              Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate HexaStrings with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order to generate HexaStrings with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
@@ -369,13 +369,13 @@ class Fuzz(object):
         ====================  =================================================
         interval              The scope of values to generate.
 
-                              * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
-                              * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the BitArray length.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the BitArray length.
                               * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
 
-                              Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
+                              Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate BitArrays with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order to generate BitArrays with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
@@ -462,13 +462,13 @@ class Fuzz(object):
                               Default value is ``{}``.
         interval              The scope of values to generate.
 
-                              * If set to :attr:`MutatorInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
-                              * If set to :attr:`MutatorInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the number of repetitions.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the number of repetitions.
                               * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
 
-                              Default value is :attr:`MutatorInterval.FULL_INTERVAL`.
+                              Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`MutatorInterval.FULL_INTERVAL` or with a tuple interval, in order to generate a Repeat with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`MutatorInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order to generate a Repeat with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
@@ -542,7 +542,7 @@ class Fuzz(object):
         >>> fuzz = Fuzz()
         >>> f_data = Field(name="data", domain=int16(2))
         >>> symbol = Symbol(name="sym", fields=[f_data])
-        >>> fuzz.set(f_data, mode=MutatorMode.MUTATE, interval=(20, 32000))
+        >>> fuzz.set(f_data, mode=FuzzingMode.MUTATE, interval=(20, 32000))
         >>> res = next(symbol.specialize(fuzz=fuzz))
         >>> res != b'\x00\x02'
         True
@@ -583,7 +583,7 @@ class Fuzz(object):
         >>> f_data1 = Field(name="data1", domain=int8(interval=(2, 4)))
         >>> f_data2 = Field(name="data2", domain=int8(interval=(5, 8)))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-        >>> fuzz.set(symbol, interval=MutatorInterval.FULL_INTERVAL)
+        >>> fuzz.set(symbol, interval=FuzzingInterval.FULL_INTERVAL)
         >>> next(symbol.specialize(fuzz=fuzz))
         b'\x00\x00'
 
@@ -595,7 +595,7 @@ class Fuzz(object):
         >>> f_data1 = Field(name="data1", domain=int8(2))
         >>> f_data2 = Field(name="data2", domain=int8(interval=(10, 20)))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-        >>> fuzz.set(f_data2, interval=MutatorInterval.FULL_INTERVAL)
+        >>> fuzz.set(f_data2, interval=FuzzingInterval.FULL_INTERVAL)
         >>> next(symbol.specialize(fuzz=fuzz))
         b'\x02\x00'
 
@@ -607,7 +607,7 @@ class Fuzz(object):
         >>> f_data1 = Field(name="data1", domain=int8(2))
         >>> f_data2 = Field(name="data2", domain=int8(interval=(10, 20)))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-        >>> fuzz.set(f_data2, interval=MutatorInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_16)
+        >>> fuzz.set(f_data2, interval=FuzzingInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_16)
         >>> next(symbol.specialize(fuzz=fuzz))
         b'\x02\x00\x00'
 
@@ -733,7 +733,7 @@ class Fuzz(object):
         >>> f_data1 = Field(name="data1", domain=int8(2))
         >>> f_data2 = Field(name="data2", domain=int8(4))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
-        >>> fuzz.set(symbol, interval=MutatorInterval.FULL_INTERVAL)
+        >>> fuzz.set(symbol, interval=FuzzingInterval.FULL_INTERVAL)
         >>> fuzz.unset(f_data2)
         >>> next(symbol.specialize(fuzz=fuzz))
         b'\x00\x04'
@@ -1091,7 +1091,7 @@ def _test():
     >>> f1 = Field(uint8())
     >>> f2 = Field(uint8(interval=(0, 254)))
     >>> symbol = Symbol([f1, f2])
-    >>> fuzz.set(symbol, interval=MutatorInterval.DEFAULT_INTERVAL)
+    >>> fuzz.set(symbol, interval=FuzzingInterval.DEFAULT_INTERVAL)
     >>> g = symbol.specialize(fuzz=fuzz)
     >>> a = []
     >>> for i in range(symbol.count()):
@@ -1110,7 +1110,7 @@ def _test():
     >>> f1 = Field(uint8(interval=(0, 3)))
     >>> f2 = Field(Size(f1))
     >>> symbol = Symbol([f1, f2])
-    >>> fuzz.set(Integer, interval=MutatorInterval.DEFAULT_INTERVAL)
+    >>> fuzz.set(Integer, interval=FuzzingInterval.DEFAULT_INTERVAL)
     >>> fuzz.set(f1)
     >>> g = symbol.specialize(fuzz=fuzz)
     >>> a = []
