@@ -894,7 +894,7 @@ def _test():
     ...     uint16(1), int8le(), int32be(0x007F0041), uint16le(2)
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
     >>> Symbol.abstract(data, [symbol])  #doctest: +ELLIPSIS
     (Symbol, OrderedDict([('0', b'\x00\x01'), ('1', b'...'), ('2', b'\x00\x7f\x00A'), ('3', b'\x02\x00')]))
 

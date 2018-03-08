@@ -177,7 +177,7 @@ class String(AbstractType):
     >>> s = String("abcdef", eos=["123"])
     >>> s.generate().tobytes()
     b'abcdef123'
-    >>> Field(s).specialize()
+    >>> next(Field(s).specialize())
     b'abcdef123'
 
 
@@ -769,7 +769,7 @@ def _test(self):
     ...    String("abcd"), String(nbChars=(4, 5)),
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
     >>> Symbol.abstract(data, [symbol])  #doctest: +ELLIPSIS
     (Symbol, OrderedDict([('0', b'abcd'), ('1', ...)]))
 

@@ -247,7 +247,7 @@ class Symbol(AbstractField):
         >>> f1 = Field(domain=String(nbChars=5))
         >>> f0 = Field(domain=Size(f1))
         >>> s = Symbol(fields=[f0, f1])
-        >>> result = s.specialize()
+        >>> result = next(s.specialize())
         >>> result[0]
         5
         >>> len(result)
@@ -290,19 +290,19 @@ class Symbol(AbstractField):
         >>> presets = {}
         >>> presets["udp.dport"] = 11              # udp.dport expects an int or an Integer
         >>> presets["udp.payload"] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
-        >>> symbol_udp.specialize(presets=presets)
+        >>> next(symbol_udp.specialize(presets=presets))
         b'\x0b\xaa\xbb'
 
         >>> presets = {}
         >>> presets["udp.dport"] = uint16(11)        # udp.dport expects an int or an Integer
         >>> presets["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
-        >>> symbol_udp.specialize(presets=presets)
+        >>> next(symbol_udp.specialize(presets=presets))
         b'\x00\x0b\xaa\xbb'
 
         >>> presets = {}
         >>> presets["udp.dport"] = bitarray('00001011', endian='big')
         >>> presets["udp.payload"] = bitarray('1010101010111011', endian='big')
-        >>> symbol_udp.specialize(presets=presets)
+        >>> next(symbol_udp.specialize(presets=presets))
         b'\x0b\xaa\xbb'
 
         The previous example shows the use of BitArray as dict
@@ -314,9 +314,9 @@ class Symbol(AbstractField):
         parameterized **keys** during specialization of the fields
         ``udp_dport`` and ``udp_payload``:
 
-        >>> symbol_udp.specialize(presets={f_dport: 11, f_payload: b"\xaa\xbb"})
+        >>> next(symbol_udp.specialize(presets={f_dport: 11, f_payload: b"\xaa\xbb"}))
         b'\x0b\xaa\xbb'
-        >>> symbol_udp.specialize(presets={"udp.dport": 11, "udp.payload": b"\xaa\xbb"})
+        >>> next(symbol_udp.specialize(presets={"udp.dport": 11, "udp.payload": b"\xaa\xbb"}))
         b'\x0b\xaa\xbb'
 
 
@@ -329,7 +329,7 @@ class Symbol(AbstractField):
         >>> f1.domain = Size(f2)
         >>> s = Symbol(fields=[f1, f2])
         >>> presetValues = {f1: bitarray('11111111')}
-        >>> s.specialize(presets = presetValues)[0]
+        >>> next(s.specialize(presets = presetValues))[0]
         255
 
 
@@ -351,15 +351,8 @@ class Symbol(AbstractField):
         from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
         msg = MessageSpecializer(presets=presets, fuzz=fuzz, memory=memory)
 
-        if fuzz is None:
-            try:
-                specializing_path = next(msg.specializeSymbol(self))
-            except StopIteration:
-                raise Exception("Cannot specialize this symbol.")
-            return specializing_path.generatedContent.tobytes()
-        else:
-            specializing_paths = msg.specializeSymbol(self)
-            return self._inner_specialize(specializing_paths)
+        specializing_paths = msg.specializeSymbol(self)
+        return self._inner_specialize(specializing_paths)
 
     def _inner_specialize(self, specializing_paths):
         for specializing_path in specializing_paths:
@@ -589,7 +582,7 @@ def _test_many_relation_abstractions():
     ...                          eth_padding,
     ...                          eth_crc_802_3])
     >>> presets = {'eth.payload': b"PAYLOAD"}
-    >>> d = Symbol.abstract(symbol.specialize(presets=presets), [symbol])[1]
+    >>> d = Symbol.abstract(next(symbol.specialize(presets=presets)), [symbol])[1]
     >>> for k in presets:
     ...    assert d[k] == presets[k]
 

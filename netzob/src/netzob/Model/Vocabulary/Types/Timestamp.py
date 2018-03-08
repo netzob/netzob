@@ -212,7 +212,7 @@ class Timestamp(AbstractType):
        >>> f1 = Field(Timestamp(1444737333), name="Timestamp")
        >>> f2 = Field(Raw(b"00"), name="End")
        >>> s = Symbol(fields=[f0, f1, f2])
-       >>> s.messages = [RawMessage(s.specialize()) for x in range(5)]
+       >>> s.messages = [RawMessage(next(s.specialize())) for x in range(5)]
        >>> print(s.str_data())
        Start | Timestamp     | End 
        ----- | ------------- | ----
@@ -366,11 +366,11 @@ class Timestamp(AbstractType):
 
         >>> from netzob.all import *
         >>> f = Field(Timestamp())
-        >>> value = f.specialize()
+        >>> value = next(f.specialize())
         >>> len(value)
         4
         >>> f = Field(Timestamp(epoch=Epoch.WINDOWS, unitSize=UnitSize.SIZE_64))
-        >>> len(f.specialize())
+        >>> len(next(f.specialize()))
         8
         """
         if self.value is not None:
@@ -470,7 +470,7 @@ def _test():
     ...     Timestamp(), Timestamp(1444737333),
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
     >>> assert Symbol.abstract(data, [symbol])[1]
 
     """

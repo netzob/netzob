@@ -117,7 +117,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size([f0], dataType=Raw(nbBytes=1)))
     >>> f = Field([f0, f1, f2])
-    >>> data = f.specialize()
+    >>> data = next(f.specialize())
     >>> data[-1] == 10
     True
 
@@ -129,7 +129,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size([f0, f1], dataType=Raw(nbBytes=1), factor=1./8, offset=4))
     >>> f = Field([f0, f1, f2])
-    >>> data = f.specialize()
+    >>> data = next(f.specialize())
     >>> data[-1] > (4*8*1./8 + 4) # == 4 bytes minimum * 8 bits * a factor of 1./8 + an offset of 4
     True
 
@@ -152,7 +152,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f5 = Field(Raw(b"_"))
     >>> f3 = Field(Size([f1, f2, f4, f5]))
     >>> f = Field([f1, f2, f3, f4, f5])
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'=#\x04%_'
 
     In the following example, a size field is declared after its
@@ -164,7 +164,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"), name='f1')
     >>> f2 = Field(Size(f0), name='f2')
     >>> f = Field([f0, f1, f2])
-    >>> 3 <= len(f.specialize()) <= 6
+    >>> 3 <= len(next(f.specialize())) <= 6
     True
 
 
@@ -192,7 +192,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"), name="f1", )
     >>> f0 = Field(Size(f2), name="f0")
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> 3 <= len(d) <= 6
     True
 
@@ -225,7 +225,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size([d, f1]))
     >>> f = Field([f0, f1, f2])
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> b'\x15' in res
     True
 
@@ -235,7 +235,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"))
     >>> f0 = Field(Size([f1, d]))
     >>> f = Field([f0, f1, f2])
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> b'\x15' in res
     True
 
@@ -463,7 +463,7 @@ def _test_size():
     >>> packet = Symbol(name='IP layer', fields=[
     ...    ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off,
     ...    ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload])
-    >>> data = packet.specialize()
+    >>> data = next(packet.specialize())
     >>> hex(data[0])
     ... # This corresponds to the first byte of the IP layer. '5' means 5*32 bits,
     ... # which is the size of the default IP header.
@@ -482,7 +482,7 @@ def _test_size():
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size(f0))
     >>> f = Field([f0, f1, f2])
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> b'\x14' in res
     True
 
@@ -498,7 +498,7 @@ def _test_size():
     >>> f3.domain = Size([f4, f5, f6])
     >>> f2.fields = [f3, f4, f5, f6, f7]
     >>> s = Symbol(fields=[f0, f1, f2])
-    >>> b"CMDauthentify#\x11" in s.specialize()
+    >>> b"CMDauthentify#\x11" in next(s.specialize())
     True
 
     # We check that a Size datatype cannot be constant
@@ -541,7 +541,7 @@ def _test_size():
     >>> symbol_udp = Symbol(name="udp", fields=(udp_header + [pseudo_ip_header]))
     >>>
     >>> # 
-    >>> data = symbol_udp.specialize(presets={"udp.payload": "test AAAAAAAA"})
+    >>> data = next(symbol_udp.specialize(presets={"udp.payload": "test AAAAAAAA"}))
     >>>
     >>> (symbol_result, structured_data) = Symbol.abstract(data, [symbol_udp])
     >>> symbol_result == symbol_udp

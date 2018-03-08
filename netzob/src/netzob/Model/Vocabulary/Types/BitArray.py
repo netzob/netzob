@@ -444,7 +444,7 @@ def _test():
     ...     BitArray(nbBits=8),  # BitArray(bitarray("00001111" "1")), BitArray(nbBits=7),
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
     >>> assert Symbol.abstract(data, [symbol])[1]
 
 

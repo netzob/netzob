@@ -157,7 +157,7 @@ class Repeat(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> f1 = Field(Repeat(String("A"), nbRepeat=16))
-    >>> f1.specialize()
+    >>> next(f1.specialize())
     b'AAAAAAAAAAAAAAAA'
 
 
@@ -171,7 +171,7 @@ class Repeat(AbstractVariableNode):
     >>> delimiter.frombytes(b"-")
     >>> f = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=(2, 4),
     ...           delimiter=delimiter), name='f1')
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'A-B-B'
 
 
@@ -239,7 +239,7 @@ class Repeat(AbstractVariableNode):
     >>> f2 = Field(String("B"), name="f2")
     >>> f3 = Field(String("C"), name="f3")
     >>> f = Field([f1, f2, f3])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d == b'ABC' or d == b'BBC'
     True
     >>> data = "AABC"
@@ -275,7 +275,7 @@ class Repeat(AbstractVariableNode):
        >>> from netzob.all import *
        >>> f1 = Field(Repeat(String("john"), nbRepeat=2))
        >>> s = Symbol([f1])
-       >>> s.specialize()
+       >>> next(s.specialize())
        b'johnjohn'
        >>> from netzob.all import *
        >>> delimiter = bitarray(endian='big')
@@ -283,7 +283,7 @@ class Repeat(AbstractVariableNode):
        >>> f1 = Field(Repeat(IPv4(), nbRepeat=3,
        ...           delimiter=delimiter))
        >>> s = Symbol([f1])
-       >>> gen = s.specialize()
+       >>> gen = next(s.specialize())
        >>> len(gen) == 14
        True
        >>> gen.count(b";") >= 2
@@ -296,7 +296,7 @@ class Repeat(AbstractVariableNode):
        >>> f1 = Field(Repeat(child, nbRepeat=3,
        ...            delimiter=delimiter))
        >>> s = Symbol([f1])
-       >>> gen = s.specialize()
+       >>> gen = next(s.specialize())
        >>> len(gen) == 17
        True
        >>> gen.count(b";") >= 2
@@ -740,7 +740,7 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x04AAAA'
     >>> Symbol.abstract(d, [s])
@@ -751,7 +751,7 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x05AAAAA'
     >>> Symbol.abstract(d, [s])
@@ -762,7 +762,7 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x05AAAAA'
     >>> Symbol.abstract(d, [s])
@@ -773,7 +773,7 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x04AAAA'
     >>> Symbol.abstract(d, [s])
@@ -787,7 +787,7 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAA\x04'
     >>> Symbol.abstract(d, [s])
@@ -798,7 +798,7 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAA\x05'
     >>> Symbol.abstract(d, [s])
@@ -809,7 +809,7 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAA\x05'
     >>> Symbol.abstract(d, [s])
@@ -820,7 +820,7 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAA\x05'
     >>> Symbol.abstract(d, [s])
@@ -834,7 +834,7 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAA'
 
@@ -846,7 +846,7 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAA'
     >>> Symbol.abstract(d, [s])  # doctest: +SKIP
@@ -858,7 +858,7 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAAAA'
     >>> Symbol.abstract(d, [s])  # doctest: +SKIP
@@ -870,7 +870,7 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAA'
     >>> Symbol.abstract(d, [s])  # doctest: +SKIP
@@ -884,7 +884,7 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAA'
     >>> Symbol.abstract(d, [s])
@@ -895,7 +895,7 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAA'
     >>> Symbol.abstract(d, [s])
@@ -907,7 +907,7 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAAAA'
     >>> Symbol.abstract(d, [s])
@@ -918,7 +918,7 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAA'
     >>> Symbol.abstract(d, [s])
@@ -930,7 +930,7 @@ def _test_repeat():
     >>> f1 = Field(uint8(4), name='Nb repeat')
     >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x04AAAA'
     >>>
@@ -940,7 +940,7 @@ def _test_repeat():
     >>> f1 = Field(uint8(), name='Nb repeat')
     >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x9eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     >>>
@@ -951,7 +951,7 @@ def _test_repeat():
     >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
     >>> f3 = Field(Raw(b"A"))
     >>> s = Symbol([f1, f2, f3])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     >>>
@@ -964,7 +964,7 @@ def _test_repeat():
     >>> f2 = Field(uint8(4), name='Size field')
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f2), name='Repeat field')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAA\x04'
     >>>
@@ -974,7 +974,7 @@ def _test_repeat():
     >>> f2 = Field(uint8(), name='Size field')
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f2), name='Repeat field')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%'
     >>> Symbol.abstract(d, [s])
@@ -984,7 +984,7 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f3), name='Repeat field')
     >>> f2 = Field(Raw(b"A"))
     >>> s = Symbol([f1, f2, f3])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xa9'
     >>> Symbol.abstract(d, [s])

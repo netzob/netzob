@@ -77,7 +77,7 @@ class RawEthernetChannel(AbstractChannel):
     >>> client = RawEthernetChannel(interface="lo")
     >>> client.open()
     >>> symbol = Symbol([Field(Raw(b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00"))])
-    >>> client.write(symbol.specialize())
+    >>> client.write(next(symbol.specialize()))
     14
     >>> client.close()
 

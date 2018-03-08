@@ -75,8 +75,8 @@ class Memory(object):
        >>> s2 = Symbol(fields=[f4, f5, f6])
        >>>
        >>> memory = Memory()
-       >>> m1 = s1.specialize(memory=memory)
-       >>> m2 = s2.specialize(memory=memory)
+       >>> m1 = next(s1.specialize(memory=memory))
+       >>> m2 = next(s2.specialize(memory=memory))
        >>>
        >>> m1[6:] == m2[7:]
        True
@@ -100,7 +100,7 @@ class Memory(object):
        >>> s3 = Symbol(fields=[f7, f8, f9])
        >>>
        >>> # Symbol specialization
-       >>> s3.specialize(memory=memory)
+       >>> next(s3.specialize(memory=memory))
        b'master>John'
 
     """

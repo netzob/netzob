@@ -185,7 +185,7 @@ class Raw(AbstractType):
         >>> from netzob.all import *
         >>> f = Field(Raw(b"\x01\x02\x03\x04"))
         >>> s = Symbol(fields=[f])
-        >>> messages = [RawMessage(s.specialize()) for x in range(5)]
+        >>> messages = [RawMessage(next(s.specialize())) for x in range(5)]
         >>> s.messages = messages
         >>> print(s.str_data())
         Field             
@@ -426,7 +426,7 @@ def _test(self):
         Raw(b"xxxx"), Raw(nbBytes=2),
     ]
     symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    data = b''.join(f.specialize() for f in symbol.fields)
+    data = b''.join(next(f.specialize()) for f in symbol.fields)
     assert Symbol.abstract(data, [symbol])[1]
 
 

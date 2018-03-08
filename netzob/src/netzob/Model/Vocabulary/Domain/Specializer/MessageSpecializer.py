@@ -61,7 +61,7 @@ class MessageSpecializer(object):
     >>> f3 = Field(String(';'))
     >>> f4 = Field(Value(f2))
     >>> s = Symbol(fields=[f0, f1, f2, f3, f4])
-    >>> msgs = [RawMessage(s.specialize()) for i in range(1)]
+    >>> msgs = [RawMessage(next(s.specialize())) for i in range(1)]
     >>> s.messages = msgs
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> valueInTab = s.getCells()[0]

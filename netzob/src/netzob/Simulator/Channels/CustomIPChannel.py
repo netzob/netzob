@@ -104,7 +104,7 @@ class CustomIPChannel(AbstractChannel):
     >>> client = CustomIPChannel(remoteIP='127.0.0.1', timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> client.write(symbol.specialize())
+    >>> client.write(next(symbol.specialize()))
     35
     >>> client.close()
 
@@ -189,7 +189,7 @@ class CustomIPChannel(AbstractChannel):
         """
 
         self.header_presets['ip.payload'] = data
-        packet = self.header.specialize(presets=self.header_presets)
+        packet = next(self.header.specialize(presets=self.header_presets))
         len_data = self._socket.sendto(packet, (self.remoteIP, 0))
         return len_data
 
@@ -393,7 +393,7 @@ def _test_write_read_with_same_channel():
     >>> client = CustomIPChannel(remoteIP='127.0.0.1', timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> client.write(symbol.specialize())
+    >>> client.write(next(symbol.specialize()))
     35
     >>> client.read()
     b'Hello everyone!'
@@ -411,7 +411,7 @@ def _test_write_read_with_different_channels():
     >>> server = CustomIPChannel(remoteIP='127.0.0.1', timeout=1.)
     >>> server.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> client.write(symbol.specialize())
+    >>> client.write(next(symbol.specialize()))
     35
     >>> server.read()
     b'Hello everyone!'
@@ -432,7 +432,7 @@ def _test_read_before_send():
     29
     >>> client.read()
     b'some data'
-    >>> client.write(symbol.specialize())
+    >>> client.write(next(symbol.specialize()))
     35
     >>> client.close()
 

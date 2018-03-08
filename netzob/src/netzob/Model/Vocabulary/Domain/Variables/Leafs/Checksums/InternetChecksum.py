@@ -57,7 +57,7 @@ class InternetChecksum(CRC16):
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(InternetChecksum([f1]))
     >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
+    >>> binascii.hexlify(next(s.specialize()))
     b'aabb5544'
 
     The following example illustrates the creation of an ICMP Echo request packet
@@ -80,7 +80,7 @@ class InternetChecksum(CRC16):
     >>> chksumField.domain = InternetChecksum([headerField, dataField],
     ...                                       dataType=Raw(nbBytes=2))
     >>> s = Symbol(fields = [headerField, dataField])
-    >>> msgs = [RawMessage(s.specialize())]
+    >>> msgs = [RawMessage(next(s.specialize()))]
     >>> s.messages = msgs
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> print(s.str_data())  # doctest: +ELLIPSIS

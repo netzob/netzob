@@ -140,7 +140,7 @@ class Alt(AbstractVariableNode):
     ...    return -1
     >>> f = Field(Alt([String(_) for _ in "abc"], callback=cbk), "alt")
     >>> sym = Symbol([f])
-    >>> data = sym.specialize()
+    >>> data = next(sym.specialize())
     >>> print(data)
     b'c'
     >>> Symbol.abstract(data, [sym])
@@ -338,7 +338,7 @@ def _test_alt(self):
     >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x01B'
     >>> Symbol.abstract(d, [s])
@@ -349,7 +349,7 @@ def _test_alt(self):
     >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v2, name='f2'), Field(v1, name='f1')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x01B'
     >>> Symbol.abstract(d, [s])
@@ -363,7 +363,7 @@ def _test_alt(self):
     >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'A\x01'
     >>> Symbol.abstract(d, [s])
@@ -374,7 +374,7 @@ def _test_alt(self):
     >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'B\x01'
     >>> Symbol.abstract(d, [s])
@@ -388,7 +388,7 @@ def _test_alt(self):
     >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'CC'
     >>> Symbol.abstract(d, [s])
@@ -399,7 +399,7 @@ def _test_alt(self):
     >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v2, name='f2'), Field(v1, name='f1')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'BB'
     >>> Symbol.abstract(d, [s])
@@ -413,7 +413,7 @@ def _test_alt(self):
     >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'BB'
     >>> Symbol.abstract(d, [s])
@@ -424,7 +424,7 @@ def _test_alt(self):
     >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'BB'
     >>> Symbol.abstract(d, [s])

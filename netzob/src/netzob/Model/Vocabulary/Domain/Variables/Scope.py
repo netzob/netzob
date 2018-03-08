@@ -119,9 +119,9 @@ class Scope(Enum):
       >>> f.domain = Data(String(), originalValue=value, scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> s.specialize(memory=m)
+      >>> next(s.specialize(memory=m))
       b'john'
-      >>> s.specialize(memory=m)
+      >>> next(s.specialize(memory=m))
       b'john'
       >>> len(str(m))
       0
@@ -135,10 +135,10 @@ class Scope(Enum):
       >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> s.specialize(memory=m)
+      >>> next(s.specialize(memory=m))
       Traceback (most recent call last):
-        ...
-      Exception: Cannot specialize this symbol.
+      ...
+      StopIteration
 
 
     * **Scope.SESSION**: A persistent value carries a value, such as
@@ -186,7 +186,7 @@ class Scope(Enum):
       >>> f.domain = Data(String(), originalValue=value, scope=Scope.SESSION)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> s.specialize(memory=m)
+      >>> next(s.specialize(memory=m))
       b'john'
       >>> len(str(m))
       0
@@ -196,12 +196,12 @@ class Scope(Enum):
       >>> f.domain = Data(String(nbChars=5), scope=Scope.SESSION)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> generated1 = s.specialize(memory=m)
+      >>> generated1 = next(s.specialize(memory=m))
       >>> len(generated1)
       5
       >>> m.hasValue(f.domain)
       True
-      >>> generated2 = s.specialize(memory=m)
+      >>> generated2 = next(s.specialize(memory=m))
       >>> len(generated2)
       5
       >>> generated1 == generated2
@@ -252,10 +252,10 @@ class Scope(Enum):
       >>> m = Memory()
       >>> m.hasValue(f.domain)
       False
-      >>> generated1 = s.specialize(memory=m)
+      >>> generated1 = next(s.specialize(memory=m))
       >>> m.hasValue(f.domain)
       True
-      >>> generated2 = s.specialize(memory=m)
+      >>> generated2 = next(s.specialize(memory=m))
       >>> generated1 == generated2
       True
 
@@ -301,7 +301,7 @@ class Scope(Enum):
       >>> m = Memory()
       >>> m.hasValue(f.domain)
       False
-      >>> generated = s.specialize(memory=m)
+      >>> generated = next(s.specialize(memory=m))
       >>> m.hasValue(f.domain)
       False
 

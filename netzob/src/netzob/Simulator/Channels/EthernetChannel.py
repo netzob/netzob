@@ -92,7 +92,7 @@ class EthernetChannel(AbstractChannel):
     ...    localMac="00:06:07:08:09:10")
     >>> client.open()
     >>> symbol = Symbol([Field("ABC")])
-    >>> client.write(symbol.specialize())
+    >>> client.write(next(symbol.specialize()))
     17
     >>> client.close()
 
@@ -229,7 +229,7 @@ class EthernetChannel(AbstractChannel):
             raise Exception("socket is not available")
 
         self.header_presets["eth.payload"] = data
-        packet = self.header.specialize(presets=self.header_presets)
+        packet = next(self.header.specialize(presets=self.header_presets))
         len_data = self._socket.sendto(packet, (self.interface,
                                                 EthernetChannel.ETH_P_ALL))
         return len_data

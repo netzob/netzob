@@ -107,10 +107,10 @@ class IPv4(AbstractType):
        >>> raw_data = ip.value.tobytes()
        >>> Symbol.abstract(raw_data, [f2])
        (ip4, OrderedDict([('ip4', b'\xc0\xa8\x00\n')]))
-       >>> raw_data = f1.specialize() + raw_data
+       >>> raw_data = next(f1.specialize()) + raw_data
        >>> Symbol.abstract(raw_data, [f1, f2])  # doctest: +SKIP
        >>> s = Symbol(fields=[f1,f2])
-       >>> msgs = [RawMessage(s.specialize()) for x in range(10)]
+       >>> msgs = [RawMessage(next(s.specialize())) for x in range(10)]
        >>> len(msgs)
        10
 
@@ -207,15 +207,15 @@ class IPv4(AbstractType):
 
         >>> from netzob.all import *
         >>> f = Field(IPv4())
-        >>> len(f.specialize())
+        >>> len(next(f.specialize()))
         4
 
         >>> f = Field(IPv4("192.168.0.20"))
-        >>> f.specialize()
+        >>> next(f.specialize())
         b'\xc0\xa8\x00\x14'
 
         >>> f = Field(IPv4(network="10.10.10.0/24"))
-        >>> len(f.specialize())
+        >>> len(next(f.specialize()))
         4
 
         """
@@ -482,7 +482,7 @@ def _test():
     ...    IPv4("1.2.3.4"), IPv4(),
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
     >>> assert Symbol.abstract(data, [symbol])[1]
 
 

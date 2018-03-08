@@ -141,7 +141,7 @@ class Padding(AbstractRelationVariableLeaf):
     >>> f1 = Field(Raw(b"##"))
     >>> f2 = Field(Padding([f0, f1], data=Raw(b'\x00'), modulo=128))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x00\x00\x00\x00'
     >>> len(d) * 8
@@ -156,7 +156,7 @@ class Padding(AbstractRelationVariableLeaf):
     >>> f1 = Field(Raw(b"##"))
     >>> f2 = Field(Padding([f0, f1], data=Raw(b'\x00'), modulo=128, offset=8))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x00\x00\x00'
     >>> len(d) * 8
@@ -171,7 +171,7 @@ class Padding(AbstractRelationVariableLeaf):
     >>> f1 = Field(Raw(b"##"))
     >>> f2 = Field(Padding([f0, f1], data=Raw(b'\x00'), modulo=128, factor=1./2))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
     >>> len(d) * 8
@@ -193,7 +193,7 @@ class Padding(AbstractRelationVariableLeaf):
     ...     return res_bits
     >>> f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x00\x01\x02\x03'
     >>> len(d) * 8
@@ -216,7 +216,7 @@ class Padding(AbstractRelationVariableLeaf):
     ...     return res_bits
     >>> f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x04\x04\x04\x04'
     >>> len(d) * 8
@@ -446,7 +446,7 @@ def _test():
     >>> f_pad = Field(Padding([f_size, f_data], data=Raw(b"\x00"), modulo=8*16), "padding")
     >>>
     >>> s = Symbol([f_size, f_data, f_pad])
-    >>> data = s.specialize()
+    >>> data = next(s.specialize())
     >>>
     >>> (abstractedSymbol, structured_data) = Symbol.abstract(data, [s])
     >>> ord(structured_data['size']) == len(structured_data['payload'])

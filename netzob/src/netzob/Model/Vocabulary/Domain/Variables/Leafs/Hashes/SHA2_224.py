@@ -62,7 +62,7 @@ class SHA2_224(AbstractHash):
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(SHA2_224([f1]))
     >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
+    >>> binascii.hexlify(next(s.specialize()))
     b'aabb6b14a319ec360af5bbc69eea2bfb3a7ef278705e742c5b1dd1c11239'
     """
 

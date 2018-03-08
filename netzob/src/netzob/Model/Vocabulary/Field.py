@@ -375,7 +375,7 @@ class Field(AbstractField):
 
         >>> from netzob.all import *
         >>> f = Field(String("hello"))
-        >>> f.specialize()
+        >>> next(f.specialize())
         b'hello'
 
         The following example shows the :meth:`specialize()` method used for a
@@ -383,7 +383,7 @@ class Field(AbstractField):
 
         >>> from netzob.all import *
         >>> f = Field(String(nbChars=4))
-        >>> len(f.specialize())
+        >>> len(next(f.specialize()))
         4
 
         """
@@ -404,15 +404,8 @@ class Field(AbstractField):
         from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
         fs = FieldSpecializer(self, presets=presets, fuzz=fuzz)
 
-        if fuzz is None:
-            try:
-                specializing_path = next(fs.specialize())
-            except StopIteration:
-                raise Exception("Cannot specialize this field.")
-            return specializing_path.getData(self.domain).tobytes()
-        else:
-            specializing_paths = fs.specialize()
-            return self._inner_specialize(specializing_paths)
+        specializing_paths = fs.specialize()
+        return self._inner_specialize(specializing_paths)
 
     def _inner_specialize(self, specializing_paths):
         for specializing_path in specializing_paths:
@@ -500,7 +493,7 @@ def _test():
 
     >>> from netzob.all import *
     >>> f = Field(String("hello"))
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'hello'
 
 
@@ -510,7 +503,7 @@ def _test():
     >>> f1 = Field(String("hello"))
     >>> f2 = Field(String(" john"))
     >>> f = Field([f1, f2])
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'hello john'
 
 
@@ -519,7 +512,7 @@ def _test():
     >>> from netzob.all import *
     >>> f = Field(String("hello"))
     >>> presets = {f: bitarray('01111000')}
-    >>> f.specialize(presets=presets)
+    >>> next(f.specialize(presets=presets))
     b'x'
 
 
@@ -553,7 +546,7 @@ def _test_field_integer():
     >>> s = Symbol([field])
     >>> list = []
     >>> for _ in range(40):
-    ...     list.append(s.specialize())
+    ...     list.append(next(s.specialize()))
 
     # i1
     >>> b'\x01' in list
@@ -596,22 +589,22 @@ def _test_field_bitarray():
 
     >>> from netzob.all import *
 
-    >>> Field(BitArray('00000000')).specialize()
+    >>> next(Field(BitArray('00000000')).specialize())
     b'\x00'
-    >>> Field(BitArray('00000001')).specialize()
+    >>> next(Field(BitArray('00000001')).specialize())
     b'\x01'
-    >>> Field(BitArray('00000010')).specialize()
+    >>> next(Field(BitArray('00000010')).specialize())
     b'\x02'
-    >>> Field(BitArray('00000100')).specialize()
+    >>> next(Field(BitArray('00000100')).specialize())
     b'\x04'
-    >>> Field(BitArray('11111111')).specialize()
+    >>> next(Field(BitArray('11111111')).specialize())
     b'\xff'
-    >>> Field(BitArray('1111111100000000')).specialize()
+    >>> next(Field(BitArray('1111111100000000')).specialize())
     b'\xff\x00'
 
-    >>> len(Field(BitArray(nbBits=32)).specialize())
+    >>> len(next(Field(BitArray(nbBits=32)).specialize()))
     4
-    >>> len(Field(BitArray(nbBits=64)).specialize())
+    >>> len(next(Field(BitArray(nbBits=64)).specialize()))
     8
 
     """
@@ -623,14 +616,14 @@ def _test_field_string():
 
     >>> from netzob.all import *
 
-    >>> Field(domain=String('abcdef')).specialize()
+    >>> next(Field(domain=String('abcdef')).specialize())
     b'abcdef'
-    >>> Field(domain=String('Ω')).specialize()
+    >>> next(Field(domain=String('Ω')).specialize())
     b'\xce\xa9'
-    >>> Field(domain=String('abcdefΩ')).specialize()
+    >>> next(Field(domain=String('abcdefΩ')).specialize())
     b'abcdef\xce\xa9'
 
-    >>> Field(domain=String('abcdef', eos=['123'])).specialize() # doctest: +SKIP
+    >>> next(Field(domain=String('abcdef', eos=['123'])).specialize()) # doctest: +SKIP
     b'abcdef123'
 
     """
@@ -643,16 +636,16 @@ def _test_field_padding():
 
     >>> f_str = Field(String("abcdef"))
     >>> f_pad = Field(Padding(f_str, data=String('*'), modulo=64))
-    >>> a = Field([f_str, f_pad]).specialize()
+    >>> a = next(Field([f_str, f_pad]).specialize())
     >>> a
     b'abcdef**'
     >>> len(a) * 8
     64
     >>> f_pad = Field(Padding(f_str, data=String('*'), modulo=128))
-    >>> len(Field([f_str, f_pad]).specialize()) * 8
+    >>> len(next(Field([f_str, f_pad]).specialize())) * 8
     128
     >>> f_pad = Field(Padding(f_str, data=String('*'), modulo=256))
-    >>> len(Field([f_str, f_pad]).specialize()) * 8
+    >>> len(next(Field([f_str, f_pad]).specialize())) * 8
     256
 
     """
@@ -673,7 +666,7 @@ def _test_field_padding_callback():
     ...     return res_bits
     >>> f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x00\x01\x02\x03'
     >>> len(d) * 8
@@ -691,9 +684,9 @@ def _test_field_multi_type():
     >>> f_bit = Field([BitArray('11111111'), Raw(b'##')])
     >>> f_f = Field([f_int, f_str, f_bit])
     >>> f = Field([f_f])
-    >>> b = f.specialize()
+    >>> b = next(f.specialize())
     >>> for _ in range(10):
-    ...     b += f.specialize()
+    ...     b += next(f.specialize())
 
     >>> b.find(b'\x2A') != -1 # 42 in hexa
     True

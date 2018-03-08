@@ -174,7 +174,7 @@ def _test():
     >>> from netzob.all import *
     >>> x = Field(Alt([uint8(1)]))
     >>> y = Field(Padding([x], data=Raw(b'\0'), modulo=32))
-    >>> Symbol([x, y]).specialize()
+    >>> next(Symbol([x, y]).specialize())
     b'\x01\x00\x00\x00'
 
     Reference a *single-item* node variable and make sure the parent is processed
@@ -182,7 +182,7 @@ def _test():
     >>> from netzob.all import *
     >>> x = Alt([uint8(1)])
     >>> y = Padding([x], data=Raw(b'\0'), modulo=32)
-    >>> Symbol([Field(x), Field(y)]).specialize()
+    >>> next(Symbol([Field(x), Field(y)]).specialize())
     b'\x01\x00\x00\x00'
 
     Reference a *multi-item* node field and make sure the parent variable is processed
@@ -190,15 +190,15 @@ def _test():
     >>> from netzob.all import *
     >>> x = Field(Alt([uint8(1), uint8(2)]))
     >>> y = Field(Padding([x], data=Raw(b'\0'), modulo=32))
-    >>> Symbol([x, y]).specialize()
-    b'\x02\x00\x00\x00'
+    >>> next(Symbol([x, y]).specialize())
+    b'\x01\x00\x00\x00'
 
     Reference a *multi-item* node variable and make sure the parent is processed
 
     >>> from netzob.all import *
     >>> x = Alt([uint8(1), uint8(2)])
     >>> y = Padding([x], data=Raw(b'\0'), modulo=32)
-    >>> Symbol([Field(x), Field(y)]).specialize()
-    b'\x01\x00\x00\x00'
+    >>> next(Symbol([Field(x), Field(y)]).specialize())
+    b'\x02\x00\x00\x00'
 
     """

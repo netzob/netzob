@@ -423,7 +423,7 @@ def _test():
     ...     HexaString(b"aabb"), HexaString(nbBytes=4),
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    >>> data = b''.join(f.specialize() for f in symbol.fields)
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
     >>> assert Symbol.abstract(data, [symbol])[1]
 
 

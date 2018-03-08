@@ -61,7 +61,7 @@ class Opt(Repeat):
     >>> from netzob.all import *
     >>> f0 = Field(String("a"), "f0")
     >>> f1 = Field(Opt(String("b")), "f1")
-    >>> assert Symbol([f0, f1]).specialize() in (b"a", b"ab")
+    >>> assert next(Symbol([f0, f1]).specialize()) in (b"a", b"ab")
 
     """
 

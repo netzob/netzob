@@ -100,7 +100,7 @@ class Agg(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> f = Field(Agg([BitArray('01101001'), BitArray(nbBits=3), BitArray(nbBits=5)]))
-    >>> t = f.specialize()
+    >>> t = next(f.specialize())
     >>> len(t)
     2
 
@@ -162,7 +162,7 @@ class Agg(AbstractVariableNode):
     >>> d1 = String("hello")
     >>> d2 = String(" john")
     >>> f = Field(Agg([d1, d2]))
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'hello john'
 
 
@@ -174,7 +174,7 @@ class Agg(AbstractVariableNode):
     >>> from netzob.all import *
     >>> a = Agg([int8(2), int8(3)], last_optional=True)
     >>> f = Field(a)
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> res == b'\x02' or res == b'\x02\x03'
     True
     >>> d = b'\x02\x03'
@@ -200,7 +200,7 @@ class Agg(AbstractVariableNode):
     >>> f = Field(v2)
     >>>
     >>> # Test specialization
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> res == b'\x02' or res == b'\x02!\x03' or res == b'\x02!\x03?\x04'
     True
     >>>
@@ -258,7 +258,7 @@ class Agg(AbstractVariableNode):
     >>> f = Field(v)
     >>>
     >>> # Test specialization
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> res  # doctest: +SKIP
     b'\x02\x04\x01'
     >>>
@@ -304,7 +304,7 @@ class Agg(AbstractVariableNode):
     >>> parentheses.children += [left, right]
     >>>
     >>> symbol = Symbol([Field(parentheses)])
-    >>> symbol.specialize()
+    >>> next(symbol.specialize())
     b'((+))'
 
 
@@ -321,7 +321,7 @@ class Agg(AbstractVariableNode):
     >>> v2 = Agg([int8(interval=(1, 3)), v1], last_optional=True)
     >>> v1.children = ["!", v2]
     >>> f = Field(v2)
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> res  # doctest: +SKIP
     b'\x03!\x03!\x03!\x03'
     >>>
@@ -375,7 +375,7 @@ class Agg(AbstractVariableNode):
     >>> right = Agg([operator, operation])
     >>> operation.children += [left, right]
     >>> sym = Symbol([Field(operation)])
-    >>> sym.specialize()  # doctest: +SKIP
+    >>> next(sym.specialize())  # doctest: +SKIP
     b'((((4 * 8 * 4) + 5 + 9 + 0) * 7 * 0 + (4 + 9 + (3 * 4 + 2) * 0) * 9) + 4 * 7)'
 
     """
@@ -579,7 +579,7 @@ def _test_agg():
     >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x03ABC'
     >>> Symbol.abstract(d, [s])
@@ -590,7 +590,7 @@ def _test_agg():
     >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x03ABC'
     >>> Symbol.abstract(d, [s])
@@ -604,7 +604,7 @@ def _test_agg():
     >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABC\x03'
     >>> Symbol.abstract(d, [s])
@@ -615,7 +615,7 @@ def _test_agg():
     >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABC\x03'
     >>> Symbol.abstract(d, [s])
@@ -629,7 +629,7 @@ def _test_agg():
     >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
     >>> Symbol.abstract(d, [s])
@@ -640,7 +640,7 @@ def _test_agg():
     >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v2, name='f2'), Field(v1, name='f1')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
     >>> Symbol.abstract(d, [s])
@@ -654,7 +654,7 @@ def _test_agg():
     >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
     >>> Symbol.abstract(d, [s])
@@ -665,7 +665,7 @@ def _test_agg():
     >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
     >>> Symbol.abstract(d, [s])

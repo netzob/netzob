@@ -536,7 +536,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f1 = Field(" # ")
         >>> f2 = Field("bbbbbb")
         >>> symbol = Symbol(fields=[f0, f1, f2])
-        >>> concrete_message = symbol.specialize()
+        >>> concrete_message = next(symbol.specialize())
         >>> concrete_message
         b'aaaa # bbbbbb'
         >>> (abstracted_symbol, structured_data) = Symbol.abstract(concrete_message, [symbol])

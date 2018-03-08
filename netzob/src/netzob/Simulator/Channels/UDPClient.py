@@ -94,7 +94,7 @@ class UDPClient(AbstractChannel):
     >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999, timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> client.write(symbol.specialize())
+    >>> client.write(next(symbol.specialize()))
     15
     >>> client.close()
 
@@ -317,7 +317,7 @@ def _test_udp():
     >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999, timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> client.write(symbol.specialize())
+    >>> client.write(next(symbol.specialize()))
     15
     >>> client.close()
 
