@@ -46,8 +46,8 @@
 from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Model.Vocabulary.Types.AbstractType import Sign, UnitSize
 from netzob.Model.Vocabulary.Types.Integer import Integer
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
-from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
+from netzob.Fuzzing.Mutator import Mutator, FuzzingMode
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, FuzzingInterval
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
 
@@ -60,20 +60,20 @@ class IntegerMutator(DomainMutator):
 
     :param domain: The domain of the field to mutate.
     :param interval: The scope of values to generate.
-        If set to :attr:`MutatorInterval.DEFAULT_INTERVAL <netzob.Fuzzing.DomainMutator.MutatorInterval.DEFAULT_INTERVAL>`, the values will be generated
+        If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL <netzob.Fuzzing.DomainMutator.FuzzingInterval.DEFAULT_INTERVAL>`, the values will be generated
         between the min and max values of the domain.
-        If set to :attr:`MutatorInterval.FULL_INTERVAL <netzob.Fuzzing.DomainMutator.MutatorInterval.FULL_INTERVAL>`, the values will be generated in
+        If set to :attr:`FuzzingInterval.FULL_INTERVAL <netzob.Fuzzing.DomainMutator.FuzzingInterval.FULL_INTERVAL>`, the values will be generated in
         [0, 2^N-1], where N is the bitsize (storage) of the field.
         If it is a tuple of integers (min, max), the values will be generate
         between min and max.
-        Default value is :attr:`MutatorInterval.DEFAULT_INTERVAL <netzob.Fuzzing.DomainMutator.MutatorInterval.DEFAULT_INTERVAL>`.
+        Default value is :attr:`FuzzingInterval.DEFAULT_INTERVAL <netzob.Fuzzing.DomainMutator.FuzzingInterval.DEFAULT_INTERVAL>`.
     :param lengthBitSize: The storage size in bits of the integer.
         Default value is `None`, which indicates to use the unit size set in the field domain.
-    :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`, :meth:`generate` will be
+    :param mode: If set to :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`, :meth:`generate` will be
         used to produce the value.
-        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`, :meth:`mutate` will be used to
+        If set to :attr:`FuzzingMode.MUTATE <netzob.Fuzzing.DomainMutator.FuzzingMode.MUTATE>`, :meth:`mutate` will be used to
         produce the value (not used yet).
-        Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
+        Default value is :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`.
     :param generator: The name of the generator to use. Set 'determinist' for the determinist generator, else among those
         available in :mod:`randomstate.prng` for a pseudo-random generator.
         Default value is ``'xorshift'``.
@@ -237,7 +237,7 @@ class IntegerMutator(DomainMutator):
 
     def __init__(self,
                  domain,
-                 mode=MutatorMode.GENERATE,
+                 mode=FuzzingMode.GENERATE,
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
@@ -255,10 +255,10 @@ class IntegerMutator(DomainMutator):
         # Handle default interval depending on type of generator
         if generator == DeterministGenerator.name or isinstance(generator, DeterministGenerator):
             if interval is None:
-                interval = MutatorInterval.DEFAULT_INTERVAL
+                interval = FuzzingInterval.DEFAULT_INTERVAL
         else:
             if interval is None:
-                interval = MutatorInterval.FULL_INTERVAL
+                interval = FuzzingInterval.FULL_INTERVAL
 
         # Initialize generator
         self._initializeGenerator(interval)
@@ -272,10 +272,10 @@ class IntegerMutator(DomainMutator):
             # Handle desired interval according to the storage space of the domain dataType
             self._minLength = max(interval[0], self.domain.dataType.getMinStorageValue())
             self._maxLength = min(interval[1], self.domain.dataType.getMaxStorageValue())
-        elif interval == MutatorInterval.DEFAULT_INTERVAL:
+        elif interval == FuzzingInterval.DEFAULT_INTERVAL:
             self._minLength = self.domain.dataType.getMinValue()
             self._maxLength = self.domain.dataType.getMaxValue()
-        elif interval == MutatorInterval.FULL_INTERVAL:
+        elif interval == FuzzingInterval.FULL_INTERVAL:
             self._minLength = self.domain.dataType.getMinStorageValue()
             self._maxLength = self.domain.dataType.getMaxStorageValue()
         else:
@@ -560,7 +560,7 @@ def _test_coverage():
     >>> fuzz = Fuzz()
     >>> f_data = Field(uint8(interval=(10, 20)))
     >>> symbol = Symbol([f_data])
-    >>> fuzz.set(f_data, interval=MutatorInterval.DEFAULT_INTERVAL, generator='xorshift')
+    >>> fuzz.set(f_data, interval=FuzzingInterval.DEFAULT_INTERVAL, generator='xorshift')
     >>> datas = set()
     >>> symbol.count()
     11

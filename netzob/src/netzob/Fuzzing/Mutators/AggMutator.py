@@ -43,7 +43,7 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
+from netzob.Fuzzing.Mutator import Mutator, FuzzingMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Common.Utils.Decorators import typeCheck
@@ -55,11 +55,11 @@ class AggMutator(DomainMutator):
     The AggMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to :attr:`MutatorMode.GENERATE`, :meth:`generate` will be
+    :param mode: If set to :attr:`FuzzingMode.GENERATE`, :meth:`generate` will be
         used to produce the value.
-        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`,
+        If set to :attr:`FuzzingMode.MUTATE <netzob.Fuzzing.DomainMutator.FuzzingMode.MUTATE>`,
         :meth:`mutate` will be used to produce the value.
-        Default value is :attr:`MutatorMode.GENERATE`.
+        Default value is :attr:`FuzzingMode.GENERATE`.
     :param mutateChild: If :const:`True`, the subfield has to be mutated.
         Default value is :const:`False`.
     :param mappingTypesMutators: Override the global default mapping of types with their default
@@ -72,10 +72,10 @@ class AggMutator(DomainMutator):
     :raises: :class:`Exception` if domain is not valid
 
 
-    **Fuzzing of a field that contains an aggregate of variables with default fuzzing strategy (MutatorMode.GENERATE)**
+    **Fuzzing of a field that contains an aggregate of variables with default fuzzing strategy (FuzzingMode.GENERATE)**
 
     >>> from netzob.all import *
-    >>> from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
+    >>> from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
     >>> fuzz = Fuzz()
     >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
     ...                                       int16(interval=(5, 8))]))
@@ -85,13 +85,13 @@ class AggMutator(DomainMutator):
     b'\x00\x00\x00\x00'
 
 
-    **Fuzzing of an aggregate of variables with non-default fuzzing strategy (MutatorMode.MUTATE)**
+    **Fuzzing of an aggregate of variables with non-default fuzzing strategy (FuzzingMode.MUTATE)**
 
     >>> fuzz = Fuzz()
     >>> f_agg = Field(name="agg", domain=Agg([int16(1),
     ...                                       int16(2)]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
-    >>> fuzz.set(f_agg, mode=MutatorMode.MUTATE)
+    >>> fuzz.set(f_agg, mode=FuzzingMode.MUTATE)
     >>> res = next(symbol.specialize(fuzz=fuzz))
     >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
@@ -129,7 +129,7 @@ class AggMutator(DomainMutator):
 
     def __init__(self,
                  domain,
-                 mode=MutatorMode.GENERATE,
+                 mode=FuzzingMode.GENERATE,
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=DomainMutator.COUNTER_MAX_DEFAULT,

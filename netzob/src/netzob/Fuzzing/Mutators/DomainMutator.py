@@ -51,16 +51,17 @@ from netzob.Common.Utils.Constant import Constant
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Fuzzing.Mutator import Mutator
-from netzob.Fuzzing.Mutator import MutatorMode
+from netzob.Fuzzing.Mutator import FuzzingMode
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Common.Utils.Decorators import NetzobLogger, public_api
 
 
-class MutatorInterval(Enum):
-    """Mutator Fuzzing intervals"""
-    DEFAULT_INTERVAL = 0  #: We use the legitimate domain interval (ex: DeterminitMutator(interval=MutatorInterval.DEFAULT_INTERVAL)
-    FULL_INTERVAL = 1  #: We cover the whole storage space of the domain (ex: DeterminitMutator(interval=MutatorInterval.FULL_INTERVAL)
-    # else, we consider the tuple passed as parameter to override the domain interval (ex: DeterminitMutator(interval=(10, 42))
+@public_api
+class FuzzingInterval(Enum):
+    """Fuzzing intervals"""
+    DEFAULT_INTERVAL = 0  #: We use the legitimate domain interval (ex: DeterministMutator(interval=FuzzingInterval.DEFAULT_INTERVAL)
+    FULL_INTERVAL = 1  #: We cover the whole storage space of the domain (ex: DeterministMutator(interval=FuzzingInterval.FULL_INTERVAL)
+    # else, we consider the tuple passed as parameter to override the domain interval (ex: DeterministMutator(interval=(10, 42))
 
 
 @NetzobLogger
@@ -82,10 +83,10 @@ class DomainMutator(Mutator):
 
     :param domain: The domain of the field to mutate, in case of a data
         mutator.
-    :param mode: If set to :attr:`MutatorMode.GENERATE`, :meth:`Mutator.generate()` will be
+    :param mode: If set to :attr:`FuzzingMode.GENERATE`, :meth:`Mutator.generate()` will be
         called in order to produce the fuzzing value.
-        If set to :attr:`MutatorMode.MUTATE`, :meth:`Mutator.mutate()` will be called in order to
-        mutate the current value. Default value is :attr:`MutatorMode.GENERATE`.
+        If set to :attr:`FuzzingMode.MUTATE`, :meth:`Mutator.mutate()` will be called in order to
+        mutate the current value. Default value is :attr:`FuzzingMode.GENERATE`.
     :param generator: The underlying generator used to produce pseudo-random or deterministic values.
     :param seed: The seed value of the mutator used to initialize the generator.
     :param counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be used to represent a ratio in percent). Default value is :attr:`COUNTER_MAX_DEFAULT` = 2**32.
@@ -93,7 +94,7 @@ class DomainMutator(Mutator):
         Default value is `None`, which indicates to use the unit size set in the field domain.
     :type domain: :class:`AbstractVariable
         <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
-    :type mode: :class:`MutatorMode`, optional
+    :type mode: :class:`FuzzingMode`, optional
     :type generator: :class:`iter`, optional
     :type seed: :class:`int`, optional
     :type counterMax: :class:`int` or :class:`float`, optional
@@ -105,7 +106,7 @@ class DomainMutator(Mutator):
     :var generator: The underlying generator used to produce pseudo-random or deterministic values.
     :var seed: The seed value of the mutator used to initialize the generator.
     :var counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be used to represent a ratio in percent).
-    :vartype mode: :class:`MutatorMode`
+    :vartype mode: :class:`FuzzingMode`
     :vartype generator: :class:`iter`
     :vartype seed: :class:`int`
     :vartype counterMax: :class:`int` or :class:`float`
@@ -129,7 +130,7 @@ class DomainMutator(Mutator):
     @public_api
     def __init__(self,
                  domain,
-                 mode=MutatorMode.GENERATE,  # type: MutatorMode
+                 mode=FuzzingMode.GENERATE,  # type: FuzzingMode
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=COUNTER_MAX_DEFAULT,
@@ -221,7 +222,7 @@ class DomainMutator(Mutator):
         """
 
         # Identify min and max interval from default datatype storage size
-        if fuzzing_interval == MutatorInterval.FULL_INTERVAL:
+        if fuzzing_interval == FuzzingInterval.FULL_INTERVAL:
             generator = 'determinist'
 
             if self.lengthBitSize is None:
@@ -233,7 +234,7 @@ class DomainMutator(Mutator):
 
         else:
             # Identify min and max interval from default datatype interval
-            if fuzzing_interval == MutatorInterval.DEFAULT_INTERVAL:
+            if fuzzing_interval == FuzzingInterval.DEFAULT_INTERVAL:
                 self._minLength = model_interval[0]
                 self._maxLength = model_interval[1]
                 self._logger.debug("Computed fuzzing interval from default datatype interval: ({}, {})".format(self._minLength, self._maxLength))
@@ -299,9 +300,9 @@ class DomainMutator(Mutator):
     @mode.setter  # type: ignore
     def mode(self, mode):
         # Sanity checks on mutator mode
-        if not isinstance(mode, MutatorMode):
+        if not isinstance(mode, FuzzingMode):
             raise TypeError("Mutator mode should be of type '{}'. Received object: '{}'"
-                            .format(MutatorMode, mode))
+                            .format(FuzzingMode, mode))
         self._mode = mode
 
     @property
@@ -342,7 +343,7 @@ def _test():
     >>> type(d)
     <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
 
-    >>> d = IntegerMutator(domain, mode=MutatorMode.MUTATE)
+    >>> d = IntegerMutator(domain, mode=FuzzingMode.MUTATE)
     >>> type(d)
     <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
 

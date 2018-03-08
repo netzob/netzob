@@ -94,8 +94,8 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             str([v.name for v in self.targets]), self.dataType)
 
     def count(self, fuzz=None):
-        from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.GENERATE:
+        from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
             # Retrieve the mutator
             mutator = fuzz.get(self)
             return mutator.count()

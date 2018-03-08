@@ -360,9 +360,9 @@ class Repeat(AbstractVariableNode):
 
         """
 
-        from netzob.Fuzzing.Mutators.DomainMutator import MutatorMode
+        from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == MutatorMode.GENERATE:
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
             # Retrieve the mutator
             mutator = fuzz.get(self)
             return mutator.count()

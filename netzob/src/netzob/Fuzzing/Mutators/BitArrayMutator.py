@@ -45,8 +45,8 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Fuzzing.Mutator import Mutator, MutatorMode
-from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, MutatorInterval
+from netzob.Fuzzing.Mutator import Mutator, FuzzingMode
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, FuzzingInterval
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
@@ -61,11 +61,11 @@ class BitArrayMutator(DomainMutator):
     The BitArrayMutator constructor expects some parameters:
 
     :param domain: The domain of the field to mutate.
-    :param mode: If set to :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`,
+    :param mode: If set to :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`,
         :meth:`generate` will be used to produce the value.
-        If set to :attr:`MutatorMode.MUTATE <netzob.Fuzzing.DomainMutator.MutatorMode.MUTATE>`,
+        If set to :attr:`FuzzingMode.MUTATE <netzob.Fuzzing.DomainMutator.FuzzingMode.MUTATE>`,
         :meth:`mutate` will be used to produce the value (not used yet).
-        Default value is :attr:`MutatorMode.GENERATE <netzob.Fuzzing.DomainMutator.MutatorMode.GENERATE>`.
+        Default value is :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`.
     :param interval: The scope of sequence length to generate. If set to
         (min, max), the values will be generated between min and max.
         Default value is **(None, None)**.
@@ -93,11 +93,11 @@ class BitArrayMutator(DomainMutator):
 
     def __init__(self,
                  domain,
-                 mode=MutatorMode.GENERATE,
+                 mode=FuzzingMode.GENERATE,
                  generator='xorshift',
                  seed=Mutator.SEED_DEFAULT,
                  counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
-                 interval=MutatorInterval.FULL_INTERVAL,
+                 interval=FuzzingInterval.FULL_INTERVAL,
                  lengthBitSize=None):
 
         # Call parent init
@@ -234,7 +234,7 @@ def _test():
     # Default BitArray type and fuzzing with full storage size
 
     >>> f = Field(BitArray())
-    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.FULL_INTERVAL)
+    >>> mutator = BitArrayMutator(f.domain, interval=FuzzingInterval.FULL_INTERVAL)
     >>> mutator._minLength
     0
     >>> mutator._maxLength
@@ -248,7 +248,7 @@ def _test():
     # Default BitArray type and fuzzing with full storage size, and specific length bit size
 
     >>> f = Field(BitArray())
-    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_4)
+    >>> mutator = BitArrayMutator(f.domain, interval=FuzzingInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_4)
     >>> mutator._minLength
     0
     >>> mutator._maxLength
@@ -262,7 +262,7 @@ def _test():
     # BitArray of specific size and fuzzing with default interval
 
     >>> f = Field(domain=BitArray(nbBits=16), name="data")
-    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.DEFAULT_INTERVAL)
+    >>> mutator = BitArrayMutator(f.domain, interval=FuzzingInterval.DEFAULT_INTERVAL)
     >>> mutator._minLength
     16
     >>> mutator._maxLength
@@ -276,7 +276,7 @@ def _test():
     # BitArray of specific size and fuzzing with default interval, and specific datatype storage size
 
     >>> f = Field(domain=BitArray(nbBits=16), name="data")
-    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.DEFAULT_INTERVAL, lengthBitSize=UnitSize.SIZE_8)
+    >>> mutator = BitArrayMutator(f.domain, interval=FuzzingInterval.DEFAULT_INTERVAL, lengthBitSize=UnitSize.SIZE_8)
     >>> mutator._minLength
     16
     >>> mutator._maxLength
@@ -290,7 +290,7 @@ def _test():
     # BitArray of specific variable size and fuzzing with default interval
 
     >>> f = Field(domain=BitArray(nbBits=(8, 12)), name="data")
-    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.DEFAULT_INTERVAL)
+    >>> mutator = BitArrayMutator(f.domain, interval=FuzzingInterval.DEFAULT_INTERVAL)
     >>> mutator._minLength
     8
     >>> mutator._maxLength
@@ -304,7 +304,7 @@ def _test():
     # BitArray of specific variable size and fuzzing with full datatype storage size
 
     >>> f = Field(domain=BitArray(nbBits=(4, 6)), name="data")
-    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.FULL_INTERVAL)
+    >>> mutator = BitArrayMutator(f.domain, interval=FuzzingInterval.FULL_INTERVAL)
     >>> mutator._minLength
     0
     >>> mutator._maxLength
@@ -318,7 +318,7 @@ def _test():
     # BitArray of specific variable size and fuzzing with full datatype storage size, and specific length bit size
 
     >>> f = Field(domain=BitArray(nbBits=(4, 6)), name="data")
-    >>> mutator = BitArrayMutator(f.domain, interval=MutatorInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_8)
+    >>> mutator = BitArrayMutator(f.domain, interval=FuzzingInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_8)
     >>> mutator._minLength
     0
     >>> mutator._maxLength
