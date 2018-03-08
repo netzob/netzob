@@ -548,7 +548,16 @@ class Integer(AbstractType):
 
         f = Integer.computeFormat(unitSize, endianness, sign)
 
-        return struct.pack(f, int(data))
+        data = struct.pack(f, int(data))
+
+        # Special case for 24 bits integers
+        if unitSize == UnitSize.SIZE_24:
+            if endianness == Endianness.BIG:
+                data = data[1:]
+            else:
+                data = data[:-1]
+
+        return data
 
     @staticmethod
     def encode(data,
@@ -642,7 +651,19 @@ class Integer(AbstractType):
                     raise ValueError(
                         "Invalid endianness value: {0}".format(endianness))
 
+            # Special case for 24 bits integers
+            if unitSize == UnitSize.SIZE_24:
+                if endianness == Endianness.BIG:
+                    wordData = b'\x00' + wordData
+                else:
+                    wordData = wordData + b'\x00'
+
             unpackedWord = struct.unpack(perWordFormat, wordData)[0]
+
+            # Special case for 24 bits integers
+            if unitSize == UnitSize.SIZE_24 and sign == Sign.SIGNED:
+                unpackedWord = unpackedWord if not (unpackedWord & 0x800000) else unpackedWord - 0x1000000
+
             unpackedWord = unpackedWord << int(unitSize.value) * iWord
 
             finalValue = finalValue + unpackedWord
@@ -667,6 +688,8 @@ class Integer(AbstractType):
             unitFormat = 'b'
         elif unitSize == UnitSize.SIZE_16:
             unitFormat = 'h'
+        elif unitSize == UnitSize.SIZE_24:
+            unitFormat = 'i'
         elif unitSize == UnitSize.SIZE_32:
             unitFormat = 'i'
         elif unitSize == UnitSize.SIZE_64:
@@ -732,9 +755,10 @@ def getMinStorageValue(unitSize, sign):
 
 def getMaxStorageValue(unitSize, sign):
     if sign == Sign.UNSIGNED:
-        return 2**unitSize.value - 1
+        d = (1 << unitSize.value) - 1
     else:
-        return int((2**unitSize.value) / 2) - 1
+        d = int((1 << unitSize.value) / 2) - 1
+    return d
 
 
 int8be = partialclass(Integer,
@@ -769,6 +793,22 @@ uint16le = partialclass(Integer,
                         unitSize=UnitSize.SIZE_16,
                         sign=Sign.UNSIGNED,
                         endianness=Endianness.LITTLE)
+int24be = partialclass(Integer,
+                       unitSize=UnitSize.SIZE_24,
+                       sign=Sign.SIGNED,
+                       endianness=Endianness.BIG)
+int24le = partialclass(Integer,
+                       unitSize=UnitSize.SIZE_24,
+                       sign=Sign.SIGNED,
+                       endianness=Endianness.LITTLE)
+uint24be = partialclass(Integer,
+                        unitSize=UnitSize.SIZE_24,
+                        sign=Sign.UNSIGNED,
+                        endianness=Endianness.BIG)
+uint24le = partialclass(Integer,
+                        unitSize=UnitSize.SIZE_24,
+                        sign=Sign.UNSIGNED,
+                        endianness=Endianness.LITTLE)
 int32be = partialclass(Integer,
                        unitSize=UnitSize.SIZE_32,
                        sign=Sign.SIGNED,
@@ -801,8 +841,8 @@ uint64le = partialclass(Integer,
                         unitSize=UnitSize.SIZE_64,
                         sign=Sign.UNSIGNED,
                         endianness=Endianness.LITTLE)
-int8, int16, int32, int64 = int8be, int16be, int32be, int64be
-uint8, uint16, uint32, uint64 = uint8be, uint16be, uint32be, uint64be
+int8, int16, int24, int32, int64 = int8be, int16be, int24be, int32be, int64be
+uint8, uint16, uint24, uint32, uint64 = uint8be, uint16be, uint24be, uint32be, uint64be
 
 
 def _test():
@@ -869,3 +909,29 @@ def _test():
     """
 
 
+def _test_24_bits_integers():
+    r"""
+
+    >>> from netzob.all import *
+    >>> t = Integer(unitSize=UnitSize.SIZE_24)
+    >>> len(t.generate().tobytes())
+    3
+
+    >>> t = Integer(unitSize=UnitSize.SIZE_24, endianness=Endianness.LITTLE)
+    >>> len(t.generate().tobytes())
+    3
+
+    >>> raw = b'\xff\xff\xff'
+    >>> Integer.encode(raw, unitSize=UnitSize.SIZE_24, endianness=Endianness.BIG, sign=Sign.UNSIGNED)
+    16777215
+
+    >>> Integer.encode(raw, unitSize=UnitSize.SIZE_24, endianness=Endianness.LITTLE, sign=Sign.UNSIGNED)
+    16777215
+
+    >>> Integer.encode(raw, unitSize=UnitSize.SIZE_24, endianness=Endianness.BIG, sign=Sign.SIGNED)
+    -1
+
+    >>> Integer.encode(raw, unitSize=UnitSize.SIZE_24, endianness=Endianness.LITTLE, sign=Sign.SIGNED)
+    -1
+
+    """

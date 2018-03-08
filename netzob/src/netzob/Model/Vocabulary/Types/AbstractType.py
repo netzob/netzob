@@ -449,15 +449,17 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             length = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
 
         # Deduce unit size according to max possible length
-        if length > 2**UnitSize.SIZE_64.value:
+        if length > (1 << UnitSize.SIZE_64.value):
             raise Exception("Maximum length for datatype is too large: '{}'".format(length))
-        elif length > 2**UnitSize.SIZE_32.value:
+        elif length > (1 << UnitSize.SIZE_32.value):
             unit_size = UnitSize.SIZE_64
-        elif length > 2**UnitSize.SIZE_16.value:
+        elif length > (1 << UnitSize.SIZE_24.value):
             unit_size = UnitSize.SIZE_32
-        elif length > 2**UnitSize.SIZE_8.value:
+        elif length > (1 << UnitSize.SIZE_16.value):
+            unit_size = UnitSize.SIZE_24
+        elif length > (1 << UnitSize.SIZE_8.value):
             unit_size = UnitSize.SIZE_16
-        elif length > 2**UnitSize.SIZE_4.value:
+        elif length > (1 << UnitSize.SIZE_4.value):
             unit_size = UnitSize.SIZE_8
         else:
             unit_size = UnitSize.SIZE_4

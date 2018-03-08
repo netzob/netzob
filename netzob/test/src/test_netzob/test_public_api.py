@@ -76,7 +76,7 @@ class test_public_api(unittest.TestCase):
 
         # One-line used to produce the list: grep -nir public_api src/netzob/| awk -F":" '{ print $1}' |uniq|grep -v .pyc|awk -F".py" '{ print $1}' |awk -F"/" '{print $NF}' | sort |xargs echo
         public_classes = [
-            AbstractChannel, AbstractChecksum, AbstractField, AbstractHash, AbstractHMAC, AbstractionLayer, AbstractState, AbstractTransition, AbstractType, Actor, Agg, Alt, Automata, AutomataMutator, BitArray, CloseChannelTransition, Data, DebugChannel, DomainMutator, EmptySymbol, EthernetChannel, Field, Fuzz, HexaString, Integer, IPChannel, IPv4, Memory, OpenChannelTransition, Opt, Padding, Protocol, Raw, RawEthernetChannel, RawIPChannel, Repeat, Size, SSLClient, State, String, Symbol, TCPClient, TCPServer, Timestamp, Transition, UDPClient, UDPServer, UnknownSymbol, Value
+            AbstractChannel, AbstractChecksum, AbstractField, AbstractHash, AbstractHMAC, AbstractionLayer, AbstractState, AbstractTransition, AbstractType, Actor, Agg, Alt, Automata, AutomataMutator, BitArray, CloseChannelTransition, Data, DebugChannel, DomainMutator, EmptySymbol, EthernetChannel, Field, Fuzz, HexaString, Integer, IPChannel, IPv4, Memory, OpenChannelTransition, Opt, Padding, Protocol, Raw, RawEthernetChannel, CustomIPChannel, Repeat, Size, SSLClient, State, String, Symbol, TCPClient, TCPServer, Timestamp, Transition, UDPClient, UDPServer, UnknownSymbol, Value
         ]
 
         for public_class in public_classes:
