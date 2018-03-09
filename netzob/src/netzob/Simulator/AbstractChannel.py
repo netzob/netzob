@@ -728,6 +728,14 @@ class NetUtils(object):
         :param localInterface: The local network interface
         :type localInterface: :class:`str`
         """
+        try:
+            with open('/proc/mounts', 'r') as f:
+                line = next(_ for _ in f.readlines() if 'sysfs' in _)
+        except StopIteration:
+            sysroot = '/sys'
+        else:
+            sysroot = line.split()[1]
 
-        with open('/sys/class/net/{}/operstate'.format(localInterface)) as fd:
-            return 'up' in fd.read()
+        path = '{}/class/net/{}/operstate'.format(sysroot, localInterface)
+        with open(path) as fd:
+            return 'down' not in fd.read()
