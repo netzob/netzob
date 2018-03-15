@@ -91,9 +91,9 @@ class Raw(AbstractType):
     >>> len(i.generate().tobytes())
     533
     >>> len(i.generate().tobytes())
-    7026
+    62
     >>> len(i.generate().tobytes())
-    7906
+    5580
 
     The following example shows how to define a six-byte long raw
     object, and the use of the generation method to produce a
@@ -126,7 +126,7 @@ class Raw(AbstractType):
     >>> r = Raw(nbBytes=100, alphabet=[b"t", b"o"])
     >>> data = r.generate().tobytes()
     >>> data  # doctest: +ELLIPSIS
-    b'oottoottototooooootoototootttttootooootottotttootttootttottoo...
+    b'otoootottoootttootttttootottotoooooottootoottttttttttttttttoototttotootooottttottotttttottootttottoo...
     >>> for c in set(data):  # extract distinct characters
     ...    print(chr(c))
     t
@@ -290,7 +290,7 @@ class Raw(AbstractType):
 
         generatedValue = None
         if self.alphabet is None:
-            generatedValue = os.urandom(int(generatedSize / 8))
+            generatedValue = b''.join(random.randint(0, 255).to_bytes(length=1, byteorder='big') for i in range(int(generatedSize / 8)))
         else:
             generatedValue = b"".join([random.choice(self.alphabet) for _ in range(int(generatedSize / 8))])
 
