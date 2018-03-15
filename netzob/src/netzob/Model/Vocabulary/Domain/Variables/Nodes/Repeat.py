@@ -308,8 +308,8 @@ class Repeat(AbstractVariableNode):
     MAX_REPEAT = 2**UNIT_SIZE.value
 
     @public_api
-    def __init__(self, child, nbRepeat, delimiter=None):
-        super(Repeat, self).__init__(self.__class__.__name__, [child])
+    def __init__(self, child, nbRepeat, delimiter=None, name=None):
+        super(Repeat, self).__init__(self.__class__.__name__, children=[child], name=name)
         self.nbRepeat = nbRepeat  # type: nbRepeatType
         self.delimiter = delimiter
 

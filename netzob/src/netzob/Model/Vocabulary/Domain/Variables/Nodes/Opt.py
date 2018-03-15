@@ -66,8 +66,8 @@ class Opt(Repeat):
     """
 
     @public_api
-    def __init__(self, child):
-        super(Opt, self).__init__(child, (0, 1))
+    def __init__(self, child, name=None):
+        super(Opt, self).__init__(child, (0, 1), name=name)
 
     @public_api
     def clone(self, map_objects={}):

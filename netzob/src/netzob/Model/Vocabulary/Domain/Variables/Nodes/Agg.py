@@ -381,8 +381,8 @@ class Agg(AbstractVariableNode):
     """
 
     @public_api
-    def __init__(self, children=None, last_optional=False):
-        super(Agg, self).__init__(self.__class__.__name__, children)
+    def __init__(self, children=None, last_optional=False, name=None):
+        super(Agg, self).__init__(self.__class__.__name__, children=children, name=name)
 
         self._last_optional = last_optional
 

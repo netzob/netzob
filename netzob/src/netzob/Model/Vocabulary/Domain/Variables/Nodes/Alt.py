@@ -177,8 +177,8 @@ class Alt(AbstractVariableNode):
     """
 
     @public_api
-    def __init__(self, children=None, callback=None):
-        super(Alt, self).__init__(self.__class__.__name__, children)
+    def __init__(self, children=None, callback=None, name=None):
+        super(Alt, self).__init__(self.__class__.__name__, children=children, name=name)
         self._callback = callback  # type: altCbkType
 
     @public_api
