@@ -1894,11 +1894,11 @@ class Actor(Thread):
       [+]   During transition 'T1', receiving expected output symbol 'Symbol 1'
       [+]   Transition 'T1' lead to state 'S2'
       [+] At state 'S2'
-      [+]   Picking transition 'T3'
-      [+]   During transition 'T3', sending input symbol 'Symbol 1'
-      [+]   During transition 'T3', fuzzing activated
-      [+]   During transition 'T3', receiving expected output symbol 'Symbol 2'
-      [+]   Transition 'T3' lead to state 'S2'
+      [+]   Picking transition 'T2'
+      [+]   During transition 'T2', sending input symbol 'Symbol 2'
+      [+]   During transition 'T2', fuzzing activated
+      [+]   During transition 'T2', receiving expected output symbol 'Symbol 2'
+      [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
     Activity log for actor 'Alice':
