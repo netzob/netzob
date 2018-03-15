@@ -47,7 +47,7 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
-from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
+from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingException
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
@@ -72,7 +72,7 @@ class AbstractVariableLeaf(AbstractVariable):
 
     def count(self, fuzz=None):
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode in [FuzzingMode.GENERATE, FuzzingMode.FIXED]:
             # Retrieve the mutator
             mutator = fuzz.get(self)
             return mutator.count()
@@ -144,7 +144,7 @@ class AbstractVariableLeaf(AbstractVariable):
 
         # Fuzzing has priority over generating a legitimate value
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
+        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode in [FuzzingMode.GENERATE, FuzzingMode.FIXED]:
 
             # Retrieve the mutator
             mutator = fuzz.get(self)
@@ -162,11 +162,10 @@ class AbstractVariableLeaf(AbstractVariable):
                         # Convert the return bytes into bitarray
                         value = bitarray(endian='big')
                         value.frombytes(generated_value)
-                        arbitraryValue = value
 
                         # Associate the generated value to the current variable
                         newParsingPath = parsingPath.clone()
-                        newParsingPath.addResult(self, arbitraryValue)
+                        newParsingPath.addResult(self, value)
                         yield newParsingPath
 
             return fuzz_generate()

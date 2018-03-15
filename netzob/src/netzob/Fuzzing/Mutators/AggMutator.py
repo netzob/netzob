@@ -43,6 +43,7 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Fuzzing.Mutator import Mutator, FuzzingMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
@@ -146,8 +147,11 @@ class AggMutator(DomainMutator):
         self.mutateChild = mutateChild
         self.mappingTypesMutators = mappingTypesMutators
 
-        # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=1)
+        if self.mode == FuzzingMode.FIXED:
+            self.generator = generator
+        else:
+            # Configure generator
+            self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=1)
 
     def count(self, fuzz=None):
         r"""
@@ -158,9 +162,13 @@ class AggMutator(DomainMutator):
         65536
 
         """
-        count = 1
-        for t in self.domain.children:
-            count *= t.count(fuzz=fuzz)
+        if self.mode == FuzzingMode.FIXED:
+            count = AbstractType.MAXIMUM_POSSIBLE_VALUES
+        else:
+            count = 1
+            for t in self.domain.children:
+                count *= t.count(fuzz=fuzz)
+
         if isinstance(self._effectiveCounterMax, float):
             count = count * self._effectiveCounterMax
         else:
@@ -214,3 +222,56 @@ class AggMutator(DomainMutator):
         """
         # Call parent generate() method
         super().generate()
+
+        if self.mode == FuzzingMode.FIXED:
+            value = next(self.generator)
+            return value
+
+
+def _test_fixed():
+    r"""
+
+    Reset the underlying random generator
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+
+
+    **Fixing the value of a node variable**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(Raw(nbBytes=1))
+    >>> v2 = Data(Raw(nbBytes=1))
+    >>> v_agg = Agg([v1, v2])
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set(v_agg, b'\x41\x42\x43')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+
+    **Fixing the value of a variable node through its name**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(Raw(nbBytes=1), name='v1')
+    >>> v2 = Data(Raw(nbBytes=1), name='v2')
+    >>> v_agg = Agg([v1, v2], name='v_agg')
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set('v_agg', b'\x41\x42\x43')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+    """

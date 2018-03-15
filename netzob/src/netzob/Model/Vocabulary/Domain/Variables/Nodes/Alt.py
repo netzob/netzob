@@ -36,6 +36,7 @@
 #+---------------------------------------------------------------------------+
 import random
 from typing import Callable, List
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -50,6 +51,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
 
 altCbkType = Callable[[GenericPath, List[AbstractVariable]], AbstractVariable]
@@ -252,8 +254,6 @@ class Alt(AbstractVariableNode):
         if len(self.children) == 0:
             raise Exception("Cannot specialize ALT if its has no children")
 
-        specializingPaths = []
-
         # If we are in a fuzzing mode
         if fuzz is not None and fuzz.get(self) is not None:
 
@@ -266,6 +266,14 @@ class Alt(AbstractVariableNode):
             except MaxFuzzingException:
                 self._logger.debug("Maximum mutation counter reached")
                 return
+
+            if mutator.mode == FuzzingMode.FIXED:
+                while True:
+                    value = bitarray(endian='big')
+                    value.frombytes(generated_value)
+
+                    specializingPath.addResult(self, value)
+                    yield specializingPath
 
             if 0 <= generated_value < len(self.children):
                 child = self.children[generated_value]

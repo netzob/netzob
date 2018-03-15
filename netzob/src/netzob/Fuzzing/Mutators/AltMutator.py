@@ -44,6 +44,7 @@ from typing import Dict  # noqa: F401
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Fuzzing.Mutator import Mutator, FuzzingMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
@@ -182,8 +183,11 @@ class AltMutator(DomainMutator):
         # Internal structure used to determine the position to select at each call to generate()
         self._currentDepth = 0
 
-        # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=len(self.domain.children) - 1)
+        if self.mode == FuzzingMode.FIXED:
+            self.generator = generator
+        else:
+            # Configure generator
+            self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=len(self.domain.children) - 1)
 
     def count(self, fuzz=None):
         r"""
@@ -194,9 +198,12 @@ class AltMutator(DomainMutator):
         65536
 
         """
-        count = 1
-        for t in self.domain.children:
-            count *= t.count(fuzz=fuzz)
+        if self.mode == FuzzingMode.FIXED:
+            count = AbstractType.MAXIMUM_POSSIBLE_VALUES
+        else:
+            count = 1
+            for t in self.domain.children:
+                count *= t.count(fuzz=fuzz)
         return count
 
     @property
@@ -326,6 +333,7 @@ def _test_alt_mutator():
 
     """
 
+
 def _test_alt_use_mutator():
     r"""
     # AltMutator can be set to use another mutator's option for mutation
@@ -347,6 +355,7 @@ def _test_alt_use_mutator():
 
     """
 
+
 def _test_alt_max_depth():
     r"""
     # AltMutator can be set to limit the number of mutations
@@ -364,5 +373,54 @@ def _test_alt_max_depth():
     Traceback (most recent call last):
     ...
     netzob.Fuzzing.Mutators.AltMutator.RecursionException: Max depth reached (3)
+
+    """
+
+
+def _test_fixed():
+    r"""
+
+    Reset the underlying random generator
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+
+
+    **Fixing the value of a node variable**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(Raw(nbBytes=1))
+    >>> v2 = Data(Raw(nbBytes=1))
+    >>> v_alt = Alt([v1, v2])
+    >>> f1 = Field(v_alt)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set(v_alt, b'\x41\x42\x43')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+
+    **Fixing the value of a variable node through its name**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(Raw(nbBytes=1), name='v1')
+    >>> v2 = Data(Raw(nbBytes=1), name='v2')
+    >>> v_alt = Alt([v1, v2], name='v_alt')
+    >>> f1 = Field(v_alt)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set('v_alt', b'\x41\x42\x43')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
 
     """

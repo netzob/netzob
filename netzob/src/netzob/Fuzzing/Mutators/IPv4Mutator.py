@@ -102,9 +102,12 @@ class IPv4Mutator(DomainMutator):
                          seed=seed,
                          counterMax=counterMax)
 
-        # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator,\
-            seed=self.seed, minValue=0, maxValue=2**32-1, signed=False)
+        if self.mode == FuzzingMode.FIXED:
+            self.generator = generator
+        else:
+
+            # Initialize data generator
+            self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=(1 << 32) - 1, signed=False)
 
     def count(self):
         r"""
@@ -137,11 +140,234 @@ class IPv4Mutator(DomainMutator):
         :return: the generated content represented with bytes
         :rtype: :class:`bytes`
         """
+        # Call parent generate() method
+        super().generate()
 
-        # Generate a random integer between 0 and 2**32-1
-        ipv4Value = next(self.generator)
+        if self.mode == FuzzingMode.FIXED:
+            valueBytes = next(self.generator)
+        else:
 
-        return Integer.decode(ipv4Value,
-                              unitSize=UnitSize.SIZE_32,
-                              endianness=self.domain.dataType.endianness,
-                              sign=Sign.UNSIGNED)
+            # Generate a random integer between 0 and 2**32-1
+            ipv4Value = next(self.generator)
+
+            valueBytes = Integer.decode(ipv4Value,
+                                        unitSize=UnitSize.SIZE_32,
+                                        endianness=self.domain.dataType.endianness,
+                                        sign=Sign.UNSIGNED)
+
+        return valueBytes
+
+
+def _test_fixed():
+    r"""
+
+    Reset the underlying random generator
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+
+
+    **Fixing the value of a field**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(IPv4())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz = Fuzz()
+    >>> fuzz.set(f1, b'\x41')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a sub-field**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(IPv4())
+    >>> f2_1 = Field(IPv4())
+    >>> f2_2 = Field(IPv4())
+    >>> f2 = Field([f2_1, f2_2])
+    >>> symbol = Symbol([f1, f2], name="sym")
+    >>> fuzz.set(f2_1, b'\x41')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'\xd9c\xc3\xe4Al\x0bC\xf8'
+    >>> next(messages_gen)
+    b'\xd9c\xc3\xe4A\x83}h\xec'
+    >>> next(messages_gen)
+    b'\xd9c\xc3\xe4A\xc9\xd5N\xf8'
+
+
+    **Fixing the value of a field that contains sub-fields**
+
+    This should trigger an exception as it is only possible to fix a value to leaf fields.
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(IPv4())
+    >>> f2_1 = Field(IPv4())
+    >>> f2_2 = Field(IPv4())
+    >>> f2 = Field([f2_1, f2_2])
+    >>> symbol = Symbol([f1, f2], name="sym")
+    >>> fuzz.set(f2, b'\x41')
+    Traceback (most recent call last):
+    ...
+    Exception: Cannot set a fixed value on a field that contains sub-fields
+
+
+    **Fixing the value of a leaf variable**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(IPv4())
+    >>> v2 = Data(IPv4())
+    >>> v_agg = Agg([v1, v2])
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set(v1, b'\x41')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'A{\\\x96\xe5'
+    >>> next(messages_gen)
+    b'A\xe98\x82$'
+    >>> next(messages_gen)
+    b'AI$\xc2\x19'
+
+
+    **Fixing the value of a node variable**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(IPv4())
+    >>> v2 = Data(IPv4())
+    >>> v_agg = Agg([v1, v2])
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set(v_agg, b'\x41\x42\x43')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+
+    **Fixing the value of a field, by relying on a provided generator**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(IPv4())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
+    >>> fuzz.set(f1, my_generator)
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    Traceback (most recent call last):
+    ...
+    StopIteration
+
+
+    **Fixing the value of a field, by relying on a provided iterator**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(IPv4())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
+    >>> fuzz.set(f1, my_iter)
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    Traceback (most recent call last):
+    ...
+    StopIteration
+
+
+    **Fixing the value of a field, by relying on a provided function**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(IPv4())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> def my_callable():
+    ...     return random.choice([b'\x41', b'\x42', b'\x43'])
+    >>> fuzz.set(f1, my_callable)
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+
+
+    **Fixing the value of a field through its name**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(IPv4(), name='f1')
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set('f1', b'\x41')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a variable leaf through its name**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(IPv4(), name='v1')
+    >>> v2 = Data(IPv4(), name='v2')
+    >>> v_agg = Agg([v1, v2], name='v_agg')
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set('v1', b'\x41\x42\x43')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'ABC\xfc\xb5\xd0\x9b'
+    >>> next(messages_gen)
+    b'ABC\xe7&P\x1a'
+    >>> next(messages_gen)
+    b'ABC\xbb\x13\xe7\xda'
+
+
+    **Fixing the value of a variable node through its name**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(IPv4(), name='v1')
+    >>> v2 = Data(IPv4(), name='v2')
+    >>> v_agg = Agg([v1, v2], name='v_agg')
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set('v_agg', b'\x41\x42\x43')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+    """

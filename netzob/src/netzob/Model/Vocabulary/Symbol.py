@@ -430,6 +430,24 @@ class Symbol(AbstractField):
 
         return presets
 
+    def normalize_fuzz(self, fuzz):
+        """Update the presets dict, according to the symbol definition.
+
+        Fields described with field name are converted into field
+        object, and preseting values are converted into bitarray.
+
+        """
+
+        if fuzz is None:
+            return None
+        else:
+            keys_to_normalize = []
+            for k, v in fuzz.mappingFieldsMutators.items():
+                if isinstance(k, str):
+                    keys_to_normalize.append(k)
+            for k in keys_to_normalize:
+                fuzz.normalize_mappingFieldsMutators(k, current_symbol=self)
+
     @public_api
     def count(self, presets=None, fuzz=None):
         r"""The :meth:`count` method computes the expected number of unique

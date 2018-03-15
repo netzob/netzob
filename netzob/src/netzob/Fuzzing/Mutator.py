@@ -52,6 +52,7 @@ from netzob.conf import Conf
 @public_api
 class FuzzingMode(Enum):
     """Mutator Fuzzing modes"""
+    FIXED = 0  #: Data is fixed (no fuzzing)
     MUTATE = 1  #: Fuzzing by mutation of a legitimate value
     GENERATE = 2  #: Fuzzing by generation
     __repr__ = Enum.__str__

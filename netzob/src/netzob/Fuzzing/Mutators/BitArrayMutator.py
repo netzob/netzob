@@ -108,14 +108,18 @@ class BitArrayMutator(DomainMutator):
                          counterMax=counterMax,
                          lengthBitSize=lengthBitSize)
 
-        # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=(1<<32)-1)  # in order to generate 4 bytes of random data at each call
+        if self.mode == FuzzingMode.FIXED:
+            self.generator = generator
+        else:
 
-        # Initialize length generator
-        model_min = self.domain.dataType.size[0]
-        model_max = self.domain.dataType.size[1]
-        model_unitSize = self.domain.dataType.unitSize
-        self._initializeLengthGenerator(generator, interval, (model_min, model_max), model_unitSize)
+            # Initialize data generator
+            self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=(1 << 32) - 1)  # in order to generate 4 bytes of random data at each call
+
+            # Initialize length generator
+            model_min = self.domain.dataType.size[0]
+            model_max = self.domain.dataType.size[1]
+            model_unitSize = self.domain.dataType.unitSize
+            self._initializeLengthGenerator(generator, interval, (model_min, model_max), model_unitSize)
 
     def count(self):
         r"""
@@ -143,14 +147,17 @@ class BitArrayMutator(DomainMutator):
 
         """
 
-        range_min = self.domain.dataType.size[0]
-        range_max = self.domain.dataType.size[1]
-        permitted_values = 2
-        count = 0
-        for i in range(range_min, range_max + 1):
-            count += permitted_values ** i
-            if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
-                return AbstractType.MAXIMUM_POSSIBLE_VALUES
+        if self.mode == FuzzingMode.FIXED:
+            count = AbstractType.MAXIMUM_POSSIBLE_VALUES
+        else:
+            range_min = self.domain.dataType.size[0]
+            range_max = self.domain.dataType.size[1]
+            permitted_values = 2
+            count = 0
+            for i in range(range_min, range_max + 1):
+                count += permitted_values ** i
+                if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+                    return AbstractType.MAXIMUM_POSSIBLE_VALUES
         return count
 
     def generate(self):
@@ -164,25 +171,31 @@ class BitArrayMutator(DomainMutator):
         # Call parent generate() method
         super().generate()
 
-        # Generate length of random data
-        length = next(self._lengthGenerator)
+        if self.mode == FuzzingMode.FIXED:
+            valueBytes = next(self.generator)
+        else:
 
-        # Generate random data
-        value_bits = bitarray('')
-        if length == 0:
-            return value_bits.tobytes()
-        while True:
-            # Generate random sequence of bits, octet per octet
-            data_int = next(self.generator)
-            data_bytes = data_int.to_bytes(4, byteorder='big')
-            data_bits = bitarray()
-            data_bits.frombytes(data_bytes)
+            # Generate length of random data
+            length = next(self._lengthGenerator)
 
-            # Concatenate the generated data
-            value_bits += data_bits
-            if len(value_bits) >= length:
-                break
-        return value_bits[:length].tobytes()
+            # Generate random data
+            value_bits = bitarray('')
+            if length == 0:
+                return value_bits.tobytes()
+            while True:
+                # Generate random sequence of bits, octet per octet
+                data_int = next(self.generator)
+                data_bytes = data_int.to_bytes(4, byteorder='big')
+                data_bits = bitarray()
+                data_bits.frombytes(data_bytes)
+
+                # Concatenate the generated data
+                value_bits += data_bits
+                if len(value_bits) >= length:
+                    break
+            valueBytes = value_bits[:length].tobytes()
+
+        return valueBytes
 
 
 def _test():
@@ -373,5 +386,220 @@ def _test_bitarray_length_2():
     >>> mutator = BitArrayMutator(fieldBits.domain, lengthBitSize=UnitSize.SIZE_4)
     >>> len(mutator.generate()) * 8
     16
+
+    """
+
+
+def _test_fixed():
+    r"""
+
+    Reset the underlying random generator
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+
+
+    **Fixing the value of a field**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(BitArray(nbBits=8))
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz = Fuzz()
+    >>> fuzz.set(f1, b'\x41')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a sub-field**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(BitArray(nbBits=8))
+    >>> f2_1 = Field(BitArray(nbBits=8))
+    >>> f2_2 = Field(BitArray(nbBits=8))
+    >>> f2 = Field([f2_1, f2_2])
+    >>> symbol = Symbol([f1, f2], name="sym")
+    >>> fuzz.set(f2_1, b'\x41')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'\xbfAJ'
+    >>> next(messages_gen)
+    b'\xbfA\xdd'
+    >>> next(messages_gen)
+    b'\xbfA\x8b'
+
+
+    **Fixing the value of a field that contains sub-fields**
+
+    This should trigger an exception as it is only possible to fix a value to leaf fields.
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(BitArray(nbBits=8))
+    >>> f2_1 = Field(BitArray(nbBits=8))
+    >>> f2_2 = Field(BitArray(nbBits=8))
+    >>> f2 = Field([f2_1, f2_2])
+    >>> symbol = Symbol([f1, f2], name="sym")
+    >>> fuzz.set(f2, b'\x41')
+    Traceback (most recent call last):
+    ...
+    Exception: Cannot set a fixed value on a field that contains sub-fields
+
+
+    **Fixing the value of a leaf variable**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(BitArray(nbBits=8))
+    >>> v2 = Data(BitArray(nbBits=8))
+    >>> v_agg = Agg([v1, v2])
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set(v1, b'\x41')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'A\x82'
+    >>> next(messages_gen)
+    b'A\xda'
+    >>> next(messages_gen)
+    b'A\xb4'
+
+
+    **Fixing the value of a node variable**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(BitArray(nbBits=8))
+    >>> v2 = Data(BitArray(nbBits=8))
+    >>> v_agg = Agg([v1, v2])
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set(v_agg, b'\x41\x42\x43')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+
+    **Fixing the value of a field, by relying on a provided generator**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(BitArray(nbBits=8))
+    >>> symbol = Symbol([f1], name="sym")
+    >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
+    >>> fuzz.set(f1, my_generator)
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    Traceback (most recent call last):
+    ...
+    StopIteration
+
+
+    **Fixing the value of a field, by relying on a provided iterator**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(BitArray(nbBits=8))
+    >>> symbol = Symbol([f1], name="sym")
+    >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
+    >>> fuzz.set(f1, my_iter)
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    Traceback (most recent call last):
+    ...
+    StopIteration
+
+
+    **Fixing the value of a field, by relying on a provided function**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(BitArray(nbBits=8))
+    >>> symbol = Symbol([f1], name="sym")
+    >>> def my_callable():
+    ...     return random.choice([b'\x41', b'\x42', b'\x43'])
+    >>> fuzz.set(f1, my_callable)
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'C'
+
+
+    **Fixing the value of a field through its name**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> f1 = Field(BitArray(nbBits=8), name='f1')
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set('f1', b'\x41')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a variable leaf through its name**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(BitArray(nbBits=8), name='v1')
+    >>> v2 = Data(BitArray(nbBits=8), name='v2')
+    >>> v_agg = Agg([v1, v2], name='v_agg')
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set('v1', b'\x41\x42\x43')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'ABC\x81'
+    >>> next(messages_gen)
+    b'ABC>'
+    >>> next(messages_gen)
+    b'ABCb'
+
+
+    **Fixing the value of a variable node through its name**
+
+    >>> from netzob.all import *
+    >>> fuzz = Fuzz()
+    >>> v1 = Data(BitArray(nbBits=8), name='v1')
+    >>> v2 = Data(BitArray(nbBits=8), name='v2')
+    >>> v_agg = Agg([v1, v2], name='v_agg')
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> fuzz.set('v_agg', b'\x41\x42\x43')
+    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
 
     """

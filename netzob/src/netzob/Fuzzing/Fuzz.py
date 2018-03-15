@@ -36,6 +36,9 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 from typing import Dict, Union  # noqa: F401
+import types
+import collections
+from itertools import repeat
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -59,6 +62,7 @@ from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
+from netzob.Fuzzing.Generators.GeneratorFactory import repeatfunc
 from netzob.Fuzzing.Mutator import Mutator, FuzzingMode
 from netzob.Fuzzing.Mutators.AltMutator import AltMutator
 from netzob.Fuzzing.Mutators.AggMutator import AggMutator
@@ -140,6 +144,7 @@ class Fuzz(object):
     @public_api
     def set(self,
             key,
+            value=None,
             mode=FuzzingMode.GENERATE,
             generator='xorshift',
             seed=None,
@@ -154,6 +159,7 @@ class Fuzz(object):
                     variable or a type).
         :param mode: The fuzzing strategy, which can be either:
 
+                     * ``FuzzingMode.FIXED``: in this mode, no fuzzing is applied, and a fixed valued is expected.
                      * ``FuzzingMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied to it.
                      * ``FuzzingMode.GENERATE``: in this mode, the fuzzing component directly produces a random message.
 
@@ -502,7 +508,7 @@ class Fuzz(object):
         The following examples show the different usages of the fuzzing
         component.
 
-        **Basic fuzzing example**
+        **Simple fuzzing example**
 
         >>> from netzob.all import *
         >>> fuzz = Fuzz()
@@ -511,6 +517,210 @@ class Fuzz(object):
         >>> fuzz.set(f_data)
         >>> next(symbol.specialize(fuzz=fuzz))
         b'\x00'
+
+
+        **Fixing the value of a field**
+
+        >>> from netzob.all import *
+        >>> f1 = Field(uint8())
+        >>> symbol = Symbol([f1], name="sym")
+        >>> fuzz = Fuzz()
+        >>> fuzz.set(f1, b'\x41')
+        >>> messages_gen = symbol.specialize(fuzz=fuzz)
+        >>> next(messages_gen)
+        b'A'
+        >>> next(messages_gen)
+        b'A'
+        >>> next(messages_gen)
+        b'A'
+
+
+        **Fixing the value of a sub-field**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f1 = Field(uint8())
+        >>> f2_1 = Field(uint8())
+        >>> f2_2 = Field(uint8())
+        >>> f2 = Field([f2_1, f2_2])
+        >>> symbol = Symbol([f1, f2], name="sym")
+        >>> fuzz.set(f2_1, b'\x41')
+        >>> messages_gen = symbol.specialize(fuzz=fuzz)
+        >>> next(messages_gen)
+        b'\xc5A\xd7'
+        >>> next(messages_gen)
+        b'\xc5A\x14'
+        >>> next(messages_gen)
+        b'\xc5A\x84'
+
+
+        **Fixing the value of a field that contains sub-fields**
+
+        This should trigger an exception as it is only possible to fix a value to leaf fields.
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f1 = Field(uint8())
+        >>> f2_1 = Field(uint8())
+        >>> f2_2 = Field(uint8())
+        >>> f2 = Field([f2_1, f2_2])
+        >>> symbol = Symbol([f1, f2], name="sym")
+        >>> fuzz.set(f2, b'\x41')
+        Traceback (most recent call last):
+        ...
+        Exception: Cannot set a fixed value on a field that contains sub-fields
+
+
+        **Fixing the value of a leaf variable**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> v1 = Data(uint8())
+        >>> v2 = Data(uint8())
+        >>> v_agg = Agg([v1, v2])
+        >>> f1 = Field(v_agg)
+        >>> symbol = Symbol([f1], name="sym")
+        >>> fuzz.set(v1, b'\x41')
+        >>> messages_gen = symbol.specialize(fuzz=fuzz)
+        >>> next(messages_gen)
+        b'A\xf8'
+        >>> next(messages_gen)
+        b'A\xcf'
+        >>> next(messages_gen)
+        b'A\x9b'
+
+
+        **Fixing the value of a node variable**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> v1 = Data(uint8())
+        >>> v2 = Data(uint8())
+        >>> v_agg = Agg([v1, v2])
+        >>> f1 = Field(v_agg)
+        >>> symbol = Symbol([f1], name="sym")
+        >>> fuzz.set(v_agg, b'\x41\x42\x43')
+        >>> messages_gen = symbol.specialize(fuzz=fuzz)
+        >>> next(messages_gen)
+        b'ABC'
+        >>> next(messages_gen)
+        b'ABC'
+        >>> next(messages_gen)
+        b'ABC'
+
+
+        **Fixing the value of a field, by relying on a provided generator**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f1 = Field(uint8())
+        >>> symbol = Symbol([f1], name="sym")
+        >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
+        >>> fuzz.set(f1, my_generator)
+        >>> messages_gen = symbol.specialize(fuzz=fuzz)
+        >>> next(messages_gen)
+        b'A'
+        >>> next(messages_gen)
+        b'B'
+        >>> next(messages_gen)
+        b'C'
+        >>> next(messages_gen)
+        Traceback (most recent call last):
+        ...
+        StopIteration
+
+
+        **Fixing the value of a field, by relying on a provided iterator**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f1 = Field(uint8())
+        >>> symbol = Symbol([f1], name="sym")
+        >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
+        >>> fuzz.set(f1, my_iter)
+        >>> messages_gen = symbol.specialize(fuzz=fuzz)
+        >>> next(messages_gen)
+        b'A'
+        >>> next(messages_gen)
+        b'B'
+        >>> next(messages_gen)
+        b'C'
+        >>> next(messages_gen)
+        Traceback (most recent call last):
+        ...
+        StopIteration
+
+
+        **Fixing the value of a field, by relying on a provided function**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f1 = Field(uint8())
+        >>> symbol = Symbol([f1], name="sym")
+        >>> def my_callable():
+        ...     return random.choice([b'\x41', b'\x42', b'\x43'])
+        >>> fuzz.set(f1, my_callable)
+        >>> messages_gen = symbol.specialize(fuzz=fuzz)
+        >>> next(messages_gen)
+        b'B'
+        >>> next(messages_gen)
+        b'B'
+        >>> next(messages_gen)
+        b'C'
+
+
+        **Fixing the value of a field through its name**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> f1 = Field(uint8(), name='f1')
+        >>> symbol = Symbol([f1], name="sym")
+        >>> fuzz.set('f1', b'\x41')
+        >>> messages_gen = symbol.specialize(fuzz=fuzz)
+        >>> next(messages_gen)
+        b'A'
+        >>> next(messages_gen)
+        b'A'
+        >>> next(messages_gen)
+        b'A'
+
+
+        **Fixing the value of a variable leaf through its name**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> v1 = Data(uint8(), name='v1')
+        >>> v2 = Data(uint8(), name='v2')
+        >>> v_agg = Agg([v1, v2], name='v_agg')
+        >>> f1 = Field(v_agg)
+        >>> symbol = Symbol([f1], name="sym")
+        >>> fuzz.set('v1', b'\x41\x42\x43')
+        >>> messages_gen = symbol.specialize(fuzz=fuzz)
+        >>> next(messages_gen)
+        b'ABCo'
+        >>> next(messages_gen)
+        b'ABCG'
+        >>> next(messages_gen)
+        b'ABC\x90'
+
+
+        **Fixing the value of a variable node through its name**
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> v1 = Data(uint8(), name='v1')
+        >>> v2 = Data(uint8(), name='v2')
+        >>> v_agg = Agg([v1, v2], name='v_agg')
+        >>> f1 = Field(v_agg)
+        >>> symbol = Symbol([f1], name="sym")
+        >>> fuzz.set('v_agg', b'\x41\x42\x43')
+        >>> messages_gen = symbol.specialize(fuzz=fuzz)
+        >>> next(messages_gen)
+        b'ABC'
+        >>> next(messages_gen)
+        b'ABC'
+        >>> next(messages_gen)
+        b'ABC'
 
 
         **Fuzzing example of a field that contains an integer**
@@ -683,6 +893,20 @@ class Fuzz(object):
         if seed is None:
             seed = Mutator.SEED_DEFAULT
 
+        if value is not None:
+            mode = FuzzingMode.FIXED
+
+            if callable(value):
+                generator = repeatfunc(value)
+            elif isinstance(value, types.GeneratorType):
+                generator = value
+            elif isinstance(value, (str, bytes)):
+                generator = repeat(value)
+            elif isinstance(value, collections.Iterable):
+                generator = value
+            else:
+                generator = repeat(value)
+
         # Update kwargs with the first 4 parameters. This kwargs will be passed to Mutator constructors
         kwargs.update({'mode': mode, 'generator': generator, 'seed': seed, 'counterMax': counterMax})
 
@@ -700,10 +924,10 @@ class Fuzz(object):
                 raise TypeError("Unsupported type for key: '{}'".format(type(key)))
 
         # Case where target key is an AbstractField or AbstractVariable
-        elif isinstance(key, (AbstractField, AbstractVariable)):
+        elif isinstance(key, (AbstractField, AbstractVariable, str)):
 
             self.mappingFieldsMutators[key] = kwargs
-            self._normalize_mappingFieldsMutators(key)
+            self.normalize_mappingFieldsMutators(key)
 
         else:
             raise TypeError("Unsupported type for key: '{}'".format(type(key)))
@@ -823,7 +1047,7 @@ class Fuzz(object):
 
         return mutatorInstance
 
-    def _normalize_mappingFieldsMutators(self, new_key):
+    def normalize_mappingFieldsMutators(self, new_key, current_symbol=None):
         """Normalize the fuzzing configuration.
 
         Fields described with field name are converted into field
@@ -833,7 +1057,7 @@ class Fuzz(object):
         """
 
         # Normalize fuzzing keys
-        normalized_new_keys = self._normalizeKeys(new_key=new_key)
+        normalized_new_keys = self._normalizeKeys(new_key=new_key, current_symbol=current_symbol)
 
         # Normalize fuzzing values
         self._normalizeValues(new_keys=normalized_new_keys)
@@ -849,7 +1073,7 @@ class Fuzz(object):
         # Second loop to normalize fuzzing values, after handling complex domains (that may have added news keys:values)
         self._normalizeValues(new_keys=normalized_new_keys)
 
-    def _normalizeKeys(self, new_key):
+    def _normalizeKeys(self, new_key, current_symbol=None):
         """Normalize the keys of the dict containing he relationships between
         domain and mutators.
 
@@ -874,6 +1098,10 @@ class Fuzz(object):
 
             # Handle case where k is a Field containing sub-Fields -> we retrieve all its field variables
             elif isinstance(k, Field) and len(k.fields) > 0:
+
+                if v['mode'] == FuzzingMode.FIXED:
+                    raise Exception("Cannot set a fixed value on a field that contains sub-fields")
+
                 subfields = k.fields
                 keys_to_remove.append(k)
                 for f in subfields:
@@ -909,6 +1137,36 @@ class Fuzz(object):
                     elif f.domain not in self.mappingFieldsMutators.keys():
                         new_keys[f.domain] = v
 
+            # Handle case where k is a string -> in such case,
+            # normalization we be done when calling .specialize() in
+            # order to retrieve the associated field or variable
+            elif isinstance(k, str):
+                if current_symbol is None:
+                    pass
+                else:
+
+                    # Retrieve associated field or variable based on its string name
+                    for f in current_symbol.getLeafFields(includePseudoFields=True):
+                        if f.name == k:
+                            keys_to_remove.append(k)
+                            new_keys[f.domain] = v
+                            if new_key == k:
+                                normalized_new_keys.append(f.domain)
+                            break
+                        else:
+                            variables = f.getVariables()
+                            var_found = False
+                            for var in variables:
+                                if var.name == k:
+                                    var_found = True
+                                    keys_to_remove.append(k)
+                                    new_keys[var] = v
+                                    if new_key == k:
+                                        normalized_new_keys.append(var)
+                                    break
+                            if var_found:
+                                break
+
             else:
                 raise Exception("Fuzzing keys must contain Symbols, Fields or Variables"
                                 ", but not a '{}'".format(type(k)))
@@ -928,8 +1186,11 @@ class Fuzz(object):
         from netzob.Fuzzing.Mutator import Mutator
         for k, v in self.mappingFieldsMutators.items():
 
+            if isinstance(k, str):
+                pass
+
             # If the value is already a Mutator instance -> we do nothing
-            if isinstance(v, Mutator):
+            elif isinstance(v, Mutator):
                 pass
             # Else, we instanciate the default Mutator according to the type of the object
             else:

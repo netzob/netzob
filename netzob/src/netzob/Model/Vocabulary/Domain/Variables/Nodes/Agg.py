@@ -48,6 +48,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
 
 # Class used to denote current variable, in order to handle self recursivity
@@ -488,6 +489,15 @@ class Agg(AbstractVariableNode):
 
             # Retrieve the mutator
             mutator = fuzz.get(self)
+
+            if mutator.mode == FuzzingMode.FIXED:
+                while True:
+                    generated_value = mutator.generate()
+                    value = bitarray(endian='big')
+                    value.frombytes(generated_value)
+
+                    specializingPath.addResult(self, value)
+                    yield specializingPath
 
             for path in self._inner_specialize(specializingPath, 0, fuzz):
 

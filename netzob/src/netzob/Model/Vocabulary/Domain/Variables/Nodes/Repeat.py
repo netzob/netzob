@@ -58,6 +58,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
 
 @public_api
@@ -603,10 +604,20 @@ class Repeat(AbstractVariableNode):
 
             try:
                 # Chose the child according to the integer returned by the mutator
-                i_repeat = mutator.generate()
+                generated_value = mutator.generate()
             except MaxFuzzingException:
                 self._logger.debug("Maximum mutation counter reached")
                 return
+
+            if mutator.mode == FuzzingMode.FIXED:
+                while True:
+                    value = bitarray(endian='big')
+                    value.frombytes(generated_value)
+
+                    originalSpecializingPath.addResult(self, value)
+                    yield originalSpecializingPath
+            else:
+                i_repeat = generated_value
 
         # Else, randomly chose the child
         else:

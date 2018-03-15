@@ -46,6 +46,7 @@ from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
 from netzob.Model.Vocabulary.Field import Field
+from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
 
 @NetzobLogger
@@ -131,6 +132,8 @@ class MessageSpecializer(object):
         # are converted into bitarray.
         self.presets = symbol.normalize_presets(self.presets)
 
+        symbol.normalize_fuzz(self.fuzz)
+
         # Remove preset fields when they are concerned with fuzzing
         self._filterPresetsWithFuzz(symbol)
 
@@ -170,7 +173,6 @@ class MessageSpecializer(object):
         self._logger.debug("Specializing field: '{}'".format(fields[i_current_field]))
 
         field = fields[i_current_field]
-        fieldDomain = field.domain
 
         if self.presets is not None and field in self.presets.keys():
             if i_current_field < len(fields) - 1:
@@ -197,11 +199,14 @@ class MessageSpecializer(object):
                         if field.domain.isnode() or i_current_field > 0:
                             self._produce_data(path, symbol)
                         else:
-                            # Do not produce when itering new_paths,
-                            # as the generatedContent has already been
-                            # set (only works when symbal has one
-                            # field and the field domain is a leaf)
-                            if idx == 0:
+                            # In mutate mode, do not produce when
+                            # itering new_paths, as the
+                            # generatedContent has already been set
+                            # (only works when symbol has one field
+                            # and the field domain is a leaf)
+                            if idx > 0 and self.fuzz is not None and self.fuzz.get(field.domain) is not None and self.fuzz.get(field.domain).mode == FuzzingMode.MUTATE:
+                                pass
+                            else:
                                 self._produce_data(path, symbol)
                         yield path
 
