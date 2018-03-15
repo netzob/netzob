@@ -278,17 +278,18 @@ class Data(AbstractVariableLeaf):
 
         """
 
-        self._logger.debug("Use variable {0}".format(self))
+        while True:
+            self._logger.debug("Use variable {0}".format(self))
 
-        if variableSpecializerPath is None:
-            raise Exception("VariableSpecializerPath cannot be None")
+            if variableSpecializerPath is None:
+                raise Exception("VariableSpecializerPath cannot be None")
 
-        if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
-            variableSpecializerPath.addResult(self, variableSpecializerPath.memory.getValue(self))
-        elif self.currentValue is not None:
-            variableSpecializerPath.addResult(self, self.currentValue)
+            if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
+                variableSpecializerPath.addResult(self, variableSpecializerPath.memory.getValue(self))
+            elif self.currentValue is not None:
+                variableSpecializerPath.addResult(self, self.currentValue)
 
-        yield variableSpecializerPath
+            yield variableSpecializerPath
 
     def regenerate(self, variableSpecializerPath, acceptCallBack=True):
         """This method participates in the specialization proces.
@@ -297,17 +298,20 @@ class Data(AbstractVariableLeaf):
         generated value that follows the definition of the Data
 
         """
-        self._logger.debug("Regenerate variable {0}".format(self))
 
-        if variableSpecializerPath is None:
-            raise Exception("VariableSpecializerPath cannot be None")
+        while True:
+            self._logger.debug("Regenerate variable {0}".format(self))
 
-        newValue = self.dataType.generate()
+            if variableSpecializerPath is None:
+                raise Exception("VariableSpecializerPath cannot be None")
 
-        self._logger.debug("Generated value for {}: {}".format(self, newValue))
+            newValue = self.dataType.generate()
 
-        variableSpecializerPath.addResult(self, newValue)
-        yield variableSpecializerPath
+            self._logger.debug("Generated value for {}: {}".format(self, newValue))
+
+            variableSpecializerPath.addResult(self, newValue)
+
+            yield variableSpecializerPath
 
     def regenerateAndMemorize(self,
                               variableSpecializerPath,
@@ -316,22 +320,26 @@ class Data(AbstractVariableLeaf):
         It memorizes the value present in the path of the variable
         """
 
-        self._logger.debug("Regenerate and memorize variable '{}' for field '{}'".format(self, self.field))
+        while True:
+            self._logger.debug("Regenerate and memorize variable '{}' for field '{}'".format(self, self.field))
 
-        if variableSpecializerPath is None:
-            raise Exception("VariableSpecializerPath cannot be None")
+            if variableSpecializerPath is None:
+                raise Exception("VariableSpecializerPath cannot be None")
 
-        if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
-            newValue = variableSpecializerPath.memory.getValue(self)
-        else:
-            newValue = self.dataType.generate()
-            if variableSpecializerPath.memory is not None:
-                variableSpecializerPath.memory.memorize(self, newValue)
+            variableSpecializerPath = variableSpecializerPath.clone()
 
-        self._logger.debug("Generated value for {}: {}".format(self, newValue.tobytes()))
+            if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
+                newValue = variableSpecializerPath.memory.getValue(self)
+            else:
+                newValue = self.dataType.generate()
+                if variableSpecializerPath.memory is not None:
+                    variableSpecializerPath.memory.memorize(self, newValue)
 
-        variableSpecializerPath.addResult(self, newValue.copy())
-        yield variableSpecializerPath
+            self._logger.debug("Generated value for {}: {}".format(self, newValue.tobytes()))
+
+            variableSpecializerPath.addResult(self, newValue.copy())
+
+            yield variableSpecializerPath.clone()
 
     @public_api
     @property
