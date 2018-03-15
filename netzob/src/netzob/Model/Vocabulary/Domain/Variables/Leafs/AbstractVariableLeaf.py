@@ -134,6 +134,9 @@ class AbstractVariableLeaf(AbstractVariable):
     def learn(self, parsingPath, acceptCallBack, carnivorous):
         raise NotImplementedError("method learn is not implemented")
 
+    def getVariables(self):
+        return [self]
+
     def specialize(self, parsingPath, fuzz=None, acceptCallBack=True):
         """Specializes a Leaf"""
 

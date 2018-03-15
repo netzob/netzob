@@ -97,6 +97,12 @@ class AbstractVariableNode(AbstractVariable):
                 count *= t.count(fuzz=fuzz)
             return count
 
+    def getVariables(self):
+        variables = [self]
+        for t in self.children:
+            variables.extend(t.getVariables())
+        return variables
+
     @property
     def children(self):
         """Sorted typed list of children attached to the variable node.

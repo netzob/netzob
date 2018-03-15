@@ -342,6 +342,25 @@ class Field(AbstractField):
 
         return new_field
 
+    def getVariables(self):
+        r"""Returns the list of all underlying variables.
+
+        :return: the list of variables
+        :rtype: :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`.
+
+        >>> from netzob.all import *
+        >>> fuzz = Fuzz()
+        >>> v1 = Data(uint8(), name='v1')
+        >>> v2 = Data(uint8(), name='v2')
+        >>> v_agg = Agg([v1, v2], name='v_agg')
+        >>> f1 = Field(v_agg)
+        >>> variables = f1.getVariables()
+        >>> len(variables)
+        3
+
+        """
+        return self.domain.getVariables()
+
     @public_api
     def specialize(self, presets=None, fuzz=None):
         r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose
