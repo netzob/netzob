@@ -345,9 +345,10 @@ def _test_udp_write_read():
     >>> client.nbMaxTransitions = 3
 
     >>> server.start()
+    >>> time.sleep(0.2)
     >>> client.start()
 
-    >>> time.sleep(2)
+    >>> time.sleep(1)
     >>> client.stop()
     >>> server.stop()
     >>> print(client.generateLog())
