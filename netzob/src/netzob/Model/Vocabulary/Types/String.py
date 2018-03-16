@@ -288,7 +288,7 @@ class String(AbstractType):
         >>> ascii.typeName
         'String'
         >>> data = ascii.buildDataRepresentation()
-        >>> data.currentValue.tobytes()
+        >>> data.dataType.value.tobytes()
         b'hello john !'
         >>> print(data.dataType)
         String('hello john !')
@@ -303,7 +303,7 @@ class String(AbstractType):
         if self.value is not None and not self.eos:
             scope = Scope.CONSTANT
 
-        return Data(dataType=self, originalValue=self.value, scope=scope)
+        return Data(dataType=self, scope=scope)
 
     @public_api
     def count(self):

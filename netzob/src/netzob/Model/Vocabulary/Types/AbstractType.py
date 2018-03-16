@@ -703,7 +703,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         >>> ascii.typeName
         'String'
         >>> data = ascii.buildDataRepresentation()
-        >>> data.currentValue.tobytes()
+        >>> data.dataType.value.tobytes()
         b'hello john !'
         >>> print(data.dataType)
         String('hello john !')
@@ -721,7 +721,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         else:
             scope = Scope.MESSAGE
 
-        return Data(dataType=self, originalValue=self.value, scope=scope)
+        return Data(dataType=self, scope=scope)
 
     def getFixedBitSize(self):
         """Provide the length of a theoretical value that would be generated.

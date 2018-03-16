@@ -90,8 +90,8 @@ class Scope(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, scope=Scope.CONSTANT)
+      >>> st = String("john")
+      >>> f.domain = Data(st, scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> Symbol.abstract("john", [s], memory=m)
@@ -103,8 +103,8 @@ class Scope(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, scope=Scope.CONSTANT)
+      >>> st = String("john")
+      >>> f.domain = Data(st, scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> Symbol.abstract("kurt", [s], memory=m)
@@ -115,8 +115,8 @@ class Scope(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, scope=Scope.CONSTANT)
+      >>> st = String("john")
+      >>> f.domain = Data(st, scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> next(s.specialize(memory=m))
@@ -127,7 +127,7 @@ class Scope(Enum):
       0
 
       The following example shows that the specialization of
-      constant data raises an exception when no original value is
+      constant data raises an exception when no specific value is
       attached to the definition domain of the variable:
 
       >>> from netzob.all import *
@@ -182,8 +182,8 @@ class Scope(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, scope=Scope.SESSION)
+      >>> st = String("john")
+      >>> f.domain = Data(st, scope=Scope.SESSION)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> next(s.specialize(memory=m))
@@ -246,8 +246,8 @@ class Scope(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, scope=Scope.MESSAGE)
+      >>> st = String("john")
+      >>> f.domain = Data(st, scope=Scope.MESSAGE)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> m.hasValue(f.domain)

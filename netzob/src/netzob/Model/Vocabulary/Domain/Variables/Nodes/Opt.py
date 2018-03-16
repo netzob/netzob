@@ -48,7 +48,7 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
 class Opt(Repeat):
-    """The Opt class is a node variable that represents a variable
+    r"""The Opt class is a node variable that represents a variable
     that may or may not produce a value, either in abstraction or
     specialization.
 

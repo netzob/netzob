@@ -45,9 +45,6 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
-from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
-from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
-from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
@@ -65,26 +62,21 @@ class Data(AbstractVariableLeaf):
 
     :param dataType: The type of the data (for example Integer,
                      Raw, String, ...).
-    :param originalValue: The original value of the data (can be
-                          None, which is the default behavior).
     :param name: The name of the data (if None, the name will
                  be generated).
     :param scope: The Scope strategy defining how the Data value is
                  used during the abstraction and specialization process.
                  The default strategy is Scope.MESSAGE.
     :type dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, required
-    :type originalValue: :class:`bitarray`, optional
     :type name: :class:`str`, optional
     :type scope: :class:`~netzob.Model.Vocabulary.Domain.Variables.Scope.Scope`, optional
 
 
     The Data class provides the following public variables:
 
-    :var currentValue: The current value of the data.
     :var dataType: The type of the data.
     :var name: The name of the variable (Read-only).
     :var varType: The type of the variable (Read-only).
-    :vartype currentValue: :class:`bitarray`
     :vartype dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
     :vartype varType: :class:`str`
     :vartype name: :class:`str`
@@ -96,14 +88,12 @@ class Data(AbstractVariableLeaf):
     of this object is `"hello"`.
 
     >>> from netzob.all import *
-    >>> s = String('hello').value
-    >>> data = Data(dataType=String(), originalValue=s, name="pseudo")
+    >>> s = String('hello')
+    >>> data = Data(dataType=s, name="pseudo")
     >>> data.varType
     'Data'
-    >>> data.currentValue.tobytes()
-    b'hello'
     >>> print(data.dataType)
-    String(nbChars=(0,8192))
+    String('hello')
     >>> data.name
     'pseudo'
 
@@ -117,25 +107,24 @@ class Data(AbstractVariableLeaf):
        >>> f = Field(String("hello"))
        >>> f.domain.varType
        'Data'
-       >>> f.domain.currentValue.tobytes()
+       >>> f.domain.dataType.value.tobytes()
        b'hello'
 
     """
 
     @public_api
-    def __init__(self, dataType, originalValue=None, name=None, scope=None):
+    def __init__(self, dataType, name=None, scope=None):
         super(Data, self).__init__(
             self.__class__.__name__, name=name, scope=scope)
 
         self.dataType = dataType
-        self.currentValue = originalValue
 
     @public_api
     def clone(self, map_objects={}):
         if self in map_objects:
             return map_objects[self]
 
-        new_data = Data(self.dataType, originalValue=self.currentValue, name=self.name, scope=self.scope)
+        new_data = Data(self.dataType, name=self.name, scope=self.scope)
         map_objects[self] = new_data
         return new_data
 
@@ -154,13 +143,11 @@ class Data(AbstractVariableLeaf):
         if path is None:
             raise Exception("Path cannot be None")
 
-        #  first we check if current value is assigned to the data
-        if self.currentValue is not None:
-            return True
-
         # we check if memory referenced its value (memory is priority)
-        if path.memory is not None:
-            return path.memory.hasValue(self)
+        if path.memory is not None and path.memory.hasValue(self):
+            return True
+        elif self.dataType.value is not None:
+            return True
         else:
             return False
 
@@ -199,7 +186,7 @@ class Data(AbstractVariableLeaf):
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
 
-        expectedValue = self.currentValue
+        expectedValue = self.dataType.value
 
         # we check a value is available in memory
         if parsingPath.memory is not None and parsingPath.memory.hasValue(self):
@@ -286,8 +273,10 @@ class Data(AbstractVariableLeaf):
 
             if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
                 variableSpecializerPath.addResult(self, variableSpecializerPath.memory.getValue(self))
-            elif self.currentValue is not None:
-                variableSpecializerPath.addResult(self, self.currentValue)
+            elif self.dataType.value is not None:
+                variableSpecializerPath.addResult(self, self.dataType.value.copy())
+            else:
+                raise Exception("No value has been memorized or value is not a constant")
 
             yield variableSpecializerPath
 
@@ -340,29 +329,6 @@ class Data(AbstractVariableLeaf):
             variableSpecializerPath.addResult(self, newValue.copy())
 
             yield variableSpecializerPath.clone()
-
-    @public_api
-    @property
-    def currentValue(self):
-        """
-        Property (getter.setter  # type: ignore).
-        The current value of the data.
-
-        :type: :class:`bitarray`
-        """
-        if self.__currentValue is not None:
-            return self.__currentValue.copy()
-        else:
-            return None
-
-    @currentValue.setter  # type: ignore
-    @typeCheck(bitarray)
-    def currentValue(self, currentValue):
-        if currentValue is not None:
-            cv = currentValue.copy()
-        else:
-            cv = currentValue
-        self.__currentValue = cv
 
     @public_api
     @property
