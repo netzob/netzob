@@ -120,6 +120,14 @@ class HexaString(AbstractType):
     >>> str(binascii.hexlify(data.tobytes()))[2]
     'a'
 
+
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> t = HexaString(nbBytes=(2), default=b"aabb")
+    >>> t.generate().tobytes()
+    b'\xaa\xbb'
+
     """
 
     @public_api
@@ -128,10 +136,14 @@ class HexaString(AbstractType):
                  nbBytes=None,
                  unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
-                 sign=AbstractType.defaultSign()):
+                 sign=AbstractType.defaultSign(),
+                 default=None):
 
         if value is not None and nbBytes is not None:
-            raise ValueError("An HexaString should have either its value or its nbBytes set, but not both")
+            raise ValueError("A HexaString should have either its value or its nbBytes set, but not both")
+
+        if value is not None and default is not None:
+            raise ValueError("A HexaString should have either its constant value or its default value set, but not both")
 
         if value is not None and not isinstance(value, bitarray):
             if isinstance(value, bytes):
@@ -140,6 +152,14 @@ class HexaString(AbstractType):
                 value = TypeConverter.convert(value, HexaString, BitArray)
             else:
                 raise ValueError("Unsupported input format for value: '{}', type is: '{}', expected type is 'bitarray' or 'bytes'".format(value, type(value)))
+
+        if default is not None and not isinstance(default, bitarray):
+            if isinstance(default, bytes):
+                from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+                from netzob.Model.Vocabulary.Types.BitArray import BitArray
+                default = TypeConverter.convert(default, HexaString, BitArray)
+            else:
+                raise ValueError("Unsupported input format for default value: '{}', type is: '{}', expected type is 'bitarray' or 'bytes'".format(default, type(default)))
 
         # Handle data size if value is None
         if value is None:
@@ -153,7 +173,8 @@ class HexaString(AbstractType):
             nbBits,
             unitSize=unitSize,
             endianness=endianness,
-            sign=sign)
+            sign=sign,
+            default=default)
 
     def __str__(self):
         if self.value is not None:
@@ -432,6 +453,6 @@ def _test():
     >>> i = HexaString(b'aabb', nbBytes=(2, 10))
     Traceback (most recent call last):
     ...
-    ValueError: An HexaString should have either its value or its nbBytes set, but not both
+    ValueError: A HexaString should have either its value or its nbBytes set, but not both
 
     """

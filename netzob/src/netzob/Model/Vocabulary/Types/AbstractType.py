@@ -192,7 +192,8 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                  size=(None, None),
                  unitSize=None,
                  endianness=None,
-                 sign=None):
+                 sign=None,
+                 default=None):
         self.typeName = typeName
         self.value = value
         self.size = size
@@ -228,6 +229,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         if sign is None:
             sign = AbstractType.defaultSign()
         self.sign = sign
+        self.default = default
 
     def __str__(self):
         from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
@@ -365,6 +367,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         # Return the self.value in priority if it is defined
         if self.value is not None:
             return self.value
+
+        if self.default is not None:
+            return self.default
 
         # Else, generate a data that respects the permitted min and max sizes
         minSize, maxSize = self.size
@@ -647,6 +652,20 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         else:
             raise TypeError(
                 "Size must be defined by a tuple an int or with None")
+
+    @property
+    def default(self):
+        """The default value of the type instance.
+
+        :type: :class:`bitarray`
+        """
+
+        return self.__default
+
+    @default.setter  # type: ignore
+    @typeCheck(bitarray)
+    def default(self, default):
+        self.__default = default
 
     @staticmethod
     def normalize(data):

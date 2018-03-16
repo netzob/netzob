@@ -123,6 +123,14 @@ class IPv4(AbstractType):
     >>> IPv4(ip.generate())  # initialize with the generated bitarray value
     10.10.10.29
 
+
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> t = IPv4(default='127.0.0.1')
+    >>> t.generate().tobytes()
+    b'\x7f\x00\x00\x01'
+
     """
 
     @public_api
@@ -131,16 +139,34 @@ class IPv4(AbstractType):
                  network=None,
                  unitSize=UnitSize.SIZE_32,
                  endianness=AbstractType.defaultEndianness(),
-                 sign=AbstractType.defaultSign()):
+                 sign=AbstractType.defaultSign(),
+                 default=None):
 
         if value is not None and network is not None:
             raise ValueError("An IPv4 should have either its value or its network set, but not both")
+
+        if value is not None and default is not None:
+            raise ValueError("An IPv4 should have either its constant value or its default value set, but not both")
 
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
             value = TypeConverter.convert(
                 value,
+                IPv4,
+                BitArray,
+                src_unitSize=unitSize,
+                src_endianness=endianness,
+                src_sign=sign,
+                dst_unitSize=unitSize,
+                dst_endianness=endianness,
+                dst_sign=sign)
+
+        if default is not None and not isinstance(default, bitarray):
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+            default = TypeConverter.convert(
+                default,
                 IPv4,
                 BitArray,
                 src_unitSize=unitSize,
@@ -160,7 +186,8 @@ class IPv4(AbstractType):
             size,
             unitSize=UnitSize.SIZE_32,
             endianness=AbstractType.defaultEndianness(),
-            sign=AbstractType.defaultSign())
+            sign=AbstractType.defaultSign(),
+            default=default)
 
     def __str__(self):
         if self.value is not None:
@@ -225,6 +252,8 @@ class IPv4(AbstractType):
 
         if self.value is not None:
             return self.value
+        elif self.default is not None:
+            return self.default
         elif self.network is not None:
             ip = random.choice(self.network)
             return TypeConverter.convert(

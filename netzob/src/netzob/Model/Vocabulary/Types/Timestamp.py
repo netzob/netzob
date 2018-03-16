@@ -205,6 +205,14 @@ class Timestamp(AbstractType):
     Endianness.BIG
 
 
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> t = Timestamp(default=1234)
+    >>> t.generate().tobytes()
+    b'\x00\x00\x04\xd2'
+
+
     .. ifconfig:: scope in ('netzob')
 
        >>> from netzob.all import *
@@ -246,11 +254,26 @@ class Timestamp(AbstractType):
                  unity=Unity.SECOND,
                  unitSize=UnitSize.SIZE_32,
                  endianness=AbstractType.defaultEndianness(),
-                 sign=Sign.UNSIGNED):
+                 sign=Sign.UNSIGNED,
+                 default=None):
+
+        if value is not None and default is not None:
+            raise ValueError("A Timestamp should have either its constant value or its default value set, but not both")
+
         if value is not None and not isinstance(value, bitarray):
             # converts the specified value in bitarray
             value = TypeConverter.convert(
                 value,
+                Integer,
+                BitArray,
+                src_unitSize=unitSize,
+                src_endianness=endianness,
+                src_sign=sign)
+
+        if default is not None and not isinstance(default, bitarray):
+            # converts the specified default value in bitarray
+            default = TypeConverter.convert(
+                default,
                 Integer,
                 BitArray,
                 src_unitSize=unitSize,
@@ -268,7 +291,8 @@ class Timestamp(AbstractType):
             size,
             unitSize=unitSize,
             endianness=endianness,
-            sign=sign)
+            sign=sign,
+            default=default)
 
     def __str__(self):
         if self.value is not None:
@@ -375,6 +399,9 @@ class Timestamp(AbstractType):
         """
         if self.value is not None:
             return self.value
+
+        if self.default is not None:
+            return self.default
 
         # computes utc now
         now = datetime.utcnow()

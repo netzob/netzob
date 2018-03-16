@@ -163,13 +163,26 @@ class BitArray(AbstractType):
     >>> b['Urgent flag']
     True
 
+
+    **Using a default value**
+
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> t = BitArray(nbBits=16, default='1111111100000000')
+    >>> t.generate().tobytes()
+    b'\xff\x00'
+
     """
 
     @public_api
-    def __init__(self, value=None, nbBits=None):
+    def __init__(self, value=None, nbBits=None, default=None):
 
         if value is not None and nbBits is not None:
             raise ValueError("A BitArray should have either its value or its nbBits set, but not both")
+
+        if value is not None and default is not None:
+            raise ValueError("A BitArray should have either its constant value or its default value set, but not both")
 
         # Handle input value
         if value is not None and not isinstance(value, bitarray):
@@ -183,13 +196,25 @@ class BitArray(AbstractType):
             else:
                 raise ValueError("Unsupported input format for value: '{}', type: '{}'".format(value, type(value)))
 
+        # Handle input value
+        if default is not None and not isinstance(default, bitarray):
+
+            # Check if default value is correct, and normalize it in str object, and then in bitarray
+            if isinstance(default, str):
+                try:
+                    default = bitarray(default)
+                except Exception as e:
+                    raise ValueError("Input default value for the following BitArray is incorrect: '{}'. Error: '{}'".format(default, e))
+            else:
+                raise ValueError("Unsupported input format for default value: '{}', type: '{}'".format(default, type(default)))
+
         # Normalize nbBits
         if value is None:
             nbBits = self._normalizeNbBits(nbBits)
         else:
             nbBits = (len(value), len(value))
 
-        super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
+        super(BitArray, self).__init__(self.__class__.__name__, value, nbBits, default=default)
         self.constants = None  # A list of named constant used to access the bitarray elements
 
         # When value is not None, we can access each element of the bitarray with named constants
@@ -334,6 +359,9 @@ class BitArray(AbstractType):
 
         if self.value is not None:
             return self.value
+
+        if self.default is not None:
+            return self.default
 
         minSize, maxSize = self.size
         if maxSize is None:

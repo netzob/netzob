@@ -185,6 +185,16 @@ class String(AbstractType):
     potential terminal characters. Terminal characters can be a
     constant (such as ``'\n'`` in the previous example).
 
+
+    **Using a default value**
+
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> t = String(nbChars=(1, 4), default="A")
+    >>> t.generate().tobytes()
+    b'A'
+
     """
 
     @public_api
@@ -195,12 +205,16 @@ class String(AbstractType):
                  eos=[],
                  unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
-                 sign=AbstractType.defaultSign()):
+                 sign=AbstractType.defaultSign(),
+                 default=None):
         self.encoding = encoding
         self.eos = eos
 
         if value is not None and nbChars is not None:
             raise ValueError("A String should have either its value or its nbChars set, but not both")
+
+        if value is not None and default is not None:
+            raise ValueError("A String should have either its constant value or its default value set, but not both")
 
         # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):
@@ -232,6 +246,36 @@ class String(AbstractType):
                 dst_endianness=endianness,
                 dst_sign=sign)
 
+        # Convert default value to bitarray
+        if default is not None and not isinstance(default, bitarray):
+
+            # Check if value is correct, and normalize it in str object, and then in bitarray
+            if isinstance(default, bytes):
+                try:
+                    default = default.decode(self.encoding)
+                except Exception as e:
+                    raise ValueError("Input default value for the following string is incorrect: '{}'. Error: '{}'".format(default, e))
+            elif isinstance(default, str):
+                try:
+                    default.encode(self.encoding)
+                except Exception as e:
+                    raise ValueError("Input default value for the following string is incorrect: '{}'. Error: '{}'".format(default, e))
+            else:
+                raise ValueError("Unsupported input format for default value: '{}', type: '{}'".format(default, type(default)))
+
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+            default = TypeConverter.convert(
+                default,
+                String,
+                BitArray,
+                src_unitSize=unitSize,
+                src_endianness=endianness,
+                src_sign=sign,
+                dst_unitSize=unitSize,
+                dst_endianness=endianness,
+                dst_sign=sign)
+
         # Handle string size if value is None
         if value is None:
             nbBits = self._normalizeNbChars(nbChars)
@@ -244,7 +288,8 @@ class String(AbstractType):
             nbBits,
             unitSize=unitSize,
             endianness=endianness,
-            sign=sign)
+            sign=sign,
+            default=default)
 
     def __str__(self):
         if self.value is not None:
@@ -372,6 +417,8 @@ class String(AbstractType):
         # Generate the sufficient amount of data
         if self.value is not None:
             random_content = self.value.tobytes().decode(self.encoding)
+        elif self.default is not None:
+            random_content = self.default.tobytes().decode(self.encoding)
         else:
             random_content = ""
         # Compare the length of the *unicode* value against the targeted size
@@ -392,7 +439,7 @@ class String(AbstractType):
 
         # Handle terminal character ('end of string')
         if final_character is not None:
-            if self.value is None:
+            if self.value is None or self.default is not None:
                 # Remove the size of the added terminal character to the original random_content, and add the final character
                 random_content = random_content[:len(random_content) - len(final_character)] + final_character
             else:

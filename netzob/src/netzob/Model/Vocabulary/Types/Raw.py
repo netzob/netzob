@@ -35,7 +35,6 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import random
-import os
 from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
@@ -132,6 +131,13 @@ class Raw(AbstractType):
     t
     o
 
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> raw = Raw(nbBytes=6, default=b'\x02')
+    >>> raw.generate().tobytes()
+    b'\x02'
+
     """
 
     @public_api
@@ -141,10 +147,14 @@ class Raw(AbstractType):
                  unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign(),
-                 alphabet=None):
+                 alphabet=None,
+                 default=None):
 
         if value is not None and nbBytes is not None:
             raise ValueError("A Raw should have either its value or its nbBytes set, but not both")
+
+        if value is not None and default is not None:
+            raise ValueError("A Raw should have either its constant value or its default value set, but not both")
 
         if value is not None and not isinstance(value, bitarray):
             if isinstance(value, bytes):
@@ -153,6 +163,14 @@ class Raw(AbstractType):
                 value.frombytes(tmp_value)
             else:
                 raise ValueError("Unsupported input format for value: '{}', type is: '{}', expected type is 'bitarray' or 'bytes'".format(value, type(value)))
+
+        if default is not None and not isinstance(default, bitarray):
+            if isinstance(default, bytes):
+                tmp_default = default
+                default = bitarray(endian='big')
+                default.frombytes(tmp_default)
+            else:
+                raise ValueError("Unsupported input format for default value: '{}', type is: '{}', expected type is 'bitarray' or 'bytes'".format(default, type(default)))
 
         # Handle raw data size if value is None
         if value is None:
@@ -168,7 +186,8 @@ class Raw(AbstractType):
             nbBits,
             unitSize=unitSize,
             endianness=endianness,
-            sign=sign)
+            sign=sign,
+            default=default)
 
     def __str__(self):
         if self.value is not None:
@@ -279,6 +298,9 @@ class Raw(AbstractType):
 
         if self.value is not None:
             return self.value
+
+        if self.default is not None:
+            return self.default
 
         minSize, maxSize = self.size
         if maxSize is None:

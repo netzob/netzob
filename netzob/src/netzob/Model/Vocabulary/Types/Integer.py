@@ -271,6 +271,21 @@ class Integer(AbstractType):
     >>> repr(i)
     'None'
 
+
+    **Using a default value**
+
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> t = uint8(default=3)
+    >>> t.generate().tobytes()
+    b'\x03'
+
+    >>> from netzob.all import *
+    >>> t = Integer(interval=(1, 4), default=4)
+    >>> t.generate().tobytes()
+    b'\x00\x04'
+
     """
 
     @public_api
@@ -279,10 +294,14 @@ class Integer(AbstractType):
                  interval=None,
                  unitSize=UnitSize.SIZE_16,
                  endianness=AbstractType.defaultEndianness(),
-                 sign=AbstractType.defaultSign()):
+                 sign=AbstractType.defaultSign(),
+                 default=None):
 
         if value is not None and interval is not None:
             raise ValueError("An Integer should have either its value or its interval set, but not both")
+
+        if value is not None and default is not None:
+            raise ValueError("An Integer should have either its constant value or its default value set, but not both")
 
         # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):
@@ -304,6 +323,26 @@ class Integer(AbstractType):
                 dst_endianness=endianness,
                 dst_sign=sign)
 
+        # Convert default value to bitarray
+        if default is not None and not isinstance(default, bitarray):
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+
+            # Check if default value is correct
+            if not isinstance(default, int):
+                raise ValueError("Input default value shoud be a integer. Default value received: '{}'".format(default))
+
+            default = TypeConverter.convert(
+                default,
+                Integer,
+                BitArray,
+                src_unitSize=unitSize,
+                src_endianness=endianness,
+                src_sign=sign,
+                dst_unitSize=unitSize,
+                dst_endianness=endianness,
+                dst_sign=sign)
+
         # Handle interval
         interval = self._normalizeInterval(interval, unitSize, sign)
 
@@ -313,7 +352,8 @@ class Integer(AbstractType):
             interval,
             unitSize=unitSize,
             endianness=endianness,
-            sign=sign)
+            sign=sign,
+            default=default)
 
     def __str__(self):
         if self.value is not None:
@@ -724,6 +764,8 @@ class Integer(AbstractType):
         """
         if self.value is not None:
             return self.value
+        elif self.default is not None:
+            return self.default
         elif self.size is not None and isinstance(self.size, Iterable) and len(self.size) == 2:
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
