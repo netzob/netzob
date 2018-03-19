@@ -145,8 +145,8 @@ class Alt(AbstractVariableNode):
     >>> data = next(sym.specialize())
     >>> print(data)
     b'c'
-    >>> Symbol.abstract(data, [sym])
-    (Symbol, OrderedDict([('alt', b'c')]))
+    >>> sym.abstract(data)
+    OrderedDict([('alt', b'c')])
 
 
     .. ifconfig:: scope in ('netzob')
@@ -162,19 +162,22 @@ class Alt(AbstractVariableNode):
        >>> f0 = Field(Alt([v0, v1]), name='f0')
        >>> s = Symbol([f0])
        >>> data = "john"
-       >>> Symbol.abstract(data, [s])
-       (Symbol, OrderedDict([('f0', b'john')]))
+       >>> s.abstract(data)
+       OrderedDict([('f0', b'john')])
        >>> data = "kurt"
-       >>> Symbol.abstract(data, [s])
-       (Symbol, OrderedDict([('f0', b'kurt')]))
+       >>> s.abstract(data)
+       OrderedDict([('f0', b'kurt')])
 
        In the following example, an Alternate variable is defined. A
        message that does not correspond to the expected model is then
-       parsed, thus the returned symbol is unknown:
+       parsed, thus an exception is returned:
 
        >>> data = "nothing"
-       >>> Symbol.abstract(data, [s])
-       (Unknown message 'nothing', OrderedDict())
+       >>> s.abstract(data)
+       Traceback (most recent call last):
+       ...
+       netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'nothing'. Error: 'No parsing path returned while parsing 'b'nothing'''
+
 
     """
 
@@ -349,8 +352,8 @@ def _test_alt(self):
     >>> d = next(s.specialize())
     >>> d
     b'\x01B'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'\x01'), ('f1', b'B')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x01'), ('f1', b'B')])
 
     Size field targeting a alt variable, with size field on the right:
 
@@ -360,8 +363,8 @@ def _test_alt(self):
     >>> d = next(s.specialize())
     >>> d
     b'\x01B'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'\x01'), ('f1', b'B')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x01'), ('f1', b'B')])
 
 
     ## Size field on the left
@@ -374,8 +377,8 @@ def _test_alt(self):
     >>> d = next(s.specialize())
     >>> d
     b'A\x01'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'A'), ('f2', b'\x01')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'A'), ('f2', b'\x01')])
 
     Size field targeting a alt variable, with size field on the left:
 
@@ -385,8 +388,8 @@ def _test_alt(self):
     >>> d = next(s.specialize())
     >>> d
     b'B\x01'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'B'), ('f2', b'\x01')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'B'), ('f2', b'\x01')])
 
 
     ## Value field on the right
@@ -399,8 +402,8 @@ def _test_alt(self):
     >>> d = next(s.specialize())
     >>> d
     b'CC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'C'), ('f1', b'C')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'C'), ('f1', b'C')])
 
     Value field targeting a alt variable, with value field on the right:
 
@@ -410,8 +413,8 @@ def _test_alt(self):
     >>> d = next(s.specialize())
     >>> d
     b'BB'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'B'), ('f1', b'B')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'B'), ('f1', b'B')])
 
 
     ## Value field on the left
@@ -424,8 +427,8 @@ def _test_alt(self):
     >>> d = next(s.specialize())
     >>> d
     b'BB'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'B'), ('f2', b'B')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'B'), ('f2', b'B')])
 
     Value field targeting a alt variable, with value field on the left:
 
@@ -435,7 +438,7 @@ def _test_alt(self):
     >>> d = next(s.specialize())
     >>> d
     b'BB'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'B'), ('f2', b'B')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'B'), ('f2', b'B')])
 
     """

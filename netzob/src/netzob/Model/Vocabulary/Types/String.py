@@ -817,8 +817,8 @@ def _test(self):
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
     >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
-    >>> Symbol.abstract(data, [symbol])  #doctest: +ELLIPSIS
-    (Symbol, OrderedDict([('0', b'abcd'), ('1', ...)]))
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    OrderedDict([('0', b'abcd'), ('1', ...)])
 
 
     ## String with terminal character as a constant (specialization and abstraction)
@@ -831,13 +831,14 @@ def _test(self):
     >>> data[-1:] == b'A'
     True
     >>> symbol = Symbol([Field(s)])
-    >>> (symbol1, structured_data) = Symbol.abstract(data, [symbol])
-    >>> symbol1 == symbol
-    True
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    OrderedDict([('Field', b'...A')])
     >>> data = data[:-1] + b'\t'
-    >>> (symbol2, structured_data) = Symbol.abstract(data, [symbol])
-    >>> isinstance(symbol2, UnknownSymbol)
-    True
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'b'...\t''. Error: 'No parsing path returned while parsing 'b'...\t'''
+
 
 
     ## String with terminal character as a list of constants (specialization and abstraction)
@@ -860,13 +861,14 @@ def _test(self):
     >>> data[-1:] == b'A' or data[-1:] == b'B'
     True
     >>> symbol = Symbol([Field(s)])
-    >>> (symbol1, structured_data) = Symbol.abstract(data, [symbol])
-    >>> symbol1 == symbol
-    True
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    OrderedDict([('Field', b'...')])
     >>> data = data[:-1] + b'\t'
-    >>> (symbol2, structured_data) = Symbol.abstract(data, [symbol])
-    >>> isinstance(symbol2, UnknownSymbol)
-    True
+    >>> structured_data = symbol.abstract(data)  #doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'b'...\t''. Error: 'No parsing path returned while parsing 'b'...\t'''
+
 
 
     ## String with terminal character as a mulitple characters constant (specialization and abstraction)
@@ -879,13 +881,13 @@ def _test(self):
     >>> data[-2:] == b'\r\n'
     True
     >>> symbol = Symbol([Field(s)])
-    >>> (symbol1, structured_data) = Symbol.abstract(data, [symbol])
-    >>> symbol1 == symbol
-    True
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    OrderedDict([('Field', b'...\r\n')])
     >>> data = data[:-2] + b'\r\t'
-    >>> (symbol2, structured_data) = Symbol.abstract(data, [symbol])
-    >>> isinstance(symbol2, UnknownSymbol)
-    True
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'b'...\r\t''. Error: 'No parsing path returned while parsing 'b'...\r\t'''
 
 
     # Verify that you cannot create a String with a value AND an nbChars:

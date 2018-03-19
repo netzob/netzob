@@ -430,8 +430,7 @@ class Actor(Thread):
     ...    # Building the output symbol by incrementing the value of the last
     ...    # received symbol
     ...    if last_received_symbol is not None and last_received_message is not None:
-    ...        (dummy, structured_data) = Symbol.abstract(last_received_message,
-    ...                                                   [last_received_symbol])
+    ...        structured_data = last_received_symbol.abstract(last_received_message)
     ...        field_data = structured_data[last_received_symbol.fields[0].name]
     ...        field_data_int = int.from_bytes(field_data, byteorder='big')
     ...        field_data = int(field_data_int + 1).to_bytes(length=1, byteorder='big')
@@ -604,8 +603,7 @@ class Actor(Thread):
     ...
     ...    # Building the output symbol by incrementing the value of the last received symbol
     ...    if last_received_symbol is not None and last_received_message is not None:
-    ...        (dummy, structured_data) = Symbol.abstract(last_received_message,
-    ...                                                   [last_received_symbol])
+    ...        structured_data = last_received_symbol.abstract(last_received_message)
     ...        field_data = structured_data[last_received_symbol.fields[0].name]
     ...        field_data_int = int.from_bytes(field_data, byteorder='big')
     ...        field_data = int(field_data_int + 1).to_bytes(length=1, byteorder='big')
@@ -2536,8 +2534,7 @@ def _test_callback_modify_symbol():
     ...    # Building the output symbol by incrementing the value of the last
     ...    # received symbol
     ...    if last_received_symbol is not None and last_received_message is not None:
-    ...        (dummy, structured_data) = Symbol.abstract(last_received_message,
-    ...                                                   [last_received_symbol])
+    ...        structured_data = last_received_symbol.abstract(last_received_message)
     ...        field_data = structured_data[last_received_symbol.fields[0].name]
     ...        field_data_int = int.from_bytes(field_data, byteorder='big')
     ...        field_data = int(field_data_int + 1).to_bytes(length=1, byteorder='big')

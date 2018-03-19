@@ -600,7 +600,7 @@ def _test_many_relation_abstractions():
     ...                          eth_padding,
     ...                          eth_crc_802_3])
     >>> presets = {'eth.payload': b"PAYLOAD"}
-    >>> d = Symbol.abstract(next(symbol.specialize(presets=presets)), [symbol])[1]
+    >>> d = symbol.abstract(next(symbol.specialize(presets=presets)))
     >>> for k in presets:
     ...    assert d[k] == presets[k]
 
@@ -624,8 +624,8 @@ def _test_many_relation_abstractions():
     ...     arp_hrd, arp_pro, arp_hln, arp_pln, arp_op,
     ...     arp_ip_sha, arp_ip_spa, arp_ip_tha, arp_ip_tpa]))
 
-    >>> AbstractField.abstract(data, [arp_ip_symbol])
-    (arp.ip, OrderedDict([('arp.hrd', b'\x00\x01'), ('arp.pro', b'\x08\x00'), ('arp.hln', b'\x06'), ('arp.pln', b'\x04'), ('arp.op', b'\x00\x02'), ('arp.sha', b'\x00"MVM\xac'), ('arp.spa', b'\xc0\xa8\xc8\xab'), ('arp.tha', b'\x84\x8fi\xc9(\x91'), ('arp.tpa', b'\xc0\xa8\xc8\xe2')]))
+    >>> arp_ip_symbol.abstract(data)
+    OrderedDict([('arp.hrd', b'\x00\x01'), ('arp.pro', b'\x08\x00'), ('arp.hln', b'\x06'), ('arp.pln', b'\x04'), ('arp.op', b'\x00\x02'), ('arp.sha', b'\x00"MVM\xac'), ('arp.spa', b'\xc0\xa8\xc8\xab'), ('arp.tha', b'\x84\x8fi\xc9(\x91'), ('arp.tpa', b'\xc0\xa8\xc8\xe2')])
 
 
     # Test Symbol cloning

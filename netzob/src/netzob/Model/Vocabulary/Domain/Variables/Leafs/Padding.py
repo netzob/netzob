@@ -448,7 +448,7 @@ def _test():
     >>> s = Symbol([f_size, f_data, f_pad])
     >>> data = next(s.specialize())
     >>>
-    >>> (abstractedSymbol, structured_data) = Symbol.abstract(data, [s])
+    >>> structured_data = s.abstract(data)
     >>> ord(structured_data['size']) == len(structured_data['payload'])
     True
     """

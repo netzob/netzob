@@ -168,22 +168,6 @@ class Size(AbstractRelationVariableLeaf):
     True
 
 
-    .. ifconfig:: scope in ('netzob')
-
-       In the following example, a size field is declared after its
-       targeted field, and a message that does not correspond to the
-       expected model is then parsed. As the data does not match the
-       expected symbol, the returned symbol is unknown:
-
-       >>> from netzob.all import *
-       >>> f0 = Field(String(nbChars=(1,10)), name='f0')
-       >>> f1 = Field(String(";"), name='f1')
-       >>> f2 = Field(Size(f0), name='f2')
-       >>> s  = Symbol(fields=[f0, f1, f2])
-       >>> data = b"john;\x03"
-       >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
-       (Unknown message b'john;\x03', OrderedDict())
-
     In the following example, a size field is declared before the
     targeted field:
 
@@ -195,23 +179,6 @@ class Size(AbstractRelationVariableLeaf):
     >>> d = next(f.specialize())
     >>> 3 <= len(d) <= 6
     True
-
-
-    .. ifconfig:: scope in ('netzob')
-
-       In the following example, a size field is declared before its
-       targeted field, and a message that does not correspond to the
-       expected model is then parsed. As the data does not match the
-       expected symbol, the returned symbol is unknown:
-
-       >>> from netzob.all import *
-       >>> f2 = Field(String(nbChars=(1,10)), name="f2")
-       >>> f1 = Field(String(";"), name="f1", )
-       >>> f0 = Field(Size(f2), name="f0")
-       >>> s  = Symbol(fields=[f0, f1, f2])
-       >>> data = b"\x03;john"
-       >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
-       (Unknown message b'\x03;john', OrderedDict())
 
 
     **Size field with fields and variables as target**
@@ -516,31 +483,69 @@ def _test_size():
     >>> udp_length = Field(bitarray('0000000000000000'), "udp.length")
     >>> udp_checksum = Field(bitarray('0000000000000000'), "udp.checksum")
     >>> udp_payload = Field(Raw(), "udp.payload")
-    >>> 
+    >>>
     >>> udp_header = [udp_sport, udp_dport, udp_length, udp_checksum, udp_payload]
-    >>> 
+    >>>
     >>> # Update UDP length field
     >>> udp_length.domain = Size(udp_header, dataType=uint16(), factor=1./8)
-    >>> 
+    >>>
     >>> # Pseudo IP header to compute the UDP checksum
     >>> pseudo_ip_src = Field(IPv4(), "udp.pseudoIP.saddr")
     >>> pseudo_ip_dst = Field(IPv4(), "udp.pseudoIP.daddr")
     >>> pseudo_ip_proto = Field(Raw(b'\x00\x11'), "udp.pseudoIP.proto")
     >>> pseudo_ip_length = Field(Size(udp_header, dataType=uint16(), factor=1./8), "udp.pseudoIP.length")
-    >>> 
+    >>>
     >>> pseudo_ip_header = Field(name="udp.pseudoIP", isPseudoField=True)
     >>> pseudo_ip_header.fields = [pseudo_ip_src, pseudo_ip_dst, pseudo_ip_proto, pseudo_ip_length]
-    >>> 
+    >>>
     >>> udp_checksum.domain = InternetChecksum([pseudo_ip_header] + udp_header, dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))
-    >>> 
+    >>>
     >>> # UDP symbol
     >>> symbol_udp = Symbol(name="udp", fields=(udp_header + [pseudo_ip_header]))
     >>>
-    >>> # 
+    >>> #
     >>> data = next(symbol_udp.specialize(presets={"udp.payload": "test AAAAAAAA"}))
     >>>
-    >>> (symbol_result, structured_data) = Symbol.abstract(data, [symbol_udp])
-    >>> symbol_result == symbol_udp
-    True
+    >>> symbol_udp.abstract(data)  # doctest: +ELLIPSIS
+    OrderedDict([('udp.sport', b'...'), ('udp.dport', b'...'), ('udp.length', b'\x00\x15'), ('udp.checksum', b'...'), ('udp.payload', b'test AAAAAAAA')])
+
+    """
+
+
+def _test_abstraction():
+    r"""
+
+    In the following example, a size field is declared after its
+    targeted field, and a message that does not correspond to the
+    expected model is then parsed. As the data does not match the
+    expected symbol, the returned symbol is unknown:
+
+    >>> from netzob.all import *
+    >>> f0 = Field(String(nbChars=(1,10)), name='f0')
+    >>> f1 = Field(String(";"), name='f1')
+    >>> f2 = Field(Size(f0), name='f2')
+    >>> s  = Symbol(fields=[f0, f1, f2])
+    >>> data = b"john;\x03"
+    >>> s.abstract(data)  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'b'john;\x03''. Error: 'No parsing path returned while parsing 'b'john;\x03'''
+
+
+    In the following example, a size field is declared before its
+    targeted field, and a message that does not correspond to the
+    expected model is then parsed. As the data does not match the
+    expected symbol, the returned symbol is unknown:
+
+    >>> from netzob.all import *
+    >>> f2 = Field(String(nbChars=(1,10)), name="f2")
+    >>> f1 = Field(String(";"), name="f1", )
+    >>> f0 = Field(Size(f2), name="f0")
+    >>> s  = Symbol(fields=[f0, f1, f2])
+    >>> data = b"\x03;john"
+    >>> s.abstract(data)  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'b'\x03;john''. Error: 'No parsing path returned while parsing 'b'\x03;john'''
 
     """

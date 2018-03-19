@@ -449,7 +449,7 @@ def _test(self):
     ]
     symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
     data = b''.join(next(f.specialize()) for f in symbol.fields)
-    assert Symbol.abstract(data, [symbol])[1]
+    assert symbol.abstract(data)
 
 
     # Verify that you cannot create a Raw with a value AND an nbBytes:

@@ -136,12 +136,12 @@ class Agg(AbstractVariableNode):
     >>> f1 = Field(String("!"), name="f1")
     >>> f = Field([f0, f1])
     >>> data = "john.txt!"
-    >>> Field.abstract(data, [f])
-    (Field, OrderedDict([('f0', b'john.txt'), ('f1', b'!')]))
+    >>> f.abstract(data)
+    OrderedDict([('f0', b'john.txt'), ('f1', b'!')])
 
     In the following example, an Aggregate variable is defined. A
     message that does not correspond to the expected model is then
-    parsed, thus the returned field is unknown:
+    parsed, thus an exception is returned:
 
     >>> from netzob.all import *
     >>> v1 = String(nbChars=(1, 10))
@@ -150,8 +150,10 @@ class Agg(AbstractVariableNode):
     >>> f1 = Field(String("!"), name="f1")
     >>> f = Field([f0, f1])
     >>> data = "johntxt!"
-    >>> Field.abstract(data, [f])
-    (Unknown message 'johntxt!', OrderedDict())
+    >>> f.abstract(data)
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Field', cannot abstract the data: 'johntxt!'. Error: 'No parsing path returned while parsing 'b'johntxt!'''
 
 
     **Specialization of aggregate variables**
@@ -179,11 +181,11 @@ class Agg(AbstractVariableNode):
     >>> res == b'\x02' or res == b'\x02\x03'
     True
     >>> d = b'\x02\x03'
-    >>> Field.abstract(d, [f])
-    (Field, OrderedDict([('Field', b'\x02\x03')]))
+    >>> f.abstract(d)
+    OrderedDict([('Field', b'\x02\x03')])
     >>> d = b'\x02'
-    >>> Field.abstract(d, [f])
-    (Field, OrderedDict([('Field', b'\x02')]))
+    >>> f.abstract(d)
+    OrderedDict([('Field', b'\x02')])
 
 
     **Modeling indirect imbrication**
@@ -206,9 +208,8 @@ class Agg(AbstractVariableNode):
     True
     >>>
     >>> # Test parsing
-    >>> (res_object, res_data) = Field.abstract(res, [f])
-    >>> res_object == f
-    True
+    >>> f.abstract(res)
+    OrderedDict([('Field', b'\x02')])
 
 
     .. warning::
@@ -264,8 +265,7 @@ class Agg(AbstractVariableNode):
     b'\x02\x04\x01'
     >>>
     >>> # Test parsing
-    >>> (res_object, res_data) = Field.abstract(res, [f])
-    >>> res_object == f  # doctest: +SKIP
+    >>> res_data = f.abstract(res) # doctest: +SKIP
     True
 
     **Modeling direct recursion, more complex example**
@@ -327,9 +327,9 @@ class Agg(AbstractVariableNode):
     b'\x03!\x03!\x03!\x03'
     >>>
     >>> # Test parsing
-    >>> (res_object, res_data) = Field.abstract(res, [f])
-    >>> res_object == f  # doctest: +SKIP
-    True
+    >>> f.abstract(res)
+    OrderedDict([('Field', b'\x01!\x01')])
+
 
 
     **Modeling indirect recursion, more complex example**
@@ -592,8 +592,8 @@ def _test_agg():
     >>> d = next(s.specialize())
     >>> d
     b'\x03ABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'\x03'), ('f1', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x03'), ('f1', b'ABC')])
 
     Size field targeting a agg variable, with size field on the right:
 
@@ -603,8 +603,8 @@ def _test_agg():
     >>> d = next(s.specialize())
     >>> d
     b'\x03ABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'\x03'), ('f2', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'\x03'), ('f2', b'ABC')])
 
 
     ## Size field on the left
@@ -617,8 +617,8 @@ def _test_agg():
     >>> d = next(s.specialize())
     >>> d
     b'ABC\x03'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'\x03')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'ABC'), ('f2', b'\x03')])
 
     Size field targeting a agg variable, with size field on the left:
 
@@ -628,8 +628,8 @@ def _test_agg():
     >>> d = next(s.specialize())
     >>> d
     b'ABC\x03'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'\x03')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'ABC'), ('f2', b'\x03')])
 
 
     ## Value field on the right
@@ -642,8 +642,8 @@ def _test_agg():
     >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'ABC'), ('f1', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'ABC'), ('f1', b'ABC')])
 
     Value field targeting a agg variable, with value field on the right:
 
@@ -653,8 +653,8 @@ def _test_agg():
     >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'ABC'), ('f1', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'ABC'), ('f1', b'ABC')])
 
 
     ## Value field on the left
@@ -667,8 +667,8 @@ def _test_agg():
     >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'ABC'), ('f2', b'ABC')])
 
     Value field targeting a agg variable, with value field on the left:
 
@@ -678,7 +678,7 @@ def _test_agg():
     >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'ABC'), ('f2', b'ABC')])
 
     """

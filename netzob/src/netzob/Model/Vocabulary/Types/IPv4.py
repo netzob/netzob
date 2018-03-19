@@ -100,20 +100,6 @@ class IPv4(AbstractType):
     >>> ip.value
     bitarray('11000000101010000000000000001010')
 
-    .. ifconfig:: scope in ('netzob')
-
-       >>> f1 = Field("IP=", name="magic")
-       >>> f2 = Field(IPv4(), name="ip4")
-       >>> raw_data = ip.value.tobytes()
-       >>> Symbol.abstract(raw_data, [f2])
-       (ip4, OrderedDict([('ip4', b'\xc0\xa8\x00\n')]))
-       >>> raw_data = next(f1.specialize()) + raw_data
-       >>> Symbol.abstract(raw_data, [f1, f2])  # doctest: +SKIP
-       >>> s = Symbol(fields=[f1,f2])
-       >>> msgs = [RawMessage(next(s.specialize())) for x in range(10)]
-       >>> len(msgs)
-       10
-
     It is also possible to specify an IPv4 type that accepts a range
     of IP addresses, through the :attr:`network` parameter, as shown in the
     following example:
@@ -121,7 +107,7 @@ class IPv4(AbstractType):
     >>> from netzob.all import *
     >>> ip = IPv4(network="10.10.10.0/27")
     >>> IPv4(ip.generate())  # initialize with the generated bitarray value
-    10.10.10.29
+    10.10.10.26
 
 
     This next example shows the usage of a default value:
@@ -512,7 +498,7 @@ def _test():
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
     >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
-    >>> assert Symbol.abstract(data, [symbol])[1]
+    >>> assert symbol.abstract(data)
 
 
     # Verify that you cannot create an IPv4 with a value AND a network:

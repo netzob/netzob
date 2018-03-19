@@ -937,8 +937,8 @@ def _test():
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
     >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
-    >>> Symbol.abstract(data, [symbol])  #doctest: +ELLIPSIS
-    (Symbol, OrderedDict([('0', b'\x00\x01'), ('1', b'...'), ('2', b'\x00\x7f\x00A'), ('3', b'\x02\x00')]))
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    OrderedDict([('0', b'\x00\x01'), ('1', b'...'), ('2', b'\x00\x7f\x00A'), ('3', b'\x02\x00')])
 
 
     # Verify that you cannot create an Integer with a value AND an interval:

@@ -244,11 +244,11 @@ class Repeat(AbstractVariableNode):
     >>> d == b'ABC' or d == b'BBC'
     True
     >>> data = "AABC"
-    >>> Field.abstract(data, [f])
+    >>> f.abstract(data)
     in cbk: nb_repeat:1 -- data:b'A' -- remaining:b'ABC'
     in cbk: nb_repeat:2 -- data:b'AA' -- remaining:b'BC'
     in cbk: nb_repeat:3 -- data:b'AAB' -- remaining:b'C'
-    (Field, OrderedDict([('f1', b'AA'), ('f2', b'B'), ('f3', b'C')]))
+    OrderedDict([('f1', b'AA'), ('f2', b'B'), ('f3', b'C')])
 
 
     .. ifconfig:: scope in ('netzob')
@@ -262,11 +262,11 @@ class Repeat(AbstractVariableNode):
        >>> f2 = Field(String("kurt"), name="f2")
        >>> s = Symbol([f1, f2])
        >>> data = "johnkurt"
-       >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-       (Symbol, OrderedDict([('f1', b'john'), ('f2', b'kurt')]))
+       >>> s.abstract(data)  # doctest: +NORMALIZE_WHITESPACE
+       OrderedDict([('f1', b'john'), ('f2', b'kurt')])
        >>> data = "kurt"
-       >>> Symbol.abstract(data, [s])
-       (Symbol, OrderedDict([('f1', b''), ('f2', b'kurt')]))
+       >>> s.abstract(data)
+       OrderedDict([('f1', b''), ('f2', b'kurt')])
 
 
        **Specialization of repeat variables**
@@ -754,8 +754,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'\x04AAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'\x04'), ('f1', b'AAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x04'), ('f1', b'AAAA')])
 
     Size field targeting a field containing a repeat variable of non fixed size, with size field on the right:
 
@@ -765,8 +765,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'\x05AAAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'\x05'), ('f1', b'AAAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x05'), ('f1', b'AAAAA')])
 
     Size field targeting a repeat variable, with size field on the right:
 
@@ -776,8 +776,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'\x05AAAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'\x05'), ('f2', b'AAAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'\x05'), ('f2', b'AAAAA')])
 
     Size field targeting a repeat variable of non fixed size, with size field on the right:
 
@@ -787,8 +787,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'\x04AAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'\x04'), ('f2', b'AAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'\x04'), ('f2', b'AAAA')])
 
 
     ## Size field on the left
@@ -801,8 +801,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAA\x04'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAA'), ('f2', b'\x04')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAA'), ('f2', b'\x04')])
 
     Size field targeting a field containing a repeat variable of non fixed size, with size field on the left:
 
@@ -812,8 +812,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAAA\x05'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')])
 
     Size field targeting a repeat variable, with size field on the left:
 
@@ -823,8 +823,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAAA\x05'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')])
 
     Size field targeting a repeat variable of non fixed size, with size field on the left:
 
@@ -834,8 +834,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAAA\x05'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')])
 
 
     ## Value field on the right
@@ -849,8 +849,8 @@ def _test_repeat():
     >>> d
     b'AAAAAAAA'
 
-    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
-    (Symbol, OrderedDict([('f2', b'AAAA'), ('f1', b'AAAA')]))
+    >>> s.abstract(d)  # doctest: +SKIP
+    OrderedDict([('f2', b'AAAA'), ('f1', b'AAAA')])
 
     Value field targeting a field containing a repeat variable of non fixed size, with value field on the right:
 
@@ -860,8 +860,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAAAA'
-    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
-    (Symbol, OrderedDict([('f2', b'AAA'), ('f1', b'AAA')]))
+    >>> s.abstract(d)  # doctest: +SKIP
+    OrderedDict([('f2', b'AAA'), ('f1', b'AAA')])
 
 
     Value field targeting a repeat variable, with value field on the right:
@@ -872,8 +872,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAAAA'
-    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
-    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')]))
+    >>> s.abstract(d)  # doctest: +SKIP
+    OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')])
 
 
     Value field targeting a repeat variable of non fixed size, with value field on the right:
@@ -884,8 +884,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAA'
-    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
-    (Symbol, OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')]))
+    >>> s.abstract(d)  # doctest: +SKIP
+    OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')])
 
 
     ## Value field on the left
@@ -898,8 +898,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')])
 
     Value field targeting a field containing a repeat variable of non fixed size, with value field on the left:
 
@@ -909,8 +909,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AA'), ('f2', b'AA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AA'), ('f2', b'AA')])
 
 
     Value field targeting a repeat variable, with value field on the left:
@@ -921,8 +921,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')])
 
     Value field targeting a repeat variable of non fixed size, with value field on the left:
 
@@ -932,8 +932,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAA'), ('f2', b'AAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAA'), ('f2', b'AAA')])
 
 
     # Repeat variable whose nbRepeat is a field/variable on the left
@@ -945,8 +945,8 @@ def _test_repeat():
     >>> d
     b'\x04AAAA'
     >>>
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Nb repeat', b'\x04'), ('Repeat', b'AAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('Nb repeat', b'\x04'), ('Repeat', b'AAAA')])
 
     >>> f1 = Field(uint8(), name='Nb repeat')
     >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
@@ -955,8 +955,8 @@ def _test_repeat():
     >>> d
     b'\x9eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     >>>
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Nb repeat', b'\x9e'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('Nb repeat', b'\x9e'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')])
 
     >>> f1 = Field(uint8(), name='Nb repeat')
     >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
@@ -966,8 +966,8 @@ def _test_repeat():
     >>> d
     b'2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     >>>
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Nb repeat', b'2'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A')]))
+    >>> s.abstract(d)
+    OrderedDict([('Nb repeat', b'2'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A')])
 
 
     # Repeat variable whose nbRepeat is a field/variable on the right
@@ -979,8 +979,8 @@ def _test_repeat():
     >>> d
     b'AAAA\x04'
     >>>
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Repeat field', b'AAAA'), ('Size field', b'\x04')]))
+    >>> s.abstract(d)
+    OrderedDict([('Repeat field', b'AAAA'), ('Size field', b'\x04')])
 
     >>> f2 = Field(uint8(), name='Size field')
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f2), name='Repeat field')
@@ -988,8 +988,8 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Size field', b'%')]))
+    >>> s.abstract(d)
+    OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Size field', b'%')])
 
     >>> f3 = Field(uint8(), name='Size field')
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f3), name='Repeat field')
@@ -998,7 +998,7 @@ def _test_repeat():
     >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xa9'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A'), ('Size field', b'\xa9')]))
+    >>> s.abstract(d)
+    OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A'), ('Size field', b'\xa9')])
 
     """

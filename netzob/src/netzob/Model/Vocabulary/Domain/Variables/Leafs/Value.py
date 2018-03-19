@@ -145,8 +145,8 @@ class Value(AbstractRelationVariableLeaf):
        >>> f3 = Field(Value(f1), name="f3")
        >>> f4 = Field(String("!"), name="f4")
        >>> s = Symbol(fields=[f1, f2, f3, f4])
-       >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-       (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
+       >>> s.abstract(data)  # doctest: +NORMALIZE_WHITESPACE
+       OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')])
 
 
     **Value field with a variable as a target**
@@ -221,17 +221,20 @@ class Value(AbstractRelationVariableLeaf):
     the next portion of the example, the previously specialized data
     is abstracted according to the field definition.
 
-    >>> Field.abstract(data, [f])
-    (f, OrderedDict([('f0', b'\x01'), ('f1', b'\x80')]))
+    >>> f.abstract(data)
+    OrderedDict([('f0', b'\x01'), ('f1', b'\x80')])
 
     If the targeted field (``f0``) does not contain the expected data,
     the callback function should return :const:`None`, indicating that the
     relationship does not apply. In this case, the abstraction process
-    will not succeed.
+    will return an exception.
 
     >>> data = b'\x02\x80'
-    >>> Field.abstract(data, [f])
-    (Unknown message b'\x02\x80', OrderedDict())
+    >>> f.abstract(data)
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'f', cannot abstract the data: 'b'\x02\x80''. Error: 'No parsing path returned while parsing 'b'\x02\x80'''
+
 
     """
 
@@ -376,7 +379,7 @@ def _test_value():
     >>> f2 = Field(String(";"), name="f2")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-    (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
+    >>> s.abstract(data)  # doctest: +NORMALIZE_WHITESPACE
+    OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')])
 
     """
