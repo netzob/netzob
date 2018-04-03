@@ -378,14 +378,18 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
 
     ## Internal methods ##
 
+    @public_api
     def __enter__(self):
-        """Enter the runtime channel context.
+        """Enter the runtime channel context by opening the channel.
+        This methods is implied in the with statement.
         """
         self.open()
         return self
 
+    @public_api
     def __exit__(self, exc_type, exc_value, traceback):
-        """Exit the runtime channel context.
+        """Exit the runtime channel context by closing the channel.
+        This methods is implied in the with statement.
         """
         self.close()
 
