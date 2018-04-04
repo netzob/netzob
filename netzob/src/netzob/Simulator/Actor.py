@@ -902,13 +902,13 @@ class Actor(Thread):
       [+]   Picking transition 'Open'
       [+]   Transition 'Open' lead to state 'S1'
       [+] At state 'S1'
-      [+]   Picking transition 'T2'
+      [+]   Picking transition 'T1'
       [+]   Changing transition to 'T2', through callback
       [+]   During transition 'T2', sending input symbol 'Symbol'
       [+]   During transition 'T2', receiving expected output symbol 'Symbol'
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2'
-      [+]   Picking transition 'T4'
+      [+]   Picking transition 'T3'
       [+]   Changing transition to 'T4', through callback
       [+]   During transition 'T4', sending input symbol 'Symbol'
       [+]   During transition 'T4', receiving expected output symbol 'Symbol'
