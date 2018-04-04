@@ -275,7 +275,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         parsingPath.registerVariablesCallBack(self.targets, self)
 
     @typeCheck(GenericPath)
-    def computeExpectedValue(self, parsingPath):
+    def computeExpectedValue(self, parsingPath, fuzz=None):
         self._logger.debug("Compute expected value for relation field")
 
         # first checks the pointed variables all have a value
@@ -317,7 +317,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         return result
 
     @typeCheck(SpecializingPath)
-    def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True):
+    def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True, fuzz=None):
         """This method participates in the specialization proces.
 
         It creates a result in the provided path that contains a
@@ -329,7 +329,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             raise Exception("VariableSpecializerPath cannot be None")
 
         try:
-            newValue = self.computeExpectedValue(variableSpecializerPath)
+            newValue = self.computeExpectedValue(variableSpecializerPath, fuzz=fuzz)
 
             if newValue is not None:
                 (addresult_succeed, addresult_newpaths) = variableSpecializerPath.addResult(self, newValue.copy())

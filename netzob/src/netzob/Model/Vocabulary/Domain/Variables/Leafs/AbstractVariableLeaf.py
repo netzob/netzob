@@ -141,9 +141,8 @@ class AbstractVariableLeaf(AbstractVariable):
         """Specializes a Leaf"""
 
         from netzob.Fuzzing.Fuzz import MaxFuzzingException
-
-        # Fuzzing has priority over generating a legitimate value
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
+        # Fuzzing has priority over generating a legitimate value
         if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode in [FuzzingMode.GENERATE, FuzzingMode.FIXED]:
 
             # Retrieve the mutator
@@ -176,11 +175,11 @@ class AbstractVariableLeaf(AbstractVariable):
 
         if self.isDefined(parsingPath):
             if self.scope == Scope.CONSTANT or self.scope == Scope.SESSION:
-                newParsingPaths = self.use(parsingPath, acceptCallBack)
+                newParsingPaths = self.use(parsingPath, acceptCallBack, fuzz=fuzz)
             elif self.scope == Scope.MESSAGE:
-                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack, fuzz=fuzz)
             elif self.scope == Scope.NONE:
-                newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerate(parsingPath, acceptCallBack, fuzz=fuzz)
         else:
             if self.scope == Scope.CONSTANT:
                 self._logger.debug(
@@ -188,9 +187,9 @@ class AbstractVariableLeaf(AbstractVariable):
                     format(self))
                 newParsingPaths = iter(())
             elif self.scope == Scope.MESSAGE or self.scope == Scope.SESSION:
-                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack, fuzz=fuzz)
             elif self.scope == Scope.NONE:
-                newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerate(parsingPath, acceptCallBack, fuzz=fuzz)
 
         if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.MUTATE:
 

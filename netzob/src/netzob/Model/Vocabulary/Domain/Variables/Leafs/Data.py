@@ -257,7 +257,7 @@ class Data(AbstractVariableLeaf):
                     else:
                         self._logger.debug("Parsed data does not respect a relation")
 
-    def use(self, variableSpecializerPath, acceptCallBack=True):
+    def use(self, variableSpecializerPath, acceptCallBack=True, fuzz=None):
         """This method participates in the specialization proces.
 
         It creates a result in the provided path that either contains
@@ -280,7 +280,7 @@ class Data(AbstractVariableLeaf):
 
             yield variableSpecializerPath
 
-    def regenerate(self, variableSpecializerPath, acceptCallBack=True):
+    def regenerate(self, variableSpecializerPath, acceptCallBack=True, fuzz=None):
         """This method participates in the specialization proces.
 
         It creates a result in the provided path that contains a
@@ -304,7 +304,8 @@ class Data(AbstractVariableLeaf):
 
     def regenerateAndMemorize(self,
                               variableSpecializerPath,
-                              acceptCallBack=True):
+                              acceptCallBack=True,
+                              fuzz=None):
         """This method participates in the specialization proces.
         It memorizes the value present in the path of the variable
         """

@@ -242,16 +242,20 @@ class Size(AbstractRelationVariableLeaf):
         new_size.targets = new_targets
         return new_size
 
-    def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables):
+    def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables, fuzz=None):
         """
         Compute the total size of targets
         """
         size = 0
         missing_variables = []
 
+        from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
         for variable in targets:
 
-            if parsingPath.hasData(variable) or variable is self:
+            if fuzz is not None and fuzz.get(variable) is not None and fuzz.get(variable).mode == FuzzingMode.FIXED:
+                remainingVariables.append(variable)
+
+            elif parsingPath.hasData(variable) or variable is self:
                 remainingVariables.append(variable)
 
             # variable is a leaf
@@ -303,13 +307,13 @@ class Size(AbstractRelationVariableLeaf):
         return size
 
     @typeCheck(GenericPath)
-    def computeExpectedValue(self, parsingPath):
+    def computeExpectedValue(self, parsingPath, fuzz=None):
         self._logger.debug("Compute expected value for Size variable '{}' from field '{}'".format(self, self.field))
 
         # first checks the pointed fields all have a value
         remainingVariables = []
 
-        size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables)
+        size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables, fuzz=fuzz)
         size += self.__computeExpectedValue_stage2(parsingPath, remainingVariables)
         size = int(size * self.factor + self.offset)
         size_raw = TypeConverter.convert(size, Integer, Raw,
