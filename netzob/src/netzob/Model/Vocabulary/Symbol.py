@@ -35,7 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-from bitarray import bitarray
 from typing import Dict, Union  # noqa: F401
 
 # +---------------------------------------------------------------------------+
@@ -204,7 +203,6 @@ class Symbol(AbstractField):
 
     @public_api
     def specialize(self,
-                   presets: Dict[Union[str, Field], Union[bitarray, bytes, AbstractType]] = None,
                    fuzz: Fuzz = None,
                    memory: Memory = None) -> bytes:
         r"""The :meth:`specialize()` method generates a :class:`bytes` sequence whose
@@ -212,11 +210,6 @@ class Symbol(AbstractField):
 
         The specialize() method expects some parameters:
 
-        :param presets: A dictionary of keys:values used to preset
-                        (parameterize) fields during symbol
-                        specialization. Values in this dictionary will
-                        override any field definition, constraints or
-                        relationship dependencies. The default value is :const:`None`.
         :param fuzz: A fuzzing configuration used during the specialization process. Values
                      in this configuration will override any field
                      definition, constraints, relationship
@@ -230,10 +223,6 @@ class Symbol(AbstractField):
                        relationships. If None, a temporary memory is
                        created by default and used internally during the scope of the
                        specialization process.
-        :type presets: ~typing.Dict[~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
-                       ~typing.Union[~bitarray.bitarray,bytes,
-                       ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
-                       optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
         :return: The produced content after specializing the symbol.
@@ -253,12 +242,10 @@ class Symbol(AbstractField):
         >>> len(result)
         6
 
-        **Parameterized specialization of field values** (:attr:`presets` parameter)
+        **Parameterized specialization of field values**
 
-        It is possible to preset (parameterize) fields during symbol
-        specialization, through a dict passed in the :attr:`presets`
-        parameter of the :meth:`~netzob.Model.Vocabulary.Symbol.specialize`
-        method. Values in this dictionary will override any field
+        It is possible to parameterize fields during symbol
+        specialization. Values in this structure will override any field
         definition, constraints or relationship dependencies.
 
         The presets dictionary accepts a sequence of keys and values,
@@ -287,22 +274,31 @@ class Symbol(AbstractField):
         parameterized **values** during specialization of the
         ``udp_dport`` and ``udp_payload`` fields:
 
-        >>> presets = {}
-        >>> presets["udp.dport"] = 11              # udp.dport expects an int or an Integer
-        >>> presets["udp.payload"] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
-        >>> next(symbol_udp.specialize(presets=presets))
-        b'\x0b\xaa\xbb'
 
-        >>> presets = {}
-        >>> presets["udp.dport"] = uint16(11)        # udp.dport expects an int or an Integer
-        >>> presets["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
-        >>> next(symbol_udp.specialize(presets=presets))
+        >>> fuzz = Fuzz()
+        >>> fuzz.set(f_dport, 11)              # udp.dport expects an int or an Integer
+        >>> fuzz.set(f_payload, b"\xaa\xbb")   # udp.payload expects a bytes object or a Raw object
+        >>> next(symbol_udp.specialize(fuzz=fuzz))
         b'\x00\x0b\xaa\xbb'
 
-        >>> presets = {}
-        >>> presets["udp.dport"] = bitarray('00001011', endian='big')
-        >>> presets["udp.payload"] = bitarray('1010101010111011', endian='big')
-        >>> next(symbol_udp.specialize(presets=presets))
+
+        >>> fuzz = Fuzz()
+        >>> fuzz.set("udp.dport", 11)              # udp.dport expects an int or an Integer
+        >>> fuzz.set("udp.payload", b"\xaa\xbb")   # udp.payload expects a bytes object or a Raw object
+        >>> next(symbol_udp.specialize(fuzz=fuzz))
+        b'\x00\x0b\xaa\xbb'
+
+        >>> fuzz = Fuzz()
+        >>> fuzz.set("udp.dport", uint16(11))        # udp.dport expects an int or an Integer
+        >>> fuzz.set("udp.payload", Raw(b"\xaa\xbb")) # udp.payload expects a bytes object or a Raw object
+        >>> next(symbol_udp.specialize(fuzz=fuzz))
+        b'\x00\x0b\xaa\xbb'
+
+        >>> fuzz = Fuzz()
+        >>> fuzz.set("udp.dport", bitarray('00001011', endian='big'))
+        >>> fuzz.set("udp.payload", bitarray('1010101010111011', endian='big'))
+        >>> fuzz.set("udp.payload", bitarray('1010101010111011', endian='big'))
+        >>> next(symbol_udp.specialize(fuzz=fuzz))
         b'\x0b\xaa\xbb'
 
         The previous example shows the use of BitArray as dict
@@ -314,13 +310,19 @@ class Symbol(AbstractField):
         parameterized **keys** during specialization of the fields
         ``udp_dport`` and ``udp_payload``:
 
-        >>> next(symbol_udp.specialize(presets={f_dport: 11, f_payload: b"\xaa\xbb"}))
-        b'\x0b\xaa\xbb'
-        >>> next(symbol_udp.specialize(presets={"udp.dport": 11, "udp.payload": b"\xaa\xbb"}))
-        b'\x0b\xaa\xbb'
+        >>> fuzz = Fuzz()
+        >>> fuzz.set(f_dport, 11)
+        >>> fuzz.set(f_payload, b"\xaa\xbb")
+        >>> next(symbol_udp.specialize(fuzz=fuzz))
+        b'\x00\x0b\xaa\xbb'
+        >>> fuzz = Fuzz()
+        >>> fuzz.set("udp.dport", 11)
+        >>> fuzz.set("udp.payload", b"\xaa\xbb")
+        >>> next(symbol_udp.specialize(fuzz=fuzz))
+        b'\x00\x0b\xaa\xbb'
 
 
-        A preset value bypasses all the constraint checks on your field definition.
+        A preset value bypasses all the constraint checks on the field definition.
         In the following example, it can be used to bypass a size field definition.
 
         >>> from netzob.all import *
@@ -328,9 +330,10 @@ class Symbol(AbstractField):
         >>> f2 = Field(domain=Raw(nbBytes=(10,15)))
         >>> f1.domain = Size(f2)
         >>> s = Symbol(fields=[f1, f2])
-        >>> presetValues = {f1: bitarray('11111111')}
-        >>> next(s.specialize(presets = presetValues))[0]
-        255
+        >>> fuzz = Fuzz()
+        >>> fuzz.set(f1, bitarray('11111111'))
+        >>> next(s.specialize(fuzz=fuzz))
+        b'\xff\xcf\x9b\xf4\xb7oG\x90G0\x80K\x9e2'
 
 
         **Field Fuzzing**
@@ -349,7 +352,7 @@ class Symbol(AbstractField):
         """
 
         from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
-        msg = MessageSpecializer(presets=presets, fuzz=fuzz, memory=memory)
+        msg = MessageSpecializer(fuzz=fuzz, memory=memory)
 
         specializing_paths = msg.specializeSymbol(self)
         return self._inner_specialize(specializing_paths)
@@ -358,83 +361,11 @@ class Symbol(AbstractField):
         for specializing_path in specializing_paths:
             yield specializing_path.generatedContent.tobytes()
 
-    def normalize_presets(self, presets):
-        """Update the presets dict, according to the symbol definition.
-
-        Fields described with field name are converted into field
-        object, and preseting values are converted into bitarray.
-
-        """
-
-        if presets is None:
-            return None
-
-        new_keys = {}
-        old_keys = []
-        for k, v in presets.items():
-
-            # Handle case where k is a Field
-            if isinstance(k, Field):
-                if isinstance(v, bitarray):
-                    continue
-                elif hasattr(k.domain, "dataType"):
-                    if isinstance(v, AbstractType):
-                        presets[k] = v.value
-                    else:  # v should be basic python type, such as an int, str, ...
-                        presets[k] = TypeConverter.convert(v, k.domain.dataType.__class__, BitArray,
-                                                                src_unitSize=k.domain.dataType.unitSize,
-                                                                dst_unitSize=k.domain.dataType.unitSize,
-                                                                src_sign=k.domain.dataType.sign,
-                                                                dst_sign=k.domain.dataType.sign,
-                                                                src_endianness=k.domain.dataType.endianness,
-                                                                dst_endianness=k.domain.dataType.endianness)
-                else:
-                    raise Exception("Cannot find the default dataType for field '{}'".format(k))
-
-            # Handle case where k is a string
-            elif isinstance(k, str):
-
-                # Retrieve associated Field based on its string name
-                for f in self.getLeafFields(includePseudoFields=True):
-                    if f.name == k:
-                        if isinstance(v, bitarray):
-                            new_keys[f] = v
-                            old_keys.append(k)
-                        elif isinstance(v, bytes):
-                            valbits = bitarray(endian='big')
-                            valbits.frombytes(v)
-                            new_keys[f] = valbits
-                            old_keys.append(k)
-                        elif hasattr(f.domain, "dataType"):
-                            if isinstance(v, AbstractType):
-                                new_keys[f] = v.value
-                            else:  # v should be basic python type, such as an int, str, ...
-                                new_keys[f] = TypeConverter.convert(v, f.domain.dataType.__class__, BitArray,
-                                                                    src_unitSize=f.domain.dataType.unitSize,
-                                                                    dst_unitSize=f.domain.dataType.unitSize,
-                                                                    src_sign=f.domain.dataType.sign,
-                                                                    dst_sign=f.domain.dataType.sign,
-                                                                    src_endianness=f.domain.dataType.endianness,
-                                                                    dst_endianness=f.domain.dataType.endianness)
-                            old_keys.append(k)
-                        else:
-                            raise Exception("Cannot find the default dataType for field '{}'".format(f))
-                        break
-            else:
-                raise Exception("Preset's keys must be of Field or string types")
-
-        # Replace string keys by their equivalent Field keys
-        for old_key in old_keys:
-            presets.pop(old_key)
-        presets.update(new_keys)
-
-        return presets
-
     def normalize_fuzz(self, fuzz):
-        """Update the presets dict, according to the symbol definition.
+        """Update the fuzz object, according to the symbol definition.
 
         Fields described with field name are converted into field
-        object, and preseting values are converted into bitarray.
+        object, and fixed values are converted into bitarray.
 
         """
 
@@ -449,18 +380,13 @@ class Symbol(AbstractField):
                 fuzz.normalize_mappingFieldsMutators(k, current_symbol=self)
 
     @public_api
-    def count(self, presets=None, fuzz=None):
+    def count(self, fuzz=None):
         r"""The :meth:`count` method computes the expected number of unique
         messages produced, considering the initial symbol model, the
         preset fields and the fuzzed fields.
 
         The :meth:`count` method expects the same parameters as the :meth:`specialize` method:
 
-        :param presets: A dictionary of keys:values used to preset
-                        (parameterize) fields during symbol
-                        specialization. Values in this dictionary will
-                        override any field definition, constraints or
-                        relationship dependencies. The default value is :const:`None`.
         :param fuzz: A fuzzing configuration used during the specialization process. Values
                      in this configuration will override any field
                      definition, constraints, relationship
@@ -468,10 +394,6 @@ class Symbol(AbstractField):
                      :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
                      purpose. The default value is :const:`None`.
-        :type presets: ~typing.Dict[~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
-                       ~typing.Union[~bitarray.bitarray,bytes,
-                       ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
-                       optional
         :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :return: The number of unique values the symbol specialization can produce.
         :rtype: a :class:`int`
@@ -496,27 +418,18 @@ class Symbol(AbstractField):
         >>> symbol.count()
         62324736
         >>>
-        >>> # Specify a preset for field 'f3'
-        >>> presetValues = {f3: bitarray('11111111')}
-        >>>
-        >>> symbol.count(presets=presetValues)
-        243456
-        >>>
         >>> # Specify a fuzz configuration for field 'f2'
         >>> fuzz = Fuzz()
         >>> fuzz.set(f2, generator='determinist')
         >>>
-        >>> symbol.count(presets=presetValues, fuzz=fuzz)
-        27579
+        >>> symbol.count(fuzz=fuzz)
+        7060224
 
         """
 
         count = 1
         for field in self.fields:
-            if presets is not None and field in presets.keys():
-                pass
-            else:
-                count *= field.count(presets=presets, fuzz=fuzz)
+            count *= field.count(fuzz=fuzz)
         return count
 
     def clearMessages(self):
@@ -599,10 +512,10 @@ def _test_many_relation_abstractions():
     ...                          eth_payload,
     ...                          eth_padding,
     ...                          eth_crc_802_3])
-    >>> presets = {'eth.payload': b"PAYLOAD"}
-    >>> d = symbol.abstract(next(symbol.specialize(presets=presets)))
-    >>> for k in presets:
-    ...    assert d[k] == presets[k]
+    >>> fuzz = Fuzz()
+    >>> fuzz.set('eth.payload', b"PAYLOAD")
+    >>> symbol.abstract(next(symbol.specialize(fuzz=fuzz)))  # doctest: +ELLIPSIS
+    OrderedDict([('eth.length', b'\x00\n'), ('eth.llc', b'...'), ('eth.payload', b'PAYLOAD'), ('eth.padding', b'...'), ('eth.crc', b'...')])
 
 
     # Test abstraction of ARP message

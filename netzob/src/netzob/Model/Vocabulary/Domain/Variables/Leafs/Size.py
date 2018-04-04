@@ -508,7 +508,9 @@ def _test_size():
     >>> symbol_udp = Symbol(name="udp", fields=(udp_header + [pseudo_ip_header]))
     >>>
     >>> #
-    >>> data = next(symbol_udp.specialize(presets={"udp.payload": "test AAAAAAAA"}))
+    >>> fuzz = Fuzz()
+    >>> fuzz.set("udp.payload", "test AAAAAAAA")
+    >>> data = next(symbol_udp.specialize(fuzz=fuzz))
     >>>
     >>> symbol_udp.abstract(data)  # doctest: +ELLIPSIS
     OrderedDict([('udp.sport', b'...'), ('udp.dport', b'...'), ('udp.length', b'\x00\x15'), ('udp.checksum', b'...'), ('udp.payload', b'test AAAAAAAA')])

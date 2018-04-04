@@ -108,17 +108,11 @@ class FieldSpecializer(object):
 
     """
 
-    def __init__(self, field, presets=None, fuzz=None):
+    def __init__(self, field, fuzz=None):
         self._logger.debug("Creating a new FieldSpecializer.")
 
         self.field = field
-        self.presets = presets
         self.fuzz = fuzz
-
-        if self.presets is not None and self.field in self.presets.keys():
-            self.arbitraryValue = self.presets[self.field].copy()
-        else:
-            self.arbitraryValue = None
 
     def specialize(self, specializingPath=None):
         """Execute the specialize operation"""
@@ -130,18 +124,9 @@ class FieldSpecializer(object):
 
         # We look at where to retrieve the data used for specializing the current field
         specializingPaths = []
-        if self.arbitraryValue is not None:
+        if len(self.field.fields) > 0:
 
-            # In case an arbitrary value is specified, we consider it for field specialization
-            specializingPath.addResult(self.field.domain, self.arbitraryValue)
-            specializingPaths = [specializingPath]
-
-            # Convert list into generator
-            specializingPaths = iter(specializingPaths)
-
-        elif len(self.field.fields) > 0:
-
-            # If no arbitrary value is specified, we specialize the sub-fields if there are any
+            # We specialize the sub-fields if there are any
             specializingPaths = self._specializeFieldWithChildren(specializingPath, 0)
 
             # Convert list into generator
@@ -156,7 +141,7 @@ class FieldSpecializer(object):
     def _specializeFieldWithChildren(self, specializingPath, idx):
 
         child = self.field.fields[idx]
-        fs = FieldSpecializer(child, presets=self.presets, fuzz=self.fuzz)
+        fs = FieldSpecializer(child, fuzz=self.fuzz)
         paths = fs.specialize(specializingPath)
 
         for path in paths:
@@ -185,22 +170,3 @@ class FieldSpecializer(object):
         resultSpecializingPaths = variableSpecializer.specialize(specializingPath)
 
         return resultSpecializingPaths
-
-    @property
-    def arbitraryValue(self):
-        """Arbitrary value that must be used when specializing the current field.
-        If set, no specializing process is started on the field domain, instead the provided
-        value is considered.
-
-        It should be noted that no verification is made on the arbitrary value. Thus, this value
-        is not forced to follow field definitions.
-
-        :type: a :class:`BitArray` value
-        :raises: :class:`TypeError`
-        """
-        return self.__arbitraryValue
-
-    @arbitraryValue.setter  # type: ignore
-    @typeCheck(bitarray)
-    def arbitraryValue(self, value):
-        self.__arbitraryValue = value
