@@ -39,6 +39,7 @@ from typing import Dict, Union  # noqa: F401
 import types
 import collections
 from itertools import repeat
+from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -900,7 +901,19 @@ class Fuzz(object):
                 generator = repeatfunc(value)
             elif isinstance(value, types.GeneratorType):
                 generator = value
-            elif isinstance(value, (str, bytes)):
+            elif isinstance(value, AbstractType):
+                value = value.generate().tobytes()
+                generator = repeat(value)
+            elif isinstance(value, int):
+                value = Integer(value).generate().tobytes()
+                generator = repeat(value)
+            elif isinstance(value, bitarray):
+                value = BitArray(value).generate().tobytes()
+                generator = repeat(value)
+            elif isinstance(value, str):
+                value = String(value).generate().tobytes()
+                generator = repeat(value)
+            elif isinstance(value, bytes):
                 generator = repeat(value)
             elif isinstance(value, collections.Iterable):
                 generator = value
@@ -1093,7 +1106,7 @@ class Fuzz(object):
 
             # Handle case where k is a Variable -> nothing to do
             if isinstance(k, AbstractVariable):
-                if new_key == k:
+                if isinstance(new_key, AbstractVariable) and new_key == k:
                     normalized_new_keys.append(k)
 
             # Handle case where k is a Field containing sub-Fields -> we retrieve all its field variables
@@ -1186,6 +1199,7 @@ class Fuzz(object):
         from netzob.Fuzzing.Mutator import Mutator
         for k, v in self.mappingFieldsMutators.items():
 
+            # If k is a str, the value will be normalized after the key is transformed into a field or variable object
             if isinstance(k, str):
                 pass
 
@@ -1194,6 +1208,7 @@ class Fuzz(object):
                 pass
             # Else, we instanciate the default Mutator according to the type of the object
             else:
+
                 mut_inst = Fuzz._retrieveDefaultMutator(domain=k, mapping=Fuzz.mappingTypesMutators, **v)
                 keys_to_update[k] = mut_inst
 
