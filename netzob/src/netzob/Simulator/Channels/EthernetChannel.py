@@ -218,7 +218,6 @@ class EthernetChannel(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
-
     def writePacket(self, data):
         """Write on the communication channel the specified data
 
@@ -262,6 +261,12 @@ class EthernetChannel(AbstractChannel):
 
     @typeCheck(int)
     def setProtocol(self, upperProtocol):
+        """Set the code of the upper protocol
+
+        :param upperProtocol: the upper protocol code
+        :type upperProtocol: :class:`int`
+        :raise: TypeError if the value is outside of the interval (0, 0xFFFF)
+        """
         if upperProtocol < 0 or upperProtocol > 0xffff:
             raise TypeError("Upper protocol should be between 0 and 0xffff")
 
