@@ -77,7 +77,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         self.endState = endState
         self.name = name
         self.priority = priority
-        self._description = description
+        self.__description = description
         self.active = False
         self.cbk_modify_symbol = []
         self.cbk_action = []
@@ -237,12 +237,12 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
     @property
     def description(self):
-        return self._description
+        return self.__description
 
     @description.setter  # type: ignore
     @typeCheck(str)
     def description(self, description):
-        self._description = description
+        self.__description = description
 
     @public_api
     def add_cbk_modify_symbol(self, cbk_method):

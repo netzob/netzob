@@ -63,21 +63,21 @@ class Transition(AbstractTransition):
 
     The Transition constructor expects some parameters:
 
-    :param startState: This parameter is the initial state of the transition.
-    :param endState: This parameter is the end state of the transition.
+    :param startState: The initial state of the transition.
+    :param endState: The end state of the transition.
     :param inputSymbol: The input symbol which triggers the execution of the
                         transition.
-                        The default value is `None`, which means that no symbol
+                        The default value is ``None``, which means that no symbol
                         is expected in a receiving context, and no symbol is sent
                         in a sending context. Internally,
                         `None` symbol will be replaced by an
                         :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param outputSymbols: A list of output symbols that can be expected when
                           the current transition is executed.
-                          The default value is `None`, which means that no
+                          The default value is ``None``, which means that no
                           symbol will be sent in a receiving context, and no
                           symbol is expected in a sending context.
-                          Internally, `None` symbol will be replaced by an
+                          Internally, ``None`` symbol will be replaced by an
                           :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param name: The name of the transition. The default value is `None`.
     :type startState: :class:`~netzob.Model.Grammar.States.State.State`, required
@@ -85,47 +85,42 @@ class Transition(AbstractTransition):
     :type inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, optional
     :type outputSymbols: a :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, optional
     :type name: :class:`str`, optional
-    :param inputSymbolReactionTime: The timeout value in seconds to wait for the
-                                    input value (only used in a receiving context).
-                                    The default value is None (blocking).
-    :param outputSymbolsReactionTime: A :class:`dict` containing, for each output
-                                      symbol, the timeout value in seconds to
-                                      wait for the output value (only used in a
-                                      sending context).
-                                      The default value is None (blocking).
-    :type inputSymbolReactionTime: :class:`float`, optional
-    :type outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}, optional
 
 
     The Transition class provides the following public variables:
 
     :var startState: The initial state of the transition.
     :var endState: The end state of the transition.
-    :var active: Represents the current execution status of the transition.
-                 If a transition is active, it means it has not yet finished
-                 executing it.
-    :var name: The name of the transition.
     :var inputSymbol: The input symbol is the symbol which triggers the
                       execution of the transition.
     :var outputSymbols: Output symbols that can be generated when
                         the current transition is executed.
-    :var description: description of the transition. If not explicitly set,
-                      it is generated from the input and output symbols
+    :var name: The name of the transition.
     :var inputSymbolReactionTime: The timeout value in seconds to wait for the
                                   input value (only used in a receiving context).
     :var outputSymbolsReactionTime: A :class:`dict` containing, for each output
                                     symbol, the timeout value in seconds to
                                     wait for the output value (only used in a
                                     sending context).
+    :var inverseInitiator: XXXXX.
+    :var rate: This specifies the bandwidth in octets to respect during
+               traffic emission (should be used with :attr:`duration` parameter).
+    :var duration: This indicates for how many seconds the data is continuously
+                         written on the underlying communication channel.
+    :var description: The description of the transition. If not explicitly set,
+                      it is generated from the input and output symbol strings
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`
-    :vartype active: :class:`bool`
-    :vartype name: :class:`str`
     :vartype inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype outputSymbols: :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
-    :vartype description: :class:`str`
+    :vartype name: :class:`str`
     :vartype inputSymbolReactionTime: :class:`float`
     :vartype outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
+    :vartype inverseInitiator: :class:`bool`
+    :vartype rate: :class:`int`
+    :vartype duration: :class:`int`
+    :vartype description: :class:`str`
+
 
     The following example shows the definition of a transition `t` between
     two states, `s0` and `s1`:
@@ -161,15 +156,8 @@ class Transition(AbstractTransition):
                  startState,
                  endState,
                  inputSymbol=None,
-                 inputSymbolPreset=None,  # type: Preset
                  outputSymbols=None,
-                 outputSymbolsPreset=None,  # type: Dict[Symbol,Preset]
-                 name=None,
-                 inputSymbolReactionTime=None,   # type: float
-                 outputSymbolsReactionTime=None,  # type: Dict[Symbol,float]
-                 inverseInitiator=False,
-                 rate=None,
-                 duration=None
+                 name=None
                  ):
         # type: (...) -> None
         super(Transition, self).__init__(Transition.TYPE,
@@ -178,20 +166,20 @@ class Transition(AbstractTransition):
                                          name,
                                          priority=10)
 
-        if outputSymbols is None:
-            outputSymbols = []
-
+        # Initialize public variables from parameters
         self.inputSymbol = inputSymbol
-        self.inputSymbolPreset = inputSymbolPreset
         self.outputSymbols = outputSymbols
-        self.outputSymbolsPreset = outputSymbolsPreset
+
+        # Initialize other public variables
+        self.inputSymbolPreset = None
+        self.outputSymbolsPreset = None
         self.outputSymbolProbabilities = {}  # TODO: not yet exposed in the API
-        self.inputSymbolReactionTime = inputSymbolReactionTime
-        self.outputSymbolsReactionTime = outputSymbolsReactionTime
+        self.inputSymbolReactionTime = None
+        self.outputSymbolsReactionTime = None
         self.description = None
-        self.inverseInitiator = inverseInitiator
-        self.rate = rate
-        self.duration = duration
+        self.inverseInitiator = False
+        self.rate = None
+        self.duration = None
 
     @public_api
     def clone(self):
@@ -199,10 +187,7 @@ class Transition(AbstractTransition):
                                 endState=self.endState,
                                 inputSymbol=self.inputSymbol,
                                 outputSymbols=self.outputSymbols,
-                                name=self.name,
-                                inputSymbolReactionTime=self.inputSymbolReactionTime,
-                                outputSymbolsReactionTime=self.outputSymbolsReactionTime,
-                                inverseInitiator=self.inverseInitiator)
+                                name=self.name)
         transition._startState = self.startState
         transition.description = self.description
         transition.active = self.active
@@ -211,8 +196,11 @@ class Transition(AbstractTransition):
         transition.cbk_action = self.cbk_action
         if self.inputSymbolPreset is not None:
             transition.inputSymbolPreset = self.inputSymbolPreset.copy()
+        transition.inputSymbolReactionTime = self.inputSymbolReactionTime
         if self.outputSymbolsPreset is not None:
             transition.outputSymbolsPreset = self.outputSymbolsPreset.copy()
+        if self.outputSymbolsReactionTime is not None:
+            transition.outputSymbolsReactionTime = self.outputSymbolsReactionTime.copy()
         transition.inverseInitiator = self.inverseInitiator
         transition.rate = self.rate
         transition.duration = self.duration
@@ -530,8 +518,7 @@ class Transition(AbstractTransition):
 
         return (symbol_to_send, symbol_preset)
 
-
-    ## Properties
+    # Properties
 
     @public_api
     @property
@@ -617,22 +604,12 @@ class Transition(AbstractTransition):
 
     @public_api
     @property
-    def description(self):
-        return self._description
+    def inputSymbolReactionTime(self):
+        return self.__inputSymbolReactionTime
 
-    @description.setter  # type: ignore
-    def description(self, description):
-        if description is not None:
-            self._description = description
-        else:
-            desc = []
-            for outputSymbol in self.outputSymbols:
-                desc.append(str(outputSymbol.name))
-            if self.inputSymbol is not None:
-                inputSymbolName = self.inputSymbol.name
-            else:
-                inputSymbolName = "None"
-            self._description = "{} ({};{}{}{})".format(self.name, inputSymbolName, "{", ",".join(desc), "}")
+    @inputSymbolReactionTime.setter  # type: ignore
+    def inputSymbolReactionTime(self, inputSymbolReactionTime):
+        self.__inputSymbolReactionTime = inputSymbolReactionTime
 
     @public_api
     @property
@@ -648,6 +625,52 @@ class Transition(AbstractTransition):
                             "Symbol and float, not {}"
                             .format(type(outputSymbolsReactionTime).__name__))
         self.__outputSymbolsReactionTime = outputSymbolsReactionTime
+
+    @public_api
+    @property
+    def description(self):
+        return self.__description
+
+    @description.setter  # type: ignore
+    def description(self, description):
+        if description is not None:
+            self.__description = description
+        else:
+            desc = []
+            for outputSymbol in self.outputSymbols:
+                desc.append(str(outputSymbol.name))
+            if self.inputSymbol is not None:
+                inputSymbolName = self.inputSymbol.name
+            else:
+                inputSymbolName = "None"
+            self.__description = "{} ({};{}{}{})".format(self.name, inputSymbolName, "{", ",".join(desc), "}")
+
+    @public_api
+    @property
+    def inverseInitiator(self):
+        return self.__inverseInitiator
+
+    @inverseInitiator.setter  # type: ignore
+    def inverseInitiator(self, inverseInitiator):
+        self.__inverseInitiator = inverseInitiator
+
+    @public_api
+    @property
+    def rate(self):
+        return self.__rate
+
+    @rate.setter  # type: ignore
+    def rate(self, rate):
+        self.__rate = rate
+
+    @public_api
+    @property
+    def duration(self):
+        return self.__duration
+
+    @duration.setter  # type: ignore
+    def duration(self, duration):
+        self.__duration = duration
 
 
 def _test():
