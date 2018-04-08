@@ -61,8 +61,8 @@ class ActorStopException(Exception):
 @NetzobLogger
 class Actor(Thread):
     r"""An actor is an instance of a traffic generator which, given a
-    grammar and a vocabulary, can visit the underlying automaton, and
-    generate and parse messages from a specified abstraction layer.
+    automaton and a list of symbols, can visit the automaton, generate
+    and parse messages from a specified abstraction layer.
 
     The Actor constructor expects some parameters:
 
@@ -1979,7 +1979,7 @@ class Actor(Thread):
         self.visit_log = []
 
         # Create abstraction layer
-        self.abstractionLayer = AbstractionLayer(channel, self.automata.vocabulary, memory=memory, preset=actor_preset, cbk_data=cbk_data)
+        self.abstractionLayer = AbstractionLayer(channel, self.automata.symbols, memory=memory, preset=actor_preset, cbk_data=cbk_data)
 
     def __str__(self):
         return str(self.name)

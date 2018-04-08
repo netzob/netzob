@@ -127,7 +127,7 @@ class AutomataMutator(Mutator):
         >>> import time
         >>> sym1 = Symbol([Field(String(nbChars=3))], name='Sym1')
         >>> sym2 = Symbol([Field(String(nbChars=5))], name='Sym2')
-        >>> vocabulary = [sym1, sym2]
+        >>> symbols = [sym1, sym2]
         >>> s0 = State(name="s0")
         >>> s1 = State(name="s1")
         >>> s2 = State(name="s2")
@@ -147,7 +147,7 @@ class AutomataMutator(Mutator):
         >>> t4 = CloseChannelTransition(startState=s2, endState=s4,
         ...                             name="t4")
         >>>
-        >>> automata = Automata(s0, vocabulary=vocabulary)
+        >>> automata = Automata(s0, symbols=symbols)
         >>> automata_ascii = automata.generateASCII()
         >>> print(automata_ascii)
                                          #========================#
@@ -275,7 +275,7 @@ class AutomataMutator(Mutator):
         >>> import time
         >>> sym1 = Symbol([Field(String(nbChars=3))], name='Sym1')
         >>> sym2 = Symbol([Field(String(nbChars=5))], name='Sym2')
-        >>> vocabulary = [sym1, sym2]
+        >>> symbols = [sym1, sym2]
         >>> s0 = State(name="s0")
         >>> s1 = State(name="s1")
         >>> s2 = State(name="s2")
@@ -316,7 +316,7 @@ class AutomataMutator(Mutator):
         >>> t10 = CloseChannelTransition(startState=s6, endState=s7,
         ...                             name="t10")
         >>>
-        >>> automata = Automata(s0, vocabulary=vocabulary)
+        >>> automata = Automata(s0, symbols=symbols)
         >>> automata_ascii = automata.generateASCII()
         >>> print(automata_ascii)
                                      #=========================#
@@ -421,7 +421,7 @@ class AutomataMutator(Mutator):
         >>> alice_transition2 = Transition(startState=alice_s1, endState=alice_s1,
         ...                                inputSymbol=sym2, outputSymbols=[sym2],
         ...                                name="T2")
-        >>> alice_automata = Automata(alice_s0, vocabulary)
+        >>> alice_automata = Automata(alice_s0, symbols)
         >>> automata_ascii = alice_automata.generateASCII()
         >>> print(automata_ascii)
                                #========================#
@@ -572,7 +572,7 @@ class AutomataMutator(Mutator):
             ending_state_idx = (next(self.generator) * len(states)) % len(states)
             ending_state = states[int(ending_state_idx)]
 
-            for symbol in new_automata.vocabulary:
+            for symbol in new_automata.symbols:
 
                 # Do not add a new transition between 2 states, if it already exists with the same input symbol
                 stop = False
@@ -585,7 +585,7 @@ class AutomataMutator(Mutator):
 
                 # Create a transition between current state and selected end state
                 Transition(startState=state, endState=ending_state,
-                           inputSymbol=symbol, outputSymbols=new_automata.vocabulary,
+                           inputSymbol=symbol, outputSymbols=new_automata.symbols,
                            name="t_random")
 
         return new_automata
@@ -602,14 +602,14 @@ class AutomataMutator(Mutator):
         for state in states:
             for t in state.transitions:
                 if isinstance(t, Transition):
-                    t.outputSymbols = new_automata.vocabulary
+                    t.outputSymbols = new_automata.symbols
                     t.description = None  # Force re-computation of transition description
 
         for initial_state in states:
 
             for ending_state in states:
 
-                for symbol in new_automata.vocabulary:
+                for symbol in new_automata.symbols:
 
                     # Do not add a new transition between 2 states, if it already exists with the same input symbol
                     stop = False
@@ -622,7 +622,7 @@ class AutomataMutator(Mutator):
 
                     # Create a transition between current state and selected end state
                     Transition(startState=initial_state, endState=ending_state,
-                               inputSymbol=symbol, outputSymbols=new_automata.vocabulary,
+                               inputSymbol=symbol, outputSymbols=new_automata.symbols,
                                name="t_random")
 
         return new_automata
@@ -635,14 +635,14 @@ class AutomataMutator(Mutator):
         state = State(name="Main state")
         OpenChannelTransition(startState=init_state, endState=state, name='Transition open channel')
 
-        for symbol in self.automata.vocabulary:
+        for symbol in self.automata.symbols:
 
             # Create a transition
             Transition(startState=state, endState=state,
-                       inputSymbol=symbol, outputSymbols=self.automata.vocabulary,
+                       inputSymbol=symbol, outputSymbols=self.automata.symbols,
                        name="t_random")
 
-        return Automata(init_state, self.automata.vocabulary)
+        return Automata(init_state, self.automata.symbols)
 
     def _mutate_targeted(self, target):
         r"""Build an automaton similar to the original one, where a targeted
@@ -664,11 +664,11 @@ class AutomataMutator(Mutator):
                 state.transitions = []
 
                 # Create a transition for each symbol that leads to the same state
-                for symbol in new_automata.vocabulary:
+                for symbol in new_automata.symbols:
 
                     # Create a transition between current state and selected end state
                     Transition(startState=state, endState=state,
-                               inputSymbol=symbol, outputSymbols=new_automata.vocabulary,
+                               inputSymbol=symbol, outputSymbols=new_automata.symbols,
                                name="t_random")
             else:
                 # Keep the only transition that can further lead to the targeted state
@@ -695,7 +695,7 @@ class AutomataMutator(Mutator):
         >>> import time
         >>> sym1 = Symbol([Field(String(nbChars=3))], name='Sym1')
         >>> sym2 = Symbol([Field(String(nbChars=5))], name='Sym2')
-        >>> vocabulary = [sym1, sym2]
+        >>> symbols = [sym1, sym2]
         >>> s0 = State(name="s0")
         >>> s1 = State(name="s1")
         >>> s2 = State(name="s2")
@@ -730,7 +730,7 @@ class AutomataMutator(Mutator):
         >>> t8 = CloseChannelTransition(startState=s6, endState=s7,
         ...                             name="t8")
         >>>
-        >>> automata = Automata(s0, vocabulary=vocabulary)
+        >>> automata = Automata(s0, symbols=symbols)
         >>> automata_ascii = automata.generateASCII()
         >>> print(automata_ascii)
                                    #=========================#

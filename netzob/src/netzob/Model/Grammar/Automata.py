@@ -56,9 +56,9 @@ class Automata(object):
     The Automata constructor expects some parameters:
 
     :param initialState: This parameter is the initial state of the automaton.
-    :param vocabulary: This parameter is the list of permitted symbols for every transition of the automaton.
+    :param symbols: This parameter is the list of permitted symbols for every transition of the automaton.
     :type initialState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
-    :type vocabulary: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
+    :type symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
 
     The underlying structure of the automaton in the form of an SMMDT
     (i.e. Stochastic Mealy Machine with Deterministic Transitions),
@@ -68,9 +68,9 @@ class Automata(object):
     The Automata class provides the following public variables:
 
     :var initialState: The initial state of the automaton.
-    :var vocabulary: The list of permitted symbols for every transition of the automaton.
+    :var symbols: The list of permitted symbols for every transition of the automaton.
     :vartype initialState: :class:`State <netzob.Model.Grammar.States.State.State>`
-    :vartype vocabulary: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+    :vartype symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
 
 
     The following example shows the definition of an automaton with
@@ -97,9 +97,9 @@ class Automata(object):
 
     @public_api
     @typeCheck(State, list)
-    def __init__(self, initialState, vocabulary):
+    def __init__(self, initialState, symbols):
         self.initialState = initialState
-        self.vocabulary = vocabulary  # A list of symbols
+        self.symbols = symbols  # A list of symbols accepted by the automaton
 
         self.cbk_read_symbol_timeout = None
         self.cbk_read_unexpected_symbol = None
@@ -158,7 +158,7 @@ class Automata(object):
                 map_new_states[state] = state.clone()
                 map_new_states[state].transitions = new_transitions
 
-        automata = Automata(map_new_states[self.initialState], self.vocabulary)
+        automata = Automata(map_new_states[self.initialState], self.symbols)
         automata.cbk_read_symbol_timeout = self.cbk_read_symbol_timeout
         automata.cbk_read_unexpected_symbol = self.cbk_read_unexpected_symbol
         automata.cbk_read_unknown_symbol = self.cbk_read_unknown_symbol
@@ -562,14 +562,13 @@ class Automata(object):
 
     @public_api
     @property
-    def vocabulary(self):
-        return self.__vocabulary
+    def symbols(self):
+        return self.__symbols
 
-    @vocabulary.setter  # type: ignore
+    @symbols.setter  # type: ignore
     @typeCheck(list)
-    def vocabulary(self, vocabulary):
-        self.__vocabulary = vocabulary
-
+    def symbols(self, symbols):
+        self.__symbols = symbols
 
     @public_api
     def set_cbk_read_symbol_timeout(self, cbk_method, states=None):
