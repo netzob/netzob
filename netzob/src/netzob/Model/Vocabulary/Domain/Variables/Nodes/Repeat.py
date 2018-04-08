@@ -315,7 +315,7 @@ class Repeat(AbstractVariableNode):
         self.delimiter = delimiter
 
     @public_api
-    def clone(self, map_objects=None):
+    def copy(self, map_objects=None):
         if map_objects is None:
             map_objects = {}
         if self in map_objects:
@@ -325,7 +325,7 @@ class Repeat(AbstractVariableNode):
             if self.nbRepeat in map_objects.keys():
                 new_nbRepeat = map_objects[self.nbRepeat]
             else:
-                new_nbRepeat = self.nbRepeat.clone(map_objects)
+                new_nbRepeat = self.nbRepeat.copy(map_objects)
         else:
             new_nbRepeat = self.nbRepeat
 
@@ -337,7 +337,7 @@ class Repeat(AbstractVariableNode):
             if child in map_objects.keys():
                 new_children.append(map_objects[child])
             else:
-                new_child = child.clone(map_objects)
+                new_child = child.copy(map_objects)
                 new_children.append(new_child)
 
         new_repeat.children = [new_children]
@@ -438,7 +438,7 @@ class Repeat(AbstractVariableNode):
         # if no valid result if found, provide a fallback parsing path with
         # an empty result
         if len(valid_results) == 0:
-            newParsingPath = parsingPath.clone()
+            newParsingPath = parsingPath.copy()
             newParsingPath.addResult(self, bitarray(), notify=False)
             valid_results.append(newParsingPath)
 
@@ -449,7 +449,7 @@ class Repeat(AbstractVariableNode):
         for nb_repeat in range(max_nb_repeat, min_nb_repeat, -1):
 
             # initiate a new parsing path based on the current one
-            newParsingPath = parsingPath.clone()
+            newParsingPath = parsingPath.copy()
             newParsingPath.assignData(dataToParse, self.children[0])
             newParsingPaths = [newParsingPath]
 
@@ -513,7 +513,7 @@ class Repeat(AbstractVariableNode):
 
     def _parse_callback(self, parsingPath, dataToParse, carnivorous=False):
         # initiate a new parsing path based on the current one
-        newParsingPath = parsingPath.clone()
+        newParsingPath = parsingPath.copy()
         newParsingPath.assignData(dataToParse, self.children[0])
         newParsingPaths = [newParsingPath]
 

@@ -120,7 +120,7 @@ class Data(AbstractVariableLeaf):
         self.dataType = dataType
 
     @public_api
-    def clone(self, map_objects=None):
+    def copy(self, map_objects=None):
         if map_objects is None:
             map_objects = {}
         if self in map_objects:
@@ -179,7 +179,7 @@ class Data(AbstractVariableLeaf):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
-                    newParsingPath = parsingPath.clone()
+                    newParsingPath = parsingPath.copy()
 
                     newParsingPath.addResult(self, content[:size].copy())
                     yield newParsingPath
@@ -249,7 +249,7 @@ class Data(AbstractVariableLeaf):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
-                    newParsingPath = parsingPath.clone()
+                    newParsingPath = parsingPath.copy()
                     (addresult_succeed, addresult_parsingPaths) = newParsingPath.addResult(self, content[:size].copy())
                     if addresult_succeed:
                         for addresult_parsingPath in addresult_parsingPaths:
@@ -318,7 +318,7 @@ class Data(AbstractVariableLeaf):
             if variableSpecializerPath is None:
                 raise Exception("VariableSpecializerPath cannot be None")
 
-            variableSpecializerPath = variableSpecializerPath.clone()
+            variableSpecializerPath = variableSpecializerPath.copy()
 
             if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
                 newValue = variableSpecializerPath.memory.getValue(self)
@@ -331,7 +331,7 @@ class Data(AbstractVariableLeaf):
 
             variableSpecializerPath.addResult(self, newValue.copy())
 
-            yield variableSpecializerPath.clone()
+            yield variableSpecializerPath.copy()
 
     @public_api
     @property

@@ -101,7 +101,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     # Other methods
 
     @abc.abstractmethod
-    def clone(self):
+    def copy(self):
         pass
 
     # Priorities

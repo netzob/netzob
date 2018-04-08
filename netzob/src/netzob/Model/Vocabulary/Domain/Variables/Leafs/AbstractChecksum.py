@@ -102,7 +102,7 @@ class AbstractChecksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
                                                targets=targets,
                                                name=name)
 
-    def clone(self, map_objects=None):
+    def copy(self, map_objects=None):
         if map_objects is None:
             map_objects = {}
         if self in map_objects:
@@ -116,7 +116,7 @@ class AbstractChecksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
             if target in map_objects.keys():
                 new_targets.append(map_objects[target])
             else:
-                new_target = target.clone(map_objects)
+                new_target = target.copy(map_objects)
                 new_targets.append(new_target)
 
         new_checksum.targets = new_targets

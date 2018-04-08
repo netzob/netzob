@@ -1950,7 +1950,7 @@ class Actor(Thread):
         Thread.__init__(self)
 
         # Initialize public variables from parameters
-        self.automata = automata.clone()
+        self.automata = automata.copy()
         self.name = name
 
         # Initialize other public variables

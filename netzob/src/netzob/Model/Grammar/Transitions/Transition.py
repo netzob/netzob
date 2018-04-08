@@ -182,7 +182,13 @@ class Transition(AbstractTransition):
         self.duration = None
 
     @public_api
-    def clone(self):
+    def copy(self):
+        r"""Copy the current transition.
+
+        This method copies the transition object but keeps references to the
+        original callbacks and symbols.
+
+        """
         transition = Transition(startState=None,
                                 endState=self.endState,
                                 inputSymbol=self.inputSymbol,
@@ -676,13 +682,13 @@ class Transition(AbstractTransition):
 def _test():
     r"""
 
-    # Test clone()
+    # Test copy()
 
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> t = Transition(s0, s1, name="transition")
-    >>> t.clone()
+    >>> t.copy()
     transition
 
     """

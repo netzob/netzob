@@ -163,7 +163,7 @@ class AbstractVariableLeaf(AbstractVariable):
                         value.frombytes(generated_value)
 
                         # Associate the generated value to the current variable
-                        newParsingPath = parsingPath.clone()
+                        newParsingPath = parsingPath.copy()
                         newParsingPath.addResult(self, value)
                         yield newParsingPath
 

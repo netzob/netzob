@@ -70,7 +70,7 @@ class Opt(Repeat):
         super(Opt, self).__init__(child, (0, 1), name=name)
 
     @public_api
-    def clone(self, map_objects=None):
+    def copy(self, map_objects=None):
         if map_objects is None:
             map_objects = {}
         if self in map_objects:
@@ -82,7 +82,7 @@ class Opt(Repeat):
         if self.children[0] in map_objects.keys():
             new_children = map_objects[self.children[0]]
         else:
-            new_children = self.children[0].clone(map_objects)
+            new_children = self.children[0].copy(map_objects)
 
         new_opt.children = [new_children]
         return new_opt

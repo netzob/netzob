@@ -316,7 +316,7 @@ class Field(AbstractField):
         self.isPseudoField = isPseudoField
 
     @public_api
-    def clone(self, map_objects=None):
+    def copy(self, map_objects=None):
         if map_objects is None:
             map_objects = {}
         if self in map_objects:
@@ -331,7 +331,7 @@ class Field(AbstractField):
                 if f in map_objects.keys():
                     new_domain.append(map_objects[f])
                 else:
-                    new_sub_field = f.clone(map_objects)
+                    new_sub_field = f.copy(map_objects)
                     new_domain.append(new_sub_field)
             new_field.fields = new_domain
             new_field.domain = None
@@ -339,7 +339,7 @@ class Field(AbstractField):
             if self.domain in map_objects.keys():
                 new_domain = map_objects[self.domain]
             else:
-                new_domain = self.domain.clone(map_objects)
+                new_domain = self.domain.copy(map_objects)
             new_field.domain = new_domain
 
         return new_field

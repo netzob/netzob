@@ -59,7 +59,7 @@ class SpecializingPath(GenericPath):
         else:
             self.__ok = ok
 
-    def clone(self):
+    def copy(self):
         dVariable = {}
         for key, value in list(self._dataAssignedToVariable.items()):
             dVariable[key] = value.copy()

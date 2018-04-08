@@ -251,7 +251,7 @@ class Value(AbstractRelationVariableLeaf):
         self.operation = operation
 
     @public_api
-    def clone(self, map_objects=None):
+    def copy(self, map_objects=None):
         if map_objects is None:
             map_objects = {}
         if self in map_objects:
@@ -264,7 +264,7 @@ class Value(AbstractRelationVariableLeaf):
             if self.targets[0] in map_objects.keys():
                 new_target = map_objects[self.targets[0]]
             else:
-                new_target = target.clone(map_objects)
+                new_target = self.targets[0].copy(map_objects)
             new_value.targets = [new_target]
 
         return new_value
@@ -298,7 +298,7 @@ class Value(AbstractRelationVariableLeaf):
 
                 for size in range(min(maxSizeDep, len(content)), minSizeDep - 1, -1):
                     # we create a new parsing path and returns it
-                    newParsingPath = parsingPath.clone()
+                    newParsingPath = parsingPath.copy()
                     newParsingPath.addResult(self, content[:size].copy())
                     self._addCallBacksOnUndefinedVariables(newParsingPath)
                     results.append(newParsingPath)

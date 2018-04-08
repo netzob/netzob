@@ -563,7 +563,7 @@ class AutomataMutator(Mutator):
 
         """
 
-        new_automata = self.automata.clone()
+        new_automata = self.automata.copy()
         states = new_automata.getStates(main_states=True)
 
         for state in states:
@@ -600,7 +600,7 @@ class AutomataMutator(Mutator):
 
         """
 
-        new_automata = self.automata.clone()
+        new_automata = self.automata.copy()
         states = new_automata.getStates(main_states=True)
 
         for state in states:
@@ -656,7 +656,7 @@ class AutomataMutator(Mutator):
         if not isinstance(target, str):
             raise TypeError("'target' parameter should be a state name, not '{}' of type '{}'".format(target, type(target)))
 
-        new_automata = self.automata.clone()
+        new_automata = self.automata.copy()
         new_states = new_automata.getStates(main_states=True)
 
         path = self._find_shortest_path(new_automata.initialState.name, target, path=[])

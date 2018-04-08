@@ -75,7 +75,7 @@ class ParsingPath(GenericPath):
     def __str__(self):
         return "ParsingPath ({}, ok={})".format(id(self), self.__ok)
 
-    def clone(self):
+    def copy(self):
         dVariable = {}
         for key, value in list(self._dataAssignedToVariable.items()):
             dVariable[key] = value.copy()

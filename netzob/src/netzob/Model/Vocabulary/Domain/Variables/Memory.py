@@ -230,7 +230,7 @@ class Memory(object):
             self.memory.pop(variable, None)
 
     @public_api
-    def clone(self):
+    def copy(self):
         """Clone the current memory in a new memory.
 
         :return: A new memory containing the same entries as the current memory.
@@ -244,7 +244,7 @@ class Memory(object):
         >>> m.memorize(d2, String("hello").value)
         >>> m.getValue(d1)
         bitarray('01100100')
-        >>> m2 = m.clone()
+        >>> m2 = m.copy()
         >>> m2.getValue(d1)
         bitarray('01100100')
         >>> m.getValue(d1).bytereverse()

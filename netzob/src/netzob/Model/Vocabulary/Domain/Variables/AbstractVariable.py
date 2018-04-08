@@ -78,7 +78,7 @@ class AbstractVariable(object):
         self.field = None
 
     @abc.abstractmethod
-    def clone(self, map_objects=None):
+    def copy(self, map_objects=None):
         """Clone the current object as well as all its dependencies. This
         method returns a new object of the same type.
 

@@ -160,7 +160,7 @@ class Symbol(AbstractField):
         self.fields = fields
 
     @public_api
-    def clone(self, map_objects=None):
+    def copy(self, map_objects=None):
         if map_objects is None:
             map_objects = {}
         if self in map_objects:
@@ -174,7 +174,7 @@ class Symbol(AbstractField):
             if f in map_objects.keys():
                 new_fields.append(map_objects[f])
             else:
-                new_field = f.clone(map_objects)
+                new_field = f.copy(map_objects)
                 new_fields.append(new_field)
 
         new_symbol.fields = new_fields
@@ -594,7 +594,7 @@ def _test_many_relation_abstractions():
     ...         for v in f.domain.children:
     ...             ids.add(id(v))
     
-    >>> s_bis = s.clone()
+    >>> s_bis = s.copy()
     >>> print(s_bis.str_structure())
     Symbol
     |--  Field

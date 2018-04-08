@@ -187,7 +187,7 @@ class Alt(AbstractVariableNode):
         self._callback = callback  # type: altCbkType
 
     @public_api
-    def clone(self, map_objects=None):
+    def copy(self, map_objects=None):
         if map_objects is None:
             map_objects = {}
         if self in map_objects:
@@ -201,7 +201,7 @@ class Alt(AbstractVariableNode):
             if child in map_objects.keys():
                 new_children.append(map_objects[child])
             else:
-                new_child = child.clone(map_objects)
+                new_child = child.copy(map_objects)
                 new_children.append(new_child)
 
         new_alt.children = new_children
@@ -226,7 +226,7 @@ class Alt(AbstractVariableNode):
         # create a path for each child
         if len(self.children) > 1:
             for child in self.children[1:]:
-                newParsingPath = parsingPath.clone()
+                newParsingPath = parsingPath.copy()
                 newParsingPath.assignData(dataToParse.copy(), child)
                 parserPaths.append(newParsingPath)
 
@@ -297,7 +297,7 @@ class Alt(AbstractVariableNode):
         else:
             child = random.choice(self.children)
 
-        newSpecializingPath = specializingPath.clone()
+        newSpecializingPath = specializingPath.copy()
 
         for childSpecializingPath in child.specialize(newSpecializingPath, preset=preset):
             value = childSpecializingPath.getData(child)

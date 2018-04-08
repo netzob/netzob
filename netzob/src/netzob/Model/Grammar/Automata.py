@@ -31,7 +31,6 @@
 import os
 import subprocess
 import tempfile
-import copy
 
 #+----------------------------------------------
 #| Related third party imports
@@ -107,10 +106,10 @@ class Automata(object):
         self.cbk_read_unknown_symbol = None     # list of callbacks
 
     @public_api
-    def clone(self):
-        r"""Clone the current automaton.
+    def copy(self):
+        r"""Copy the current automaton.
 
-        This method clones the states and transitions of the
+        This method copies the states and transitions of the
         automaton, but keeps references to the original callbacks and
         symbols.
 
@@ -126,7 +125,7 @@ class Automata(object):
         >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="close transition")
         >>> # Creation of the automata
         >>> automata = Automata(s0, [inputSymbol, outputSymbol])
-        >>> automata_bis = automata.clone()
+        >>> automata_bis = automata.copy()
 
         """
 
@@ -136,27 +135,27 @@ class Automata(object):
             new_transitions = []
             for transition in state.transitions:
 
-                new_transition = transition.clone()
+                new_transition = transition.copy()
                 new_transitions.append(new_transition)
 
                 # Handle startState
                 if transition.startState in map_new_states.keys():
                     new_transition._startState = map_new_states[transition.startState]
                 else:
-                    new_transition._startState = transition.startState.clone()
+                    new_transition._startState = transition.startState.copy()
                     map_new_states[transition.startState] = new_transition.startState
 
                 # Handle endState
                 if transition.endState in map_new_states.keys():
                     new_transition.endState = map_new_states[transition.endState]
                 else:
-                    new_transition.endState = transition.endState.clone()
+                    new_transition.endState = transition.endState.copy()
                     map_new_states[transition.endState] = new_transition.endState
 
             if state in map_new_states.keys():
                 map_new_states[state].transitions = new_transitions
             else:
-                map_new_states[state] = state.clone()
+                map_new_states[state] = state.copy()
                 map_new_states[state].transitions = new_transitions
 
         automata = Automata(map_new_states[self.initialState], self.symbols)

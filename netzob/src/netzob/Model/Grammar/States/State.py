@@ -91,7 +91,12 @@ class State(AbstractState):
         self.__transitions = []
 
     @public_api
-    def clone(self):
+    def copy(self):
+        r"""Copy the current state.
+
+        This method copies the state object.
+
+        """
         state = State(name=self.name)
         state.transitions = self.transitions
         state.active = self.active
@@ -241,7 +246,7 @@ class State(AbstractState):
         self._logger.debug("[actor='{}'] Test if a callback function is defined at state '{}'".format(str(actor), self.name))
         for cbk in self.cbk_modify_transition:
             self._logger.debug("[actor='{}'] A callback function is defined at state '{}'".format(str(actor), self.name))
-            availableTransitions = [cloned_transition.clone() for cloned_transition in self.transitions]
+            availableTransitions = [cloned_transition.copy() for cloned_transition in self.transitions]
             nextTransition = cbk(availableTransitions,
                                  nextTransition,
                                  self,
@@ -312,9 +317,9 @@ class State(AbstractState):
         prioritizedTransitions = dict()
         for transition in self.transitions:
             if transition.priority in list(prioritizedTransitions.keys()):
-                prioritizedTransitions[transition.priority].append(transition.clone())
+                prioritizedTransitions[transition.priority].append(transition.copy())
             else:
-                prioritizedTransitions[transition.priority] = [transition.clone()]
+                prioritizedTransitions[transition.priority] = [transition.copy()]
 
         availableTransitions = prioritizedTransitions[sorted(prioritizedTransitions.keys())[0]]
 
@@ -393,13 +398,13 @@ def _test():
     'S1'
 
 
-    # Test clone()
+    # Test copy()
 
     >>> from netzob.all import *
     >>> s0 = State(name="s0")
     >>> s1 = State(name="s1")
     >>> t = CloseChannelTransition(s0, s1, name="transition")
-    >>> s0.clone()
+    >>> s0.copy()
     s0
 
     """
