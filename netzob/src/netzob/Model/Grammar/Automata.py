@@ -51,18 +51,16 @@ from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAut
 
 @NetzobLogger
 class Automata(object):
-    """Class which describes an automaton (of a grammar) of a protocol.
+    """Class which describes an automaton (i.e. state machine) of a
+    protocol. The underlying structure of the automaton is a Mealy
+    machine (cf. https://en.wikipedia.org/wiki/Mealy_machine).
 
     The Automata constructor expects some parameters:
 
-    :param initialState: This parameter is the initial state of the automaton.
-    :param symbols: This parameter is the list of permitted symbols for every transition of the automaton.
+    :param initialState: The initial state of the automaton.
+    :param symbols: The list of permitted symbols for every transition of the automaton.
     :type initialState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
-
-    The underlying structure of the automaton in the form of an SMMDT
-    (i.e. Stochastic Mealy Machine with Deterministic Transitions),
-    which is a Mealy machine (cf. https://en.wikipedia.org/wiki/Mealy_machine).
 
 
     The Automata class provides the following public variables:
@@ -98,12 +96,15 @@ class Automata(object):
     @public_api
     @typeCheck(State, list)
     def __init__(self, initialState, symbols):
+
+        # Initialize public variables from parameters
         self.initialState = initialState
         self.symbols = symbols  # A list of symbols accepted by the automaton
 
-        self.cbk_read_symbol_timeout = None
-        self.cbk_read_unexpected_symbol = None
-        self.cbk_read_unknown_symbol = None
+        # Initialize local variables
+        self.cbk_read_symbol_timeout = None     # list of callbacks
+        self.cbk_read_unexpected_symbol = None  # list of callbacks
+        self.cbk_read_unknown_symbol = None     # list of callbacks
 
     @public_api
     def clone(self):
@@ -549,28 +550,6 @@ class Automata(object):
         return PTAAutomataFactory.generate(abstractSessions, symbolList)
 
     @public_api
-    @property
-    def initialState(self):
-        return self.__initialState
-
-    @initialState.setter  # type: ignore
-    @typeCheck(State)
-    def initialState(self, initialState):
-        if initialState is None:
-            raise TypeError("AbstractionLayer cannot be None")
-        self.__initialState = initialState
-
-    @public_api
-    @property
-    def symbols(self):
-        return self.__symbols
-
-    @symbols.setter  # type: ignore
-    @typeCheck(list)
-    def symbols(self, symbols):
-        self.__symbols = symbols
-
-    @public_api
     def set_cbk_read_symbol_timeout(self, cbk_method, states=None):
         """Function called to handle cases where a timeout appears when
         waiting for a symbol. For a server, this symbol would
@@ -732,3 +711,27 @@ class Automata(object):
             raise TypeError("'cbk_method' should be a callable function")
 
         self.cbk_read_unknown_symbol = cbk_method
+
+    ## Public properties ##
+
+    @public_api
+    @property
+    def initialState(self):
+        return self.__initialState
+
+    @initialState.setter  # type: ignore
+    @typeCheck(State)
+    def initialState(self, initialState):
+        if initialState is None:
+            raise TypeError("AbstractionLayer cannot be None")
+        self.__initialState = initialState
+
+    @public_api
+    @property
+    def symbols(self):
+        return self.__symbols
+
+    @symbols.setter  # type: ignore
+    @typeCheck(list)
+    def symbols(self, symbols):
+        self.__symbols = symbols
