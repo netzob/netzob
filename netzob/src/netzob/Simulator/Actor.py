@@ -66,57 +66,19 @@ class Actor(Thread):
 
     The Actor constructor expects some parameters:
 
-    :param automata: This parameter is the automaton the actor will visit.
-    :param channel: This corresponds to the underlying communication channel.
-    :param initiator: If True, this parameter indicates that the actor is a client, and thus initiates the
-                      communication and emits the input symbol.  If
-                      False, it indicates that the actor is a server, and is thus waiting for
-                      another peer to initiate the connection. Default
-                      value is :const:`True`. The value can be changed
-                      during a communication, in order to reverse the
-                      way the actors communicate together.
-    :param fuzzing_preset: A fuzzing configuration used during the
-                           specialization process when writing symbols over the
-                           abstraction layer. Values in this configuration will
-                           override any field definition, constraints,
-                           relationship dependencies or parameterized
-                           fields. See :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
-                           for a complete explanation of its use for fuzzing
-                           purpose. The default value is :const:`None`.
-    :param fuzzing_states: A list of states on which format message
-                           fuzzing is applied. Default is ``[]``,
-                           which means that the fuzzing configuration
-                           is applied on each state.
+    :param automata: The automaton the actor will visit.
+    :param channel: The underlying communication channel.
     :param name: The name of the actor. Default value is 'Actor'.
-    :param keep_open: Tells if the actor should be let active after reaching its targeted state or after reaching the maximum number of transitions. Default value is ``False``.
-    :param memory: This parameter is a memory used to store variable values during specialization
-                   and abstraction of successive symbols, especially to handle
-                   inter-symbol relationships. If None, a local memory is
-                   created by default and used internally.
-    :param preset: A preset configuration used during specialization and abstraction of symbols emitted and received by the actor. Values
-                         in this configuration will override any field
-                         definition, constraints or relationship dependencies. See
-                         :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
-                         for a complete explanation of its usage.
-                         Default is None.
-    :param cbk_data: A callback used to tell if the current actor is concerned by the received data on the communication channel. See description below.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
                     required
-    :type initiator: :class:`bool`, optional
-    :type fuzzing_preset: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
-    :type fuzzing_states: :class:`dict` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
+    :type channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`, required
     :type name: :class:`str`, optional
-    :type keep_open: :class:`bool`, optional
-    :type memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`, optional
-    :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
-    :type cbk_data: :class:`Callable <collections.abc.Callable>`
-
 
     The Actor class provides the following public variables:
 
     :var automata: The automaton the actor will visit.
-    :var abstractionLayer: The underlying abstraction layer used to abstract
-                           and specialize symbols.
+    :var channel: The underlying communication channel.
+    :var name: The name of the actor.
     :var initiator: If True, indicates that the actor initiates the
                     communication and emits the input symbol.
                     If False, indicates that the actor is waiting for another
@@ -124,27 +86,49 @@ class Actor(Thread):
                     :const:`True`. The value can be changed
                     during a communication, in order to reverse the
                     way the actors communicate together.
-    :var name: The name of the actor.
-    :var keep_open: Tells if the actor should be let active after reaching its targeted state or after reaching the maximum number of transitions.
-    :var nbMaxTransitions: The maximum number of transitions the actor will travel.
+    :var fuzzing_preset: A fuzzing configuration used at
+                         specific states (see ``fuzzing_states`` attribute) when sending symbols.
+                         Values in this fuzzing configuration will
+                         override any field definition, constraints or
+                         relationship dependencies. See :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+                         for a complete explanation of its usage for fuzzing purpose.
+    :var fuzzing_states: A list of states on which format message
+                         fuzzing is applied.
+    :var keep_open: Tell the actor to stay open after it has exiting the visit loop.
+    :var memory: A memory context used to store variable values during specialization
+                 and abstraction of successive symbols. This context is notably used to handle
+                 inter-symbol relationships and relationships with the environment.
+    :var preset: A preset configuration used during specialization and abstraction of symbols emitted and received by the actor. Values
+                 in this configuration will override any field
+                 definition, constraints or relationship dependencies. See
+                 :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+                 for a complete explanation of its usage.
+    :var cbk_select_data: A callback used to tell if the current actor is concerned by the data received on the communication channel.
+    :var target_state: A state at which position the actor will exit the visit loop.
     :var current_state: The current state of the actor.
-    :var target_state: A state at which position the actor will stop execution.
+    :var nbMaxTransitions: The maximum number of transitions the actor will visit.
+
     :vartype automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
-    :vartype abstractionLayer: :class:`AbstractionLayer <netzob.Simulator.AbstractionLayer.AbstractionLayer>`
-    :vartype initiator: :class:`bool`
+    :vartype channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`
     :vartype name: :class:`str`
+    :vartype initiator: :class:`bool`
+    :vartype fuzzing_preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+    :vartype fuzzing_states: :class:`dict` of :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype keep_open: :class:`bool`
-    :vartype nbMaxTransitions: :class:`int`
-    :vartype current_state: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`
+    :vartype preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+    :vartype cbk_select_data: :class:`Callable <collections.abc.Callable>`
     :vartype target_state: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype current_state: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype nbMaxTransitions: :class:`int`
 
 
     **Callback prototype**
 
     A callback function can be used to tell if the current actor is concerned by the received data on the communication channel. The callback function that can be used in the
-    ``cbk_data`` parameter has the following prototype:
+    ``cbk_select_data`` parameter has the following prototype:
 
-    .. function:: cbk_data(data)
+    .. function:: cbk_select_data(data)
        :noindex:
 
        :param data: contains the current data received on the communication channel.
@@ -158,6 +142,10 @@ class Actor(Thread):
     .. automethod:: netzob.Simulator.Actor.Actor.start
 
     .. automethod:: netzob.Simulator.Actor.Actor.stop
+
+    .. automethod:: netzob.Simulator.Actor.Actor.wait
+
+    .. automethod:: netzob.Simulator.Actor.Actor.execute_transition
 
     .. automethod:: netzob.Simulator.Actor.Actor.isActive
 
@@ -221,7 +209,8 @@ class Actor(Thread):
     >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=automata, channel=channel, initiator=False, name='Alice')
+    >>> alice = Actor(automata=automata, channel=channel, name='Alice')
+    >>> alice.initiator = False
     >>>
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> bob = Actor(automata=automata, channel=channel, name='Bob')
@@ -364,7 +353,8 @@ class Actor(Thread):
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -530,7 +520,8 @@ class Actor(Thread):
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -700,7 +691,8 @@ class Actor(Thread):
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
     >>> bob.start()
@@ -883,7 +875,8 @@ class Actor(Thread):
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -1074,7 +1067,8 @@ class Actor(Thread):
     >>>
     >>> # Create Alice actor (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -1237,15 +1231,12 @@ class Actor(Thread):
     >>> # Create actors: Alice (a UDP server) and Bob (a UDP client)
     >>> # Alice
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel,
-    ...               initiator=False, name="Alice")
-    >>> alice.abstractionLayer.timeout = .5
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> # Bob
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=3.)
-    >>> bob = Actor(automata=bob_automata, channel=channel,
-    ...             initiator=True, name="Bob")
-    >>> bob.abstractionLayer.timeout = .5
+    >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
     >>> bob.nbMaxTransitions = 10
     >>>
     >>> alice.start()
@@ -1352,7 +1343,8 @@ class Actor(Thread):
     >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=automata, channel=channel, initiator=False, name='Alice')
+    >>> alice = Actor(automata=automata, channel=channel, name='Alice')
+    >>> alice.initiator = False
     >>>
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> bob = Actor(automata=automata, channel=channel, name='Bob')
@@ -1486,7 +1478,8 @@ class Actor(Thread):
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -1617,7 +1610,8 @@ class Actor(Thread):
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -1744,12 +1738,14 @@ class Actor(Thread):
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> bob = Actor(automata=bob_automata, channel=channel, fuzzing_preset=preset, name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
     >>> bob.nbMaxTransitions = 3
+    >>> bob.fuzzing_preset = preset
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -1891,12 +1887,15 @@ class Actor(Thread):
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> bob = Actor(automata=bob_automata, channel=channel, fuzzing_preset=preset, fuzzing_states=['S2'], name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
+    >>> bob.fuzzing_preset = preset
+    >>> bob.fuzzing_states = ['S2']
     >>> bob.nbMaxTransitions = 3
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -1946,38 +1945,33 @@ class Actor(Thread):
     def __init__(self,
                  automata,          # type: Automata
                  channel,           # type: AbstractType
-                 initiator=True,    # type: bool
-                 fuzzing_preset=None,  # type: Preset
-                 fuzzing_states=[],    # type: dict
                  name="Actor",      # type: str
-                 keep_open=False,   # type: bool
-                 memory=None,
-                 preset=None,
-                 cbk_data=None
                  ):
         # type: (...) -> None
         Thread.__init__(self)
+
+        # Initialize public variables from parameters
         self.automata = automata.clone()
-        self.initiator = initiator
-        self.fuzzing_preset = fuzzing_preset
-        self.fuzzing_states = fuzzing_states
         self.name = name
+
+        # Initialize other public variables
+        self.initiator = True          # Tell that the actor is currenlty at the initiative of the communication
+        self.fuzzing_preset = None     # Fuzzing configuration used at dedicated states
+        self.fuzzing_states = []       # Tell the actor in which states fuzzing should be activated
+        self.keep_open = False         # Tell the actor to stay open after it has exiting the visit loop
+        self.memory = None             # Context of the actor
+        self.preset = None             # Variable used for Actor symbol configuration
+        self.cbk_select_data = None           # Variable used to tell if received data is interesting for the actor
+        self.target_state = None       # Variable used to tell the actor to return at a specific state
+        self.current_state = None      # Variable used to keep track of the current state
+        self.nbMaxTransitions = None   # Max number of transitions the actor can browse (None means no limit)
+
+        # Initialize local private variables
         self.__stopEvent = Event()
-        self.keep_open = keep_open
-        self.memory = memory
-        self.preset = preset
-        self.cbk_data = cbk_data
+        self.__currentnbTransitions = 0  # Used to track the current number of transitions
 
         # Initialize local variables
-        self.__nbMaxTransitions = None   # Max number of transitions the actor can browse (None means no limit)
-        self.__currentnbTransitions = 0  # Used to track the current number of transitions
-        self.__target_state = None  # Variable used to lead the actor to a specific state
-        self.__current_state = None  # Variable used to keep track of the current state
-
-        # Initiate visit log, which contains the information regarding the different transitions and states visited by the actor
-        self.visit_log = []
-
-        # Create abstraction layer
+        self.visit_log = []  # Visit log, which contains the information regarding the different transitions and states visited by the actor
         self.abstractionLayer = AbstractionLayer(channel, self.automata.symbols, actor=self)
 
     def __str__(self):
@@ -2080,8 +2074,7 @@ class Actor(Thread):
         result += "\n".join(self.visit_log)
         return result
 
-
-    ## Properties
+    ## Public properties ##
 
     @public_api
     @property
@@ -2094,6 +2087,58 @@ class Actor(Thread):
         if automata is None:
             raise TypeError("Automata cannot be None")
         self.__automata = automata
+
+    @public_api
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter  # type: ignore
+    @typeCheck(str)
+    def name(self, name):
+        self.__name = name
+
+    @public_api
+    @property
+    def initiator(self):
+        return self.__initiator
+
+    @initiator.setter  # type: ignore
+    @typeCheck(bool)
+    def initiator(self, initiator):
+        if initiator is None:
+            raise TypeError("Initiator  cannot be None")
+        self.__initiator = initiator
+
+    @public_api
+    @property
+    def fuzzing_preset(self):
+        return self.__fuzzing_preset
+
+    @fuzzing_preset.setter  # type: ignore
+    @typeCheck(Preset)
+    def fuzzing_preset(self, fuzzing_preset):
+        self.__fuzzing_preset = fuzzing_preset
+
+    @public_api
+    @property
+    def fuzzing_states(self):
+        return self.__fuzzing_states
+
+    @fuzzing_states.setter  # type: ignore
+    @typeCheck(list)
+    def fuzzing_states(self, fuzzing_states):
+        self.__fuzzing_states = fuzzing_states
+
+    @public_api
+    @property
+    def keep_open(self):
+        return self.__keep_open
+
+    @keep_open.setter  # type: ignore
+    @typeCheck(bool)
+    def keep_open(self, keep_open):
+        self.__keep_open = keep_open
 
     @public_api
     @property
@@ -2119,64 +2164,12 @@ class Actor(Thread):
 
     @public_api
     @property
-    def cbk_data(self):
-        return self.__cbk_data
+    def cbk_select_data(self):
+        return self.__cbk_select_data
 
-    @cbk_data.setter  # type: ignore
-    def cbk_data(self, cbk_data):
-        self.__cbk_data = cbk_data
-
-    @public_api
-    @property
-    def initiator(self):
-        return self.__initiator
-
-    @initiator.setter  # type: ignore
-    @typeCheck(bool)
-    def initiator(self, initiator):
-        if initiator is None:
-            raise TypeError("Initiator  cannot be None")
-        self.__initiator = initiator
-
-    @property
-    def fuzzing_preset(self):
-        return self.__fuzzing_preset
-
-    @fuzzing_preset.setter  # type: ignore
-    @typeCheck(Preset)
-    def fuzzing_preset(self, fuzzing_preset):
-        self.__fuzzing_preset = fuzzing_preset
-
-    @property
-    def fuzzing_states(self):
-        return self.__fuzzing_states
-
-    @fuzzing_states.setter  # type: ignore
-    @typeCheck(list)
-    def fuzzing_states(self, fuzzing_states):
-        self.__fuzzing_states = fuzzing_states
-
-    @public_api
-    @property
-    def abstractionLayer(self):
-        return self.__abstractionLayer
-
-    @abstractionLayer.setter  # type: ignore
-    @typeCheck(AbstractionLayer)
-    def abstractionLayer(self, abstractionLayer):
-        if abstractionLayer is None:
-            raise TypeError("AbstractionLayer cannot be None")
-        self.__abstractionLayer = abstractionLayer
-
-    @public_api
-    @property
-    def nbMaxTransitions(self):
-        return self.__nbMaxTransitions
-
-    @nbMaxTransitions.setter  # type: ignore
-    @typeCheck(int)
-    def nbMaxTransitions(self, nbMaxTransitions):
-        self.__nbMaxTransitions = nbMaxTransitions
+    @cbk_select_data.setter  # type: ignore
+    def cbk_select_data(self, cbk_select_data):
+        self.__cbk_select_data = cbk_select_data
 
     @public_api
     @property
@@ -2197,6 +2190,16 @@ class Actor(Thread):
     @typeCheck(AbstractState)
     def current_state(self, current_state):
         self.__current_state = current_state
+
+    @public_api
+    @property
+    def nbMaxTransitions(self):
+        return self.__nbMaxTransitions
+
+    @nbMaxTransitions.setter  # type: ignore
+    @typeCheck(int)
+    def nbMaxTransitions(self, nbMaxTransitions):
+        self.__nbMaxTransitions = nbMaxTransitions
 
 
 def _test_client_and_server_actors():
@@ -2297,7 +2300,8 @@ def _test_client_and_server_actors():
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)
@@ -2487,19 +2491,35 @@ def _test_context():
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, memory=alice_memory, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.memory = alice_memory
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
+    [READ] Current state: S0
+    [READ] Current structure: None
     >>> bob.start()
     >>> time.sleep(1)
-    Current state: S1
-    Current value for f2: 3626764237
-    Current state: S1
-    Current value for f2: 3626764238
-    Current state: S1
-    Current value for f2: 3626764239
-    Current state: S1
-    Current value for f2: 3626764240
+    [READ] Current state: S1
+    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x82\xe2\xe6b')])
+    [WRITE] Current state: S1
+    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xd4q=`')])
+    [WRITE] Current value for f2: 3564191072
+    [READ] Current state: S1
+    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xd4q=`')])
+    [WRITE] Current state: S1
+    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xd4q=a')])
+    [WRITE] Current value for f2: 3564191073
+    [READ] Current state: S1
+    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xd4q=a')])
+    [WRITE] Current state: S1
+    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xd4q=b')])
+    [WRITE] Current value for f2: 3564191074
+    [READ] Current state: S1
+    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xd4q=b')])
+    [WRITE] Current state: S1
+    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xd4q=c')])
+    [WRITE] Current value for f2: 3564191075
     >>>
     >>> bob.stop()
     >>> alice.stop()
@@ -2680,7 +2700,8 @@ def _test_callback_modify_symbol():
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
-    >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+    >>> alice = Actor(automata=alice_automata, channel=channel, name="Alice")
+    >>> alice.initiator = False
     >>>
     >>> alice.start()
     >>> time.sleep(0.5)

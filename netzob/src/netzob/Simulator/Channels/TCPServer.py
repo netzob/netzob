@@ -101,10 +101,11 @@ class TCPServer(AbstractChannel):
        >>> automata = Automata(s0, [symbol])
 
        >>> channel = TCPServer(localIP="127.0.0.1", localPort=8886, timeout=1.)
-       >>> server = Actor(automata = automata, initiator = False, channel=channel)
+       >>> server = Actor(automata = automata, channel=channel)
+       >>> server.initiator = False
 
        >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8886, timeout=1.)
-       >>> client = Actor(automata = automata, initiator = True, channel=channel)
+       >>> client = Actor(automata = automata, channel=channel)
 
        >>> server.start()
        >>> client.start()

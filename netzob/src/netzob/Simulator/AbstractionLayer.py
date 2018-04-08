@@ -67,13 +67,13 @@ class SymbolBadSettingsException(Exception):
 
 
 class Operation(Enum):
-    """Tells the direction of the symbol.
+    """Tells the direction of the symbol on the communication channel.
 
     """
     READ = 'read'
-    """Indicates that the symbol has been received from the channel."""
+    """Indicates that the symbol has been received from the communication channel."""
     WRITE = 'write'
-    """Indicates that the symbol has been sent on the channel."""
+    """Indicates that the symbol has been sent on the communication channel."""
     __repr__ = Enum.__str__
 
 
@@ -362,8 +362,8 @@ class AbstractionLayer(object):
 
     def is_data_interesting(self, data):
         """Tells if the current abstraction layer is concerned by the given data."""
-        if self.actor is not None and self.actor.cbk_data is not None:
-            return self.actor.cbk_data(data)
+        if self.actor is not None and self.actor.cbk_select_data is not None:
+            return self.actor.cbk_select_data(data)
         else:
             return True
 
@@ -652,13 +652,13 @@ def _test():
     +-------------------------+
     <BLANKLINE>
     >>>
-    >>> def cbk_data_bob(data):
+    >>> def cbk_select_data_bob(data):
     ...     if data[:6] == b"alice>":
     ...         return True
     ...     else:
     ...         return False
     >>>
-    >>> def cbk_data_alice(data):
+    >>> def cbk_select_data_alice(data):
     ...     if data[:4] == b"bob>":
     ...         return True
     ...     else:
@@ -666,9 +666,12 @@ def _test():
     >>>
     >>> # Create actors: Alice (a server) and Bob (a client)
     >>> channel = IPChannel(localIP="127.0.0.1", remoteIP="127.0.0.1")
-    >>> alice = Actor(automata=automata, channel=channel, initiator=False, name='Alice', cbk_data=cbk_data_alice)
+    >>> alice = Actor(automata=automata, channel=channel, name='Alice')
+    >>> alice.cbk_select_data = cbk_select_data_alice
+    >>> alice.initiator = False
     >>>
-    >>> bob = Actor(automata=automata, channel=channel, name='Bob', cbk_data=cbk_data_bob)
+    >>> bob = Actor(automata=automata, channel=channel, name='Bob')
+    >>> bob.cbk_select_data = cbk_select_data_bob
     >>> bob.nbMaxTransitions = 3
     >>>
     >>> channel.start()

@@ -103,10 +103,11 @@ class UDPServer(AbstractChannel):
        >>> automata = Automata(s0, [symbol])
        >>>
        >>> channel = UDPServer(localIP="127.0.0.1", localPort=8884, timeout=1.)
-       >>> server = Actor(automata = automata, initiator = False, channel=channel)
+       >>> server = Actor(automata = automata, channel=channel)
+       >>> server.initiator = False
        >>>
        >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8884, timeout=1.)
-       >>> client = Actor(automata = automata, initiator = True, channel=channel)
+       >>> client = Actor(automata = automata, channel=channel)
        >>>
        >>> server.start()
        >>> client.start()
