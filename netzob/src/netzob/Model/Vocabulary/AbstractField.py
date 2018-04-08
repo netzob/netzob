@@ -95,7 +95,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         self._variable = None
 
     @abc.abstractmethod
-    def clone(self, map_objects={}):
+    def clone(self, map_objects=None):
         """Clone the current object as well as all its dependencies. This
         method returns a new object of the same type.
 

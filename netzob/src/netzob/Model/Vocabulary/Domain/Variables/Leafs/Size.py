@@ -224,7 +224,9 @@ class Size(AbstractRelationVariableLeaf):
         self.offset = offset
 
     @public_api
-    def clone(self, map_objects={}):
+    def clone(self, map_objects=None):
+        if map_objects is None:
+            map_objects = {}
         if self in map_objects:
             return map_objects[self]
 

@@ -688,7 +688,7 @@ class AutomataMutator(Mutator):
 
         return new_automata
 
-    def _find_shortest_path(self, start_name, end_name, path=[]):
+    def _find_shortest_path(self, start_name, end_name, path=None):
         r"""Find the shortest path between two states of the automaton.
 
         >>> from netzob.all import *
@@ -781,6 +781,8 @@ class AutomataMutator(Mutator):
         ['s0', 's1', 's2', 's4', 's6']
 
         """
+        if path is None:
+            path = []
         path = path + [start_name]
         if start_name == end_name:
             return path

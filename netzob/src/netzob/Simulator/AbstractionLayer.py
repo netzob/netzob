@@ -220,7 +220,7 @@ class AbstractionLayer(object):
         self.__queue_input = Queue()
 
     @typeCheck(Symbol)
-    def writeSymbol(self, symbol, rate=None, duration=None, preset=None, cbk_action=[]):
+    def writeSymbol(self, symbol, rate=None, duration=None, preset=None, cbk_action=None):
         """Write the specified symbol on the communication channel
         after specializing it into a contextualized message.
 
@@ -245,6 +245,9 @@ class AbstractionLayer(object):
         :raise: :class:`TypeError` if a parameter is not valid and :class:`Exception` if an exception occurs.
 
         """
+
+        if cbk_action is None:
+            cbk_action = []
 
         if symbol is None:
             raise TypeError("The symbol to write on the channel cannot be None")
@@ -305,7 +308,10 @@ class AbstractionLayer(object):
                                                                                                                                         round(t_elapsed, 2)))
         return (data, data_len, data_structure)
 
-    def _writeSymbol(self, symbol, preset=None, cbk_action=[]):
+    def _writeSymbol(self, symbol, preset=None, cbk_action=None):
+        if cbk_action is None:
+            cbk_action = []
+
         data_len = 0
         if isinstance(symbol, EmptySymbol):
             self._logger.debug("Symbol to write is an EmptySymbol. So nothing to do.".format(symbol.name))
