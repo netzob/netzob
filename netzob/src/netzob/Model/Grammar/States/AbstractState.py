@@ -53,7 +53,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
     The AbstractState constructor expects some parameters:
 
-    :param name: The name of the state. The default value is `None`.
+    :param name: The name of the state. The default value is ``None``.
     :type name: :class:`str`, optional
 
     """
@@ -69,7 +69,6 @@ class AbstractState(object, metaclass=abc.ABCMeta):
     def __repr__(self):
         return str(self.name)
 
-
     # Execution abstract methods
 
     @abc.abstractmethod
@@ -80,13 +79,11 @@ class AbstractState(object, metaclass=abc.ABCMeta):
     def executeAsNotInitiator(self, actor):
         pass
 
-
     # Other methods
 
     @abc.abstractmethod
     def clone(self):
         pass
-
 
     # Properties
 
@@ -108,7 +105,6 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
         self.__name = name
 
-    @public_api
     @property
     def active(self):
         """Represents the current execution status of the state.
