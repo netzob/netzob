@@ -93,7 +93,7 @@ class Actor(Thread):
                    and abstraction of successive symbols, especially to handle
                    inter-symbol relationships. If None, a local memory is
                    created by default and used internally.
-    :param actor_preset: A preset configuration used during specialization and abstraction of symbols emitted and received by the actor. Values
+    :param preset: A preset configuration used during specialization and abstraction of symbols emitted and received by the actor. Values
                          in this configuration will override any field
                          definition, constraints or relationship dependencies. See
                          :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
@@ -108,7 +108,7 @@ class Actor(Thread):
     :type name: :class:`str`, optional
     :type keep_open: :class:`bool`, optional
     :type memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`, optional
-    :type actor_preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
+    :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
     :type cbk_data: :class:`Callable <collections.abc.Callable>`
 
 
@@ -1952,7 +1952,7 @@ class Actor(Thread):
                  name="Actor",      # type: str
                  keep_open=False,   # type: bool
                  memory=None,
-                 actor_preset=None,
+                 preset=None,
                  cbk_data=None
                  ):
         # type: (...) -> None
@@ -1964,22 +1964,21 @@ class Actor(Thread):
         self.name = name
         self.__stopEvent = Event()
         self.keep_open = keep_open
+        self.memory = memory
+        self.preset = preset
+        self.cbk_data = cbk_data
 
-        # Max number of transitions the actor can browse
-        self.__nbMaxTransitions = None   # None means no limit
-        self._currentnbTransitions = 0
-
-        # Variable used to lead the actor to a specific state
-        self.__target_state = None
-
-        # Variable used to keep track of the current state
-        self.__current_state = None
+        # Initialize local variables
+        self.__nbMaxTransitions = None   # Max number of transitions the actor can browse (None means no limit)
+        self.__currentnbTransitions = 0  # Used to track the current number of transitions
+        self.__target_state = None  # Variable used to lead the actor to a specific state
+        self.__current_state = None  # Variable used to keep track of the current state
 
         # Initiate visit log, which contains the information regarding the different transitions and states visited by the actor
         self.visit_log = []
 
         # Create abstraction layer
-        self.abstractionLayer = AbstractionLayer(channel, self.automata.symbols, memory=memory, preset=actor_preset, cbk_data=cbk_data)
+        self.abstractionLayer = AbstractionLayer(channel, self.automata.symbols, actor=self)
 
     def __str__(self):
         return str(self.name)
@@ -2022,8 +2021,8 @@ class Actor(Thread):
             self.visit_log.append("  [+] At state '{}', we reached the targeted state '{}', so we stop".format(self.current_state, self.target_state))
             return True
 
-        self._currentnbTransitions += 1
-        if self.nbMaxTransitions is not None and self._currentnbTransitions >= self.nbMaxTransitions:
+        self.__currentnbTransitions += 1
+        if self.nbMaxTransitions is not None and self.__currentnbTransitions >= self.nbMaxTransitions:
             self._logger.debug("[actor='{}'] Max number of transitions ({}) reached".format(self.name, self.nbMaxTransitions))
             self.visit_log.append("  [+] At state '{}', we reached the max number of transitions ({}), so we stop".format(self.current_state, self.nbMaxTransitions))
             return True
@@ -2099,17 +2098,33 @@ class Actor(Thread):
     @public_api
     @property
     def memory(self):
-        if self.abstractionLayer is not None:
-            return self.abstractionLayer.memory
-        else:
-            return None
+        return self.__memory
 
     @memory.setter  # type: ignore
     @typeCheck(Memory)
     def memory(self, memory):
         if memory is None:
-            raise TypeError("Memory cannot be None")
-        self.abstractionLayer.memory = memory
+            memory = Memory()
+        self.__memory = memory
+
+    @public_api
+    @property
+    def preset(self):
+        return self.__preset
+
+    @preset.setter  # type: ignore
+    @typeCheck(Preset)
+    def preset(self, preset):
+        self.__preset = preset
+
+    @public_api
+    @property
+    def cbk_data(self):
+        return self.__cbk_data
+
+    @cbk_data.setter  # type: ignore
+    def cbk_data(self, cbk_data):
+        self.__cbk_data = cbk_data
 
     @public_api
     @property
@@ -2341,6 +2356,8 @@ def _test_context():
 
     >>> from netzob.all import *
     >>> import time
+    >>> import random
+    >>> random.seed(0)
     >>>
     >>> # We create bob's symbol
     >>> f1 = Field("hello")

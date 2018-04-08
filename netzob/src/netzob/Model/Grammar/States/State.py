@@ -188,7 +188,7 @@ class State(AbstractState):
         received_message = None
         from netzob.Simulator.Actor import ActorStopException
         try:
-            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(actor=actor)
+            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol()
 
             if received_symbol is None:
                 raise Exception("The abstraction layer returned a None received symbol")

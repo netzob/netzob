@@ -49,7 +49,7 @@ from enum import Enum
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
@@ -89,13 +89,10 @@ class AbstractionLayer(object):
                     UDPClient...).
     :param symbols: This parameter is the list of permitted symbols during translation from/to
                     concrete messages.
-    :param memory: This parameter is a memory used to store variable values during specialization
-                   and abstraction of successive symbols, especially to handle
-                   inter-symbol relationships. If None, a local memory is
-                   created by default and used internally.
+    :param actor: An actor that will visit the associated automaton and provide a dedicated memory context.
     :type channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`, required
     :type symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`, required
-    :type memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`, optional
+    :type actor: :class:`Actor <netzob.Simulator.Actor.Actor>`, optional
 
 
     The AbstractionLayer class provides the following public variables:
@@ -104,12 +101,8 @@ class AbstractionLayer(object):
                   UDPClient...).
     :var symbols: The list of permitted symbols during translation from/to
                   concrete messages.
-    :var memory: A memory used to store variable values during specialization
-                 and abstraction of successive symbols, especially to handle
-                 inter-symbol relationships.
     :vartype channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`
     :vartype symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`
-    :vartype memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`
 
 
     **Usage example of the abstraction layer**
@@ -179,10 +172,12 @@ class AbstractionLayer(object):
     >>>
     >>> # Creation of channels with dedicated abstraction layer
     >>> channelIn = UDPServer(localIP="127.0.0.1", localPort=8889, timeout=1.)
-    >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol], memory1)
+    >>> abstractionLayerIn = AbstractionLayer(channelIn, [symbol])
+    >>> abstractionLayerIn.memory = memory1
     >>> abstractionLayerIn.openChannel()
     >>> channelOut = UDPClient(remoteIP="127.0.0.1", remotePort=8889, timeout=1.)
-    >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbol], memory1)
+    >>> abstractionLayerOut = AbstractionLayer(channelOut, [symbol])
+    >>> abstractionLayerOut.memory = memory1
     >>> abstractionLayerOut.openChannel()
     >>>
     >>> # Sending of a symbol containing a data coming from the environment
@@ -197,15 +192,17 @@ class AbstractionLayer(object):
 
     """
 
-    def __init__(self, channel, symbols, memory=None, preset=None, cbk_data=None):
+    def __init__(self, channel, symbols, actor=None):
         self.channel = channel
         self.symbols = symbols
-        if memory is None:
+        self.actor = actor
+
+        # Initialize local variables
+        self.specializer = None
+        self.parser = None
+        self.flow_parser = None
+        if self.actor is None:
             self.memory = Memory()
-        else:
-            self.memory = memory
-        self.preset = preset
-        self.cbk_data = cbk_data
 
         # Instanciate inner instance variables
         self.specializer = MessageSpecializer(memory=self.memory)
@@ -222,9 +219,8 @@ class AbstractionLayer(object):
 
         self.__queue_input = Queue()
 
-    @public_api
     @typeCheck(Symbol)
-    def writeSymbol(self, symbol, rate=None, duration=None, preset=None, actor=None, cbk_action=[]):
+    def writeSymbol(self, symbol, rate=None, duration=None, preset=None, cbk_action=[]):
         """Write the specified symbol on the communication channel
         after specializing it into a contextualized message.
 
@@ -253,17 +249,17 @@ class AbstractionLayer(object):
         if symbol is None:
             raise TypeError("The symbol to write on the channel cannot be None")
 
-        if self.preset is not None:
+        if self.actor is not None and self.actor.preset is not None:
             if preset is not None:
-                preset.update(self.preset)
+                preset.update(self.actor.preset)
             else:
-                preset = self.preset
+                preset = self.actor.preset
 
         data = b''
         data_len = 0
         data_structure = {}
         if duration is None:
-            (data, data_len, data_structure) = self._writeSymbol(symbol, preset=preset, actor=actor, cbk_action=cbk_action)
+            (data, data_len, data_structure) = self._writeSymbol(symbol, preset=preset, cbk_action=cbk_action)
         else:
 
             t_start = time.time()
@@ -276,7 +272,7 @@ class AbstractionLayer(object):
                     break
 
                 # Specialize the symbol and send it over the channel
-                (data, data_len_tmp, data_structure) = self._writeSymbol(symbol, preset=preset, actor=actor, cbk_action=cbk_action)
+                (data, data_len_tmp, data_structure) = self._writeSymbol(symbol, preset=preset, cbk_action=cbk_action)
                 data_len += data_len_tmp
 
                 if rate is None:
@@ -309,7 +305,7 @@ class AbstractionLayer(object):
                                                                                                                                         round(t_elapsed, 2)))
         return (data, data_len, data_structure)
 
-    def _writeSymbol(self, symbol, preset=None, actor=None, cbk_action=[]):
+    def _writeSymbol(self, symbol, preset=None, cbk_action=[]):
         data_len = 0
         if isinstance(symbol, EmptySymbol):
             self._logger.debug("Symbol to write is an EmptySymbol. So nothing to do.".format(symbol.name))
@@ -353,19 +349,18 @@ class AbstractionLayer(object):
         self.last_sent_structure = data_structure
 
         for cbk in cbk_action:
-            self._logger.debug("[actor='{}'] A callback function is defined at the end of the transition".format(str(actor)))
-            cbk(symbol, data, data_structure, Operation.WRITE, actor)
+            self._logger.debug("[actor='{}'] A callback function is defined at the end of the transition".format(self.actor))
+            cbk(symbol, data, data_structure, Operation.WRITE, self.actor)
 
         return (data, data_len, data_structure)
 
     def is_data_interesting(self, data):
         """Tells if the current abstraction layer is concerned by the given data."""
-        if self.cbk_data is not None:
-            return self.cbk_data(data)
+        if self.actor is not None and self.actor.cbk_data is not None:
+            return self.actor.cbk_data(data)
         else:
             return True
 
-    @public_api
     def readSymbols(self):
         """Read a flow from the abstraction layer and abstract it in one or
         more consecutive symbols.
@@ -406,8 +401,7 @@ class AbstractionLayer(object):
 
         return (symbols, data)
 
-    @public_api
-    def readSymbol(self, symbols_preset=None, timeout=5.0, actor=None):
+    def readSymbol(self, symbols_preset=None, timeout=5.0):
         """Read a message from the abstraction layer and abstract it
         into a symbol.
 
@@ -425,7 +419,7 @@ class AbstractionLayer(object):
             if self.channel.threaded_mode:
                 elapsed_time = 0
                 while True:
-                    if actor is not None and not actor.isActive() and not actor.keep_open:
+                    if self.actor is not None and not self.actor.isActive() and not self.actor.keep_open:
                         self._logger.debug("Actor is not active, so we break the abstraction layer readSymbol() loop")
                         from netzob.Simulator.Actor import ActorStopException
                         raise ActorStopException()
@@ -571,6 +565,28 @@ class AbstractionLayer(object):
     @queue_input.setter  # type: ignore
     def queue_input(self, queue_input):
         self.__queue_input = queue_input
+
+    @property
+    def memory(self):
+        if self.actor is not None:
+            return self.actor.memory
+        else:
+            return self.__memory
+
+    @memory.setter  # type: ignore
+    def memory(self, memory):
+        if self.actor is not None:
+            self.actor.memory = memory
+        else:
+            self.__memory = memory
+
+        # Update other instance variables
+        if self.specializer is not None:
+            self.specializer.memory = self.memory
+        if self.parser is not None:
+            self.parser.memory = self.memory
+        if self.flow_parser is not None:
+            self.flow_parser.memory = self.memory
 
 
 def _test():

@@ -277,7 +277,7 @@ class Transition(AbstractTransition):
                         tmp_preset = actor.fuzzing_preset
                 else:
                     tmp_preset = symbol_preset
-                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, actor=actor, cbk_action=self.cbk_action)
+                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, cbk_action=self.cbk_action)
             except socket.timeout:
                 self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
                 self.active = False
@@ -305,7 +305,7 @@ class Transition(AbstractTransition):
         # Waits for the reception of a symbol
         from netzob.Simulator.Actor import ActorStopException
         try:
-            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(self.outputSymbolsPreset, actor=actor)
+            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(self.outputSymbolsPreset)
         except ActorStopException:
             raise
         except socket.timeout:
@@ -428,7 +428,7 @@ class Transition(AbstractTransition):
                     tmp_preset = actor.fuzzing_preset
             else:
                 tmp_preset = symbol_preset
-            (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, actor=actor, cbk_action=self.cbk_action)
+            (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, cbk_action=self.cbk_action)
         except socket.timeout:
             self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
             self.active = False
