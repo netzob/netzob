@@ -191,9 +191,9 @@ class MessageSpecializer(object):
             if len(field.fields) == 0:
                 if first_pass:
                     first_pass = False
-                    retainedPath.generatedContent = retainedPath.getData(field.domain)
+                    retainedPath.generatedContent = retainedPath.getData(field.domain).copy()
                 else:
-                    retainedPath.generatedContent += retainedPath.getData(field.domain)
+                    retainedPath.generatedContent += retainedPath.getData(field.domain).copy()
             else:
                 for child in field.fields:
 

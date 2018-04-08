@@ -208,7 +208,7 @@ class Data(AbstractVariableLeaf):
                 expectedValue)].tobytes() == expectedValue.tobytes():
             (addresult_succeed, addresult_parsingPaths) = parsingPath.addResult(self, content[:len(expectedValue)].copy())
             results.extend(addresult_parsingPaths)
-            self._logger.debug("Data '{}' can be parsed with variable {}".format(content.tobytes(), self))
+            self._logger.debug("Data '{}' can be parsed with variable {}, providing '{}'".format(content.tobytes(), self, content[:len(expectedValue)].tobytes()))
         else:
             self._logger.debug("Data '{}' cannot be parsed with variable {}".format(content.tobytes(), self))
         return results

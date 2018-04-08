@@ -2360,8 +2360,8 @@ def _test_context():
     >>> random.seed(0)
     >>>
     >>> # We create bob's symbol
-    >>> f1 = Field("hello")
-    >>> f2 = Field(uint32())
+    >>> f1 = Field("hello", name="Bob hello")
+    >>> f2 = Field(uint32(), name="Bob integer")
     >>> symbol = Symbol(name="Hello", fields=[f1, f2])
     >>> symbolList = [symbol]
     >>>
@@ -2435,15 +2435,18 @@ def _test_context():
     >>> # Creation of a callback function that will be called after each transition, to update the context
     >>> def cbk_action(symbol_to_send, data, data_structure, operation, actor):
     ...     if operation == Operation.WRITE:
-    ...         var_integer_bits = data_structure['Alice Field f2']
-    ...         var_integer = int.from_bytes(var_integer_bits.tobytes(), byteorder='big')
-    ...         print("Current state: {}".format(actor.current_state))
-    ...         print("Current value for f2: {}".format(var_integer))
+    ...         var_integer_bytes = data_structure['Alice Field f2']
+    ...         var_integer = int.from_bytes(var_integer_bytes, byteorder='big')
+    ...         print("[WRITE] Current state: {}".format(actor.current_state))
+    ...         print("[WRITE] Current structure: {}".format(data_structure))
+    ...         print("[WRITE] Current value for f2: {}".format(var_integer))
     ...         var_integer += 1
-    ...         new_var_integer_bytes = var_integer.to_bytes(4, byteorder='big')
-    ...         new_var_integer_bits = bitarray(endian='big')
-    ...         new_var_integer_bits.frombytes(new_var_integer_bytes)
-    ...         actor.memory.memorize(alice_var_integer, new_var_integer_bits)
+    ...         var_integer_bytes = var_integer.to_bytes(4, byteorder='big')
+    ...         actor.memory.memorize(alice_var_integer, var_integer_bytes)
+    ...     else:
+    ...         var_integer_bits = data_structure
+    ...         print("[READ] Current state: {}".format(actor.current_state))
+    ...         print("[READ] Current structure: {}".format(data_structure))
     >>>
     >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
     >>> alice_mainTransition = Transition(startState=alice_s1, endState=alice_s1,
@@ -2487,7 +2490,6 @@ def _test_context():
     >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, memory=alice_memory, name="Alice")
     >>>
     >>> alice.start()
-    >>> time.sleep(0.5)
     >>> bob.start()
     >>> time.sleep(1)
     Current state: S1

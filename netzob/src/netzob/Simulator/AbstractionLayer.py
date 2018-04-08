@@ -328,7 +328,7 @@ class AbstractionLayer(object):
         data_structure = OrderedDict()
         for field in symbol.getLeafFields():
             if path.hasData(field.domain):
-                field_data = path.getData(field.domain)
+                field_data = path.getData(field.domain).tobytes()
             else:
                 field_data = b''
             data_structure[field.name] = field_data
