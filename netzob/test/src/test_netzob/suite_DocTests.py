@@ -223,7 +223,7 @@ def getSuite():
 
         # Modules related to fuzzing
         # --------------------------
-        Fuzz.__module__,
+        Preset.__module__,
         Mutator.__module__,
         DomainMutator.__module__,
         AltMutator.__module__,

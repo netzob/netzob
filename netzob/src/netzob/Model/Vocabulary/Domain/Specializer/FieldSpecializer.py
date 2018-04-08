@@ -108,11 +108,11 @@ class FieldSpecializer(object):
 
     """
 
-    def __init__(self, field, fuzz=None):
+    def __init__(self, field, preset=None):
         self._logger.debug("Creating a new FieldSpecializer.")
 
         self.field = field
-        self.fuzz = fuzz
+        self.preset = preset
 
     def specialize(self, specializingPath=None):
         """Execute the specialize operation"""
@@ -141,7 +141,7 @@ class FieldSpecializer(object):
     def _specializeFieldWithChildren(self, specializingPath, idx):
 
         child = self.field.fields[idx]
-        fs = FieldSpecializer(child, fuzz=self.fuzz)
+        fs = FieldSpecializer(child, preset=self.preset)
         paths = fs.specialize(specializingPath)
 
         for path in paths:
@@ -166,7 +166,7 @@ class FieldSpecializer(object):
         domain = self.field.domain
 
         # we create a first VariableParser and uses it to parse the domain
-        variableSpecializer = VariableSpecializer(domain, fuzz=self.fuzz)
+        variableSpecializer = VariableSpecializer(domain, preset=self.preset)
         resultSpecializingPaths = variableSpecializer.specialize(specializingPath)
 
         return resultSpecializingPaths

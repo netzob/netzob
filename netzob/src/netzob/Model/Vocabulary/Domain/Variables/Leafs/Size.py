@@ -242,7 +242,7 @@ class Size(AbstractRelationVariableLeaf):
         new_size.targets = new_targets
         return new_size
 
-    def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables, fuzz=None):
+    def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables, preset=None):
         """
         Compute the total size of targets
         """
@@ -252,7 +252,7 @@ class Size(AbstractRelationVariableLeaf):
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
         for variable in targets:
 
-            if fuzz is not None and fuzz.get(variable) is not None and fuzz.get(variable).mode == FuzzingMode.FIXED:
+            if preset is not None and preset.get(variable) is not None and preset.get(variable).mode == FuzzingMode.FIXED:
                 remainingVariables.append(variable)
 
             elif parsingPath.hasData(variable) or variable is self:
@@ -307,13 +307,13 @@ class Size(AbstractRelationVariableLeaf):
         return size
 
     @typeCheck(GenericPath)
-    def computeExpectedValue(self, parsingPath, fuzz=None):
+    def computeExpectedValue(self, parsingPath, preset=None):
         self._logger.debug("Compute expected value for Size variable '{}' from field '{}'".format(self, self.field))
 
         # first checks the pointed fields all have a value
         remainingVariables = []
 
-        size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables, fuzz=fuzz)
+        size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables, preset=preset)
         size += self.__computeExpectedValue_stage2(parsingPath, remainingVariables)
         size = int(size * self.factor + self.offset)
         size_raw = TypeConverter.convert(size, Integer, Raw,
@@ -508,9 +508,9 @@ def _test_size():
     >>> symbol_udp = Symbol(name="udp", fields=(udp_header + [pseudo_ip_header]))
     >>>
     >>> #
-    >>> fuzz = Fuzz()
-    >>> fuzz.set("udp.payload", "test AAAAAAAA")
-    >>> data = next(symbol_udp.specialize(fuzz=fuzz))
+    >>> preset = Preset()
+    >>> preset["udp.payload"] = "test AAAAAAAA"
+    >>> data = next(symbol_udp.specialize(preset=preset))
     >>>
     >>> symbol_udp.abstract(data)  # doctest: +ELLIPSIS
     OrderedDict([('udp.sport', b'...'), ('udp.dport', b'...'), ('udp.length', b'\x00\x15'), ('udp.checksum', b'...'), ('udp.payload', b'test AAAAAAAA')])

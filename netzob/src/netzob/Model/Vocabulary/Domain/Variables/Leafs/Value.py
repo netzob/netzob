@@ -322,7 +322,7 @@ class Value(AbstractRelationVariableLeaf):
 
         return self.valueCMP(parsingPath, acceptCallBack)
 
-    def computeExpectedValue(self, parsingPath, fuzz=None):
+    def computeExpectedValue(self, parsingPath, preset=None):
         self._logger.debug("Compute expected value for Value field '{}'".format(self.field))
 
         # Check target variable consistency

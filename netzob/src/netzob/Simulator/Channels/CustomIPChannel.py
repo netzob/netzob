@@ -188,8 +188,8 @@ class CustomIPChannel(AbstractChannel):
         :type data: :class:`bytes`
         """
 
-        self.header_presets['ip.payload'] = data
-        packet = next(self.header.specialize(presets=self.header_presets))
+        self.header_preset['ip.payload'] = data
+        packet = next(self.header.specialize(presets=self.header_preset))
         len_data = self._socket.sendto(packet, (self.remoteIP, 0))
         return len_data
 

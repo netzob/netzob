@@ -93,11 +93,11 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         return "Relation({0}) - Type:{1}".format(
             str([v.name for v in self.targets]), self.dataType)
 
-    def count(self, fuzz=None):
+    def count(self, preset=None):
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
+        if preset is not None and preset.get(self) is not None and preset.get(self).mode == FuzzingMode.GENERATE:
             # Retrieve the mutator
-            mutator = fuzz.get(self)
+            mutator = preset.get(self)
             return mutator.count()
         else:
             return 1
@@ -275,7 +275,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         parsingPath.registerVariablesCallBack(self.targets, self)
 
     @typeCheck(GenericPath)
-    def computeExpectedValue(self, parsingPath, fuzz=None):
+    def computeExpectedValue(self, parsingPath, preset=None):
         self._logger.debug("Compute expected value for relation field")
 
         # first checks the pointed variables all have a value
@@ -317,7 +317,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         return result
 
     @typeCheck(SpecializingPath)
-    def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True, fuzz=None):
+    def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True, preset=None):
         """This method participates in the specialization proces.
 
         It creates a result in the provided path that contains a
@@ -329,7 +329,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             raise Exception("VariableSpecializerPath cannot be None")
 
         try:
-            newValue = self.computeExpectedValue(variableSpecializerPath, fuzz=fuzz)
+            newValue = self.computeExpectedValue(variableSpecializerPath, preset=preset)
 
             if newValue is not None:
                 (addresult_succeed, addresult_newpaths) = variableSpecializerPath.addResult(self, newValue.copy())

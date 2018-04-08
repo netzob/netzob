@@ -197,14 +197,14 @@ class AbstractionLayer(object):
 
     """
 
-    def __init__(self, channel, symbols, memory=None, presets=None, cbk_data=None):
+    def __init__(self, channel, symbols, memory=None, preset=None, cbk_data=None):
         self.channel = channel
         self.symbols = symbols
         if memory is None:
             self.memory = Memory()
         else:
             self.memory = memory
-        self.presets = presets
+        self.preset = preset
         self.cbk_data = cbk_data
 
         # Instanciate inner instance variables
@@ -224,7 +224,7 @@ class AbstractionLayer(object):
 
     @public_api
     @typeCheck(Symbol)
-    def writeSymbol(self, symbol, rate=None, duration=None, presets=None, fuzz=None, actor=None, cbk_action=[]):
+    def writeSymbol(self, symbol, rate=None, duration=None, preset=None, actor=None, cbk_action=[]):
         """Write the specified symbol on the communication channel
         after specializing it into a contextualized message.
 
@@ -236,28 +236,16 @@ class AbstractionLayer(object):
         :param duration: This indicates for how many seconds the symbol is
                          continuously written on the channel. Default
                          value is None (write only once).
-        :param presets: This specifies how to parameterize the emitted
-                        symbol. The expected content of this dict is
-                        specified in :meth:`Symbol.specialize \
-                        <netzob.Model.Vocabulary.Symbol.Symbol.specialize>`.
-                        Default is None.
-        :param fuzz: A fuzzing configuration used during the specialization process. Values
-                     in this configuration will override any field
-                     definition, constraints, relationship
-                     dependencies or parameterized fields. See
-                     :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
-                     for a complete explanation of its use for fuzzing
-                     purpose.
-                     Default is None.
+        :param preset: A preset configuration used during the specialization process. Values
+                       in this configuration will override any field
+                       definition, constraints or relationship dependencies. See
+                       :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+                       for a complete explanation of its usage.
+                       Default is None.
         :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
         :type rate: :class:`int`, optional
         :type duration: :class:`int`, optional
-        :type presets: ~typing.Dict[
-                       ~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
-                       ~typing.Union[~bitarray.bitarray,bytes,
-                       ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
-                       optional
-        :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
+        :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
         :raise: :class:`TypeError` if a parameter is not valid and :class:`Exception` if an exception occurs.
 
         """
@@ -265,17 +253,17 @@ class AbstractionLayer(object):
         if symbol is None:
             raise TypeError("The symbol to write on the channel cannot be None")
 
-        if self.presets is not None:
-            if presets is not None:
-                presets.update(self.presets)
+        if self.preset is not None:
+            if preset is not None:
+                preset.update(self.preset)
             else:
-                presets = self.presets
+                preset = self.preset
 
         data = b''
         data_len = 0
         data_structure = {}
         if duration is None:
-            (data, data_len, data_structure) = self._writeSymbol(symbol, presets=presets, fuzz=fuzz, actor=actor, cbk_action=cbk_action)
+            (data, data_len, data_structure) = self._writeSymbol(symbol, preset=preset, actor=actor, cbk_action=cbk_action)
         else:
 
             t_start = time.time()
@@ -288,7 +276,7 @@ class AbstractionLayer(object):
                     break
 
                 # Specialize the symbol and send it over the channel
-                (data, data_len_tmp, data_structure) = self._writeSymbol(symbol, presets=presets, fuzz=fuzz, actor=actor, cbk_action=cbk_action)
+                (data, data_len_tmp, data_structure) = self._writeSymbol(symbol, preset=preset, actor=actor, cbk_action=cbk_action)
                 data_len += data_len_tmp
 
                 if rate is None:
@@ -321,28 +309,7 @@ class AbstractionLayer(object):
                                                                                                                                         round(t_elapsed, 2)))
         return (data, data_len, data_structure)
 
-    def _writeSymbol(self, symbol, presets=None, fuzz=None, actor=None, cbk_action=[]):
-        """Write the specified symbol on the communication channel after
-        specializing it into a contextualized message.
-
-        :param symbol: The symbol to write on the channel.
-        :param presets: This specifies how to parameterize the emitted
-                        symbol. The expected content of this dict is
-                        specified in :meth:`Symbol.specialize \
-                        <netzob.Model.Vocabulary.Symbol.Symbol.specialize>`.
-        :param fuzz: A fuzzing configuration used during the specialization process. Values
-                     in this configuration will override any field
-                     definition, constraints, relationship
-                     dependencies or parameterized fields. See
-                     :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
-                     for a complete explanation of its use for fuzzing
-                     purpose.
-        :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-        :type presets: :class:`dict`, optional
-        :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
-        :raise: :class:`TypeError` if parameter is not valid and :class:`Exception` if an exception occurs.
-
-        """
+    def _writeSymbol(self, symbol, preset=None, actor=None, cbk_action=[]):
         data_len = 0
         if isinstance(symbol, EmptySymbol):
             self._logger.debug("Symbol to write is an EmptySymbol. So nothing to do.".format(symbol.name))
@@ -350,8 +317,7 @@ class AbstractionLayer(object):
 
         self._logger.debug("Specializing symbol '{0}' (id={1}).".format(symbol.name, id(symbol)))
 
-        self.specializer.presets = presets
-        self.specializer.fuzz = fuzz
+        self.specializer.preset = preset
         path = next(self.specializer.specializeSymbol(symbol))
 
         data = path.generatedContent.tobytes()
@@ -365,8 +331,7 @@ class AbstractionLayer(object):
                 field_data = b''
             data_structure[field.name] = field_data
 
-        self.specializer.presets = None  # This is needed, in order to avoid applying the preset configuration on an already preseted symbol
-        # Regarding the fuzz attribute, as its behavior is different from preset, we don't have to set it to None
+        self.specializer.preset = None  # This is needed, in order to avoid applying the preset configuration on an already preseted symbol
 
         self.memory = self.specializer.memory
         self.parser.memory = self.memory
@@ -442,7 +407,7 @@ class AbstractionLayer(object):
         return (symbols, data)
 
     @public_api
-    def readSymbol(self, symbols_presets=None, timeout=5.0, actor=None):
+    def readSymbol(self, symbols_preset=None, timeout=5.0, actor=None):
         """Read a message from the abstraction layer and abstract it
         into a symbol.
 
@@ -523,30 +488,30 @@ class AbstractionLayer(object):
         self._logger.debug("Receiving the following data from the commnunication channel: '{}'".format(data))
         self._logger.debug("Receiving the following symbol from the commnunication channel: '{}'".format(symbol.name))
 
-        # Check symbol regarding its expected presets
+        # Check symbol regarding its expected preset
         if not isinstance(symbol, (UnknownSymbol, EmptySymbol)):
-            if symbols_presets is not None:
-                if not self._check_presets(symbol, data_structure, symbols_presets):
+            if symbols_preset is not None:
+                if not self._check_preset(symbol, data_structure, symbols_preset):
                     self._logger.debug("Receive good symbol but with wrong setting")
                     raise SymbolBadSettingsException()
 
         return (symbol, data, data_structure)
 
-    def _check_presets(self, symbol, data_structure, symbols_presets):
-        self._logger.debug("Checking symbol consistency regarding its expected presets, for symbol '{}'".format(symbol))
+    def _check_preset(self, symbol, data_structure, symbols_preset):
+        self._logger.debug("Checking symbol consistency regarding its expected preset, for symbol '{}'".format(symbol))
 
-        if symbol not in symbols_presets.keys():
+        if symbol not in symbols_preset.keys():
             return True
 
         result = True
-        symbol_presets = symbols_presets[symbol]
-        for (field, field_presets) in symbol_presets.items():
+        symbol_preset = symbols_preset[symbol]
+        for (field, field_preset) in symbol_preset.items():
             if isinstance(field, Field):
                 field_name = field.name
             else:
                 field_name = field
             if field_name in data_structure.keys():
-                expected_value = field_presets.tobytes()
+                expected_value = field_preset.tobytes()
                 observed_value = data_structure[field_name]
                 self._logger.debug("Checking field consistence, for field '{}'".format(field_name))
                 if expected_value == observed_value:
@@ -562,7 +527,6 @@ class AbstractionLayer(object):
             self._logger.debug("Symbol '{}' consistency is not ok".format(symbol))
         return result
 
-    @public_api
     def openChannel(self):
         """Open the underlying communication channel.
 
@@ -576,7 +540,6 @@ class AbstractionLayer(object):
             self.channel.open()
             self._logger.debug("Communication channel opened.")
 
-    @public_api
     def closeChannel(self):
         """Close the underlying communication channel.
 
@@ -590,7 +553,6 @@ class AbstractionLayer(object):
             self.channel.close()
             self._logger.debug("Communication channel close.")
 
-    @public_api
     def reset(self):
         """Reset the abstraction layer (i.e. its internal memory as well as the internal parsers).
 

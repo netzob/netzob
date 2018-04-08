@@ -402,13 +402,13 @@ class AutomataMutator(Mutator):
         <BLANKLINE>
         >>>
         >>> # Define fuzzing configuration
-        >>> fuzz = Fuzz()
-        >>> fuzz.set(sym1)
-        >>> fuzz.set(sym2)
+        >>> preset = Preset()
+        >>> preset.fuzz(sym1)
+        >>> preset.fuzz(sym2)
         >>>
         >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
         >>> bob_channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-        >>> bob_actor = Actor(automata=mutatedAutomata, initiator=True, channel=bob_channel, fuzz=fuzz, fuzz_states=[s6.name], name='Fuzzer')
+        >>> bob_actor = Actor(automata=mutatedAutomata, initiator=True, channel=bob_channel, fuzzing_preset=preset, fuzzing_states=[s6.name], name='Fuzzer')
         >>> bob_actor.nbMaxTransitions = 7
         >>>
         >>> # Create Alice's automaton

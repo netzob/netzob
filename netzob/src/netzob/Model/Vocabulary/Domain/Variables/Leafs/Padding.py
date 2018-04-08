@@ -277,7 +277,7 @@ class Padding(AbstractRelationVariableLeaf):
         new_padding.targets = new_targets
         return new_padding
 
-    def compareValues(self, content, expectedSize, computedValue, fuzz=None):
+    def compareValues(self, content, expectedSize, computedValue, preset=None):
         return len(content[:self._current_length_to_pad]) == len(computedValue)
 
     def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables):
@@ -331,7 +331,7 @@ class Padding(AbstractRelationVariableLeaf):
         return size
 
     @typeCheck(GenericPath)
-    def computeExpectedValue(self, parsingPath, fuzz=None):
+    def computeExpectedValue(self, parsingPath, preset=None):
         self._logger.debug("Compute expected value for Padding variable")
 
         # Reinitialize current length size

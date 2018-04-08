@@ -49,11 +49,8 @@ from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
-from netzob.Fuzzing.Fuzz import Fuzz
+from netzob.Model.Vocabulary.Preset import Preset
 
 
 @NetzobLogger
@@ -203,14 +200,14 @@ class Symbol(AbstractField):
 
     @public_api
     def specialize(self,
-                   fuzz: Fuzz = None,
+                   preset: Preset = None,
                    memory: Memory = None) -> bytes:
         r"""The :meth:`specialize()` method generates a :class:`bytes` sequence whose
         content follows the symbol definition.
 
         The specialize() method expects some parameters:
 
-        :param fuzz: A fuzzing configuration used during the specialization process. Values
+        :param preset: A preset configuration used during the specialization process. Values
                      in this configuration will override any field
                      definition, constraints, relationship
                      dependencies or parameterized fields. See
@@ -275,30 +272,30 @@ class Symbol(AbstractField):
         ``udp_dport`` and ``udp_payload`` fields:
 
 
-        >>> fuzz = Fuzz()
-        >>> fuzz.set(f_dport, 11)              # udp.dport expects an int or an Integer
-        >>> fuzz.set(f_payload, b"\xaa\xbb")   # udp.payload expects a bytes object or a Raw object
-        >>> next(symbol_udp.specialize(fuzz=fuzz))
+        >>> preset = Preset()
+        >>> preset[f_dport] = 11              # udp.dport expects an int or an Integer
+        >>> preset[f_payload] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
+        >>> next(symbol_udp.specialize(preset=preset))
         b'\x00\x0b\xaa\xbb'
 
 
-        >>> fuzz = Fuzz()
-        >>> fuzz.set("udp.dport", 11)              # udp.dport expects an int or an Integer
-        >>> fuzz.set("udp.payload", b"\xaa\xbb")   # udp.payload expects a bytes object or a Raw object
-        >>> next(symbol_udp.specialize(fuzz=fuzz))
+        >>> preset = Preset()
+        >>> preset["udp.dport"] = 11              # udp.dport expects an int or an Integer
+        >>> preset["udp.payload"] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
+        >>> next(symbol_udp.specialize(preset=preset))
         b'\x00\x0b\xaa\xbb'
 
-        >>> fuzz = Fuzz()
-        >>> fuzz.set("udp.dport", uint16(11))        # udp.dport expects an int or an Integer
-        >>> fuzz.set("udp.payload", Raw(b"\xaa\xbb")) # udp.payload expects a bytes object or a Raw object
-        >>> next(symbol_udp.specialize(fuzz=fuzz))
+        >>> preset = Preset()
+        >>> preset["udp.dport"] = uint16(11)        # udp.dport expects an int or an Integer
+        >>> preset["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
+        >>> next(symbol_udp.specialize(preset=preset))
         b'\x00\x0b\xaa\xbb'
 
-        >>> fuzz = Fuzz()
-        >>> fuzz.set("udp.dport", bitarray('00001011', endian='big'))
-        >>> fuzz.set("udp.payload", bitarray('1010101010111011', endian='big'))
-        >>> fuzz.set("udp.payload", bitarray('1010101010111011', endian='big'))
-        >>> next(symbol_udp.specialize(fuzz=fuzz))
+        >>> preset = Preset()
+        >>> preset["udp.dport"] = bitarray('00001011', endian='big')
+        >>> preset["udp.payload"] = bitarray('1010101010111011', endian='big')
+        >>> preset["udp.payload"] = bitarray('1010101010111011', endian='big')
+        >>> next(symbol_udp.specialize(preset=preset))
         b'\x0b\xaa\xbb'
 
         The previous example shows the use of BitArray as dict
@@ -310,15 +307,15 @@ class Symbol(AbstractField):
         parameterized **keys** during specialization of the fields
         ``udp_dport`` and ``udp_payload``:
 
-        >>> fuzz = Fuzz()
-        >>> fuzz.set(f_dport, 11)
-        >>> fuzz.set(f_payload, b"\xaa\xbb")
-        >>> next(symbol_udp.specialize(fuzz=fuzz))
+        >>> preset = Preset()
+        >>> preset[f_dport] = 11
+        >>> preset[f_payload] = b"\xaa\xbb"
+        >>> next(symbol_udp.specialize(preset=preset))
         b'\x00\x0b\xaa\xbb'
-        >>> fuzz = Fuzz()
-        >>> fuzz.set("udp.dport", 11)
-        >>> fuzz.set("udp.payload", b"\xaa\xbb")
-        >>> next(symbol_udp.specialize(fuzz=fuzz))
+        >>> preset = Preset()
+        >>> preset["udp.dport"] = 11
+        >>> preset["udp.payload"] = b"\xaa\xbb"
+        >>> next(symbol_udp.specialize(preset=preset))
         b'\x00\x0b\xaa\xbb'
 
 
@@ -330,9 +327,9 @@ class Symbol(AbstractField):
         >>> f2 = Field(domain=Raw(nbBytes=(10,15)))
         >>> f1.domain = Size(f2)
         >>> s = Symbol(fields=[f1, f2])
-        >>> fuzz = Fuzz()
-        >>> fuzz.set(f1, bitarray('11111111'))
-        >>> next(s.specialize(fuzz=fuzz))
+        >>> preset = Preset()
+        >>> preset[f1] = bitarray('11111111')
+        >>> next(s.specialize(preset=preset))
         b'\xff\xcf\x9b\xf4\xb7oG\x90G0\x80K\x9e2'
 
 
@@ -352,7 +349,7 @@ class Symbol(AbstractField):
         """
 
         from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
-        msg = MessageSpecializer(fuzz=fuzz, memory=memory)
+        msg = MessageSpecializer(preset=preset, memory=memory)
 
         specializing_paths = msg.specializeSymbol(self)
         return self._inner_specialize(specializing_paths)
@@ -361,40 +358,40 @@ class Symbol(AbstractField):
         for specializing_path in specializing_paths:
             yield specializing_path.generatedContent.tobytes()
 
-    def normalize_fuzz(self, fuzz):
-        """Update the fuzz object, according to the symbol definition.
+    def normalize_preset(self, preset):
+        """Update the Preset object, according to the symbol definition.
 
         Fields described with field name are converted into field
         object, and fixed values are converted into bitarray.
 
         """
 
-        if fuzz is None:
+        if preset is None:
             return None
         else:
             keys_to_normalize = []
-            for k, v in fuzz.mappingFieldsMutators.items():
+            for k, v in preset.mappingFieldsMutators.items():
                 if isinstance(k, str):
                     keys_to_normalize.append(k)
             for k in keys_to_normalize:
-                fuzz.normalize_mappingFieldsMutators(k, current_symbol=self)
+                preset.normalize_mappingFieldsMutators(k, current_symbol=self)
 
     @public_api
-    def count(self, fuzz=None):
+    def count(self, preset=None):
         r"""The :meth:`count` method computes the expected number of unique
         messages produced, considering the initial symbol model, the
         preset fields and the fuzzed fields.
 
         The :meth:`count` method expects the same parameters as the :meth:`specialize` method:
 
-        :param fuzz: A fuzzing configuration used during the specialization process. Values
+        :param preset: A fuzzing configuration used during the specialization process. Values
                      in this configuration will override any field
                      definition, constraints, relationship
                      dependencies or parameterized fields. See
                      :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
                      purpose. The default value is :const:`None`.
-        :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
+        :type preset: :class:`Preset <netzob.Fuzzing.Preset.Preset>`, optional
         :return: The number of unique values the symbol specialization can produce.
         :rtype: a :class:`int`
 
@@ -418,18 +415,18 @@ class Symbol(AbstractField):
         >>> symbol.count()
         62324736
         >>>
-        >>> # Specify a fuzz configuration for field 'f2'
-        >>> fuzz = Fuzz()
-        >>> fuzz.set(f2, generator='determinist')
+        >>> # Specify a fuzzing configuration for field 'f2'
+        >>> preset = Preset()
+        >>> preset.fuzz(f2, generator='determinist')
         >>>
-        >>> symbol.count(fuzz=fuzz)
+        >>> symbol.count(preset=preset)
         7060224
 
         """
 
         count = 1
         for field in self.fields:
-            count *= field.count(fuzz=fuzz)
+            count *= field.count(preset=preset)
         return count
 
     def clearMessages(self):
@@ -512,9 +509,9 @@ def _test_many_relation_abstractions():
     ...                          eth_payload,
     ...                          eth_padding,
     ...                          eth_crc_802_3])
-    >>> fuzz = Fuzz()
-    >>> fuzz.set('eth.payload', b"PAYLOAD")
-    >>> symbol.abstract(next(symbol.specialize(fuzz=fuzz)))  # doctest: +ELLIPSIS
+    >>> preset = Preset()
+    >>> preset['eth.payload'] = b"PAYLOAD"
+    >>> symbol.abstract(next(symbol.specialize(preset=preset)))  # doctest: +ELLIPSIS
     OrderedDict([('eth.length', b'\x00\n'), ('eth.llc', b'...'), ('eth.payload', b'PAYLOAD'), ('eth.padding', b'...'), ('eth.crc', b'...')])
 
 

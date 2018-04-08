@@ -245,7 +245,7 @@ class State(AbstractState):
         self._logger.debug("[actor='{}'] Test if a callback function is defined at state '{}'".format(str(actor), self.name))
         for cbk in self.cbk_modify_transition:
             self._logger.debug("[actor='{}'] A callback function is defined at state '{}'".format(str(actor), self.name))
-            availableTransitions = self.transitions
+            availableTransitions = [cloned_transition.clone() for cloned_transition in self.transitions]
             nextTransition = cbk(availableTransitions,
                                  nextTransition,
                                  self,
@@ -316,9 +316,9 @@ class State(AbstractState):
         prioritizedTransitions = dict()
         for transition in self.transitions:
             if transition.priority in list(prioritizedTransitions.keys()):
-                prioritizedTransitions[transition.priority].append(transition)
+                prioritizedTransitions[transition.priority].append(transition.clone())
             else:
-                prioritizedTransitions[transition.priority] = [transition]
+                prioritizedTransitions[transition.priority] = [transition.clone()]
 
         availableTransitions = prioritizedTransitions[sorted(prioritizedTransitions.keys())[0]]
 

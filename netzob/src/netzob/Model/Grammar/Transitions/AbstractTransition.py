@@ -266,8 +266,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :param current_symbol:
                   Currently selected symbol that will be sent, either the initial
                   symbol or the symbol returned by the previous callback.
-           :param current_symbol_presets:
-                  Presets configuration associated to selected symbol.
+           :param current_symbol_preset:
+                  Preset configuration associated to selected symbol.
            :param current_state:
                   Current state in the automaton.
            :param last_sent_symbol:
@@ -296,7 +296,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
            :type available_symbols: ~typing.List[~netzob.Model.Vocabulary.Symbol.Symbol], required
            :type current_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
-           :type current_symbol_presets: :class:`dict`, required
+           :type current_symbol_preset: :class:`~netzob.Model.Vocabulary.Preset.Preset`, required
            :type current_state: :class:`~netzob.Model.Grammar.States.State.State`, required
            :type last_sent_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
            :type last_sent_message: :class:`~bitarray.bitarray`, required
@@ -308,8 +308,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :return:
              * The symbol that will be sent. This could be the same as the
                :attr:`current_symbol` or another one,
-             * A dict of key-value used to preset (parameterize) fields
-               during symbol specialization. Values in this dictionary will
+             * A preset configuration used to parameterize fields
+               during symbol specialization. This configuration will
                override any field definition, constraints or relationship
                dependencies (see :meth:`~netzob.Model.Vocabulary.Symbol.Symbol.specialize`,
                for more information).

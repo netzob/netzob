@@ -341,7 +341,7 @@ class Repeat(AbstractVariableNode):
         new_repeat.children = [new_children]
         return new_repeat
 
-    def count(self, fuzz=None):
+    def count(self, preset=None):
         r"""
 
         >>> from netzob.all import *
@@ -363,9 +363,9 @@ class Repeat(AbstractVariableNode):
 
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
+        if preset is not None and preset.get(self) is not None and preset.get(self).mode == FuzzingMode.GENERATE:
             # Retrieve the mutator
-            mutator = fuzz.get(self)
+            mutator = preset.get(self)
             return mutator.count()
         else:
             # Handle max repeat
@@ -377,7 +377,7 @@ class Repeat(AbstractVariableNode):
                 max_repeat = Repeat.MAX_REPEAT
 
             # Handle count() of children
-            count = self.children[0].count(fuzz=fuzz)
+            count = self.children[0].count(preset=preset)
 
             # Result
             count = count ** max_repeat
@@ -586,10 +586,10 @@ class Repeat(AbstractVariableNode):
         yield from newParsingPaths
 
     @typeCheck(SpecializingPath)
-    def specialize(self, originalSpecializingPath, fuzz=None, acceptCallBack=True):
+    def specialize(self, originalSpecializingPath, preset=None, acceptCallBack=True):
         """Specializes a Repeat"""
 
-        from netzob.Fuzzing.Fuzz import MaxFuzzingException
+        from netzob.Fuzzing.Mutator import MaxFuzzingException
 
         if originalSpecializingPath is None:
             raise Exception("Specializing path cannot be None")
@@ -597,10 +597,10 @@ class Repeat(AbstractVariableNode):
         newSpecializingPath = originalSpecializingPath
 
         # If we are in a fuzzing mode
-        if fuzz is not None and fuzz.get(self) is not None:
+        if preset is not None and preset.get(self) is not None:
 
             # Retrieve the mutator
-            mutator = fuzz.get(self)
+            mutator = preset.get(self)
 
             try:
                 # Chose the child according to the integer returned by the mutator
@@ -643,14 +643,14 @@ class Repeat(AbstractVariableNode):
             newSpecializingPath.addResult(self, bitarray())
             yield newSpecializingPath
         else:
-            yield from self._inner_specialize(newSpecializingPath, 0, i_repeat, fuzz)
+            yield from self._inner_specialize(newSpecializingPath, 0, i_repeat, preset)
 
-    def _inner_specialize(self, newSpecializingPath, i_repeat, max_repeat, fuzz):
+    def _inner_specialize(self, newSpecializingPath, i_repeat, max_repeat, preset):
 
         break_repeat = RepeatResult.CONTINUE
 
         child = self.children[0]
-        for path in child.specialize(newSpecializingPath, fuzz=fuzz):
+        for path in child.specialize(newSpecializingPath, preset=preset):
 
             oldResult = bitarray()
             if path.hasData(self):
@@ -680,7 +680,7 @@ class Repeat(AbstractVariableNode):
             if break_repeat is not RepeatResult.CONTINUE or i_repeat == max_repeat - 1:
                 yield path
             else:
-                yield from self._inner_specialize(path, i_repeat + 1, max_repeat, fuzz)
+                yield from self._inner_specialize(path, i_repeat + 1, max_repeat, preset)
 
     @property
     def nbRepeat(self):

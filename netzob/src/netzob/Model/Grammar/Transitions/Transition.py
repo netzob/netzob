@@ -48,6 +48,7 @@ from typing import Dict  # noqa: F401
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Preset import Preset
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
@@ -160,9 +161,9 @@ class Transition(AbstractTransition):
                  startState,
                  endState,
                  inputSymbol=None,
-                 inputSymbolPresets=None,
+                 inputSymbolPreset=None,  # type: Preset
                  outputSymbols=None,
-                 outputSymbolsPresets=None,  # type: Dict[Symbol,Dict]
+                 outputSymbolsPreset=None,  # type: Dict[Symbol,Preset]
                  name=None,
                  inputSymbolReactionTime=None,   # type: float
                  outputSymbolsReactionTime=None,  # type: Dict[Symbol,float]
@@ -181,9 +182,9 @@ class Transition(AbstractTransition):
             outputSymbols = []
 
         self.inputSymbol = inputSymbol
-        self.inputSymbolPresets = inputSymbolPresets
+        self.inputSymbolPreset = inputSymbolPreset
         self.outputSymbols = outputSymbols
-        self.outputSymbolsPresets = outputSymbolsPresets
+        self.outputSymbolsPreset = outputSymbolsPreset
         self.outputSymbolProbabilities = {}  # TODO: not yet exposed in the API
         self.inputSymbolReactionTime = inputSymbolReactionTime
         self.outputSymbolsReactionTime = outputSymbolsReactionTime
@@ -208,10 +209,10 @@ class Transition(AbstractTransition):
         transition.priority = self.priority
         transition.cbk_modify_symbol = self.cbk_modify_symbol
         transition.cbk_action = self.cbk_action
-        if self.inputSymbolPresets is not None:
-            transition.inputSymbolPresets = self.inputSymbolPresets.copy()
-        if self.outputSymbolsPresets is not None:
-            transition.outputSymbolsPresets = self.outputSymbolsPresets.copy()
+        if self.inputSymbolPreset is not None:
+            transition.inputSymbolPreset = self.inputSymbolPreset.copy()
+        if self.outputSymbolsPreset is not None:
+            transition.outputSymbolsPreset = self.outputSymbolsPreset.copy()
         transition.inverseInitiator = self.inverseInitiator
         transition.rate = self.rate
         transition.duration = self.duration
@@ -241,16 +242,16 @@ class Transition(AbstractTransition):
 
         # Retrieve the symbol to send
         symbol_to_send = self.inputSymbol
-        symbol_presets = self.inputSymbolPresets
+        symbol_preset = self.inputSymbolPreset
         actor.visit_log.append("  [+]   During transition '{}', sending input symbol '{}'".format(self.name, str(symbol_to_send)))
 
         # If a callback is defined, we can change or modify the selected symbol
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))
         for cbk in self.cbk_modify_symbol:
             self._logger.debug("[actor='{}'] A callback function is defined at transition '{}'".format(str(actor), self.name))
-            (symbol_to_send, symbol_presets) = cbk([symbol_to_send],
+            (symbol_to_send, symbol_preset) = cbk([symbol_to_send],
                                                    symbol_to_send,
-                                                   symbol_presets,
+                                                   symbol_preset,
                                                    self.startState,
                                                    actor.abstractionLayer.last_sent_symbol,
                                                    actor.abstractionLayer.last_sent_message,
@@ -267,12 +268,16 @@ class Transition(AbstractTransition):
             self._logger.debug("[actor='{}'] Nothing to write on abstraction layer (inputSymbol is an EmptySymbol)".format(str(actor)))
         else:
             try:
-                if actor.fuzz is not None and (len(actor.fuzz_states) == 0 or self.startState.name in actor.fuzz_states):
+                if actor.fuzzing_preset is not None and (len(actor.fuzzing_states) == 0 or self.startState.name in actor.fuzzing_states):
                     self._logger.debug("[actor='{}'] Fuzzing activated at transition".format(str(actor)))
                     actor.visit_log.append("  [+]   During transition '{}', fuzzing activated".format(self.name))
-                    (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, fuzz=actor.fuzz, actor=actor, cbk_action=self.cbk_action)
+                    if symbol_preset is not None:
+                        tmp_preset = symbol_preset + actor.fuzzing_preset
+                    else:
+                        tmp_preset = actor.fuzzing_preset
                 else:
-                    (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, actor=actor, cbk_action=self.cbk_action)
+                    tmp_preset = symbol_preset
+                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, actor=actor, cbk_action=self.cbk_action)
             except socket.timeout:
                 self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
                 self.active = False
@@ -300,7 +305,7 @@ class Transition(AbstractTransition):
         # Waits for the reception of a symbol
         from netzob.Simulator.Actor import ActorStopException
         try:
-            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(self.outputSymbolsPresets, actor=actor)
+            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(self.outputSymbolsPreset, actor=actor)
         except ActorStopException:
             raise
         except socket.timeout:
@@ -401,7 +406,7 @@ class Transition(AbstractTransition):
         self.active = True
 
         # Pick the output symbol to emit
-        (symbol_to_send, symbol_presets) = self.__pickOutputSymbol(actor)
+        (symbol_to_send, symbol_preset) = self.__pickOutputSymbol(actor)
         if symbol_to_send is None:
             self._logger.debug("[actor='{}'] No output symbol to send, we pick an EmptySymbol as output symbol".format(str(actor)))
             symbol_to_send = EmptySymbol()
@@ -414,12 +419,16 @@ class Transition(AbstractTransition):
 
         # Emit the symbol
         try:
-            if actor.fuzz is not None and (len(actor.fuzz_states) == 0 or self.startState in actor.fuzz_states):
+            if actor.fuzzing_preset is not None and (len(actor.fuzzing_states) == 0 or self.startState in actor.fuzzing_states):
                 self._logger.debug("[actor='{}'] Fuzzing activated at transition".format(str(actor)))
                 actor.visit_log.append("  [+]   During transition '{}', fuzzing activated".format(self.name))
-                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, fuzz=actor.fuzz, actor=actor, cbk_action=self.cbk_action)
+                if symbol_preset is not None:
+                    tmp_preset = symbol_preset + actor.fuzzing_preset
+                else:
+                    tmp_preset = actor.fuzzing_preset
             else:
-                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, actor=actor, cbk_action=self.cbk_action)
+                tmp_preset = symbol_preset
+            (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, actor=actor, cbk_action=self.cbk_action)
         except socket.timeout:
             self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
             self.active = False
@@ -491,12 +500,12 @@ class Transition(AbstractTransition):
             for outputSymbolsWithNoProbability in inner
         ]
 
-        # Random selection of the symbol and its associated presets
+        # Random selection of the symbol and its associated preset
         symbol_to_send = random.choice(distribution)
-        symbol_presets = {}
-        if self.outputSymbolsPresets is not None and isinstance(self.outputSymbolsPresets, dict):
-            if symbol_to_send in self.outputSymbolsPresets:
-                symbol_presets = self.outputSymbolsPresets[symbol_to_send]
+        symbol_preset = Preset()
+        if self.outputSymbolsPreset is not None and isinstance(self.outputSymbolsPreset, dict):
+            if symbol_to_send in self.outputSymbolsPreset:
+                symbol_preset = self.outputSymbolsPreset[symbol_to_send]
 
         # Update visit log
         actor.visit_log.append("  [+]   During transition '{}', choosing output symbol '{}'".format(self.name, str(symbol_to_send)))
@@ -505,9 +514,9 @@ class Transition(AbstractTransition):
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))
         for cbk in self.cbk_modify_symbol:
             self._logger.debug("[actor='{}'] A callback function is executed at transition '{}'".format(str(actor), self.name))
-            (symbol_to_send, symbol_presets) = cbk(self.outputSymbols,
+            (symbol_to_send, symbol_preset) = cbk(self.outputSymbols,
                                                    symbol_to_send,
-                                                   symbol_presets,
+                                                   symbol_preset,
                                                    self.startState,
                                                    actor.abstractionLayer.last_sent_symbol,
                                                    actor.abstractionLayer.last_sent_message,
@@ -519,7 +528,7 @@ class Transition(AbstractTransition):
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))
 
-        return (symbol_to_send, symbol_presets)
+        return (symbol_to_send, symbol_preset)
 
 
     ## Properties
@@ -544,16 +553,16 @@ class Transition(AbstractTransition):
 
     @public_api
     @property
-    def inputSymbolPresets(self):
-        return self.__inputSymbolPresets
+    def inputSymbolPreset(self):
+        return self.__inputSymbolPreset
 
-    @inputSymbolPresets.setter  # type: ignore
-    def inputSymbolPresets(self, inputSymbolPresets):
-        self.__inputSymbolPresets = None
-        # Normalize presets
-        if inputSymbolPresets is not None:
+    @inputSymbolPreset.setter  # type: ignore
+    def inputSymbolPreset(self, inputSymbolPreset):
+        self.__inputSymbolPreset = None
+        # Normalize preset
+        if inputSymbolPreset is not None:
             if not isinstance(self.inputSymbol, EmptySymbol):
-                self.__inputSymbolPresets = self.inputSymbol.normalize_presets(inputSymbolPresets)
+                self.__inputSymbolPreset = self.inputSymbol.normalize_preset(inputSymbolPreset)
 
     @public_api
     @property
@@ -594,17 +603,17 @@ class Transition(AbstractTransition):
 
     @public_api
     @property
-    def outputSymbolsPresets(self):
-        return self.__outputSymbolsPresets
+    def outputSymbolsPreset(self):
+        return self.__outputSymbolsPreset
 
-    @outputSymbolsPresets.setter  # type: ignore
-    def outputSymbolsPresets(self, outputSymbolsPresets):
-        self.__outputSymbolsPresets = {}
-        # Normalize presets
-        if outputSymbolsPresets is not None:
-            for outputSymbol, outputSymbolPresets in outputSymbolsPresets.items():
+    @outputSymbolsPreset.setter  # type: ignore
+    def outputSymbolsPreset(self, outputSymbolsPreset):
+        self.__outputSymbolsPreset = {}
+        # Normalize preset
+        if outputSymbolsPreset is not None:
+            for outputSymbol, outputSymbolPreset in outputSymbolsPreset.items():
                 if not isinstance(outputSymbol, EmptySymbol):
-                    self.__outputSymbolsPresets[outputSymbol] = outputSymbol.normalize_presets(outputSymbolPresets)
+                    self.__outputSymbolsPreset[outputSymbol] = outputSymbol.normalize_preset(outputSymbolPreset)
 
     @public_api
     @property

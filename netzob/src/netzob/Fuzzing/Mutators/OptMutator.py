@@ -129,7 +129,7 @@ class OptMutator(DomainMutator):
             # Initialize data generator
             self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=255)  # Arbitrarily maxValue
 
-    def count(self, fuzz=None):
+    def count(self, preset=None):
         r"""
 
         >>> from netzob.all import *
@@ -144,7 +144,7 @@ class OptMutator(DomainMutator):
         else:
 
             # Handle count() of children
-            count = self.domain.children[0].count(fuzz=fuzz)
+            count = self.domain.children[0].count(preset=preset)
             if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
                 return AbstractType.MAXIMUM_POSSIBLE_VALUES
             else:
@@ -180,8 +180,8 @@ class OptMutator(DomainMutator):
         """Override the global default mapping of types with their default
         mutators.
         """
-        from netzob.Fuzzing.Fuzz import Fuzz
-        self._mappingTypesMutators = Fuzz.mappingTypesMutators.copy()
+        from netzob.Model.Vocabulary.Preset import Preset
+        self._mappingTypesMutators = Preset.mappingTypesMutators.copy()
         for k, v in self._mappingTypesMutators.items():
             if k in mappingTypesMutators.keys():
                 mutator, mutator_default_parameters = v
@@ -195,7 +195,8 @@ class OptMutator(DomainMutator):
         :rtype: :class:`None`
         """
         # Call parent generate() method
-        super().generate()
+        if self.mode != FuzzingMode.FIXED:
+            super().generate()
 
         if self.mode == FuzzingMode.FIXED:
             return next(self.generator)
@@ -220,13 +221,13 @@ def _test_fixed():
     **Fixing the value of a node variable**
 
     >>> from netzob.all import *
-    >>> fuzz = Fuzz()
+    >>> preset = Preset()
     >>> v1 = Data(Raw(nbBytes=1))
     >>> v_opt = Opt(v1)
     >>> f1 = Field(v_opt)
     >>> symbol = Symbol([f1], name="sym")
-    >>> fuzz.set(v_opt, b'\x41\x42\x43')
-    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> preset[v_opt] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -238,13 +239,13 @@ def _test_fixed():
     **Fixing the value of a variable node through its name**
 
     >>> from netzob.all import *
-    >>> fuzz = Fuzz()
+    >>> preset = Preset()
     >>> v1 = Data(Raw(nbBytes=1), name='v1')
     >>> v_opt = Opt(v1, name='v_opt')
     >>> f1 = Field(v_opt)
     >>> symbol = Symbol([f1], name="sym")
-    >>> fuzz.set('v_opt', b'\x41\x42\x43')
-    >>> messages_gen = symbol.specialize(fuzz=fuzz)
+    >>> preset['v_opt'] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)

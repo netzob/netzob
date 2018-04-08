@@ -42,7 +42,6 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 
@@ -67,7 +66,7 @@ class AbstractVariableNode(AbstractVariable):
     def isnode(self):
         return True
 
-    def count(self, fuzz=None):
+    def count(self, preset=None):
         r"""
 
         >>> from netzob.all import *
@@ -87,14 +86,14 @@ class AbstractVariableNode(AbstractVariable):
         """
 
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
+        if preset is not None and preset.get(self) is not None and preset.get(self).mode == FuzzingMode.GENERATE:
             # Retrieve the mutator
-            mutator = fuzz.get(self)
-            return mutator.count(fuzz=fuzz)
+            mutator = preset.get(self)
+            return mutator.count(preset=preset)
         else:
             count = 1
             for t in self.children:
-                count *= t.count(fuzz=fuzz)
+                count *= t.count(preset=preset)
             return count
 
     def getVariables(self):

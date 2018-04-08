@@ -44,7 +44,6 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
-from netzob.Model.Vocabulary.Field import Field
 from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
 
@@ -97,9 +96,9 @@ class MessageSpecializer(object):
 
     """
 
-    def __init__(self, memory=None, fuzz=None):
+    def __init__(self, memory=None, preset=None):
         self.memory = memory
-        self.fuzz = fuzz
+        self.preset = preset
 
     def specializeSymbol(self, symbol):
         r"""This method generates a message based on the provided symbol definition.
@@ -114,10 +113,10 @@ class MessageSpecializer(object):
         >>> len(generated_data) > 4
         True
 
-        # we can use fix the value of one field through the fuzz object
-        >>> fuzz = Fuzz()
-        >>> fuzz.set("Value", "hello")
-        >>> next(s.specialize(fuzz=fuzz))
+        # we can use fix the value of one field through the preset object
+        >>> preset = Preset()
+        >>> preset["Value"] = "hello"
+        >>> next(s.specialize(preset=preset))
         b'\x01\x00\x00\x05hello'
 
         """
@@ -126,10 +125,10 @@ class MessageSpecializer(object):
 
         self._logger.debug("Specifies symbol '{0}'.".format(symbol.name))
 
-        # Normalize fuzz definition: fields described with field name
+        # Normalize preset definition: fields described with field name
         # are converted into field object, and values are converted
         # into bitarray.
-        symbol.normalize_fuzz(self.fuzz)
+        symbol.normalize_preset(self.preset)
 
         # This variable host all the specialization paths
         specializingPaths = [SpecializingPath(memory=self.memory)]
@@ -153,7 +152,7 @@ class MessageSpecializer(object):
 
         field = fields[i_current_field]
 
-        fs = FieldSpecializer(field, fuzz=self.fuzz)
+        fs = FieldSpecializer(field, preset=self.preset)
 
         for specializingPath in paths:
             new_paths = fs.specialize(specializingPath)
@@ -172,7 +171,7 @@ class MessageSpecializer(object):
                         # generatedContent has already been set
                         # (only works when symbol has one field
                         # and the field domain is a leaf)
-                        if idx > 0 and self.fuzz is not None and self.fuzz.get(field.domain) is not None and self.fuzz.get(field.domain).mode == FuzzingMode.MUTATE:
+                        if idx > 0 and self.preset is not None and self.preset.get(field.domain) is not None and self.preset.get(field.domain).mode == FuzzingMode.MUTATE:
                             pass
                         else:
                             self._produce_data(path, symbol)
@@ -227,9 +226,9 @@ class MessageSpecializer(object):
         self.__memory = memory
 
     @property
-    def fuzz(self):
-        return self.__fuzz
+    def preset(self):
+        return self.__preset
 
-    @fuzz.setter  # type: ignore
-    def fuzz(self, fuzz):
-        self.__fuzz = fuzz
+    @preset.setter  # type: ignore
+    def preset(self, preset):
+        self.__preset = preset

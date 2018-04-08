@@ -349,7 +349,6 @@ class Field(AbstractField):
         :rtype: :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`.
 
         >>> from netzob.all import *
-        >>> fuzz = Fuzz()
         >>> v1 = Data(uint8(), name='v1')
         >>> v2 = Data(uint8(), name='v2')
         >>> v_agg = Agg([v1, v2], name='v_agg')
@@ -362,18 +361,18 @@ class Field(AbstractField):
         return self.domain.getVariables()
 
     @public_api
-    def specialize(self, fuzz=None):
+    def specialize(self, preset=None):
         r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose
         content follows the symbol definition.
 
-        :param fuzz: A fuzzing configuration used during the specialization process. Values
+        :param preset: A fuzzing configuration used during the specialization process. Values
                      in this configuration will override any field
                      definition, constraints, relationship
                      dependencies or parameterized fields. See
                      :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
                      for a complete explanation of its use for fuzzing
                      purpose. The default value is :const:`None`.
-        :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
+        :type preset: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
         :return: The produced content after specializing the field.
         :rtype: :class:`bytes`
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
@@ -410,7 +409,7 @@ class Field(AbstractField):
                     field.domain.normalize_targets()
 
         from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
-        fs = FieldSpecializer(self, fuzz=fuzz)
+        fs = FieldSpecializer(self, preset=preset)
 
         specializing_paths = fs.specialize()
         return self._inner_specialize(specializing_paths)
@@ -419,13 +418,13 @@ class Field(AbstractField):
         for specializing_path in specializing_paths:
             yield specializing_path.getData(self.domain).tobytes()
 
-    def count(self, fuzz=None):
+    def count(self, preset=None):
         count = 1
         if len(self.fields) > 0:
             for field in self.fields:
-                count *= field.count(fuzz=fuzz)
+                count *= field.count(preset=preset)
         else:
-            count = self.domain.count(fuzz=fuzz)
+            count = self.domain.count(preset=preset)
         return count
 
     @property
@@ -512,13 +511,13 @@ def _test():
     b'hello john'
 
 
-    # Test field specialization with fuzz
+    # Test field specialization with fuzzing
 
     >>> from netzob.all import *
     >>> f = Field(String("hello"))
-    >>> fuzz = Fuzz()
-    >>> fuzz.set(f)
-    >>> next(f.specialize(fuzz=fuzz))
+    >>> preset = Preset()
+    >>> preset.fuzz(f)
+    >>> next(f.specialize(preset=preset))
     b'System("ls -al /")\x00                                                                                                                                                                                                                                             '
     """
 

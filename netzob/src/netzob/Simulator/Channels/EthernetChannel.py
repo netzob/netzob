@@ -228,8 +228,8 @@ class EthernetChannel(AbstractChannel):
         if self._socket is None:
             raise Exception("socket is not available")
 
-        self.header_presets["eth.payload"] = data
-        packet = next(self.header.specialize(presets=self.header_presets))
+        self.header_preset["eth.payload"] = data
+        packet = next(self.header.specialize(presets=self.header_preset))
         len_data = self._socket.sendto(packet, (self.interface,
                                                 EthernetChannel.ETH_P_ALL))
         return len_data
@@ -270,7 +270,7 @@ class EthernetChannel(AbstractChannel):
         if upperProtocol < 0 or upperProtocol > 0xffff:
             raise TypeError("Upper protocol should be between 0 and 0xffff")
 
-        self.header_presets['eth.type'] = upperProtocol
+        self.header_preset['eth.type'] = upperProtocol
 
     # Properties
 

@@ -246,10 +246,10 @@ class Alt(AbstractVariableNode):
         self._logger.debug("End of parsing of Alt variable")
 
     @typeCheck(SpecializingPath)
-    def specialize(self, specializingPath, fuzz=None):
+    def specialize(self, specializingPath, preset=None):
         """Specializes an Alt"""
 
-        from netzob.Fuzzing.Fuzz import MaxFuzzingException
+        from netzob.Fuzzing.Mutator import MaxFuzzingException
 
         if specializingPath is None:
             raise Exception("SpecializingPath cannot be None")
@@ -258,10 +258,10 @@ class Alt(AbstractVariableNode):
             raise Exception("Cannot specialize ALT if its has no children")
 
         # If we are in a fuzzing mode
-        if fuzz is not None and fuzz.get(self) is not None:
+        if preset is not None and preset.get(self) is not None:
 
             # Retrieve the mutator
-            mutator = fuzz.get(self)
+            mutator = preset.get(self)
 
             try:
                 # Chose the child according to the integer returned by the mutator
@@ -297,7 +297,7 @@ class Alt(AbstractVariableNode):
 
         newSpecializingPath = specializingPath.clone()
 
-        for childSpecializingPath in child.specialize(newSpecializingPath, fuzz=fuzz):
+        for childSpecializingPath in child.specialize(newSpecializingPath, preset=preset):
             value = childSpecializingPath.getData(child)
             self._logger.debug("Generated value for {}: {} ({})".format(self, value, id(self)))
             childSpecializingPath.addResult(self, value)

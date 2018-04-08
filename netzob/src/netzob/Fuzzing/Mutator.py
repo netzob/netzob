@@ -49,6 +49,10 @@ from netzob.Common.Utils.Decorators import public_api
 from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.conf import Conf
 
+class MaxFuzzingException(Exception):
+    pass
+
+
 @public_api
 class FuzzingMode(Enum):
     """Mutator Fuzzing modes"""

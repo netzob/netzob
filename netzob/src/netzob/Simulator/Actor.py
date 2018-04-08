@@ -51,7 +51,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Grammar.Automata import Automata
 from netzob.Model.Grammar.States.AbstractState import AbstractState
 from netzob.Simulator.AbstractionLayer import AbstractionLayer
-from netzob.Fuzzing.Fuzz import Fuzz
+from netzob.Model.Vocabulary.Preset import Preset
 
 
 class ActorStopException(Exception):
@@ -75,42 +75,40 @@ class Actor(Thread):
                       value is :const:`True`. The value can be changed
                       during a communication, in order to reverse the
                       way the actors communicate together.
-    :param fuzz: A fuzzing configuration used during the
-                 specialization process when writing symbols over the
-                 abstraction layer. Values in this configuration will
-                 override any field definition, constraints,
-                 relationship dependencies or parameterized
-                 fields. See :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
-                 for a complete explanation of its use for fuzzing
-                 purpose. The default value is :const:`None`.
-    :param fuzz_states: A list of states on which format message
-                        fuzzing is applied. Default is ``[]``,
-                        which means that the fuzzing configuration
-                        is applied on each state.
+    :param fuzzing_preset: A fuzzing configuration used during the
+                           specialization process when writing symbols over the
+                           abstraction layer. Values in this configuration will
+                           override any field definition, constraints,
+                           relationship dependencies or parameterized
+                           fields. See :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
+                           for a complete explanation of its use for fuzzing
+                           purpose. The default value is :const:`None`.
+    :param fuzzing_states: A list of states on which format message
+                           fuzzing is applied. Default is ``[]``,
+                           which means that the fuzzing configuration
+                           is applied on each state.
     :param name: The name of the actor. Default value is 'Actor'.
     :param keep_open: Tells if the actor should be let active after reaching its targeted state or after reaching the maximum number of transitions. Default value is ``False``.
     :param memory: This parameter is a memory used to store variable values during specialization
                    and abstraction of successive symbols, especially to handle
                    inter-symbol relationships. If None, a local memory is
                    created by default and used internally.
-    :param presets: A dictionary of keys:values used to preset
-                    (parameterize) fields during symbol
-                    specialization, for all symbols emitted by the actor. Values in this dictionary will
-                    override any field definition, constraints or
-                    relationship dependencies. The default value is :const:`None`.
+    :param actor_preset: A preset configuration used during specialization and abstraction of symbols emitted and received by the actor. Values
+                         in this configuration will override any field
+                         definition, constraints or relationship dependencies. See
+                         :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+                         for a complete explanation of its usage.
+                         Default is None.
     :param cbk_data: A callback used to tell if the current actor is concerned by the received data on the communication channel. See description below.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
                     required
     :type initiator: :class:`bool`, optional
-    :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
-    :param fuzz_states: :class:`dict` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
+    :type fuzzing_preset: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
+    :type fuzzing_states: :class:`dict` of :class:`State <netzob.Model.Grammar.States.State.State>`, optional
     :type name: :class:`str`, optional
     :type keep_open: :class:`bool`, optional
     :type memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`, optional
-    :type presets: ~typing.Dict[~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
-                   ~typing.Union[~bitarray.bitarray,bytes,
-                   ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
-                   optional
+    :type actor_preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
     :type cbk_data: :class:`Callable <collections.abc.Callable>`
 
 
@@ -425,7 +423,7 @@ class Actor(Thread):
     ...        last_received_symbol_name = last_received_symbol.name
     ...    else:
     ...        last_received_symbol_name = None
-    ...    presets = {}
+    ...    preset = Preset()
     ...
     ...    # Building the output symbol by incrementing the value of the last
     ...    # received symbol
@@ -434,12 +432,12 @@ class Actor(Thread):
     ...        field_data = structured_data[last_received_symbol.fields[0].name]
     ...        field_data_int = int.from_bytes(field_data, byteorder='big')
     ...        field_data = int(field_data_int + 1).to_bytes(length=1, byteorder='big')
-    ...        presets[current_symbol.fields[0]] = field_data
+    ...        preset[current_symbol.fields[0]] = field_data
     ...    else:
-    ...        presets[current_symbol.fields[0]] = b'\x02'
+    ...        preset[current_symbol.fields[0]] = b'\x02'
     ...
     ...    # Sending current symbol with specific preset
-    ...    return (current_symbol, presets)
+    ...    return (current_symbol, preset)
     >>>
     >>> # We create the symbols
     >>> symbol1 = Symbol(fields=[Field(Raw(nbBytes=1))])
@@ -599,7 +597,7 @@ class Actor(Thread):
     ...        last_received_symbol_name = last_received_symbol.name
     ...    else:
     ...        last_received_symbol_name = None
-    ...    presets = {}
+    ...    preset = Preset()
     ...
     ...    # Building the output symbol by incrementing the value of the last received symbol
     ...    if last_received_symbol is not None and last_received_message is not None:
@@ -607,12 +605,12 @@ class Actor(Thread):
     ...        field_data = structured_data[last_received_symbol.fields[0].name]
     ...        field_data_int = int.from_bytes(field_data, byteorder='big')
     ...        field_data = int(field_data_int + 1).to_bytes(length=1, byteorder='big')
-    ...        presets[current_symbol.fields[0]] = field_data
+    ...        preset[current_symbol.fields[0]] = field_data
     ...    else:
-    ...        presets[current_symbol.fields[0]] = b'\x02'
+    ...        preset[current_symbol.fields[0]] = b'\x02'
     ...
-    ...    # Sending current symbol with specific presets
-    ...    return (current_symbol, presets)
+    ...    # Sending current symbol with specific preset
+    ...    return (current_symbol, preset)
     >>>
     >>> # We create the symbols
     >>> symbol1 = Symbol(fields=[Field(Raw(nbBytes=1))], name='symbol1')
@@ -754,6 +752,7 @@ class Actor(Thread):
     of a client in its automaton, through a callback method.
 
     >>> from netzob.all import *
+    >>> random.seed(0)
     >>> import time
     >>>
     >>> # Creation of a callback function that returns a new transition
@@ -761,11 +760,10 @@ class Actor(Thread):
     ...                          last_sent_symbol, last_sent_message, last_sent_structure,
     ...                          last_received_symbol, last_received_message, last_received_structure):
     ...
-    ...     # Modify the selected transition so that we change the next state
-    ...     if nextTransition.endState == nextTransition.startState:
+    ...     # Modify the selected transition
+    ...     if nextTransition in availableTransitions:
     ...         availableTransitions.remove(nextTransition)
-    ...         if len(availableTransitions) > 0:
-    ...             nextTransition = random.choice(availableTransitions)
+    ...     nextTransition = random.choice(availableTransitions)
     ...     return nextTransition
     >>>
     >>> # We create the symbols
@@ -902,6 +900,18 @@ class Actor(Thread):
       [+]   Picking transition 'Open'
       [+]   Transition 'Open' lead to state 'S1'
       [+] At state 'S1'
+      [+]   Picking transition 'T2'
+      [+]   Changing transition to 'T1', through callback
+      [+]   During transition 'T1', sending input symbol 'Symbol'
+      [+]   During transition 'T1', receiving expected output symbol 'Symbol'
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Picking transition 'T2'
+      [+]   Changing transition to 'T1', through callback
+      [+]   During transition 'T1', sending input symbol 'Symbol'
+      [+]   During transition 'T1', receiving expected output symbol 'Symbol'
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
       [+]   Picking transition 'T1'
       [+]   Changing transition to 'T2', through callback
       [+]   During transition 'T2', sending input symbol 'Symbol'
@@ -929,6 +939,14 @@ class Actor(Thread):
       [+]   Receiving input symbol 'Symbol', which corresponds to transition 'T1'
       [+]   During transition 'T1', choosing output symbol 'Symbol'
       [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Symbol', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Symbol'
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Receiving input symbol 'Symbol', which corresponds to transition 'T1'
+      [+]   During transition 'T1', choosing output symbol 'Symbol'
+      [+]   Transition 'T1' lead to state 'S1'
 
 
     **Modification of the current transition of a server through a callback**
@@ -938,6 +956,7 @@ class Actor(Thread):
 
     >>> from netzob.all import *
     >>> import time
+    >>> random.seed(0)
     >>>
     >>> # Creation of a callback function that returns a new transition
     >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
@@ -945,10 +964,17 @@ class Actor(Thread):
     ...                          last_received_symbol, last_received_message, last_received_structure):
     ...
     ...     # Modify the selected transition so that we change the next state
-    ...     if nextTransition.endState == nextTransition.startState:
-    ...         availableTransitions.remove(nextTransition)
-    ...         if len(availableTransitions) > 0:
-    ...             nextTransition = random.choice(availableTransitions)
+    ...     initialTransition = nextTransition
+    ...     while True:
+    ...         if len(availableTransitions) == 0:
+    ...             break
+    ...         if nextTransition.endState != current_state and initialTransition != nextTransition:
+    ...             break
+    ...         if nextTransition in availableTransitions:
+    ...             availableTransitions.remove(nextTransition)
+    ...         if len(availableTransitions) == 0:
+    ...             break
+    ...         nextTransition = random.choice(availableTransitions)
     ...     return nextTransition
     >>>
     >>> # We create the symbols
@@ -1713,12 +1739,12 @@ class Actor(Thread):
     <BLANKLINE>
     >>>
     >>> # Define fuzzing configuration
-    >>> fuzz = Fuzz()
-    >>> fuzz.set(symbol1)
+    >>> preset = Preset()
+    >>> preset.fuzz(symbol1)
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> bob = Actor(automata=bob_automata, channel=channel, fuzz=fuzz, name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, fuzzing_preset=preset, name="Bob")
     >>> bob.nbMaxTransitions = 3
     >>>
     >>> # Create Alice actor (a server)
@@ -1859,13 +1885,13 @@ class Actor(Thread):
     <BLANKLINE>
     >>>
     >>> # Define fuzzing configuration
-    >>> fuzz = Fuzz()
-    >>> fuzz.set(symbol1)
-    >>> fuzz.set(symbol2)
+    >>> preset = Preset()
+    >>> preset.fuzz(symbol1)
+    >>> preset.fuzz(symbol2)
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
-    >>> bob = Actor(automata=bob_automata, channel=channel, fuzz=fuzz, fuzz_states=['S2'], name="Bob")
+    >>> bob = Actor(automata=bob_automata, channel=channel, fuzzing_preset=preset, fuzzing_states=['S2'], name="Bob")
     >>> bob.nbMaxTransitions = 3
     >>>
     >>> # Create Alice actor (a server)
@@ -1921,20 +1947,20 @@ class Actor(Thread):
                  automata,          # type: Automata
                  channel,           # type: AbstractType
                  initiator=True,    # type: bool
-                 fuzz=None,         # type: Fuzz
-                 fuzz_states=[],    # type: dict
+                 fuzzing_preset=None,  # type: Preset
+                 fuzzing_states=[],    # type: dict
                  name="Actor",      # type: str
                  keep_open=False,   # type: bool
                  memory=None,
-                 presets=None,
+                 actor_preset=None,
                  cbk_data=None
                  ):
         # type: (...) -> None
         Thread.__init__(self)
         self.automata = automata.clone()
         self.initiator = initiator
-        self.fuzz = fuzz
-        self.fuzz_states = fuzz_states
+        self.fuzzing_preset = fuzzing_preset
+        self.fuzzing_states = fuzzing_states
         self.name = name
         self.__stopEvent = Event()
         self.keep_open = keep_open
@@ -1953,7 +1979,7 @@ class Actor(Thread):
         self.visit_log = []
 
         # Create abstraction layer
-        self.abstractionLayer = AbstractionLayer(channel, self.automata.vocabulary, memory=memory, presets=presets, cbk_data=cbk_data)
+        self.abstractionLayer = AbstractionLayer(channel, self.automata.vocabulary, memory=memory, preset=actor_preset, cbk_data=cbk_data)
 
     def __str__(self):
         return str(self.name)
@@ -2098,22 +2124,22 @@ class Actor(Thread):
         self.__initiator = initiator
 
     @property
-    def fuzz(self):
-        return self.__fuzz
+    def fuzzing_preset(self):
+        return self.__fuzzing_preset
 
-    @fuzz.setter  # type: ignore
-    @typeCheck(Fuzz)
-    def fuzz(self, fuzz):
-        self.__fuzz = fuzz
+    @fuzzing_preset.setter  # type: ignore
+    @typeCheck(Preset)
+    def fuzzing_preset(self, fuzzing_preset):
+        self.__fuzzing_preset = fuzzing_preset
 
     @property
-    def fuzz_states(self):
-        return self.__fuzz_states
+    def fuzzing_states(self):
+        return self.__fuzzing_states
 
-    @fuzz_states.setter  # type: ignore
+    @fuzzing_states.setter  # type: ignore
     @typeCheck(list)
-    def fuzz_states(self, fuzz_states):
-        self.__fuzz_states = fuzz_states
+    def fuzzing_states(self, fuzzing_states):
+        self.__fuzzing_states = fuzzing_states
 
     @public_api
     @property
@@ -2311,7 +2337,7 @@ def _test_context():
     times. Alice answers every time with the data ``"hello"``.
 
     We also create a context, through a Memory object, that allows to persist a variable accross states and transitions changes.
-    An integer variable is created and memorize for Alice actor. Its value is incremented at each transition.
+    An integer variable is created and memorized for Alice actor. Its value is incremented at each transition.
 
     >>> from netzob.all import *
     >>> import time
@@ -2374,7 +2400,7 @@ def _test_context():
     >>> alice_symbolList = [alice_symbol_input]
     >>>
     >>> # Output symbol
-    >>> alice_var_integer = Data(uint32(), scope=Scope.MESSAGE, name='Alice integer')
+    >>> alice_var_integer = Data(uint32(), name='Alice integer')
     >>> alice_f1_output = Field("hello", name="Alice Field f1")
     >>> alice_f2_output = Field(alice_var_integer, name="Alice Field f2")
     >>> alice_symbol_output = Symbol(name="Alice Output Symbol", fields=[alice_f1_output, alice_f2_output])
@@ -2446,7 +2472,6 @@ def _test_context():
     >>> alice.start()
     >>> time.sleep(0.5)
     >>> bob.start()
-    >>>
     >>> time.sleep(1)
     Current state: S1
     Current value for f2: 3626764237
@@ -2529,7 +2554,7 @@ def _test_callback_modify_symbol():
     ...        last_received_symbol_name = last_received_symbol.name
     ...    else:
     ...        last_received_symbol_name = None
-    ...    presets = {}
+    ...    preset = Preset()
     ...
     ...    # Building the output symbol by incrementing the value of the last
     ...    # received symbol
@@ -2538,12 +2563,12 @@ def _test_callback_modify_symbol():
     ...        field_data = structured_data[last_received_symbol.fields[0].name]
     ...        field_data_int = int.from_bytes(field_data, byteorder='big')
     ...        field_data = int(field_data_int + 1).to_bytes(length=1, byteorder='big')
-    ...        presets[current_symbol.fields[0]] = field_data
+    ...        preset[current_symbol.fields[0]] = field_data
     ...    else:
-    ...        presets[current_symbol.fields[0]] = b'\x02'
+    ...        preset[current_symbol.fields[0]] = b'\x02'
     ...
     ...    # Sending current symbol with specific preset
-    ...    return (current_symbol, presets)
+    ...    return (current_symbol, preset)
     >>>
     >>> # We create the symbols
     >>> symbol1 = Symbol(fields=[Field(Raw(nbBytes=1))])

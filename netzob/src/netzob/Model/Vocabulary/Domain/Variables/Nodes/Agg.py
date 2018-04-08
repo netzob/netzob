@@ -479,16 +479,16 @@ class Agg(AbstractVariableNode):
                 yield childParsingPath
 
     @typeCheck(SpecializingPath)
-    def specialize(self, specializingPath, fuzz=None):
+    def specialize(self, specializingPath, preset=None):
         """Specializes an Agg"""
 
-        from netzob.Fuzzing.Fuzz import MaxFuzzingException
+        from netzob.Fuzzing.Mutator import MaxFuzzingException
 
         # If we are in a fuzzing mode
-        if fuzz is not None and fuzz.get(self) is not None:
+        if preset is not None and preset.get(self) is not None:
 
             # Retrieve the mutator
-            mutator = fuzz.get(self)
+            mutator = preset.get(self)
 
             if mutator.mode == FuzzingMode.FIXED:
                 while True:
@@ -499,7 +499,7 @@ class Agg(AbstractVariableNode):
                     specializingPath.addResult(self, value)
                     yield specializingPath
 
-            for path in self._inner_specialize(specializingPath, 0, fuzz):
+            for path in self._inner_specialize(specializingPath, 0, preset):
 
                 try:
                     # Just call the generate() method to increment the counter of mutation
@@ -511,9 +511,9 @@ class Agg(AbstractVariableNode):
                 yield path
 
         else:
-            yield from self._inner_specialize(specializingPath, 0, fuzz)
+            yield from self._inner_specialize(specializingPath, 0, preset)
 
-    def _inner_specialize(self, specializingPath, idx, fuzz):
+    def _inner_specialize(self, specializingPath, idx, preset):
 
         # Select the child to specialize
         child = self.children[idx]
@@ -538,7 +538,7 @@ class Agg(AbstractVariableNode):
             # Nothing to specialize in this case (the recursive specialization is done later)
             childSpecializingPaths = (specializingPath, )
         else:
-            childSpecializingPaths = child.specialize(specializingPath, fuzz=fuzz)
+            childSpecializingPaths = child.specialize(specializingPath, preset=preset)
 
         for path in childSpecializingPaths:
 
@@ -548,7 +548,7 @@ class Agg(AbstractVariableNode):
                     newResult = path.getData(self)
                 else:
                     newResult = bitarray('')
-                for inner_path in self._inner_specialize(path, idx, fuzz):
+                for inner_path in self._inner_specialize(path, idx, preset):
 
                     if inner_path.hasData(self):
                         current_value = inner_path.getData(self)
@@ -559,7 +559,7 @@ class Agg(AbstractVariableNode):
                 self._produce_data(path, specialize_last_child)
                 yield path
             else:
-                yield from self._inner_specialize(path, idx + 1, fuzz)
+                yield from self._inner_specialize(path, idx + 1, preset)
 
     def _produce_data(self, path, specialize_last_child):
         data = bitarray()
