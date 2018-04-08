@@ -101,8 +101,10 @@ class AbstractionLayer(object):
                   UDPClient...).
     :var symbols: The list of permitted symbols during translation from/to
                   concrete messages.
+    :var actor: An actor that will visit the associated automaton and provide a dedicated memory context.
     :vartype channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`
     :vartype symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabular.Symbol.Symbol>`
+    :vartype actor: :class:`Actor <netzob.Simulator.Actor.Actor>`
 
 
     **Usage example of the abstraction layer**
@@ -193,22 +195,24 @@ class AbstractionLayer(object):
     """
 
     def __init__(self, channel, symbols, actor=None):
+
+        # Initialize public variables from parameters
         self.channel = channel
         self.symbols = symbols
         self.actor = actor
 
-        # Initialize local variables
-        self.specializer = None
-        self.parser = None
-        self.flow_parser = None
+        # Initialize local private variables
+        self.__specializer = None
+        self.__parser = None
+        self.__flow_parser = None
         if self.actor is None:
-            self.memory = Memory()
+            self.memory = Memory()  # self.memory expects specializer, parser and flow_parser to be initialized
+        self.__specializer = MessageSpecializer(memory=self.memory)
+        self.__parser = MessageParser(memory=self.memory)
+        self.__flow_parser = FlowParser(memory=self.memory)
+        self.__queue_input = Queue()
 
-        # Instanciate inner instance variables
-        self.specializer = MessageSpecializer(memory=self.memory)
-        self.parser = MessageParser(memory=self.memory)
-        self.flow_parser = FlowParser(memory=self.memory)
-
+        # Initialize local variables
         # Variables used to keep track of the last sent and received symbols and associated messages
         self.last_sent_symbol = None
         self.last_sent_message = None
@@ -216,8 +220,6 @@ class AbstractionLayer(object):
         self.last_received_symbol = None
         self.last_received_message = None
         self.last_received_structure = None
-
-        self.__queue_input = Queue()
 
     @typeCheck(Symbol)
     def writeSymbol(self, symbol, rate=None, duration=None, preset=None, cbk_action=None):
@@ -319,8 +321,8 @@ class AbstractionLayer(object):
 
         self._logger.debug("Specializing symbol '{0}' (id={1}).".format(symbol.name, id(symbol)))
 
-        self.specializer.preset = preset
-        path = next(self.specializer.specializeSymbol(symbol))
+        self.__specializer.preset = preset
+        path = next(self.__specializer.specializeSymbol(symbol))
 
         data = path.generatedContent.tobytes()
 
@@ -333,10 +335,10 @@ class AbstractionLayer(object):
                 field_data = b''
             data_structure[field.name] = field_data
 
-        self.specializer.preset = None  # This is needed, in order to avoid applying the preset configuration on an already preseted symbol
+        self.__specializer.preset = None  # This is needed, in order to avoid applying the preset configuration on an already preseted symbol
 
-        self.memory = self.specializer.memory
-        self.parser.memory = self.memory
+        self.memory = self.__specializer.memory
+        self.__parser.memory = self.memory
 
         self._logger.debug("Writing the following data to the commnunication channel: '{}'".format(data))
         self._logger.debug("Writing the following symbol to the commnunication channel: '{}'".format(symbol.name))
@@ -388,7 +390,7 @@ class AbstractionLayer(object):
         # if we read some bytes, we try to abstract them
         if len(data) > 0:
             try:
-                symbols_and_data = self.flow_parser.parseFlow(
+                symbols_and_data = self.__flow_parser.parseFlow(
                     RawMessage(data), self.symbols)
                 for (symbol, alignment) in symbols_and_data:
                     symbols.append(symbol)
@@ -396,8 +398,8 @@ class AbstractionLayer(object):
                 self._logger.error(e)
 
             if len(symbols) > 0:
-                self.memory = self.flow_parser.memory
-                self.specializer.memory = self.memory
+                self.memory = self.__flow_parser.memory
+                self.__specializer.memory = self.memory
         else:
             symbols.append(EmptySymbol())
 
@@ -459,11 +461,11 @@ class AbstractionLayer(object):
         if len(data) > 0:
             for potentialSymbol in self.symbols:
                 try:
-                    aligned_data = DataAlignment.align([data], potentialSymbol, encoded=False, messageParser=self.parser)
+                    aligned_data = DataAlignment.align([data], potentialSymbol, encoded=False, messageParser=self.__parser)
 
                     symbol = potentialSymbol
-                    self.memory = self.parser.memory
-                    self.specializer.memory = self.memory
+                    self.memory = self.__parser.memory
+                    self.__specializer.memory = self.memory
                     break
                 except Exception as e:
                     self._logger.debug(e)
@@ -560,9 +562,9 @@ class AbstractionLayer(object):
 
         self._logger.debug("Reseting abstraction layer")
         self.memory = Memory()
-        self.specializer = MessageSpecializer(memory=self.memory)
-        self.parser = MessageParser(memory=self.memory)
-        self.flow_parser = FlowParser(memory=self.memory)
+        self.__specializer = MessageSpecializer(memory=self.memory)
+        self.__parser = MessageParser(memory=self.memory)
+        self.__flow_parser = FlowParser(memory=self.memory)
 
     @property
     def queue_input(self):
@@ -587,12 +589,12 @@ class AbstractionLayer(object):
             self.__memory = memory
 
         # Update other instance variables
-        if self.specializer is not None:
-            self.specializer.memory = self.memory
-        if self.parser is not None:
-            self.parser.memory = self.memory
-        if self.flow_parser is not None:
-            self.flow_parser.memory = self.memory
+        if self.__specializer is not None:
+            self.__specializer.memory = self.memory
+        if self.__parser is not None:
+            self.__parser.memory = self.memory
+        if self.__flow_parser is not None:
+            self.__flow_parser.memory = self.memory
 
 
 def _test():

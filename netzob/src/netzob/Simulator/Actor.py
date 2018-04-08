@@ -1192,8 +1192,8 @@ class Actor(Thread):
     >>> alice_s4 = State(name="S4")
     >>> t0 = OpenChannelTransition(alice_s0, alice_s1, name="Open")
     >>> t1 = Transition(alice_s1, alice_s2, inputSymbol=helloAlice, outputSymbols=[helloBob], name="Hello")
-    >>> outputSymbolsReactionTime = {bye: 0.5}
-    >>> t2 = Transition(alice_s2, alice_s3, inputSymbol=None, outputSymbols=[bye], outputSymbolsReactionTime=outputSymbolsReactionTime, name="Bye")
+    >>> t2 = Transition(alice_s2, alice_s3, inputSymbol=None, outputSymbols=[bye], name="Bye")
+    >>> t2.outputSymbolsReactionTime = {bye: 0.5}
     >>> t3 = CloseChannelTransition(alice_s3, alice_s4, name="Close")
     >>> alice_automata = Automata(alice_s0, allSymbols)
     >>>
@@ -1306,12 +1306,11 @@ class Actor(Thread):
     >>> s2 = State(name="Close state")
     >>> error_state = State(name="Error state")
     >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
-    >>> outputSymbolsReactionTime = {symbol: 2.0}
     >>> mainTransition = Transition(startState=s1, endState=s1,
     ...                             inputSymbol=symbol,
     ...                             outputSymbols=[symbol],
-    ...                             outputSymbolsReactionTime=outputSymbolsReactionTime,
     ...                             name="T1")
+    >>> mainTransition.outputSymbolsReactionTime = {symbol: 2.0}
     >>> closeTransition1 = CloseChannelTransition(startState=error_state, endState=s2, name="Close with error")
     >>> closeTransition2 = CloseChannelTransition(startState=s1, endState=s2, name="Close")
     >>> automata = Automata(s0, symbolList)
