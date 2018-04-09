@@ -162,20 +162,6 @@ class Repeat(AbstractVariableNode):
     b'AAAAAAAAAAAAAAAA'
 
 
-    **Usage of a delimiter in Repeat**
-
-    We can specify a delimiter between each repeated element, as
-    depicted in the following example:
-
-    >>> from netzob.all import *
-    >>> delimiter = bitarray(endian='big')
-    >>> delimiter.frombytes(b"-")
-    >>> f = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=(2, 4),
-    ...           delimiter=delimiter), name='f1')
-    >>> next(f.specialize())
-    b'A-B-B'
-
-
     **Limiting the number of repetitions with an integer**
 
     The following example shows how to create a Repeat variable whose
@@ -203,6 +189,20 @@ class Repeat(AbstractVariableNode):
     >>> from netzob.all import *
     >>> var = 3
     >>> f1 = Field(Repeat(String("john"), nbRepeat=var))
+
+
+    **Usage of a delimiter in Repeat**
+
+    We can specify a delimiter between each repeated element, as
+    depicted in the following example:
+
+    >>> from netzob.all import *
+    >>> delimiter = bitarray(endian='big')
+    >>> delimiter.frombytes(b"-")
+    >>> f = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=(2, 4),
+    ...           delimiter=delimiter), name='f1')
+    >>> next(f.specialize())
+    b'A-B-B'
 
 
     **Limiting the number of repetitions with the value of another field**
