@@ -132,7 +132,8 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         :type cbk_method: ~typing.Callable, required
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
-        :attr:`cbk_method` should have the following prototype:
+        The callback function that can be used in the
+        :attr:`cbk_method` parameter has the following prototype:
 
         .. function:: cbk_method(availableTransitions, nextTransition,\
                                  current_state, last_sent_symbol,\
@@ -173,20 +174,19 @@ class AbstractState(object, metaclass=abc.ABCMeta):
                   layer, and thus making it possible to create relationships
                   with the previously received message structure.
 
-           :type availableTransitions: ~typing.List[~netzob.Model.Grammar.Transitions.Transition.Transition], required
-           :type nextTransition: :class:`~netzob.Model.Grammar.Transitions.Transition.Transition`, required
-           :type current_state: :class:`~netzob.Model.Grammar.States.State.State`, required
-           :type last_sent_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
-           :type last_sent_message: :class:`~bitarray.bitarray`, required
-           :type last_sent_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`, required
-           :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
-           :type last_received_message: :class:`~bitarray.bitarray`, required
-           :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`, required
+           :type availableTransitions: ~typing.List[~netzob.Model.Grammar.Transitions.Transition.Transition]
+           :type nextTransition: :class:`~netzob.Model.Grammar.Transitions.Transition.Transition`
+           :type current_state: :class:`~netzob.Model.Grammar.States.State.State`
+           :type last_sent_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+           :type last_sent_message: :class:`~bitarray.bitarray`
+           :type last_sent_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
+           :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+           :type last_received_message: :class:`~bitarray.bitarray`
+           :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
 
-           :return:
-             The callback function should return a transition (which could be
-             the original transition or another one in the available transitions).
-           :rtype: ~netzob.Model.Grammar.Transitions.Transition.Transition
+           The callback function should return a transition object (:class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`),
+           which could be the original transition or another one in
+           the available transitions.
 
         """
 

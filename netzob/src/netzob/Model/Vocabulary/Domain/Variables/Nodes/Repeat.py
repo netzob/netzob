@@ -111,20 +111,20 @@ class Repeat(AbstractVariableNode):
 
        :param nb_repeat: the number of times the child element has been parsed
                           or specialized.
-       :type nb_repeat: int, required
+       :type nb_repeat: int
        :param data: the already parsed or specialized data.
-       :type data: ~bitarray.bitarray, required
+       :type data: ~bitarray.bitarray
        :param path: data structure that allows access to the values of the
                     parsed :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
                     elements.
-       :type path: object, required
+       :type path: object
        :param child: the repeated element.
-       :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
+       :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
        :param remaining: the remaining data to be parsed.
                          Only set in parsing mode. In specialization mode, this
                          parameter will have a :const:`None` value. This parameter can
                          therefore be used to identify the current mode.
-       :type remaining: ~bitarray.bitarray, required
+       :type remaining: ~bitarray.bitarray
 
     The ``child`` parameter allows access to the root of a tree structure.
     The ``child`` :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`

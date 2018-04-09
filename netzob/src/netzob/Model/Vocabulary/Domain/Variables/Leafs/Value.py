@@ -83,21 +83,21 @@ class Value(AbstractRelationVariableLeaf):
 
     **Callback prototype**
 
-    A callback function can be used to specify a complex
-    relationship. The callback function that can be used in the
-    ``operation`` parameter has the following prototype:
+    The callback function that can be used to specify a complex
+    relationship in the ``operation`` parameter has the following
+    prototype:
 
     .. function:: cbk_operation(data, path, variable)
        :noindex:
 
        :param data: contains the current data of the targeted field.
-       :type data: ~bitarray.bitarray, required
+       :type data: ~bitarray.bitarray
        :param path: data structure that allows access to the values of the
                     :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
                     element.
-       :type path: object, required
+       :type path: object
        :param variable: the current Value variable.
-       :type variable: ~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value, required
+       :type variable: ~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value
 
     Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     values is done through the ``path``, thanks to its methods
@@ -234,7 +234,6 @@ class Value(AbstractRelationVariableLeaf):
     Traceback (most recent call last):
     ...
     netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'f', cannot abstract the data: 'b'\x02\x80''. Error: 'No parsing path returned while parsing 'b'\x02\x80'''
-
 
     """
 

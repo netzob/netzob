@@ -86,20 +86,20 @@ class Alt(AbstractVariableNode):
 
     **Callback prototype**
 
-    A callback function can be used to determine the child index to select.
-    The callback function has the following prototype:
+    The callback function that can be used to determine the child
+    index to select has the following prototype:
 
-    .. function:: callback(path, children)
+    .. function:: cbk_child_selection(path, children)
        :noindex:
 
        :param path: data structure that allows access to the values of the
                     :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
                     elements.
-       :type path: object, required
+       :type path: object
        :param children: children of the
                         :class:`~netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt`
                         variable.
-       :type children: ~typing.List[~netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt], required
+       :type children: ~typing.List[~netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt]
 
     Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     values is done through the ``path``, thanks to its methods
@@ -113,6 +113,11 @@ class Alt(AbstractVariableNode):
       to the value specialized or parsed for the child
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
+    The callback function should return an integer used to determine
+    the child index to select.
+
+
+    **Alt examples**
 
     The following code denotes an alternate object that
     accepts either the string "filename1.txt" or the string
@@ -177,7 +182,6 @@ class Alt(AbstractVariableNode):
        Traceback (most recent call last):
        ...
        netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'nothing'. Error: 'No parsing path returned while parsing 'b'nothing'''
-
 
     """
 

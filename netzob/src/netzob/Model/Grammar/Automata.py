@@ -569,7 +569,8 @@ class Automata(object):
 
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
-        :attr:`cbk_method` should have the following prototype:
+        The callback function that can be used in the
+        :attr:`cbk_method` parameter has the following prototype:
 
         .. function:: cbk_method(current_state, current_transition=None)
            :noindex:
@@ -585,10 +586,9 @@ class Automata(object):
              in a server context, where no transition has been initiated.
            :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition
 
-           :return:
-             The callback function should return the next :class:`~netzob.Model.Grammar.States.State.State`.
-             For example, to stay at the same state, the callback function
-             would have to return the :attr:`current_state` value.
+           The callback function should return the next :class:`~netzob.Model.Grammar.States.State.State`.
+           For example, to stay at the same state, the callback function
+           would have to return the :attr:`current_state` value.
 
         """
         if not callable(cbk_method):
@@ -617,7 +617,8 @@ class Automata(object):
 
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
-        :attr:`cbk_method` should have the following prototype:
+        The callback function that can be used in the
+        :attr:`cbk_method` parameter has the following prototype:
 
         .. function:: cbk_method(current_state, current_transition=None,\
                                  received_symbol=None, received_message=None)
@@ -642,11 +643,9 @@ class Automata(object):
              Corresponds to the received raw message.
            :type current_message: ~netzob.Model.Vocabulary.Messages.RawMessage.RawMessage
 
-           :return:
-             The callback function should return the next state.
-             For example, to stay at the same state, the callback function
-             would have to return the :attr:`current_state` value.
-           :rtype: ~netzob.Model.Grammar.States.State.State
+           The callback function should return the next :class:`~netzob.Model.Grammar.States.State.State`.
+           For example, to stay at the same state, the callback function
+           would have to return the :attr:`current_state` value.
 
         """
         if not callable(cbk_method):
@@ -675,7 +674,8 @@ class Automata(object):
 
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
-        :attr:`cbk_method` function should have the following prototype:
+        The callback function that can be used in the
+        :attr:`cbk_method` parameter has the following prototype:
 
         .. function:: cbk_method(current_state, current_transition=None,\
                                  received_symbol=None, received_message=None)
@@ -700,8 +700,7 @@ class Automata(object):
              Corresponds to the received raw message.
            :type received_message: ~netzob.Model.Vocabulary.Messages.RawMessage.RawMessage
 
-        The callback function should return the next state
-        (:class:`~netzob.Model.Grammar.States.State.State`). For
+        The callback function should return the next :class:`~netzob.Model.Grammar.States.State.State`. For
         example, to stay at the same state, the callback function
         would have to return the ``current_state`` value.
 

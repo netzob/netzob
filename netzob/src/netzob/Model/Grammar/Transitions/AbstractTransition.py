@@ -254,7 +254,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         :type cbk_method: ~typing.Callable, required
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
-        :attr:`cbk_method` should have the following prototype:
+        The callback function that can be used in the
+        :attr:`cbk_method` parameter has the following prototype:
 
         .. function:: cbk_method(available_symbols, current_symbol, current_state,\
                                  last_sent_symbol, last_sent_message, last_sent_structure,\
@@ -294,26 +295,28 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                   layer, and thus making it possible to create relationships
                   with the previously received message structure.
 
-           :type available_symbols: ~typing.List[~netzob.Model.Vocabulary.Symbol.Symbol], required
-           :type current_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
-           :type current_symbol_preset: :class:`~netzob.Model.Vocabulary.Preset.Preset`, required
-           :type current_state: :class:`~netzob.Model.Grammar.States.State.State`, required
-           :type last_sent_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
-           :type last_sent_message: :class:`~bitarray.bitarray`, required
-           :type last_sent_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`, required
-           :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
-           :type last_received_message: :class:`~bitarray.bitarray`, required
-           :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`, required
+           :type available_symbols: ~typing.List[~netzob.Model.Vocabulary.Symbol.Symbol]
+           :type current_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+           :type current_symbol_preset: :class:`~netzob.Model.Vocabulary.Preset.Preset`
+           :type current_state: :class:`~netzob.Model.Grammar.States.State.State`
+           :type last_sent_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+           :type last_sent_message: :class:`~bitarray.bitarray`
+           :type last_sent_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
+           :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+           :type last_received_message: :class:`~bitarray.bitarray`
+           :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
 
-           :return:
-             * The symbol that will be sent. This could be the same as the
-               :attr:`current_symbol` or another one,
-             * A preset configuration used to parameterize fields
-               during symbol specialization. This configuration will
-               override any field definition, constraints or relationship
-               dependencies (see :meth:`~netzob.Model.Vocabulary.Symbol.Symbol.specialize`,
-               for more information).
-           :rtype: ~typing.Tuple[~netzob.Model.Vocabulary.Symbol.Symbol,~typing.Dict]
+           The callback function should return a tuple. The first
+           tuple element is the symbol (:class:`Symbol
+           <netzob.Model.Vocabulary.Symbol.Symbol>`) that will be
+           sent. This could be the same as the :attr:`current_symbol`
+           or another one. The second tuple element is a preset (:class:`Preset
+           <netzob.Model.Vocabulary.Preset.Preset>`)
+           configuration used to parameterize fields during symbol
+           specialization. This configuration will override any field
+           definition, constraints or relationship dependencies (see
+           :meth:`~netzob.Model.Vocabulary.Symbol.Symbol.specialize`,
+           for more information).
 
         """
         if not callable(cbk_method):
@@ -328,7 +331,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         :type cbk_method: ~typing.Callable, required
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
-        :attr:`cbk_method` should have the following prototype:
+        The callback function that can be used in the
+        :attr:`cbk_method` parameter has the following prototype:
 
         .. function:: cbk_method(symbol, data, data_structure, operation, actor)
            :noindex:
@@ -346,11 +350,11 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :param actor:
                   The actor that is sending or receiving the symbol.
 
-           :type symbol_to_send: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, required
-           :type data: :class:`str`, required
-           :type data_structure: :class:`dict`, required
-           :type operation: :class:`~netzob.Simulation.AbstractionLayer.Operation`, required
-           :type actor: :class:`~netzob.Simulation.Actor.Actor`, required
+           :type symbol_to_send: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+           :type data: :class:`str`
+           :type data_structure: :class:`dict`
+           :type operation: :class:`~netzob.Simulation.AbstractionLayer.Operation`
+           :type actor: :class:`~netzob.Simulation.Actor.Actor`
 
         The callback method is not expected to return something.
 
