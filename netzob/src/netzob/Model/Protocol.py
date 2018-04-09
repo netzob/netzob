@@ -76,14 +76,14 @@ class Protocol(object):
 
 
     If .zdl files are provided, they should follow a specific
-    convention to export the defined symbols and automaton:
+    convention to contain the defined symbols and automaton:
 
     * The .zdl file for the format messages should be named
       ``{PROTOCOL_NAME}_format.zdl``, and should contain a variable
       named :attr:`symbols` that contains a :class:`list` of :class:`Symbol
       <netzob.Model.Vocabulary.Symbol.Symbol>`.
     * The .zdl file for the automaton should be named
-      ``{PROTOCOL_NAME}_automata.zdl``, and should export a variable
+      ``{PROTOCOL_NAME}_automata.zdl``, and should contain a variable
       named :attr:`automata` that contains an :class:`Automata
       <netzob.Model.Grammar.Automata.Automata>`.
 
