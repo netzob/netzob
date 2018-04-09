@@ -473,11 +473,7 @@ class Symbol(AbstractField):
         :type field_name: :class:`str`
         :raise KeyError: when the field has not been found
         """
-        field = self.getField(field_name)
-        if field is None:
-            raise KeyError("Field {} has not been found in {}"
-                           .format(field_name, self))
-        return field
+        return self.getField(field_name)
 
 
 def _test_many_relation_abstractions():

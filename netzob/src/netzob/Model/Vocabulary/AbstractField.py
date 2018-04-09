@@ -585,6 +585,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :type field_name: :class:`str`, required
         :returns: The sub-field object.
         :rtype: :class:`Field <netzob.Model.Vocabulary.Field>`
+        :raise KeyError: when the field has not been found
 
         The following example shows how to retrieve a sub-field based
         on its name:
@@ -602,6 +603,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         for field in self.getLeafFields(includePseudoFields=True):
             if field_name == field.name:
                 return field
+        raise KeyError("Field '{}' has not been found in '{}'".format(field_name, self))
 
     def getLeafFields(self, depth=None, currentDepth=0, includePseudoFields=False):
         """Extract the leaf fields to consider, regarding the specified depth.
