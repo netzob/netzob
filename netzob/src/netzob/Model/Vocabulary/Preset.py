@@ -432,7 +432,7 @@ class Preset(object):
 
         The ``kwargs`` parameter is used to provide specific options
         depending on the targeted object type. Available options are
-        described in the following table:
+        described in the following tables:
 
         Integer options:
 

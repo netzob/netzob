@@ -175,7 +175,7 @@ class Actor(Thread):
     >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
     >>> symbolList = [aliceSymbol, bobSymbol]
     >>>
-    >>> # Create the grammar
+    >>> # Create the automaton
     >>> s0 = State(name="S0")
     >>> s1 = State(name="S1")
     >>> s2 = State(name="S2")
@@ -260,7 +260,7 @@ class Actor(Thread):
 
     The two actors are Alice and Bob. Bob is the initiator of the
     communication, meaning he sends the input symbols while Alice
-    answers with the output symbols of the grammar. The grammar is
+    answers with its output symbols. The automaton here is
     very simple, and different for each actor. We first open the
     channel, and allow Bob to send the data ``"hello"`` multiple
     times. Alice answers every time with the data ``"hello"``.
@@ -1140,7 +1140,7 @@ class Actor(Thread):
     >>> aliceSymbols = [helloBob]
     >>> allSymbols = bobSymbols + aliceSymbols + [bye]
     >>>
-    >>> # Create the grammar
+    >>> # Create the automaton
     >>> # Bob
     >>> bob_s0 = State(name="S0")
     >>> bob_s1 = State(name="S1")
@@ -1300,7 +1300,7 @@ class Actor(Thread):
     >>> symbol = Symbol(name="Hello", fields=[Field("hello")])
     >>> symbolList = [symbol]
     >>>
-    >>> # Create the grammar
+    >>> # Create the automaton
     >>> s0 = State(name="Start state")
     >>> s1 = State(name="S1")
     >>> s2 = State(name="Close state")
@@ -2206,7 +2206,7 @@ def _test_client_and_server_actors():
 
     Two actors are created: Alice and Bob. Bob is the initiator of the
     communication (he's a client), meaning he sends the input symbols while Alice
-    answers with the output symbols of the grammar (she's a server). The grammar is
+    answers with its output symbols (she's a server). The automaton is
     very simple, and different for each actor. We first open the
     channel, and allow Bob to send the data ``"hello"`` multiple
     times. Alice answers every time with the data ``"hello"``.
@@ -2349,7 +2349,7 @@ def _test_context():
 
     Two actors are created: Alice and Bob. Bob is the initiator of the
     communication (he's a client), meaning he sends the input symbols while Alice
-    answers with the output symbols of the grammar (she's a server). The grammar is
+    answers with its output symbols (she's a server). The automaton is
     very simple, and different for each actor. We first open the
     channel, and allow Bob to send the data ``"hello"`` multiple
     times. Alice answers every time with the data ``"hello"``.
