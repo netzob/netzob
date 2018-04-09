@@ -135,18 +135,18 @@ class Timestamp(AbstractType):
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max values.
-    :var unitSize: The unitsize of the current value.
     :var epoch: The initial date expressed in UTC from which
                 timestamp is measured.
     :var unity: This specifies the unity of the timestamp (seconds,
                 milliseconds, nanoseconds).
+    :var unitSize: The unitsize of the current value.
     :var sign: The sign of the current value.
     :var endianness: The endianness of the current value.
     :vartype value: :class:`bitarray`
     :vartype size: ~typing.Tuple[int,int] or int
-    :vartype unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional
     :vartype epoch: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Epoch`
     :vartype unity: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Unity`
+    :vartype unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional
     :vartype sign: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`
     :vartype endianness: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Endianness`
 

@@ -79,8 +79,10 @@ class IPv4(AbstractType):
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var network: A constraint over the network. The parsed data belongs to this network or not.
+    :var endianness: The endianness of the value. Values must be Endianness.BIG or Endianness.LITTLE.
     :vartype value: :class:`bitarray`
     :vartype network: :class:`str` or :class:`netaddr.IPNetwork`
+    :vartype endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`
 
 
     The creation of an IPv4 type with no parameter will create a random bytes
