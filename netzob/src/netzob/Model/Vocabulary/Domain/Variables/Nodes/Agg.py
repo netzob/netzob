@@ -276,7 +276,7 @@ class Agg(AbstractVariableNode):
     The BNF syntax of this model would be:
 
     .. productionlist::
-       parentheses: ( "(" parentheses)  | ( "+"  ")" )
+       parentheses: ( "(" parentheses )  | ( "+"  ")" )
 
     This syntax introduces a recursivity in the middle of the `left` statement,
     which **is not supported**. Instead, this syntax could be adapted to move
