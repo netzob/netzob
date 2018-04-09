@@ -169,6 +169,32 @@ class Integer(AbstractType):
     pre-defined values of :attr:`unitSize`, :attr:`sign` and :attr:`endianness`
     attributes. They are used to shorten calls of singular definitions.
 
+    Available big-endian pre-defined Integer types are:
+
+    * int8be (or int8)
+    * int16be (or int16)
+    * int24be (or int24)
+    * int32be (or int32)
+    * int64be (or int64)
+    * uint8be (or uint8)
+    * uint16be (or uint16)
+    * uint24be (or uint24)
+    * uint32be (or uint32)
+    * uint64be (or uint64)
+
+    Available little-endian pre-defined Integer types are:
+
+    * int8le
+    * int16le
+    * int24le
+    * int32le
+    * int64le
+    * uint8le
+    * uint16le
+    * uint24le
+    * uint32le
+    * uint64le
+
     For example, a *16-bit little-endian unsigned* Integer is classically defined
     like this:
 
