@@ -342,10 +342,12 @@ class Preset(object):
         Preset.mappingTypesMutators[Agg] = (AggMutator, {})
 
     @public_api
-    def __init__(self, counterMax=DomainMutator.COUNTER_MAX_DEFAULT):
+    def __init__(self, counterMax=None):
         # type: (Union[int, float]) -> None
 
         # Initialize variables from parameters
+        if counterMax is None:
+            counterMax = DomainMutator.COUNTER_MAX_DEFAULT
         self.counterMax = counterMax
 
         # Initialize mapping between Types and default Mutators with default
@@ -363,7 +365,7 @@ class Preset(object):
              mode=FuzzingMode.GENERATE,
              generator='xorshift',
              seed=None,
-             counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
+             counterMax=None,
              **kwargs):
         r"""The :meth:`fuzz <.Preset.fuzz>` method specifies the fuzzing
         strategy for a symbol, a field, a variable or a type.
@@ -897,6 +899,8 @@ class Preset(object):
         >>> preset = Preset()  # This is needed to restore globalCounterMax default value for unit test purpose
 
         """
+        if counterMax is None:
+            counterMax = DomainMutator.COUNTER_MAX_DEFAULT
         self.set(key,
                  value=value,
                  mode=mode,
