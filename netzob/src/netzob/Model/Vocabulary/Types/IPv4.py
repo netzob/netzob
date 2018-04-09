@@ -76,11 +76,9 @@ class IPv4(AbstractType):
 
     The IPv4 class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var network: A constraint over the network. The parsed data belongs to this network or not.
-    :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype network: :class:`str` or :class:`netaddr.IPNetwork`
 

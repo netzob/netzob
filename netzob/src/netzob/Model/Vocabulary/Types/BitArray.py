@@ -70,13 +70,11 @@ class BitArray(AbstractType):
 
     The BitArray class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max values.
     :var constants: A list of named constants used to access the bitarray internal elements.
-    :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype constants: a :class:`list` of :class:`str`

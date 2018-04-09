@@ -102,7 +102,6 @@ class Integer(AbstractType):
 
     The Integer class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size of the expected data type defined by a tuple (min integer, max integer).
@@ -110,7 +109,6 @@ class Integer(AbstractType):
     :var unitSize: The unitSize of the current value.
     :var endianness: The endianness of the current value.
     :var sign: The sign of the current value.
-    :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype unitSize: :class:`str`

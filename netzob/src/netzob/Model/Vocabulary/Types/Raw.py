@@ -70,13 +70,11 @@ class Raw(AbstractType):
 
     The Raw class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The internal size (in bits) of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max values.
     :var alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.
-    :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype alphabet: a :class:`list` of :class:`bytes`

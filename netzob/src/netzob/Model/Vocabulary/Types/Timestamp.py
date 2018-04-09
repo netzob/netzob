@@ -131,7 +131,6 @@ class Timestamp(AbstractType):
 
     The Timestamp class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
@@ -143,7 +142,6 @@ class Timestamp(AbstractType):
                 milliseconds, nanoseconds).
     :var sign: The sign of the current value.
     :var endianness: The endianness of the current value.
-    :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: ~typing.Tuple[int,int] or int
     :vartype unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional

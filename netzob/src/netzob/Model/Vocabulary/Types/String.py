@@ -84,7 +84,6 @@ class String(AbstractType):
 
     The String class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
@@ -92,7 +91,6 @@ class String(AbstractType):
     :var encoding: The encoding of the current value, such as 'ascii' or 'utf-8'.
     :var eos: A list defining the potential terminal characters for
               the string.
-    :vartype typeName: :class:`str`
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype encoding: :class:`str`
