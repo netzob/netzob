@@ -116,13 +116,14 @@ class Timestamp(AbstractType):
     :param sign: The sign of the current value.
                  Values must be :attr:`Sign.SIGNED` or :attr:`Sign.UNSIGNED`.
                  The default value is :attr:`Sign.UNSIGNED`.
-
+    :param default: The default value used in specialization.
     :type value: :class:`bitarray` or :class:`int`, optional
     :type epoch: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Epoch`, optional
     :type unity: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Unity`, optional
     :type unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional
     :type endianness: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Endianness`, optional
     :type sign: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`, optional
+    :type default: :class:`bitarray` or :class:`int`, optional
 
     .. note::
        :attr:`value` and :attr:`unitSize` attributes are mutually exclusive.
@@ -142,6 +143,7 @@ class Timestamp(AbstractType):
     :var unitSize: The unitsize of the current value.
     :var sign: The sign of the current value.
     :var endianness: The endianness of the current value.
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype size: ~typing.Tuple[int,int] or int
     :vartype epoch: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Epoch`
@@ -149,6 +151,7 @@ class Timestamp(AbstractType):
     :vartype unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional
     :vartype sign: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`
     :vartype endianness: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Endianness`
+    :vartype default: :class:`bitarray`
 
 
     Available values for `epoch` parameter are:

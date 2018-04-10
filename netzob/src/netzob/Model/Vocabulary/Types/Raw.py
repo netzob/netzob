@@ -59,9 +59,11 @@ class Raw(AbstractType):
     :param value: This parameter is used to describe a domain that contains a fixed sequence of bytes. If None, the constructed Raw will accept a random sequence of bytes, whose size may be specified (see :attr:`nbBytes` parameter).
     :param nbBytes: This parameter is used to describe a domain that contains an amount of bytes. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.
     :param alphabet: The alphabet can be used to limit the bytes that can participate in the domain value. The default value is None.
+    :param default: The default value used in specialization.
     :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
     :type alphabet: a :class:`list` of :class:`bytes`, optional
+    :type default: :class:`bitarray` or :class:`bytes`, optional
 
     .. note::
        :attr:`value` and :attr:`nbBytes` attributes are mutually exclusive.
@@ -75,10 +77,11 @@ class Raw(AbstractType):
     :var size: The internal size (in bits) of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max values.
     :var alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype alphabet: a :class:`list` of :class:`bytes`
-
+    :vartype default: :class:`bitarray`
 
     The creation of a Raw type with no parameter will create a bytes
     object whose length ranges from 0 to 65535:

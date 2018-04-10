@@ -72,10 +72,12 @@ class String(AbstractType):
                 to other fields containing the permitted terminal
                 values. Default value is an empty list, meaning there
                 is no terminal character.
+    :param default: The default value used in specialization.
     :type value: :class:`bitarray` or :class:`str`, optional
     :type nbChars: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
     :type encoding: :class:`str`, optional
     :type eos: a :class:`list` of :class:`str`, optional
+    :type default: :class:`bitarray` or :class:`str`, optional
 
     .. note::
        :attr:`value` and :attr:`nbChars` attributes are mutually exclusive.
@@ -91,10 +93,12 @@ class String(AbstractType):
     :var encoding: The encoding of the current value, such as 'ascii' or 'utf-8'.
     :var eos: A list defining the potential terminal characters for
               the string.
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype encoding: :class:`str`
-    :type eos: a :class:`list` of :class:`str`
+    :vartype eos: a :class:`list` of :class:`str`
+    :vartype default: :class:`bitarray`
 
 
     Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_.

@@ -66,9 +66,11 @@ class IPv4(AbstractType):
     :param network: This parameter is used to describe a domain that contains a network address expressed in standard
                     dot notation (ex: "192.168.0.0/24"). The default value is None.
     :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
+    :param default: The default value used in specialization.
     :type value: :class:`str` or :class:`netaddr.IPAddress`, optional
     :type network: :class:`str` or :class:`netaddr.IPNetwork`, optional
     :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
+    :type default: :class:`str` or :class:`netaddr.IPAddress`, optional
 
     .. note::
        :attr:`value` and :attr:`network` attributes are mutually exclusive.
@@ -80,9 +82,11 @@ class IPv4(AbstractType):
                 under the bitarray format.
     :var network: A constraint over the network. The parsed data belongs to this network or not.
     :var endianness: The endianness of the value. Values must be Endianness.BIG or Endianness.LITTLE.
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype network: :class:`str` or :class:`netaddr.IPNetwork`
     :vartype endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`
+    :vartype default: :class:`bitarray`
 
 
     The creation of an IPv4 type with no parameter will create a random bytes

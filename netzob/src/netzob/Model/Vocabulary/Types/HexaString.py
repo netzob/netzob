@@ -60,8 +60,10 @@ class HexaString(AbstractType):
 
     :param value: This parameter is used to describe a domain that contains a fixed hexastring. If None, the constructed hexastring will accept a random sequence of bytes, whose size may be specified (see :attr:`nbBytes` parameter).
     :param nbBytes: This parameter is used to describe a domain that contains an amount of bytes. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.
+    :param default: The default value used in specialization.
     :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
+    :type default: :class:`bitarray` or :class:`bytes`, optional
 
     .. note::
        :attr:`value` and :attr:`nbBytes` attributes are mutually exclusive.
@@ -74,8 +76,10 @@ class HexaString(AbstractType):
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max values.
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
+    :vartype default: :class:`bitarray`
 
 
     The creation of a HexaString type with no parameter will create a bytes

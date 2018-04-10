@@ -94,6 +94,8 @@ class Integer(AbstractType):
       * Sign.UNSIGNED
 
     :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
+    :param default: The default value used in specialization.
+    :type default: :class:`bitarray` or :class:`int`, optional
 
     .. note::
        :attr:`value` and :attr:`interval` attributes are mutually exclusive.
@@ -109,12 +111,13 @@ class Integer(AbstractType):
     :var unitSize: The unitSize of the current value.
     :var endianness: The endianness of the current value.
     :var sign: The sign of the current value.
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype unitSize: :class:`str`
     :vartype endianness: :class:`str`
     :vartype sign: :class:`str`
-
+    :vartype default: :class:`bitarray`
 
     **Examples of Integer object instantiations**
 
@@ -127,7 +130,7 @@ class Integer(AbstractType):
     b'\x94\xba'
 
     The following example shows how to define an integer encoded in
-    sequences of 8 bits and with a default value of 12 (thus producing
+    sequences of 8 bits and with a constant value of 12 (thus producing
     ``\x0c``):
 
     >>> from netzob.all import *
@@ -136,7 +139,7 @@ class Integer(AbstractType):
     b'\x0c'
 
     The following example shows how to define an integer encoded in
-    sequences of 32 bits and with a default value of 12 (thus
+    sequences of 32 bits and with a constant value of 12 (thus
     producing ``\x00\x00\x00\x0c``):
 
     >>> from netzob.all import *
@@ -145,7 +148,7 @@ class Integer(AbstractType):
     b'\x00\x00\x00\x0c'
 
     The following example shows how to define an integer encoded in
-    sequences of 32 bits in little endian with a default value of 12
+    sequences of 32 bits in little endian with a constant value of 12
     (thus producing ``\x0c\x00\x00\x00``):
 
     >>> from netzob.all import *
@@ -154,7 +157,7 @@ class Integer(AbstractType):
     b'\x0c\x00\x00\x00'
 
     The following example shows how to define a signed integer
-    encoded in sequences of 16 bits with a default value of -12 (thus
+    encoded in sequences of 16 bits with a constant value of -12 (thus
     producing ``\xff\xf4``):
 
     >>> from netzob.all import *
@@ -267,7 +270,7 @@ class Integer(AbstractType):
     **Representation of Integer type objects**
 
     The following examples show the representation of Integer objects
-    with and without default value.
+    with and without a constant value.
 
     >>> from netzob.all import *
     >>> i = int16le(12)
@@ -283,7 +286,7 @@ class Integer(AbstractType):
     **Encoding of Integer type objects**
 
     The following examples show the encoding of Integer objects with
-    and without default value.
+    and without a constant value.
 
     >>> from netzob.all import *
     >>> i = int32le(12)
