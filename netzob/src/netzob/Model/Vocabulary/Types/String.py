@@ -64,7 +64,7 @@ class String(AbstractType):
     The String constructor expects some parameters:
 
     :param value: This parameter is used to describe a domain that contains a fixed string. If None, the constructed string will accept a random sequence of character, whose size may be specified (see :attr:`nbChars` parameter).
-    :param nbChars: This parameter is used to describe a domain that contains an amount of characters. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.
+    :param nbChars: This parameter is used to describe a domain that contains an amount of characters. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 8192.
     :param encoding: The encoding of the string, such as 'ascii' or
                     'utf-8'. Default value is 'utf-8'.
     :param eos: A list defining the potential terminal characters for
@@ -108,7 +108,7 @@ class String(AbstractType):
 
 
     The creation of a String type with no parameter will create a string
-    object whose length ranges from 0 to 65535:
+    object whose length ranges from 0 to 8192:
 
     >>> from netzob.all import *
     >>> i = String()
@@ -204,12 +204,14 @@ class String(AbstractType):
                  value=None,
                  nbChars=None,
                  encoding='utf-8',
-                 eos=[],
+                 eos=None,
                  unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign(),
                  default=None):
         self.encoding = encoding
+        if eos is None:
+            eos = []
         self.eos = eos
 
         if value is not None and nbChars is not None:

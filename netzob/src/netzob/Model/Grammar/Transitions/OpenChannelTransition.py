@@ -108,6 +108,15 @@ class OpenChannelTransition(AbstractTransition):
 
     @public_api
     def copy(self):
+        r"""Copy the current transition.
+
+        This method copies the transition object but keeps references to the
+        original callbacks.
+
+        :return: A new object of the same type.
+        :rtype: :class:`OpenChannelTransition <netzob.Model.Grammar.Transitions.OpenChannelTransition.OpenChannelTransition>`
+
+        """
         transition = OpenChannelTransition(startState=None,
                                            endState=self.endState,
                                            name=self.name)

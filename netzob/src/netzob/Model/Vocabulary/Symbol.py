@@ -161,6 +161,14 @@ class Symbol(AbstractField):
 
     @public_api
     def copy(self, map_objects: Dict = None) -> 'Symbol':
+        """Copy the current object as well as all its dependencies. This
+        method returns a new object of the same type.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+
+        """
+
         if map_objects is None:
             map_objects = {}
         if self in map_objects:

@@ -113,6 +113,9 @@ class Automata(object):
         automaton, but keeps references to the original callbacks and
         symbols.
 
+        :return: A new object of the same type.
+        :rtype: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
+
         >>> # Creation of some states and transitions
         >>> from netzob.all import *
         >>> s0 = State(name="S0")

@@ -94,7 +94,8 @@ class State(AbstractState):
     def copy(self):
         r"""Copy the current state.
 
-        This method copies the state object.
+        :return: A new object of the same type.
+        :rtype: :class:`State <netzob.Model.Grammar.States.State.State>`
 
         """
         state = State(name=self.name)

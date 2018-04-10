@@ -94,9 +94,35 @@ class Timestamp(AbstractType):
                   in UTC.
     :param epoch: The initial date expressed in UTC from which
                   timestamp is measured. Default value is :attr:`Epoch.UNIX`.
+
+                  Available values for `epoch` parameter are:
+
+                  * Epoch.WINDOWS = datetime(1601, 1, 1)
+                  * Epoch.MUMPS = datetime(1840, 12, 31)
+                  * Epoch.VMS = datetime(1858, 11, 17)
+                  * Epoch.EXCEL = datetime(1899, 12, 31)
+                  * Epoch.NTP = datetime(1900, 1, 1)
+                  * Epoch.MACOS_9 = datetime(1904, 1, 1)
+                  * Epoch.PICKOS = datetime(1967, 12, 31)
+                  * Epoch.UNIX = datetime(1970, 1, 1)
+                  * Epoch.FAT = datetime(1980, 1, 1)
+                  * Epoch.GPS = datetime(1980, 1, 6)
+                  * Epoch.ZIGBEE = datetime(2000, 1, 1)
+                  * Epoch.COCOA = datetime(2001, 1, 1)
+
     :param unity: This specifies the unity of the value (seconds,
                   milliseconds, nanoseconds). The default value is
                   :attr:`Unity.SECOND`.
+
+                  Available values for `unity` parameter are:
+
+                  * Unity.SECOND = 1
+                  * Unity.DECISECOND = 10
+                  * Unity.CENTISECOND = 100
+                  * Unity.MILLISECOND = 1000
+                  * Unity.MICROSECOND = 1000000
+                  * Unity.NANOSECOND = 10000000000
+
     :param unitSize: The unitsize of the current value. Values must be one of
                      ``UnitSize.SIZE_*``.
                      The following unit sizes are available:
@@ -152,31 +178,6 @@ class Timestamp(AbstractType):
     :vartype sign: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`
     :vartype endianness: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Endianness`
     :vartype default: :class:`bitarray`
-
-
-    Available values for `epoch` parameter are:
-
-    * Epoch.WINDOWS = datetime(1601, 1, 1)
-    * Epoch.MUMPS = datetime(1840, 12, 31)
-    * Epoch.VMS = datetime(1858, 11, 17)
-    * Epoch.EXCEL = datetime(1899, 12, 31)
-    * Epoch.NTP = datetime(1900, 1, 1)
-    * Epoch.MACOS_9 = datetime(1904, 1, 1)
-    * Epoch.PICKOS = datetime(1967, 12, 31)
-    * Epoch.UNIX = datetime(1970, 1, 1)
-    * Epoch.FAT = datetime(1980, 1, 1)
-    * Epoch.GPS = datetime(1980, 1, 6)
-    * Epoch.ZIGBEE = datetime(2000, 1, 1)
-    * Epoch.COCOA = datetime(2001, 1, 1)
-
-    Available values for `unity` parameter are:
-
-    * Unity.SECOND = 1
-    * Unity.DECISECOND = 10
-    * Unity.CENTISECOND = 100
-    * Unity.MILLISECOND = 1000
-    * Unity.MICROSECOND = 1000000
-    * Unity.NANOSECOND = 10000000000
 
 
     The creation of a Timestamp type with no parameter will create a bytes

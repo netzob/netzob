@@ -166,8 +166,7 @@ class Scope(Enum):
       OrderedDict([('f1', b'dylan')])
 
       The following example shows that the abstraction of persistent
-      data that does not correspond to the expected model returns a
-      unknown symbol:
+      data that does not correspond to the expected model triggers an exception:
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')

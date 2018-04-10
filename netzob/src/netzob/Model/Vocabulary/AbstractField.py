@@ -96,11 +96,11 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def copy(self, map_objects=None):
-        """Clone the current object as well as all its dependencies. This
+        """Copy the current object as well as all its dependencies. This
         method returns a new object of the same type.
 
         """
-        raise NotImplementedError("Method clone() is not implemented")
+        raise NotImplementedError("Method copy() is not implemented")
 
     @typeCheck(bool, bool, bool)
     def getCells(self, encoded=True, styled=True, transposed=False):

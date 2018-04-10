@@ -188,6 +188,9 @@ class Transition(AbstractTransition):
         This method copies the transition object but keeps references to the
         original callbacks and symbols.
 
+        :return: A new object of the same type.
+        :rtype: :class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`
+
         """
         transition = Transition(startState=None,
                                 endState=self.endState,

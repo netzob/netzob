@@ -231,7 +231,7 @@ class Memory(object):
 
     @public_api
     def copy(self):
-        """Clone the current memory in a new memory.
+        """Copy the current memory in a new memory.
 
         :return: A new memory containing the same entries as the current memory.
         :rtype: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`

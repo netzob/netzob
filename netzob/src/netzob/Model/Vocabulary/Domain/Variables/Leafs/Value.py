@@ -253,6 +253,12 @@ class Value(AbstractRelationVariableLeaf):
 
     @public_api
     def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Value <netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value>`
+
+        """
         if map_objects is None:
             map_objects = {}
         if self in map_objects:
