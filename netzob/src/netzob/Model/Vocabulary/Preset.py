@@ -389,6 +389,23 @@ class Preset(object):
     >>> next(messages_gen)
     b'ABC'
 
+
+    **Unfixing the value of a field**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(uint8(), name='field 1')
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset()
+    >>> preset[f1] = b'\x41'
+    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> next(messages_gen)
+    b'A'
+    >>> del preset[f1]
+    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> next(messages_gen)
+    b'\xf4'
+
+
     """
 
     mappingTypesMutators = {}   # type: Dict[AbstractType, Union[DomainMutator, dict]]
@@ -994,10 +1011,14 @@ class Preset(object):
         if key in self.mappingFieldsMutators:
             return self.mappingFieldsMutators[key]
         else:
-            raise AttributeError("No such attribute: " + key)
+            raise AttributeError("No such attribute: '{}'".format(key))
 
     def __setitem__(self, key, value):
         self._set(key, value)
+
+    def __delitem__(self, key):
+        self.unset(key)
+        #raise AttributeError("No such attribute: '{}'".format(key))
 
     def _set(self,
              key,
