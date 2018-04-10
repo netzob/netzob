@@ -498,7 +498,7 @@ class Preset(object):
                           A deterministic is also available
                           (``generator='determinist'``), and
                           may be used in case where a domain has an
-                          interval.
+                          interval (see below).
 
         :param seed: An integer used to initialize the underlying
                      generator.
@@ -508,7 +508,7 @@ class Preset(object):
         :param counterMax: An integer used to limit the number of
                            mutations.
 
-                           Default value is :attr:`COUNTER_MAX_DEFAULT` = 2**32.
+                           Default value is :attr:`COUNTER_MAX_DEFAULT` = ``2**32``.
 
         :param kwargs: Some context dependent parameters (see below)
                        (optional).
@@ -529,6 +529,10 @@ class Preset(object):
         The ``kwargs`` parameter is used to provide specific options
         depending on the targeted object type. Available options are
         described in the following tables:
+
+        .. raw:: latex
+
+           \newpage
 
         Integer options:
 
@@ -562,6 +566,10 @@ class Preset(object):
                               * ``UnitSize.SIZE_64``
         ====================  =================================================
 
+
+        .. raw:: latex
+
+           \newpage
 
         String options:
 
@@ -615,6 +623,9 @@ class Preset(object):
                  '%s']
 
 
+        .. raw:: latex
+
+           \newpage
 
         Raw options:
 
@@ -646,6 +657,10 @@ class Preset(object):
         ====================  =================================================
 
 
+        .. raw:: latex
+
+           \newpage
+
         HexaString options:
 
         .. tabularcolumns:: |p{3cm}|p{10cm}|
@@ -676,6 +691,10 @@ class Preset(object):
         ====================  =================================================
 
 
+        .. raw:: latex
+
+           \newpage
+
         BitArray options:
 
         .. tabularcolumns:: |p{3cm}|p{10cm}|
@@ -705,6 +724,10 @@ class Preset(object):
                               * ``UnitSize.SIZE_64``
         ====================  =================================================
 
+
+        .. raw:: latex
+
+           \newpage
 
         Timestamp options:
 
@@ -737,7 +760,7 @@ class Preset(object):
         ====================  =================================================
         mutateChild           If :const:`True`, the children variables will also be fuzzed.
 
-                              Default value is :const:`False`.
+                              Default value is :const:`True`.
         mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with their default mutators.
 
                               Default value is ``{}``.
@@ -756,12 +779,16 @@ class Preset(object):
         ====================  =================================================
         mutateChild           If :const:`True`, the children variables will also be fuzzed.
 
-                              Default value is :const:`False`.
+                              Default value is :const:`True`.
         mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with their default mutators.
 
                               Default value is ``{}``.
         ====================  =================================================
 
+
+        .. raw:: latex
+
+           \newpage
 
         Repeat options:
 
@@ -772,7 +799,7 @@ class Preset(object):
         ====================  =================================================
         mutateChild           If :const:`True`, the children variables will also be fuzzed.
 
-                              Default value is :const:`False`.
+                              Default value is :const:`True`.
         mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with their default mutators.
 
                               Default value is ``{}``.
@@ -799,6 +826,10 @@ class Preset(object):
         ====================  =================================================
 
 
+        .. raw:: latex
+
+           \newpage
+
         Optional options:
 
         .. tabularcolumns:: |p{4cm}|p{10cm}|
@@ -808,15 +839,38 @@ class Preset(object):
         ====================  =================================================
         mutateChild           If :const:`True`, the children variable will also be fuzzed.
 
-                              Default value is :const:`False`.
+                              Default value is :const:`True`.
         mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with their default mutators.
 
                               Default value is ``{}``.
         ====================  =================================================
 
 
-        The following examples show the different usages of the fuzzing
-        component.
+        **Values produces by the determinist generator**
+
+        Considering a data field whose length allows to store an ``N``
+        bits integer (signed or unsigned) with an interval ranging
+        from ``P`` to ``Q`` inclusive, the determinist generator will produce
+        the following integer values:
+
+        * ``Q``
+        * ``P``
+        * ``P - 1``
+        * ``Q - 1``
+        * ``P + 1``
+        * ``Q + 1``
+        * ``0``
+        * ``-1``
+        * ``1``
+        * ``for k in [0..N-2]:``
+
+          * ``-2^k``
+          * ``-2^k - 1``
+          * ``-2^k + 1``
+          * ``2^k``
+          * ``2^k - 1``
+          * ``2^k + 1``
+
 
         **Simple fuzzing example**
 
@@ -939,6 +993,56 @@ class Preset(object):
         >>> preset.fuzz(symbol)
         >>> next(symbol.specialize(preset=preset))
         b'\x0c\x0c'
+
+
+        **Fuzzing of an aggregate of variables with non-default types/mutators mapping**
+
+        In this example, we use a determinist integer mutator instead
+        of the pseudo-random integer mutator used by default for integer fuzzing.
+
+        >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+        >>> preset = Preset()
+        >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
+        ...                                       int16(interval=(5, 8))]))
+        >>> symbol = Symbol(name="sym", fields=[f_agg])
+        >>> mapping = {}
+        >>> mapping[Integer] = {'generator':'determinist'}
+        >>> preset.fuzz(f_agg, mappingTypesMutators=mapping)
+        >>> res = next(symbol.specialize(preset))
+        >>> res
+        b' \x01 \x01'
+
+
+        **Fuzzing of an alternate of variables with non-default types/mutators mapping**
+
+        In this example, we use a determinist integer mutator instead
+        of the pseudo-random integer mutator used by default for integer fuzzing.
+
+        >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+        >>> preset = Preset()
+        >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
+        ...                                       int16(interval=(5, 8))]))
+        >>> symbol = Symbol(name="sym", fields=[f_alt])
+        >>> mapping = {}
+        >>> mapping[Integer] = {'generator':'determinist'}
+        >>> preset.fuzz(f_alt, mappingTypesMutators=mapping)
+        >>> res = next(symbol.specialize(preset))
+        >>> res
+        b' \x01'
+
+
+        **Fuzzing of an aggregate of variables without fuzzing the children**
+
+        >>> preset = Preset()
+        >>> f_agg = Field(name="agg", domain=Agg([int8(interval=(1, 4)),
+        ...                                       int8(interval=(5, 8))]))
+        >>> symbol = Symbol(name="sym", fields=[f_agg])
+        >>> preset.fuzz(f_agg, mutateChild=False)
+        >>> res = next(symbol.specialize(preset))
+        >>> 1 <= res[0] <= 4
+        True
+        >>> 5 <= res[1] <= 8
+        True
 
 
         **Fuzzing configuration with a global maximum number of mutations**
@@ -1424,7 +1528,7 @@ class Preset(object):
         should be used to represent an absolute value, whereas a
         :class:`float` should be used to represent a ratio in percent.
 
-        The default maximum value is :attr:`COUNTER_MAX_DEFAULT` = 2**32
+        The default maximum value is :attr:`COUNTER_MAX_DEFAULT` = ``2**32``
 
         :param counterMax: the maximum number of mutations to produce.
         :type counterMax: :class:`int` or :class:`float`
