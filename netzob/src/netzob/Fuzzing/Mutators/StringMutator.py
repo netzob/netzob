@@ -193,7 +193,7 @@ class StringMutator(DomainMutator):
         """
 
         if self.mode == FuzzingMode.FIXED:
-            count = AbstractType.MAXIMUM_POSSIBLE_VALUES
+            count = 1
         else:
             range_min = int(self.domain.dataType.size[0] / 8)
             range_max = int(self.domain.dataType.size[1] / 8)

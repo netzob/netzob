@@ -334,7 +334,7 @@ class IntegerMutator(DomainMutator):
         """
 
         if self.mode == FuzzingMode.FIXED:
-            count = AbstractType.MAXIMUM_POSSIBLE_VALUES
+            count = 1
         elif isinstance(self.generator, DeterministGenerator):
             count = len(self.generator._values)
         else:

@@ -148,7 +148,7 @@ class BitArrayMutator(DomainMutator):
         """
 
         if self.mode == FuzzingMode.FIXED:
-            count = AbstractType.MAXIMUM_POSSIBLE_VALUES
+            count = 1
         else:
             range_min = self.domain.dataType.size[0]
             range_max = self.domain.dataType.size[1]
