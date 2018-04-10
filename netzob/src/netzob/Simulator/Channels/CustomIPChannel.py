@@ -358,15 +358,19 @@ class CustomIPChannel(AbstractChannel):
 class CustomIPChannelBuilder(ChannelBuilder):
     """
     This builder is used to create an
-    :class:`~netzob.Simulator.Channel.CustomIPChannel.CustomIPChannel` instance
+    :class:`~netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel` instance
 
     >>> import socket
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(dst_addr="1.2.3.4",
     ...                   src_addr="4.3.2.1",
     ...                   protocol=socket.IPPROTO_TCP)
-    >>> chan = CustomIPChannelBuilder().set_map(netinfo.getDict()).build()
-    >>> assert isinstance(chan, CustomIPChannel)
+    >>> builder = CustomIPChannelBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'CustomIPChannel.CustomIPChannel'>
+    >>> chan.localIP  # src_addr key has been mapped to localIP attribute
+    '4.3.2.1'
     """
 
     def __init__(self):

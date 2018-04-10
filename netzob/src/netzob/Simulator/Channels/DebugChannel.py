@@ -166,11 +166,13 @@ class DebugChannel(AbstractChannel):
 class DebugChannelBuilder(ChannelBuilder):
     """
     This builder is used to create an
-    :class:`~netzob.Simulator.Channel.DebugChannel.DebugChannel` instance
+    :class:`~netzob.Simulator.Channels.DebugChannel.DebugChannel` instance
 
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
-    >>> chan = DebugChannelBuilder().set("stream", "stderr").build()
-    >>> assert isinstance(chan, DebugChannel)
+    >>> builder = DebugChannelBuilder().set("stream", "stderr")
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'DebugChannel.DebugChannel'>
     """
 
     def __init__(self):

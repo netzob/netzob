@@ -49,13 +49,21 @@ from netzob.Common.Utils.Decorators import NetzobLogger
 @NetzobLogger
 class ChannelBuilder(object):
     """This builder pattern enables the creation of any kind of
-    :class:`~netzob.Simulator.AbstractChannel`
+    :class:`~netzob.Simulator.AbstractChannel.AbstractChannel`
 
     Initialize the builder context by providing the kind of object to build.
 
-    Sub classes should use specific methods to handle the setting of attributes
+    Sub classes should use specific setter methods (i.e. ``set_key`` to set
+    ``key`` attribute in final object) to handle the setting of attributes
     in a specific way. Otherwise, the named attribute of
     :meth:`~ChannelBuilder.set` will be used.
+
+    Two data-stores are available in a ``ChannelBuilder`` instance:
+
+    * :attr:`~.ChannelBuilder.attrs`:
+      a map between argument name in __init__ method of the channel,
+    * :attr:`~.ChannelBuilder.after_init_callbacks`:
+      a list of callback to be called **after** __init__ method call.
 
     :param kind: the kind of object to build
     :type kind: an AbstractChannel class
@@ -83,13 +91,16 @@ class ChannelBuilder(object):
                                .format(setter_name, type(self).__name__))
         return self
 
-    def set_map(self, mapping: Mapping):
+    def set_map(self, mapping):
+        # type: (Mapping) -> ChannelBuilder
         """
         Set a mapping of key-value named parametres.
+
+        It is a shortcut method to address multiple key-value pairs successively.
         See :meth:`set` for details.
 
         :param mapping: A key-value parameter mapping
-        :type mapping: Mapping[str, Any]
+        :type mapping: ~typing.Mapping[str, ~typing.Any]
         """
         for key, value in mapping.items():
             self.set(key, value)
@@ -103,7 +114,7 @@ class ChannelBuilder(object):
 
     def build(self):
         """
-        Generate the final object instance
+        Generate the final object instance using gathered information.
         """
         channel = self.kind(**self.attrs)
         for cb in self.after_init_callbacks:

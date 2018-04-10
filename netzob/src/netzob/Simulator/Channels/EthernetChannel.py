@@ -316,15 +316,19 @@ class EthernetChannel(AbstractChannel):
 class EthernetChannelBuilder(ChannelBuilder):
     """
     This builder is used to create an
-    :class:`~netzob.Simulator.Channel.EthernetChannel.EthernetChannel` instance
+    :class:`~netzob.Simulator.Channels.EthernetChannel.EthernetChannel` instance
 
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
-    >>> netinfo = NetInfo(dst_addr="00:11:22:33:44:55",
-    ...                   src_addr="55:44:33:22:11:00",
+    >>> netinfo = NetInfo(dst_addr="00:00:00:00:00:00",
+    ...                   src_addr="00:00:00:00:00:00",
     ...                   protocol=0x0800,
-    ...                   interface="eth0")
-    >>> chan = EthernetChannelBuilder().set_map(netinfo.getDict()).build()
-    >>> assert isinstance(chan, EthernetChannel)
+    ...                   interface="lo")
+    >>> builder = EthernetChannelBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'EthernetChannel.EthernetChannel'>
+    >>> chan.localMac  # src_addr key has been mapped to localMac attribute
+    '00:00:00:00:00:00'
     """
 
     def __init__(self):

@@ -239,12 +239,16 @@ class UDPServer(AbstractChannel):
 class UDPServerBuilder(ChannelBuilder):
     """
     This builder is used to create an
-    :class:`~netzob.Simulator.Channel.UDPServer.UDPServer` instance
+    :class:`~netzob.Simulator.Channels.UDPServer.UDPServer` instance
 
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(src_addr="4.3.2.1", src_port=32000)
-    >>> chan = UDPServerBuilder().set_map(netinfo.getDict()).build()
-    >>> assert isinstance(chan, UDPServer)
+    >>> builder = UDPServerBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'UDPServer.UDPServer'>
+    >>> chan.localPort  # src_port key has been mapped to localPort attribute
+    32000
     """
 
     def __init__(self):

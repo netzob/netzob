@@ -189,13 +189,17 @@ class RawEthernetChannel(AbstractChannel):
 class RawEthernetChannelBuilder(ChannelBuilder):
     """
     This builder is used to create a
-    :class:`~netzob.Simulator.Channel.RawEthernetChannel.RawEthernetChannel`
+    :class:`~netzob.Simulator.Channels.RawEthernetChannel.RawEthernetChannel`
     instance.
 
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(interface="eth0")
-    >>> chan = RawEthernetChannelBuilder().set_map(netinfo.getDict()).build()
-    >>> assert isinstance(chan, RawEthernetChannel)
+    >>> builder = RawEthernetChannelBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'RawEthernetChannel.RawEthernetChannel'>
+    >>> chan.interface  # interface key has been mapped to interface attribute
+    'eth0'
     """
 
     def __init__(self):
