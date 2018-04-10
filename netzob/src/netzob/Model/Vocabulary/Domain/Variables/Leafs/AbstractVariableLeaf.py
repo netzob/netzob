@@ -149,7 +149,12 @@ class AbstractVariableLeaf(AbstractVariable):
             mutator = preset.get(self)
 
             def fuzzing_generate():
-                for _ in range(self.count(preset=preset)):
+                if preset.get(self).mode == FuzzingMode.FIXED:
+                    nb_iterations = AbstractType.MAXIMUM_POSSIBLE_VALUES
+                else:
+                    nb_iterations = self.count(preset=preset)
+
+                for _ in range(nb_iterations):
 
                     try:
                         # Mutate a value according to the current field attributes

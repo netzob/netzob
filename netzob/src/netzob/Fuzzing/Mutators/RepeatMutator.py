@@ -63,7 +63,7 @@ class RepeatMutator(DomainMutator):
         produce the value (not used yet).
         Default value is :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`.
     :param mutateChild: If true, sub-field has to be mutated.
-        Default value is :const:`False`.
+        Default value is :const:`True`.
     :param mappingTypesMutators: Override the global default mapping of types with their default
         mutators.
     :param length: The scope of sequence length to generate. If set to

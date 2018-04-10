@@ -61,7 +61,7 @@ class AggMutator(DomainMutator):
         :meth:`mutate` will be used to produce the value.
         Default value is :attr:`FuzzingMode.GENERATE`.
     :param mutateChild: If :const:`True`, the subfield has to be mutated.
-        Default value is :const:`False`.
+        Default value is :const:`True`.
     :param mappingTypesMutators: Override the global default mapping of types with their default
         mutators.
     :type domain: :class:`AbstractVariable
