@@ -49,7 +49,8 @@ from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransiti
 @NetzobLogger
 class CloseChannelTransition(AbstractTransition):
     """This class represents a transition which, when executed, requests
-    to close the current underlying communication channel.
+    to close the current underlying communication channel, and leads
+    to a terminal state in the automaton.
 
     The CloseChannelTransition expects some parameters:
 

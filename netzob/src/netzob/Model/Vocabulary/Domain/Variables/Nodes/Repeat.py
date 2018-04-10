@@ -149,6 +149,14 @@ class Repeat(AbstractVariableNode):
       to the value specialized or parsed for the child
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
+    Besides, it is possible to test if a ``child`` variable is a node
+    of the tree structure through the :meth:`isnode(child)` method. A
+    node may represent an ``Agg``, an ``Alt``, a ``Repeat`` or a
+    ``Opt`` variable. Access to the node leafs is possible with the
+    attribute ``children`` (i.e. ``child.children``). The type of the
+    children leafs is also :class:`Variable
+    <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+
     The callback function is called each time the child element is
     seen.
 

@@ -437,6 +437,16 @@ class Preset(object):
         r"""The :meth:`fuzz <.Preset.fuzz>` method specifies the fuzzing
         strategy for a symbol, a field, a variable or a type.
 
+        Applying a fuzzing strategy on a object has the effect to
+        propagate the fuzzing strategy to the object descendants
+        (i.e. fuzzing a symbol will activate fuzzing on its fields,
+        which then triggers the fuzzing of the associated field
+        variables). It is possible to control the fuzzing propagation
+        on node variables (``Agg``, ``Alt``, ``Repeat`` and ``Opt``)
+        with the :attr:`mutateChild` parameter. Besides, it is
+        possible to specifically deactivate fuzzing on a object with
+        the :meth:`unset <.Preset.unset>` method.
+
         The :meth:`fuzz <.Preset.fuzz>` method expects some parameters:
 
         :param key: The targeted object (either a symbol, a field, a
