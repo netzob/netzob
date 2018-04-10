@@ -35,6 +35,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from typing import Iterator  # noqa: F401
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -48,6 +49,7 @@ from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
+from netzob.Model.Vocabulary.Preset import Preset
 
 
 class InvalidDomainException(Exception):
@@ -363,20 +365,19 @@ class Field(AbstractField):
         return self.domain.getVariables()
 
     @public_api
-    def specialize(self, preset=None):
-        r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose
-        content follows the symbol definition.
+    def specialize(self, preset: Preset = None) -> Iterator[bytes]:
+        r"""The :meth:`specialize()` method is intended to produce concrete
+        :class:`bytes` data based on the field model. This method
+        returns a Python generator that in turn provides data
+        :class:`bytes` object at each call to ``next(generator)``.
 
-        :param preset: A fuzzing configuration used during the specialization process. Values
-                     in this configuration will override any field
-                     definition, constraints, relationship
-                     dependencies or parameterized fields. See
-                     :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
-                     for a complete explanation of its use for fuzzing
-                     purpose. The default value is :const:`None`.
-        :type preset: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
-        :return: The produced content after specializing the field.
-        :rtype: :class:`bytes`
+        :param preset: A preset configuration used during the specialization process. Values
+                       in this configuration will override any field
+                       definition, constraints or relationship
+                       dependencies. See
+                       :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+                       for a complete explanation of its usage. The default value is :const:`None`.
+        :return: A generator that provides data :class:`bytes` at each call to ``next(generator)``.
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
 
         The following example shows the :meth:`specialize()` method used for a
