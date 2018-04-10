@@ -349,7 +349,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :param operation:
                   Tells the direction of the symbol: either
                   :attr:`Operation.READ` for received symbols or
-                  :attr:`Operation.WRITE` for send symbols.
+                  :attr:`Operation.WRITE` for sent symbols.
            :param actor:
                   The actor that is sending or receiving the symbol.
 
