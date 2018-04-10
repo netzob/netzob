@@ -90,7 +90,7 @@ class Repeat(AbstractVariableNode):
                     a Python variable containing an :class:`int` or a
                     :class:`Field
                     <netzob.Model.Vocabulary.Field.Field>` or a
-                    :class:`func` method, required
+                    :class:`Callable <collections.abc.Callable>`, required
     :type delimiter: :class:`bitarray`, optional
 
 
@@ -126,6 +126,14 @@ class Repeat(AbstractVariableNode):
                          therefore be used to identify the current mode.
        :type remaining: ~bitarray.bitarray
 
+       :return: The callback function should return one of the following values:
+
+         * :attr:`RepeatResult.CONTINUE`: this tells to continue the repetition.
+         * :attr:`RepeatResult.STOP_BEFORE`: this tells to stop the repetition before the current value of the child.
+         * :attr:`RepeatResult.STOP_AFTER`: this tells to stop the repetition after the current value of the child.
+
+       :rtype: :class:`int`
+
     The ``child`` parameter allows access to the root of a tree structure.
     The ``child`` :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     can have children.
@@ -143,12 +151,6 @@ class Repeat(AbstractVariableNode):
 
     The callback function is called each time the child element is
     seen.
-
-    The callback function should return one of the following values:
-
-    * :attr:`RepeatResult.CONTINUE`: this tells to continue the repetition.
-    * :attr:`RepeatResult.STOP_BEFORE`: this tells to stop the repetition before the current value of the child.
-    * :attr:`RepeatResult.STOP_AFTER`: this tells to stop the repetition after the current value of the child.
 
 
     **Basic usage of Repeat**

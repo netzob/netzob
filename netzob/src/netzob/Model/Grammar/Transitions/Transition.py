@@ -102,7 +102,7 @@ class Transition(AbstractTransition):
                                     symbol, the timeout value in seconds to
                                     wait for the output value (only used in a
                                     sending context).
-    :var inverseInitiator: XXXXX.
+    :var inverseInitiator: Indicates to inverse the initiator of the communication after the transition.
     :var rate: This specifies the bandwidth in octets to respect during
                traffic emission (should be used with :attr:`duration` parameter).
     :var duration: This indicates for how many seconds the data is continuously

@@ -85,7 +85,7 @@ class Padding(AbstractRelationVariableLeaf):
                  will be generated.
     :type targets: a :class:`list` of :class:`~netzob.Model.Vocabulary.Field`, required
     :type data: a :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
-                or a :class:`callable`, required
+                or a :class:`Callable <collections.abc.Callable>`, required
     :type modulo: :class:`int`, required
     :type factor: :class:`float`, optional
     :type offset: :class:`int`, optional
@@ -124,8 +124,8 @@ class Padding(AbstractRelationVariableLeaf):
        :param modulo: corresponds to the expected modulo size in bits.
        :type modulo: :class:`int`
 
-    The callback function should return a :class:`bitarray
-    <bitarray>`.
+       :return: The callback function should return a :class:`bitarray <bitarray.bitarray>`.
+       :rtype: :class:`bitarray <bitarray.bitarray>`
 
 
     **Padding examples**

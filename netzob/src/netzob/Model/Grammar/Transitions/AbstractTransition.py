@@ -306,17 +306,20 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :type last_received_message: :class:`~bitarray.bitarray`
            :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
 
-           The callback function should return a tuple. The first
-           tuple element is the symbol (:class:`Symbol
-           <netzob.Model.Vocabulary.Symbol.Symbol>`) that will be
-           sent. This could be the same as the :attr:`current_symbol`
-           or another one. The second tuple element is a preset (:class:`Preset
-           <netzob.Model.Vocabulary.Preset.Preset>`)
-           configuration used to parameterize fields during symbol
-           specialization. This configuration will override any field
-           definition, constraints or relationship dependencies (see
-           :meth:`~netzob.Model.Vocabulary.Symbol.Symbol.specialize`,
-           for more information).
+           :return: The callback function should return a tuple. The
+                    first tuple element is the symbol (:class:`Symbol
+                    <netzob.Model.Vocabulary.Symbol.Symbol>`) that
+                    will be sent. This could be the same as the
+                    :attr:`current_symbol` or another one. The second
+                    tuple element is a preset (:class:`Preset
+                    <netzob.Model.Vocabulary.Preset.Preset>`)
+                    configuration used to parameterize fields during
+                    symbol specialization. This configuration will
+                    override any field definition, constraints or
+                    relationship dependencies (see
+                    :meth:`~netzob.Model.Vocabulary.Symbol.Symbol.specialize`,
+                    for more information).
+           :rtype: ~typing.Tuple[~netzob.Model.Vocabulary.Symbol.Symbol,~typing.Dict]
 
         """
         if not callable(cbk_method):
@@ -328,7 +331,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         transition. This function could be used to change memory or actor behavior.
 
         :param cbk_method: the callback function
-        :type cbk_method: ~typing.Callable, required
+        :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
         The callback function that can be used in the

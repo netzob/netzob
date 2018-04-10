@@ -129,7 +129,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         transition (in a server context).
 
         :param cbk_method: the callback function
-        :type cbk_method: ~typing.Callable, required
+        :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
         The callback function that can be used in the
@@ -184,9 +184,10 @@ class AbstractState(object, metaclass=abc.ABCMeta):
            :type last_received_message: :class:`~bitarray.bitarray`
            :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
 
-           The callback function should return a transition object (:class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`),
-           which could be the original transition or another one in
-           the available transitions.
+           :return: The callback function should return a transition
+                    object, which could be the original transition or
+                    another one in the available transitions.
+           :rtype: :class:`Transition<netzob.Model.Grammar.Transitions.Transition.Transition>`
 
         """
 

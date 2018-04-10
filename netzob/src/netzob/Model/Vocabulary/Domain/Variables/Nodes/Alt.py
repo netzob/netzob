@@ -70,18 +70,18 @@ class Alt(AbstractVariableNode):
 
     :param children: The set of variable elements permitted in the
                      alternative. The default is None.
-    :param callback: The callback function should return an integer used to
-                     determine the child index to select. The default is None.
+    :param callback: The callback function that may be used to determine the child index to select. The default is None.
     :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
-    :type callback: callable function taking two positional arguments returning
-                    an integer, optional
+    :type callback: :class:`Callable <collections.abc.Callable>`, optional
 
     The Alt class provides the following public variables:
 
     :var children: The sorted typed list of children attached to the variable node.
     :var varType: The type of the variable (Read-only).
+    :var callback: The callback function that may be used to determine the child index to select.
     :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
     :vartype varType: :class:`str`
+    :vartype callback: :class:`Callable <collections.abc.Callable>`
 
 
     **Callback prototype**
@@ -101,6 +101,10 @@ class Alt(AbstractVariableNode):
                         variable.
        :type children: ~typing.List[~netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt]
 
+       :return: The callback function should return an integer used to determine
+                the child index to select.
+       :rtype: :class:`int`
+
     Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     values is done through the ``path``, thanks to its methods
     :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.hasData` and
@@ -112,9 +116,6 @@ class Alt(AbstractVariableNode):
     * ``path.getData(child)`` will return a :class:`bitarray` that corresponds
       to the value specialized or parsed for the child
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
-
-    The callback function should return an integer used to determine
-    the child index to select.
 
 
     **Alt examples**

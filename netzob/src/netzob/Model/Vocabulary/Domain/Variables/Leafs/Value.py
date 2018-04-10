@@ -99,6 +99,13 @@ class Value(AbstractRelationVariableLeaf):
        :param variable: the current Value variable.
        :type variable: ~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value
 
+       :return: The callback function should return a :class:`bitarray
+                <bitarray>` representing the matching data during
+                specialization or abstraction. In the latter case, if
+                the callback function does not succeed to parse the
+                data, it should return the :const:`None` value.
+       :rtype: :class:`bitarray <bitarray.bitarray>`
+
     Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     values is done through the ``path``, thanks to its methods
     :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.hasData` and
@@ -113,11 +120,6 @@ class Value(AbstractRelationVariableLeaf):
 
     The callback function is expected to implement relationship
     operations based on the provided data.
-
-    The callback function should return a :class:`bitarray <bitarray>`
-    representing the matching data during specialization or
-    abstraction. In the latter case, if the callback function does not
-    succeed to parse the data, it should return the :const:`None` value.
 
 
     **Value usage**

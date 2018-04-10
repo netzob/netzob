@@ -560,7 +560,7 @@ class Automata(object):
         :param cbk_method: A function used to handle the selection of the next
                            state when no symbol is received after the timeout
                            has expired.
-        :type cbk_method: ~typing.Callable, required
+        :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
 
         :param states: A list of states on which the callback function should apply.
                        If no states are specified, the callback function is
@@ -586,9 +586,11 @@ class Automata(object):
              in a server context, where no transition has been initiated.
            :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition
 
-           The callback function should return the next :class:`~netzob.Model.Grammar.States.State.State`.
-           For example, to stay at the same state, the callback function
-           would have to return the :attr:`current_state` value.
+           :return: The callback function should return the next
+                    state.  For example, to stay at the same state,
+                    the callback function would have to return the
+                    :attr:`current_state` value.
+           :rtype: :class:`~netzob.Model.Grammar.States.State.State`
 
         """
         if not callable(cbk_method):
@@ -608,7 +610,7 @@ class Automata(object):
 
         :param cbk_method: A function used to handle the selection of the next
                            state when a unexpected symbol is received.
-        :type cbk_method: ~typing.Callable, required
+        :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
 
         :param states: A list of states on which the callback function should apply.
                        If no states are specified, the callback function is
@@ -643,9 +645,11 @@ class Automata(object):
              Corresponds to the received raw message.
            :type current_message: ~netzob.Model.Vocabulary.Messages.RawMessage.RawMessage
 
-           The callback function should return the next :class:`~netzob.Model.Grammar.States.State.State`.
-           For example, to stay at the same state, the callback function
-           would have to return the :attr:`current_state` value.
+           :return: The callback function should return the next
+                    state.  For example, to stay at the same state,
+                    the callback function would have to return the
+                    :attr:`current_state` value.
+           :rtype: :class:`~netzob.Model.Grammar.States.State.State`
 
         """
         if not callable(cbk_method):
@@ -665,7 +669,7 @@ class Automata(object):
 
         :param cbk_method: A callable function used to handle the selection of
                            the next state when an unknown symbol is received.
-        :type cbk_method: ~typing.Callback, required
+        :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
 
         :param states: A list of states on which the callback function should apply.
                        If no states are specified, the callback function is
@@ -700,9 +704,11 @@ class Automata(object):
              Corresponds to the received raw message.
            :type received_message: ~netzob.Model.Vocabulary.Messages.RawMessage.RawMessage
 
-        The callback function should return the next :class:`~netzob.Model.Grammar.States.State.State`. For
-        example, to stay at the same state, the callback function
-        would have to return the ``current_state`` value.
+           :return: The callback function should return the next
+                    state.  For example, to stay at the same state,
+                    the callback function would have to return the
+                    :attr:`current_state` value.
+           :rtype: :class:`~netzob.Model.Grammar.States.State.State`
 
         """
         if not callable(cbk_method):
