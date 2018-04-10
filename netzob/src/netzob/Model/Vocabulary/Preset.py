@@ -53,7 +53,6 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
-from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType  # noqa: F401
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.Integer import Integer
@@ -81,39 +80,110 @@ from netzob.Common.Utils.Decorators import NetzobLogger, public_api
 
 @NetzobLogger
 class Preset(object):
-    r"""The Preset class is the entry point for the fuzzing component.
+    r"""The Preset class may be used to configure symbol specialization, by
+    fixing the expected value of a field or a variable.
 
-    We can apply fuzzing on symbols, fields, variables and types
-    through the :meth:`fuzz <.Preset.fuzz>` method.
+    The Preset works with a key:value principle:
 
-    The Fuzz constructor expects some parameters:
-
-    :param counterMax: The max number of mutations to produce (a :class:`int`
-                       should be used to represent an absolute value, whereas
-                       a :class:`float` should be used to represent a ratio in
-                       percent).
-    :type counterMax: :class:`int` or :class:`float`, optional, default to
-                      :attr:`COUNTER_MAX_DEFAULT` = 2**32
-
-
-    The Preset class provides the following public variables:
-
-    :var counterMax: The max number of mutations to produce.
-    :vartype counterMax: :class:`int` or :class:`float`
-
-
-    The :meth:`fix <.Preset.fix>` method can be used to fix the value
-    of a field or a variable.
-
-    The :meth:`fix <.Preset.fix>` method expects some parameters:
-
-    :param key: The targeted object (either a field or a variable).
-    :param value: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    :param key: The field or variable for which we want to set the value.
+    :param value: The configured value for the field or value.
     :type key: :class:`Field
                 <netzob.Model.Vocabulary.Field.Field>`,
                 or :class:`Variable
                 <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
-    :type xxx: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, required
+    :type key: :class:`bytes`, :class:`bitarray <bitarray.bitarray>` or the type associated with of the overridden field
+               variable, required
+
+
+    **The different ways to specify a field to preset**
+
+    It is possible to parameterize fields during symbol
+    specialization. Values configured for fields will override any
+    field definition, constraints or relationship dependencies.
+
+    The Preset configuration accepts a sequence of keys and values,
+    where keys correspond to the fields or variables in the symbol that we want
+    to override, and values correspond to the overriding
+    content. Keys are either expressed as field/variable object or strings
+    containing field/variable accessors when names are used (such as
+    in ``f = Field(name="udp.dport")``). Values are either
+    expressed as :class:`bitarray <bitarray.bitarray>` (as it is
+    the internal type for variables in the Netzob library), as
+    :class:`bytes` or in the type associated with of the overridden field
+    variable.
+
+    The following code shows the definition of a simplified UDP
+    header that will be later used as base example. This UDP
+    header is made of one named field containing a destination
+    port, and a named field containing a payload:
+
+    >>> from netzob.all import *
+    >>> f_dport = Field(name="udp.dport", domain=Integer(unitSize=UnitSize.SIZE_8))
+    >>> f_payload = Field(name="udp.payload", domain=Raw(nbBytes=2))
+    >>> symbol_udp = Symbol(name="udp", fields=[f_dport, f_payload])
+
+    The four following codes show the same way to express the
+    parameterized **values** during specialization of the
+    ``udp_dport`` and ``udp_payload`` fields:
+
+    >>> preset = Preset()
+    >>> preset[f_dport] = 11              # udp.dport expects an int or an Integer
+    >>> preset[f_payload] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
+    >>> next(symbol_udp.specialize(preset=preset))
+    b'\x00\x0b\xaa\xbb'
+
+    >>> preset = Preset()
+    >>> preset["udp.dport"] = 11              # udp.dport expects an int or an Integer
+    >>> preset["udp.payload"] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
+    >>> next(symbol_udp.specialize(preset=preset))
+    b'\x00\x0b\xaa\xbb'
+
+    >>> preset = Preset()
+    >>> preset["udp.dport"] = uint16(11)        # udp.dport expects an int or an Integer
+    >>> preset["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
+    >>> next(symbol_udp.specialize(preset=preset))
+    b'\x00\x0b\xaa\xbb'
+
+    >>> preset = Preset()
+    >>> preset["udp.dport"] = bitarray('00001011', endian='big')
+    >>> preset["udp.payload"] = bitarray('1010101010111011', endian='big')
+    >>> preset["udp.payload"] = bitarray('1010101010111011', endian='big')
+    >>> next(symbol_udp.specialize(preset=preset))
+    b'\x0b\xaa\xbb'
+
+    The previous example shows the use of BitArray as dict
+    values. BitArray are always permitted for any parameterized
+    field, as it is the internal type for variables in the Netzob
+    library.
+
+    The following example shows the same way to express the
+    parameterized **keys** during specialization of the fields
+    ``udp_dport`` and ``udp_payload``:
+
+    >>> preset = Preset()
+    >>> preset[f_dport] = 11
+    >>> preset[f_payload] = b"\xaa\xbb"
+    >>> next(symbol_udp.specialize(preset=preset))
+    b'\x00\x0b\xaa\xbb'
+    >>> preset = Preset()
+    >>> preset["udp.dport"] = 11
+    >>> preset["udp.payload"] = b"\xaa\xbb"
+    >>> next(symbol_udp.specialize(preset=preset))
+    b'\x00\x0b\xaa\xbb'
+
+
+    A preset value bypasses all the constraint checks on the field definition.
+    In the following example, it can be used to bypass a size field definition.
+
+    >>> from netzob.all import *
+    >>> f1 = Field()
+    >>> f2 = Field(domain=Raw(nbBytes=(10,15)))
+    >>> f1.domain = Size(f2)
+    >>> s = Symbol(fields=[f1, f2])
+    >>> preset = Preset()
+    >>> preset[f1] = bitarray('11111111')
+    >>> next(s.specialize(preset=preset))
+    b'\xff\xd7\x14\x84\xf8\xcf\x9b\xf4\xb7oG\x90G0'
 
 
     **Fixing the value of a field**
@@ -144,11 +214,11 @@ class Preset(object):
     >>> preset[f2_1] = b'\x41'
     >>> messages_gen = symbol.specialize(preset=preset)
     >>> next(messages_gen)
-    b'\xc5A\xd7'
+    b'\x80AK'
     >>> next(messages_gen)
-    b'\xc5A\x14'
+    b'\x80A\x9e'
     >>> next(messages_gen)
-    b'\xc5A\x84'
+    b'\x80A2'
 
 
     **Fixing the value of a field that contains sub-fields**
@@ -180,11 +250,11 @@ class Preset(object):
     >>> preset[v1] = b'\x41'
     >>> messages_gen = symbol.specialize(preset=preset)
     >>> next(messages_gen)
-    b'A\xf8'
+    b'A%'
     >>> next(messages_gen)
-    b'A\xcf'
+    b'A\xa9'
     >>> next(messages_gen)
-    b'A\x9b'
+    b'A\xf1'
 
 
     **Fixing the value of a node variable**
@@ -259,11 +329,11 @@ class Preset(object):
     >>> preset[f1] = my_callable
     >>> messages_gen = symbol.specialize(preset=preset)
     >>> next(messages_gen)
-    b'B'
-    >>> next(messages_gen)
-    b'B'
-    >>> next(messages_gen)
     b'C'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
 
 
     **Fixing the value of a field through its name**
@@ -294,11 +364,11 @@ class Preset(object):
     >>> preset['v1'] = b'\x41\x42\x43'
     >>> messages_gen = symbol.specialize(preset=preset)
     >>> next(messages_gen)
-    b'ABCo'
+    b'ABC\xde'
     >>> next(messages_gen)
-    b'ABCG'
+    b'ABC\xa1'
     >>> next(messages_gen)
-    b'ABC\x90'
+    b'ABCh'
 
 
     **Fixing the value of a variable node through its name**
@@ -342,13 +412,10 @@ class Preset(object):
         Preset.mappingTypesMutators[Agg] = (AggMutator, {})
 
     @public_api
-    def __init__(self, counterMax=None):
-        # type: (Union[int, float]) -> None
+    def __init__(self):
 
-        # Initialize variables from parameters
-        if counterMax is None:
-            counterMax = DomainMutator.COUNTER_MAX_DEFAULT
-        self.counterMax = counterMax
+        # Initialize counterMax
+        DomainMutator.globalCounterMax = DomainMutator.COUNTER_MAX_DEFAULT
 
         # Initialize mapping between Types and default Mutators with default
         # configuration
@@ -850,7 +917,8 @@ class Preset(object):
         **Fuzzing configuration with a global maximum number of mutations**
 
         >>> from netzob.all import *
-        >>> preset = Preset(counterMax=1)
+        >>> preset = Preset()
+        >>> preset.setFuzzingCounterMax(1)
         >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
         ...                                       int8(interval=(5, 8))]))
         >>> symbol = Symbol(name="sym", fields=[f_alt])
@@ -896,18 +964,21 @@ class Preset(object):
         ...     idx += 1
         >>> print(idx)
         65
-        >>> preset = Preset()  # This is needed to restore globalCounterMax default value for unit test purpose
+
+        .. ifconfig:: scope in ('netzob')
+
+           >>> preset = Preset()  # This is needed to restore counterMax default value for unit test purpose
 
         """
         if counterMax is None:
             counterMax = DomainMutator.COUNTER_MAX_DEFAULT
-        self.set(key,
-                 value=value,
-                 mode=mode,
-                 generator=generator,
-                 seed=seed,
-                 counterMax=counterMax,
-                 **kwargs)
+        self._set(key,
+                  value=value,
+                  mode=mode,
+                  generator=generator,
+                  seed=seed,
+                  counterMax=counterMax,
+                  **kwargs)
 
     def __getitem__(self, key):
         if key in self.mappingFieldsMutators:
@@ -916,16 +987,16 @@ class Preset(object):
             raise AttributeError("No such attribute: " + key)
 
     def __setitem__(self, key, value):
-        self.set(key, value)
+        self._set(key, value)
 
-    def set(self,
-            key,
-            value=None,
-            mode=FuzzingMode.GENERATE,
-            generator='xorshift',
-            seed=None,
-            counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
-            **kwargs):
+    def _set(self,
+             key,
+             value=None,
+             mode=FuzzingMode.GENERATE,
+             generator='xorshift',
+             seed=None,
+             counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
+             **kwargs):
 
         # Handle seed value
         if seed is None:
@@ -1015,6 +1086,7 @@ class Preset(object):
         """
 
         from netzob.Model.Vocabulary.Symbol import Symbol
+        from netzob.Model.Vocabulary.Field import Field
 
         keys_to_remove = []
         # Handle case where k is a Variable -> nothing to do
@@ -1133,6 +1205,7 @@ class Preset(object):
 
         """
         from netzob.Model.Vocabulary.Symbol import Symbol
+        from netzob.Model.Vocabulary.Field import Field
 
         # Normalize fuzzing keys
         new_keys = {}
@@ -1263,7 +1336,7 @@ class Preset(object):
         tmp_new_keys = {}
 
         # Propagate also the mutator mode and the seed
-        kwargs = {'mode': mutator.mode, 'seed': mutator.seed}#, 'counterMax' : mutator.counterMax}
+        kwargs = {'mode': mutator.mode, 'seed': mutator.seed}  # , 'counterMax' : mutator.counterMax}
 
         if isinstance(variable, Repeat) and isinstance(mutator, RepeatMutator) and mutator.mutateChild:
 
@@ -1302,23 +1375,28 @@ class Preset(object):
 
         return tmp_new_keys
 
+    def getFuzzingCounterMax(self):
+        """Return the maximum number of mutations to produce. A :class:`int` should
+           be used to represent an absolute value, whereas a
+           :class:`float` should be used to represent a ratio in
+           percent.
 
-    # PROPERTIES ##
-
-    @property
-    def counterMax(self):
-        """The maximum number of mutations to produce.
-
-        :getter: Returns the maximum number of mutations.
-        :setter: Sets the maximum number of mutations.
-        :type: :class:`int` or :class:`float`
+        :return: the maximum number of mutations to produce.
+        :rtype: :class:`int` or :class:`float`
 
         """
         return DomainMutator.globalCounterMax
 
-    @public_api
-    @counterMax.setter  # type: ignore
-    def counterMax(self, counterMax: Integer):
+    def setFuzzingCounterMax(self, counterMax: Integer):
+        """Set the maximum number of mutations to produce. A :class:`int` should
+           be used to represent an absolute value, whereas a
+           :class:`float` should be used to represent a ratio in
+           percent.
+
+        :param counterMax: the maximum number of mutations to produce.
+        :type counterMax: :class:`int` or :class:`float`, default to :attr:`COUNTER_MAX_DEFAULT` = 2**32
+
+        """
         DomainMutator.globalCounterMax = counterMax
 
 
@@ -1486,7 +1564,8 @@ def _test_max_mutations():
     **Fuzzing configuration with a global maximum number of mutations**
 
     >>> from netzob.all import *
-    >>> preset = Preset(counterMax=1)
+    >>> preset = Preset()
+    >>> preset.setFuzzingCounterMax(1)
     >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
     ...                                       int8(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
