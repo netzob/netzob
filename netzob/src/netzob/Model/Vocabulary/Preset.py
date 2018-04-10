@@ -1376,10 +1376,10 @@ class Preset(object):
         return tmp_new_keys
 
     def getFuzzingCounterMax(self):
-        """Return the maximum number of mutations to produce. A :class:`int` should
-           be used to represent an absolute value, whereas a
-           :class:`float` should be used to represent a ratio in
-           percent.
+        """Return the default value for the maximum number of mutations to
+        produce in the context of the Preset instance. A :class:`int`
+        should be used to represent an absolute value, whereas a
+        :class:`float` should be used to represent a ratio in percent.
 
         :return: the maximum number of mutations to produce.
         :rtype: :class:`int` or :class:`float`
@@ -1388,13 +1388,15 @@ class Preset(object):
         return DomainMutator.globalCounterMax
 
     def setFuzzingCounterMax(self, counterMax: Integer):
-        """Set the maximum number of mutations to produce. A :class:`int` should
-           be used to represent an absolute value, whereas a
-           :class:`float` should be used to represent a ratio in
-           percent.
+        """Set the default value for the maximum number of mutations to
+        produce in the context of the Preset instance. A :class:`int`
+        should be used to represent an absolute value, whereas a
+        :class:`float` should be used to represent a ratio in percent.
+
+        The default maximum value is :attr:`COUNTER_MAX_DEFAULT` = 2**32
 
         :param counterMax: the maximum number of mutations to produce.
-        :type counterMax: :class:`int` or :class:`float`, default to :attr:`COUNTER_MAX_DEFAULT` = 2**32
+        :type counterMax: :class:`int` or :class:`float`
 
         """
         DomainMutator.globalCounterMax = counterMax
