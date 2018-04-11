@@ -172,7 +172,7 @@ class DebugChannelBuilder(ChannelBuilder):
     >>> builder = DebugChannelBuilder().set("stream", "stderr")
     >>> chan = builder.build()
     >>> type(chan)
-    <class 'DebugChannel.DebugChannel'>
+    <class 'netzob.Simulator.Channels.DebugChannel.DebugChannel'>
     """
 
     def __init__(self):
