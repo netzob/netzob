@@ -312,7 +312,7 @@ class TCPClientBuilder(ChannelBuilder):
     >>> builder = TCPClientBuilder().set_map(netinfo.getDict())
     >>> chan = builder.build()
     >>> type(chan)
-    <class 'TCPClient.TCPClient'>
+    <class 'netzob.Simulator.Channels.TCPClient.TCPClient'>
     >>> chan.remotePort  # dst_port key has been mapped to remotePort attribute
     1024
     """
