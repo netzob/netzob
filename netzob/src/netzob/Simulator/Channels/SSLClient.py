@@ -328,13 +328,17 @@ class SSLClient(AbstractChannel):
 class SSLClientBuilder(ChannelBuilder):
     """
     This builder is used to create an
-    :class:`~netzob.Simulator.Channel.SSLClient.SSLClient` instance
+    :class:`~netzob.Simulator.Channels.SSLClient.SSLClient` instance
 
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(dst_addr="1.2.3.4", dst_port=1024,
     ...                   src_addr="4.3.2.1", src_port=32000)
-    >>> chan = SSLClientBuilder().set_map(netinfo.getDict()).build()
-    >>> assert isinstance(chan, SSLClient)
+    >>> builder = SSLClientBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'netzob.Simulator.Channels.SSLClient.SSLClient'>
+    >>> chan.remotePort  # dst_port key has been mapped to remotePort attribute
+    1024
     """
 
     def __init__(self):

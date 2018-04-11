@@ -304,13 +304,17 @@ class TCPClient(AbstractChannel):
 class TCPClientBuilder(ChannelBuilder):
     """
     This builder is used to create an
-    :class:`~netzob.Simulator.Channel.TCPClient.TCPClient` instance
+    :class:`~netzob.Simulator.Channels.TCPClient.TCPClient` instance
 
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(dst_addr="1.2.3.4", dst_port=1024,
     ...                   src_addr="4.3.2.1", src_port=32000)
-    >>> chan = TCPClientBuilder().set_map(netinfo.getDict()).build()
-    >>> assert isinstance(chan, TCPClient)
+    >>> builder = TCPClientBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'netzob.Simulator.Channels.TCPClient.TCPClient'>
+    >>> chan.remotePort  # dst_port key has been mapped to remotePort attribute
+    1024
     """
 
     def __init__(self):

@@ -130,8 +130,8 @@ class IPChannel(AbstractChannel):
 
         super().open(timeout=timeout)
         self._socket = socket.socket(socket.AF_INET,
-                                      socket.SOCK_RAW,
-                                      self.upperProtocol)
+                                     socket.SOCK_RAW,
+                                     self.upperProtocol)
         self._socket.settimeout(timeout or self.timeout)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2**30)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
@@ -266,15 +266,19 @@ class IPChannel(AbstractChannel):
 class IPChannelBuilder(ChannelBuilder):
     """
     This builder is used to create an
-    :class:`~netzob.Simulator.Channel.IPChannel.IPChannel` instance
+    :class:`~netzob.Simulator.Channels.IPChannel.IPChannel` instance
 
     >>> import socket
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(dst_addr="1.2.3.4",
     ...                   src_addr="4.3.2.1",
     ...                   protocol=socket.IPPROTO_TCP)
-    >>> chan = IPChannelBuilder().set_map(netinfo.getDict()).build()
-    >>> assert isinstance(chan, IPChannel)
+    >>> builder = IPChannelBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'IPChannel.IPChannel'>
+    >>> chan.remoteIP  # dst_addr key has been mapped to remoteIP attribute
+    '1.2.3.4'
     """
 
     def __init__(self):

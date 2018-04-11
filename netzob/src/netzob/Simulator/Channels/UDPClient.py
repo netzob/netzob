@@ -281,13 +281,17 @@ class UDPClient(AbstractChannel):
 class UDPClientBuilder(ChannelBuilder):
     """
     This builder is used to create an
-    :class:`~netzob.Simulator.Channel.UDPClient.UDPClient` instance
+    :class:`~netzob.Simulator.Channels.UDPClient.UDPClient` instance
 
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(dst_addr="1.2.3.4", dst_port=1024,
     ...                   src_addr="4.3.2.1", src_port=32000)
-    >>> chan = UDPClientBuilder().set_map(netinfo.getDict()).build()
-    >>> assert isinstance(chan, UDPClient)
+    >>> builder = UDPClientBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'netzob.Simulator.Channels.UDPClient.UDPClient'>
+    >>> chan.localPort  # src_port key has been mapped to localPort attribute
+    32000
     """
 
     def __init__(self):

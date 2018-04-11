@@ -258,12 +258,16 @@ class TCPServer(AbstractChannel):
 class TCPServerBuilder(ChannelBuilder):
     """
     This builder is used to create an
-    :class:`~netzob.Simulator.Channel.TCPServer.TCPServer` instance
+    :class:`~netzob.Simulator.Channels.TCPServer.TCPServer` instance
 
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(src_addr="4.3.2.1", src_port=32000)
-    >>> chan = TCPServerBuilder().set_map(netinfo.getDict()).build()
-    >>> assert isinstance(chan, TCPServer)
+    >>> builder = TCPServerBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'netzob.Simulator.Channels.TCPServer.TCPServer'>
+    >>> chan.localIP  # src_addr key has been mapped to localIP attribute
+    '4.3.2.1'
     """
 
     def __init__(self):
