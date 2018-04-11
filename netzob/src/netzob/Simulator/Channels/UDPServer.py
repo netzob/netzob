@@ -246,7 +246,7 @@ class UDPServerBuilder(ChannelBuilder):
     >>> builder = UDPServerBuilder().set_map(netinfo.getDict())
     >>> chan = builder.build()
     >>> type(chan)
-    <class 'UDPServer.UDPServer'>
+    <class 'netzob.Simulator.Channels.UDPServer.UDPServer'>
     >>> chan.localPort  # src_port key has been mapped to localPort attribute
     32000
     """
