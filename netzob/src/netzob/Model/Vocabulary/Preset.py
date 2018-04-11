@@ -846,7 +846,7 @@ class Preset(object):
         ====================  =================================================
 
 
-        **Values produces by the determinist generator**
+        **Values produced by the determinist generator**
 
         Considering a data field whose length allows to store an ``N``
         bits integer (signed or unsigned) with an interval ranging

@@ -97,7 +97,7 @@ class UnitSize(Enum):
 
 @NetzobLogger
 class AbstractType(object, metaclass=abc.ABCMeta):
-    """AbstractType is the abstract class of all the classes that represent netzob types.
+    """AbstractType is the abstract class of all the classes that represent Netzob types.
 
     A type defines a definition domain as a unique value or specified
     with specific rules.  For instance, an integer under a specific

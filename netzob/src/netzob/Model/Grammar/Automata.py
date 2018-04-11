@@ -171,6 +171,10 @@ class Automata(object):
     @public_api
     def generateASCII(self):
         """Render the ASCII representation of the automaton.
+
+        :return: A string containing an ASCII representation of the automaton.
+        :rtype: :class:`str`
+
         """
 
         f = tempfile.NamedTemporaryFile(delete=False)
@@ -195,6 +199,9 @@ class Automata(object):
     @public_api
     def generateDotCode(self):
         """Generates the dot code representing the automaton.
+
+        :return: A string containing a dot code representation of the automaton.
+        :rtype: :class:`str`
 
         >>> # Create some states and transitions
         >>> from netzob.all import *

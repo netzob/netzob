@@ -104,9 +104,9 @@ class Actor(Thread):
                  :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
                  for a complete explanation of its usage.
     :var cbk_select_data: A callback used to tell if the current actor is concerned by the data received on the communication channel.
-    :var target_state: A state at which position the actor will exit the visit loop.
+    :var target_state: A state at which position the actor will exit the visit loop. This is an exit condition.
     :var current_state: The current state of the actor.
-    :var nbMaxTransitions: The maximum number of transitions the actor will visit.
+    :var nbMaxTransitions: The maximum number of transitions the actor will visit. This is an exit condition.
 
     :vartype automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
     :vartype channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`
@@ -134,7 +134,10 @@ class Actor(Thread):
        :param data: contains the current data received on the communication channel.
        :type data: :class:`bytes`, required
 
-    The callback function should return a :class:`bool` telling if the current actor is concerned by the received data.
+       :return: The callback function should return a :class:`bool`
+                telling if the current actor is concerned by the
+                received data.
+       :rtype: :class:`bool`
 
 
     **Actor methods**
@@ -152,7 +155,27 @@ class Actor(Thread):
     .. automethod:: netzob.Simulator.Actor.Actor.generateLog
 
 
-    **Example with a common automaton for a client and a server**
+    **List of actor examples**
+
+    Several illustrations of actor usages are provided below:
+
+    * Common automaton for a client and a server (see ActorExample1_.)
+    * Dedicated automaton for a client and a server (see ActorExample2_.)
+    * Modification of the emitted symbol by a client through a callback (see ActorExample3_.)
+    * Modification of the emitted symbol by a server through a callback (see ActorExample4_.)
+    * Modification of the selected transition by a client through a callback (see ActorExample5_.)
+    * Modification of the current transition of a server through a callback (see ActorExample6_.)
+    * Transition with no input symbol (see ActorExample7_.)
+    * How to catch all read symbol timeout (see ActorExample8_.)
+    * How to catch all receptions of unexpected symbols (see ActorExample9_.)
+    * How to catch all receptions of unknown messages (see ActorExample10_.)
+    * Message format fuzzing from an actor (see ActorExample11_.)
+    * Message format fuzzing from an actor, at a specific state (see ActorExample12_.)
+
+
+    .. _ActorExample1:
+
+    **Common automaton for a client and a server**
 
     For instance, we can create two very simple network Actors which
     communicate together through a TCP channel and exchange their
@@ -256,7 +279,9 @@ class Actor(Thread):
       [+]   Transition 'hello' lead to state 'S1'
 
 
-    **Example with a dedicated automaton for a client and a server**
+    .. _ActorExample2:
+
+    **Dedicated automaton for a client and a server**
 
     The two actors are Alice and Bob. Bob is the initiator of the
     communication, meaning he sends the input symbols while Alice
@@ -395,6 +420,8 @@ class Actor(Thread):
       [+]   During transition 'T1', choosing output symbol 'Hello'
       [+]   Transition 'T1' lead to state 'S1'
 
+
+    .. _ActorExample3:
 
     **Modification of the emitted symbol by a client through a callback**
 
@@ -570,6 +597,8 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
 
 
+    .. _ActorExample4:
+
     **Modification of the emitted symbol by a server through a callback**
 
     The following example shows how to modify the symbol that is sent
@@ -737,6 +766,7 @@ class Actor(Thread):
       [+]   Transition 'T1' lead to state 'S1'
 
 
+    .. _ActorExample5:
 
     **Modification of the selected transition by a client through a callback**
 
@@ -942,6 +972,8 @@ class Actor(Thread):
       [+]   Transition 'T1' lead to state 'S1'
 
 
+    .. _ActorExample6:
+
     **Modification of the current transition of a server through a callback**
 
     The following example shows how to modify the current transition
@@ -1117,6 +1149,8 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
 
 
+    .. _ActorExample7:
+
     **Transition with no input symbol**
 
     The following example shows how to specify no input symbol, for
@@ -1284,7 +1318,9 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
 
 
-    **Example on how to catch all read symbol timeout**
+    .. _ActorExample8:
+
+    **How to catch all read symbol timeout**
 
     The following example shows how to specify a global behavior, on
     all states and transitions, in order to catch timeouts when
@@ -1381,7 +1417,9 @@ class Actor(Thread):
       [+]   Transition 'T1' lead to state 'S1'
 
 
-    **Example on how to catch all receptions of unexpected symbols**
+    .. _ActorExample9:
+
+    **How to catch all receptions of unexpected symbols**
 
     The following example shows how to specify a global behavior, on
     all states and transitions, in order to catch reception of unexpected symbols (i.e. symbols that are known but not expected at this state/transition). In this example, we set a callback through the method :meth:`set_cbk_read_unexpected_symbol`. When an unexpected symbol is received, the defined callback will move the current
@@ -1512,7 +1550,9 @@ class Actor(Thread):
       [+]   Transition 'T1' lead to state 'S1'
 
 
-    **Example on how to catch all receptions of unknown messages**
+    .. _ActorExample10:
+
+    **How to catch all receptions of unknown messages**
 
     The following example shows how to specify a global behavior, on
     all states and transitions, in order to catch reception of unknown messages (i.e. messages that cannot be abstracted to a symbol). In this example, we set a callback through the method :meth:`set_cbk_read_unknown_symbol`. When an unknown message is received, the defined callback will move the current
@@ -1644,7 +1684,9 @@ class Actor(Thread):
       [+]   Transition 'T1' lead to state 'S1'
 
 
-    **Example of message format fuzzing from an actor**
+    .. _ActorExample11:
+
+    **Message format fuzzing from an actor**
 
     This example shows the creation of a fuzzing actor, Bob, that will
     exchange messages with a Target, Alice. Messages generated from
@@ -1790,7 +1832,9 @@ class Actor(Thread):
       [+]   Transition 'T2' lead to state 'S1'
 
 
-    **Example of message format fuzzing from an actor, at a specific state**
+    .. _ActorExample12:
+
+    **Message format fuzzing from an actor, at a specific state**
 
     This example shows the creation of a fuzzing actor, Bob, that will
     exchange messages with a Target, Alice. Only messages sent at a
@@ -1960,7 +2004,7 @@ class Actor(Thread):
         self.keep_open = False         # Tell the actor to stay open after it has exiting the visit loop
         self.memory = None             # Context of the actor
         self.preset = None             # Variable used for Actor symbol configuration
-        self.cbk_select_data = None           # Variable used to tell if received data is interesting for the actor
+        self.cbk_select_data = None    # Variable used to tell if received data is interesting for the actor
         self.target_state = None       # Variable used to tell the actor to return at a specific state
         self.current_state = None      # Variable used to keep track of the current state
         self.nbMaxTransitions = None   # Max number of transitions the actor can browse (None means no limit)
@@ -1998,6 +2042,13 @@ class Actor(Thread):
 
     @public_api
     def execute_transition(self):
+        r"""Execute the next transition in the automaton.
+
+        :return: A boolean telling if the transition execution triggered an exit condition of the visit loop of the automaton. Return ``True`` if an exit condition is triggered.
+        :rtype: :class:`bool`
+
+        """
+
         self._logger.debug("Current state for actor '{}': '{}'.".format(self.name, self.current_state))
 
         if self.initiator:
@@ -2067,6 +2118,9 @@ class Actor(Thread):
     @public_api
     def generateLog(self):
         """Return the log of the transitions and states visited by the actor.
+
+        :return: An string containing the visit log.
+        :rtype: :class:`str`
 
         """
         result = "Activity log for actor '{}':\n".format(self.name)
