@@ -336,7 +336,7 @@ class SSLClientBuilder(ChannelBuilder):
     >>> builder = SSLClientBuilder().set_map(netinfo.getDict())
     >>> chan = builder.build()
     >>> type(chan)
-    <class 'SSLClient.SSLClient'>
+    <class 'netzob.Simulator.Channels.SSLClient.SSLClient'>
     >>> chan.remotePort  # dst_port key has been mapped to remotePort attribute
     1024
     """
