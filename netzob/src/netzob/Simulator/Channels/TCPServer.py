@@ -265,7 +265,7 @@ class TCPServerBuilder(ChannelBuilder):
     >>> builder = TCPServerBuilder().set_map(netinfo.getDict())
     >>> chan = builder.build()
     >>> type(chan)
-    <class 'TCPServer.TCPServer'>
+    <class 'netzob.Simulator.Channels.TCPServer.TCPServer'>
     >>> chan.localIP  # src_addr key has been mapped to localIP attribute
     '4.3.2.1'
     """
