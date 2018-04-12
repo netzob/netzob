@@ -53,7 +53,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType  # noqa: F401
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Sign  # noqa: F401
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.Types.String import String
@@ -1148,7 +1148,12 @@ class Preset(object):
                 value = value.generate().tobytes()
                 generator = repeat(value)
             elif isinstance(value, int):
-                value = Integer(value).generate().tobytes()
+                unitSize = AbstractType.computeUnitSize(value)
+                if value < 0:
+                    sign = Sign.SIGNED
+                else:
+                    sign = Sign.UNSIGNED
+                value = Integer(value, unitSize=unitSize, sign=sign).generate().tobytes()
                 generator = repeat(value)
             elif isinstance(value, bitarray):
                 value = BitArray(value).generate().tobytes()
