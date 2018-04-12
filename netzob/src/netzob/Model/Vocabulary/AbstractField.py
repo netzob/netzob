@@ -720,45 +720,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         """
         return repr(self)
 
-    @public_api
-    @typeCheck(int)
-    def str_structure(self, deepness=0):
-        """Returns a string which denotes the current symbol/field definition
-        using a tree display.
-
-        :param deepness: Parameter used to specify the number of indentations. The default value is 0.
-        :type deepness: :class:`int`, optional
-        :return: The current symbol/field represented as a string.
-        :rtype: :class:`str`
-
-        >>> from netzob.all import *
-        >>> f1 = Field(String(), name="field1")
-        >>> f2 = Field(Integer(interval=(10, 100)), name="field2")
-        >>> f3 = Field(Raw(nbBytes=14), name="field3")
-        >>> symbol = Symbol([f1, f2, f3], name="symbol_name")
-        >>> print(symbol.str_structure())
-        symbol_name
-        |--  field1
-             |--   Data (String(nbChars=(0,8192)))
-        |--  field2
-             |--   Data (Integer(10,100))
-        |--  field3
-             |--   Data (Raw(nbBytes=14))
-        >>> print(f1.str_structure())
-        field1
-        |--   Data (String(nbChars=(0,8192)))
-
-        """
-        tab = ["|--  " for x in range(deepness)]
-        tab.append(str(self.name))
-        lines = [''.join(tab)]
-        from netzob.Model.Vocabulary.Field import Field
-        if isinstance(self, Field) and len(self.fields) == 0:
-            lines.append(self.domain.str_structure(deepness + 1))
-        for f in self.fields:
-            lines.append(f.str_structure(deepness + 1))
-        return '\n'.join(lines)
-
     @typeCheck(int)
     def str_data(self, deepness=0):
         """Returns a string which shows the associated messages of the current

@@ -352,6 +352,39 @@ class Field(AbstractField):
 
         return new_field
 
+    @public_api
+    @typeCheck(int)
+    def str_structure(self, deepness=0, preset=None):
+        """Returns a string which denotes the current field definition
+        using a tree display.
+
+        :return: The current field represented as a string.
+        :rtype: :class:`str`
+
+        >>> from netzob.all import *
+        >>> f1 = Field(String(), name="field1")
+        >>> f2 = Field(Integer(interval=(10, 100)), name="field2")
+        >>> f3 = Field(Raw(nbBytes=14), name="field3")
+        >>> field = Field([f1, f2, f3], name="Main field")
+        >>> print(field.str_structure())
+        Main field
+        |--  field1
+             |--   Data (String(nbChars=(0,8192)))
+        |--  field2
+             |--   Data (Integer(10,100))
+        |--  field3
+             |--   Data (Raw(nbBytes=14))
+
+        """
+        tab = ["|--  " for x in range(deepness)]
+        tab.append(str(self.name))
+        lines = [''.join(tab)]
+        if len(self.fields) == 0:
+            lines.append(self.domain.str_structure(deepness + 1, preset=preset))
+        for f in self.fields:
+            lines.append(f.str_structure(deepness + 1, preset=preset))
+        return '\n'.join(lines)
+
     def getVariables(self):
         r"""Returns the list of all underlying variables.
 

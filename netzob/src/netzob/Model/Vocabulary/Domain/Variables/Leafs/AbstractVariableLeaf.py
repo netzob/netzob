@@ -214,13 +214,18 @@ class AbstractVariableLeaf(AbstractVariable):
         else:
             return newParsingPaths
 
-    def str_structure(self, deepness=0):
+    def str_structure(self, deepness=0, preset=None):
         """Returns a string which denotes
         the current field definition using a tree display"""
 
         tab = ["     " for x in range(deepness - 1)]
         tab.append("|--   ")
         tab.append("{0}".format(self))
+
+        # Add information regarding preset configuration
+        if preset is not None and preset.get(self) is not None:
+            tab.append(" [{0}]".format(preset.get(self).mode))
+
         return ''.join(tab)
 
     def getFixedBitSize(self):
