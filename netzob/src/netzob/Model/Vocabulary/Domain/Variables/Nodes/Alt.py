@@ -77,10 +77,8 @@ class Alt(AbstractVariableNode):
     The Alt class provides the following public variables:
 
     :var children: The sorted typed list of children attached to the variable node.
-    :var varType: The type of the variable (Read-only).
     :var callback: The callback function that may be used to determine the child index to select.
     :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
-    :vartype varType: :class:`str`
     :vartype callback: :class:`Callable <collections.abc.Callable>`
 
 
@@ -134,8 +132,6 @@ class Alt(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> domain = Alt([Raw(), String()])
-    >>> domain.varType
-    'Alt'
     >>> print(domain.children[0].dataType)
     Raw(nbBytes=(0,8192))
     >>> print(domain.children[1].dataType)

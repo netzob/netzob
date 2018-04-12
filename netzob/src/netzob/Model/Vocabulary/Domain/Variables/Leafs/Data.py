@@ -76,9 +76,7 @@ class Data(AbstractVariableLeaf):
 
     :var dataType: The type of the data.
     :var name: The name of the variable (Read-only).
-    :var varType: The type of the variable (Read-only).
     :vartype dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
-    :vartype varType: :class:`str`
     :vartype name: :class:`str`
 
 
@@ -90,25 +88,10 @@ class Data(AbstractVariableLeaf):
     >>> from netzob.all import *
     >>> s = String('hello')
     >>> data = Data(dataType=s, name="pseudo")
-    >>> data.varType
-    'Data'
     >>> print(data.dataType)
     String('hello')
     >>> data.name
     'pseudo'
-
-    .. ifconfig:: scope in ('netzob')
-
-       Besides, the Data object is the default Variable when we create a
-       Field without explicitly specifying the Data domain, as shown in
-       the following example:
-
-       >>> from netzob.all import *
-       >>> f = Field(String("hello"))
-       >>> f.domain.varType
-       'Data'
-       >>> f.domain.dataType.value.tobytes()
-       b'hello'
 
     """
 

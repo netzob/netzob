@@ -75,10 +75,8 @@ class Value(AbstractRelationVariableLeaf):
                  the value of this relation.
     :var operation: Defines the operation to be performed on the found value.
                     The prototype of this callback is detailed below.
-    :var varType: The type of the variable (Read-only).
     :vartype target: :class:`~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
     :vartype operation: :class:`Callable <collections.abc.Callable>`
-    :vartype varType: :class:`str`
 
 
     **Callback prototype**

@@ -80,9 +80,7 @@ class Agg(AbstractVariableNode):
     The Agg class provides the following public variables:
 
     :var children: The sorted typed list of children attached to the variable node.
-    :var varType: The type of the variable (Read-only).
     :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
-    :vartype varType: :class:`str`
 
 
     **Aggregate examples**
@@ -110,8 +108,6 @@ class Agg(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> domain = Agg([Raw(), String()])
-    >>> domain.varType
-    'Agg'
     >>> print(domain.children[0].dataType)
     Raw(nbBytes=(0,8192))
     >>> print(domain.children[1].dataType)

@@ -101,11 +101,9 @@ class Padding(AbstractRelationVariableLeaf):
     :var factor: Defines the multiplication factor to apply to the targeted
                  length.
     :var offset: Defines the offset to apply to the computed length.
-    :var varType: The type of the variable (Read-only).
     :vartype dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
     :vartype factor: :class:`float`
     :vartype offset: :class:`int`
-    :vartype varType: :class:`str`
     :vartype targets: a list of
                       :class:`~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
 

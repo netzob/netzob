@@ -97,9 +97,8 @@ class Repeat(AbstractVariableNode):
     The Repeat class provides the following public variables:
 
     :var children: The list of one element which is the child attached to the variable node.
-    :var varType: The type of the variable (Read-only).
     :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
-    :vartype varType: :class:`str`
+
 
     **Callback prototype**
 
