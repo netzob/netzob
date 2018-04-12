@@ -1212,6 +1212,9 @@ class Preset(object):
         given in parameter. Only the configuration of the current
         preset is updated.
 
+        :param new_preset: The preset configuration from which we want to retrieve the information.
+        :type new_preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+
         Example of updating the Preset configuration:
 
         >>> from netzob.all import *
