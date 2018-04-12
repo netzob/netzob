@@ -2500,7 +2500,7 @@ def _test_context():
     ...         var_integer += 1
     ...         var_integer_bytes = var_integer.to_bytes(4, byteorder='big')
     ...         actor.memory.memorize(alice_var_integer, var_integer_bytes)
-    ...     else:
+    ...     elif actor.current_state.name != 'S0':
     ...         var_integer_bits = data_structure
     ...         print("[READ] Current state: {}".format(actor.current_state))
     ...         print("[READ] Current structure: {}".format(data_structure))
@@ -2549,8 +2549,6 @@ def _test_context():
     >>> alice.initiator = False
     >>>
     >>> alice.start()
-    [READ] Current state: S0
-    [READ] Current structure: None
     >>> bob.start()
     >>> time.sleep(1)
     [READ] Current state: S1
