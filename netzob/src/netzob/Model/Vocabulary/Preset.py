@@ -546,7 +546,7 @@ class Preset(object):
                               * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
                               * If it is a tuple of integers (min, max), the values will be generated between min and max.
 
-                              Default value is dependant on the chosen generator: 
+                              Default value is dependant on the chosen generator:
 
                               * If the generator is `determinist`, default interval will be :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
                               * Else, default interval will be :attr:`FuzzingInterval.FULL_INTERVAL`.
@@ -1136,42 +1136,31 @@ class Preset(object):
         if seed is None:
             seed = Mutator.SEED_DEFAULT
 
-        if value is not None:
-            mode = FuzzingMode.FIXED
-
-            if callable(value):
-                generator = repeatfunc(value)
-            elif isinstance(value, types.GeneratorType):
-                generator = value
-            elif isinstance(value, AbstractType):
-                value = value.generate().tobytes()
-                generator = repeat(value)
-            elif isinstance(value, int):
-                unitSize = AbstractType.computeUnitSize(value)
-                if value < 0:
-                    sign = Sign.SIGNED
-                else:
-                    sign = Sign.UNSIGNED
-                value = Integer(value, unitSize=unitSize, sign=sign).generate().tobytes()
-                generator = repeat(value)
-            elif isinstance(value, bitarray):
-                value = BitArray(value).generate().tobytes()
-                generator = repeat(value)
-            elif isinstance(value, str):
-                value = String(value).generate().tobytes()
-                generator = repeat(value)
-            elif isinstance(value, bytes):
-                generator = repeat(value)
-            elif isinstance(value, collections.Iterable):
-                generator = value
-            else:
-                generator = repeat(value)
-
         # Update kwargs with the first 4 parameters. This kwargs will be passed to Mutator constructors
         kwargs.update({'mode': mode, 'generator': generator, 'seed': seed, 'counterMax': counterMax})
 
+        # Case where target key is an AbstractField or AbstractVariable or a string
+        if isinstance(key, (AbstractField, AbstractVariable, str)):
+
+            if value is not None:
+                # Add value to kwargs, so that it is accessible later
+                kwargs.update({'value': value})
+
+            # Resolve the key if it is a string, to find the corresponding object (field or variable)
+            if isinstance(key, str):
+                key = self._resolve_name(key)
+
+            # Update mapping
+            self.mappingFieldsMutators[key] = kwargs
+
+            # Normalize fuzzing keys
+            self._normalizeKeys(key)
+
+            # Normalize mapping
+            self.normalize_mappingFieldsMutators()
+
         # Case where target key is an AbstractType
-        if isinstance(key, type):
+        elif isinstance(key, type):
 
             # Update default Mutator parameters for the associated type
             for t in self.mappingTypesMutators:
@@ -1182,12 +1171,6 @@ class Preset(object):
                     break
             else:
                 raise TypeError("Unsupported type for key: '{}'".format(type(key)))
-
-        # Case where target key is an AbstractField or AbstractVariable
-        elif isinstance(key, (AbstractField, AbstractVariable, str)):
-
-            self.mappingFieldsMutators[key] = kwargs
-            self.normalize_mappingFieldsMutators(key)
 
         else:
             raise TypeError("Unsupported type for key: '{}'".format(type(key)))
@@ -1446,7 +1429,7 @@ class Preset(object):
 
         return mutatorInstance
 
-    def normalize_mappingFieldsMutators(self, new_key):
+    def normalize_mappingFieldsMutators(self):
         """Normalize the fuzzing configuration.
 
         Fields described with field name are converted into field
@@ -1455,11 +1438,8 @@ class Preset(object):
 
         """
 
-        # Normalize fuzzing keys
-        normalized_new_keys = self._normalizeKeys(new_key=new_key)
-
         # Normalize fuzzing values
-        self._normalizeValues(new_keys=normalized_new_keys)
+        self._normalizeValues()
 
         # Second loop, to handle cases where domains are complex (Alt, Agg or Repeat)
         keys = {}
@@ -1469,8 +1449,8 @@ class Preset(object):
                 keys.update(self._propagateMutation(k, v))
         self.mappingFieldsMutators.update(keys)
 
-        # Second loop to normalize fuzzing values, after handling complex domains (that may have added news keys:values)
-        self._normalizeValues(new_keys=normalized_new_keys)
+        # Third loop to normalize fuzzing values, after handling complex domains (that may have added news keys:values)
+        self._normalizeValues()
 
     def _normalizeKeys(self, new_key):
         """Normalize the keys of the dict containing he relationships between
@@ -1488,18 +1468,16 @@ class Preset(object):
         # Normalize fuzzing keys
         new_keys = {}
         keys_to_remove = []
-        normalized_new_keys = []
         for k, v in self.mappingFieldsMutators.items():
 
             # Handle case where k is a Variable -> nothing to do
             if isinstance(k, AbstractVariable):
-                if isinstance(new_key, AbstractVariable) and new_key == k:
-                    normalized_new_keys.append(k)
+                pass
 
             # Handle case where k is a Field containing sub-Fields -> we retrieve all its field variables
             elif isinstance(k, Field) and len(k.fields) > 0:
 
-                if v['mode'] == FuzzingMode.FIXED:
+                if 'value' in v:
                     raise Exception("Cannot set a fixed value on a field that contains sub-fields")
 
                 subfields = k.fields
@@ -1509,7 +1487,6 @@ class Preset(object):
                     # We force the replacement of the new key
                     if new_key == k:
                         new_keys[f.domain] = v
-                        normalized_new_keys.append(f.domain)
 
                     # We check if the variable is not already present in the variables to mutate
                     elif f.domain not in self.mappingFieldsMutators.keys():
@@ -1519,8 +1496,6 @@ class Preset(object):
             elif isinstance(k, Field):
                 keys_to_remove.append(k)
                 new_keys[k.domain] = v
-                if new_key == k:
-                    normalized_new_keys.append(k.domain)
 
             # Handle case where k is a Symbol -> we retrieve all its field variables
             elif isinstance(k, Symbol):
@@ -1531,48 +1506,10 @@ class Preset(object):
                     # We force the replacement of the new key
                     if new_key == k:
                         new_keys[f.domain] = v
-                        normalized_new_keys.append(f.domain)
 
                     # We check if the variable is not already present in the variables to mutate
                     elif f.domain not in self.mappingFieldsMutators.keys():
                         new_keys[f.domain] = v
-
-            # Handle case where k is a string -> in such case,
-            # normalization we be done when calling .specialize() in
-            # order to retrieve the associated field or variable
-            elif isinstance(k, str):
-
-                # Loop over each symbols associated to the preset configuration
-                var_found = False
-                for current_symbol in self.symbols:
-
-                    if var_found:
-                        break
-
-                    # Retrieve associated field or variable based on its string name
-                    for f in current_symbol.getLeafFields(includePseudoFields=True):
-                        if f.name == k:
-                            var_found = True
-                            keys_to_remove.append(k)
-                            new_keys[f.domain] = v
-                            if new_key == k:
-                                normalized_new_keys.append(f.domain)
-                            break
-                        else:
-                            variables = f.getVariables()
-                            for var in variables:
-                                if var.name == k:
-                                    var_found = True
-                                    keys_to_remove.append(k)
-                                    new_keys[var] = v
-                                    if new_key == k:
-                                        normalized_new_keys.append(var)
-                                    break
-                            if var_found:
-                                break
-
-                if not var_found:
-                    raise Exception("The key string '{}' has not been recognized in current symbols to preset".format(k))
 
             else:
                 raise Exception("Fuzzing keys must contain Symbols, Fields or Variables"
@@ -1583,9 +1520,38 @@ class Preset(object):
             self.mappingFieldsMutators.pop(old_key)
         self.mappingFieldsMutators.update(new_keys)
 
-        return normalized_new_keys
+    def _resolve_name(self, name):
+        r"""Return the corresponding field or variable according to its name,
+        by looping over associated symbol.
 
-    def _normalizeValues(self, new_keys):
+        """
+
+        # Loop over each symbols associated to the preset configuration
+        var_found = None
+        for current_symbol in self.symbols:
+
+            if var_found is not None:
+                break
+
+            # Retrieve associated field or variable based on its string name
+            for f in current_symbol.getLeafFields(includePseudoFields=True):
+                if f.name == name:
+                    var_found = f
+                    break
+                else:
+                    variables = f.getVariables()
+                    for var in variables:
+                        if var.name == name:
+                            var_found = var
+                            break
+                    if var_found is not None:
+                        break
+
+        if var_found is None:
+            raise Exception("The key string '{}' has not been recognized in current symbols to preset".format(name))
+        return var_found
+
+    def _normalizeValues(self):
         # Normalize fuzzing values
         keys_to_update = {}
         keys_to_remove = []
@@ -1595,7 +1561,7 @@ class Preset(object):
 
             # If k is a str, the value will be normalized after the key is transformed into a field or variable object
             if isinstance(k, str):
-                pass
+                raise Exception("The key string '{}' has not been recognized in current symbols to preset".format(k))
 
             # If the value is already a Mutator instance -> we do nothing
             elif isinstance(v, Mutator):
@@ -1603,7 +1569,57 @@ class Preset(object):
             # Else, we instanciate the default Mutator according to the type of the object
             else:
 
-                mut_inst = Preset._retrieveDefaultMutator(domain=k, mapping=Preset.mappingTypesMutators, **v)
+                # Handle fixed fuzzing mode (aka fixed preset)
+                kwargs = v
+                if 'value' in kwargs:
+                    fixed_value = kwargs['value']
+                    del kwargs['value']
+
+                    kwargs['mode'] = FuzzingMode.FIXED
+
+                    # Adapt the value according to its type, in order to systematically provide a generator
+                    if callable(fixed_value):
+                        generator = repeatfunc(fixed_value)
+                    elif isinstance(fixed_value, types.GeneratorType):
+                        generator = fixed_value
+                    elif isinstance(fixed_value, AbstractType):
+
+                        # Retrieve the variable data type
+                        datatype = k.dataType
+                        fixed_value = fixed_value.generate().tobytes()
+
+                        generator = repeat(fixed_value)
+
+                    elif isinstance(fixed_value, (str, bytes, int, bitarray)):
+
+                        if isinstance(fixed_value, bytes):
+                            pass
+                        elif isinstance(fixed_value, int):
+                            unitSize = AbstractType.computeUnitSize(fixed_value)
+                            if fixed_value < 0:
+                                sign = Sign.SIGNED
+                            else:
+                                sign = Sign.UNSIGNED
+                            fixed_value = Integer(fixed_value, unitSize=unitSize, sign=sign).generate().tobytes()
+                        else:
+                            # Retrieve the variable data type
+                            datatype = k.dataType
+                            fixed_value = datatype.__class__(fixed_value)
+
+                            # Then produce a value from the datatype that respects the type constraints
+                            fixed_value = fixed_value.generate().tobytes()
+
+                        generator = repeat(fixed_value)
+
+                    elif isinstance(fixed_value, collections.Iterable):
+                        generator = fixed_value
+                    else:
+                        generator = repeat(fixed_value)
+
+                    kwargs['generator'] = generator
+
+                # Instance the mutator
+                mut_inst = Preset._retrieveDefaultMutator(domain=k, mapping=Preset.mappingTypesMutators, **kwargs)
                 keys_to_update[k] = mut_inst
 
         # Update keys

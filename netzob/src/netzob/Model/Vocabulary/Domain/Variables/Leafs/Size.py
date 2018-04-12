@@ -515,7 +515,7 @@ def _test_size():
     >>>
     >>> #
     >>> preset = Preset(symbol_udp)
-    >>> preset["udp.payload"] = "test AAAAAAAA"
+    >>> preset["udp.payload"] = b"test AAAAAAAA"
     >>> data = next(symbol_udp.specialize())
     >>>
     >>> symbol_udp.abstract(data)  # doctest: +ELLIPSIS

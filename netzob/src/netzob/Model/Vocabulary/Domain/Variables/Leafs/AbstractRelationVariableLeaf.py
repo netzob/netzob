@@ -276,7 +276,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
     @typeCheck(GenericPath)
     def computeExpectedValue(self, parsingPath, preset=None):
-        self._logger.debug("Compute expected value for relation field")
+        self._logger.debug("Compute expected value for relation variable '{}' from field '{}'".format(self, self.field))
 
         # first checks the pointed variables all have a value
         hasValue = True
