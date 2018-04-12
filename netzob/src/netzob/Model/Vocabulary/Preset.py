@@ -130,13 +130,13 @@ class Preset(object):
     >>> preset[f_dport] = 11              # udp.dport expects an int or an Integer
     >>> preset[f_payload] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
     >>> next(symbol_udp.specialize(preset=preset))
-    b'\x00\x0b\xaa\xbb'
+    b'\x0b\xaa\xbb'
 
     >>> preset = Preset()
     >>> preset["udp.dport"] = 11              # udp.dport expects an int or an Integer
     >>> preset["udp.payload"] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
     >>> next(symbol_udp.specialize(preset=preset))
-    b'\x00\x0b\xaa\xbb'
+    b'\x0b\xaa\xbb'
 
     >>> preset = Preset()
     >>> preset["udp.dport"] = uint16(11)        # udp.dport expects an int or an Integer
@@ -164,12 +164,12 @@ class Preset(object):
     >>> preset[f_dport] = 11
     >>> preset[f_payload] = b"\xaa\xbb"
     >>> next(symbol_udp.specialize(preset=preset))
-    b'\x00\x0b\xaa\xbb'
+    b'\x0b\xaa\xbb'
     >>> preset = Preset()
     >>> preset["udp.dport"] = 11
     >>> preset["udp.payload"] = b"\xaa\xbb"
     >>> next(symbol_udp.specialize(preset=preset))
-    b'\x00\x0b\xaa\xbb'
+    b'\x0b\xaa\xbb'
 
 
     A preset value bypasses all the constraint checks on the field definition.
