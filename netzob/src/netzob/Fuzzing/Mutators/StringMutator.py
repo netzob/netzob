@@ -168,7 +168,25 @@ class StringMutator(DomainMutator):
             model_unitSize = self.domain.dataType.unitSize
             self._initializeLengthGenerator(generator, interval, (model_min, model_max), model_unitSize)
 
-    ## API methods
+    def copy(self):
+        r"""Return a copy of the current mutator.
+
+        >>> from netzob.all import *
+        >>> f = Field(String())
+        >>> m = StringMutator(f.domain).copy()
+        >>> m.mode
+        FuzzingMode.GENERATE
+
+        """
+        m = StringMutator(self.domain,
+                          mode=self.mode,
+                          generator=self.generator,
+                          seed=self.seed,
+                          counterMax=self.counterMax,
+                          naughtyStrings=self.naughtyStrings,
+                          endChar=self.endChar,
+                          lengthBitSize=self.lengthBitSize)
+        return m
 
     def count(self):
         r"""

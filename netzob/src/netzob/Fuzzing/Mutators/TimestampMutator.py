@@ -114,6 +114,23 @@ class TimestampMutator(DomainMutator):
             # Initialize data generator
             self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=(1 << 32) - 1, signed=False)
 
+    def copy(self):
+        r"""Return a copy of the current mutator.
+
+        >>> from netzob.all import *
+        >>> f = Field(Timestamp())
+        >>> m = TimestampMutator(f.domain).copy()
+        >>> m.mode
+        FuzzingMode.GENERATE
+
+        """
+        m = TimestampMutator(self.domain,
+                             mode=self.mode,
+                             generator=self.generator,
+                             seed=self.seed,
+                             counterMax=self.counterMax)
+        return m
+
     def count(self):
         r"""
 

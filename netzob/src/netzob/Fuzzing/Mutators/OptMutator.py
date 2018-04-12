@@ -129,6 +129,30 @@ class OptMutator(DomainMutator):
             # Initialize data generator
             self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=255)  # Arbitrarily maxValue
 
+    def copy(self):
+        r"""Return a copy of the current mutator.
+
+        >>> from netzob.all import *
+        >>> d = Opt(uint8())
+        >>> m = OptMutator(d).copy()
+        >>> m.mode
+        FuzzingMode.GENERATE
+
+        """
+        copy_mappingTypesMutators = {}
+        for k, v in self._mappingTypesMutators.items():
+            mutator, mutator_default_parameters = v
+            copy_mappingTypesMutators[k] = mutator_default_parameters
+
+        m = OptMutator(self.domain,
+                       mode=self.mode,
+                       generator=self.generator,
+                       seed=self.seed,
+                       counterMax=self.counterMax,
+                       mutateChild=self.mutateChild,
+                       mappingTypesMutators=copy_mappingTypesMutators)
+        return m
+
     def count(self, preset=None):
         r"""
 

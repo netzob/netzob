@@ -121,6 +121,24 @@ class BitArrayMutator(DomainMutator):
             model_unitSize = self.domain.dataType.unitSize
             self._initializeLengthGenerator(generator, interval, (model_min, model_max), model_unitSize)
 
+    def copy(self):
+        r"""Return a copy of the current mutator.
+
+        >>> from netzob.all import *
+        >>> f = Field(BitArray())
+        >>> m = BitArrayMutator(f.domain).copy()
+        >>> m.mode
+        FuzzingMode.GENERATE
+
+        """
+        m = BitArrayMutator(self.domain,
+                            mode=self.mode,
+                            generator=self.generator,
+                            seed=self.seed,
+                            counterMax=self.counterMax,
+                            lengthBitSize=self.lengthBitSize)
+        return m
+
     def count(self):
         r"""
 

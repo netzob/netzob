@@ -1278,6 +1278,60 @@ class Preset(object):
         self.mappingTypesMutators.update(new_preset.mappingTypesMutators)
 
     @public_api
+    def copy(self):
+        r"""The :meth:`copy <.Preset.copy>` method copies the current preset
+        configuration.
+
+        :return: A copy of the current preset configuration.
+        :rtype: :class:`Preset`
+
+        .. note::
+           This method with linked the Preset configuration of the associated symbols to the new created Preset instance.
+
+
+        Example of copying the Preset configuration:
+
+        >>> from netzob.all import *
+        >>> f_data1 = Field(name="data1", domain=int8())
+        >>> f_data2 = Field(name="data2", domain=int8())
+        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>>
+        >>> preset = Preset(symbol)
+        >>> preset[f_data1] = b'\x01'
+        >>> preset[f_data2] = b'\x02'
+        >>>
+        >>> # Copy the preset configuration
+        >>> new_preset = preset.copy()
+        >>>
+        >>> # Update new preset configuration
+        >>> new_preset[f_data1] = b'\x03'
+        >>> new_preset[f_data2] = b'\x04'
+        >>>
+        >>> g = symbol.specialize()
+        >>> next(g)
+        b'\x03\x04'
+        >>>
+        >>> # Restore the preset configuration of the symbol to the original preset configuration
+        >>> symbol.preset = preset
+        >>> g = symbol.specialize()
+        >>> next(g)
+        b'\x01\x02'
+
+        """
+
+        new_preset = Preset(self.symbols)
+
+        # Copy fields mapping
+        for k, mutator in self.mappingFieldsMutators.items():
+            # Copy each mutator
+            new_preset.mappingFieldsMutators[k] = mutator.copy()
+
+        # Copy types mapping
+        new_preset.mappingTypesMutators = self.mappingTypesMutators
+
+        return new_preset
+
+    @public_api
     def unset(self, key):
         r"""The :meth:`unset <.Preset.unset>` method deactivates the fixed
         value or the fuzzing strategy for a symbol, a field or a

@@ -83,9 +83,11 @@ class Symbol(AbstractField):
     :var name: The name of the symbol.
     :var description: The description of the symbol.
     :var fields: The sorted list of sub-fields.
+    :var preset: The current :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>` configuration of the symbol.
     :vartype name: :class:`str`
     :vartype description: :class:`str`
     :vartype fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`
+    :vartype preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
 
 
     **Usage of Symbol for protocol modeling**

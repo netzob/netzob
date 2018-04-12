@@ -127,7 +127,6 @@ class DomainMutator(Mutator):
     # Class variables
     globalCounterMax = COUNTER_MAX_DEFAULT
 
-    @public_api
     def __init__(self,
                  domain,
                  mode=FuzzingMode.GENERATE,  # type: FuzzingMode
@@ -156,7 +155,6 @@ class DomainMutator(Mutator):
 
     # API methods
 
-    @public_api
     @abc.abstractmethod
     def count(self):
         r"""Computes the expected number of unique values produced, considering
@@ -168,7 +166,6 @@ class DomainMutator(Mutator):
         """
         pass
 
-    @public_api
     def generate(self):
         """This is the fuzz generation method of the field domain. It has to
         be overridden by all the inherited mutators which call the
@@ -189,7 +186,6 @@ class DomainMutator(Mutator):
 
         self._currentCounter += 1
 
-    @public_api
     def mutate(self, data):
         """This is the mutation method of the field domain. It has to be
         overridden by all the inherited mutators which call the
@@ -213,6 +209,12 @@ class DomainMutator(Mutator):
         idx = next(self.generator) % len(data)
         data[idx] = not data[idx]
 
+    @abc.abstractmethod
+    def copy(self):
+        r"""Return a copy of the current mutator.
+
+        """
+        pass
 
     ## Internal methods
 

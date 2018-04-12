@@ -189,6 +189,31 @@ class AltMutator(DomainMutator):
             # Configure generator
             self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=len(self.domain.children) - 1)
 
+    def copy(self):
+        r"""Return a copy of the current mutator.
+
+        >>> from netzob.all import *
+        >>> d = Alt([uint8(), uint8()])
+        >>> m = AltMutator(d).copy()
+        >>> m.mode
+        FuzzingMode.GENERATE
+
+        """
+        copy_mappingTypesMutators = {}
+        for k, v in self._mappingTypesMutators.items():
+            mutator, mutator_default_parameters = v
+            copy_mappingTypesMutators[k] = mutator_default_parameters
+
+        m = AltMutator(self.domain,
+                       mode=self.mode,
+                       generator=self.generator,
+                       seed=self.seed,
+                       counterMax=self.counterMax,
+                       mutateChild=self.mutateChild,
+                       mappingTypesMutators=copy_mappingTypesMutators,
+                       maxDepth=self.maxDepth)
+        return m
+
     def count(self, preset=None):
         r"""
 

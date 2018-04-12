@@ -109,6 +109,23 @@ class IPv4Mutator(DomainMutator):
             # Initialize data generator
             self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=(1 << 32) - 1, signed=False)
 
+    def copy(self):
+        r"""Return a copy of the current mutator.
+
+        >>> from netzob.all import *
+        >>> f = Field(IPv4("127.0.0.1"))
+        >>> m = IPv4Mutator(f.domain).copy()
+        >>> m.mode
+        FuzzingMode.GENERATE
+
+        """
+        m = IPv4Mutator(self.domain,
+                        mode=self.mode,
+                        generator=self.generator,
+                        seed=self.seed,
+                        counterMax=self.counterMax)
+        return m
+
     def count(self):
         r"""
 
