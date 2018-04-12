@@ -125,11 +125,6 @@ class MessageSpecializer(object):
 
         self._logger.debug("Specifies symbol '{0}'.".format(symbol.name))
 
-        # Normalize preset definition: fields described with field name
-        # are converted into field object, and values are converted
-        # into bitarray.
-        symbol.normalize_preset(self.preset)
-
         # This variable host all the specialization paths
         specializingPaths = [SpecializingPath(memory=self.memory)]
 

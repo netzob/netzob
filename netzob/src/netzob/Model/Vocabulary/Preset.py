@@ -413,9 +413,7 @@ class Preset(object):
 
     # Initialize mapping of types with their mutators
     @staticmethod
-    def _initializeMappings():
-        Preset.mappingFieldsMutators = {}
-
+    def _initializeTypeMappings():
         Preset.mappingTypesMutators = {}
         Preset.mappingTypesMutators[Integer] = (IntegerMutator, {})
         Preset.mappingTypesMutators[String] = (StringMutator, {})
@@ -437,11 +435,11 @@ class Preset(object):
 
         # Initialize mapping between Types and default Mutators with default
         # configuration
-        Preset._initializeMappings()
+        Preset._initializeTypeMappings()
         self.mappingTypesMutators = Preset.mappingTypesMutators
 
         # Initialize mapping between Field/Symbols and Mutators
-        self.mappingFieldsMutators = Preset.mappingFieldsMutators
+        self.mappingFieldsMutators = {}
 
     @public_api
     def fuzz(self,
@@ -1309,7 +1307,7 @@ class Preset(object):
 
         return mutatorInstance
 
-    def normalize_mappingFieldsMutators(self, new_key, current_symbol=None):
+    def normalize_mappingFieldsMutators(self, new_key):
         """Normalize the fuzzing configuration.
 
         Fields described with field name are converted into field
@@ -1319,7 +1317,7 @@ class Preset(object):
         """
 
         # Normalize fuzzing keys
-        normalized_new_keys = self._normalizeKeys(new_key=new_key, current_symbol=current_symbol)
+        normalized_new_keys = self._normalizeKeys(new_key=new_key)
 
         # Normalize fuzzing values
         self._normalizeValues(new_keys=normalized_new_keys)
@@ -1335,7 +1333,7 @@ class Preset(object):
         # Second loop to normalize fuzzing values, after handling complex domains (that may have added news keys:values)
         self._normalizeValues(new_keys=normalized_new_keys)
 
-    def _normalizeKeys(self, new_key, current_symbol=None):
+    def _normalizeKeys(self, new_key):
         """Normalize the keys of the dict containing he relationships between
         domain and mutators.
 
@@ -1404,13 +1402,18 @@ class Preset(object):
             # normalization we be done when calling .specialize() in
             # order to retrieve the associated field or variable
             elif isinstance(k, str):
-                if current_symbol is None:
-                    pass
-                else:
+
+                # Loop over each symbols associated to the preset configuration
+                var_found = False
+                for current_symbol in self.symbols:
+
+                    if var_found:
+                        break
 
                     # Retrieve associated field or variable based on its string name
                     for f in current_symbol.getLeafFields(includePseudoFields=True):
                         if f.name == k:
+                            var_found = True
                             keys_to_remove.append(k)
                             new_keys[f.domain] = v
                             if new_key == k:
@@ -1418,7 +1421,6 @@ class Preset(object):
                             break
                         else:
                             variables = f.getVariables()
-                            var_found = False
                             for var in variables:
                                 if var.name == k:
                                     var_found = True
@@ -1429,6 +1431,9 @@ class Preset(object):
                                     break
                             if var_found:
                                 break
+
+                if not var_found:
+                    raise Exception("The key string '{}' has not been recognized in current symbols to preset".format(k))
 
             else:
                 raise Exception("Fuzzing keys must contain Symbols, Fields or Variables"

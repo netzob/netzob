@@ -44,13 +44,12 @@ from typing import Dict, Union, Iterator, List  # noqa: F401
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import public_api, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
-from netzob.Model.Vocabulary.Preset import Preset
 
 
 @NetzobLogger
@@ -209,22 +208,81 @@ class Symbol(AbstractField):
         return id(self)
 
     @public_api
+    @typeCheck(int)
+    def str_structure(self, deepness=0):
+        """Returns a string which denotes the current symbol definition
+        using a tree display.
+
+        :return: The current symbol represented as a string.
+        :rtype: :class:`str`
+
+
+        This example shows the rendering of a symbol with multiple
+        fields.
+
+        >>> from netzob.all import *
+        >>> f1 = Field(String(), name="field1")
+        >>> f2 = Field(Integer(interval=(10, 100)), name="field2")
+        >>> f3 = Field(Raw(nbBytes=14), name="field3")
+        >>> symbol = Symbol([f1, f2, f3], name="symbol_name")
+        >>> print(symbol.str_structure())
+        symbol_name
+        |--  field1
+             |--   Data (String(nbChars=(0,8192)))
+        |--  field2
+             |--   Data (Integer(10,100))
+        |--  field3
+             |--   Data (Raw(nbBytes=14))
+        >>> print(f1.str_structure())
+        field1
+        |--   Data (String(nbChars=(0,8192)))
+
+
+        This example shows the rendering of a symbol where a Preset
+        configuration has been applied on several variables (the
+        :meth:`fuzz` method is explained in the fuzzing section).
+
+        >>> from netzob.all import *
+        >>> field1 = Field(Raw(nbBytes=1), name="field 1")
+        >>> v1 = Data(uint8(), name='v1')
+        >>> v2 = Data(uint8())
+        >>> var_agg = Agg([v1, v2])
+        >>> field2 = Field(var_agg, name="field 2")
+        >>> field3 = Field(Raw(nbBytes=1), name="field 3")
+        >>> symbol = Symbol(name="symbol 1", fields=[field1, field2, field3])
+        >>> preset = Preset(symbol)
+        >>> preset[field1] = b'\x42'
+        >>> preset.fuzz('v1', mode=FuzzingMode.MUTATE)
+        >>> preset.fuzz(field3)
+        >>> print(symbol.str_structure())
+        symbol 1
+        |--  field 1
+             |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED]
+        |--  field 2
+             |--   Agg
+                   |--   Data (Integer(0,255)) [FuzzingMode.MUTATE]
+                   |--   Data (Integer(0,255))
+        |--  field 3
+             |--   Data (Raw(nbBytes=1)) [FuzzingMode.GENERATE]
+
+        """
+        tab = ["|--  " for x in range(deepness)]
+        tab.append(str(self.name))
+        lines = [''.join(tab)]
+        for f in self.fields:
+            lines.append(f.str_structure(deepness + 1, preset=self.preset))
+        return '\n'.join(lines)
+
+    @public_api
     def specialize(self,
                    memory: Memory = None) -> Iterator[bytes]:
         r"""The :meth:`specialize()` method is intended to produce concrete
-        :class:`bytes` data based on the symbol model. This method
+        :class:`bytes` data based on the symbol model and the current :class:`Preset` <netzob.Vocabulary.Preset.Preset> configuration. This method
         returns a Python generator that in turn provides data
         :class:`bytes` object at each call to ``next(generator)``.
 
         The specialize() method expects some parameters:
 
-        :param preset: A preset configuration used during the specialization process. Values
-                     in this configuration will override any field
-                     definition, constraints, relationship
-                     dependencies or parameterized fields. See
-                     :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
-                     for a complete explanation of its use for fuzzing
-                     purpose. The default value is :const:`None`.
         :param memory: A memory used to store variable values during
                        specialization and abstraction of successive
                        symbols, especially to handle inter-symbol
@@ -257,40 +315,16 @@ class Symbol(AbstractField):
         for specializing_path in specializing_paths:
             yield specializing_path.generatedContent.tobytes()
 
-    def normalize_preset(self, preset):
-        """Update the Preset object, according to the symbol definition.
-
-        Fields described with field name are converted into field
-        object, and fixed values are converted into bitarray.
-
-        """
-
-        if preset is None:
-            return None
-        else:
-            keys_to_normalize = []
-            for k, v in preset.mappingFieldsMutators.items():
-                if isinstance(k, str):
-                    keys_to_normalize.append(k)
-            for k in keys_to_normalize:
-                preset.normalize_mappingFieldsMutators(k, current_symbol=self)
-
     @public_api
     def count(self) -> int:
         r"""The :meth:`count` method computes the expected number of unique
-        messages produced, considering the initial symbol model, the
-        preset fields and the fuzzed fields.
+        messages produced, considering the initial symbol model and the
+        preset configuration of fields.
 
         The :meth:`count` method expects the same parameters as the :meth:`specialize` method:
 
-        :param preset: A fuzzing configuration used during the specialization process. Values
-                     in this configuration will override any field
-                     definition, constraints, relationship
-                     dependencies or parameterized fields. See
-                     :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
-                     for a complete explanation of its use for fuzzing
-                     purpose. The default value is :const:`None`.
         :return: The number of unique values the symbol specialization can produce.
+        :rtype: :class:`int`
 
         .. note::
            The theoretical value returned by :meth:`~count`

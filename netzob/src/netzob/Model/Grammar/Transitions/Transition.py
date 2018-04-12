@@ -558,10 +558,9 @@ class Transition(AbstractTransition):
     @inputSymbolPreset.setter  # type: ignore
     def inputSymbolPreset(self, inputSymbolPreset):
         self.__inputSymbolPreset = None
-        # Normalize preset
         if inputSymbolPreset is not None:
             if not isinstance(self.inputSymbol, EmptySymbol):
-                self.__inputSymbolPreset = self.inputSymbol.normalize_preset(inputSymbolPreset)
+                self.__inputSymbolPreset = inputSymbolPreset
 
     @public_api
     @property
@@ -608,11 +607,10 @@ class Transition(AbstractTransition):
     @outputSymbolsPreset.setter  # type: ignore
     def outputSymbolsPreset(self, outputSymbolsPreset):
         self.__outputSymbolsPreset = {}
-        # Normalize preset
         if outputSymbolsPreset is not None:
             for outputSymbol, outputSymbolPreset in outputSymbolsPreset.items():
                 if not isinstance(outputSymbol, EmptySymbol):
-                    self.__outputSymbolsPreset[outputSymbol] = outputSymbol.normalize_preset(outputSymbolPreset)
+                    self.__outputSymbolsPreset[outputSymbol] = outputSymbolPreset
 
     @public_api
     @property

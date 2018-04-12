@@ -49,7 +49,6 @@ from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
-from netzob.Model.Vocabulary.Preset import Preset
 
 
 class InvalidDomainException(Exception):
@@ -378,12 +377,6 @@ class Field(AbstractField):
         returns a Python generator that in turn provides data
         :class:`bytes` object at each call to ``next(generator)``.
 
-        :param preset: A preset configuration used during the specialization process. Values
-                       in this configuration will override any field
-                       definition, constraints or relationship
-                       dependencies. See
-                       :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
-                       for a complete explanation of its usage. The default value is :const:`None`.
         :return: A generator that provides data :class:`bytes` at each call to ``next(generator)``.
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
 
@@ -531,6 +524,7 @@ def _test():
     b'System("ls -al /")\x00                                                                                                                                                                                                                                             '
     """
 
+
 def _test_field_integer():
     r"""
 
@@ -586,6 +580,7 @@ def _test_field_integer():
     True
     
     """
+
 
 def _test_field_bitarray():
     r"""
