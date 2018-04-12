@@ -1193,6 +1193,91 @@ class Preset(object):
             raise TypeError("Unsupported type for key: '{}'".format(type(key)))
 
     @public_api
+    def clear(self):
+        r"""The :meth:`clear <.Preset.clear>` method clear the preset
+        and fuzzing configuration.
+
+        Example of clearing the Preset configuration:
+
+        >>> from netzob.all import *
+        >>> import random
+        >>> random.seed(0)
+        >>> f_data1 = Field(name="data1", domain=int8())
+        >>> f_data2 = Field(name="data2", domain=int8())
+        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>> preset = Preset(symbol)
+        >>> preset[f_data1] = b'\x01'
+        >>> preset[f_data2] = b'\x02'
+        >>> next(symbol.specialize())
+        b'\x01\x02'
+        >>> preset.clear()
+        >>> next(symbol.specialize())
+        b'EW'
+
+        """
+
+        # Clear types mapping
+        self._initializeTypeMappings()
+
+        # Clear fields mapping
+        self.mappingFieldsMutators = {}
+
+    @public_api
+    def update(self, new_preset):
+        r"""The :meth:`update <.Preset.update>` method updates the current
+        preset and fuzzing configuration with a preset configuration
+        given in parameter. Only the configuration of the current
+        preset is updated.
+
+        Example of updating the Preset configuration:
+
+        >>> from netzob.all import *
+        >>> f_data1 = Field(name="data1", domain=int8())
+        >>> f_data2 = Field(name="data2", domain=int8())
+        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>>
+        >>> # Create main preset
+        >>> main_preset = Preset(symbol)
+        >>> main_preset[f_data1] = b'\x01'
+        >>> main_preset[f_data2] = b'\x02'
+        >>>
+        >>> # Create new preset
+        >>> new_preset = Preset(symbol)
+        >>> new_preset[f_data1] = b'\x03'
+        >>> new_preset[f_data2] = b'\x04'
+        >>>
+        >>> # Generate data according to the last defined preset (i.e. the 'new' preset)
+        >>> g = symbol.specialize()
+        >>> next(g)
+        b'\x03\x04'
+        >>>
+        >>> # Update preset associated to the current symbol (this will set 'main' preset as the current preset of symbol)
+        >>> symbol.preset = main_preset
+        >>>
+        >>> # We generate data (the generator is still defined according to the 'new' preset)
+        >>> next(g)
+        b'\x03\x04'
+        >>>
+        >>> # New, we produce a new generator (this generator will thus be based on the 'main' preset)
+        >>> g = symbol.specialize()
+        >>> next(g)
+        b'\x01\x02'
+        >>>
+        >>> # We update 'main' preset we the configuration of the 'new' preset, and then generate data
+        >>> main_preset.update(new_preset)
+        >>> g = symbol.specialize()
+        >>> next(g)
+        b'\x03\x04'
+
+        """
+
+        # Update fields mapping
+        self.mappingFieldsMutators.update(new_preset.mappingFieldsMutators)
+
+        # Update types mapping
+        self.mappingTypesMutators.update(new_preset.mappingTypesMutators)
+
+    @public_api
     def unset(self, key):
         r"""The :meth:`unset <.Preset.unset>` method deactivates the fixed
         value or the fuzzing strategy for a symbol, a field or a
@@ -1780,5 +1865,89 @@ def _test_max_mutations():
     >>> print(idx)
     65
     >>> preset = Preset([])  # This is needed to restore globalCounterMax default value for unit test purpose
+
+    """
+
+
+def _test_preset_configuration():
+    r"""Test preset of a field through its object and then through its
+    name, that verify that normalization works.
+
+    >>> from netzob.all import *
+    >>> field = Field(Raw(nbBytes=1), name="field 1")
+    >>> symbol = Symbol(name="symbol 1", fields=[field])
+    >>> preset = Preset(symbol)
+    >>> preset[field] = b'\x42'
+    >>> next(symbol.specialize())
+    b'B'
+    >>> preset["field 1"] = b'\x43'
+    >>> next(symbol.specialize())
+    b'C'
+    >>> preset["field 1"] = b'\x44'
+    >>> next(symbol.specialize())
+    b'D'
+    >>> len(preset.mappingFieldsMutators)
+    1
+
+
+    Test preset of a field through a wrong name, to verify that this
+    triggers an exception.
+
+    >>> from netzob.all import *
+    >>> field = Field(Raw(nbBytes=1), name="field 1")
+    >>> symbol = Symbol(name="symbol 1", fields=[field])
+    >>> preset = Preset(symbol)
+    >>> preset["field 2"] = b'\x42'
+    Traceback (most recent call last):
+    ...
+    Exception: The key string 'field 2' has not been recognized in current symbols to preset
+
+    """
+
+
+def _test_str_structure_with_preset():
+    r"""Test the rendering of str_structure with preset configuration.
+
+    >>> from netzob.all import *
+    >>> field1 = Field(Raw(nbBytes=1), name="field 1")
+    >>> field2 = Field(Raw(nbBytes=1), name="field 2")
+    >>> field3 = Field(Raw(nbBytes=1), name="field 3")
+    >>> symbol = Symbol(name="symbol 1", fields=[field1, field2, field3])
+    >>> preset = Preset(symbol)
+    >>> preset[field1] = b'\x42'
+    >>> preset.fuzz(field3)
+    >>> print(symbol.str_structure())
+    symbol 1
+    |--  field 1
+         |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED]
+    |--  field 2
+         |--   Data (Raw(nbBytes=1))
+    |--  field 3
+         |--   Data (Raw(nbBytes=1)) [FuzzingMode.GENERATE]
+
+    Test the rendering of str_structure with preset configuration, with variable nodes.
+
+    >>> from netzob.all import *
+    >>> field1 = Field(Raw(nbBytes=1), name="field 1")
+    >>> v1 = Data(uint8(), name='v1')
+    >>> v2 = Data(uint8())
+    >>> var_agg = Agg([v1, v2])
+    >>> field2 = Field(var_agg, name="field 2")
+    >>> field3 = Field(Raw(nbBytes=1), name="field 3")
+    >>> symbol = Symbol(name="symbol 1", fields=[field1, field2, field3])
+    >>> preset = Preset(symbol)
+    >>> preset[field1] = b'\x42'
+    >>> preset.fuzz('v1', mode=FuzzingMode.MUTATE)
+    >>> preset.fuzz(field3)
+    >>> print(symbol.str_structure())
+    symbol 1
+    |--  field 1
+         |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED]
+    |--  field 2
+         |--   Agg
+               |--   Data (Integer(0,255)) [FuzzingMode.MUTATE]
+               |--   Data (Integer(0,255))
+    |--  field 3
+         |--   Data (Raw(nbBytes=1)) [FuzzingMode.GENERATE]
 
     """
