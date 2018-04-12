@@ -98,10 +98,12 @@ class Transition(AbstractTransition):
     :var name: The name of the transition.
     :var inputSymbolReactionTime: The timeout value in seconds to wait for the
                                   input value (only used in a receiving context).
-    :var outputSymbolsReactionTime: A :class:`dict` containing, for each output
-                                    symbol, the timeout value in seconds to
-                                    wait for the output value (only used in a
+    :var outputSymbolsReactionTime: A :class:`dict` containing, for
+                                    each output symbol, the timeout
+                                    value in seconds to wait for the
+                                    output value (only used in a
                                     sending context).
+    :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol.
     :var inverseInitiator: Indicates to inverse the initiator of the communication after the transition.
     :var rate: This specifies the bandwidth in octets to respect during
                traffic emission (should be used with :attr:`duration` parameter).
@@ -116,6 +118,7 @@ class Transition(AbstractTransition):
     :vartype name: :class:`str`
     :vartype inputSymbolReactionTime: :class:`float`
     :vartype outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
+    :vartype outputSymbolsProbabilities: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
     :vartype inverseInitiator: :class:`bool`
     :vartype rate: :class:`int`
     :vartype duration: :class:`int`
@@ -173,7 +176,7 @@ class Transition(AbstractTransition):
         # Initialize other public variables
         self.inputSymbolPreset = None
         self.outputSymbolsPreset = None
-        self.outputSymbolProbabilities = {}  # TODO: not yet exposed in the API
+        self.outputSymbolsProbabilities = {}
         self.inputSymbolReactionTime = None
         self.outputSymbolsReactionTime = None
         self.description = None
@@ -466,11 +469,11 @@ class Transition(AbstractTransition):
         nbSymbolWithNoExplicitProbability = 0
         totalProbability = 0
         for outputSymbol in self.outputSymbols:
-            if outputSymbol not in list(self.outputSymbolProbabilities.keys()):
+            if outputSymbol not in list(self.outputSymbolsProbabilities.keys()):
                 probability = None
                 nbSymbolWithNoExplicitProbability += 1
             else:
-                probability = self.outputSymbolProbabilities[outputSymbol]
+                probability = self.outputSymbolsProbabilities[outputSymbol]
                 totalProbability += probability
             outputSymbolsWithProbability[outputSymbol] = probability
 
@@ -634,6 +637,21 @@ class Transition(AbstractTransition):
                             "Symbol and float, not {}"
                             .format(type(outputSymbolsReactionTime).__name__))
         self.__outputSymbolsReactionTime = outputSymbolsReactionTime
+
+    @public_api
+    @property
+    def outputSymbolsProbabilities(self):
+        return self.__outputSymbolsProbabilities
+
+    @outputSymbolsProbabilities.setter  # type: ignore
+    def outputSymbolsProbabilities(self, outputSymbolsProbabilities):
+        if outputSymbolsProbabilities is None:
+            outputSymbolsProbabilities = {}
+        elif not isinstance(outputSymbolsProbabilities, dict):
+            raise TypeError("outputSymbolsProbabilities should be a dict of "
+                            "Symbol and float, not {}"
+                            .format(type(outputSymbolsProbabilities).__name__))
+        self.__outputSymbolsProbabilities = outputSymbolsProbabilities
 
     @public_api
     @property
