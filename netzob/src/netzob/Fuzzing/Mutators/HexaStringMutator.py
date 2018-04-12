@@ -212,9 +212,9 @@ def _test_fixed():
     >>> from netzob.all import *
     >>> f1 = Field(HexaString(nbBytes=1))
     >>> symbol = Symbol([f1], name="sym")
-    >>> preset = Preset()
+    >>> preset = Preset(symbol)
     >>> preset[f1] = b'\x41'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -226,14 +226,14 @@ def _test_fixed():
     **Fixing the value of a sub-field**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(HexaString(nbBytes=1))
     >>> f2_1 = Field(HexaString(nbBytes=1))
     >>> f2_2 = Field(HexaString(nbBytes=1))
     >>> f2 = Field([f2_1, f2_2])
     >>> symbol = Symbol([f1, f2], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[f2_1] = b'\x41'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'\xbfAJ'
     >>> next(messages_gen)
@@ -247,12 +247,12 @@ def _test_fixed():
     This should trigger an exception as it is only possible to fix a value to leaf fields.
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(HexaString(nbBytes=1))
     >>> f2_1 = Field(HexaString(nbBytes=1))
     >>> f2_2 = Field(HexaString(nbBytes=1))
     >>> f2 = Field([f2_1, f2_2])
     >>> symbol = Symbol([f1, f2], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[f2] = b'\x41'
     Traceback (most recent call last):
     ...
@@ -262,14 +262,14 @@ def _test_fixed():
     **Fixing the value of a leaf variable**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(HexaString(nbBytes=1))
     >>> v2 = Data(HexaString(nbBytes=1))
     >>> v_agg = Agg([v1, v2])
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[v1] = b'\x41'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A\x82'
     >>> next(messages_gen)
@@ -281,14 +281,14 @@ def _test_fixed():
     **Fixing the value of a node variable**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(HexaString(nbBytes=1))
     >>> v2 = Data(HexaString(nbBytes=1))
     >>> v_agg = Agg([v1, v2])
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[v_agg] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -300,12 +300,12 @@ def _test_fixed():
     **Fixing the value of a field, by relying on a provided generator**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(HexaString(nbBytes=1))
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_generator
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -321,12 +321,12 @@ def _test_fixed():
     **Fixing the value of a field, by relying on a provided iterator**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(HexaString(nbBytes=1))
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_iter
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -342,13 +342,13 @@ def _test_fixed():
     **Fixing the value of a field, by relying on a provided function**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(HexaString(nbBytes=1))
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> def my_callable():
     ...     return random.choice([b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_callable
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -360,11 +360,11 @@ def _test_fixed():
     **Fixing the value of a field through its name**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(HexaString(nbBytes=1), name='f1')
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset['f1'] = b'\x41'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -376,14 +376,14 @@ def _test_fixed():
     **Fixing the value of a variable leaf through its name**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(HexaString(nbBytes=1), name='v1')
     >>> v2 = Data(HexaString(nbBytes=1), name='v2')
     >>> v_agg = Agg([v1, v2], name='v_agg')
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset['v1'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC\x81'
     >>> next(messages_gen)
@@ -395,14 +395,14 @@ def _test_fixed():
     **Fixing the value of a variable node through its name**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(HexaString(nbBytes=1), name='v1')
     >>> v2 = Data(HexaString(nbBytes=1), name='v2')
     >>> v_agg = Agg([v1, v2], name='v_agg')
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset['v_agg'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)

@@ -76,23 +76,23 @@ class AggMutator(DomainMutator):
 
     >>> from netzob.all import *
     >>> from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
-    >>> preset = Preset()
     >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_agg)
-    >>> next(symbol.specialize(preset))
+    >>> next(symbol.specialize())
     b'\x00\x00\x00\x00'
 
 
     **Fuzzing of an aggregate of variables with non-default fuzzing strategy (FuzzingMode.MUTATE)**
 
-    >>> preset = Preset()
     >>> f_agg = Field(name="agg", domain=Agg([int16(1),
     ...                                       int16(2)]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_agg, mode=FuzzingMode.MUTATE)
-    >>> res = next(symbol.specialize(preset))
+    >>> res = next(symbol.specialize())
     >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
 
@@ -100,26 +100,26 @@ class AggMutator(DomainMutator):
     **Fuzzing of an aggregate of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
 
     >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-    >>> preset = Preset()
     >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
+    >>> preset = Preset(symbol)
     >>> mapping = {}
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> preset.fuzz(f_agg, mappingTypesMutators=mapping)
-    >>> res = next(symbol.specialize(preset))
+    >>> res = next(symbol.specialize())
     >>> res
     b' \x01 \x01'
 
 
     **Fuzzing of an aggregate of variables without fuzzing the children**
 
-    >>> preset = Preset()
     >>> f_agg = Field(name="agg", domain=Agg([int8(interval=(1, 4)),
     ...                                       int8(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_agg])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_agg, mutateChild=False)
-    >>> res = next(symbol.specialize(preset))
+    >>> res = next(symbol.specialize())
     >>> 1 <= res[0] <= 4
     True
     >>> 5 <= res[1] <= 8
@@ -241,14 +241,14 @@ def _test_fixed():
     **Fixing the value of a node variable**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(Raw(nbBytes=1))
     >>> v2 = Data(Raw(nbBytes=1))
     >>> v_agg = Agg([v1, v2])
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[v_agg] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -260,14 +260,14 @@ def _test_fixed():
     **Fixing the value of a variable node through its name**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(Raw(nbBytes=1), name='v1')
     >>> v2 = Data(Raw(nbBytes=1), name='v2')
     >>> v_agg = Agg([v1, v2], name='v_agg')
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset['v_agg'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)

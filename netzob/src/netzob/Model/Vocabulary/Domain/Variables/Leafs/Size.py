@@ -516,9 +516,9 @@ def _test_size():
     >>> symbol_udp = Symbol(name="udp", fields=(udp_header + [pseudo_ip_header]))
     >>>
     >>> #
-    >>> preset = Preset()
+    >>> preset = Preset(symbol_udp)
     >>> preset["udp.payload"] = "test AAAAAAAA"
-    >>> data = next(symbol_udp.specialize(preset=preset))
+    >>> data = next(symbol_udp.specialize())
     >>>
     >>> symbol_udp.abstract(data)  # doctest: +ELLIPSIS
     OrderedDict([('udp.sport', b'...'), ('udp.dport', b'...'), ('udp.length', b'\x00\x15'), ('udp.checksum', b'...'), ('udp.payload', b'test AAAAAAAA')])

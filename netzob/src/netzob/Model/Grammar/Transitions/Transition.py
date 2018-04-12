@@ -502,7 +502,7 @@ class Transition(AbstractTransition):
 
         # Random selection of the symbol and its associated preset
         symbol_to_send = random.choice(distribution)
-        symbol_preset = Preset()
+        symbol_preset = Preset(symbol_to_send)
         if self.outputSymbolsPreset is not None and isinstance(self.outputSymbolsPreset, dict):
             if symbol_to_send in self.outputSymbolsPreset:
                 symbol_preset = self.outputSymbolsPreset[symbol_to_send]

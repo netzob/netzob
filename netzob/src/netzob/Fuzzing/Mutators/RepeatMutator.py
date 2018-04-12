@@ -96,32 +96,32 @@ class RepeatMutator(DomainMutator):
 
     **Fuzzing example of a field that contains a fixed number of repeat of a variable**
 
-    >>> preset = Preset()
     >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=2))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_rep)
-    >>> gen = symbol.specialize(preset)
+    >>> gen = symbol.specialize()
     >>> len(next(gen))
     512
 
 
     **Fuzzing example of a field that contains a variable number of repeat of a variable**
 
-    >>> preset = Preset()
     >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_rep)
-    >>> len(next(symbol.specialize(preset)))
+    >>> len(next(symbol.specialize()))
     512
 
 
     **Fuzzing of an alternate of variables with non-default fuzzing strategy (FuzzingMode.MUTATE)**
 
-    >>> preset = Preset()
     >>> f_rep = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_rep])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_rep, mode=FuzzingMode.MUTATE)
-    >>> res = symbol.specialize(preset)
+    >>> res = symbol.specialize()
     >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
 
@@ -129,23 +129,23 @@ class RepeatMutator(DomainMutator):
     **Fuzzing of a repeat of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
 
     >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-    >>> preset = Preset()
     >>> f_repeat = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_repeat])
+    >>> preset = Preset(symbol)
     >>> mapping = {}
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> preset.fuzz(f_repeat, mappingTypesMutators=mapping)
-    >>> len(next(symbol.specialize(preset)))
+    >>> len(next(symbol.specialize()))
     512
 
 
     **Fuzzing of a repeat of variables without fuzzing the children**
 
-    >>> preset = Preset()
     >>> f_repeat = Field(name="rep", domain=Repeat(int8(interval=(5, 8)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_repeat])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_repeat, mutateChild=False)
-    >>> res = next(symbol.specialize(preset))
+    >>> res = next(symbol.specialize())
     >>> for i in range(int(len(res))):
     ...     assert 5 <= ord(res[i:i+1]) <= 8
 
@@ -306,13 +306,13 @@ def _test_fuzz_children_with_specific_mutator():
 
     >>> from netzob.all import *
     >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-    >>> preset = Preset()
     >>> f_repeat = Field(name="rep", domain=Repeat(int16(interval=(1, 4)), nbRepeat=(2, 4)))
     >>> symbol = Symbol(name="sym", fields=[f_repeat])
+    >>> preset = Preset(symbol)
     >>> mapping = {}
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> preset.fuzz(f_repeat, mappingTypesMutators=mapping)
-    >>> len(next(symbol.specialize(preset)))
+    >>> len(next(symbol.specialize()))
     512
 
     """
@@ -330,13 +330,13 @@ def _test_fixed():
     **Fixing the value of a node variable**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(Raw(nbBytes=1))
     >>> v_repeat = Repeat(v1, nbRepeat=3)
     >>> f1 = Field(v_repeat)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[v_repeat] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -348,13 +348,13 @@ def _test_fixed():
     **Fixing the value of a variable node through its name**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(Raw(nbBytes=1), name='v1')
     >>> v_repeat = Repeat(v1, nbRepeat=3, name='v_repeat')
     >>> f1 = Field(v_repeat)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset['v_repeat'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)

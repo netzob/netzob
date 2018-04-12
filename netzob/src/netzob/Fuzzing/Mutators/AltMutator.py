@@ -101,53 +101,53 @@ class AltMutator(DomainMutator):
 
     **Fuzzing of a field that contains an alternate of variables with default fuzzing strategy (FuzzingMode.GENERATE)**
 
-    >>> preset = Preset()
     >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_alt)
-    >>> next(symbol.specialize(preset))
+    >>> next(symbol.specialize())
     b'\x00\x00'
 
 
     **Fuzzing of an alternate of variables with non-default types/mutators mapping (determinist IntegerMutator instead of pseudo-random IntegerMutator for Integer)**
 
     >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-    >>> preset = Preset()
     >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
     ...                                       int16(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> preset = Preset(symbol)
     >>> mapping = {}
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> preset.fuzz(f_alt, mappingTypesMutators=mapping)
-    >>> res = next(symbol.specialize(preset))
+    >>> res = next(symbol.specialize())
     >>> res
     b' \x01'
 
 
     **Fuzzing of an alternate of variables without fuzzing the children**
 
-    >>> preset = Preset()
     >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
     ...                                       int8(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_alt, mutateChild=False)
-    >>> res = next(symbol.specialize(preset))
+    >>> res = next(symbol.specialize())
     >>> 1 <= ord(res) <= 4
     True
 
 
     **Fuzzing of an alternate of variables with a limitation in term of recursivity**
 
-    >>> preset = Preset()
     >>> inner_domain = Alt([int8(interval=(1, 4)), int8(interval=(5, 8))])
     >>> outer_domain = Alt([int8(interval=(9, 12)), inner_domain])
     >>> f_alt = Field(name="alt", domain=outer_domain)
     >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_alt, maxDepth=2)
-    >>> next(symbol.specialize(preset))
+    >>> next(symbol.specialize())
     b'\x00'
-    >>> next(symbol.specialize(preset))
+    >>> next(symbol.specialize())
     Traceback (most recent call last):
     ...
     netzob.Fuzzing.Mutators.AltMutator.RecursionException: Max depth reached (2)
@@ -310,15 +310,15 @@ def _test_alt_mutator():
 
     >>> from netzob.all import *
 
-    >>> preset = Preset()
     >>> f_alt = Field(name="alt", domain=Alt([Raw(), int8(), int16()]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_alt)
     >>> have_int8 = False
     >>> have_int16 = False
     >>> have_raw = False
     >>> for _ in range(10):
-    ...     tmp = len(next(symbol.specialize(preset)))
+    ...     tmp = len(next(symbol.specialize()))
     ...     if tmp == 1:
     ...         have_int8 = True
     ...     elif tmp == 2:
@@ -342,15 +342,15 @@ def _test_alt_use_mutator():
     >>> from netzob.all import *
     >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 
-    >>> preset = Preset()
     >>> mapping = {}
     >>> f_alt = Field(name="alt", domain=Alt([Integer(), Raw()]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> preset = Preset(symbol)
     >>> mapping[Integer] = {'lengthBitSize' : UnitSize.SIZE_64}
     >>> preset.fuzz(f_alt, mappingTypesMutators=mapping)
     >>> res = []
-    >>> res.append(len(next(symbol.specialize(preset))))
-    >>> res.append(len(next(symbol.specialize(preset))))
+    >>> res.append(len(next(symbol.specialize())))
+    >>> res.append(len(next(symbol.specialize())))
     >>> 8 in res
     True
 
@@ -364,13 +364,13 @@ def _test_alt_max_depth():
     >>> from netzob.all import *
     >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
 
-    >>> preset = Preset()
     >>> f_alt = Field(name="alt", domain=Alt([Integer(42)]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_alt, maxDepth=3, generator='mt19937')
-    >>> tmp = next(symbol.specialize(preset))
-    >>> tmp = next(symbol.specialize(preset))
-    >>> tmp = next(symbol.specialize(preset))
+    >>> tmp = next(symbol.specialize())
+    >>> tmp = next(symbol.specialize())
+    >>> tmp = next(symbol.specialize())
     Traceback (most recent call last):
     ...
     netzob.Fuzzing.Mutators.AltMutator.RecursionException: Max depth reached (3)
@@ -390,14 +390,14 @@ def _test_fixed():
     **Fixing the value of a node variable**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(Raw(nbBytes=1))
     >>> v2 = Data(Raw(nbBytes=1))
     >>> v_alt = Alt([v1, v2])
     >>> f1 = Field(v_alt)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[v_alt] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -409,14 +409,14 @@ def _test_fixed():
     **Fixing the value of a variable node through its name**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(Raw(nbBytes=1), name='v1')
     >>> v2 = Data(Raw(nbBytes=1), name='v2')
     >>> v_alt = Alt([v1, v2], name='v_alt')
     >>> f1 = Field(v_alt)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset['v_alt'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)

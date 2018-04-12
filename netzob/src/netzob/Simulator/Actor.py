@@ -440,7 +440,7 @@ class Actor(Thread):
     ...        last_received_symbol_name = last_received_symbol.name
     ...    else:
     ...        last_received_symbol_name = None
-    ...    preset = Preset()
+    ...    preset = Preset(current_symbol)
     ...
     ...    # Building the output symbol by incrementing the value of the last
     ...    # received symbol
@@ -617,7 +617,7 @@ class Actor(Thread):
     ...        last_received_symbol_name = last_received_symbol.name
     ...    else:
     ...        last_received_symbol_name = None
-    ...    preset = Preset()
+    ...    preset = Preset(current_symbol)
     ...
     ...    # Building the output symbol by incrementing the value of the last received symbol
     ...    if last_received_symbol is not None and last_received_message is not None:
@@ -1774,7 +1774,7 @@ class Actor(Thread):
     <BLANKLINE>
     >>>
     >>> # Define fuzzing configuration
-    >>> preset = Preset()
+    >>> preset = Preset(symbol1)
     >>> preset.fuzz(symbol1)
     >>>
     >>> # Create Bob actor (a client)
@@ -1924,7 +1924,7 @@ class Actor(Thread):
     <BLANKLINE>
     >>>
     >>> # Define fuzzing configuration
-    >>> preset = Preset()
+    >>> preset = Preset([symbol1, symbol2])
     >>> preset.fuzz(symbol1)
     >>> preset.fuzz(symbol2)
     >>>
@@ -2646,7 +2646,7 @@ def _test_callback_modify_symbol():
     ...        last_received_symbol_name = last_received_symbol.name
     ...    else:
     ...        last_received_symbol_name = None
-    ...    preset = Preset()
+    ...    preset = Preset(current_symbol)
     ...
     ...    # Building the output symbol by incrementing the value of the last
     ...    # received symbol

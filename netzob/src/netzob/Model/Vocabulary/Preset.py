@@ -126,29 +126,29 @@ class Preset(object):
     parameterized **values** during specialization of the
     ``udp_dport`` and ``udp_payload`` fields:
 
-    >>> preset = Preset()
+    >>> preset = Preset(symbol_udp)
     >>> preset[f_dport] = 11              # udp.dport expects an int or an Integer
     >>> preset[f_payload] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
-    >>> next(symbol_udp.specialize(preset=preset))
+    >>> next(symbol_udp.specialize())
     b'\x0b\xaa\xbb'
 
-    >>> preset = Preset()
+    >>> preset = Preset(symbol_udp)
     >>> preset["udp.dport"] = 11              # udp.dport expects an int or an Integer
     >>> preset["udp.payload"] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
-    >>> next(symbol_udp.specialize(preset=preset))
+    >>> next(symbol_udp.specialize())
     b'\x0b\xaa\xbb'
 
-    >>> preset = Preset()
+    >>> preset = Preset(symbol_udp)
     >>> preset["udp.dport"] = uint16(11)        # udp.dport expects an int or an Integer
     >>> preset["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
-    >>> next(symbol_udp.specialize(preset=preset))
+    >>> next(symbol_udp.specialize())
     b'\x00\x0b\xaa\xbb'
 
-    >>> preset = Preset()
+    >>> preset = Preset(symbol_udp)
     >>> preset["udp.dport"] = bitarray('00001011', endian='big')
     >>> preset["udp.payload"] = bitarray('1010101010111011', endian='big')
     >>> preset["udp.payload"] = bitarray('1010101010111011', endian='big')
-    >>> next(symbol_udp.specialize(preset=preset))
+    >>> next(symbol_udp.specialize())
     b'\x0b\xaa\xbb'
 
     The previous example shows the use of BitArray as dict
@@ -160,15 +160,15 @@ class Preset(object):
     parameterized **keys** during specialization of the fields
     ``udp_dport`` and ``udp_payload``:
 
-    >>> preset = Preset()
+    >>> preset = Preset(symbol_udp)
     >>> preset[f_dport] = 11
     >>> preset[f_payload] = b"\xaa\xbb"
-    >>> next(symbol_udp.specialize(preset=preset))
+    >>> next(symbol_udp.specialize())
     b'\x0b\xaa\xbb'
-    >>> preset = Preset()
+    >>> preset = Preset(symbol_udp)
     >>> preset["udp.dport"] = 11
     >>> preset["udp.payload"] = b"\xaa\xbb"
-    >>> next(symbol_udp.specialize(preset=preset))
+    >>> next(symbol_udp.specialize())
     b'\x0b\xaa\xbb'
 
 
@@ -180,9 +180,9 @@ class Preset(object):
     >>> f2 = Field(domain=Raw(nbBytes=(10,15)))
     >>> f1.domain = Size(f2)
     >>> s = Symbol(fields=[f1, f2])
-    >>> preset = Preset()
+    >>> preset = Preset(s)
     >>> preset[f1] = bitarray('11111111')
-    >>> next(s.specialize(preset=preset))
+    >>> next(s.specialize())
     b'\xff\xd7\x14\x84\xf8\xcf\x9b\xf4\xb7oG\x90G0'
 
 
@@ -191,9 +191,9 @@ class Preset(object):
     >>> from netzob.all import *
     >>> f1 = Field(uint8())
     >>> symbol = Symbol([f1], name="sym")
-    >>> preset = Preset()
+    >>> preset = Preset(symbol)
     >>> preset[f1] = b'\x41'
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -205,14 +205,14 @@ class Preset(object):
     **Fixing the value of a sub-field**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(uint8())
     >>> f2_1 = Field(uint8())
     >>> f2_2 = Field(uint8())
     >>> f2 = Field([f2_1, f2_2])
     >>> symbol = Symbol([f1, f2], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[f2_1] = b'\x41'
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'\x80AK'
     >>> next(messages_gen)
@@ -226,12 +226,12 @@ class Preset(object):
     This should trigger an exception as it is only possible to fix a value to leaf fields.
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(uint8())
     >>> f2_1 = Field(uint8())
     >>> f2_2 = Field(uint8())
     >>> f2 = Field([f2_1, f2_2])
     >>> symbol = Symbol([f1, f2], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[f2] = b'\x41'
     Traceback (most recent call last):
     ...
@@ -241,14 +241,14 @@ class Preset(object):
     **Fixing the value of a leaf variable**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(uint8())
     >>> v2 = Data(uint8())
     >>> v_agg = Agg([v1, v2])
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[v1] = b'\x41'
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A%'
     >>> next(messages_gen)
@@ -260,14 +260,14 @@ class Preset(object):
     **Fixing the value of a node variable**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(uint8())
     >>> v2 = Data(uint8())
     >>> v_agg = Agg([v1, v2])
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[v_agg] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -279,12 +279,12 @@ class Preset(object):
     **Fixing the value of a field, by relying on a provided generator**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(uint8())
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_generator
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -300,12 +300,12 @@ class Preset(object):
     **Fixing the value of a field, by relying on a provided iterator**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(uint8())
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_iter
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -321,13 +321,13 @@ class Preset(object):
     **Fixing the value of a field, by relying on a provided function**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(uint8())
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> def my_callable():
     ...     return random.choice([b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_callable
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'C'
     >>> next(messages_gen)
@@ -339,11 +339,11 @@ class Preset(object):
     **Fixing the value of a field through its name**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(uint8(), name='f1')
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset['f1'] = b'\x41'
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -355,14 +355,14 @@ class Preset(object):
     **Fixing the value of a variable leaf through its name**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(uint8(), name='v1')
     >>> v2 = Data(uint8(), name='v2')
     >>> v_agg = Agg([v1, v2], name='v_agg')
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset['v1'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC\xde'
     >>> next(messages_gen)
@@ -374,14 +374,14 @@ class Preset(object):
     **Fixing the value of a variable node through its name**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(uint8(), name='v1')
     >>> v2 = Data(uint8(), name='v2')
     >>> v_agg = Agg([v1, v2], name='v_agg')
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset['v_agg'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -395,13 +395,13 @@ class Preset(object):
     >>> from netzob.all import *
     >>> f1 = Field(uint8(), name='field 1')
     >>> symbol = Symbol([f1], name="sym")
-    >>> preset = Preset()
+    >>> preset = Preset(symbol)
     >>> preset[f1] = b'\x41'
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'A'
     >>> del preset[f1]
-    >>> messages_gen = symbol.specialize(preset=preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'\xf4'
 
@@ -429,7 +429,8 @@ class Preset(object):
         Preset.mappingTypesMutators[Agg] = (AggMutator, {})
 
     @public_api
-    def __init__(self):
+    def __init__(self, symbols):
+        self.symbols = symbols
 
         # Initialize counterMax
         DomainMutator.globalCounterMax = DomainMutator.COUNTER_MAX_DEFAULT
@@ -875,45 +876,45 @@ class Preset(object):
         **Simple fuzzing example**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> f_data = Field(domain=int8())
         >>> symbol = Symbol(fields=[f_data])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(f_data)
-        >>> next(symbol.specialize(preset=preset))
+        >>> next(symbol.specialize())
         b'\x00'
 
 
         **Fuzzing example of a field that contains an integer**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> f_data = Field(name="data", domain=int16(interval=(1, 4)))
         >>> symbol = Symbol(name="sym", fields=[f_data])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(f_data, interval=(20, 32000))
-        >>> next(symbol.specialize(preset=preset))
+        >>> next(symbol.specialize())
         b'U*'
 
 
         **Fuzzing example of a field that contains a size relationship with another field**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> f_data = Field(name="data", domain=int16(3))
         >>> f_size = Field(name="size", domain=Size([f_data], Integer(unitSize=UnitSize.SIZE_16)))
         >>> symbol = Symbol(name="sym", fields=[f_data, f_size])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(f_size, interval=(20, 32000))
-        >>> next(symbol.specialize(preset=preset))
+        >>> next(symbol.specialize())
         b'\x00\x03U*'
 
 
         **Fuzzing example in mutation mode of a field that contains an integer**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> f_data = Field(name="data", domain=int16(2))
         >>> symbol = Symbol(name="sym", fields=[f_data])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(f_data, mode=FuzzingMode.MUTATE, interval=(20, 32000))
-        >>> res = next(symbol.specialize(preset=preset))
+        >>> res = next(symbol.specialize())
         >>> res != b'\x00\x02'
         True
 
@@ -921,14 +922,14 @@ class Preset(object):
         **Multiple fuzzing call on the same symbol**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> f_data = Field(name="data", domain=int16(2))
         >>> symbol = Symbol(name="sym", fields=[f_data])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(f_data, interval=(20, 30000))
         >>> nbFuzz = 1000
         >>> result = set()
         >>> for i in range(nbFuzz):
-        ...     result.add(next(symbol.specialize(preset=preset)))
+        ...     result.add(next(symbol.specialize()))
         >>> len(result) == 1000
         True
 
@@ -936,62 +937,62 @@ class Preset(object):
         **Fuzzing of a field that contains sub-fields**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> f_data1 = Field(name="data1", domain=int8())
         >>> f_data2 = Field(name="data2", domain=int16())
         >>> f_parent = Field(name="parent", domain=[f_data1, f_data2])
         >>> symbol = Symbol(name="sym", fields=[f_parent])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(f_parent)
-        >>> next(symbol.specialize(preset=preset))
+        >>> next(symbol.specialize())
         b'\x00\x00\x00'
 
 
         **Fuzzing of a whole symbol, and covering all field storage spaces with default fuzzing strategy per types**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> f_data1 = Field(name="data1", domain=int8(interval=(2, 4)))
         >>> f_data2 = Field(name="data2", domain=int8(interval=(5, 8)))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(symbol, interval=FuzzingInterval.FULL_INTERVAL)
-        >>> next(symbol.specialize(preset=preset))
+        >>> next(symbol.specialize())
         b'\x00\x00'
 
 
         **Fuzzing and covering full storage space of a field**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> f_data1 = Field(name="data1", domain=int8(2))
         >>> f_data2 = Field(name="data2", domain=int8(interval=(10, 20)))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(f_data2, interval=FuzzingInterval.FULL_INTERVAL)
-        >>> next(symbol.specialize(preset=preset))
+        >>> next(symbol.specialize())
         b'\x02\x00'
 
 
         **Fuzzing and covering full storage space of a field, after redefining its storage space from 8 to 16 bits**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> f_data1 = Field(name="data1", domain=int8(2))
         >>> f_data2 = Field(name="data2", domain=int8(interval=(10, 20)))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(f_data2, interval=FuzzingInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_16)
-        >>> next(symbol.specialize(preset=preset))
+        >>> next(symbol.specialize())
         b'\x02\x00\x00'
 
 
         **Fuzzing and changing the default fuzzing parameters for types**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> f_data1 = Field(name="data1", domain=int8(2))
         >>> f_data2 = Field(name="data2", domain=int8(4))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(Integer, interval=(10, 12))
         >>> preset.fuzz(symbol)
-        >>> next(symbol.specialize(preset=preset))
+        >>> next(symbol.specialize())
         b'\x0c\x0c'
 
 
@@ -1001,14 +1002,14 @@ class Preset(object):
         of the pseudo-random integer mutator used by default for integer fuzzing.
 
         >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-        >>> preset = Preset()
         >>> f_agg = Field(name="agg", domain=Agg([int16(interval=(1, 4)),
         ...                                       int16(interval=(5, 8))]))
         >>> symbol = Symbol(name="sym", fields=[f_agg])
+        >>> preset = Preset(symbol)
         >>> mapping = {}
         >>> mapping[Integer] = {'generator':'determinist'}
         >>> preset.fuzz(f_agg, mappingTypesMutators=mapping)
-        >>> res = next(symbol.specialize(preset))
+        >>> res = next(symbol.specialize())
         >>> res
         b' \x01 \x01'
 
@@ -1019,26 +1020,26 @@ class Preset(object):
         of the pseudo-random integer mutator used by default for integer fuzzing.
 
         >>> from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
-        >>> preset = Preset()
         >>> f_alt = Field(name="alt", domain=Alt([int16(interval=(1, 4)),
         ...                                       int16(interval=(5, 8))]))
         >>> symbol = Symbol(name="sym", fields=[f_alt])
+        >>> preset = Preset(symbol)
         >>> mapping = {}
         >>> mapping[Integer] = {'generator':'determinist'}
         >>> preset.fuzz(f_alt, mappingTypesMutators=mapping)
-        >>> res = next(symbol.specialize(preset))
+        >>> res = next(symbol.specialize())
         >>> res
         b' \x01'
 
 
         **Fuzzing of an aggregate of variables without fuzzing the children**
 
-        >>> preset = Preset()
         >>> f_agg = Field(name="agg", domain=Agg([int8(interval=(1, 4)),
         ...                                       int8(interval=(5, 8))]))
         >>> symbol = Symbol(name="sym", fields=[f_agg])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(f_agg, mutateChild=False)
-        >>> res = next(symbol.specialize(preset))
+        >>> res = next(symbol.specialize())
         >>> 1 <= res[0] <= 4
         True
         >>> 5 <= res[1] <= 8
@@ -1048,15 +1049,15 @@ class Preset(object):
         **Fuzzing configuration with a global maximum number of mutations**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
-        >>> preset.setFuzzingCounterMax(1)
         >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
         ...                                       int8(interval=(5, 8))]))
         >>> symbol = Symbol(name="sym", fields=[f_alt])
+        >>> preset = Preset(symbol)
+        >>> preset.setFuzzingCounterMax(1)
         >>> preset.fuzz(f_alt)
-        >>> next(symbol.specialize(preset=preset))
+        >>> next(symbol.specialize())
         b'\x00'
-        >>> next(symbol.specialize(preset=preset))
+        >>> next(symbol.specialize())
         Traceback (most recent call last):
         StopIteration
 
@@ -1064,14 +1065,14 @@ class Preset(object):
         **Fuzzing configuration with a maximum number of mutations, expressed with an absolute limit, on a symbol**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> field = Field(Agg([uint8(), uint8()]))
         >>> symbol = Symbol([field], name="sym")
+        >>> preset = Preset(symbol)
         >>> symbol.count()
         65536
         >>> preset.fuzz(symbol, counterMax=80)
         >>> idx = 0
-        >>> for data in symbol.specialize(preset=preset):
+        >>> for data in symbol.specialize():
         ...     # use data
         ...     idx += 1
         >>> print(idx)
@@ -1081,16 +1082,16 @@ class Preset(object):
         **Fuzzing configuration with a maximum number of mutations, expressed with a ratio, on a symbol**
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> field = Field(Agg([uint8(), uint8()]))
         >>> symbol = Symbol([field], name="sym")
+        >>> preset = Preset(symbol)
         >>> symbol.count()
         65536
         >>> int(symbol.count() * 0.001)
         65
         >>> preset.fuzz(symbol, counterMax=0.001)
         >>> idx = 0
-        >>> for data in symbol.specialize(preset=preset):
+        >>> for data in symbol.specialize():
         ...     # use data
         ...     idx += 1
         >>> print(idx)
@@ -1098,7 +1099,7 @@ class Preset(object):
 
         .. ifconfig:: scope in ('netzob')
 
-           >>> preset = Preset()  # This is needed to restore counterMax default value for unit test purpose
+           >>> preset = Preset([])  # This is needed to restore counterMax default value for unit test purpose
 
         """
         if counterMax is None:
@@ -1214,13 +1215,13 @@ class Preset(object):
         Example of fuzzing of a whole symbol except one field:
 
         >>> from netzob.all import *
-        >>> preset = Preset()
         >>> f_data1 = Field(name="data1", domain=int8(2))
         >>> f_data2 = Field(name="data2", domain=int8(4))
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>> preset = Preset(symbol)
         >>> preset.fuzz(symbol, interval=FuzzingInterval.FULL_INTERVAL)
         >>> preset.unset(f_data2)
-        >>> next(symbol.specialize(preset=preset))
+        >>> next(symbol.specialize())
         b'\x00\x04'
 
         """
@@ -1541,6 +1542,26 @@ class Preset(object):
         """
         DomainMutator.globalCounterMax = counterMax
 
+    ## Properties ##
+
+    @property
+    def symbols(self):
+        """A list containing all the messages that this symbol represent.
+
+        :type : a :class:`list` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
+        """
+        return self.__symbols
+
+    @symbols.setter  # type: ignore
+    def symbols(self, symbols):
+        if isinstance(symbols, AbstractField):
+            symbols = [symbols]
+
+        self.__symbols = []
+        for symbol in symbols:
+            self.__symbols.append(symbol)
+            symbol.preset = self
+
 
 def _test():
     r"""
@@ -1548,35 +1569,35 @@ def _test():
     # Test to verify that the RNG covers all values in specific ranges, with negatives and positives number
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f_data = Field(domain=int8(interval=(10, 20)))
     >>> symbol = Symbol(fields=[f_data])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_data)
     >>> datas = set()
     >>> for _ in range(2000):
-    ...     datas.add(next(symbol.specialize(preset=preset)))
+    ...     datas.add(next(symbol.specialize()))
     >>> len(datas)
     256
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f_data = Field(domain=int8(interval=(-10, 20)))
     >>> symbol = Symbol(fields=[f_data])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_data)
     >>> datas = set()
     >>> for _ in range(2000):
-    ...     datas.add(next(symbol.specialize(preset=preset)))
+    ...     datas.add(next(symbol.specialize()))
     >>> len(datas)
     256
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f_data = Field(domain=int8(interval=(-20, -10)))
     >>> symbol = Symbol(fields=[f_data])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_data)
     >>> datas = set()
     >>> for _ in range(2000):
-    ...     datas.add(next(symbol.specialize(preset=preset)))
+    ...     datas.add(next(symbol.specialize()))
     >>> len(datas)
     256
 
@@ -1584,13 +1605,13 @@ def _test():
     # Test to verify that the RNG covers all values in specific ranges, with negatives and positives number, with a specific generator
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f_data = Field(domain=uint8())
     >>> symbol = Symbol(fields=[f_data])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_data, generator=(0., 0.5, 1.))
     >>> datas = set()
     >>> for _ in range(3):
-    ...     datas.add(next(symbol.specialize(preset=preset)))
+    ...     datas.add(next(symbol.specialize()))
     >>> len(datas)
     3
     >>> datas = sorted(datas)
@@ -1601,13 +1622,13 @@ def _test():
     255
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f_data = Field(domain=int8())
     >>> symbol = Symbol(fields=[f_data])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_data, generator=(0., 0.5, 1.))
     >>> datas = set()
     >>> for _ in range(3):
-    ...     datas.add(next(symbol.specialize(preset=preset)))
+    ...     datas.add(next(symbol.specialize()))
     >>> len(datas)
     3
     >>> datas = sorted(datas)
@@ -1619,12 +1640,12 @@ def _test():
 
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(uint8())
     >>> f2 = Field(uint8(interval=(0, 254)))
     >>> symbol = Symbol([f1, f2])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(symbol, interval=FuzzingInterval.DEFAULT_INTERVAL)
-    >>> g = symbol.specialize(preset=preset)
+    >>> g = symbol.specialize()
     >>> a = []
     >>> for i in range(symbol.count()):
     ...     data = next(g)
@@ -1638,13 +1659,13 @@ def _test():
 
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> f1 = Field(uint8(interval=(0, 3)))
     >>> f2 = Field(Size(f1))
     >>> symbol = Symbol([f1, f2])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(Integer, interval=FuzzingInterval.DEFAULT_INTERVAL)
     >>> preset.fuzz(f1)
-    >>> g = symbol.specialize(preset=preset)
+    >>> g = symbol.specialize()
     >>> a = []
     >>> for i in range(symbol.count()):
     ...     a.append(next(g))
@@ -1673,24 +1694,24 @@ def _test_seed():
     >>> Mutator.SEED_DEFAULT = 42
 
     >>> # Fuzz an integer
-    >>> preset = Preset()
     >>> f_data = Field(domain=uint8())
     >>> symbol = Symbol(fields=[f_data])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_data)
     >>> datas = []
     >>> for _ in range(20):
-    ...     datas.append(next(symbol.specialize(preset=preset)))
+    ...     datas.append(next(symbol.specialize()))
     >>> datas
     [b'\x00', b's', b'T', b'\xe6', b'\xe9', b':', b'\xe3', b'`', b'{', b'\x1c', b'\xfc', b'#', b'\x96', b'\x02', b'\x12', b'\x82', b'\xb6', b'+', b'\xde', b'\x18']
 
     >>> # Fuzz an integer
-    >>> preset = Preset()
     >>> f_data = Field(domain=uint8())
     >>> symbol = Symbol(fields=[f_data])
+    >>> preset = Preset(symbol)
     >>> preset.fuzz(f_data)
     >>> datas = []
     >>> for _ in range(20):
-    ...     datas.append(next(symbol.specialize(preset=preset)))
+    ...     datas.append(next(symbol.specialize()))
     >>> datas
     [b'\x00', b's', b'T', b'\xe6', b'\xe9', b':', b'\xe3', b'`', b'{', b'\x1c', b'\xfc', b'#', b'\x96', b'\x02', b'\x12', b'\x82', b'\xb6', b'+', b'\xde', b'\x18']
 
@@ -1706,15 +1727,15 @@ def _test_max_mutations():
     **Fuzzing configuration with a global maximum number of mutations**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
-    >>> preset.setFuzzingCounterMax(1)
     >>> f_alt = Field(name="alt", domain=Alt([int8(interval=(1, 4)),
     ...                                       int8(interval=(5, 8))]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
+    >>> preset = Preset(symbol)
+    >>> preset.setFuzzingCounterMax(1)
     >>> preset.fuzz(f_alt)
-    >>> next(symbol.specialize(preset=preset))
+    >>> next(symbol.specialize())
     b'\x00'
-    >>> next(symbol.specialize(preset=preset))
+    >>> next(symbol.specialize())
     Traceback (most recent call last):
     StopIteration
 
@@ -1722,14 +1743,14 @@ def _test_max_mutations():
     **Fuzzing configuration with a maximum number of mutations, expressed with an absolute limit, on a symbol**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> field = Field(Agg([uint8(), uint8()]))
     >>> symbol = Symbol([field], name="sym")
+    >>> preset = Preset(symbol)
     >>> symbol.count()
     65536
     >>> preset.fuzz(symbol, counterMax=80)
     >>> idx = 0
-    >>> for data in symbol.specialize(preset=preset):
+    >>> for data in symbol.specialize():
     ...     # use data
     ...     idx += 1
     >>> print(idx)
@@ -1739,20 +1760,20 @@ def _test_max_mutations():
     **Fuzzing configuration with a maximum number of mutations, expressed with a ratio, on a symbol**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> field = Field(Agg([uint8(), uint8()]))
     >>> symbol = Symbol([field], name="sym")
+    >>> preset = Preset(symbol)
     >>> symbol.count()
     65536
     >>> int(symbol.count() * 0.001)
     65
     >>> preset.fuzz(symbol, counterMax=0.001)
     >>> idx = 0
-    >>> for data in symbol.specialize(preset=preset):
+    >>> for data in symbol.specialize():
     ...     # use data
     ...     idx += 1
     >>> print(idx)
     65
-    >>> preset = Preset()  # This is needed to restore globalCounterMax default value for unit test purpose
+    >>> preset = Preset([])  # This is needed to restore globalCounterMax default value for unit test purpose
 
     """

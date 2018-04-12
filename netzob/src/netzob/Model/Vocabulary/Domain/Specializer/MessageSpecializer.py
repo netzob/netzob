@@ -114,9 +114,9 @@ class MessageSpecializer(object):
         True
 
         # we can use fix the value of one field through the preset object
-        >>> preset = Preset()
+        >>> preset = Preset(s)
         >>> preset["Value"] = "hello"
-        >>> next(s.specialize(preset=preset))
+        >>> next(s.specialize())
         b'\x01\x00\x00\x05hello'
 
         """

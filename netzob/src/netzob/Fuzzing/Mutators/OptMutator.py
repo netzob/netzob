@@ -221,13 +221,13 @@ def _test_fixed():
     **Fixing the value of a node variable**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(Raw(nbBytes=1))
     >>> v_opt = Opt(v1)
     >>> f1 = Field(v_opt)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset[v_opt] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -239,13 +239,13 @@ def _test_fixed():
     **Fixing the value of a variable node through its name**
 
     >>> from netzob.all import *
-    >>> preset = Preset()
     >>> v1 = Data(Raw(nbBytes=1), name='v1')
     >>> v_opt = Opt(v1, name='v_opt')
     >>> f1 = Field(v_opt)
     >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
     >>> preset['v_opt'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize(preset)
+    >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)

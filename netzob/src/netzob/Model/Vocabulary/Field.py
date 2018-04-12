@@ -372,7 +372,7 @@ class Field(AbstractField):
         return self.domain.getVariables()
 
     @public_api
-    def specialize(self, preset: Preset = None) -> Iterator[bytes]:
+    def specialize(self) -> Iterator[bytes]:
         r"""The :meth:`specialize()` method is intended to produce concrete
         :class:`bytes` data based on the field model. This method
         returns a Python generator that in turn provides data
@@ -419,7 +419,7 @@ class Field(AbstractField):
                     field.domain.normalize_targets()
 
         from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
-        fs = FieldSpecializer(self, preset=preset)
+        fs = FieldSpecializer(self, preset=self.preset)
 
         specializing_paths = fs.specialize()
         return self._inner_specialize(specializing_paths)
@@ -525,9 +525,9 @@ def _test():
 
     >>> from netzob.all import *
     >>> f = Field(String("hello"))
-    >>> preset = Preset()
+    >>> preset = Preset(f)
     >>> preset.fuzz(f)
-    >>> next(f.specialize(preset=preset))
+    >>> next(f.specialize())
     b'System("ls -al /")\x00                                                                                                                                                                                                                                             '
     """
 

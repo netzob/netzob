@@ -93,6 +93,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         self.__transformationFunctions = TypedList(TransformationFunction)
 
         self._variable = None
+        self.__preset = None
 
     @abc.abstractmethod
     def copy(self, map_objects=None):
@@ -931,6 +932,18 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
                 "Specified parent must be an AbstractField and not an {0}".
                 format(type(parent)))
         self.__parent = parent
+
+    @property
+    def preset(self):
+        """A preset configuration used for fixing values and fuzzing variables during specialization.
+
+        :type : :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+        """
+        return self.__preset
+
+    @preset.setter  # type: ignore
+    def preset(self, preset):
+        self.__preset = preset
 
     def storeInMemento(self):
         pass

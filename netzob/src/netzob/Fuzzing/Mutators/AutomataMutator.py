@@ -402,7 +402,7 @@ class AutomataMutator(Mutator):
         <BLANKLINE>
         >>>
         >>> # Define fuzzing configuration
-        >>> preset = Preset()
+        >>> preset = Preset([sym1, sym2])
         >>> preset.fuzz(sym1)
         >>> preset.fuzz(sym2)
         >>>
