@@ -270,7 +270,7 @@ class GenericPath(object):
                         break
                 if found:
                     self._logger.debug("Found a callback on '{}' that should be able to be computed due to indirect triggering variable '{}' from field '{}'".format(currentVariable, triggeringVariable, triggeringVariable.field))
-                    break
+                    #break
                 else:
                     self._logger.debug("Callback not concerned by the triggering variable: '{}'".format(callBackToExecute))
                     callBackToExecute = None
