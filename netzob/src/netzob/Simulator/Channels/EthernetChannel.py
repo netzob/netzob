@@ -50,6 +50,7 @@ from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding import Padding
+from netzob.Model.Vocabulary.Preset import Preset
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.Integer import uint16be
@@ -140,7 +141,7 @@ class EthernetChannel(AbstractChannel):
                                       eth_type,
                                       eth_payload],
                                      data=Raw(nbBytes=1),
-                                     modulo=8*60,
+                                     modulo=8 * 60,
                                      once=True)
         eth_padding = Field(ethPaddingVariable, "eth.padding")
         self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
@@ -148,6 +149,7 @@ class EthernetChannel(AbstractChannel):
                                                             eth_type,
                                                             eth_payload,
                                                             eth_padding])
+        self.header_preset = Preset(self.header)
 
     @public_api
     def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
@@ -229,7 +231,7 @@ class EthernetChannel(AbstractChannel):
             raise Exception("socket is not available")
 
         self.header_preset["eth.payload"] = data
-        packet = next(self.header.specialize(presets=self.header_preset))
+        packet = next(self.header.specialize())
         len_data = self._socket.sendto(packet, (self.interface,
                                                 EthernetChannel.ETH_P_ALL))
         return len_data

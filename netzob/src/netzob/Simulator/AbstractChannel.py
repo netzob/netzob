@@ -179,16 +179,13 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
     :var timeout: The default timeout in seconds for opening a connection and
                   waiting for a message.
     :var header: A Symbol that makes it possible to access the protocol header.
-    :var header_preset: A dictionary of keys:values used to preset
+    :var header_preset: A Preset used to preset
                         (parameterize) the header fields during symbol
                         specialization. See :meth:`Symbol.specialize() <netzob.Model.Vocabulary.Symbol.Symbol.specialize>` for more information.
     :vartype isOpen: :class:`bool`
     :vartype timeout: :class:`int`
     :vartype header: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
-    :vartype header_preset: ~typing.Dict[
-                             ~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
-                             ~typing.Union[~bitarray.bitarray,bytes,
-                             ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]]
+    :vartype header_preset: :class:`~netzob.Model.Vocabulary.Preset`
 
     """
 
@@ -364,7 +361,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         self.timeout = timeout
         self._isOpened = False
         self.header = None  # A Symbol corresponding to the protocol header
-        self.header_preset = {}  # A dict used to parameterize the header Symbol
+        self.header_preset = None  # A Preset object is expected to parameterize the header Symbol
         self.__writeCounter = 0
         self.__writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 
