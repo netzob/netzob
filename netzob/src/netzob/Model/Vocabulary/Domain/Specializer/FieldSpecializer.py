@@ -109,7 +109,7 @@ class FieldSpecializer(object):
     """
 
     def __init__(self, field, preset=None):
-        self._logger.debug("Creating a new FieldSpecializer.")
+        self._logger.debug("Creating a new FieldSpecializer for field '{}'".format(field))
 
         self.field = field
         self.preset = preset

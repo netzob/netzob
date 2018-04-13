@@ -611,6 +611,8 @@ class Repeat(AbstractVariableNode):
         if originalSpecializingPath is None:
             raise Exception("Specializing path cannot be None")
 
+        self._logger.debug("Specialize with {}".format(originalSpecializingPath))
+
         newSpecializingPath = originalSpecializingPath
 
         # If we are in a fuzzing mode
@@ -666,6 +668,8 @@ class Repeat(AbstractVariableNode):
             yield from self._inner_specialize(newSpecializingPath, 0, i_repeat, preset)
 
     def _inner_specialize(self, newSpecializingPath, i_repeat, max_repeat, preset):
+
+        self._logger.debug("Try iteration {}/{} of Repeat specialize with {}".format(i_repeat, max_repeat, newSpecializingPath))
 
         break_repeat = RepeatResult.CONTINUE
 

@@ -74,6 +74,9 @@ class GenericPath(object):
 
         self._current_callbacks_operation = []
 
+    def __str__(self):
+        return "Path({})".format(str(id(self)))
+
     def addResult(self, variable, result, notify=True):
         """
         This method can be used to register the bitarray obtained after having parsed a variable.
