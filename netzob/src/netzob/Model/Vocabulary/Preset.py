@@ -1588,7 +1588,7 @@ class Preset(object):
                     elif isinstance(fixed_value, AbstractType):
                         fixed_value = fixed_value.generate().tobytes()
                         generator = repeat(fixed_value)
-                    elif isinstance(fixed_value, (str, bytes, int, )):
+                    elif isinstance(fixed_value, (str, bytes, int, bitarray)):
 
                         if isinstance(fixed_value, bytes):
                             pass
