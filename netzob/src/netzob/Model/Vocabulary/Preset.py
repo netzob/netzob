@@ -75,7 +75,7 @@ from netzob.Fuzzing.Mutators.IPv4Mutator import IPv4Mutator
 from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
 from netzob.Fuzzing.Mutators.RawMutator import RawMutator
 from netzob.Fuzzing.Mutators.HexaStringMutator import HexaStringMutator
-from netzob.Common.Utils.Decorators import NetzobLogger, public_api
+from netzob.Common.Utils.Decorators import NetzobLogger, public_api, typeCheck
 
 
 @NetzobLogger
@@ -1283,6 +1283,34 @@ class Preset(object):
 
         # Update types mapping
         self.mappingTypesMutators.update(new_preset.mappingTypesMutators)
+
+    @public_api
+    @typeCheck(collections.Iterable)
+    def bulk_set(self, items):
+        r"""
+        The :meth:`bulk_set` method inserts multiple items at once.
+
+        Example:
+
+        >>> from netzob.all import *
+        >>> f_data1 = Field(name="data1", domain=int8())
+        >>> f_data2 = Field(name="data2", domain=int8())
+        >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
+        >>>
+        >>> p1 = Preset(symbol)
+        >>> presets = {
+        ...     "data1": 42,  # ASCII value for '*'
+        ...     "data2": -1
+        ... }
+        >>> p1.bulk_set(presets)
+        >>>
+        >>> next(symbol.specialize())
+        b'*\xff'
+        """
+        if isinstance(items, collections.Mapping):
+            items = items.items()
+        for k, v in items:
+            self[k] = v
 
     @public_api
     def copy(self):
