@@ -83,7 +83,15 @@ class Preset(object):
     r"""The Preset class may be used to configure symbol specialization, by
     fixing the expected value of a field or a variable.
 
-    The Preset works with a key:value principle:
+    The Preset constructor expects some parameters:
+
+    :param symbols: A symbol/field (or a list of symbols/fields) on which to apply Preset configuration.
+    :type symbols: (:class:`list` of) :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`
+
+    .. note::
+       An instanciation ``p = Preset(symbols)`` will automatically set the :attr:`preset` attribute on each symbol of the list ``symbols``.
+
+    The Preset works like a Python :class:`dict` with a key:value principle:
 
     :param key: The field or variable for which we want to set the value.
     :param value: The configured value for the field or value.
@@ -93,6 +101,9 @@ class Preset(object):
                 <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
     :type key: :class:`bytes`, :class:`bitarray <bitarray.bitarray>` or the type associated with of the overridden field
                variable, required
+
+    .. note::
+       You can only set (e.g. ``preset[field] = b'\xaa\xbb'``) or unset (e.g. ``del preset[field]``) a Preset configuration on a field or variable. However, it is not allowed to access an item of the Preset configuration (e.g. ``new_var = preset[field]``).
 
 
     **The different ways to specify a field to preset**
@@ -139,8 +150,8 @@ class Preset(object):
     b'\x00\x0b\xaa\xbb'
 
     >>> preset = Preset(symbol_udp)
-    >>> preset["udp.dport"] = uint16(11)        # udp.dport expects an int or an Integer
-    >>> preset["udp.payload"] = Raw(b"\xaa\xbb") # udp.payload expects a bytes object or a Raw object
+    >>> preset["udp.dport"] = uint16(11)          # udp.dport expects an int or an Integer
+    >>> preset["udp.payload"] = Raw(b"\xaa\xbb")  # udp.payload expects a bytes object or a Raw object
     >>> next(symbol_udp.specialize())
     b'\x00\x0b\xaa\xbb'
 
@@ -1111,10 +1122,20 @@ class Preset(object):
                   **kwargs)
 
     def __getitem__(self, key):
-        if key in self.mappingFieldsMutators:
-            return self.mappingFieldsMutators[key]
-        else:
-            raise AttributeError("No such attribute: '{}'".format(key))
+        r"""
+
+        >>> from netzob.all import *
+        >>> f = Field(Raw())
+        >>> s = Symbol([f])
+        >>> preset = Preset(s)
+        >>> preset[f] = b'\xaa'
+        >>> new_var = preset[f]
+        Traceback (most recent call last):
+        ...
+        Exception: It is not allowed to access an item of the Preset configuration.
+
+        """
+        raise Exception("It is not allowed to access an item of the Preset configuration.")
 
     def __setitem__(self, key, value):
         self._set(key, value)
