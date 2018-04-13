@@ -187,7 +187,7 @@ class Fuzz(object):
         :param seed: An integer used to initialize the underlying
                      generator.
 
-                     Default value is :attr:`Mutator.SEED_DEFAULT` = 10.
+                     Default value is :attr:`Mutator.SEED_DEFAULT` = Conf.seed.
 
         :param counterMax: An integer used to limit the number of
                            mutations.

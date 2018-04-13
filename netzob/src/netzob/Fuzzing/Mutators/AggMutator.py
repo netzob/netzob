@@ -48,7 +48,6 @@ from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
 from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
 from netzob.Common.Utils.Decorators import typeCheck
 
-
 class AggMutator(DomainMutator):
     r"""The aggregate mutator.
 
