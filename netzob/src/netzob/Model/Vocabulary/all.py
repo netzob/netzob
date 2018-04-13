@@ -32,6 +32,8 @@ from netzob.Model.Vocabulary.Messages.all import *
 from netzob.Model.Vocabulary.Domain.all import *
 from netzob.Model.Vocabulary.Functions.all import *
 
+from netzob.Model.Vocabulary.AbstractField import AbstractionException
+
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Preset import Preset

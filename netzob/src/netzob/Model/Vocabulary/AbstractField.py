@@ -73,6 +73,7 @@ class GenerationException(Exception):
     pass
 
 
+@public_api
 class AbstractionException(Exception):
     pass
 
