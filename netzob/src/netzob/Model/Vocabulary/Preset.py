@@ -1586,17 +1586,14 @@ class Preset(object):
                     elif isinstance(fixed_value, types.GeneratorType):
                         generator = fixed_value
                     elif isinstance(fixed_value, AbstractType):
-
-                        # Retrieve the variable data type
-                        datatype = k.dataType
                         fixed_value = fixed_value.generate().tobytes()
-
                         generator = repeat(fixed_value)
-
-                    elif isinstance(fixed_value, (str, bytes, int, bitarray)):
+                    elif isinstance(fixed_value, (str, bytes, int, )):
 
                         if isinstance(fixed_value, bytes):
                             pass
+                        elif isinstance(fixed_value, bitarray):
+                            fixed_value = fixed_value.tobytes()
                         elif isinstance(fixed_value, int):
                             unitSize = AbstractType.computeUnitSize(fixed_value)
                             if fixed_value < 0:
