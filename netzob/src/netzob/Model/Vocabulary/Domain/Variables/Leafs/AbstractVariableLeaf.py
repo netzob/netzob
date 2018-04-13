@@ -163,9 +163,12 @@ class AbstractVariableLeaf(AbstractVariable):
                         self._logger.debug("Maximum mutation counter reached")
                         break
                     else:
-                        # Convert the return bytes into bitarray
-                        value = bitarray(endian='big')
-                        value.frombytes(generated_value)
+                        if isinstance(generated_value, bitarray):
+                            value = generated_value
+                        else:
+                            # Convert the return bytes into bitarray
+                            value = bitarray(endian='big')
+                            value.frombytes(generated_value)
 
                         # Associate the generated value to the current variable
                         newParsingPath = parsingPath.copy()

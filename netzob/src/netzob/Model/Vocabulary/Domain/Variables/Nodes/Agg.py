@@ -497,8 +497,11 @@ class Agg(AbstractVariableNode):
             if mutator.mode == FuzzingMode.FIXED:
                 while True:
                     generated_value = mutator.generate()
-                    value = bitarray(endian='big')
-                    value.frombytes(generated_value)
+                    if isinstance(generated_value, bitarray):
+                        value = generated_value
+                    else:
+                        value = bitarray(endian='big')
+                        value.frombytes(generated_value)
 
                     specializingPath.addResult(self, value)
                     yield specializingPath

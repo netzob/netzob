@@ -628,8 +628,11 @@ class Repeat(AbstractVariableNode):
 
             if mutator.mode == FuzzingMode.FIXED:
                 while True:
-                    value = bitarray(endian='big')
-                    value.frombytes(generated_value)
+                    if isinstance(generated_value, bitarray):
+                        value = generated_value
+                    else:
+                        value = bitarray(endian='big')
+                        value.frombytes(generated_value)
 
                     originalSpecializingPath.addResult(self, value)
                     yield originalSpecializingPath

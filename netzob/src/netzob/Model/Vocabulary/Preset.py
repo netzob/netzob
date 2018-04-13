@@ -1593,7 +1593,8 @@ class Preset(object):
                         if isinstance(fixed_value, bytes):
                             pass
                         elif isinstance(fixed_value, bitarray):
-                            fixed_value = fixed_value.tobytes()
+                            pass
+                            #fixed_value = fixed_value.tobytes()
                         else:
                             # Retrieve the variable data type
                             datatype = k.dataType
