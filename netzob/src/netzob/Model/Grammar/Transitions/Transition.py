@@ -103,7 +103,7 @@ class Transition(AbstractTransition):
                                     value in seconds to wait for the
                                     output value (only used in a
                                     sending context).
-    :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol.
+    :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The values should be distributed between ``0.0`` and ``100.0``. The biggest values correspond to a high selection probability.
     :var inverseInitiator: Indicates to inverse the initiator of the communication after the transition.
     :var rate: This specifies the bandwidth in octets to respect during
                traffic emission (should be used with :attr:`duration` parameter).
