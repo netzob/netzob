@@ -52,6 +52,7 @@ from enum import Enum
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Preset import Preset
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
@@ -254,17 +255,19 @@ class AbstractionLayer(object):
         if symbol is None:
             raise TypeError("The symbol to write on the channel cannot be None")
 
+        tmp_preset = Preset(symbol)
+
         if self.actor is not None and self.actor.preset is not None:
-            if preset is not None:
-                preset.update(self.actor.preset)
-            else:
-                preset = self.actor.preset
+            tmp_preset.update(self.actor.preset)
+
+        if preset is not None:
+            tmp_preset.update(preset)
 
         data = b''
         data_len = 0
         data_structure = {}
         if duration is None:
-            (data, data_len, data_structure) = self._writeSymbol(symbol, preset=preset, cbk_action=cbk_action)
+            (data, data_len, data_structure) = self._writeSymbol(symbol, preset=tmp_preset, cbk_action=cbk_action)
         else:
 
             t_start = time.time()
@@ -277,7 +280,7 @@ class AbstractionLayer(object):
                     break
 
                 # Specialize the symbol and send it over the channel
-                (data, data_len_tmp, data_structure) = self._writeSymbol(symbol, preset=preset, cbk_action=cbk_action)
+                (data, data_len_tmp, data_structure) = self._writeSymbol(symbol, preset=tmp_preset, cbk_action=cbk_action)
                 data_len += data_len_tmp
 
                 if rate is None:
