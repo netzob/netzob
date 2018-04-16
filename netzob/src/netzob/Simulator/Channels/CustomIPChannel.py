@@ -48,6 +48,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Preset import Preset
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
 from netzob.Model.Vocabulary.Types.Raw import Raw
@@ -189,7 +190,7 @@ class CustomIPChannel(AbstractChannel):
         """
 
         self.header_preset['ip.payload'] = data
-        packet = next(self.header.specialize(presets=self.header_preset))
+        packet = next(self.header.specialize())
         len_data = self._socket.sendto(packet, (self.remoteIP, 0))
         return len_data
 
@@ -239,15 +240,14 @@ class CustomIPChannel(AbstractChannel):
         ip_tos = Field(
             name='ip.tos',
             domain=Data(
-                dataType=BitArray(nbBits=8),
-                originalValue=bitarray('00000000'),
+                dataType=BitArray(nbBits=8, default=bitarray('00000000')),
                 scope=Scope.SESSION))
         ip_tot_len = Field(
             name='ip.len', domain=BitArray('0000000000000000'))
         ip_id = Field(name='ip.id', domain=BitArray(nbBits=16))
-        ip_flags = Field(name='ip.flags', domain=Data(dataType=BitArray(nbBits=3), originalValue=bitarray('000'), scope=Scope.SESSION))
-        ip_frag_off = Field(name='ip.fragment', domain=Data(dataType=BitArray(nbBits=13), originalValue=bitarray('0000000000000'), scope=Scope.SESSION))
-        ip_ttl = Field(name='ip.ttl', domain=Data(dataType=BitArray(nbBits=8), originalValue=bitarray('01000000'), scope=Scope.SESSION))
+        ip_flags = Field(name='ip.flags', domain=Data(dataType=BitArray(nbBits=3, default=bitarray('000')), scope=Scope.SESSION))
+        ip_frag_off = Field(name='ip.fragment', domain=Data(dataType=BitArray(nbBits=13, default=bitarray('0000000000000')), scope=Scope.SESSION))
+        ip_ttl = Field(name='ip.ttl', domain=Data(dataType=BitArray(nbBits=8, default=bitarray('01000000')), scope=Scope.SESSION))
         ip_proto = Field(name='ip.proto', domain=Integer(value=self.upperProtocol, unitSize=UnitSize.SIZE_8, endianness=Endianness.BIG, sign=Sign.UNSIGNED))
         ip_checksum = Field(name='ip.checksum', domain=BitArray('0000000000000000'))
         ip_saddr = Field(name='ip.src', domain=IPv4(self.localIP))
@@ -304,8 +304,7 @@ class CustomIPChannel(AbstractChannel):
                                                       ip_saddr,
                                                       ip_daddr,
                                                       ip_payload])
-
-    # Management methods
+        self.header_preset = Preset(self.header)
 
     # Properties
 
