@@ -402,15 +402,16 @@ class AutomataMutator(Mutator):
         <BLANKLINE>
         >>>
         >>> # Define fuzzing configuration
-        >>> preset = Preset([sym1, sym2])
-        >>> preset.fuzz(sym1)
-        >>> preset.fuzz(sym2)
+        >>> preset_symbol1 = Preset(sym1)
+        >>> preset_symbol1.fuzz(sym1)
+        >>> preset_symbol2 = Preset(sym2)
+        >>> preset_symbol2.fuzz(sym2)
         >>>
         >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
         >>> bob_channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
         >>> bob_actor = Actor(automata=mutatedAutomata, channel=bob_channel, name='Fuzzer')
         >>> bob_actor.initiator=True
-        >>> bob_actor.fuzzing_preset = preset
+        >>> bob_actor.fuzzing_presets = [preset_symbol1, preset_symbol2]
         >>> bob_actor.fuzzing_states = [s6.name]
         >>> bob_actor.nbMaxTransitions = 7
         >>>

@@ -85,11 +85,11 @@ class Preset(object):
 
     The Preset constructor expects some parameters:
 
-    :param symbols: A symbol/field (or a list of symbols/fields) on which to apply Preset configuration.
-    :type symbols: (:class:`list` of) :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`
+    :param symbol: A symbol/field on which to apply Preset configuration.
+    :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`
 
     .. note::
-       An instanciation ``p = Preset(symbols)`` will automatically set the :attr:`preset` attribute on each symbol of the list ``symbols``.
+       An instanciation ``p = Preset(symbol)`` will automatically set the :attr:`preset` attribute of the symbol.
 
     The Preset works like a Python :class:`dict` with a key:value principle:
 
@@ -438,8 +438,8 @@ class Preset(object):
         Preset.mappingTypesMutators[Agg] = (AggMutator, {})
 
     @public_api
-    def __init__(self, symbols):
-        self.symbols = symbols
+    def __init__(self, symbol):
+        self.symbol = symbol
 
         # Initialize counterMax
         DomainMutator.globalCounterMax = DomainMutator.COUNTER_MAX_DEFAULT
@@ -449,7 +449,7 @@ class Preset(object):
         Preset._initializeTypeMappings()
         self.mappingTypesMutators = Preset.mappingTypesMutators
 
-        # Initialize mapping between Field/Symbols and Mutators
+        # Initialize mapping between Field/Symbol and Mutators
         self.mappingFieldsMutators = {}
 
     @public_api
@@ -1108,7 +1108,7 @@ class Preset(object):
 
         .. ifconfig:: scope in ('netzob')
 
-           >>> preset = Preset([])  # This is needed to restore counterMax default value for unit test purpose
+           >>> preset = Preset(symbol)  # This is needed to restore counterMax default value for unit test purpose
 
         """
         if counterMax is None:
@@ -1345,7 +1345,7 @@ class Preset(object):
         :rtype: :class:`Preset`
 
         .. note::
-           This method will linked the Preset configuration of the associated symbols to the new created Preset instance.
+           This method will linked the Preset configuration of the associated symbol to the new created Preset instance.
 
 
         Example of copying the Preset configuration:
@@ -1378,7 +1378,7 @@ class Preset(object):
 
         """
 
-        new_preset = Preset(self.symbols)
+        new_preset = Preset(self.symbol)
 
         # Copy fields mapping
         for k, mutator in self.mappingFieldsMutators.items():
@@ -1588,7 +1588,7 @@ class Preset(object):
                         new_keys[f.domain] = v
 
             else:
-                raise Exception("Fuzzing keys must contain Symbols, Fields or Variables"
+                raise Exception("Fuzzing keys must contain Symbol, Fields or Variables"
                                 ", but not a '{}'".format(type(k)))
 
         # Update keys
@@ -1602,29 +1602,23 @@ class Preset(object):
 
         """
 
-        # Loop over each symbols associated to the preset configuration
+        # Retrieve associated field or variable based on its string name
         var_found = None
-        for current_symbol in self.symbols:
-
-            if var_found is not None:
+        for f in self.symbol.getLeafFields(includePseudoFields=True):
+            if f.name == name:
+                var_found = f
                 break
-
-            # Retrieve associated field or variable based on its string name
-            for f in current_symbol.getLeafFields(includePseudoFields=True):
-                if f.name == name:
-                    var_found = f
-                    break
-                else:
-                    variables = f.getVariables()
-                    for var in variables:
-                        if var.name == name:
-                            var_found = var
-                            break
-                    if var_found is not None:
+            else:
+                variables = f.getVariables()
+                for var in variables:
+                    if var.name == name:
+                        var_found = var
                         break
+                if var_found is not None:
+                    break
 
         if var_found is None:
-            raise Exception("The key string '{}' has not been recognized in current symbols to preset".format(name))
+            raise Exception("The key string '{}' has not been recognized in current symbol to preset".format(name))
         return var_found
 
     def _normalizeValues(self):
@@ -1637,7 +1631,7 @@ class Preset(object):
 
             # If k is a str, the value will be normalized after the key is transformed into a field or variable object
             if isinstance(k, str):
-                raise Exception("The key string '{}' has not been recognized in current symbols to preset".format(k))
+                raise Exception("The key string '{}' has not been recognized in current symbol to preset".format(k))
 
             # If the value is already a Mutator instance -> we do nothing
             elif isinstance(v, Mutator):
@@ -1776,22 +1770,20 @@ class Preset(object):
     ## Properties ##
 
     @property
-    def symbols(self):
-        """A list containing all the messages that this symbol represent.
+    def symbol(self):
+        """The symbol or field on which to apply preset configuration..
 
-        :type : a :class:`list` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
+        :type : :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
         """
-        return self.__symbols
+        return self.__symbol
 
-    @symbols.setter  # type: ignore
-    def symbols(self, symbols):
-        if isinstance(symbols, AbstractField):
-            symbols = [symbols]
-
-        self.__symbols = []
-        for symbol in symbols:
-            self.__symbols.append(symbol)
-            symbol.preset = self
+    @symbol.setter  # type: ignore
+    def symbol(self, symbol):
+        from netzob.Model.Vocabulary.AbstractField import AbstractField
+        if not isinstance(symbol, AbstractField):
+            raise TypeError("It is expected a symbol or field for the Preset configuration, not '{}' of type '{}'".format(symbol, type(symbol)))
+        self.__symbol = symbol
+        symbol.preset = self
 
 
 def _test():
@@ -1914,7 +1906,7 @@ def _test():
 
 def _test_seed():
     r"""
-    
+
     This test verifies that the fuzzing seed ensures predictibility of generated values
 
     >>> from netzob.all import *
@@ -2005,7 +1997,7 @@ def _test_max_mutations():
     ...     idx += 1
     >>> print(idx)
     65
-    >>> preset = Preset([])  # This is needed to restore globalCounterMax default value for unit test purpose
+    >>> preset = Preset(symbol)  # This is needed to restore globalCounterMax default value for unit test purpose
 
     """
 
@@ -2041,7 +2033,7 @@ def _test_preset_configuration():
     >>> preset["field 2"] = b'\x42'
     Traceback (most recent call last):
     ...
-    Exception: The key string 'field 2' has not been recognized in current symbols to preset
+    Exception: The key string 'field 2' has not been recognized in current symbol to preset
 
     """
 

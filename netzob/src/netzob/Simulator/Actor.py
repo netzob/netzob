@@ -86,7 +86,7 @@ class Actor(Thread):
                     :const:`True`. The value can be changed
                     during a communication, in order to reverse the
                     way the actors communicate together.
-    :var fuzzing_preset: A fuzzing configuration used at
+    :var fuzzing_presets: A :class:`list` of fuzzing configurations used at
                          specific states (see ``fuzzing_states`` attribute) when sending symbols.
                          Values in this fuzzing configuration will
                          override any field definition, constraints or
@@ -98,7 +98,7 @@ class Actor(Thread):
     :var memory: A memory context used to store variable values during specialization
                  and abstraction of successive symbols. This context is notably used to handle
                  inter-symbol relationships and relationships with the environment.
-    :var preset: A preset configuration used during specialization and abstraction of symbols emitted and received by the actor. Values
+    :var presets: A :class:`list` of preset configurations used during specialization and abstraction of symbols emitted and received by the actor. Values
                  in this configuration will override any field
                  definition, constraints or relationship dependencies. See
                  :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
@@ -112,11 +112,11 @@ class Actor(Thread):
     :vartype channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`
     :vartype name: :class:`str`
     :vartype initiator: :class:`bool`
-    :vartype fuzzing_preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
-    :vartype fuzzing_states: :class:`dict` of :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype fuzzing_presets: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+    :vartype fuzzing_states: :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype keep_open: :class:`bool`
     :vartype memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`
-    :vartype preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+    :vartype preset: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
     :vartype cbk_select_data: :class:`Callable <collections.abc.Callable>`
     :vartype target_state: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype current_state: :class:`State <netzob.Model.Grammar.States.State.State>`
@@ -1774,14 +1774,14 @@ class Actor(Thread):
     <BLANKLINE>
     >>>
     >>> # Define fuzzing configuration
-    >>> preset = Preset(symbol1)
-    >>> preset.fuzz(symbol1)
+    >>> preset_symbol1 = Preset(symbol1)
+    >>> preset_symbol1.fuzz(symbol1)
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
     >>> bob.nbMaxTransitions = 3
-    >>> bob.fuzzing_preset = preset
+    >>> bob.fuzzing_presets = [preset_symbol1]
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
@@ -1811,7 +1811,6 @@ class Actor(Thread):
       [+] At state 'S2'
       [+]   Picking transition 'T2'
       [+]   During transition 'T2', sending input symbol 'Symbol 2'
-      [+]   During transition 'T2', fuzzing activated
       [+]   During transition 'T2', receiving expected output symbol 'Symbol 2'
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2', we reached the max number of transitions (3), so we stop
@@ -1924,14 +1923,15 @@ class Actor(Thread):
     <BLANKLINE>
     >>>
     >>> # Define fuzzing configuration
-    >>> preset = Preset([symbol1, symbol2])
-    >>> preset.fuzz(symbol1)
-    >>> preset.fuzz(symbol2)
+    >>> preset_symbol1 = Preset(symbol1)
+    >>> preset_symbol1.fuzz(symbol1)
+    >>> preset_symbol2 = Preset(symbol2)
+    >>> preset_symbol2.fuzz(symbol2)
     >>>
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
-    >>> bob.fuzzing_preset = preset
+    >>> bob.fuzzing_presets = [preset_symbol1, preset_symbol2]
     >>> bob.fuzzing_states = ['S2']
     >>> bob.nbMaxTransitions = 3
     >>>
@@ -1999,11 +1999,11 @@ class Actor(Thread):
 
         # Initialize other public variables
         self.initiator = True          # Tell that the actor is currenlty at the initiative of the communication
-        self.fuzzing_preset = None     # Fuzzing configuration used at dedicated states
+        self.fuzzing_presets = []      # Fuzzing configuration used at dedicated states
         self.fuzzing_states = []       # Tell the actor in which states fuzzing should be activated
         self.keep_open = False         # Tell the actor to stay open after it has exiting the visit loop
         self.memory = None             # Context of the actor
-        self.preset = None             # Variable used for Actor symbol configuration
+        self.presets = []              # Variable used for Actor symbol configuration
         self.cbk_select_data = None    # Variable used to tell if received data is interesting for the actor
         self.target_state = None       # Variable used to tell the actor to return at a specific state
         self.current_state = None      # Variable used to keep track of the current state
@@ -2165,13 +2165,16 @@ class Actor(Thread):
 
     @public_api
     @property
-    def fuzzing_preset(self):
-        return self.__fuzzing_preset
+    def fuzzing_presets(self):
+        return self.__fuzzing_presets
 
-    @fuzzing_preset.setter  # type: ignore
-    @typeCheck(Preset)
-    def fuzzing_preset(self, fuzzing_preset):
-        self.__fuzzing_preset = fuzzing_preset
+    @fuzzing_presets.setter  # type: ignore
+    @typeCheck(list)
+    def fuzzing_presets(self, fuzzing_presets):
+        for preset in fuzzing_presets:
+            if not isinstance(preset, Preset):
+                raise TypeError("The configuration should be a list of Preset objects, not a '{}'".format(fuzzing_presets))
+        self.__fuzzing_presets = fuzzing_presets
 
     @public_api
     @property
@@ -2207,13 +2210,16 @@ class Actor(Thread):
 
     @public_api
     @property
-    def preset(self):
-        return self.__preset
+    def presets(self):
+        return self.__presets
 
-    @preset.setter  # type: ignore
-    @typeCheck(Preset)
-    def preset(self, preset):
-        self.__preset = preset
+    @presets.setter  # type: ignore
+    @typeCheck(list)
+    def presets(self, presets):
+        for preset in presets:
+            if not isinstance(preset, Preset):
+                raise TypeError("The configuration should be a list of Preset objects, not a '{}'".format(presets))
+        self.__presets = presets
 
     @public_api
     @property

@@ -257,8 +257,8 @@ class AbstractionLayer(object):
 
         tmp_preset = Preset(symbol)
 
-        if self.actor is not None and self.actor.preset is not None:
-            tmp_preset.update(self.actor.preset)
+        if self.actor is not None and self.actor.presets is not None and symbol in self.actor.presets:
+            tmp_preset.update(self.actor.presets[symbol])
 
         if preset is not None:
             tmp_preset.update(preset)

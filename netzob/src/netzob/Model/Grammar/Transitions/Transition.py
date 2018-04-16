@@ -268,15 +268,21 @@ class Transition(AbstractTransition):
             self._logger.debug("[actor='{}'] Nothing to write on abstraction layer (inputSymbol is an EmptySymbol)".format(str(actor)))
         else:
             try:
-                if actor.fuzzing_preset is not None and (len(actor.fuzzing_states) == 0 or self.startState.name in actor.fuzzing_states):
+                fuzzing_preset = None
+                if actor.fuzzing_presets is not None and (len(actor.fuzzing_states) == 0 or self.startState.name in actor.fuzzing_states):
+                    for tmp_fuzzing_preset in actor.fuzzing_presets:
+                        if tmp_fuzzing_preset.symbol == symbol_to_send:
+                            fuzzing_preset = tmp_fuzzing_preset
+                            break
+                if fuzzing_preset is not None:
                     self._logger.debug("[actor='{}'] Fuzzing activated at transition".format(str(actor)))
                     actor.visit_log.append("  [+]   During transition '{}', fuzzing activated".format(self.name))
                     tmp_preset = Preset(symbol_to_send)
                     if symbol_preset is not None:
-                        tmp_preset.update(actor.fuzzing_preset)
+                        tmp_preset.update(fuzzing_preset)
                         tmp_preset.update(symbol_preset)
                     else:
-                        tmp_preset.update(actor.fuzzing_preset)
+                        tmp_preset.update(fuzzing_preset)
                 else:
                     tmp_preset = symbol_preset
                 (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, cbk_action=self.cbk_action)
@@ -421,13 +427,21 @@ class Transition(AbstractTransition):
 
         # Emit the symbol
         try:
-            if actor.fuzzing_preset is not None and (len(actor.fuzzing_states) == 0 or self.startState in actor.fuzzing_states):
+            fuzzing_preset = None
+            if actor.fuzzing_presets is not None and (len(actor.fuzzing_states) == 0 or self.startState.name in actor.fuzzing_states):
+                for tmp_fuzzing_preset in actor.fuzzing_presets:
+                    if tmp_fuzzing_preset.symbol == symbol_to_send:
+                        fuzzing_preset = tmp_fuzzing_preset
+                        break
+            if fuzzing_preset is not None:
                 self._logger.debug("[actor='{}'] Fuzzing activated at transition".format(str(actor)))
                 actor.visit_log.append("  [+]   During transition '{}', fuzzing activated".format(self.name))
+                tmp_preset = Preset(symbol_to_send)
                 if symbol_preset is not None:
-                    tmp_preset = symbol_preset + actor.fuzzing_preset
+                    tmp_preset.update(fuzzing_preset)
+                    tmp_preset.update(symbol_preset)
                 else:
-                    tmp_preset = actor.fuzzing_preset
+                    tmp_preset.update(fuzzing_preset)
             else:
                 tmp_preset = symbol_preset
             (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, cbk_action=self.cbk_action)
