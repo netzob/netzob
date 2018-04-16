@@ -1311,6 +1311,9 @@ class Preset(object):
         r"""
         The :meth:`bulk_set` method inserts multiple items at once.
 
+        :param items: the mapping to merge into the current object
+        :type items: dict
+
         Example:
 
         >>> from netzob.all import *
