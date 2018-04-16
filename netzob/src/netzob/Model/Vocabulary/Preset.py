@@ -1135,14 +1135,32 @@ class Preset(object):
         Exception: It is not allowed to access an item of the Preset configuration.
 
         """
-        raise Exception("It is not allowed to access an item of the Preset configuration.")
+        # Resolve the key if it is a string, to find the corresponding object (field or variable)
+        if isinstance(key, str):
+            key = self._resolve_name(key)
+
+        # Handle case where k is a Field -> retrieve the associated variable
+        from netzob.Model.Vocabulary.Field import Field
+        if isinstance(key, Field):
+            key = key.domain
+
+        if key in self.mappingFieldsMutators.keys():
+            mutator = self.mappingFieldsMutators[key]
+
+            if mutator.mode == FuzzingMode.FIXED and isinstance(mutator.generator, repeat):
+                return next(mutator.generator)
+
+        raise Exception("It is not allowed to access an item of the Preset configuration if it is not a fixed value")
 
     def __setitem__(self, key, value):
         self._set(key, value)
 
     def __delitem__(self, key):
+        # Resolve the key if it is a string, to find the corresponding object (field or variable)
+        if isinstance(key, str):
+            key = self._resolve_name(key)
+
         self.unset(key)
-        #raise AttributeError("No such attribute: '{}'".format(key))
 
     def _set(self,
              key,
@@ -1321,7 +1339,7 @@ class Preset(object):
         :rtype: :class:`Preset`
 
         .. note::
-           This method with linked the Preset configuration of the associated symbols to the new created Preset instance.
+           This method will linked the Preset configuration of the associated symbols to the new created Preset instance.
 
 
         Example of copying the Preset configuration:
@@ -1678,6 +1696,10 @@ class Preset(object):
         """
 
         tmp_new_keys = {}
+
+        # Do not propagate fuzzing in FIXED mode, as, in this mode, the fixed value is set to the parent variable
+        if mutator.mode == FuzzingMode.FIXED:
+            return tmp_new_keys
 
         # Propagate also the mutator mode and the seed
         kwargs = {'mode': mutator.mode, 'seed': mutator.seed}  # , 'counterMax' : mutator.counterMax}
