@@ -54,9 +54,6 @@ class UDPClient(AbstractChannel):
     """A UDPClient is a communication channel. It provides the connection of a
     client to a specific IP:Port server over a UDP socket.
 
-    When the actor executes an OpenChannelTransition, it calls the
-    open method on the UDP client which connects to the server.
-
     The UDPClient constructor expects some parameters:
 
     :param remoteIP: This parameter is the remote IP address to connect to.

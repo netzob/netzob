@@ -276,7 +276,7 @@ class IPChannelBuilder(ChannelBuilder):
     >>> builder = IPChannelBuilder().set_map(netinfo.getDict())
     >>> chan = builder.build()
     >>> type(chan)
-    <class 'IPChannel.IPChannel'>
+    <class 'netzob.Simulator.Channels.IPChannel.IPChannel'>
     >>> chan.remoteIP  # dst_addr key has been mapped to remoteIP attribute
     '1.2.3.4'
     """

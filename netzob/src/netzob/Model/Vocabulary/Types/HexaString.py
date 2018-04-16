@@ -118,6 +118,7 @@ class HexaString(AbstractType):
     demonstrated in the following example where a 4-bit BitArray is
     converted into the 'a' semi-octet.
 
+    >>> import binascii
     >>> data = bitarray('1010', endian='big')
     >>> str(binascii.hexlify(data.tobytes()))[2]
     'a'

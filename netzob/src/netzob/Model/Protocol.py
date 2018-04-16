@@ -90,6 +90,7 @@ class Protocol(object):
     The following code describes the instantiation of a new Protocol,
     without .zdl files:
 
+    >>> from netzob.all import *
     >>> icmp = Protocol("ICMP")
     >>> icmp.name
     'ICMP'

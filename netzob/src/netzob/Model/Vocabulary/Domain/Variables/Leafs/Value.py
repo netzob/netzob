@@ -98,10 +98,10 @@ class Value(AbstractRelationVariableLeaf):
        :type variable: ~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value
 
        :return: The callback function should return a :class:`bitarray
-                <bitarray>` representing the matching data during
+                <bitarray>` representing the computed data during
                 specialization or abstraction. In the latter case, if
                 the callback function does not succeed to parse the
-                data, it should return the :const:`None` value.
+                data, it should return the :const:`None` value. The length of the computed data may differ from the length of the targeted data.
        :rtype: :class:`bitarray <bitarray.bitarray>`
 
     Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`

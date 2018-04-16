@@ -54,10 +54,6 @@ class UDPServer(AbstractChannel):
     """A UDPServer is a communication channel. It provides a
     server listening to a specific IP:Port over a UDP socket.
 
-    When the actor executes an OpenChannelTransition, it calls the
-    open method on the UDP server which makes it to listen for
-    incoming messages.
-
     The UDPServer constructor expects some parameters:
 
     :param localIP: This parameter is the local IP address.

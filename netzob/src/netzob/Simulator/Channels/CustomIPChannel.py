@@ -367,7 +367,7 @@ class CustomIPChannelBuilder(ChannelBuilder):
     >>> builder = CustomIPChannelBuilder().set_map(netinfo.getDict())
     >>> chan = builder.build()
     >>> type(chan)
-    <class 'CustomIPChannel.CustomIPChannel'>
+    <class 'netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel'>
     >>> chan.localIP  # src_addr key has been mapped to localIP attribute
     '4.3.2.1'
     """

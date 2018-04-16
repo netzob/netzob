@@ -115,11 +115,10 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def open(self, timeout=DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a server, it
-        starts to listen for incoming data.
+        starts to listen for incoming data. If the channel is a client, it connects to the remote peer.
 
-        :param timeout: The default timeout of the channel for opening
-                        connection and waiting for a message. Default value
-                        is blocking (None).
+        :param timeout: The timeout of the channel for opening
+                        a connection with a remote peer. This parameter overrides the channel :attr:`timeout` attribute and is only effective in the context of a client. Default value (None) corresponds to no timeout.
         :type timeout: :class:`float`, optional
 
         """
@@ -176,8 +175,8 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
     A communication channel provides the following public variables:
 
     :var isOpen: The status of the communication channel.
-    :var timeout: The default timeout in seconds for opening a connection and
-                  waiting for a message.
+    :var timeout: The default timeout in seconds for opening a connection (only effective in the context of a client), as well as for
+                  waiting a message when calling the :meth:`read` method.
     :var header: A Symbol that makes it possible to access the protocol header.
     :var header_preset: A Preset used to preset
                         (parameterize) the header fields during symbol

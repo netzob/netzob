@@ -49,7 +49,7 @@ from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransiti
 @NetzobLogger
 class OpenChannelTransition(AbstractTransition):
     """This class represents a transition which, when executed, requests
-    to open the current underlying communication channel.
+    to open the current underlying communication channel (i.e. a call to the :meth:`open` method of the channel is made).
 
     The OpenChannelTransition expects some parameters:
 

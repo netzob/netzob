@@ -86,16 +86,18 @@ class EthernetChannel(AbstractChannel):
     :vartype interface: :class:`str`
 
 
+    The following example shows how to instantiate an EthernetChannel.
+
     >>> from netzob.all import *
     >>> from binascii import hexlify
-    >>> client = EthernetChannel(
-    ...    remoteMac="00:01:02:03:04:05",
-    ...    localMac="00:06:07:08:09:10")
-    >>> client.open()
-    >>> symbol = Symbol([Field("ABC")])
-    >>> client.write(next(symbol.specialize()))
-    17
-    >>> client.close()
+    >>> def example_channel():
+    ...     client = EthernetChannel(
+    ...        remoteMac="00:01:02:03:04:05",
+    ...        localMac="00:06:07:08:09:10")
+    ...     client.open()
+    ...     symbol = Symbol([Field("ABC")])
+    ...     client.write(next(symbol.specialize()))
+    ...     client.close()
 
     """
 
@@ -328,7 +330,7 @@ class EthernetChannelBuilder(ChannelBuilder):
     >>> builder = EthernetChannelBuilder().set_map(netinfo.getDict())
     >>> chan = builder.build()
     >>> type(chan)
-    <class 'EthernetChannel.EthernetChannel'>
+    <class 'netzob.Simulator.Channels.EthernetChannel.EthernetChannel'>
     >>> chan.localMac  # src_addr key has been mapped to localMac attribute
     '00:00:00:00:00:00'
     """

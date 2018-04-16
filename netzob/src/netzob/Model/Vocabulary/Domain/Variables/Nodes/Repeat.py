@@ -105,7 +105,7 @@ class Repeat(AbstractVariableNode):
     The callback function that can be used in the ``nbRepeat``
     parameter has the following prototype:
 
-    .. function:: cbk_nbRepeat(nb_repeat, data, path, child, remaining=None)
+    .. function:: cbk_nbRepeat(nb_repeat, data, path, child, remaining)
        :noindex:
 
        :param nb_repeat: the number of times the child element has been parsed

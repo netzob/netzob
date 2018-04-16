@@ -197,7 +197,7 @@ class RawEthernetChannelBuilder(ChannelBuilder):
     >>> builder = RawEthernetChannelBuilder().set_map(netinfo.getDict())
     >>> chan = builder.build()
     >>> type(chan)
-    <class 'RawEthernetChannel.RawEthernetChannel'>
+    <class 'netzob.Simulator.Channels.RawEthernetChannel.RawEthernetChannel'>
     >>> chan.interface  # interface key has been mapped to interface attribute
     'eth0'
     """
