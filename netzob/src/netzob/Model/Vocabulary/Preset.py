@@ -1130,9 +1130,12 @@ class Preset(object):
         >>> preset = Preset(s)
         >>> preset[f] = b'\xaa'
         >>> new_var = preset[f]
+        >>>
+        >>> preset.fuzz(f)
+        >>> new_var = preset[f]
         Traceback (most recent call last):
         ...
-        Exception: It is not allowed to access an item of the Preset configuration.
+        Exception: It is not allowed to access an item of the Preset configuration if it is not a fixed value
 
         """
         # Resolve the key if it is a string, to find the corresponding object (field or variable)
