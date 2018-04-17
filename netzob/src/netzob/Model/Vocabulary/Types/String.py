@@ -867,12 +867,12 @@ def _test(self):
     True
     >>> symbol = Symbol([Field(s)])
     >>> symbol.abstract(data)  #doctest: +ELLIPSIS
-    OrderedDict([('Field', b'...')])
+    OrderedDict([('Field', ...)])
     >>> data = data[:-1] + b'\t'
     >>> structured_data = symbol.abstract(data)  #doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'b'...\t''. Error: 'No parsing path returned while parsing 'b'...\t'''
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: .... Error: 'No parsing path returned while parsing ...'
 
 
 

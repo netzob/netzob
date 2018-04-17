@@ -446,7 +446,7 @@ def _test_many_relation_abstractions():
     >>> preset = Preset(symbol)
     >>> preset['eth.payload'] = b"PAYLOAD"
     >>> symbol.abstract(next(symbol.specialize()))  # doctest: +ELLIPSIS
-    OrderedDict([('eth.length', b'\x00\n'), ('eth.llc', b'...'), ('eth.payload', b'PAYLOAD'), ('eth.padding', b'...'), ('eth.crc', b'...')])
+    OrderedDict([('eth.length', b'\x00\n'), ('eth.llc', b'...'), ('eth.payload', b'PAYLOAD'), ('eth.padding', b'...'), ('eth.crc', ...)])
 
 
     # Test abstraction of ARP message
