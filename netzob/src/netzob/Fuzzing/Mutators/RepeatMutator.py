@@ -121,7 +121,7 @@ class RepeatMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_rep, mode=FuzzingMode.MUTATE)
-    >>> res = symbol.specialize()
+    >>> res = next(symbol.specialize())
     >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
 

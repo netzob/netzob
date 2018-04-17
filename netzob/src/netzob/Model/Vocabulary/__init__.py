@@ -77,10 +77,10 @@ def typeSpecifier(klass: Callable[..., Any],
     (128, -128)
     >>> v1 == v2
     False
-    >>> Field(v1).specialize() == Field(v2).specialize()
+    >>> next(Field(v1).specialize()) == next(Field(v2).specialize())
     True
     >>> (v1, v2) = (uint16be(0x1234), uint16le(0x3412))
-    >>> Field(v1).specialize() == Field(v2).specialize()
+    >>> next(Field(v1).specialize()) == next(Field(v2).specialize())
     True
     """
 

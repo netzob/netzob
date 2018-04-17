@@ -324,7 +324,7 @@ class Padding(AbstractRelationVariableLeaf):
 
             # Retrieve variable value
             if variable is self:
-                value = bitarray()
+                value = bitarray(endian=self.dataType.endianness.value)
             else:
                 value = parsingPath.getData(variable)
 
@@ -351,7 +351,7 @@ class Padding(AbstractRelationVariableLeaf):
         size = int(size * self.factor + self.offset)
 
         # Compute the padding value according to the current size
-        padding_value = bitarray(endian='big')
+        padding_value = bitarray(endian=self.dataType.endianness.value)
 
         length_to_pad = 0
         if self.data_callback is not None:

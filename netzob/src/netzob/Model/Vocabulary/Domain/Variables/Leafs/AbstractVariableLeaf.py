@@ -167,7 +167,7 @@ class AbstractVariableLeaf(AbstractVariable):
                             value = generated_value
                         else:
                             # Convert the return bytes into bitarray
-                            value = bitarray(endian='big')
+                            value = bitarray(endian=self.dataType.endianness.value)
                             value.frombytes(generated_value)
 
                         # Associate the generated value to the current variable

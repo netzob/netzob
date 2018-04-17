@@ -205,7 +205,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         return []
 
     def compareValues(self, content, expectedSize, computedValue):
-        if content[:expectedSize] == computedValue:
+        if content[:expectedSize].tobytes() == computedValue.tobytes():
             msg = "The current variable data '{}' contain the expected value '{}'".format(content[:expectedSize].tobytes(), computedValue.tobytes())
             self._logger.debug(msg)
             return True
@@ -306,7 +306,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             values.append(value)
 
         # Aggregate all values in a uniq bitarray object
-        concatValues = bitarray('')
+        concatValues = bitarray(endian=self.dataType.endianness.value)
         for f in values:
             concatValues += f
 
@@ -337,6 +337,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                     return addresult_newpaths
                 else:
                     self._logger.debug("addResult() dit not succeed")
+                    return (variableSpecializerPath,)
             else:
                 raise Exception("Target value is not defined currently")
         except Exception as e:
