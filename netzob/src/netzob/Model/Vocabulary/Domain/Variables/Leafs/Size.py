@@ -322,12 +322,13 @@ class Size(AbstractRelationVariableLeaf):
         size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables, preset=preset)
         size += self.__computeExpectedValue_stage2(parsingPath, remainingVariables)
         size = int(size * self.factor + self.offset)
-        size_raw = TypeConverter.convert(size, Integer, Raw,
-                                         src_unitSize=self.dataType.unitSize,
-                                         dst_unitSize=self.dataType.unitSize,
-                                         src_sign=self.dataType.sign,
-                                         dst_sign=self.dataType.sign)
-        b = TypeConverter.convert(size_raw, Raw, BitArray)
+        b = TypeConverter.convert(size, Integer, BitArray,
+                                  src_unitSize=self.dataType.unitSize,
+                                  dst_unitSize=self.dataType.unitSize,
+                                  src_sign=self.dataType.sign,
+                                  dst_sign=self.dataType.sign,
+                                  src_endianness=self.dataType.endianness,
+                                  dst_endianness=self.dataType.endianness)
 
         # add heading '0'
         while len(b) < self.dataType.size[0]:
@@ -559,5 +560,47 @@ def _test_abstraction():
     Traceback (most recent call last):
     ...
     netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'b'\x03;john''. Error: 'No parsing path returned while parsing 'b'\x03;john'''
+
+    """
+
+
+def _test_size_contains_itself():
+    r"""
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+
+    # In big endian
+
+    >>> from netzob.all import *
+    >>> f0 = Field(uint8(0), name="f0")
+    >>> f1 = Field(uint8(0), name="f1")
+    >>> f2 = Field(name="len")
+    >>> f3 = Field(uint32(0), name="f3")
+    >>> f4 = Field(Raw(nbBytes=(0,28)), name="f4")
+    >>> f2.domain = Size([f0, f1, f2, f3, f4], dataType=uint16())
+    >>> symbol = Symbol([f0, f1, f2, f3, f4])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x00\x00\x00\x17\x00\x00\x00\x00\x07i\xec\xfb\x8eR\x11\xfa\xa7&\x7f\xb8\x16\xd7G'
+    >>> symbol.abstract(data)
+    OrderedDict([('f0', b'\x00'), ('f1', b'\x00'), ('len', b'\x00\x17'), ('f3', b'\x00\x00\x00\x00'), ('f4', b'\x07i\xec\xfb\x8eR\x11\xfa\xa7&\x7f\xb8\x16\xd7G')])
+
+
+    # In little endian
+
+    >>> from netzob.all import *
+    >>> f0 = Field(uint8le(0), name="f0")
+    >>> f1 = Field(uint8le(0), name="f1")
+    >>> f2 = Field(name="len")
+    >>> f3 = Field(uint32le(0), name="f3")
+    >>> f4 = Field(Raw(nbBytes=(0,28)), name="f4")
+    >>> f2.domain = Size([f0, f1, f2, f3, f4], dataType=uint16le())
+    >>> symbol = Symbol([f0, f1, f2, f3, f4])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x00\x00\r\x00\x00\x00\x00\x00\xd9\x9d"\x97^'
+    >>> symbol.abstract(data)
+    OrderedDict([('f0', b'\x00'), ('f1', b'\x00'), ('len', b'\r\x00'), ('f3', b'\x00\x00\x00\x00'), ('f4', b'\xd9\x9d"\x97^')])
 
     """
