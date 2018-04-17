@@ -567,7 +567,7 @@ def _test_coverage():
     >>> preset.fuzz(f_data, generator='xorshift')
     >>> datas = set()
     >>> for _ in range(symbol.count()):
-    ...     datas.add(symbol.specialize())
+    ...     datas.add(next(symbol.specialize()))
     >>> len(datas)
     256
 
@@ -580,7 +580,7 @@ def _test_coverage():
     >>> preset.fuzz(f_data, generator='xorshift')
     >>> datas = set()
     >>> for _ in range(symbol.count()):
-    ...     datas.add(symbol.specialize())
+    ...     datas.add(next(symbol.specialize()))
     >>> len(datas)
     65536
 
@@ -596,7 +596,7 @@ def _test_coverage():
     >>> symbol.count()
     11
     >>> for _ in range(symbol.count()):
-    ...     datas.add(symbol.specialize())
+    ...     datas.add(next(symbol.specialize()))
     >>> len(datas)
     11
 
