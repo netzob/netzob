@@ -56,6 +56,9 @@ class AbstractHMAC(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     r"""The AbstractHMAC interface specifies the methods to implement
     in order to create a new HMAC relationship.
 
+    If the relationship targets itself, it will initialize the initial
+    value of the HMAC field to 0x00.
+
     The following methods have to be implemented:
 
     * :meth:`calculate`

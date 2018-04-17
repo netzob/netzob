@@ -56,6 +56,9 @@ class AbstractChecksum(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     r"""The AbstractChecksum interface specifies the methods to implement
     in order to create a new checksum relationship.
 
+    If the relationship targets itself, it will initialize the initial
+    value of the checksum field to 0x00.
+
     The following methods have to be implemented:
 
     * :meth:`calculate`

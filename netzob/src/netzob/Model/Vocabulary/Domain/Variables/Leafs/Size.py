@@ -204,6 +204,28 @@ class Size(AbstractRelationVariableLeaf):
     >>> b'\x15' in res
     True
 
+
+    **Size field which targets itself**
+
+    The following example shows a Size field whose targets contain
+    itsef. In such case, the domain datatype (here, an ``uint16``) is
+    used to compute the size of the length field (here, the datatype
+    occupies 2 bytes).
+
+    >>> from netzob.all import *
+    >>> f0 = Field(uint8(0), name="f0")
+    >>> f1 = Field(uint8(0), name="f1")
+    >>> f2 = Field(name="len")
+    >>> f3 = Field(uint32(0), name="f3")
+    >>> f4 = Field(Raw(nbBytes=(0,28)), name="f4")
+    >>> f2.domain = Size([f0, f1, f2, f3, f4], dataType=uint16())
+    >>> symbol = Symbol([f0, f1, f2, f3, f4])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x00\x00\x00\x15\x00\x00\x00\x00z\x12\x10\xfe\x9a$)L\xc4\xbfL91'
+    >>> symbol.abstract(data)
+    OrderedDict([('f0', b'\x00'), ('f1', b'\x00'), ('len', b'\x00\x15'), ('f3', b'\x00\x00\x00\x00'), ('f4', b'z\x12\x10\xfe\x9a$)L\xc4\xbfL91')])
+
     """
 
     @public_api

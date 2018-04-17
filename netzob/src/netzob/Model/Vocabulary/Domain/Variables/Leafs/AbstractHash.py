@@ -55,6 +55,9 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
     r"""The AbstractHash interface specifies the methods to implement
     in order to create a new hash relationship.
 
+    If the relationship targets itself, it will initialize the initial
+    value of the hash field to 0x00.
+
     The following methods have to be implemented:
 
     * :meth:`calculate`
