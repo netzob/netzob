@@ -66,7 +66,10 @@ class Raw(AbstractType):
     :type default: :class:`bitarray` or :class:`bytes`, optional
 
     .. note::
-       :attr:`value` and :attr:`nbBytes` attributes are mutually exclusive.
+       :attr:`value` and :attr:`nbBytes` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
 
@@ -123,10 +126,10 @@ class Raw(AbstractType):
     can participate in the domain value:
 
     >>> from netzob.all import *
-    >>> r = Raw(nbBytes=100, alphabet=[b"t", b"o"])
+    >>> r = Raw(nbBytes=30, alphabet=[b"t", b"o"])
     >>> data = r.generate().tobytes()
     >>> data  # doctest: +ELLIPSIS
-    b'otoootottoootttootttttootottotoooooottootoottttttttttttttttoototttotootooottttottotttttottootttottoo...
+    b'otoootottoootttootttttootottot'
     >>> for c in set(data):  # extract distinct characters
     ...    print(chr(c))
     t

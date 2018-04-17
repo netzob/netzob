@@ -73,7 +73,11 @@ class IPv4(AbstractType):
     :type default: :class:`str` or :class:`netaddr.IPAddress`, optional
 
     .. note::
-       :attr:`value` and :attr:`network` attributes are mutually exclusive.
+       :attr:`value` and :attr:`network` parameters are mutually
+       exclusive. Setting both values raises an :class:`Exception`.
+
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
 
 
     The IPv4 class provides the following public variables:

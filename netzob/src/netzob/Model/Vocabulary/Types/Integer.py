@@ -98,7 +98,10 @@ class Integer(AbstractType):
     :type default: :class:`bitarray` or :class:`int`, optional
 
     .. note::
-       :attr:`value` and :attr:`interval` attributes are mutually exclusive.
+       :attr:`value` and :attr:`interval` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
 

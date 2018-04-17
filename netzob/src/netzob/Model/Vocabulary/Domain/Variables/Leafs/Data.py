@@ -53,10 +53,9 @@ from netzob.Model.Vocabulary.Types.BitArray import BitArray
 class Data(AbstractVariableLeaf):
     """The Data class is a variable which embeds specific content.
 
-    A Data object stores at least two things: 1) the definition domain
-    and the constraints over it, through a :class:`Type
-    <netzob.Model.Vocabulary.Types.AbstractType>` object, and 2) the
-    current value of the variable.
+    A Data object stores the definition domain of a variable and the constraints
+    over it, through a :class:`Type
+    <netzob.Model.Vocabulary.Types.AbstractType>` object.
 
     The Data constructor expects some parameters:
 
@@ -86,12 +85,15 @@ class Data(AbstractVariableLeaf):
     of this object is `"hello"`.
 
     >>> from netzob.all import *
-    >>> s = String('hello')
+    >>> s = String(nbChars=20, default='hello')
     >>> data = Data(dataType=s, name="pseudo")
     >>> print(data.dataType)
-    String('hello')
+    String(nbChars=20)
     >>> data.name
     'pseudo'
+    >>> s.generate().tobytes()
+    b'hello'
+
 
     """
 

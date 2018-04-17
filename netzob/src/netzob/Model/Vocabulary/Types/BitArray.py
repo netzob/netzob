@@ -66,7 +66,10 @@ class BitArray(AbstractType):
     :type default: :class:`bitarray`, optional
 
     .. note::
-       :attr:`value` and :attr:`nbBits` attributes are mutually exclusive.
+       :attr:`value` and :attr:`nbBits` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
 
@@ -76,7 +79,11 @@ class BitArray(AbstractType):
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max values.
-    :var constants: A list of named constants used to access the bitarray internal elements.
+    :var constants: A list of named constants used to access the
+                    bitarray internal elements. Those elements are
+                    automatically accessible by predefined named
+                    constants, whose names can be changed. Besides,
+                    elements can be accessed in read or write mode.
     :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`

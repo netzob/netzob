@@ -66,7 +66,10 @@ class HexaString(AbstractType):
     :type default: :class:`bitarray` or :class:`bytes`, optional
 
     .. note::
-       :attr:`value` and :attr:`nbBytes` attributes are mutually exclusive.
+       :attr:`value` and :attr:`nbBytes` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
 

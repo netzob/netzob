@@ -95,6 +95,34 @@ class Transition(AbstractTransition):
                       execution of the transition.
     :var outputSymbols: Output symbols that can be generated when
                         the current transition is executed.
+    :var inputSymbolPreset: A :class:`list` of preset configurations
+                            used during specialization and abstraction
+                            of symbols emitted and received. During
+                            specialization, values in this
+                            configuration will override any field
+                            definition, constraints or relationship
+                            dependencies. During abstraction, this
+                            structure is used to validate the data of
+                            the receveived symbol. If the data does
+                            not match, we stay at the
+                            ``startState`` state. See :class:`Preset
+                            <netzob.Model.Vocabulary.Preset.Preset>`
+                            for a complete explanation of Preset
+                            usage.
+    :var outputSymbolsPreset: A :class:`list` of preset configurations
+                              used during specialization and abstraction
+                              of symbols emitted and received. During
+                              specialization, values in this
+                              configuration will override any field
+                              definition, constraints or relationship
+                              dependencies. During abstraction, this
+                              structure is used to validate the data of
+                              the receveived symbol. If the data does
+                              not match, we stay at the
+                              ``startState`` state. See :class:`Preset
+                              <netzob.Model.Vocabulary.Preset.Preset>`
+                              for a complete explanation of Preset
+                              usage.
     :var name: The name of the transition.
     :var inputSymbolReactionTime: The timeout value in seconds to wait for the
                                   input value (only used in a receiving context).
@@ -115,6 +143,8 @@ class Transition(AbstractTransition):
     :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype outputSymbols: :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+    :vartype inputSymbolPreset: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+    :vartype outputSymbolsPreset: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
     :vartype name: :class:`str`
     :vartype inputSymbolReactionTime: :class:`float`
     :vartype outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}

@@ -152,7 +152,7 @@ class Timestamp(AbstractType):
     :type default: :class:`bitarray` or :class:`int`, optional
 
     .. note::
-       :attr:`value` and :attr:`unitSize` attributes are mutually exclusive.
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
 
@@ -171,7 +171,7 @@ class Timestamp(AbstractType):
     :var endianness: The endianness of the current value.
     :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
-    :vartype size: ~typing.Tuple[int,int] or int
+    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype epoch: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Epoch`
     :vartype unity: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Unity`
     :vartype unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional

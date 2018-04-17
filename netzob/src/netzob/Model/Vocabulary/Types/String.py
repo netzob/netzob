@@ -66,7 +66,7 @@ class String(AbstractType):
     :param value: This parameter is used to describe a domain that contains a fixed string. If None, the constructed string will accept a random sequence of character, whose size may be specified (see :attr:`nbChars` parameter).
     :param nbChars: This parameter is used to describe a domain that contains an amount of characters. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 8192.
     :param encoding: The encoding of the string, such as 'ascii' or
-                    'utf-8'. Default value is 'utf-8'.
+                    'utf-8'. Default value is 'utf-8'. Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_.
     :param eos: A list defining the potential terminal characters for
                 the string, with either specific constants or pointers
                 to other fields containing the permitted terminal
@@ -80,7 +80,10 @@ class String(AbstractType):
     :type default: :class:`bitarray` or :class:`str`, optional
 
     .. note::
-       :attr:`value` and :attr:`nbChars` attributes are mutually exclusive.
+       :attr:`value` and :attr:`nbChars` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
 
@@ -99,9 +102,6 @@ class String(AbstractType):
     :vartype encoding: :class:`str`
     :vartype eos: a :class:`list` of :class:`str`
     :vartype default: :class:`bitarray`
-
-
-    Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_.
 
     Strings can be either static, dynamic with fixed sizes or even
     dynamic with variable sizes.
@@ -425,21 +425,22 @@ class String(AbstractType):
             random_content = self.default.tobytes().decode(self.encoding)
         else:
             random_content = ""
-        # Compare the length of the *unicode* value against the targeted size
-        while len(random_content.encode(self.encoding)) < generatedSize:
-            random_content += random.choice(permitted_characters)
 
-            # Be sure that the potential terminal characters are not present in the first part of the generated string
-            if final_character is not None:
-                while True:
-                    random_content_tmp = random_content
-                    for elt in self.eos:
-                        random_content_tmp = random_content_tmp.replace(elt, "")
-                    if len(random_content_tmp) == len(random_content):
-                        random_content = random_content_tmp
-                        break
-                    else:
-                        random_content = random_content_tmp
+            # Compare the length of the *unicode* value against the targeted size
+            while len(random_content.encode(self.encoding)) < generatedSize:
+                random_content += random.choice(permitted_characters)
+
+                # Be sure that the potential terminal characters are not present in the first part of the generated string
+                if final_character is not None:
+                    while True:
+                        random_content_tmp = random_content
+                        for elt in self.eos:
+                            random_content_tmp = random_content_tmp.replace(elt, "")
+                        if len(random_content_tmp) == len(random_content):
+                            random_content = random_content_tmp
+                            break
+                        else:
+                            random_content = random_content_tmp
 
         # Handle terminal character ('end of string')
         if final_character is not None:
