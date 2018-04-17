@@ -89,11 +89,11 @@ class Raw(AbstractType):
     >>> from netzob.all import *
     >>> i = Raw()
     >>> len(i.generate().tobytes())
-    6311
+    533
     >>> len(i.generate().tobytes())
-    6890
+    7026
     >>> len(i.generate().tobytes())
-    663
+    7906
 
     The following example shows how to define a six-byte long raw
     object, and the use of the generation method to produce a
@@ -126,7 +126,7 @@ class Raw(AbstractType):
     >>> r = Raw(nbBytes=100, alphabet=[b"t", b"o"])
     >>> data = r.generate().tobytes()
     >>> data  # doctest: +ELLIPSIS
-    b'oooottottotottootoootoootttotoototttttottootoototootoototttto...
+    b'oottoottototooooootoototootttttootooootottotttootttootttottoo...
     >>> for c in set(data):  # extract distinct characters
     ...    print(chr(c))
     t

@@ -32,7 +32,7 @@ import random
 class Conf(object):
     """Configuration variables.
     """
-    seed = 0  ## Seed for random number generation
+    seed = 10  ## Seed for random number generation
 
 
     @staticmethod

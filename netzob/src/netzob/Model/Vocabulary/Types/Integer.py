@@ -712,7 +712,7 @@ class Integer(AbstractType):
         >>> v1[0] is True  # sign bit (MSB) is set
         True
         >>> v1
-        bitarray('1111111111111100')
+        bitarray('1111111111111111')
 
         >>> v2 = Integer(42, sign=Sign.UNSIGNED)
         >>> v2.generate()

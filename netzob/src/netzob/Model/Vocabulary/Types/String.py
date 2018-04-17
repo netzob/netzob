@@ -111,11 +111,11 @@ class String(AbstractType):
     >>> from netzob.all import *
     >>> i = String()
     >>> len(i.generate().tobytes())
-    6311
+    533
     >>> len(i.generate().tobytes())
-    3429
+    2053
     >>> len(i.generate().tobytes())
-    3260
+    6908
 
     The following examples show how to define a static string in UTF-8:
 

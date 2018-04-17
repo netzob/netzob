@@ -91,7 +91,7 @@ class IPv4(AbstractType):
     >>> from netzob.all import *
     >>> i = IPv4()
     >>> i.generate().tobytes()
-    b'\xd9c\xc3\xe4'
+    b'\x93\tn|'
 
     The following examples show the use of an IPv4 type:
 
@@ -121,7 +121,7 @@ class IPv4(AbstractType):
     >>> from netzob.all import *
     >>> ip = IPv4(network="10.10.10.0/27")
     >>> IPv4(ip.generate())  # initialize with the generated bitarray value
-    10.10.10.21
+    10.10.10.29
 
     """
 

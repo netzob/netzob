@@ -191,7 +191,7 @@ def _test():
     >>> x = Field(Alt([uint8(1), uint8(2)]))
     >>> y = Field(Padding([x], data=Raw(b'\0'), modulo=32))
     >>> Symbol([x, y]).specialize()
-    b'\x01\x00\x00\x00'
+    b'\x02\x00\x00\x00'
 
     Reference a *multi-item* node variable and make sure the parent is processed
 
@@ -199,6 +199,6 @@ def _test():
     >>> x = Alt([uint8(1), uint8(2)])
     >>> y = Padding([x], data=Raw(b'\0'), modulo=32)
     >>> Symbol([Field(x), Field(y)]).specialize()
-    b'\x02\x00\x00\x00'
+    b'\x01\x00\x00\x00'
 
     """
