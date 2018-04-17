@@ -2516,7 +2516,6 @@ def _test_context():
     ...                                   inputSymbol=alice_symbol_input, outputSymbols=[alice_symbol_output],
     ...                                   name="T1")
     >>> # Set callback function on transitions
-    >>> alice_openTransition.add_cbk_action(cbk_action)
     >>> alice_mainTransition.add_cbk_action(cbk_action)
     >>>
     >>> alice_closeTransition = CloseChannelTransition(startState=alice_s1, endState=alice_s2, name="Close")
