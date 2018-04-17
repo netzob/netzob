@@ -42,7 +42,7 @@ from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Common.Utils.SortedTypedList import SortedTypedList
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.ApplicativeData import ApplicativeData
-from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.AbstractField import AbstractionException
 
 
 @NetzobLogger
@@ -302,6 +302,12 @@ class Session(object):
             )
             return abstractSession
         for message in list(self.messages.values()):
-            (symbol, structured_message) = Symbol.abstract(message.data, symbolList)
-            abstractSession.append((message.source, message.destination, symbol))
+            for symbol in symbolList:
+                try:
+                    symbol.abstract(message.data)
+                except AbstractionException:
+                    continue
+                else:
+                    abstractSession.append((message.source, message.destination, symbol))
+                    break
         return abstractSession

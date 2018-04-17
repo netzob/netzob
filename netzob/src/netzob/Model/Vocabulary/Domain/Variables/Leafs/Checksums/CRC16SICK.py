@@ -57,7 +57,7 @@ class CRC16SICK(CRC16):
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(CRC16SICK([f1]))
     >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
+    >>> binascii.hexlify(next(s.specialize()))
     b'aabbabef'
     """
 

@@ -68,16 +68,12 @@ class State(AbstractState):
     The State class provides the following public variables:
 
     :var name: The name of the state. The default value is 'State'.
-    :var active: Indicates that the current position of the actor in the automaton is this state.
-                 If a state is active, it also means none of its transitions has yet
-                 been fully initiated.
     :var transitions: The list of outgoing transitions
     :vartype name: :class:`str`
-    :vartype active: :class:`bool`
     :vartype transitions: ~typing.List[~netzob.Model.Grammar.Transitions.Transition.Transition]
 
 
-    The following example shows the definition of an `s0` state and an `s1` state:
+    The following example shows the definition of an ``s0`` state and an ``s1`` state:
 
     >>> from netzob.all import *
     >>> s0 = State()
@@ -95,7 +91,13 @@ class State(AbstractState):
         self.__transitions = []
 
     @public_api
-    def clone(self):
+    def copy(self):
+        r"""Copy the current state.
+
+        :return: A new object of the same type.
+        :rtype: :class:`State <netzob.Model.Grammar.States.State.State>`
+
+        """
         state = State(name=self.name)
         state.transitions = self.transitions
         state.active = self.active
@@ -188,7 +190,7 @@ class State(AbstractState):
         received_message = None
         from netzob.Simulator.Actor import ActorStopException
         try:
-            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(actor=actor)
+            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol()
 
             if received_symbol is None:
                 raise Exception("The abstraction layer returned a None received symbol")
@@ -245,7 +247,7 @@ class State(AbstractState):
         self._logger.debug("[actor='{}'] Test if a callback function is defined at state '{}'".format(str(actor), self.name))
         for cbk in self.cbk_modify_transition:
             self._logger.debug("[actor='{}'] A callback function is defined at state '{}'".format(str(actor), self.name))
-            availableTransitions = self.transitions
+            availableTransitions = [cloned_transition.copy() for cloned_transition in self.transitions]
             nextTransition = cbk(availableTransitions,
                                  nextTransition,
                                  self,
@@ -316,9 +318,9 @@ class State(AbstractState):
         prioritizedTransitions = dict()
         for transition in self.transitions:
             if transition.priority in list(prioritizedTransitions.keys()):
-                prioritizedTransitions[transition.priority].append(transition)
+                prioritizedTransitions[transition.priority].append(transition.copy())
             else:
-                prioritizedTransitions[transition.priority] = [transition]
+                prioritizedTransitions[transition.priority] = [transition.copy()]
 
         availableTransitions = prioritizedTransitions[sorted(prioritizedTransitions.keys())[0]]
 
@@ -397,13 +399,13 @@ def _test():
     'S1'
 
 
-    # Test clone()
+    # Test copy()
 
     >>> from netzob.all import *
     >>> s0 = State(name="s0")
     >>> s1 = State(name="s1")
     >>> t = CloseChannelTransition(s0, s1, name="transition")
-    >>> s0.clone()
+    >>> s0.copy()
     s0
 
     """

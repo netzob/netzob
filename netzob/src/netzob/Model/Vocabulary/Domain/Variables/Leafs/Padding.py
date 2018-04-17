@@ -85,8 +85,9 @@ class Padding(AbstractRelationVariableLeaf):
                  will be generated.
     :type targets: a :class:`list` of :class:`~netzob.Model.Vocabulary.Field`, required
     :type data: a :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
-                or a :class:`callable`, required
+                or a :class:`Callable <collections.abc.Callable>`, required
     :type modulo: :class:`int`, required
+    :type once: :class:`bool`, optional
     :type factor: :class:`float`, optional
     :type offset: :class:`int`, optional
     :type name: :class:`str`, optional
@@ -100,11 +101,9 @@ class Padding(AbstractRelationVariableLeaf):
     :var factor: Defines the multiplication factor to apply to the targeted
                  length.
     :var offset: Defines the offset to apply to the computed length.
-    :var varType: The type of the variable (Read-only).
     :vartype dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
     :vartype factor: :class:`float`
     :vartype offset: :class:`int`
-    :vartype varType: :class:`str`
     :vartype targets: a list of
                       :class:`~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
 
@@ -112,20 +111,20 @@ class Padding(AbstractRelationVariableLeaf):
     **Callback prototype**
 
     The callback function that can be used in the ``data``
-    parameter has the following prototype:
+    parameter to specify the padding value has the following prototype:
 
     .. function:: cbk_data(current_length, modulo)
        :noindex:
 
        :param current_length: corresponds to the current size in bits of
                               the targeted structure.
-       :type current_length: :class:`int`, required
+       :type current_length: :class:`int`
 
        :param modulo: corresponds to the expected modulo size in bits.
-       :type modulo: :class:`int`, required
+       :type modulo: :class:`int`
 
-       :return: The padding value.
-       :rtype: :class:`bitarray`
+       :return: The callback function should return a :class:`bitarray <bitarray.bitarray>`.
+       :rtype: :class:`bitarray <bitarray.bitarray>`
 
 
     **Padding examples**
@@ -141,7 +140,7 @@ class Padding(AbstractRelationVariableLeaf):
     >>> f1 = Field(Raw(b"##"))
     >>> f2 = Field(Padding([f0, f1], data=Raw(b'\x00'), modulo=128))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x00\x00\x00\x00'
     >>> len(d) * 8
@@ -156,7 +155,7 @@ class Padding(AbstractRelationVariableLeaf):
     >>> f1 = Field(Raw(b"##"))
     >>> f2 = Field(Padding([f0, f1], data=Raw(b'\x00'), modulo=128, offset=8))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x00\x00\x00'
     >>> len(d) * 8
@@ -171,7 +170,7 @@ class Padding(AbstractRelationVariableLeaf):
     >>> f1 = Field(Raw(b"##"))
     >>> f2 = Field(Padding([f0, f1], data=Raw(b'\x00'), modulo=128, factor=1./2))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
     >>> len(d) * 8
@@ -193,7 +192,7 @@ class Padding(AbstractRelationVariableLeaf):
     ...     return res_bits
     >>> f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x00\x01\x02\x03'
     >>> len(d) * 8
@@ -216,12 +215,11 @@ class Padding(AbstractRelationVariableLeaf):
     ...     return res_bits
     >>> f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x04\x04\x04\x04'
     >>> len(d) * 8
     128
-
 
     """
 
@@ -254,7 +252,15 @@ class Padding(AbstractRelationVariableLeaf):
             self.data_callback = None
 
     @public_api
-    def clone(self, map_objects={}):
+    def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Padding <netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding.Padding>`
+
+        """
+        if map_objects is None:
+            map_objects = {}
         if self in map_objects:
             return map_objects[self]
 
@@ -271,13 +277,13 @@ class Padding(AbstractRelationVariableLeaf):
             if target in map_objects.keys():
                 new_targets.append(map_objects[target])
             else:
-                new_target = target.clone(map_objects)
+                new_target = target.copy(map_objects)
                 new_targets.append(new_target)
 
         new_padding.targets = new_targets
         return new_padding
 
-    def compareValues(self, content, expectedSize, computedValue):
+    def compareValues(self, content, expectedSize, computedValue, preset=None):
         return len(content[:self._current_length_to_pad]) == len(computedValue)
 
     def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables):
@@ -331,7 +337,7 @@ class Padding(AbstractRelationVariableLeaf):
         return size
 
     @typeCheck(GenericPath)
-    def computeExpectedValue(self, parsingPath):
+    def computeExpectedValue(self, parsingPath, preset=None):
         self._logger.debug("Compute expected value for Padding variable")
 
         # Reinitialize current length size
@@ -446,9 +452,9 @@ def _test():
     >>> f_pad = Field(Padding([f_size, f_data], data=Raw(b"\x00"), modulo=8*16), "padding")
     >>>
     >>> s = Symbol([f_size, f_data, f_pad])
-    >>> data = s.specialize()
+    >>> data = next(s.specialize())
     >>>
-    >>> (abstractedSymbol, structured_data) = Symbol.abstract(data, [s])
+    >>> structured_data = s.abstract(data)
     >>> ord(structured_data['size']) == len(structured_data['payload'])
     True
     """

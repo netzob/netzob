@@ -49,7 +49,8 @@ from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransiti
 @NetzobLogger
 class CloseChannelTransition(AbstractTransition):
     """This class represents a transition which, when executed, requests
-    to close the current underlying communication channel.
+    to close the current underlying communication channel, and leads
+    to a terminal state in the automaton.
 
     The CloseChannelTransition expects some parameters:
 
@@ -107,7 +108,16 @@ class CloseChannelTransition(AbstractTransition):
         self.description = "CloseChannelTransition"
 
     @public_api
-    def clone(self):
+    def copy(self):
+        r"""Copy the current transition.
+
+        This method copies the transition object but keeps references to the
+        original callbacks.
+
+        :return: A new object of the same type.
+        :rtype: :class:`CloseChannelTransition <netzob.Model.Grammar.Transitions.CloseChannelTransition.CloseChannelTransition>`
+
+        """
         transition = CloseChannelTransition(startState=None,
                                             endState=self.endState,
                                             name=self.name)
@@ -170,13 +180,13 @@ class CloseChannelTransition(AbstractTransition):
 def _test():
     r"""
 
-    # Test clone()
+    # Test copy()
 
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> t = CloseChannelTransition(s0, s1, name="transition")
-    >>> t.clone()
+    >>> t.copy()
     transition
 
     """

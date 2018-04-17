@@ -62,7 +62,7 @@ class SHA2_512(AbstractHash):
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(SHA2_512([f1]))
     >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())  # doctest: +ELLIPSIS
+    >>> binascii.hexlify(next(s.specialize()))  # doctest: +ELLIPSIS
     b'aabb13868e66e10c8825be2054b8fa56faf06938a2c6a7e8e3830f0c274777b0431f1...'
 
     """

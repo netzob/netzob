@@ -60,26 +60,35 @@ class BitArray(AbstractType):
 
     :param value: This parameter is used to describe a domain that contains a fixed array of bits. If None, the constructed BitArray will accept a random sequence of bits, whose size may be specified (see :attr:`nbBits` parameter).
     :param nbBits: This parameter is used to describe a domain that contains an amount of bits. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.
+    :param default: The default value used in specialization.
     :type value: :class:`bitarray`, optional
     :type nbBits: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
+    :type default: :class:`bitarray`, optional
 
     .. note::
-       :attr:`value` and :attr:`nbBits` attributes are mutually exclusive.
+       :attr:`value` and :attr:`nbBits` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
 
     The BitArray class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max values.
-    :var constants: A list of named constants used to access the bitarray internal elements.
-    :vartype typeName: :class:`str`
+    :var constants: A list of named constants used to access the
+                    bitarray internal elements. Those elements are
+                    automatically accessible by predefined named
+                    constants, whose names can be changed. Besides,
+                    elements can be accessed in read or write mode.
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype constants: a :class:`list` of :class:`str`
+    :vartype default: :class:`bitarray`
 
 
     The creation of a BitArray type with no parameter will create a bytes
@@ -163,13 +172,26 @@ class BitArray(AbstractType):
     >>> b['Urgent flag']
     True
 
+
+    **Using a default value**
+
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> t = BitArray(nbBits=16, default='1111111100000000')
+    >>> t.generate().tobytes()
+    b'\xff\x00'
+
     """
 
     @public_api
-    def __init__(self, value=None, nbBits=None):
+    def __init__(self, value=None, nbBits=None, default=None):
 
         if value is not None and nbBits is not None:
             raise ValueError("A BitArray should have either its value or its nbBits set, but not both")
+
+        if value is not None and default is not None:
+            raise ValueError("A BitArray should have either its constant value or its default value set, but not both")
 
         # Handle input value
         if value is not None and not isinstance(value, bitarray):
@@ -183,13 +205,25 @@ class BitArray(AbstractType):
             else:
                 raise ValueError("Unsupported input format for value: '{}', type: '{}'".format(value, type(value)))
 
+        # Handle input value
+        if default is not None and not isinstance(default, bitarray):
+
+            # Check if default value is correct, and normalize it in str object, and then in bitarray
+            if isinstance(default, str):
+                try:
+                    default = bitarray(default)
+                except Exception as e:
+                    raise ValueError("Input default value for the following BitArray is incorrect: '{}'. Error: '{}'".format(default, e))
+            else:
+                raise ValueError("Unsupported input format for default value: '{}', type: '{}'".format(default, type(default)))
+
         # Normalize nbBits
         if value is None:
             nbBits = self._normalizeNbBits(nbBits)
         else:
             nbBits = (len(value), len(value))
 
-        super(BitArray, self).__init__(self.__class__.__name__, value, nbBits)
+        super(BitArray, self).__init__(self.__class__.__name__, value, nbBits, default=default)
         self.constants = None  # A list of named constant used to access the bitarray elements
 
         # When value is not None, we can access each element of the bitarray with named constants
@@ -335,6 +369,9 @@ class BitArray(AbstractType):
         if self.value is not None:
             return self.value
 
+        if self.default is not None:
+            return self.default
+
         minSize, maxSize = self.size
         if maxSize is None:
             maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
@@ -444,8 +481,8 @@ def _test():
     ...     BitArray(nbBits=8),  # BitArray(bitarray("00001111" "1")), BitArray(nbBits=7),
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    >>> data = b''.join(f.specialize() for f in symbol.fields)
-    >>> assert Symbol.abstract(data, [symbol])[1]
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
+    >>> assert symbol.abstract(data)
 
 
     # Verify that you cannot create a BitArray with a value AND an nbBits:

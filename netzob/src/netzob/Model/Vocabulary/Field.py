@@ -35,6 +35,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from typing import Iterator  # noqa: F401
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -316,7 +317,16 @@ class Field(AbstractField):
         self.isPseudoField = isPseudoField
 
     @public_api
-    def clone(self, map_objects={}):
+    def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Field <netzob.Model.Vocabulary.Field.Field>`
+
+        """
+
+        if map_objects is None:
+            map_objects = {}
         if self in map_objects:
             return map_objects[self]
 
@@ -329,7 +339,7 @@ class Field(AbstractField):
                 if f in map_objects.keys():
                     new_domain.append(map_objects[f])
                 else:
-                    new_sub_field = f.clone(map_objects)
+                    new_sub_field = f.copy(map_objects)
                     new_domain.append(new_sub_field)
             new_field.fields = new_domain
             new_field.domain = None
@@ -337,37 +347,70 @@ class Field(AbstractField):
             if self.domain in map_objects.keys():
                 new_domain = map_objects[self.domain]
             else:
-                new_domain = self.domain.clone(map_objects)
+                new_domain = self.domain.copy(map_objects)
             new_field.domain = new_domain
 
         return new_field
 
     @public_api
-    def specialize(self, presets=None, fuzz=None):
-        r"""The method :meth:`specialize()` generates a :class:`bytes` sequence whose
-        content follows the symbol definition.
+    @typeCheck(int)
+    def str_structure(self, deepness=0, preset=None):
+        """Returns a string which denotes the current field definition
+        using a tree display.
 
-        :param presets: A dictionary of keys:values used to preset
-                        (parameterize) fields during field
-                        specialization. Values in this dictionary will
-                        override any field definition, constraints or
-                        relationship dependencies. See
-                        :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
-                        for a complete explanation of its use. The default value is :const:`None`.
-        :param fuzz: A fuzzing configuration used during the specialization process. Values
-                     in this configuration will override any field
-                     definition, constraints, relationship
-                     dependencies or parameterized fields. See
-                     :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`
-                     for a complete explanation of its use for fuzzing
-                     purpose. The default value is :const:`None`.
-        :type presets: ~typing.Dict[~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
-                       ~typing.Union[~bitarray.bitarray,bytes,
-                       ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]],
-                       optional
-        :type fuzz: :class:`Fuzz <netzob.Fuzzing.Fuzz.Fuzz>`, optional
-        :return: The produced content after specializing the field.
-        :rtype: :class:`bytes`
+        :return: The current field represented as a string.
+        :rtype: :class:`str`
+
+        >>> from netzob.all import *
+        >>> f1 = Field(String(), name="field1")
+        >>> f2 = Field(Integer(interval=(10, 100)), name="field2")
+        >>> f3 = Field(Raw(nbBytes=14), name="field3")
+        >>> field = Field([f1, f2, f3], name="Main field")
+        >>> print(field.str_structure())
+        Main field
+        |--  field1
+             |--   Data (String(nbChars=(0,8192)))
+        |--  field2
+             |--   Data (Integer(10,100))
+        |--  field3
+             |--   Data (Raw(nbBytes=14))
+
+        """
+        tab = ["|--  " for x in range(deepness)]
+        tab.append(str(self.name))
+        lines = [''.join(tab)]
+        if len(self.fields) == 0:
+            lines.append(self.domain.str_structure(deepness + 1, preset=preset))
+        for f in self.fields:
+            lines.append(f.str_structure(deepness + 1, preset=preset))
+        return '\n'.join(lines)
+
+    def getVariables(self):
+        r"""Returns the list of all underlying variables.
+
+        :return: the list of variables
+        :rtype: :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`.
+
+        >>> from netzob.all import *
+        >>> v1 = Data(uint8(), name='v1')
+        >>> v2 = Data(uint8(), name='v2')
+        >>> v_agg = Agg([v1, v2], name='v_agg')
+        >>> f1 = Field(v_agg)
+        >>> variables = f1.getVariables()
+        >>> len(variables)
+        3
+
+        """
+        return self.domain.getVariables()
+
+    @public_api
+    def specialize(self) -> Iterator[bytes]:
+        r"""The :meth:`specialize()` method is intended to produce concrete
+        :class:`bytes` data based on the field model. This method
+        returns a Python generator that in turn provides data
+        :class:`bytes` object at each call to ``next(generator)``.
+
+        :return: A generator that provides data :class:`bytes` at each call to ``next(generator)``.
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
 
         The following example shows the :meth:`specialize()` method used for a
@@ -375,7 +418,7 @@ class Field(AbstractField):
 
         >>> from netzob.all import *
         >>> f = Field(String("hello"))
-        >>> f.specialize()
+        >>> next(f.specialize())
         b'hello'
 
         The following example shows the :meth:`specialize()` method used for a
@@ -383,7 +426,7 @@ class Field(AbstractField):
 
         >>> from netzob.all import *
         >>> f = Field(String(nbChars=4))
-        >>> len(f.specialize())
+        >>> len(next(f.specialize()))
         4
 
         """
@@ -402,32 +445,22 @@ class Field(AbstractField):
                     field.domain.normalize_targets()
 
         from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
-        fs = FieldSpecializer(self, presets=presets, fuzz=fuzz)
+        fs = FieldSpecializer(self, preset=self.preset)
 
-        if fuzz is None:
-            try:
-                specializing_path = next(fs.specialize())
-            except StopIteration:
-                raise Exception("Cannot specialize this field.")
-            return specializing_path.getData(self.domain).tobytes()
-        else:
-            specializing_paths = fs.specialize()
-            return self._inner_specialize(specializing_paths)
+        specializing_paths = fs.specialize()
+        return self._inner_specialize(specializing_paths)
 
     def _inner_specialize(self, specializing_paths):
         for specializing_path in specializing_paths:
             yield specializing_path.getData(self.domain).tobytes()
 
-    def count(self, presets=None, fuzz=None):
+    def count(self, preset=None):
         count = 1
         if len(self.fields) > 0:
             for field in self.fields:
-                if presets is not None and field in presets.keys():
-                    pass
-                else:
-                    count *= field.count(presets=presets, fuzz=fuzz)
+                count *= field.count(preset=preset)
         else:
-            count = self.domain.count(fuzz=fuzz)
+            count = self.domain.count(preset=preset)
         return count
 
     @property
@@ -500,7 +533,7 @@ def _test():
 
     >>> from netzob.all import *
     >>> f = Field(String("hello"))
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'hello'
 
 
@@ -510,28 +543,20 @@ def _test():
     >>> f1 = Field(String("hello"))
     >>> f2 = Field(String(" john"))
     >>> f = Field([f1, f2])
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'hello john'
 
 
-    # Test field specialization with presets
+    # Test field specialization with fuzzing
 
     >>> from netzob.all import *
     >>> f = Field(String("hello"))
-    >>> presets = {f: bitarray('01111000')}
-    >>> f.specialize(presets=presets)
-    b'x'
-
-
-    # Test field specialization with fuzz
-
-    >>> from netzob.all import *
-    >>> f = Field(String("hello"))
-    >>> fuzz = Fuzz()
-    >>> fuzz.set(f)
-    >>> next(f.specialize(fuzz=fuzz))
+    >>> preset = Preset(f)
+    >>> preset.fuzz(f)
+    >>> next(f.specialize())
     b'System("ls -al /")\x00                                                                                                                                                                                                                                             '
     """
+
 
 def _test_field_integer():
     r"""
@@ -553,7 +578,7 @@ def _test_field_integer():
     >>> s = Symbol([field])
     >>> list = []
     >>> for _ in range(40):
-    ...     list.append(s.specialize())
+    ...     list.append(next(s.specialize()))
 
     # i1
     >>> b'\x01' in list
@@ -589,6 +614,7 @@ def _test_field_integer():
     
     """
 
+
 def _test_field_bitarray():
     r"""
 
@@ -596,22 +622,22 @@ def _test_field_bitarray():
 
     >>> from netzob.all import *
 
-    >>> Field(BitArray('00000000')).specialize()
+    >>> next(Field(BitArray('00000000')).specialize())
     b'\x00'
-    >>> Field(BitArray('00000001')).specialize()
+    >>> next(Field(BitArray('00000001')).specialize())
     b'\x01'
-    >>> Field(BitArray('00000010')).specialize()
+    >>> next(Field(BitArray('00000010')).specialize())
     b'\x02'
-    >>> Field(BitArray('00000100')).specialize()
+    >>> next(Field(BitArray('00000100')).specialize())
     b'\x04'
-    >>> Field(BitArray('11111111')).specialize()
+    >>> next(Field(BitArray('11111111')).specialize())
     b'\xff'
-    >>> Field(BitArray('1111111100000000')).specialize()
+    >>> next(Field(BitArray('1111111100000000')).specialize())
     b'\xff\x00'
 
-    >>> len(Field(BitArray(nbBits=32)).specialize())
+    >>> len(next(Field(BitArray(nbBits=32)).specialize()))
     4
-    >>> len(Field(BitArray(nbBits=64)).specialize())
+    >>> len(next(Field(BitArray(nbBits=64)).specialize()))
     8
 
     """
@@ -623,14 +649,14 @@ def _test_field_string():
 
     >>> from netzob.all import *
 
-    >>> Field(domain=String('abcdef')).specialize()
+    >>> next(Field(domain=String('abcdef')).specialize())
     b'abcdef'
-    >>> Field(domain=String('Ω')).specialize()
+    >>> next(Field(domain=String('Ω')).specialize())
     b'\xce\xa9'
-    >>> Field(domain=String('abcdefΩ')).specialize()
+    >>> next(Field(domain=String('abcdefΩ')).specialize())
     b'abcdef\xce\xa9'
 
-    >>> Field(domain=String('abcdef', eos=['123'])).specialize() # doctest: +SKIP
+    >>> next(Field(domain=String('abcdef', eos=['123'])).specialize()) # doctest: +SKIP
     b'abcdef123'
 
     """
@@ -643,16 +669,16 @@ def _test_field_padding():
 
     >>> f_str = Field(String("abcdef"))
     >>> f_pad = Field(Padding(f_str, data=String('*'), modulo=64))
-    >>> a = Field([f_str, f_pad]).specialize()
+    >>> a = next(Field([f_str, f_pad]).specialize())
     >>> a
     b'abcdef**'
     >>> len(a) * 8
     64
     >>> f_pad = Field(Padding(f_str, data=String('*'), modulo=128))
-    >>> len(Field([f_str, f_pad]).specialize()) * 8
+    >>> len(next(Field([f_str, f_pad]).specialize())) * 8
     128
     >>> f_pad = Field(Padding(f_str, data=String('*'), modulo=256))
-    >>> len(Field([f_str, f_pad]).specialize()) * 8
+    >>> len(next(Field([f_str, f_pad]).specialize())) * 8
     256
 
     """
@@ -673,7 +699,7 @@ def _test_field_padding_callback():
     ...     return res_bits
     >>> f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d[12:]
     b'\x00\x01\x02\x03'
     >>> len(d) * 8
@@ -691,9 +717,9 @@ def _test_field_multi_type():
     >>> f_bit = Field([BitArray('11111111'), Raw(b'##')])
     >>> f_f = Field([f_int, f_str, f_bit])
     >>> f = Field([f_f])
-    >>> b = f.specialize()
+    >>> b = next(f.specialize())
     >>> for _ in range(10):
-    ...     b += f.specialize()
+    ...     b += next(f.specialize())
 
     >>> b.find(b'\x2A') != -1 # 42 in hexa
     True

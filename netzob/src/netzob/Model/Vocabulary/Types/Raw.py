@@ -35,7 +35,6 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import random
-import os
 from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
@@ -58,42 +57,46 @@ class Raw(AbstractType):
     The Raw constructor expects some parameters:
 
     :param value: This parameter is used to describe a domain that contains a fixed sequence of bytes. If None, the constructed Raw will accept a random sequence of bytes, whose size may be specified (see :attr:`nbBytes` parameter).
-    :param nbBytes: This parameter is used to describe a domain that contains an amount of bytes. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.
+    :param nbBytes: This parameter is used to describe a domain that contains an amount of bytes. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 8192.
     :param alphabet: The alphabet can be used to limit the bytes that can participate in the domain value. The default value is None.
+    :param default: The default value used in specialization.
     :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
     :type alphabet: a :class:`list` of :class:`bytes`, optional
+    :type default: :class:`bitarray` or :class:`bytes`, optional
 
     .. note::
-       :attr:`value` and :attr:`nbBytes` attributes are mutually exclusive.
+       :attr:`value` and :attr:`nbBytes` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
 
     The Raw class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The internal size (in bits) of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max values.
     :var alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.
-    :vartype typeName: :class:`str`
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype alphabet: a :class:`list` of :class:`bytes`
-
+    :vartype default: :class:`bitarray`
 
     The creation of a Raw type with no parameter will create a bytes
-    object whose length ranges from 0 to 65535:
+    object whose length ranges from 0 to 8192:
 
     >>> from netzob.all import *
     >>> i = Raw()
     >>> len(i.generate().tobytes())
     533
     >>> len(i.generate().tobytes())
-    7026
+    7738
     >>> len(i.generate().tobytes())
-    7906
+    5505
 
     The following example shows how to define a six-byte long raw
     object, and the use of the generation method to produce a
@@ -123,14 +126,21 @@ class Raw(AbstractType):
     can participate in the domain value:
 
     >>> from netzob.all import *
-    >>> r = Raw(nbBytes=100, alphabet=[b"t", b"o"])
+    >>> r = Raw(nbBytes=30, alphabet=[b"t", b"o"])
     >>> data = r.generate().tobytes()
-    >>> data  # doctest: +ELLIPSIS
-    b'oottoottototooooootoototootttttootooootottotttootttootttottoo...
+    >>> data
+    b'otoottootottottooooooottttooot'
     >>> for c in set(data):  # extract distinct characters
     ...    print(chr(c))
     t
     o
+
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> raw = Raw(nbBytes=6, default=b'\x02')
+    >>> raw.generate().tobytes()
+    b'\x02'
 
     """
 
@@ -141,10 +151,14 @@ class Raw(AbstractType):
                  unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign(),
-                 alphabet=None):
+                 alphabet=None,
+                 default=None):
 
         if value is not None and nbBytes is not None:
             raise ValueError("A Raw should have either its value or its nbBytes set, but not both")
+
+        if value is not None and default is not None:
+            raise ValueError("A Raw should have either its constant value or its default value set, but not both")
 
         if value is not None and not isinstance(value, bitarray):
             if isinstance(value, bytes):
@@ -153,6 +167,14 @@ class Raw(AbstractType):
                 value.frombytes(tmp_value)
             else:
                 raise ValueError("Unsupported input format for value: '{}', type is: '{}', expected type is 'bitarray' or 'bytes'".format(value, type(value)))
+
+        if default is not None and not isinstance(default, bitarray):
+            if isinstance(default, bytes):
+                tmp_default = default
+                default = bitarray(endian='big')
+                default.frombytes(tmp_default)
+            else:
+                raise ValueError("Unsupported input format for default value: '{}', type is: '{}', expected type is 'bitarray' or 'bytes'".format(default, type(default)))
 
         # Handle raw data size if value is None
         if value is None:
@@ -168,7 +190,8 @@ class Raw(AbstractType):
             nbBits,
             unitSize=unitSize,
             endianness=endianness,
-            sign=sign)
+            sign=sign,
+            default=default)
 
     def __str__(self):
         if self.value is not None:
@@ -185,7 +208,7 @@ class Raw(AbstractType):
         >>> from netzob.all import *
         >>> f = Field(Raw(b"\x01\x02\x03\x04"))
         >>> s = Symbol(fields=[f])
-        >>> messages = [RawMessage(s.specialize()) for x in range(5)]
+        >>> messages = [RawMessage(next(s.specialize())) for x in range(5)]
         >>> s.messages = messages
         >>> print(s.str_data())
         Field             
@@ -280,6 +303,9 @@ class Raw(AbstractType):
         if self.value is not None:
             return self.value
 
+        if self.default is not None:
+            return self.default
+
         minSize, maxSize = self.size
         if maxSize is None:
             maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
@@ -290,7 +316,7 @@ class Raw(AbstractType):
 
         generatedValue = None
         if self.alphabet is None:
-            generatedValue = os.urandom(int(generatedSize / 8))
+            generatedValue = b''.join(random.randint(0, 255).to_bytes(length=1, byteorder='big') for i in range(int(generatedSize / 8)))
         else:
             generatedValue = b"".join([random.choice(self.alphabet) for _ in range(int(generatedSize / 8))])
 
@@ -426,8 +452,8 @@ def _test(self):
         Raw(b"xxxx"), Raw(nbBytes=2),
     ]
     symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    data = b''.join(f.specialize() for f in symbol.fields)
-    assert Symbol.abstract(data, [symbol])[1]
+    data = b''.join(next(f.specialize()) for f in symbol.fields)
+    assert symbol.abstract(data)
 
 
     # Verify that you cannot create a Raw with a value AND an nbBytes:

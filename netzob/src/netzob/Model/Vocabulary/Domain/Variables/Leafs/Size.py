@@ -100,13 +100,11 @@ class Size(AbstractRelationVariableLeaf):
     :var factor: Defines the multiplication factor to apply to the targeted
                  length.
     :var offset: Defines the offset to apply to the computed length.
-    :var varType: The type of the variable (Read-only).
     :vartype targets: a list of
                       :class:`~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
     :vartype dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
     :vartype factor: :class:`float`
     :vartype offset: :class:`int`
-    :vartype varType: :class:`str`
 
 
     The following example shows how to define a size field with a
@@ -117,7 +115,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size([f0], dataType=Raw(nbBytes=1)))
     >>> f = Field([f0, f1, f2])
-    >>> data = f.specialize()
+    >>> data = next(f.specialize())
     >>> data[-1] == 10
     True
 
@@ -129,7 +127,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size([f0, f1], dataType=Raw(nbBytes=1), factor=1./8, offset=4))
     >>> f = Field([f0, f1, f2])
-    >>> data = f.specialize()
+    >>> data = next(f.specialize())
     >>> data[-1] > (4*8*1./8 + 4) # == 4 bytes minimum * 8 bits * a factor of 1./8 + an offset of 4
     True
 
@@ -152,7 +150,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f5 = Field(Raw(b"_"))
     >>> f3 = Field(Size([f1, f2, f4, f5]))
     >>> f = Field([f1, f2, f3, f4, f5])
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'=#\x04%_'
 
     In the following example, a size field is declared after its
@@ -164,25 +162,9 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"), name='f1')
     >>> f2 = Field(Size(f0), name='f2')
     >>> f = Field([f0, f1, f2])
-    >>> 3 <= len(f.specialize()) <= 6
+    >>> 3 <= len(next(f.specialize())) <= 6
     True
 
-
-    .. ifconfig:: scope in ('netzob')
-
-       In the following example, a size field is declared after its
-       targeted field, and a message that does not correspond to the
-       expected model is then parsed. As the data does not match the
-       expected symbol, the returned symbol is unknown:
-
-       >>> from netzob.all import *
-       >>> f0 = Field(String(nbChars=(1,10)), name='f0')
-       >>> f1 = Field(String(";"), name='f1')
-       >>> f2 = Field(Size(f0), name='f2')
-       >>> s  = Symbol(fields=[f0, f1, f2])
-       >>> data = b"john;\x03"
-       >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
-       (Unknown message b'john;\x03', OrderedDict())
 
     In the following example, a size field is declared before the
     targeted field:
@@ -192,26 +174,9 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"), name="f1", )
     >>> f0 = Field(Size(f2), name="f0")
     >>> f = Field([f0, f1, f2])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> 3 <= len(d) <= 6
     True
-
-
-    .. ifconfig:: scope in ('netzob')
-
-       In the following example, a size field is declared before its
-       targeted field, and a message that does not correspond to the
-       expected model is then parsed. As the data does not match the
-       expected symbol, the returned symbol is unknown:
-
-       >>> from netzob.all import *
-       >>> f2 = Field(String(nbChars=(1,10)), name="f2")
-       >>> f1 = Field(String(";"), name="f1", )
-       >>> f0 = Field(Size(f2), name="f0")
-       >>> s  = Symbol(fields=[f0, f1, f2])
-       >>> data = b"\x03;john"
-       >>> Symbol.abstract(data, [s])  # doctest: +IGNORE_EXCEPTION_DETAIL
-       (Unknown message b'\x03;john', OrderedDict())
 
 
     **Size field with fields and variables as target**
@@ -225,7 +190,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size([d, f1]))
     >>> f = Field([f0, f1, f2])
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> b'\x15' in res
     True
 
@@ -235,7 +200,7 @@ class Size(AbstractRelationVariableLeaf):
     >>> f1 = Field(String(";"))
     >>> f0 = Field(Size([f1, d]))
     >>> f = Field([f0, f1, f2])
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> b'\x15' in res
     True
 
@@ -257,7 +222,15 @@ class Size(AbstractRelationVariableLeaf):
         self.offset = offset
 
     @public_api
-    def clone(self, map_objects={}):
+    def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Size <netzob.Model.Vocabulary.Domain.Variables.Leafs.Size.Size>`
+
+        """
+        if map_objects is None:
+            map_objects = {}
         if self in map_objects:
             return map_objects[self]
 
@@ -269,22 +242,26 @@ class Size(AbstractRelationVariableLeaf):
             if target in map_objects.keys():
                 new_targets.append(map_objects[target])
             else:
-                new_target = target.clone(map_objects)
+                new_target = target.copy(map_objects)
                 new_targets.append(new_target)
 
         new_size.targets = new_targets
         return new_size
 
-    def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables):
+    def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables, preset=None):
         """
         Compute the total size of targets
         """
         size = 0
         missing_variables = []
 
+        from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
         for variable in targets:
 
-            if parsingPath.hasData(variable) or variable is self:
+            if preset is not None and preset.get(variable) is not None and preset.get(variable).mode == FuzzingMode.FIXED:
+                remainingVariables.append(variable)
+
+            elif parsingPath.hasData(variable) or variable is self:
                 remainingVariables.append(variable)
 
             # variable is a leaf
@@ -336,13 +313,13 @@ class Size(AbstractRelationVariableLeaf):
         return size
 
     @typeCheck(GenericPath)
-    def computeExpectedValue(self, parsingPath):
+    def computeExpectedValue(self, parsingPath, preset=None):
         self._logger.debug("Compute expected value for Size variable '{}' from field '{}'".format(self, self.field))
 
         # first checks the pointed fields all have a value
         remainingVariables = []
 
-        size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables)
+        size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables, preset=preset)
         size += self.__computeExpectedValue_stage2(parsingPath, remainingVariables)
         size = int(size * self.factor + self.offset)
         size_raw = TypeConverter.convert(size, Integer, Raw,
@@ -435,17 +412,13 @@ def _test_size():
     >>> # Fields
     >>> ip_ver      = Field(name='Version', domain=BitArray(value=bitarray('0100')))
     >>> ip_ihl      = Field(name='Header length', domain=bitarray('0000'))
-    >>> ip_tos      = Field(name='TOS', domain=Data(dataType=BitArray(nbBits=8),
-    ...                     originalValue=bitarray('00000000'), scope=Scope.SESSION))
+    >>> ip_tos      = Field(name='TOS', domain=Data(dataType=BitArray('00000000'), scope=Scope.SESSION))
     >>> ip_tot_len  = Field(name='Total length', domain=bitarray('0000000000000000'))
     >>> ip_id       = Field(name='Identification number', domain=BitArray(nbBits=16))
-    >>> ip_flags    = Field(name='Flags', domain=Data(dataType=BitArray(nbBits=3),
-    ...                     originalValue=bitarray('000'), scope=Scope.SESSION))
+    >>> ip_flags    = Field(name='Flags', domain=Data(dataType=BitArray('000'), scope=Scope.SESSION))
     >>> ip_frag_off = Field(name='Fragment offset',
-    ...                     domain=Data(dataType=BitArray(nbBits=13),
-    ...                     originalValue=bitarray('0000000000000'), scope=Scope.SESSION))
-    >>> ip_ttl      = Field(name='TTL', domain=Data(dataType=BitArray(nbBits=8),
-    ...                     originalValue=bitarray('10000000'), scope=Scope.SESSION))
+    ...                     domain=Data(dataType=BitArray('0000000000000'), scope=Scope.SESSION))
+    >>> ip_ttl      = Field(name='TTL', domain=Data(dataType=BitArray('10000000'), scope=Scope.SESSION))
     >>> ip_proto    = Field(name='Protocol', domain=uint8be(6))
     >>> ip_checksum = Field(name='Checksum', domain=bitarray('0000000000000000'))
     >>> ip_saddr    = Field(name='Source address', domain=IPv4("127.0.0.1"))
@@ -463,7 +436,7 @@ def _test_size():
     >>> packet = Symbol(name='IP layer', fields=[
     ...    ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off,
     ...    ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload])
-    >>> data = packet.specialize()
+    >>> data = next(packet.specialize())
     >>> hex(data[0])
     ... # This corresponds to the first byte of the IP layer. '5' means 5*32 bits,
     ... # which is the size of the default IP header.
@@ -482,7 +455,7 @@ def _test_size():
     >>> f1 = Field(String(";"))
     >>> f2 = Field(Size(f0))
     >>> f = Field([f0, f1, f2])
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> b'\x14' in res
     True
 
@@ -498,7 +471,7 @@ def _test_size():
     >>> f3.domain = Size([f4, f5, f6])
     >>> f2.fields = [f3, f4, f5, f6, f7]
     >>> s = Symbol(fields=[f0, f1, f2])
-    >>> b"CMDauthentify#\x11" in s.specialize()
+    >>> b"CMDauthentify#\x11" in next(s.specialize())
     True
 
     # We check that a Size datatype cannot be constant
@@ -520,31 +493,71 @@ def _test_size():
     >>> udp_length = Field(bitarray('0000000000000000'), "udp.length")
     >>> udp_checksum = Field(bitarray('0000000000000000'), "udp.checksum")
     >>> udp_payload = Field(Raw(), "udp.payload")
-    >>> 
+    >>>
     >>> udp_header = [udp_sport, udp_dport, udp_length, udp_checksum, udp_payload]
-    >>> 
+    >>>
     >>> # Update UDP length field
     >>> udp_length.domain = Size(udp_header, dataType=uint16(), factor=1./8)
-    >>> 
+    >>>
     >>> # Pseudo IP header to compute the UDP checksum
     >>> pseudo_ip_src = Field(IPv4(), "udp.pseudoIP.saddr")
     >>> pseudo_ip_dst = Field(IPv4(), "udp.pseudoIP.daddr")
     >>> pseudo_ip_proto = Field(Raw(b'\x00\x11'), "udp.pseudoIP.proto")
     >>> pseudo_ip_length = Field(Size(udp_header, dataType=uint16(), factor=1./8), "udp.pseudoIP.length")
-    >>> 
+    >>>
     >>> pseudo_ip_header = Field(name="udp.pseudoIP", isPseudoField=True)
     >>> pseudo_ip_header.fields = [pseudo_ip_src, pseudo_ip_dst, pseudo_ip_proto, pseudo_ip_length]
-    >>> 
+    >>>
     >>> udp_checksum.domain = InternetChecksum([pseudo_ip_header] + udp_header, dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))
-    >>> 
+    >>>
     >>> # UDP symbol
     >>> symbol_udp = Symbol(name="udp", fields=(udp_header + [pseudo_ip_header]))
     >>>
-    >>> # 
-    >>> data = symbol_udp.specialize(presets={"udp.payload": "test AAAAAAAA"})
+    >>> #
+    >>> preset = Preset(symbol_udp)
+    >>> preset["udp.payload"] = b"test AAAAAAAA"
+    >>> data = next(symbol_udp.specialize())
     >>>
-    >>> (symbol_result, structured_data) = Symbol.abstract(data, [symbol_udp])
-    >>> symbol_result == symbol_udp
-    True
+    >>> symbol_udp.abstract(data)  # doctest: +ELLIPSIS
+    OrderedDict([('udp.sport', b'...'), ('udp.dport', b'...'), ('udp.length', b'\x00\x15'), ('udp.checksum', b'...'), ('udp.payload', b'test AAAAAAAA')])
+
+    """
+
+
+def _test_abstraction():
+    r"""
+
+    In the following example, a size field is declared after its
+    targeted field, and a message that does not correspond to the
+    expected model is then parsed. As the data does not match the
+    expected symbol, the returned symbol is unknown:
+
+    >>> from netzob.all import *
+    >>> f0 = Field(String(nbChars=(1,10)), name='f0')
+    >>> f1 = Field(String(";"), name='f1')
+    >>> f2 = Field(Size(f0), name='f2')
+    >>> s  = Symbol(fields=[f0, f1, f2])
+    >>> data = b"john;\x03"
+    >>> s.abstract(data)  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'b'john;\x03''. Error: 'No parsing path returned while parsing 'b'john;\x03'''
+
+
+    In the following example, a size field is declared before its
+    targeted field, and a message that does not correspond to the
+    expected model is then parsed. As the data does not match the
+    expected symbol, the returned symbol is unknown:
+
+    >>> from netzob.all import *
+    >>> f2 = Field(String(nbChars=(1,10)), name="f2")
+    >>> f1 = Field(String(";"), name="f1", )
+    >>> f0 = Field(Size(f2), name="f0")
+    >>> s  = Symbol(fields=[f0, f1, f2])
+    >>> data = b"\x03;john"
+    >>> s.abstract(data)  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'b'\x03;john''. Error: 'No parsing path returned while parsing 'b'\x03;john'''
 
     """

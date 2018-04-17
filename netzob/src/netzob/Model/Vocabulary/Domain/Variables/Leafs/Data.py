@@ -45,9 +45,6 @@ from bitarray import bitarray
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
-from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
-from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
-from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
@@ -56,37 +53,29 @@ from netzob.Model.Vocabulary.Types.BitArray import BitArray
 class Data(AbstractVariableLeaf):
     """The Data class is a variable which embeds specific content.
 
-    A Data object stores at least two things: 1) the definition domain
-    and the constraints over it, through a :class:`Type
-    <netzob.Model.Vocabulary.Types.AbstractType>` object, and 2) the
-    current value of the variable.
+    A Data object stores the definition domain of a variable and the constraints
+    over it, through a :class:`Type
+    <netzob.Model.Vocabulary.Types.AbstractType>` object.
 
     The Data constructor expects some parameters:
 
     :param dataType: The type of the data (for example Integer,
                      Raw, String, ...).
-    :param originalValue: The original value of the data (can be
-                          None, which is the default behavior).
     :param name: The name of the data (if None, the name will
                  be generated).
     :param scope: The Scope strategy defining how the Data value is
                  used during the abstraction and specialization process.
                  The default strategy is Scope.MESSAGE.
     :type dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, required
-    :type originalValue: :class:`bitarray`, optional
     :type name: :class:`str`, optional
     :type scope: :class:`~netzob.Model.Vocabulary.Domain.Variables.Scope.Scope`, optional
 
 
     The Data class provides the following public variables:
 
-    :var currentValue: The current value of the data.
     :var dataType: The type of the data.
     :var name: The name of the variable (Read-only).
-    :var varType: The type of the variable (Read-only).
-    :vartype currentValue: :class:`bitarray`
     :vartype dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
-    :vartype varType: :class:`str`
     :vartype name: :class:`str`
 
 
@@ -96,46 +85,39 @@ class Data(AbstractVariableLeaf):
     of this object is `"hello"`.
 
     >>> from netzob.all import *
-    >>> s = String('hello').value
-    >>> data = Data(dataType=String(), originalValue=s, name="pseudo")
-    >>> data.varType
-    'Data'
-    >>> data.currentValue.tobytes()
-    b'hello'
+    >>> s = String(nbChars=20, default='hello')
+    >>> data = Data(dataType=s, name="pseudo")
     >>> print(data.dataType)
-    String(nbChars=(0,8192))
+    String(nbChars=20)
     >>> data.name
     'pseudo'
+    >>> s.generate().tobytes()
+    b'hello'
 
-    .. ifconfig:: scope in ('netzob')
-
-       Besides, the Data object is the default Variable when we create a
-       Field without explicitly specifying the Data domain, as shown in
-       the following example:
-
-       >>> from netzob.all import *
-       >>> f = Field(String("hello"))
-       >>> f.domain.varType
-       'Data'
-       >>> f.domain.currentValue.tobytes()
-       b'hello'
 
     """
 
     @public_api
-    def __init__(self, dataType, originalValue=None, name=None, scope=None):
+    def __init__(self, dataType, name=None, scope=None):
         super(Data, self).__init__(
             self.__class__.__name__, name=name, scope=scope)
 
         self.dataType = dataType
-        self.currentValue = originalValue
 
     @public_api
-    def clone(self, map_objects={}):
+    def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leafs.Data.Data>`
+
+        """
+        if map_objects is None:
+            map_objects = {}
         if self in map_objects:
             return map_objects[self]
 
-        new_data = Data(self.dataType, originalValue=self.currentValue, name=self.name, scope=self.scope)
+        new_data = Data(self.dataType, name=self.name, scope=self.scope)
         map_objects[self] = new_data
         return new_data
 
@@ -154,13 +136,11 @@ class Data(AbstractVariableLeaf):
         if path is None:
             raise Exception("Path cannot be None")
 
-        #  first we check if current value is assigned to the data
-        if self.currentValue is not None:
-            return True
-
         # we check if memory referenced its value (memory is priority)
-        if path.memory is not None:
-            return path.memory.hasValue(self)
+        if path.memory is not None and path.memory.hasValue(self):
+            return True
+        elif self.dataType.value is not None:
+            return True
         else:
             return False
 
@@ -190,7 +170,7 @@ class Data(AbstractVariableLeaf):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
-                    newParsingPath = parsingPath.clone()
+                    newParsingPath = parsingPath.copy()
 
                     newParsingPath.addResult(self, content[:size].copy())
                     yield newParsingPath
@@ -199,7 +179,7 @@ class Data(AbstractVariableLeaf):
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
 
-        expectedValue = self.currentValue
+        expectedValue = self.dataType.value
 
         # we check a value is available in memory
         if parsingPath.memory is not None and parsingPath.memory.hasValue(self):
@@ -219,7 +199,7 @@ class Data(AbstractVariableLeaf):
                 expectedValue)].tobytes() == expectedValue.tobytes():
             (addresult_succeed, addresult_parsingPaths) = parsingPath.addResult(self, content[:len(expectedValue)].copy())
             results.extend(addresult_parsingPaths)
-            self._logger.debug("Data '{}' can be parsed with variable {}".format(content.tobytes(), self))
+            self._logger.debug("Data '{}' can be parsed with variable {}, providing '{}'".format(content.tobytes(), self, content[:len(expectedValue)].tobytes()))
         else:
             self._logger.debug("Data '{}' cannot be parsed with variable {}".format(content.tobytes(), self))
         return results
@@ -260,7 +240,7 @@ class Data(AbstractVariableLeaf):
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
-                    newParsingPath = parsingPath.clone()
+                    newParsingPath = parsingPath.copy()
                     (addresult_succeed, addresult_parsingPaths) = newParsingPath.addResult(self, content[:size].copy())
                     if addresult_succeed:
                         for addresult_parsingPath in addresult_parsingPaths:
@@ -270,7 +250,7 @@ class Data(AbstractVariableLeaf):
                     else:
                         self._logger.debug("Parsed data does not respect a relation")
 
-    def use(self, variableSpecializerPath, acceptCallBack=True):
+    def use(self, variableSpecializerPath, acceptCallBack=True, preset=None):
         """This method participates in the specialization proces.
 
         It creates a result in the provided path that either contains
@@ -278,83 +258,71 @@ class Data(AbstractVariableLeaf):
 
         """
 
-        self._logger.debug("Use variable {0}".format(self))
+        while True:
+            self._logger.debug("Use variable {0}".format(self))
 
-        if variableSpecializerPath is None:
-            raise Exception("VariableSpecializerPath cannot be None")
+            if variableSpecializerPath is None:
+                raise Exception("VariableSpecializerPath cannot be None")
 
-        if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
-            variableSpecializerPath.addResult(self, variableSpecializerPath.memory.getValue(self))
-        elif self.currentValue is not None:
-            variableSpecializerPath.addResult(self, self.currentValue)
+            if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
+                variableSpecializerPath.addResult(self, variableSpecializerPath.memory.getValue(self))
+            elif self.dataType.value is not None:
+                variableSpecializerPath.addResult(self, self.dataType.value.copy())
+            else:
+                raise Exception("No value has been memorized or value is not a constant")
 
-        yield variableSpecializerPath
+            yield variableSpecializerPath
 
-    def regenerate(self, variableSpecializerPath, acceptCallBack=True):
+    def regenerate(self, variableSpecializerPath, acceptCallBack=True, preset=None):
         """This method participates in the specialization proces.
 
         It creates a result in the provided path that contains a
         generated value that follows the definition of the Data
 
         """
-        self._logger.debug("Regenerate variable {0}".format(self))
 
-        if variableSpecializerPath is None:
-            raise Exception("VariableSpecializerPath cannot be None")
+        while True:
+            self._logger.debug("Regenerate variable {0}".format(self))
 
-        newValue = self.dataType.generate()
+            if variableSpecializerPath is None:
+                raise Exception("VariableSpecializerPath cannot be None")
 
-        self._logger.debug("Generated value for {}: {}".format(self, newValue))
+            newValue = self.dataType.generate()
 
-        variableSpecializerPath.addResult(self, newValue)
-        yield variableSpecializerPath
+            self._logger.debug("Generated value for {}: {}".format(self, newValue))
+
+            variableSpecializerPath.addResult(self, newValue)
+
+            yield variableSpecializerPath
 
     def regenerateAndMemorize(self,
                               variableSpecializerPath,
-                              acceptCallBack=True):
+                              acceptCallBack=True,
+                              preset=None):
         """This method participates in the specialization proces.
         It memorizes the value present in the path of the variable
         """
 
-        self._logger.debug("Regenerate and memorize variable '{}' for field '{}'".format(self, self.field))
+        while True:
+            self._logger.debug("Regenerate and memorize variable '{}' for field '{}'".format(self, self.field))
 
-        if variableSpecializerPath is None:
-            raise Exception("VariableSpecializerPath cannot be None")
+            if variableSpecializerPath is None:
+                raise Exception("VariableSpecializerPath cannot be None")
 
-        if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
-            newValue = variableSpecializerPath.memory.getValue(self)
-        else:
-            newValue = self.dataType.generate()
-            if variableSpecializerPath.memory is not None:
-                variableSpecializerPath.memory.memorize(self, newValue)
+            variableSpecializerPath = variableSpecializerPath.copy()
 
-        self._logger.debug("Generated value for {}: {}".format(self, newValue.tobytes()))
+            if variableSpecializerPath.memory is not None and variableSpecializerPath.memory.hasValue(self):
+                newValue = variableSpecializerPath.memory.getValue(self)
+            else:
+                newValue = self.dataType.generate()
+                if variableSpecializerPath.memory is not None:
+                    variableSpecializerPath.memory.memorize(self, newValue)
 
-        variableSpecializerPath.addResult(self, newValue.copy())
-        yield variableSpecializerPath
+            self._logger.debug("Generated value for {}: {}".format(self, newValue.tobytes()))
 
-    @public_api
-    @property
-    def currentValue(self):
-        """
-        Property (getter.setter  # type: ignore).
-        The current value of the data.
+            variableSpecializerPath.addResult(self, newValue.copy())
 
-        :type: :class:`bitarray`
-        """
-        if self.__currentValue is not None:
-            return self.__currentValue.copy()
-        else:
-            return None
-
-    @currentValue.setter  # type: ignore
-    @typeCheck(bitarray)
-    def currentValue(self, currentValue):
-        if currentValue is not None:
-            cv = currentValue.copy()
-        else:
-            cv = currentValue
-        self.__currentValue = cv
+            yield variableSpecializerPath.copy()
 
     @public_api
     @property

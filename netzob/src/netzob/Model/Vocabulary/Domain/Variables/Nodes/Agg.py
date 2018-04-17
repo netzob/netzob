@@ -48,6 +48,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
 
 # Class used to denote current variable, in order to handle self recursivity
@@ -79,9 +80,7 @@ class Agg(AbstractVariableNode):
     The Agg class provides the following public variables:
 
     :var children: The sorted typed list of children attached to the variable node.
-    :var varType: The type of the variable (Read-only).
     :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
-    :vartype varType: :class:`str`
 
 
     **Aggregate examples**
@@ -100,7 +99,7 @@ class Agg(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> f = Field(Agg([BitArray('01101001'), BitArray(nbBits=3), BitArray(nbBits=5)]))
-    >>> t = f.specialize()
+    >>> t = next(f.specialize())
     >>> len(t)
     2
 
@@ -109,8 +108,6 @@ class Agg(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> domain = Agg([Raw(), String()])
-    >>> domain.varType
-    'Agg'
     >>> print(domain.children[0].dataType)
     Raw(nbBytes=(0,8192))
     >>> print(domain.children[1].dataType)
@@ -135,12 +132,12 @@ class Agg(AbstractVariableNode):
     >>> f1 = Field(String("!"), name="f1")
     >>> f = Field([f0, f1])
     >>> data = "john.txt!"
-    >>> Field.abstract(data, [f])
-    (Field, OrderedDict([('f0', b'john.txt'), ('f1', b'!')]))
+    >>> f.abstract(data)
+    OrderedDict([('f0', b'john.txt'), ('f1', b'!')])
 
     In the following example, an Aggregate variable is defined. A
     message that does not correspond to the expected model is then
-    parsed, thus the returned field is unknown:
+    parsed, thus an exception is returned:
 
     >>> from netzob.all import *
     >>> v1 = String(nbChars=(1, 10))
@@ -149,8 +146,10 @@ class Agg(AbstractVariableNode):
     >>> f1 = Field(String("!"), name="f1")
     >>> f = Field([f0, f1])
     >>> data = "johntxt!"
-    >>> Field.abstract(data, [f])
-    (Unknown message 'johntxt!', OrderedDict())
+    >>> f.abstract(data)
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Field', cannot abstract the data: 'johntxt!'. Error: 'No parsing path returned while parsing 'b'johntxt!'''
 
 
     **Specialization of aggregate variables**
@@ -162,7 +161,7 @@ class Agg(AbstractVariableNode):
     >>> d1 = String("hello")
     >>> d2 = String(" john")
     >>> f = Field(Agg([d1, d2]))
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'hello john'
 
 
@@ -174,15 +173,15 @@ class Agg(AbstractVariableNode):
     >>> from netzob.all import *
     >>> a = Agg([int8(2), int8(3)], last_optional=True)
     >>> f = Field(a)
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> res == b'\x02' or res == b'\x02\x03'
     True
     >>> d = b'\x02\x03'
-    >>> Field.abstract(d, [f])
-    (Field, OrderedDict([('Field', b'\x02\x03')]))
+    >>> f.abstract(d)
+    OrderedDict([('Field', b'\x02\x03')])
     >>> d = b'\x02'
-    >>> Field.abstract(d, [f])
-    (Field, OrderedDict([('Field', b'\x02')]))
+    >>> f.abstract(d)
+    OrderedDict([('Field', b'\x02')])
 
 
     **Modeling indirect imbrication**
@@ -200,14 +199,13 @@ class Agg(AbstractVariableNode):
     >>> f = Field(v2)
     >>>
     >>> # Test specialization
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> res == b'\x02' or res == b'\x02!\x03' or res == b'\x02!\x03?\x04'
     True
     >>>
     >>> # Test parsing
-    >>> (res_object, res_data) = Field.abstract(res, [f])
-    >>> res_object == f
-    True
+    >>> f.abstract(res)
+    OrderedDict([('Field', b'\x02')])
 
 
     .. warning::
@@ -258,13 +256,12 @@ class Agg(AbstractVariableNode):
     >>> f = Field(v)
     >>>
     >>> # Test specialization
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> res  # doctest: +SKIP
     b'\x02\x04\x01'
     >>>
     >>> # Test parsing
-    >>> (res_object, res_data) = Field.abstract(res, [f])
-    >>> res_object == f  # doctest: +SKIP
+    >>> res_data = f.abstract(res) # doctest: +SKIP
     True
 
     **Modeling direct recursion, more complex example**
@@ -275,7 +272,7 @@ class Agg(AbstractVariableNode):
     The BNF syntax of this model would be:
 
     .. productionlist::
-       parentheses: ( "(" parentheses)  | ( "+"  ")" )
+       parentheses: ( "(" parentheses )  | ( "+"  ")" )
 
     This syntax introduces a recursivity in the middle of the `left` statement,
     which **is not supported**. Instead, this syntax could be adapted to move
@@ -304,7 +301,7 @@ class Agg(AbstractVariableNode):
     >>> parentheses.children += [left, right]
     >>>
     >>> symbol = Symbol([Field(parentheses)])
-    >>> symbol.specialize()
+    >>> next(symbol.specialize())
     b'((+))'
 
 
@@ -321,14 +318,14 @@ class Agg(AbstractVariableNode):
     >>> v2 = Agg([int8(interval=(1, 3)), v1], last_optional=True)
     >>> v1.children = ["!", v2]
     >>> f = Field(v2)
-    >>> res = f.specialize()
+    >>> res = next(f.specialize())
     >>> res  # doctest: +SKIP
     b'\x03!\x03!\x03!\x03'
     >>>
     >>> # Test parsing
-    >>> (res_object, res_data) = Field.abstract(res, [f])
-    >>> res_object == f  # doctest: +SKIP
-    True
+    >>> f.abstract(res)  # doctest: +SKIP
+    OrderedDict([('Field', b'\x01!\x01')])
+
 
 
     **Modeling indirect recursion, more complex example**
@@ -375,19 +372,27 @@ class Agg(AbstractVariableNode):
     >>> right = Agg([operator, operation])
     >>> operation.children += [left, right]
     >>> sym = Symbol([Field(operation)])
-    >>> sym.specialize()  # doctest: +SKIP
+    >>> next(sym.specialize())  # doctest: +SKIP
     b'((((4 * 8 * 4) + 5 + 9 + 0) * 7 * 0 + (4 + 9 + (3 * 4 + 2) * 0) * 9) + 4 * 7)'
 
     """
 
     @public_api
-    def __init__(self, children=None, last_optional=False):
-        super(Agg, self).__init__(self.__class__.__name__, children)
+    def __init__(self, children=None, last_optional=False, name=None):
+        super(Agg, self).__init__(self.__class__.__name__, children=children, name=name)
 
         self._last_optional = last_optional
 
     @public_api
-    def clone(self, map_objects={}):
+    def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Agg <netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg.Agg>`
+
+        """
+        if map_objects is None:
+            map_objects = {}
         if self in map_objects:
             return map_objects[self]
 
@@ -399,7 +404,7 @@ class Agg(AbstractVariableNode):
             if child in map_objects.keys():
                 new_children.append(map_objects[child])
             else:
-                new_child = child.clone(map_objects)
+                new_child = child.copy(map_objects)
                 new_children.append(new_child)
 
         new_agg.children = new_children
@@ -478,18 +483,30 @@ class Agg(AbstractVariableNode):
                 yield childParsingPath
 
     @typeCheck(SpecializingPath)
-    def specialize(self, specializingPath, fuzz=None):
+    def specialize(self, specializingPath, preset=None):
         """Specializes an Agg"""
 
-        from netzob.Fuzzing.Fuzz import MaxFuzzingException
+        from netzob.Fuzzing.Mutator import MaxFuzzingException
 
         # If we are in a fuzzing mode
-        if fuzz is not None and fuzz.get(self) is not None:
+        if preset is not None and preset.get(self) is not None:
 
             # Retrieve the mutator
-            mutator = fuzz.get(self)
+            mutator = preset.get(self)
 
-            for path in self._inner_specialize(specializingPath, 0, fuzz):
+            if mutator.mode == FuzzingMode.FIXED:
+                while True:
+                    generated_value = mutator.generate()
+                    if isinstance(generated_value, bitarray):
+                        value = generated_value
+                    else:
+                        value = bitarray(endian='big')
+                        value.frombytes(generated_value)
+
+                    specializingPath.addResult(self, value)
+                    yield specializingPath
+
+            for path in self._inner_specialize(specializingPath, 0, preset):
 
                 try:
                     # Just call the generate() method to increment the counter of mutation
@@ -501,9 +518,9 @@ class Agg(AbstractVariableNode):
                 yield path
 
         else:
-            yield from self._inner_specialize(specializingPath, 0, fuzz)
+            yield from self._inner_specialize(specializingPath, 0, preset)
 
-    def _inner_specialize(self, specializingPath, idx, fuzz):
+    def _inner_specialize(self, specializingPath, idx, preset):
 
         # Select the child to specialize
         child = self.children[idx]
@@ -528,7 +545,7 @@ class Agg(AbstractVariableNode):
             # Nothing to specialize in this case (the recursive specialization is done later)
             childSpecializingPaths = (specializingPath, )
         else:
-            childSpecializingPaths = child.specialize(specializingPath, fuzz=fuzz)
+            childSpecializingPaths = child.specialize(specializingPath, preset=preset)
 
         for path in childSpecializingPaths:
 
@@ -538,7 +555,7 @@ class Agg(AbstractVariableNode):
                     newResult = path.getData(self)
                 else:
                     newResult = bitarray('')
-                for inner_path in self._inner_specialize(path, idx, fuzz):
+                for inner_path in self._inner_specialize(path, idx, preset):
 
                     if inner_path.hasData(self):
                         current_value = inner_path.getData(self)
@@ -549,7 +566,7 @@ class Agg(AbstractVariableNode):
                 self._produce_data(path, specialize_last_child)
                 yield path
             else:
-                yield from self._inner_specialize(path, idx + 1, fuzz)
+                yield from self._inner_specialize(path, idx + 1, preset)
 
     def _produce_data(self, path, specialize_last_child):
         data = bitarray()
@@ -568,7 +585,6 @@ def _test_agg():
     r"""
 
     >>> from netzob.all import *
-    >>> Conf.seed = 0
     >>> Conf.apply()
     
 
@@ -579,22 +595,22 @@ def _test_agg():
     >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x03ABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'\x03'), ('f1', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x03'), ('f1', b'ABC')])
 
     Size field targeting a agg variable, with size field on the right:
 
     >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x03ABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'\x03'), ('f2', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'\x03'), ('f2', b'ABC')])
 
 
     ## Size field on the left
@@ -604,22 +620,22 @@ def _test_agg():
     >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABC\x03'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'\x03')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'ABC'), ('f2', b'\x03')])
 
     Size field targeting a agg variable, with size field on the left:
 
     >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABC\x03'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'\x03')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'ABC'), ('f2', b'\x03')])
 
 
     ## Value field on the right
@@ -629,22 +645,22 @@ def _test_agg():
     >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'ABC'), ('f1', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'ABC'), ('f1', b'ABC')])
 
     Value field targeting a agg variable, with value field on the right:
 
     >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v2, name='f2'), Field(v1, name='f1')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'ABC'), ('f1', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'ABC'), ('f1', b'ABC')])
 
 
     ## Value field on the left
@@ -654,21 +670,21 @@ def _test_agg():
     >>> f1 = Field(Agg(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'ABC'), ('f2', b'ABC')])
 
     Value field targeting a agg variable, with value field on the left:
 
     >>> v1 = Agg(["A", "B", "C"])
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'ABCABC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'ABC'), ('f2', b'ABC')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'ABC'), ('f2', b'ABC')])
 
     """

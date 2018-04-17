@@ -48,7 +48,7 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
 class Opt(Repeat):
-    """The Opt class is a node variable that represents a variable
+    r"""The Opt class is a node variable that represents a variable
     that may or may not produce a value, either in abstraction or
     specialization.
 
@@ -61,16 +61,24 @@ class Opt(Repeat):
     >>> from netzob.all import *
     >>> f0 = Field(String("a"), "f0")
     >>> f1 = Field(Opt(String("b")), "f1")
-    >>> assert Symbol([f0, f1]).specialize() in (b"a", b"ab")
+    >>> assert next(Symbol([f0, f1]).specialize()) in (b"a", b"ab")
 
     """
 
     @public_api
-    def __init__(self, child):
-        super(Opt, self).__init__(child, (0, 1))
+    def __init__(self, child, name=None):
+        super(Opt, self).__init__(child, (0, 1), name=name)
 
     @public_api
-    def clone(self, map_objects={}):
+    def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Opt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Opt.Opt>`
+
+        """
+        if map_objects is None:
+            map_objects = {}
         if self in map_objects:
             return map_objects[self]
 
@@ -80,7 +88,7 @@ class Opt(Repeat):
         if self.children[0] in map_objects.keys():
             new_children = map_objects[self.children[0]]
         else:
-            new_children = self.children[0].clone(map_objects)
+            new_children = self.children[0].copy(map_objects)
 
         new_opt.children = [new_children]
         return new_opt

@@ -58,6 +58,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
 
 @public_api
@@ -89,41 +90,48 @@ class Repeat(AbstractVariableNode):
                     a Python variable containing an :class:`int` or a
                     :class:`Field
                     <netzob.Model.Vocabulary.Field.Field>` or a
-                    :class:`func` method, required
+                    :class:`Callable <collections.abc.Callable>`, required
     :type delimiter: :class:`bitarray`, optional
 
 
     The Repeat class provides the following public variables:
 
     :var children: The list of one element which is the child attached to the variable node.
-    :var varType: The type of the variable (Read-only).
     :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
-    :vartype varType: :class:`str`
+
 
     **Callback prototype**
 
     The callback function that can be used in the ``nbRepeat``
     parameter has the following prototype:
 
-    .. function:: cbk_nbRepeat(nb_repeat, data, path, child, remaining=None)
+    .. function:: cbk_nbRepeat(nb_repeat, data, path, child, remaining)
        :noindex:
 
        :param nb_repeat: the number of times the child element has been parsed
                           or specialized.
-       :type nb_repeat: int, required
+       :type nb_repeat: int
        :param data: the already parsed or specialized data.
-       :type data: ~bitarray.bitarray, required
+       :type data: ~bitarray.bitarray
        :param path: data structure that allows access to the values of the
                     parsed :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
                     elements.
-       :type path: object, required
+       :type path: object
        :param child: the repeated element.
-       :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
+       :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
        :param remaining: the remaining data to be parsed.
                          Only set in parsing mode. In specialization mode, this
                          parameter will have a :const:`None` value. This parameter can
                          therefore be used to identify the current mode.
-       :type remaining: ~bitarray.bitarray, required
+       :type remaining: ~bitarray.bitarray
+
+       :return: The callback function should return one of the following values:
+
+         * :attr:`RepeatResult.CONTINUE`: this tells to continue the repetition.
+         * :attr:`RepeatResult.STOP_BEFORE`: this tells to stop the repetition before the current value of the child.
+         * :attr:`RepeatResult.STOP_AFTER`: this tells to stop the repetition after the current value of the child.
+
+       :rtype: :class:`int`
 
     The ``child`` parameter allows access to the root of a tree structure.
     The ``child`` :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
@@ -140,14 +148,16 @@ class Repeat(AbstractVariableNode):
       to the value specialized or parsed for the child
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
+    Besides, it is possible to test if a ``child`` variable is a node
+    of the tree structure through the :meth:`isnode(child)` method. A
+    node may represent an ``Agg``, an ``Alt``, a ``Repeat`` or a
+    ``Opt`` variable. Access to the node leafs is possible with the
+    attribute ``children`` (i.e. ``child.children``). The type of the
+    children leafs is also :class:`Variable
+    <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+
     The callback function is called each time the child element is
     seen.
-
-    The callback function should return one of the following values:
-
-    * :attr:`RepeatResult.CONTINUE`: this tells to continue the repetition.
-    * :attr:`RepeatResult.STOP_BEFORE`: this tells to stop the repetition before the current value of the child.
-    * :attr:`RepeatResult.STOP_AFTER`: this tells to stop the repetition after the current value of the child.
 
 
     **Basic usage of Repeat**
@@ -157,22 +167,8 @@ class Repeat(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> f1 = Field(Repeat(String("A"), nbRepeat=16))
-    >>> f1.specialize()
+    >>> next(f1.specialize())
     b'AAAAAAAAAAAAAAAA'
-
-
-    **Usage of a delimiter in Repeat**
-
-    We can specify a delimiter between each repeated element, as
-    depicted in the following example:
-
-    >>> from netzob.all import *
-    >>> delimiter = bitarray(endian='big')
-    >>> delimiter.frombytes(b"-")
-    >>> f = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=(2, 4),
-    ...           delimiter=delimiter), name='f1')
-    >>> f.specialize()
-    b'A-B-B'
 
 
     **Limiting the number of repetitions with an integer**
@@ -202,6 +198,20 @@ class Repeat(AbstractVariableNode):
     >>> from netzob.all import *
     >>> var = 3
     >>> f1 = Field(Repeat(String("john"), nbRepeat=var))
+
+
+    **Usage of a delimiter in Repeat**
+
+    We can specify a delimiter between each repeated element, as
+    depicted in the following example:
+
+    >>> from netzob.all import *
+    >>> delimiter = bitarray(endian='big')
+    >>> delimiter.frombytes(b"-")
+    >>> f = Field(Repeat(Alt([String("A"), String("B")]), nbRepeat=(2, 4),
+    ...           delimiter=delimiter), name='f1')
+    >>> next(f.specialize())
+    b'B-A-A'
 
 
     **Limiting the number of repetitions with the value of another field**
@@ -239,15 +249,15 @@ class Repeat(AbstractVariableNode):
     >>> f2 = Field(String("B"), name="f2")
     >>> f3 = Field(String("C"), name="f3")
     >>> f = Field([f1, f2, f3])
-    >>> d = f.specialize()
+    >>> d = next(f.specialize())
     >>> d == b'ABC' or d == b'BBC'
     True
     >>> data = "AABC"
-    >>> Field.abstract(data, [f])
+    >>> f.abstract(data)
     in cbk: nb_repeat:1 -- data:b'A' -- remaining:b'ABC'
     in cbk: nb_repeat:2 -- data:b'AA' -- remaining:b'BC'
     in cbk: nb_repeat:3 -- data:b'AAB' -- remaining:b'C'
-    (Field, OrderedDict([('f1', b'AA'), ('f2', b'B'), ('f3', b'C')]))
+    OrderedDict([('f1', b'AA'), ('f2', b'B'), ('f3', b'C')])
 
 
     .. ifconfig:: scope in ('netzob')
@@ -261,11 +271,11 @@ class Repeat(AbstractVariableNode):
        >>> f2 = Field(String("kurt"), name="f2")
        >>> s = Symbol([f1, f2])
        >>> data = "johnkurt"
-       >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-       (Symbol, OrderedDict([('f1', b'john'), ('f2', b'kurt')]))
+       >>> s.abstract(data)  # doctest: +NORMALIZE_WHITESPACE
+       OrderedDict([('f1', b'john'), ('f2', b'kurt')])
        >>> data = "kurt"
-       >>> Symbol.abstract(data, [s])
-       (Symbol, OrderedDict([('f1', b''), ('f2', b'kurt')]))
+       >>> s.abstract(data)
+       OrderedDict([('f1', b''), ('f2', b'kurt')])
 
 
        **Specialization of repeat variables**
@@ -275,7 +285,7 @@ class Repeat(AbstractVariableNode):
        >>> from netzob.all import *
        >>> f1 = Field(Repeat(String("john"), nbRepeat=2))
        >>> s = Symbol([f1])
-       >>> s.specialize()
+       >>> next(s.specialize())
        b'johnjohn'
        >>> from netzob.all import *
        >>> delimiter = bitarray(endian='big')
@@ -283,7 +293,7 @@ class Repeat(AbstractVariableNode):
        >>> f1 = Field(Repeat(IPv4(), nbRepeat=3,
        ...           delimiter=delimiter))
        >>> s = Symbol([f1])
-       >>> gen = s.specialize()
+       >>> gen = next(s.specialize())
        >>> len(gen) == 14
        True
        >>> gen.count(b";") >= 2
@@ -296,7 +306,7 @@ class Repeat(AbstractVariableNode):
        >>> f1 = Field(Repeat(child, nbRepeat=3,
        ...            delimiter=delimiter))
        >>> s = Symbol([f1])
-       >>> gen = s.specialize()
+       >>> gen = next(s.specialize())
        >>> len(gen) == 17
        True
        >>> gen.count(b";") >= 2
@@ -308,13 +318,21 @@ class Repeat(AbstractVariableNode):
     MAX_REPEAT = 2**UNIT_SIZE.value
 
     @public_api
-    def __init__(self, child, nbRepeat, delimiter=None):
-        super(Repeat, self).__init__(self.__class__.__name__, [child])
+    def __init__(self, child, nbRepeat, delimiter=None, name=None):
+        super(Repeat, self).__init__(self.__class__.__name__, children=[child], name=name)
         self.nbRepeat = nbRepeat  # type: nbRepeatType
         self.delimiter = delimiter
 
     @public_api
-    def clone(self, map_objects={}):
+    def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Repeat <netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat.Repeat>`
+
+        """
+        if map_objects is None:
+            map_objects = {}
         if self in map_objects:
             return map_objects[self]
 
@@ -322,7 +340,7 @@ class Repeat(AbstractVariableNode):
             if self.nbRepeat in map_objects.keys():
                 new_nbRepeat = map_objects[self.nbRepeat]
             else:
-                new_nbRepeat = self.nbRepeat.clone(map_objects)
+                new_nbRepeat = self.nbRepeat.copy(map_objects)
         else:
             new_nbRepeat = self.nbRepeat
 
@@ -334,13 +352,13 @@ class Repeat(AbstractVariableNode):
             if child in map_objects.keys():
                 new_children.append(map_objects[child])
             else:
-                new_child = child.clone(map_objects)
+                new_child = child.copy(map_objects)
                 new_children.append(new_child)
 
         new_repeat.children = [new_children]
         return new_repeat
 
-    def count(self, fuzz=None):
+    def count(self, preset=None):
         r"""
 
         >>> from netzob.all import *
@@ -362,9 +380,9 @@ class Repeat(AbstractVariableNode):
 
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
+        if preset is not None and preset.get(self) is not None and preset.get(self).mode == FuzzingMode.GENERATE:
             # Retrieve the mutator
-            mutator = fuzz.get(self)
+            mutator = preset.get(self)
             return mutator.count()
         else:
             # Handle max repeat
@@ -376,7 +394,7 @@ class Repeat(AbstractVariableNode):
                 max_repeat = Repeat.MAX_REPEAT
 
             # Handle count() of children
-            count = self.children[0].count(fuzz=fuzz)
+            count = self.children[0].count(preset=preset)
 
             # Result
             count = count ** max_repeat
@@ -435,7 +453,7 @@ class Repeat(AbstractVariableNode):
         # if no valid result if found, provide a fallback parsing path with
         # an empty result
         if len(valid_results) == 0:
-            newParsingPath = parsingPath.clone()
+            newParsingPath = parsingPath.copy()
             newParsingPath.addResult(self, bitarray(), notify=False)
             valid_results.append(newParsingPath)
 
@@ -446,7 +464,7 @@ class Repeat(AbstractVariableNode):
         for nb_repeat in range(max_nb_repeat, min_nb_repeat, -1):
 
             # initiate a new parsing path based on the current one
-            newParsingPath = parsingPath.clone()
+            newParsingPath = parsingPath.copy()
             newParsingPath.assignData(dataToParse, self.children[0])
             newParsingPaths = [newParsingPath]
 
@@ -510,7 +528,7 @@ class Repeat(AbstractVariableNode):
 
     def _parse_callback(self, parsingPath, dataToParse, carnivorous=False):
         # initiate a new parsing path based on the current one
-        newParsingPath = parsingPath.clone()
+        newParsingPath = parsingPath.copy()
         newParsingPath.assignData(dataToParse, self.children[0])
         newParsingPaths = [newParsingPath]
 
@@ -585,28 +603,43 @@ class Repeat(AbstractVariableNode):
         yield from newParsingPaths
 
     @typeCheck(SpecializingPath)
-    def specialize(self, originalSpecializingPath, fuzz=None, acceptCallBack=True):
+    def specialize(self, originalSpecializingPath, preset=None, acceptCallBack=True):
         """Specializes a Repeat"""
 
-        from netzob.Fuzzing.Fuzz import MaxFuzzingException
+        from netzob.Fuzzing.Mutator import MaxFuzzingException
 
         if originalSpecializingPath is None:
             raise Exception("Specializing path cannot be None")
 
+        self._logger.debug("Specialize with {}".format(originalSpecializingPath))
+
         newSpecializingPath = originalSpecializingPath
 
         # If we are in a fuzzing mode
-        if fuzz is not None and fuzz.get(self) is not None:
+        if preset is not None and preset.get(self) is not None:
 
             # Retrieve the mutator
-            mutator = fuzz.get(self)
+            mutator = preset.get(self)
 
             try:
                 # Chose the child according to the integer returned by the mutator
-                i_repeat = mutator.generate()
+                generated_value = mutator.generate()
             except MaxFuzzingException:
                 self._logger.debug("Maximum mutation counter reached")
                 return
+
+            if mutator.mode == FuzzingMode.FIXED:
+                while True:
+                    if isinstance(generated_value, bitarray):
+                        value = generated_value
+                    else:
+                        value = bitarray(endian='big')
+                        value.frombytes(generated_value)
+
+                    originalSpecializingPath.addResult(self, value)
+                    yield originalSpecializingPath
+            else:
+                i_repeat = generated_value
 
         # Else, randomly chose the child
         else:
@@ -632,14 +665,16 @@ class Repeat(AbstractVariableNode):
             newSpecializingPath.addResult(self, bitarray())
             yield newSpecializingPath
         else:
-            yield from self._inner_specialize(newSpecializingPath, 0, i_repeat, fuzz)
+            yield from self._inner_specialize(newSpecializingPath, 0, i_repeat, preset)
 
-    def _inner_specialize(self, newSpecializingPath, i_repeat, max_repeat, fuzz):
+    def _inner_specialize(self, newSpecializingPath, i_repeat, max_repeat, preset):
+
+        self._logger.debug("Try iteration {}/{} of Repeat specialize with {}".format(i_repeat, max_repeat, newSpecializingPath))
 
         break_repeat = RepeatResult.CONTINUE
 
         child = self.children[0]
-        for path in child.specialize(newSpecializingPath, fuzz=fuzz):
+        for path in child.specialize(newSpecializingPath, preset=preset):
 
             oldResult = bitarray()
             if path.hasData(self):
@@ -669,7 +704,7 @@ class Repeat(AbstractVariableNode):
             if break_repeat is not RepeatResult.CONTINUE or i_repeat == max_repeat - 1:
                 yield path
             else:
-                yield from self._inner_specialize(path, i_repeat + 1, max_repeat, fuzz)
+                yield from self._inner_specialize(path, i_repeat + 1, max_repeat, preset)
 
     @property
     def nbRepeat(self):
@@ -729,9 +764,7 @@ def _test_repeat():
     r"""
 
     >>> from netzob.all import *
-    >>> Conf.seed = 0
     >>> Conf.apply()
-    
 
     ## Size field on the right
 
@@ -740,44 +773,44 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x04AAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'\x04'), ('f1', b'AAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x04'), ('f1', b'AAAA')])
 
     Size field targeting a field containing a repeat variable of non fixed size, with size field on the right:
 
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x05AAAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'\x05'), ('f1', b'AAAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x05'), ('f1', b'AAAAA')])
 
     Size field targeting a repeat variable, with size field on the right:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x05AAAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'\x05'), ('f2', b'AAAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'\x05'), ('f2', b'AAAAA')])
 
     Size field targeting a repeat variable of non fixed size, with size field on the right:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'\x04AAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'\x04'), ('f2', b'AAAA')]))
+    b'\x02AA'
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'\x02'), ('f2', b'AA')])
 
 
     ## Size field on the left
@@ -787,44 +820,44 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAA\x04'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAA'), ('f2', b'\x04')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAA'), ('f2', b'\x04')])
 
     Size field targeting a field containing a repeat variable of non fixed size, with size field on the left:
 
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAA\x05'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')])
 
     Size field targeting a repeat variable, with size field on the left:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAA\x05'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')])
 
     Size field targeting a repeat variable of non fixed size, with size field on the left:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'AAAAA\x05'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')]))
+    b'AAAA\x04'
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAA'), ('f2', b'\x04')])
 
 
     ## Value field on the right
@@ -834,23 +867,23 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAA'
 
-    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
-    (Symbol, OrderedDict([('f2', b'AAAA'), ('f1', b'AAAA')]))
+    >>> s.abstract(d)  # doctest: +SKIP
+    OrderedDict([('f2', b'AAAA'), ('f1', b'AAAA')])
 
     Value field targeting a field containing a repeat variable of non fixed size, with value field on the right:
 
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'AAAAAA'
-    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
-    (Symbol, OrderedDict([('f2', b'AAA'), ('f1', b'AAA')]))
+    b'AAAA'
+    >>> s.abstract(d)  # doctest: +SKIP
+    OrderedDict([('f2', b'AAA'), ('f1', b'AAA')])
 
 
     Value field targeting a repeat variable, with value field on the right:
@@ -858,11 +891,11 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAAAA'
-    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
-    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')]))
+    >>> s.abstract(d)  # doctest: +SKIP
+    OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')])
 
 
     Value field targeting a repeat variable of non fixed size, with value field on the right:
@@ -870,11 +903,11 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAA'
-    >>> Symbol.abstract(d, [s])  # doctest: +SKIP
-    (Symbol, OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')]))
+    >>> s.abstract(d)  # doctest: +SKIP
+    OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')])
 
 
     ## Value field on the left
@@ -884,22 +917,22 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')])
 
     Value field targeting a field containing a repeat variable of non fixed size, with value field on the left:
 
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'AAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AA'), ('f2', b'AA')]))
+    b'AAAAAA'
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAA'), ('f2', b'AAA')])
 
 
     Value field targeting a repeat variable, with value field on the left:
@@ -907,22 +940,22 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAAAAAAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')])
 
     Value field targeting a repeat variable of non fixed size, with value field on the left:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'AAAAAA'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'AAA'), ('f2', b'AAA')]))
+    b'AAAA'
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'AA'), ('f2', b'AA')])
 
 
     # Repeat variable whose nbRepeat is a field/variable on the left
@@ -930,33 +963,33 @@ def _test_repeat():
     >>> f1 = Field(uint8(4), name='Nb repeat')
     >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'\x04AAAA'
     >>>
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Nb repeat', b'\x04'), ('Repeat', b'AAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('Nb repeat', b'\x04'), ('Repeat', b'AAAA')])
 
     >>> f1 = Field(uint8(), name='Nb repeat')
     >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'\x9eAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    b'\xd7AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     >>>
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Nb repeat', b'\x9e'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')]))
+    >>> s.abstract(d)
+    OrderedDict([('Nb repeat', b'\xd7'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')])
 
     >>> f1 = Field(uint8(), name='Nb repeat')
     >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
     >>> f3 = Field(Raw(b"A"))
     >>> s = Symbol([f1, f2, f3])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    b'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     >>>
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Nb repeat', b'2'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A')]))
+    >>> s.abstract(d)
+    OrderedDict([('Nb repeat', b'G'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A')])
 
 
     # Repeat variable whose nbRepeat is a field/variable on the right
@@ -964,30 +997,30 @@ def _test_repeat():
     >>> f2 = Field(uint8(4), name='Size field')
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f2), name='Repeat field')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'AAAA\x04'
     >>>
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Repeat field', b'AAAA'), ('Size field', b'\x04')]))
+    >>> s.abstract(d)
+    OrderedDict([('Repeat field', b'AAAA'), ('Size field', b'\x04')])
 
     >>> f2 = Field(uint8(), name='Size field')
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f2), name='Repeat field')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Size field', b'%')]))
+    b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xb5'
+    >>> s.abstract(d)
+    OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Size field', b'\xb5')])
 
     >>> f3 = Field(uint8(), name='Size field')
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f3), name='Repeat field')
     >>> f2 = Field(Raw(b"A"))
     >>> s = Symbol([f1, f2, f3])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xa9'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A'), ('Size field', b'\xa9')]))
+    b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xc3'
+    >>> s.abstract(d)
+    OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A'), ('Size field', b'\xc3')])
 
     """

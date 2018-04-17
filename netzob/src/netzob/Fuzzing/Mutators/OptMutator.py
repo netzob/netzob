@@ -63,7 +63,7 @@ class OptMutator(DomainMutator):
         produce the value (not used yet).
         Default value is :attr:`FuzzingMode.GENERATE <netzob.Fuzzing.DomainMutator.FuzzingMode.GENERATE>`.
     :param mutateChild: If true, sub-field has to be mutated.
-        Default value is :const:`False`.
+        Default value is :const:`True`.
     :param mappingTypesMutators: Override the global default mapping of types with their default
         mutators.
     :type domain: :class:`AbstractVariable
@@ -122,10 +122,38 @@ class OptMutator(DomainMutator):
         self.mutateChild = mutateChild
         self.mappingTypesMutators = mappingTypesMutators
 
-        # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=255)  # Arbitrarily maxValue
+        if self.mode == FuzzingMode.FIXED:
+            self.generator = generator
+        else:
 
-    def count(self, fuzz=None):
+            # Initialize data generator
+            self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=255)  # Arbitrarily maxValue
+
+    def copy(self):
+        r"""Return a copy of the current mutator.
+
+        >>> from netzob.all import *
+        >>> d = Opt(uint8())
+        >>> m = OptMutator(d).copy()
+        >>> m.mode
+        FuzzingMode.GENERATE
+
+        """
+        copy_mappingTypesMutators = {}
+        for k, v in self._mappingTypesMutators.items():
+            mutator, mutator_default_parameters = v
+            copy_mappingTypesMutators[k] = mutator_default_parameters
+
+        m = OptMutator(self.domain,
+                       mode=self.mode,
+                       generator=self.generator,
+                       seed=self.seed,
+                       counterMax=self.counterMax,
+                       mutateChild=self.mutateChild,
+                       mappingTypesMutators=copy_mappingTypesMutators)
+        return m
+
+    def count(self, preset=None):
         r"""
 
         >>> from netzob.all import *
@@ -135,12 +163,16 @@ class OptMutator(DomainMutator):
 
         """
 
-        # Handle count() of children
-        count = self.domain.children[0].count(fuzz=fuzz)
-        if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+        if self.mode == FuzzingMode.FIXED:
             return AbstractType.MAXIMUM_POSSIBLE_VALUES
         else:
-            return count
+
+            # Handle count() of children
+            count = self.domain.children[0].count(preset=preset)
+            if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+                return AbstractType.MAXIMUM_POSSIBLE_VALUES
+            else:
+                return count
 
     @property
     def mutateChild(self):
@@ -172,8 +204,8 @@ class OptMutator(DomainMutator):
         """Override the global default mapping of types with their default
         mutators.
         """
-        from netzob.Fuzzing.Fuzz import Fuzz
-        self._mappingTypesMutators = Fuzz.mappingTypesMutators.copy()
+        from netzob.Model.Vocabulary.Preset import Preset
+        self._mappingTypesMutators = Preset.mappingTypesMutators.copy()
         for k, v in self._mappingTypesMutators.items():
             if k in mappingTypesMutators.keys():
                 mutator, mutator_default_parameters = v
@@ -187,10 +219,62 @@ class OptMutator(DomainMutator):
         :rtype: :class:`None`
         """
         # Call parent generate() method
-        super().generate()
+        if self.mode != FuzzingMode.FIXED:
+            super().generate()
 
-        # Randomely decide if we create a transition
-        if next(self.generator) % 2 == 0:
-            return 0
+        if self.mode == FuzzingMode.FIXED:
+            return next(self.generator)
         else:
-            return 1
+
+            # Randomely decide if we create a transition
+            if next(self.generator) % 2 == 0:
+                return 0
+            else:
+                return 1
+
+
+def _test_fixed():
+    r"""
+
+    Reset the underlying random generator
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+
+
+    **Fixing the value of a node variable**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(Raw(nbBytes=1))
+    >>> v_opt = Opt(v1)
+    >>> f1 = Field(v_opt)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[v_opt] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+
+    **Fixing the value of a variable node through its name**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(Raw(nbBytes=1), name='v1')
+    >>> v_opt = Opt(v1, name='v_opt')
+    >>> f1 = Field(v_opt)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset['v_opt'] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+    """

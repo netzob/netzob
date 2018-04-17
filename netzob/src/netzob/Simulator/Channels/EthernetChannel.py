@@ -50,6 +50,7 @@ from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding import Padding
+from netzob.Model.Vocabulary.Preset import Preset
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.Integer import uint16be
@@ -85,16 +86,18 @@ class EthernetChannel(AbstractChannel):
     :vartype interface: :class:`str`
 
 
+    The following example shows how to instantiate an EthernetChannel.
+
     >>> from netzob.all import *
     >>> from binascii import hexlify
-    >>> client = EthernetChannel(
-    ...    remoteMac="00:01:02:03:04:05",
-    ...    localMac="00:06:07:08:09:10")
-    >>> client.open()
-    >>> symbol = Symbol([Field("ABC")])
-    >>> client.write(symbol.specialize())
-    17
-    >>> client.close()
+    >>> def example_channel():
+    ...     client = EthernetChannel(
+    ...        remoteMac="00:01:02:03:04:05",
+    ...        localMac="00:06:07:08:09:10")
+    ...     client.open()
+    ...     symbol = Symbol([Field("ABC")])
+    ...     client.write(next(symbol.specialize()))
+    ...     client.close()
 
     """
 
@@ -140,7 +143,7 @@ class EthernetChannel(AbstractChannel):
                                       eth_type,
                                       eth_payload],
                                      data=Raw(nbBytes=1),
-                                     modulo=8*60,
+                                     modulo=8 * 60,
                                      once=True)
         eth_padding = Field(ethPaddingVariable, "eth.padding")
         self.header = Symbol(name='Ethernet layer', fields=[eth_dst,
@@ -148,6 +151,7 @@ class EthernetChannel(AbstractChannel):
                                                             eth_type,
                                                             eth_payload,
                                                             eth_padding])
+        self.header_preset = Preset(self.header)
 
     @public_api
     def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
@@ -228,8 +232,8 @@ class EthernetChannel(AbstractChannel):
         if self._socket is None:
             raise Exception("socket is not available")
 
-        self.header_presets["eth.payload"] = data
-        packet = self.header.specialize(presets=self.header_presets)
+        self.header_preset["eth.payload"] = data
+        packet = next(self.header.specialize())
         len_data = self._socket.sendto(packet, (self.interface,
                                                 EthernetChannel.ETH_P_ALL))
         return len_data
@@ -270,7 +274,7 @@ class EthernetChannel(AbstractChannel):
         if upperProtocol < 0 or upperProtocol > 0xffff:
             raise TypeError("Upper protocol should be between 0 and 0xffff")
 
-        self.header_presets['eth.type'] = upperProtocol
+        self.header_preset['eth.type'] = upperProtocol
 
     # Properties
 
@@ -326,7 +330,7 @@ class EthernetChannelBuilder(ChannelBuilder):
     >>> builder = EthernetChannelBuilder().set_map(netinfo.getDict())
     >>> chan = builder.build()
     >>> type(chan)
-    <class 'EthernetChannel.EthernetChannel'>
+    <class 'netzob.Simulator.Channels.EthernetChannel.EthernetChannel'>
     >>> chan.localMac  # src_addr key has been mapped to localMac attribute
     '00:00:00:00:00:00'
     """

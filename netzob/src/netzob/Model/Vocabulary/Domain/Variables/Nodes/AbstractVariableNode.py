@@ -42,7 +42,6 @@
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 
@@ -67,7 +66,7 @@ class AbstractVariableNode(AbstractVariable):
     def isnode(self):
         return True
 
-    def count(self, fuzz=None):
+    def count(self, preset=None):
         r"""
 
         >>> from netzob.all import *
@@ -87,15 +86,21 @@ class AbstractVariableNode(AbstractVariable):
         """
 
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
+        if preset is not None and preset.get(self) is not None and preset.get(self).mode == FuzzingMode.GENERATE:
             # Retrieve the mutator
-            mutator = fuzz.get(self)
-            return mutator.count(fuzz=fuzz)
+            mutator = preset.get(self)
+            return mutator.count(preset=preset)
         else:
             count = 1
             for t in self.children:
-                count *= t.count(fuzz=fuzz)
+                count *= t.count(preset=preset)
             return count
+
+    def getVariables(self):
+        variables = [self]
+        for t in self.children:
+            variables.extend(t.getVariables())
+        return variables
 
     @property
     def children(self):
@@ -124,7 +129,7 @@ class AbstractVariableNode(AbstractVariable):
                 normalizedChild = DomainFactory.normalizeDomain(child)
             self._children.append(normalizedChild)
 
-    def str_structure(self, deepness=0):
+    def str_structure(self, deepness=0, preset=None):
         """Returns a string which denotes the current variable definition
         using a tree display
 
@@ -133,9 +138,14 @@ class AbstractVariableNode(AbstractVariable):
         tab = ["     " for x in range(deepness - 1)]
         tab.append("|--   ")
         tab.append("{0}".format(self))
+
+        # Add information regarding preset configuration
+        if preset is not None and preset.get(self) is not None:
+            tab.append(" [{0}]".format(preset.get(self).mode))
+
         lines = [''.join(tab)]
         for f in self.children:
-            lines.append(" " + f.str_structure(deepness + 1))
+            lines.append(" " + f.str_structure(deepness + 1, preset=preset))
         return '\n'.join(lines)
 
     @property

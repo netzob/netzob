@@ -115,11 +115,10 @@ class ChannelInterface(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def open(self, timeout=DEFAULT_TIMEOUT):
         """Open the communication channel. If the channel is a server, it
-        starts to listen for incoming data.
+        starts to listen for incoming data. If the channel is a client, it connects to the remote peer.
 
-        :param timeout: The default timeout of the channel for opening
-                        connection and waiting for a message. Default value
-                        is blocking (None).
+        :param timeout: The timeout of the channel for opening
+                        a connection with a remote peer. This parameter overrides the channel :attr:`timeout` attribute and is only effective in the context of a client. Default value (None) corresponds to no timeout.
         :type timeout: :class:`float`, optional
 
         """
@@ -176,19 +175,16 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
     A communication channel provides the following public variables:
 
     :var isOpen: The status of the communication channel.
-    :var timeout: The default timeout in seconds for opening a connection and
-                  waiting for a message.
+    :var timeout: The default timeout in seconds for opening a connection (only effective in the context of a client), as well as for
+                  waiting a message when calling the :meth:`read` method.
     :var header: A Symbol that makes it possible to access the protocol header.
-    :var header_presets: A dictionary of keys:values used to preset
+    :var header_preset: A Preset used to preset
                         (parameterize) the header fields during symbol
                         specialization. See :meth:`Symbol.specialize() <netzob.Model.Vocabulary.Symbol.Symbol.specialize>` for more information.
     :vartype isOpen: :class:`bool`
     :vartype timeout: :class:`int`
     :vartype header: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
-    :vartype header_presets: ~typing.Dict[
-                             ~typing.Union[str,~netzob.Model.Vocabulary.Field.Field],
-                             ~typing.Union[~bitarray.bitarray,bytes,
-                             ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType]]
+    :vartype header_preset: :class:`~netzob.Model.Vocabulary.Preset`
 
     """
 
@@ -364,7 +360,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         self.timeout = timeout
         self._isOpened = False
         self.header = None  # A Symbol corresponding to the protocol header
-        self.header_presets = {}  # A dict used to parameterize the header Symbol
+        self.header_preset = None  # A Preset object is expected to parameterize the header Symbol
         self.__writeCounter = 0
         self.__writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 

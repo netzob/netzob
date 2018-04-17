@@ -59,29 +59,34 @@ class HexaString(AbstractType):
     The HexaString constructor expects some parameters:
 
     :param value: This parameter is used to describe a domain that contains a fixed hexastring. If None, the constructed hexastring will accept a random sequence of bytes, whose size may be specified (see :attr:`nbBytes` parameter).
-    :param nbBytes: This parameter is used to describe a domain that contains an amount of bytes. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.
+    :param nbBytes: This parameter is used to describe a domain that contains an amount of bytes. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 8192.
+    :param default: The default value used in specialization.
     :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
+    :type default: :class:`bitarray` or :class:`bytes`, optional
 
     .. note::
-       :attr:`value` and :attr:`nbBytes` attributes are mutually exclusive.
+       :attr:`value` and :attr:`nbBytes` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
 
     The HexaString class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max values.
-    :vartype typeName: :class:`str`
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
+    :vartype default: :class:`bitarray`
 
 
     The creation of a HexaString type with no parameter will create a bytes
-    object whose length ranges from 0 to 65535:
+    object whose length ranges from 0 to 8192:
 
     >>> from netzob.all import *
     >>> i = HexaString()
@@ -116,9 +121,18 @@ class HexaString(AbstractType):
     demonstrated in the following example where a 4-bit BitArray is
     converted into the 'a' semi-octet.
 
+    >>> import binascii
     >>> data = bitarray('1010', endian='big')
     >>> str(binascii.hexlify(data.tobytes()))[2]
     'a'
+
+
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> t = HexaString(nbBytes=(2), default=b"aabb")
+    >>> t.generate().tobytes()
+    b'\xaa\xbb'
 
     """
 
@@ -128,10 +142,14 @@ class HexaString(AbstractType):
                  nbBytes=None,
                  unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
-                 sign=AbstractType.defaultSign()):
+                 sign=AbstractType.defaultSign(),
+                 default=None):
 
         if value is not None and nbBytes is not None:
-            raise ValueError("An HexaString should have either its value or its nbBytes set, but not both")
+            raise ValueError("A HexaString should have either its value or its nbBytes set, but not both")
+
+        if value is not None and default is not None:
+            raise ValueError("A HexaString should have either its constant value or its default value set, but not both")
 
         if value is not None and not isinstance(value, bitarray):
             if isinstance(value, bytes):
@@ -140,6 +158,14 @@ class HexaString(AbstractType):
                 value = TypeConverter.convert(value, HexaString, BitArray)
             else:
                 raise ValueError("Unsupported input format for value: '{}', type is: '{}', expected type is 'bitarray' or 'bytes'".format(value, type(value)))
+
+        if default is not None and not isinstance(default, bitarray):
+            if isinstance(default, bytes):
+                from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+                from netzob.Model.Vocabulary.Types.BitArray import BitArray
+                default = TypeConverter.convert(default, HexaString, BitArray)
+            else:
+                raise ValueError("Unsupported input format for default value: '{}', type is: '{}', expected type is 'bitarray' or 'bytes'".format(default, type(default)))
 
         # Handle data size if value is None
         if value is None:
@@ -153,7 +179,8 @@ class HexaString(AbstractType):
             nbBits,
             unitSize=unitSize,
             endianness=endianness,
-            sign=sign)
+            sign=sign,
+            default=default)
 
     def __str__(self):
         if self.value is not None:
@@ -265,8 +292,8 @@ class HexaString(AbstractType):
         True
         >>> spec_data = Symbol(fields=[Field(domain)])
         >>> data = b"\xaa\xbb"
-        >>> Symbol.abstract(data, [spec_data])
-        (Symbol, OrderedDict([('Field', b'\xaa\xbb')]))
+        >>> spec_data.abstract(data)
+        OrderedDict([('Field', b'\xaa\xbb')])
 
         """
 
@@ -423,8 +450,8 @@ def _test():
     ...     HexaString(b"aabb"), HexaString(nbBytes=4),
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    >>> data = b''.join(f.specialize() for f in symbol.fields)
-    >>> assert Symbol.abstract(data, [symbol])[1]
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
+    >>> assert symbol.abstract(data)
 
 
     # Verify that you cannot create an HexaString with a value AND an nbBytes:
@@ -432,6 +459,6 @@ def _test():
     >>> i = HexaString(b'aabb', nbBytes=(2, 10))
     Traceback (most recent call last):
     ...
-    ValueError: An HexaString should have either its value or its nbBytes set, but not both
+    ValueError: A HexaString should have either its value or its nbBytes set, but not both
 
     """

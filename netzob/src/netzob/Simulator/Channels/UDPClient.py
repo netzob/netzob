@@ -54,9 +54,6 @@ class UDPClient(AbstractChannel):
     """A UDPClient is a communication channel. It provides the connection of a
     client to a specific IP:Port server over a UDP socket.
 
-    When the actor executes an OpenChannelTransition, it calls the
-    open method on the UDP client which connects to the server.
-
     The UDPClient constructor expects some parameters:
 
     :param remoteIP: This parameter is the remote IP address to connect to.
@@ -94,7 +91,7 @@ class UDPClient(AbstractChannel):
     >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999, timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> client.write(symbol.specialize())
+    >>> client.write(next(symbol.specialize()))
     15
     >>> client.close()
 
@@ -115,10 +112,11 @@ class UDPClient(AbstractChannel):
        >>> automata = Automata(s0, [symbol])
 
        >>> channel = UDPServer(localIP="127.0.0.1", localPort=8883, timeout=1.)
-       >>> server = Actor(automata = automata, initiator = False, channel=channel)
+       >>> server = Actor(automata = automata, channel=channel)
+       >>> server.initiator = False
 
        >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8883, timeout=1.)
-       >>> client = Actor(automata = automata, initiator = True, channel=channel)
+       >>> client = Actor(automata = automata, channel=channel)
 
        >>> server.start()
        >>> client.start()
@@ -317,7 +315,7 @@ def _test_udp():
     >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999, timeout=1.)
     >>> client.open()
     >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> client.write(symbol.specialize())
+    >>> client.write(next(symbol.specialize()))
     15
     >>> client.close()
 
@@ -338,16 +336,18 @@ def _test_udp_write_read():
     >>> automata = Automata(s0, [symbol])
 
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8883, timeout=1.)
-    >>> server = Actor(automata = automata, initiator = False, channel=channel)
+    >>> server = Actor(automata = automata, channel=channel)
+    >>> server.initiator = False
 
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8883, timeout=1.)
-    >>> client = Actor(automata = automata, initiator = True, channel=channel)
+    >>> client = Actor(automata = automata, channel=channel)
     >>> client.nbMaxTransitions = 3
 
     >>> server.start()
+    >>> time.sleep(0.2)
     >>> client.start()
 
-    >>> time.sleep(2)
+    >>> time.sleep(1)
     >>> client.stop()
     >>> server.stop()
     >>> print(client.generateLog())

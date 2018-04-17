@@ -49,7 +49,7 @@ from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransiti
 @NetzobLogger
 class OpenChannelTransition(AbstractTransition):
     """This class represents a transition which, when executed, requests
-    to open the current underlying communication channel.
+    to open the current underlying communication channel (i.e. a call to the :meth:`open` method of the channel is made).
 
     The OpenChannelTransition expects some parameters:
 
@@ -107,7 +107,16 @@ class OpenChannelTransition(AbstractTransition):
         self.description = "OpenChannelTransition"
 
     @public_api
-    def clone(self):
+    def copy(self):
+        r"""Copy the current transition.
+
+        This method copies the transition object but keeps references to the
+        original callbacks.
+
+        :return: A new object of the same type.
+        :rtype: :class:`OpenChannelTransition <netzob.Model.Grammar.Transitions.OpenChannelTransition.OpenChannelTransition>`
+
+        """
         transition = OpenChannelTransition(startState=None,
                                            endState=self.endState,
                                            name=self.name)
@@ -170,13 +179,13 @@ class OpenChannelTransition(AbstractTransition):
 def _test():
     r"""
 
-    # Test clone()
+    # Test copy()
 
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> t = OpenChannelTransition(s0, s1, name="transition")
-    >>> t.clone()
+    >>> t.copy()
     transition
 
     """

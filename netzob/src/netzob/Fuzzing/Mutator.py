@@ -49,9 +49,14 @@ from netzob.Common.Utils.Decorators import public_api
 from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.conf import Conf
 
+class MaxFuzzingException(Exception):
+    pass
+
+
 @public_api
 class FuzzingMode(Enum):
     """Mutator Fuzzing modes"""
+    FIXED = 0  #: Data is fixed (no fuzzing)
     MUTATE = 1  #: Fuzzing by mutation of a legitimate value
     GENERATE = 2  #: Fuzzing by generation
     __repr__ = Enum.__str__

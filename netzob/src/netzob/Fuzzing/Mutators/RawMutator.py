@@ -105,14 +105,37 @@ class RawMutator(DomainMutator):
                          counterMax=counterMax,
                          lengthBitSize=lengthBitSize)
 
-        # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=255)  # 255 in order to cover all values of a byte
+        if self.mode == FuzzingMode.FIXED:
+            self.generator = generator
+        else:
+            # Configure generator
 
-        # Initialize length generator
-        model_min = int(self.domain.dataType.size[0] / 8)
-        model_max = int(self.domain.dataType.size[1] / 8)
-        model_unitSize = self.domain.dataType.unitSize
-        self._initializeLengthGenerator(generator, interval, (model_min, model_max), model_unitSize)
+            # Initialize data generator
+            self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=255)  # 255 in order to cover all values of a byte
+
+            # Initialize length generator
+            model_min = int(self.domain.dataType.size[0] / 8)
+            model_max = int(self.domain.dataType.size[1] / 8)
+            model_unitSize = self.domain.dataType.unitSize
+            self._initializeLengthGenerator(generator, interval, (model_min, model_max), model_unitSize)
+
+    def copy(self):
+        r"""Return a copy of the current mutator.
+
+        >>> from netzob.all import *
+        >>> f = Field(Raw())
+        >>> m = RawMutator(f.domain).copy()
+        >>> m.mode
+        FuzzingMode.GENERATE
+
+        """
+        m = RawMutator(self.domain,
+                       mode=self.mode,
+                       generator=self.generator,
+                       seed=self.seed,
+                       counterMax=self.counterMax,
+                       lengthBitSize=self.lengthBitSize)
+        return m
 
     def count(self):
         r"""
@@ -140,14 +163,17 @@ class RawMutator(DomainMutator):
 
         """
 
-        range_min = int(self.domain.dataType.size[0] / 8)
-        range_max = int(self.domain.dataType.size[1] / 8)
-        permitted_values = 256
-        count = 0
-        for i in range(range_min, range_max + 1):
-            count += permitted_values ** i
-            if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
-                return AbstractType.MAXIMUM_POSSIBLE_VALUES
+        if self.mode == FuzzingMode.FIXED:
+            count = 1
+        else:
+            range_min = int(self.domain.dataType.size[0] / 8)
+            range_max = int(self.domain.dataType.size[1] / 8)
+            permitted_values = 256
+            count = 0
+            for i in range(range_min, range_max + 1):
+                count += permitted_values ** i
+                if count > AbstractType.MAXIMUM_POSSIBLE_VALUES:
+                    return AbstractType.MAXIMUM_POSSIBLE_VALUES
         return count
 
     def generate(self):
@@ -159,17 +185,239 @@ class RawMutator(DomainMutator):
         :rtype: :class:`bytes`
         """
         # Call parent generate() method
-        super().generate()
+        if self.mode != FuzzingMode.FIXED:
+            super().generate()
 
-        # Generate length of random data
-        length = next(self._lengthGenerator)
+        if self.mode == FuzzingMode.FIXED:
+            valueBytes = next(self.generator)
+        else:
 
-        valueBytes = bytes()
-        if length == 0:
-            return valueBytes
-        while True:
-            valueInt = next(self.generator)
-            valueBytes += valueInt.to_bytes(1, byteorder='big')
-            if len(valueBytes) >= length:
-                break
-        return valueBytes[:length]
+            # Generate length of random data
+            length = next(self._lengthGenerator)
+
+            valueBytes = bytes()
+            if length == 0:
+                return valueBytes
+            while True:
+                valueInt = next(self.generator)
+                valueBytes += valueInt.to_bytes(1, byteorder='big')
+                if len(valueBytes) >= length:
+                    break
+            valueBytes = valueBytes[:length]
+
+        return valueBytes
+
+
+def _test_fixed():
+    r"""
+
+    Reset the underlying random generator
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+
+
+    **Fixing the value of a field**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Raw(nbBytes=1))
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[f1] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a sub-field**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Raw(nbBytes=1))
+    >>> f2_1 = Field(Raw(nbBytes=1))
+    >>> f2_2 = Field(Raw(nbBytes=1))
+    >>> f2 = Field([f2_1, f2_2])
+    >>> symbol = Symbol([f1, f2], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[f2_1] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'\xdbA\x07'
+    >>> next(messages_gen)
+    b'\xdbA\xec'
+    >>> next(messages_gen)
+    b'\xdbA\x8e'
+
+
+    **Fixing the value of a field that contains sub-fields**
+
+    This should trigger an exception as it is only possible to fix a value to leaf fields.
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Raw(nbBytes=1))
+    >>> f2_1 = Field(Raw(nbBytes=1))
+    >>> f2_2 = Field(Raw(nbBytes=1))
+    >>> f2 = Field([f2_1, f2_2])
+    >>> symbol = Symbol([f1, f2], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[f2] = b'\x41'
+    Traceback (most recent call last):
+    ...
+    Exception: Cannot set a fixed value on a field that contains sub-fields
+
+
+    **Fixing the value of a leaf variable**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(Raw(nbBytes=1))
+    >>> v2 = Data(Raw(nbBytes=1))
+    >>> v_agg = Agg([v1, v2])
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[v1] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A\x11'
+    >>> next(messages_gen)
+    b'A\xa7'
+    >>> next(messages_gen)
+    b'A\x7f'
+
+
+    **Fixing the value of a node variable**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(Raw(nbBytes=1))
+    >>> v2 = Data(Raw(nbBytes=1))
+    >>> v_agg = Agg([v1, v2])
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[v_agg] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+
+    **Fixing the value of a field, by relying on a provided generator**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Raw(nbBytes=1))
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
+    >>> preset[f1] = my_generator
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    Traceback (most recent call last):
+    ...
+    StopIteration
+
+
+    **Fixing the value of a field, by relying on a provided iterator**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Raw(nbBytes=1))
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
+    >>> preset[f1] = my_iter
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    Traceback (most recent call last):
+    ...
+    StopIteration
+
+
+    **Fixing the value of a field, by relying on a provided function**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Raw(nbBytes=1))
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> def my_callable():
+    ...     return random.choice([b'\x41', b'\x42', b'\x43'])
+    >>> preset[f1] = my_callable
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a field through its name**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Raw(nbBytes=1), name='f1')
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset['f1'] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a variable leaf through its name**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(Raw(nbBytes=1), name='v1')
+    >>> v2 = Data(Raw(nbBytes=1), name='v2')
+    >>> v_agg = Agg([v1, v2], name='v_agg')
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset['v1'] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'ABCG'
+    >>> next(messages_gen)
+    b'ABC\xc3'
+    >>> next(messages_gen)
+    b'ABC\x91'
+
+
+    **Fixing the value of a variable node through its name**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(Raw(nbBytes=1), name='v1')
+    >>> v2 = Data(Raw(nbBytes=1), name='v2')
+    >>> v_agg = Agg([v1, v2], name='v_agg')
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset['v_agg'] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+    """

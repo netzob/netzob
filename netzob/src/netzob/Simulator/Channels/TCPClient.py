@@ -54,9 +54,6 @@ class TCPClient(AbstractChannel):
     """A TCPClient is a communication channel. It provides the connection of a
     client to a specific IP:Port server over a TCP socket.
 
-    When the actor executes an OpenChannelTransition, it calls the open
-    method on the TCP client which connects to the server.
-
     The TCPClient constructor expects some parameters:
 
     :param remoteIP: This parameter is the remote IP address to connect to.
@@ -110,10 +107,11 @@ class TCPClient(AbstractChannel):
        >>> automata = Automata(s0, [symbol])
 
        >>> channel = TCPServer(localIP="127.0.0.1", localPort=8885, timeout=1.)
-       >>> server = Actor(automata = automata, initiator = False, channel=channel)
+       >>> server = Actor(automata = automata, channel=channel)
+       >>> server.initiator = False
 
        >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885, timeout=1.)
-       >>> client = Actor(automata = automata, initiator = True, channel=channel)
+       >>> client = Actor(automata = automata, channel=channel)
 
        >>> server.start()
        >>> client.start()
@@ -352,7 +350,7 @@ def _test_tcp_write_read():
     >>> automata = Automata(s0, [symbol])
 
     >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8889, timeout=1.)
-    >>> client = Actor(automata = automata, initiator = True, channel=channel, name='Client')
+    >>> client = Actor(automata = automata, channel=channel, name='Client')
     >>> client.nbMaxTransitions = 2
 
     >>> time.sleep(.2)
@@ -397,7 +395,7 @@ def _test_tcp_write_read_large_packet():
     >>> automata = Automata(s0, [symbol])
 
     >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885, timeout=1.)
-    >>> client = Actor(automata = automata, initiator = True, channel=channel, name='Client')
+    >>> client = Actor(automata = automata, channel=channel, name='Client')
     >>> client.nbMaxTransitions = 2
 
     >>> time.sleep(.2)

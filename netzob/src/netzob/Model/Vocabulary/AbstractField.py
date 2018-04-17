@@ -36,7 +36,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import abc
-import logging
 from collections import OrderedDict
 
 #+---------------------------------------------------------------------------+
@@ -74,6 +73,7 @@ class GenerationException(Exception):
     pass
 
 
+@public_api
 class AbstractionException(Exception):
     pass
 
@@ -94,14 +94,15 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         self.__transformationFunctions = TypedList(TransformationFunction)
 
         self._variable = None
+        self.__preset = None
 
     @abc.abstractmethod
-    def clone(self, map_objects={}):
-        """Clone the current object as well as all its dependencies. This
+    def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies. This
         method returns a new object of the same type.
 
         """
-        raise NotImplementedError("Method clone() is not implemented")
+        raise NotImplementedError("Method copy() is not implemented")
 
     @typeCheck(bool, bool, bool)
     def getCells(self, encoded=True, styled=True, transposed=False):
@@ -470,56 +471,38 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         return
 
     @public_api
-    @staticmethod
-    def abstract(data, fields, memory=None):
-        """The :meth:`abstract` method is used to retrieve the
-        corresponding symbol according to a concrete :class:`bytes`
-        message.
+    def abstract(self, data, memory=None):
+        """The :meth:`abstract` method is used to abstract the given
+        data bytes with the current symbol model.
 
         The :meth:`abstract` static method expects some parameters:
 
         :param data: The concrete message to abstract in symbol.
-        :param fields: a list of fields targeted during the abstraction process
         :param memory: A memory used to store variable values during
                        specialization and abstraction of sequence of symbols.
                        The default value is None.
         :type data: :class:`bytes`, required
-        :type fields: :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field>`, required
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
-        :return: a field/symbol and the structured received message
-        :rtype: a tuple (:class:`Field <netzob.Model.Vocabulary.Field>`, dict[:class:`str`, :class:`bytes`])
+        :return: the structured of the parsed data
+        :rtype: a dict[:class:`str`, :class:`bytes`]
         :raises: :class:`AbstractionException <netzob.Model.Vocabulary.AbstractField.AbstractionException>` if an error occurs while abstracting the data
 
 
         >>> from netzob.all import *
-        >>> messages = ["{0}, what's up in {1} ?".format(pseudo, city)
-        ...             for pseudo in ['john', 'kurt']
+        >>> messages = ["john, what's up in {} ?".format(city)
         ...             for city in ['Paris', 'Berlin']]
-        >>> 
+        >>>
         >>> f1a = Field(name="name", domain="john")
         >>> f2a = Field(name="question", domain=", what's up in ")
         >>> f3a = Field(name="city", domain=Alt(["Paris", "Berlin"]))
         >>> f4a = Field(name="mark", domain=" ?")
-        >>> s1 = Symbol([f1a, f2a, f3a, f4a], name="Symbol-john")
-        >>> 
-        >>> f1b = Field(name="name", domain="kurt")
-        >>> f2b = Field(name="question", domain=", what's up in ")
-        >>> f3b = Field(name="city", domain=Alt(["Paris", "Berlin"]))
-        >>> f4b = Field(name="mark", domain=" ?")
-        >>> s2 = Symbol([f1b, f2b, f3b, f4b], name="Symbol-kurt")
-        >>> 
+        >>> s = Symbol([f1a, f2a, f3a, f4a], name="Symbol-john")
+        >>>
         >>> for m in messages:
-        ...    (abstractedSymbol, structured_data) = Symbol.abstract(m, [s1, s2])
+        ...    structured_data = s.abstract(m)
         ...    print(structured_data)
-        ...    print(abstractedSymbol.name)  # doctest: +NORMALIZE_WHITESPACE
         OrderedDict([('name', b'john'), ('question', b", what's up in "), ('city', b'Paris'), ('mark', b' ?')])
-        Symbol-john
         OrderedDict([('name', b'john'), ('question', b", what's up in "), ('city', b'Berlin'), ('mark', b' ?')])
-        Symbol-john
-        OrderedDict([('name', b'kurt'), ('question', b", what's up in "), ('city', b'Paris'), ('mark', b' ?')])
-        Symbol-kurt
-        OrderedDict([('name', b'kurt'), ('question', b", what's up in "), ('city', b'Berlin'), ('mark', b' ?')])
-        Symbol-kurt
 
 
         **Usage of Symbol for traffic generation and parsing**
@@ -535,40 +518,31 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f0 = Field("aaaa")
         >>> f1 = Field(" # ")
         >>> f2 = Field("bbbbbb")
-        >>> symbol = Symbol(fields=[f0, f1, f2])
-        >>> concrete_message = symbol.specialize()
+        >>> s = Symbol(fields=[f0, f1, f2])
+        >>> concrete_message = next(s.specialize())
         >>> concrete_message
         b'aaaa # bbbbbb'
-        >>> (abstracted_symbol, structured_data) = Symbol.abstract(concrete_message, [symbol])
-        >>> abstracted_symbol == symbol
-        True
+        >>> s.abstract(concrete_message)
+        OrderedDict([('Field', b'bbbbbb')])
 
         """
 
         from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
-        for field in fields:
-            try:
-                # Try to align/parse the data with the current field
-                alignedData = DataAlignment.align([data], field, encoded=False, memory=memory)
+        from netzob.Model.Vocabulary.Domain.Parser.MessageParser import InvalidParsingPathException
 
-                # If it matches, we build a dict that contains, for each field, the associated value that was present in the message
-                structured_data = OrderedDict()
-                for fields_value in alignedData:
-                    for i, field_value in enumerate(fields_value):
-                        structured_data[alignedData.headers[i]] = field_value
-                return (field, structured_data)
-            except Exception as e:
-                import logging
-                logging.debug(e)
-                #logging.warn(traceback.format_exc())
+        try:
+            # Try to align/parse the data with the current field
+            alignedData = DataAlignment.align([data], self, encoded=False, memory=memory)
 
-        from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
-        from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
-        unknown_symbol = UnknownSymbol(RawMessage(data))
-        structured_data = OrderedDict()
-        logging.debug("Impossible to abstract the message in one of the specified symbols, we create an unknown symbol for it: '%s'", unknown_symbol)
-
-        return (unknown_symbol, structured_data)
+            # If it matches, we build a dict that contains, for each field, the associated value that was present in the message
+            structured_data = OrderedDict()
+            for fields_value in alignedData:
+                for i, field_value in enumerate(fields_value):
+                    structured_data[alignedData.headers[i]] = field_value
+            return structured_data
+        except InvalidParsingPathException as e:
+            raise AbstractionException("With the symbol/field '{}', cannot abstract the data: '{}'. Error: '{}'".format(self, data, e)) from None
+            #logging.warn(traceback.format_exc())
 
     @public_api
     def getSymbol(self):
@@ -613,6 +587,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :type field_name: :class:`str`, required
         :returns: The sub-field object.
         :rtype: :class:`Field <netzob.Model.Vocabulary.Field>`
+        :raise KeyError: when the field has not been found
 
         The following example shows how to retrieve a sub-field based
         on its name:
@@ -627,9 +602,10 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         <class 'netzob.Model.Vocabulary.Field.Field'>
 
         """
-        for field in self.getLeafFields():
+        for field in self.getLeafFields(includePseudoFields=True):
             if field_name == field.name:
                 return field
+        raise KeyError("Field '{}' has not been found in '{}'".format(field_name, self))
 
     def getLeafFields(self, depth=None, currentDepth=0, includePseudoFields=False):
         """Extract the leaf fields to consider, regarding the specified depth.
@@ -744,45 +720,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         """
         return repr(self)
-
-    @public_api
-    @typeCheck(int)
-    def str_structure(self, deepness=0):
-        """Returns a string which denotes the current symbol/field definition
-        using a tree display.
-
-        :param deepness: Parameter used to specify the number of indentations. The default value is 0.
-        :type deepness: :class:`int`, optional
-        :return: The current symbol/field represented as a string.
-        :rtype: :class:`str`
-
-        >>> from netzob.all import *
-        >>> f1 = Field(String(), name="field1")
-        >>> f2 = Field(Integer(interval=(10, 100)), name="field2")
-        >>> f3 = Field(Raw(nbBytes=14), name="field3")
-        >>> symbol = Symbol([f1, f2, f3], name="symbol_name")
-        >>> print(symbol.str_structure())
-        symbol_name
-        |--  field1
-             |--   Data (String(nbChars=(0,8192)))
-        |--  field2
-             |--   Data (Integer(10,100))
-        |--  field3
-             |--   Data (Raw(nbBytes=14))
-        >>> print(f1.str_structure())
-        field1
-        |--   Data (String(nbChars=(0,8192)))
-
-        """
-        tab = ["|--  " for x in range(deepness)]
-        tab.append(str(self.name))
-        lines = [''.join(tab)]
-        from netzob.Model.Vocabulary.Field import Field
-        if isinstance(self, Field) and len(self.fields) == 0:
-            lines.append(self.domain.str_structure(deepness + 1))
-        for f in self.fields:
-            lines.append(f.str_structure(deepness + 1))
-        return '\n'.join(lines)
 
     @typeCheck(int)
     def str_data(self, deepness=0):
@@ -957,6 +894,18 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
                 "Specified parent must be an AbstractField and not an {0}".
                 format(type(parent)))
         self.__parent = parent
+
+    @property
+    def preset(self):
+        """A preset configuration used for fixing values and fuzzing variables during specialization.
+
+        :type : :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+        """
+        return self.__preset
+
+    @preset.setter  # type: ignore
+    def preset(self, preset):
+        self.__preset = preset
 
     def storeInMemento(self):
         pass

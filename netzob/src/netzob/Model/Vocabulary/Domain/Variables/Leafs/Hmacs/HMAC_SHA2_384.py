@@ -66,7 +66,7 @@ class HMAC_SHA2_384(AbstractHMAC):
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(HMAC_SHA2_384([f1], key=b'1234'))
     >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())  # doctest: +ELLIPSIS
+    >>> binascii.hexlify(next(s.specialize()))  # doctest: +ELLIPSIS
     b'aabb76b3535033802e3234386d1f45aa74e443d21651a798c194769b9af1808cd29d2...'
     """
 

@@ -94,9 +94,35 @@ class Timestamp(AbstractType):
                   in UTC.
     :param epoch: The initial date expressed in UTC from which
                   timestamp is measured. Default value is :attr:`Epoch.UNIX`.
+
+                  Available values for `epoch` parameter are:
+
+                  * Epoch.WINDOWS = datetime(1601, 1, 1)
+                  * Epoch.MUMPS = datetime(1840, 12, 31)
+                  * Epoch.VMS = datetime(1858, 11, 17)
+                  * Epoch.EXCEL = datetime(1899, 12, 31)
+                  * Epoch.NTP = datetime(1900, 1, 1)
+                  * Epoch.MACOS_9 = datetime(1904, 1, 1)
+                  * Epoch.PICKOS = datetime(1967, 12, 31)
+                  * Epoch.UNIX = datetime(1970, 1, 1)
+                  * Epoch.FAT = datetime(1980, 1, 1)
+                  * Epoch.GPS = datetime(1980, 1, 6)
+                  * Epoch.ZIGBEE = datetime(2000, 1, 1)
+                  * Epoch.COCOA = datetime(2001, 1, 1)
+
     :param unity: This specifies the unity of the value (seconds,
                   milliseconds, nanoseconds). The default value is
                   :attr:`Unity.SECOND`.
+
+                  Available values for `unity` parameter are:
+
+                  * Unity.SECOND = 1
+                  * Unity.DECISECOND = 10
+                  * Unity.CENTISECOND = 100
+                  * Unity.MILLISECOND = 1000
+                  * Unity.MICROSECOND = 1000000
+                  * Unity.NANOSECOND = 10000000000
+
     :param unitSize: The unitsize of the current value. Values must be one of
                      ``UnitSize.SIZE_*``.
                      The following unit sizes are available:
@@ -116,66 +142,42 @@ class Timestamp(AbstractType):
     :param sign: The sign of the current value.
                  Values must be :attr:`Sign.SIGNED` or :attr:`Sign.UNSIGNED`.
                  The default value is :attr:`Sign.UNSIGNED`.
-
+    :param default: The default value used in specialization.
     :type value: :class:`bitarray` or :class:`int`, optional
     :type epoch: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Epoch`, optional
     :type unity: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Unity`, optional
     :type unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional
     :type endianness: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Endianness`, optional
     :type sign: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`, optional
+    :type default: :class:`bitarray` or :class:`int`, optional
 
     .. note::
-       :attr:`value` and :attr:`unitSize` attributes are mutually exclusive.
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
 
     The Timestamp class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
                Instead of a tuple, an integer can be used to represent both min and max values.
-    :var unitSize: The unitsize of the current value.
     :var epoch: The initial date expressed in UTC from which
                 timestamp is measured.
     :var unity: This specifies the unity of the timestamp (seconds,
                 milliseconds, nanoseconds).
+    :var unitSize: The unitsize of the current value.
     :var sign: The sign of the current value.
     :var endianness: The endianness of the current value.
-    :vartype typeName: :class:`str`
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
-    :vartype size: ~typing.Tuple[int,int] or int
-    :vartype unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional
+    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype epoch: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Epoch`
     :vartype unity: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Unity`
+    :vartype unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional
     :vartype sign: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`
     :vartype endianness: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Endianness`
-
-
-    Available values for `epoch` parameter are:
-
-    * Epoch.WINDOWS = datetime(1601, 1, 1)
-    * Epoch.MUMPS = datetime(1840, 12, 31)
-    * Epoch.VMS = datetime(1858, 11, 17)
-    * Epoch.EXCEL = datetime(1899, 12, 31)
-    * Epoch.NTP = datetime(1900, 1, 1)
-    * Epoch.MACOS_9 = datetime(1904, 1, 1)
-    * Epoch.PICKOS = datetime(1967, 12, 31)
-    * Epoch.UNIX = datetime(1970, 1, 1)
-    * Epoch.FAT = datetime(1980, 1, 1)
-    * Epoch.GPS = datetime(1980, 1, 6)
-    * Epoch.ZIGBEE = datetime(2000, 1, 1)
-    * Epoch.COCOA = datetime(2001, 1, 1)
-
-    Available values for `unity` parameter are:
-
-    * Unity.SECOND = 1
-    * Unity.DECISECOND = 10
-    * Unity.CENTISECOND = 100
-    * Unity.MILLISECOND = 1000
-    * Unity.MICROSECOND = 1000000
-    * Unity.NANOSECOND = 10000000000
+    :vartype default: :class:`bitarray`
 
 
     The creation of a Timestamp type with no parameter will create a bytes
@@ -205,6 +207,14 @@ class Timestamp(AbstractType):
     Endianness.BIG
 
 
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> t = Timestamp(default=1234)
+    >>> t.generate().tobytes()
+    b'\x00\x00\x04\xd2'
+
+
     .. ifconfig:: scope in ('netzob')
 
        >>> from netzob.all import *
@@ -212,7 +222,7 @@ class Timestamp(AbstractType):
        >>> f1 = Field(Timestamp(1444737333), name="Timestamp")
        >>> f2 = Field(Raw(b"00"), name="End")
        >>> s = Symbol(fields=[f0, f1, f2])
-       >>> s.messages = [RawMessage(s.specialize()) for x in range(5)]
+       >>> s.messages = [RawMessage(next(s.specialize())) for x in range(5)]
        >>> print(s.str_data())
        Start | Timestamp     | End 
        ----- | ------------- | ----
@@ -246,11 +256,26 @@ class Timestamp(AbstractType):
                  unity=Unity.SECOND,
                  unitSize=UnitSize.SIZE_32,
                  endianness=AbstractType.defaultEndianness(),
-                 sign=Sign.UNSIGNED):
+                 sign=Sign.UNSIGNED,
+                 default=None):
+
+        if value is not None and default is not None:
+            raise ValueError("A Timestamp should have either its constant value or its default value set, but not both")
+
         if value is not None and not isinstance(value, bitarray):
             # converts the specified value in bitarray
             value = TypeConverter.convert(
                 value,
+                Integer,
+                BitArray,
+                src_unitSize=unitSize,
+                src_endianness=endianness,
+                src_sign=sign)
+
+        if default is not None and not isinstance(default, bitarray):
+            # converts the specified default value in bitarray
+            default = TypeConverter.convert(
+                default,
                 Integer,
                 BitArray,
                 src_unitSize=unitSize,
@@ -268,7 +293,8 @@ class Timestamp(AbstractType):
             size,
             unitSize=unitSize,
             endianness=endianness,
-            sign=sign)
+            sign=sign,
+            default=default)
 
     def __str__(self):
         if self.value is not None:
@@ -366,15 +392,18 @@ class Timestamp(AbstractType):
 
         >>> from netzob.all import *
         >>> f = Field(Timestamp())
-        >>> value = f.specialize()
+        >>> value = next(f.specialize())
         >>> len(value)
         4
         >>> f = Field(Timestamp(epoch=Epoch.WINDOWS, unitSize=UnitSize.SIZE_64))
-        >>> len(f.specialize())
+        >>> len(next(f.specialize()))
         8
         """
         if self.value is not None:
             return self.value
+
+        if self.default is not None:
+            return self.default
 
         # computes utc now
         now = datetime.utcnow()
@@ -470,7 +499,7 @@ def _test():
     ...     Timestamp(), Timestamp(1444737333),
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    >>> data = b''.join(f.specialize() for f in symbol.fields)
-    >>> assert Symbol.abstract(data, [symbol])[1]
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
+    >>> assert symbol.abstract(data)
 
     """

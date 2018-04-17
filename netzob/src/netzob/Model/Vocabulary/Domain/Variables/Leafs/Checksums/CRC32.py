@@ -64,7 +64,7 @@ class CRC32(AbstractChecksum):
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(CRC32([f1]))
     >>> s = Symbol(fields = [f1, f2])
-    >>> binascii.hexlify(s.specialize())
+    >>> binascii.hexlify(next(s.specialize()))
     b'aabb982c8249'
     """
 

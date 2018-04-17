@@ -35,8 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-from bitarray import bitarray
-import logging
 
 # +---------------------------------------------------------------------------+
 # | related third party imports                                               |
@@ -47,7 +45,6 @@ import logging
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
-from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 
 
 @NetzobLogger
@@ -76,6 +73,9 @@ class GenericPath(object):
             self._dataAssignedToVariable = dataAssignedToVariable
 
         self._current_callbacks_operation = []
+
+    def __str__(self):
+        return "Path({})".format(str(id(self)))
 
     def addResult(self, variable, result, notify=True):
         """
@@ -211,6 +211,8 @@ class GenericPath(object):
 
         """
 
+        from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+
         callBackToExecute = None
         tested_callbacks = []
         for _ in range(len(self._variablesCallbacks)):
@@ -218,7 +220,7 @@ class GenericPath(object):
             for callBackToExecute in self._variablesCallbacks:
 
                 if callBackToExecute in tested_callbacks:
-                    self._logger.debug("Potential callback already tested")
+                    self._logger.debug("Potential callback already tested: '{}'".format(callBackToExecute))
                     callBackToExecute = None
                     continue
 
@@ -226,7 +228,7 @@ class GenericPath(object):
                 tested_callbacks.append(callBackToExecute)
 
                 if callBackToExecute in self._current_callbacks_operation:
-                    self._logger.debug("Potential callback is currently tested")
+                    self._logger.debug("Potential callback is currently tested: '{}'".format(callBackToExecute))
                     callBackToExecute = None
                     continue
 
@@ -239,7 +241,7 @@ class GenericPath(object):
                     continue
 
                 # Test if triggeringVariable may help in computing the
-                # callbacl (i.e. it is in the list of the targeted
+                # callback (i.e. it is in the list of the targeted
                 # variables of the currentVariable)
                 found = False
                 for v in targetVariables:
@@ -249,8 +251,28 @@ class GenericPath(object):
                 if found:
                     self._logger.debug("Found a callback on '{}' that should be able to be computed due to triggering variable '{}' from field '{}'".format(currentVariable, triggeringVariable, triggeringVariable.field))
                     break
+
+                # Current callback is considered if there exists
+                # another callback for which we have common target
+                # variables (this means that the resolution of a
+                # common target variable may resolve two callbacks)
+                found = False
+                for inner_cbk in self._variablesCallbacks:
+                    (inner_targetVariables, inner_currentVariable, inner_parsingCB) = inner_cbk
+
+                    # We verify those three conditions to say that a callback should be analyzed:
+                    # - We don't consider Repeat variables here
+                    # - We don't consider parsing mode
+                    # - We verify that the set of common target variables is not empty
+                    common_target_variables = list(set(inner_targetVariables).intersection(targetVariables))
+                    if not inner_parsingCB and not isinstance(currentVariable, Repeat) and len(common_target_variables) > 0:
+                        found = True
+                        break
+                if found:
+                    self._logger.debug("Found a callback on '{}' that should be able to be computed due to indirect triggering variable '{}' from field '{}'".format(currentVariable, triggeringVariable, triggeringVariable.field))
+                    #break
                 else:
-                    self._logger.debug("Callback not concerned by the triggering variable")
+                    self._logger.debug("Callback not concerned by the triggering variable: '{}'".format(callBackToExecute))
                     callBackToExecute = None
                     continue
             if callBackToExecute is not None:

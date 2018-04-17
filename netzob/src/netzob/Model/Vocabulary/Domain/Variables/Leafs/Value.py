@@ -75,29 +75,34 @@ class Value(AbstractRelationVariableLeaf):
                  the value of this relation.
     :var operation: Defines the operation to be performed on the found value.
                     The prototype of this callback is detailed below.
-    :var varType: The type of the variable (Read-only).
     :vartype target: :class:`~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
     :vartype operation: :class:`Callable <collections.abc.Callable>`
-    :vartype varType: :class:`str`
 
 
     **Callback prototype**
 
-    A callback function can be used to specify a complex
-    relationship. The callback function that can be used in the
-    ``operation`` parameter has the following prototype:
+    The callback function that can be used to specify a complex
+    relationship in the ``operation`` parameter has the following
+    prototype:
 
     .. function:: cbk_operation(data, path, variable)
        :noindex:
 
        :param data: contains the current data of the targeted field.
-       :type data: ~bitarray.bitarray, required
+       :type data: ~bitarray.bitarray
        :param path: data structure that allows access to the values of the
                     :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
                     element.
-       :type path: object, required
+       :type path: object
        :param variable: the current Value variable.
-       :type variable: ~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value, required
+       :type variable: ~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value
+
+       :return: The callback function should return a :class:`bitarray
+                <bitarray>` representing the computed data during
+                specialization or abstraction. In the latter case, if
+                the callback function does not succeed to parse the
+                data, it should return the :const:`None` value. The length of the computed data may differ from the length of the targeted data.
+       :rtype: :class:`bitarray <bitarray.bitarray>`
 
     Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     values is done through the ``path``, thanks to its methods
@@ -114,11 +119,6 @@ class Value(AbstractRelationVariableLeaf):
     The callback function is expected to implement relationship
     operations based on the provided data.
 
-    The callback function should return a :class:`bitarray <bitarray>`
-    representing the matching data during specialization or
-    abstraction. In the latter case, if the callback function does not
-    succeed to parse the data, it should return the :const:`None` value.
-
 
     **Value usage**
 
@@ -129,7 +129,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f0 = Field(String("abcd"))
     >>> f1 = Field(Value(f0))
     >>> fheader = Field([f0, f1])
-    >>> fheader.specialize()
+    >>> next(fheader.specialize())
     b'abcdabcd'
 
 
@@ -145,8 +145,8 @@ class Value(AbstractRelationVariableLeaf):
        >>> f3 = Field(Value(f1), name="f3")
        >>> f4 = Field(String("!"), name="f4")
        >>> s = Symbol(fields=[f1, f2, f3, f4])
-       >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-       (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
+       >>> s.abstract(data)  # doctest: +NORMALIZE_WHITESPACE
+       OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')])
 
 
     **Value field with a variable as a target**
@@ -161,7 +161,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f3 = Field(Value(d), name="f3")
     >>> f4 = Field(String("!"), name="f4")
     >>> f = Field([f1, f2, f3, f4])
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'john;john!'
 
 
@@ -177,7 +177,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f3 = Field(Value(f1), name="f3")
     >>> f4 = Field(String("!"), name="f4")
     >>> f = Field([f1, f2, f3, f4])
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'john;john!'
 
     The second example illustrates a case where the Value variable is
@@ -189,7 +189,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f1 = Field(Value(f3), name="f1")
     >>> f4 = Field(String("!"), name="f4")
     >>> f = Field([f1, f2, f3, f4])
-    >>> f.specialize()
+    >>> next(f.specialize())
     b'john;john!'
 
 
@@ -213,7 +213,7 @@ class Value(AbstractRelationVariableLeaf):
     >>> f0 = Field(Raw(b'\x01'), name='f0')
     >>> f1 = Field(Value(f0, operation = cbk), name='f1')
     >>> f = Field([f0, f1], name='f')
-    >>> data = f.specialize()
+    >>> data = next(f.specialize())
     >>> data
     b'\x01\x80'
 
@@ -221,17 +221,19 @@ class Value(AbstractRelationVariableLeaf):
     the next portion of the example, the previously specialized data
     is abstracted according to the field definition.
 
-    >>> Field.abstract(data, [f])
-    (f, OrderedDict([('f0', b'\x01'), ('f1', b'\x80')]))
+    >>> f.abstract(data)
+    OrderedDict([('f0', b'\x01'), ('f1', b'\x80')])
 
     If the targeted field (``f0``) does not contain the expected data,
     the callback function should return :const:`None`, indicating that the
     relationship does not apply. In this case, the abstraction process
-    will not succeed.
+    will return an exception.
 
     >>> data = b'\x02\x80'
-    >>> Field.abstract(data, [f])
-    (Unknown message b'\x02\x80', OrderedDict())
+    >>> f.abstract(data)
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'f', cannot abstract the data: 'b'\x02\x80''. Error: 'No parsing path returned while parsing 'b'\x02\x80'''
 
     """
 
@@ -248,7 +250,15 @@ class Value(AbstractRelationVariableLeaf):
         self.operation = operation
 
     @public_api
-    def clone(self, map_objects={}):
+    def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Value <netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value>`
+
+        """
+        if map_objects is None:
+            map_objects = {}
         if self in map_objects:
             return map_objects[self]
 
@@ -259,7 +269,7 @@ class Value(AbstractRelationVariableLeaf):
             if self.targets[0] in map_objects.keys():
                 new_target = map_objects[self.targets[0]]
             else:
-                new_target = target.clone(map_objects)
+                new_target = self.targets[0].copy(map_objects)
             new_value.targets = [new_target]
 
         return new_value
@@ -293,7 +303,7 @@ class Value(AbstractRelationVariableLeaf):
 
                 for size in range(min(maxSizeDep, len(content)), minSizeDep - 1, -1):
                     # we create a new parsing path and returns it
-                    newParsingPath = parsingPath.clone()
+                    newParsingPath = parsingPath.copy()
                     newParsingPath.addResult(self, content[:size].copy())
                     self._addCallBacksOnUndefinedVariables(newParsingPath)
                     results.append(newParsingPath)
@@ -319,7 +329,7 @@ class Value(AbstractRelationVariableLeaf):
 
         return self.valueCMP(parsingPath, acceptCallBack)
 
-    def computeExpectedValue(self, parsingPath):
+    def computeExpectedValue(self, parsingPath, preset=None):
         self._logger.debug("Compute expected value for Value field '{}'".format(self.field))
 
         # Check target variable consistency
@@ -376,7 +386,7 @@ def _test_value():
     >>> f2 = Field(String(";"), name="f2")
     >>> f4 = Field(String("!"), name="f4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
-    >>> Symbol.abstract(data, [s])  # doctest: +NORMALIZE_WHITESPACE
-    (Symbol, OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')]))
+    >>> s.abstract(data)  # doctest: +NORMALIZE_WHITESPACE
+    OrderedDict([('f1', b'john'), ('f2', b';'), ('f3', b'john'), ('f4', b'!')])
 
     """

@@ -66,23 +66,31 @@ class IPv4(AbstractType):
     :param network: This parameter is used to describe a domain that contains a network address expressed in standard
                     dot notation (ex: "192.168.0.0/24"). The default value is None.
     :param endianness: The endianness of the current value. Values must be Endianness.BIG or Endianness.LITTLE. The default value is Endianness.BIG.
+    :param default: The default value used in specialization.
     :type value: :class:`str` or :class:`netaddr.IPAddress`, optional
     :type network: :class:`str` or :class:`netaddr.IPNetwork`, optional
     :type endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`, optional
+    :type default: :class:`str` or :class:`netaddr.IPAddress`, optional
 
     .. note::
-       :attr:`value` and :attr:`network` attributes are mutually exclusive.
+       :attr:`value` and :attr:`network` parameters are mutually
+       exclusive. Setting both values raises an :class:`Exception`.
+
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
 
 
     The IPv4 class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var network: A constraint over the network. The parsed data belongs to this network or not.
-    :vartype typeName: :class:`str`
+    :var endianness: The endianness of the value. Values must be Endianness.BIG or Endianness.LITTLE.
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype network: :class:`str` or :class:`netaddr.IPNetwork`
+    :vartype endianness: :class:`Endianness <netzob.Model.Vocabulary.Types.AbstractType.Endianness>`
+    :vartype default: :class:`bitarray`
 
 
     The creation of an IPv4 type with no parameter will create a random bytes
@@ -100,20 +108,6 @@ class IPv4(AbstractType):
     >>> ip.value
     bitarray('11000000101010000000000000001010')
 
-    .. ifconfig:: scope in ('netzob')
-
-       >>> f1 = Field("IP=", name="magic")
-       >>> f2 = Field(IPv4(), name="ip4")
-       >>> raw_data = ip.value.tobytes()
-       >>> Symbol.abstract(raw_data, [f2])
-       (ip4, OrderedDict([('ip4', b'\xc0\xa8\x00\n')]))
-       >>> raw_data = f1.specialize() + raw_data
-       >>> Symbol.abstract(raw_data, [f1, f2])  # doctest: +SKIP
-       >>> s = Symbol(fields=[f1,f2])
-       >>> msgs = [RawMessage(s.specialize()) for x in range(10)]
-       >>> len(msgs)
-       10
-
     It is also possible to specify an IPv4 type that accepts a range
     of IP addresses, through the :attr:`network` parameter, as shown in the
     following example:
@@ -121,7 +115,15 @@ class IPv4(AbstractType):
     >>> from netzob.all import *
     >>> ip = IPv4(network="10.10.10.0/27")
     >>> IPv4(ip.generate())  # initialize with the generated bitarray value
-    10.10.10.29
+    10.10.10.0
+
+
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> t = IPv4(default='127.0.0.1')
+    >>> t.generate().tobytes()
+    b'\x7f\x00\x00\x01'
 
     """
 
@@ -131,16 +133,34 @@ class IPv4(AbstractType):
                  network=None,
                  unitSize=UnitSize.SIZE_32,
                  endianness=AbstractType.defaultEndianness(),
-                 sign=AbstractType.defaultSign()):
+                 sign=AbstractType.defaultSign(),
+                 default=None):
 
         if value is not None and network is not None:
             raise ValueError("An IPv4 should have either its value or its network set, but not both")
+
+        if value is not None and default is not None:
+            raise ValueError("An IPv4 should have either its constant value or its default value set, but not both")
 
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
             value = TypeConverter.convert(
                 value,
+                IPv4,
+                BitArray,
+                src_unitSize=unitSize,
+                src_endianness=endianness,
+                src_sign=sign,
+                dst_unitSize=unitSize,
+                dst_endianness=endianness,
+                dst_sign=sign)
+
+        if default is not None and not isinstance(default, bitarray):
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+            default = TypeConverter.convert(
+                default,
                 IPv4,
                 BitArray,
                 src_unitSize=unitSize,
@@ -160,7 +180,8 @@ class IPv4(AbstractType):
             size,
             unitSize=UnitSize.SIZE_32,
             endianness=AbstractType.defaultEndianness(),
-            sign=AbstractType.defaultSign())
+            sign=AbstractType.defaultSign(),
+            default=default)
 
     def __str__(self):
         if self.value is not None:
@@ -207,15 +228,15 @@ class IPv4(AbstractType):
 
         >>> from netzob.all import *
         >>> f = Field(IPv4())
-        >>> len(f.specialize())
+        >>> len(next(f.specialize()))
         4
 
         >>> f = Field(IPv4("192.168.0.20"))
-        >>> f.specialize()
+        >>> next(f.specialize())
         b'\xc0\xa8\x00\x14'
 
         >>> f = Field(IPv4(network="10.10.10.0/24"))
-        >>> len(f.specialize())
+        >>> len(next(f.specialize()))
         4
 
         """
@@ -225,6 +246,8 @@ class IPv4(AbstractType):
 
         if self.value is not None:
             return self.value
+        elif self.default is not None:
+            return self.default
         elif self.network is not None:
             ip = random.choice(self.network)
             return TypeConverter.convert(
@@ -482,8 +505,8 @@ def _test():
     ...    IPv4("1.2.3.4"), IPv4(),
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    >>> data = b''.join(f.specialize() for f in symbol.fields)
-    >>> assert Symbol.abstract(data, [symbol])[1]
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
+    >>> assert symbol.abstract(data)
 
 
     # Verify that you cannot create an IPv4 with a value AND a network:

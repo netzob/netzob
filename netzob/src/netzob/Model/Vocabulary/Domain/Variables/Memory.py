@@ -75,8 +75,8 @@ class Memory(object):
        >>> s2 = Symbol(fields=[f4, f5, f6])
        >>>
        >>> memory = Memory()
-       >>> m1 = s1.specialize(memory=memory)
-       >>> m2 = s2.specialize(memory=memory)
+       >>> m1 = next(s1.specialize(memory=memory))
+       >>> m2 = next(s2.specialize(memory=memory))
        >>>
        >>> m1[6:] == m2[7:]
        True
@@ -100,7 +100,7 @@ class Memory(object):
        >>> s3 = Symbol(fields=[f7, f8, f9])
        >>>
        >>> # Symbol specialization
-       >>> s3.specialize(memory=memory)
+       >>> next(s3.specialize(memory=memory))
        b'master>John'
 
     """
@@ -112,14 +112,14 @@ class Memory(object):
         self.__memoryAccessCB = None
 
     @public_api
-    @typeCheck(AbstractVariable, bitarray)
+    @typeCheck(AbstractVariable)
     def memorize(self, variable, value):
         """Memorizes the provided variable value.
 
         :param variable: The variable for which we want to memorize a value.
         :param value: The value to memorize.
         :type variable: :class:`Variable <netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable>`, required
-        :type value: :class:`bitarray <bitarray>`, required
+        :type value: :class:`bitarray <bitarray>` or :class:`bytes`, required
 
         >>> from netzob.all import *
         >>> variable = Data(String(), name="var1")
@@ -127,9 +127,19 @@ class Memory(object):
         >>> memory.memorize(variable, String("hello").value)
         >>> print(memory)
         Data (String(nbChars=(0,8192))) from field 'None': b'hello'
+        >>> memory.memorize(variable, b"test")
+        >>> print(memory)
+        Data (String(nbChars=(0,8192))) from field 'None': b'test'
 
         """
-        self.memory[variable] = value
+        if isinstance(value, bitarray):
+            self.memory[variable] = value
+        elif isinstance(value, bytes):
+            b_value = bitarray(endian='big')
+            b_value.frombytes(value)
+            self.memory[variable] = b_value
+        else:
+            raise TypeError("value parameter of memorize() method should a bitarray or a bytes, not a '{}'".format(type(value)))
 
     @public_api
     @typeCheck(AbstractVariable)
@@ -220,8 +230,8 @@ class Memory(object):
             self.memory.pop(variable, None)
 
     @public_api
-    def clone(self):
-        """Clone the current memory in a new memory.
+    def copy(self):
+        """Copy the current memory in a new memory.
 
         :return: A new memory containing the same entries as the current memory.
         :rtype: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
@@ -234,7 +244,7 @@ class Memory(object):
         >>> m.memorize(d2, String("hello").value)
         >>> m.getValue(d1)
         bitarray('01100100')
-        >>> m2 = m.clone()
+        >>> m2 = m.copy()
         >>> m2.getValue(d1)
         bitarray('01100100')
         >>> m.getValue(d1).bytereverse()

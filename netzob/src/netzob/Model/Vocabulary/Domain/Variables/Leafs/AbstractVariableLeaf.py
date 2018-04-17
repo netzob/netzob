@@ -47,7 +47,7 @@ from bitarray import bitarray
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
 from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
-from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
+from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingException
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
@@ -70,11 +70,11 @@ class AbstractVariableLeaf(AbstractVariable):
     def isnode(self):
         return False
 
-    def count(self, fuzz=None):
+    def count(self, preset=None):
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
+        if preset is not None and preset.get(self) is not None and preset.get(self).mode in [FuzzingMode.GENERATE, FuzzingMode.FIXED]:
             # Retrieve the mutator
-            mutator = fuzz.get(self)
+            mutator = preset.get(self)
             return mutator.count()
         else:
             return self.dataType.count()
@@ -134,20 +134,27 @@ class AbstractVariableLeaf(AbstractVariable):
     def learn(self, parsingPath, acceptCallBack, carnivorous):
         raise NotImplementedError("method learn is not implemented")
 
-    def specialize(self, parsingPath, fuzz=None, acceptCallBack=True):
+    def getVariables(self):
+        return [self]
+
+    def specialize(self, parsingPath, preset=None, acceptCallBack=True):
         """Specializes a Leaf"""
 
-        from netzob.Fuzzing.Fuzz import MaxFuzzingException
-
-        # Fuzzing has priority over generating a legitimate value
+        from netzob.Fuzzing.Mutator import MaxFuzzingException
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.GENERATE:
+        # Fuzzing has priority over generating a legitimate value
+        if preset is not None and preset.get(self) is not None and preset.get(self).mode in [FuzzingMode.GENERATE, FuzzingMode.FIXED]:
 
             # Retrieve the mutator
-            mutator = fuzz.get(self)
+            mutator = preset.get(self)
 
-            def fuzz_generate():
-                for _ in range(self.count(fuzz=fuzz)):
+            def fuzzing_generate():
+                if preset.get(self).mode == FuzzingMode.FIXED:
+                    nb_iterations = AbstractType.MAXIMUM_POSSIBLE_VALUES
+                else:
+                    nb_iterations = self.count(preset=preset)
+
+                for _ in range(nb_iterations):
 
                     try:
                         # Mutate a value according to the current field attributes
@@ -156,17 +163,19 @@ class AbstractVariableLeaf(AbstractVariable):
                         self._logger.debug("Maximum mutation counter reached")
                         break
                     else:
-                        # Convert the return bytes into bitarray
-                        value = bitarray(endian='big')
-                        value.frombytes(generated_value)
-                        arbitraryValue = value
+                        if isinstance(generated_value, bitarray):
+                            value = generated_value
+                        else:
+                            # Convert the return bytes into bitarray
+                            value = bitarray(endian='big')
+                            value.frombytes(generated_value)
 
                         # Associate the generated value to the current variable
-                        newParsingPath = parsingPath.clone()
-                        newParsingPath.addResult(self, arbitraryValue)
+                        newParsingPath = parsingPath.copy()
+                        newParsingPath.addResult(self, value)
                         yield newParsingPath
 
-            return fuzz_generate()
+            return fuzzing_generate()
 
         if self.scope is None:
             raise Exception(
@@ -174,11 +183,11 @@ class AbstractVariableLeaf(AbstractVariable):
 
         if self.isDefined(parsingPath):
             if self.scope == Scope.CONSTANT or self.scope == Scope.SESSION:
-                newParsingPaths = self.use(parsingPath, acceptCallBack)
+                newParsingPaths = self.use(parsingPath, acceptCallBack, preset=preset)
             elif self.scope == Scope.MESSAGE:
-                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack, preset=preset)
             elif self.scope == Scope.NONE:
-                newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerate(parsingPath, acceptCallBack, preset=preset)
         else:
             if self.scope == Scope.CONSTANT:
                 self._logger.debug(
@@ -186,35 +195,40 @@ class AbstractVariableLeaf(AbstractVariable):
                     format(self))
                 newParsingPaths = iter(())
             elif self.scope == Scope.MESSAGE or self.scope == Scope.SESSION:
-                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack, preset=preset)
             elif self.scope == Scope.NONE:
-                newParsingPaths = self.regenerate(parsingPath, acceptCallBack)
+                newParsingPaths = self.regenerate(parsingPath, acceptCallBack, preset=preset)
 
-        if fuzz is not None and fuzz.get(self) is not None and fuzz.get(self).mode == FuzzingMode.MUTATE:
+        if preset is not None and preset.get(self) is not None and preset.get(self).mode == FuzzingMode.MUTATE:
 
-            def fuzz_mutate():
+            def fuzzing_mutate():
                 for path in newParsingPaths:
                     generatedData = path.getData(self)
 
                     # Retrieve the mutator
-                    mutator = fuzz.get(self)
+                    mutator = preset.get(self)
 
                     while True:
                         # Mutate a value according to the current field attributes
                         mutator.mutate(generatedData)
                         yield path
 
-            return fuzz_mutate()
+            return fuzzing_mutate()
         else:
             return newParsingPaths
 
-    def str_structure(self, deepness=0):
+    def str_structure(self, deepness=0, preset=None):
         """Returns a string which denotes
         the current field definition using a tree display"""
 
         tab = ["     " for x in range(deepness - 1)]
         tab.append("|--   ")
         tab.append("{0}".format(self))
+
+        # Add information regarding preset configuration
+        if preset is not None and preset.get(self) is not None:
+            tab.append(" [{0}]".format(preset.get(self).mode))
+
         return ''.join(tab)
 
     def getFixedBitSize(self):

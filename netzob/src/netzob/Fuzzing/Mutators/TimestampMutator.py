@@ -107,9 +107,29 @@ class TimestampMutator(DomainMutator):
                          seed=seed,
                          counterMax=counterMax)
 
-        # Initialize data generator
-        self.generator = GeneratorFactory.buildGenerator(self.generator,\
-            seed=self.seed, minValue=0, maxValue=2**32-1, signed=False)
+        if self.mode == FuzzingMode.FIXED:
+            self.generator = generator
+        else:
+
+            # Initialize data generator
+            self.generator = GeneratorFactory.buildGenerator(self.generator, seed=self.seed, minValue=0, maxValue=(1 << 32) - 1, signed=False)
+
+    def copy(self):
+        r"""Return a copy of the current mutator.
+
+        >>> from netzob.all import *
+        >>> f = Field(Timestamp())
+        >>> m = TimestampMutator(f.domain).copy()
+        >>> m.mode
+        FuzzingMode.GENERATE
+
+        """
+        m = TimestampMutator(self.domain,
+                             mode=self.mode,
+                             generator=self.generator,
+                             seed=self.seed,
+                             counterMax=self.counterMax)
+        return m
 
     def count(self):
         r"""
@@ -134,11 +154,235 @@ class TimestampMutator(DomainMutator):
         :return: the generated content represented with bytes
         :rtype: :class:`bytes`
         """
+        # Call parent generate() method
+        if self.mode != FuzzingMode.FIXED:
+            super().generate()
 
-        # Generate a random integer between 0 and 2**unitsize-1
-        timeValue = next(self.generator)
+        if self.mode == FuzzingMode.FIXED:
+            valueBytes = next(self.generator)
+        else:
 
-        return Integer.decode(timeValue,
-                              unitSize=self.domain.dataType.unitSize,
-                              endianness=self.domain.dataType.endianness,
-                              sign=Sign.UNSIGNED)
+            # Generate a random integer between 0 and 2**unitsize-1
+            timeValue = next(self.generator)
+
+            valueBytes = Integer.decode(timeValue,
+                                        unitSize=self.domain.dataType.unitSize,
+                                        endianness=self.domain.dataType.endianness,
+                                        sign=Sign.UNSIGNED)
+
+        return valueBytes
+
+
+def _test_fixed():
+    r"""
+
+    Reset the underlying random generator
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+
+
+    **Fixing the value of a field**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Timestamp())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[f1] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a sub-field**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Timestamp())
+    >>> f2_1 = Field(Timestamp())
+    >>> f2_2 = Field(Timestamp())
+    >>> f2 = Field([f2_1, f2_2])
+    >>> symbol = Symbol([f1, f2], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[f2_1] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> len(next(messages_gen))
+    9
+    >>> len(next(messages_gen))
+    9
+    >>> len(next(messages_gen))
+    9
+
+
+    **Fixing the value of a field that contains sub-fields**
+
+    This should trigger an exception as it is only possible to fix a value to leaf fields.
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Timestamp())
+    >>> f2_1 = Field(Timestamp())
+    >>> f2_2 = Field(Timestamp())
+    >>> f2 = Field([f2_1, f2_2])
+    >>> symbol = Symbol([f1, f2], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[f2] = b'\x41'
+    Traceback (most recent call last):
+    ...
+    Exception: Cannot set a fixed value on a field that contains sub-fields
+
+
+    **Fixing the value of a leaf variable**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(Timestamp())
+    >>> v2 = Data(Timestamp())
+    >>> v_agg = Agg([v1, v2])
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[v1] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> len(next(messages_gen))
+    5
+    >>> len(next(messages_gen))
+    5
+    >>> len(next(messages_gen))
+    5
+
+
+    **Fixing the value of a node variable**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(Timestamp())
+    >>> v2 = Data(Timestamp())
+    >>> v_agg = Agg([v1, v2])
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[v_agg] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+
+    **Fixing the value of a field, by relying on a provided generator**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Timestamp())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
+    >>> preset[f1] = my_generator
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    Traceback (most recent call last):
+    ...
+    StopIteration
+
+
+    **Fixing the value of a field, by relying on a provided iterator**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Timestamp())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
+    >>> preset[f1] = my_iter
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    Traceback (most recent call last):
+    ...
+    StopIteration
+
+
+    **Fixing the value of a field, by relying on a provided function**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Timestamp())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> def my_callable():
+    ...     return random.choice([b'\x41', b'\x42', b'\x43'])
+    >>> preset[f1] = my_callable
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
+
+
+    **Fixing the value of a field through its name**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Timestamp(), name='f1')
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset['f1'] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a variable leaf through its name**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(Timestamp(), name='v1')
+    >>> v2 = Data(Timestamp(), name='v2')
+    >>> v_agg = Agg([v1, v2], name='v_agg')
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset['v1'] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize()
+    >>> len(next(messages_gen))
+    7
+    >>> len(next(messages_gen))
+    7
+    >>> len(next(messages_gen))
+    7
+
+
+    **Fixing the value of a variable node through its name**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(Timestamp(), name='v1')
+    >>> v2 = Data(Timestamp(), name='v2')
+    >>> v_agg = Agg([v1, v2], name='v_agg')
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset['v_agg'] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+    """

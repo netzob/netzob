@@ -64,7 +64,7 @@ class CRC16(AbstractChecksum):
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(CRC16([f1]))
     >>> f = Field([f1, f2])
-    >>> binascii.hexlify(f.specialize())
+    >>> binascii.hexlify(next(f.specialize()))
     b'aabb3ed3'
 
     The following example shows how to create a checksum relationship
@@ -77,7 +77,7 @@ class CRC16(AbstractChecksum):
     >>> f3 = Field(Raw(b'\xee\xff'))
     >>> f4 = Field(CRC16([f1, f2, f3]))
     >>> f = Field([f1, f2, f3, f4])
-    >>> binascii.hexlify(f.specialize())
+    >>> binascii.hexlify(next(f.specialize()))
     b'aabbccddeeff5e9b'
 
     """

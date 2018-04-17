@@ -55,9 +55,6 @@ class SSLClient(AbstractChannel):
     the connection of a client to a specific IP:Port server over a TCP/SSL
     socket.
 
-    When the actor executes an OpenChannelTransition, it calls the open
-    method on the ssl client which connects to the server.
-
     The SSLClient constructor expects some parameters:
 
     :param remoteIP: This parameter is the remote IP address to connect to.

@@ -54,10 +54,6 @@ class UDPServer(AbstractChannel):
     """A UDPServer is a communication channel. It provides a
     server listening to a specific IP:Port over a UDP socket.
 
-    When the actor executes an OpenChannelTransition, it calls the
-    open method on the UDP server which makes it to listen for
-    incoming messages.
-
     The UDPServer constructor expects some parameters:
 
     :param localIP: This parameter is the local IP address.
@@ -103,10 +99,11 @@ class UDPServer(AbstractChannel):
        >>> automata = Automata(s0, [symbol])
        >>>
        >>> channel = UDPServer(localIP="127.0.0.1", localPort=8884, timeout=1.)
-       >>> server = Actor(automata = automata, initiator = False, channel=channel)
+       >>> server = Actor(automata = automata, channel=channel)
+       >>> server.initiator = False
        >>>
        >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8884, timeout=1.)
-       >>> client = Actor(automata = automata, initiator = True, channel=channel)
+       >>> client = Actor(automata = automata, channel=channel)
        >>>
        >>> server.start()
        >>> client.start()

@@ -44,7 +44,7 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Model.Vocabulary.Types.AbstractType import Sign, UnitSize
+from netzob.Model.Vocabulary.Types.AbstractType import Sign, UnitSize, AbstractType
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Fuzzing.Mutator import Mutator, FuzzingMode
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator, FuzzingInterval
@@ -252,16 +252,21 @@ class IntegerMutator(DomainMutator):
                          counterMax=counterMax,
                          lengthBitSize=lengthBitSize)
 
-        # Handle default interval depending on type of generator
-        if generator == DeterministGenerator.name or isinstance(generator, DeterministGenerator):
-            if interval is None:
-                interval = FuzzingInterval.DEFAULT_INTERVAL
+        if self.mode == FuzzingMode.FIXED:
+            self.generator = generator
         else:
-            if interval is None:
-                interval = FuzzingInterval.FULL_INTERVAL
+            # Configure generator
 
-        # Initialize generator
-        self._initializeGenerator(interval)
+            # Handle default interval depending on type of generator
+            if generator == DeterministGenerator.name or isinstance(generator, DeterministGenerator):
+                if interval is None:
+                    interval = FuzzingInterval.DEFAULT_INTERVAL
+            else:
+                if interval is None:
+                    interval = FuzzingInterval.FULL_INTERVAL
+
+            # Initialize generator
+            self._initializeGenerator(interval)
 
     def _initializeGenerator(self, interval):
 
@@ -306,6 +311,24 @@ class IntegerMutator(DomainMutator):
                                                          bitsize=self.lengthBitSize.value,
                                                          signed=self.domain.dataType.sign == Sign.SIGNED)
 
+    def copy(self):
+        r"""Return a copy of the current mutator.
+
+        >>> from netzob.all import *
+        >>> f = Field(Integer())
+        >>> m = IntegerMutator(f.domain).copy()
+        >>> m.mode
+        FuzzingMode.GENERATE
+
+        """
+        m = IntegerMutator(self.domain,
+                           mode=self.mode,
+                           generator=self.generator,
+                           seed=self.seed,
+                           counterMax=self.counterMax,
+                           lengthBitSize=self.lengthBitSize)
+        return m
+
     def count(self):
         r"""
 
@@ -328,14 +351,18 @@ class IntegerMutator(DomainMutator):
 
         """
 
-        if isinstance(self.generator, DeterministGenerator):
-            count = len(self.generator._values) 
+        if self.mode == FuzzingMode.FIXED:
+            count = 1
+        elif isinstance(self.generator, DeterministGenerator):
+            count = len(self.generator._values)
         else:
             count = self._maxLength - self._minLength + 1
+
         if isinstance(self._effectiveCounterMax, float):
             count = count * self._effectiveCounterMax
         else:
             count = min(count, self._effectiveCounterMax)
+
         return count
 
     def generate(self):
@@ -346,22 +373,25 @@ class IntegerMutator(DomainMutator):
         :rtype: :class:`bytes`
         """
         # Call parent :meth:`generate` method
-        super().generate()
+        if self.mode != FuzzingMode.FIXED:
+            super().generate()
 
         # Generate and return a random value in the interval
-        dom_type = self.domain.dataType
         value = next(self.generator)
 
-        # Handle redefined bitsize
-        if self.lengthBitSize is not None:
-            dst_bitsize = self.lengthBitSize
-        else:
-            dst_bitsize = dom_type.unitSize
+        if self.mode != FuzzingMode.FIXED:
 
-        value = Integer.decode(value,
-                               unitSize=dst_bitsize,
-                               endianness=dom_type.endianness,
-                               sign=dom_type.sign)
+            # Handle redefined bitsize
+            dom_type = self.domain.dataType
+            if self.lengthBitSize is not None:
+                dst_bitsize = self.lengthBitSize
+            else:
+                dst_bitsize = dom_type.unitSize
+
+            value = Integer.decode(value,
+                                   unitSize=dst_bitsize,
+                                   endianness=dom_type.endianness,
+                                   sign=dom_type.sign)
         return value
 
 
@@ -395,6 +425,7 @@ def _test_endianness():
     90
 
     """
+
 
 def _test_pseudo_rand_interval():
     r"""
@@ -530,26 +561,26 @@ def _test_coverage():
     # Test to verify that the RNG covers all 8 bits values without duplicate values
 
     >>> from netzob.all import *
-    >>> fuzz = Fuzz()
     >>> f_data = Field(uint8())
     >>> symbol = Symbol([f_data])
-    >>> fuzz.set(f_data, generator='xorshift')
+    >>> preset = Preset(symbol)
+    >>> preset.fuzz(f_data, generator='xorshift')
     >>> datas = set()
     >>> for _ in range(symbol.count()):
-    ...     datas.add(symbol.specialize(fuzz=fuzz))
+    ...     datas.add(symbol.specialize())
     >>> len(datas)
     256
 
     Test to verify that the RNG covers all 16 bits values
 
     >>> from netzob.all import *
-    >>> fuzz = Fuzz()
     >>> f_data = Field(uint16())
     >>> symbol = Symbol([f_data])
-    >>> fuzz.set(f_data, generator='xorshift')
+    >>> preset = Preset(symbol)
+    >>> preset.fuzz(f_data, generator='xorshift')
     >>> datas = set()
     >>> for _ in range(symbol.count()):
-    ...     datas.add(symbol.specialize(fuzz=fuzz))
+    ...     datas.add(symbol.specialize())
     >>> len(datas)
     65536
 
@@ -557,16 +588,230 @@ def _test_coverage():
     # Test to verify that the RNG covers all values in a specific interval
 
     >>> from netzob.all import *
-    >>> fuzz = Fuzz()
     >>> f_data = Field(uint8(interval=(10, 20)))
     >>> symbol = Symbol([f_data])
-    >>> fuzz.set(f_data, interval=FuzzingInterval.DEFAULT_INTERVAL, generator='xorshift')
+    >>> preset = Preset(symbol)
+    >>> preset.fuzz(f_data, interval=FuzzingInterval.DEFAULT_INTERVAL, generator='xorshift')
     >>> datas = set()
     >>> symbol.count()
     11
     >>> for _ in range(symbol.count()):
-    ...     datas.add(symbol.specialize(fuzz=fuzz))
+    ...     datas.add(symbol.specialize())
     >>> len(datas)
     11
+
+    """
+
+
+def _test_fixed():
+    r"""
+
+    Reset the underlying random generator
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+
+    **Fixing the value of a field**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(uint8())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[f1] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a sub-field**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(uint8())
+    >>> f2_1 = Field(uint8())
+    >>> f2_2 = Field(uint8())
+    >>> f2 = Field([f2_1, f2_2])
+    >>> symbol = Symbol([f1, f2], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[f2_1] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'\x10A\xdb'
+    >>> next(messages_gen)
+    b'\x10A\xf7'
+    >>> next(messages_gen)
+    b'\x10A\x07'
+
+
+    **Fixing the value of a field that contains sub-fields**
+
+    This should trigger an exception as it is only possible to fix a value to leaf fields.
+
+    >>> from netzob.all import *
+    >>> f1 = Field(uint8())
+    >>> f2_1 = Field(uint8())
+    >>> f2_2 = Field(uint8())
+    >>> f2 = Field([f2_1, f2_2])
+    >>> symbol = Symbol([f1, f2], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[f2] = b'\x41'
+    Traceback (most recent call last):
+    ...
+    Exception: Cannot set a fixed value on a field that contains sub-fields
+
+
+    **Fixing the value of a leaf variable**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(uint8())
+    >>> v2 = Data(uint8())
+    >>> v_agg = Agg([v1, v2])
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[v1] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'Ai'
+    >>> next(messages_gen)
+    b'A\xec'
+    >>> next(messages_gen)
+    b'A\xfb'
+
+
+    **Fixing the value of a node variable**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(uint8())
+    >>> v2 = Data(uint8())
+    >>> v_agg = Agg([v1, v2])
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset[v_agg] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+
+
+    **Fixing the value of a field, by relying on a provided generator**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(uint8())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
+    >>> preset[f1] = my_generator
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    Traceback (most recent call last):
+    ...
+    StopIteration
+
+
+    **Fixing the value of a field, by relying on a provided iterator**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(uint8())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
+    >>> preset[f1] = my_iter
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    Traceback (most recent call last):
+    ...
+    StopIteration
+
+
+    **Fixing the value of a field, by relying on a provided function**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(uint8())
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> def my_callable():
+    ...     return random.choice([b'\x41', b'\x42', b'\x43'])
+    >>> preset[f1] = my_callable
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'C'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a field through its name**
+
+    >>> from netzob.all import *
+    >>> f1 = Field(uint8(), name='f1')
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset['f1'] = b'\x41'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+    >>> next(messages_gen)
+    b'A'
+
+
+    **Fixing the value of a variable leaf through its name**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(uint8(), name='v1')
+    >>> v2 = Data(uint8(), name='v2')
+    >>> v_agg = Agg([v1, v2], name='v_agg')
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset['v1'] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'ABC\x11'
+    >>> next(messages_gen)
+    b'ABC\xfa'
+    >>> next(messages_gen)
+    b'ABC\xa7'
+
+
+    **Fixing the value of a variable node through its name**
+
+    >>> from netzob.all import *
+    >>> v1 = Data(uint8(), name='v1')
+    >>> v2 = Data(uint8(), name='v2')
+    >>> v_agg = Agg([v1, v2], name='v_agg')
+    >>> f1 = Field(v_agg)
+    >>> symbol = Symbol([f1], name="sym")
+    >>> preset = Preset(symbol)
+    >>> preset['v_agg'] = b'\x41\x42\x43'
+    >>> messages_gen = symbol.specialize()
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
+    >>> next(messages_gen)
+    b'ABC'
 
     """

@@ -62,7 +62,7 @@ class MD5(AbstractHash):
     >>> f1 = Field(Raw(b'\xaa\xbb'))
     >>> f2 = Field(MD5([f1]))
     >>> f = Field([f1, f2])
-    >>> binascii.hexlify(f.specialize())
+    >>> binascii.hexlify(next(f.specialize()))
     b'aabb58cea1f6b2b06520613e09af90dc1c47'
     """
 

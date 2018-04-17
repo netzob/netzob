@@ -42,10 +42,9 @@
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
-from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
-from netzob.Model.Vocabulary.Field import Field
+from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
 
 @NetzobLogger
@@ -61,7 +60,7 @@ class MessageSpecializer(object):
     >>> f3 = Field(String(';'))
     >>> f4 = Field(Value(f2))
     >>> s = Symbol(fields=[f0, f1, f2, f3, f4])
-    >>> msgs = [RawMessage(s.specialize()) for i in range(1)]
+    >>> msgs = [RawMessage(next(s.specialize())) for i in range(1)]
     >>> s.messages = msgs
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
     >>> valueInTab = s.getCells()[0]
@@ -97,13 +96,12 @@ class MessageSpecializer(object):
 
     """
 
-    def __init__(self, memory=None, presets=None, fuzz=None):
+    def __init__(self, memory=None, preset=None):
         self.memory = memory
-        self.presets = presets
-        self.fuzz = fuzz
+        self.preset = preset
 
     def specializeSymbol(self, symbol):
-        """This method generates a message based on the provided symbol definition.
+        r"""This method generates a message based on the provided symbol definition.
 
         >>> from netzob.all import *
         >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
@@ -111,14 +109,15 @@ class MessageSpecializer(object):
         >>> f2 = Field(name="Value", domain=Raw(nbBytes=10))
         >>> f1 = Field(name="Length", domain = Size(f2, dataType = Raw(nbBytes=3, unitSize = UnitSize.SIZE_32)))
         >>> s = Symbol(fields = [f0, f1, f2])
-        >>> generated_data = TypeConverter.convert(next(MessageSpecializer().specializeSymbol(s)).generatedContent, BitArray, Raw)
+        >>> generated_data = next(s.specialize())
         >>> len(generated_data) > 4
         True
 
-        # we can use presets to arbitrary fix the value of one field
-        >>> presets = { "Value": "hello" }
-        >>> TypeConverter.convert(next(MessageSpecializer(presets = presets).specializeSymbol(s)).generatedContent, BitArray, Raw)
-        b'\\x01\\x00\\x00\\x05hello'
+        # we can use fix the value of one field through the preset object
+        >>> preset = Preset(s)
+        >>> preset["Value"] = b"hello"
+        >>> next(s.specialize())
+        b'\x01\x00\x00\x05hello'
 
         """
         if symbol is None:
@@ -126,37 +125,14 @@ class MessageSpecializer(object):
 
         self._logger.debug("Specifies symbol '{0}'.".format(symbol.name))
 
-        # Normalize presets definition: fields described with field
-        # name are converted into field object, and preseting values
-        # are converted into bitarray.
-        self.presets = symbol.normalize_presets(self.presets)
-
-        # Remove preset fields when they are concerned with fuzzing
-        self._filterPresetsWithFuzz(symbol)
-
         # This variable host all the specialization paths
         specializingPaths = [SpecializingPath(memory=self.memory)]
 
-        # First, we normalize the variables
+        # First, we normalize the targets of relantionship variables
         for field in symbol.getLeafFields(includePseudoFields=True):
             if field.domain is not None and isinstance(field.domain, AbstractRelationVariableLeaf):
                 self._logger.debug("Normalize field targets for field '{}'".format(field.name))
                 field.domain.normalize_targets()
-
-        # Second, we specialize the fields for which we have parameterized values (presets)
-        for field in symbol.fields:
-
-            fieldDomain = field.domain
-            if fieldDomain is None:
-                raise Exception(
-                    "Cannot specialize field '{0}' since it defines no domain".
-                    format(fieldDomain))
-
-            if self.presets is not None and field in self.presets.keys():
-                self._logger.debug("Specializing field {0} with preset value".format(field.name))
-
-                for specializingPath in specializingPaths:
-                    specializingPath.addResult(field.domain, self.presets[field].copy())
 
         # Convert list into generator
         new_paths = (new_path for new_path in specializingPaths)
@@ -170,40 +146,31 @@ class MessageSpecializer(object):
         self._logger.debug("Specializing field: '{}'".format(fields[i_current_field]))
 
         field = fields[i_current_field]
-        fieldDomain = field.domain
 
-        if self.presets is not None and field in self.presets.keys():
+        fs = FieldSpecializer(field, preset=self.preset)
+
+        for specializingPath in paths:
+            new_paths = fs.specialize(specializingPath)
+
             if i_current_field < len(fields) - 1:
                 self._logger.debug("More fields remaining")
-                yield from self._inner_specialize(paths, fields, i_current_field + 1, symbol)
+                yield from self._inner_specialize(new_paths, fields, i_current_field + 1, symbol)
             else:
                 self._logger.debug("In last field")
-                for path in paths:
-                    self._produce_data(path, symbol)
-                    yield path
-        else:
-
-            fs = FieldSpecializer(field, presets=self.presets, fuzz=self.fuzz)
-
-            for specializingPath in paths:
-                new_paths = fs.specialize(specializingPath)
-
-                if i_current_field < len(fields) - 1:
-                    self._logger.debug("More fields remaining")
-                    yield from self._inner_specialize(new_paths, fields, i_current_field + 1, symbol)
-                else:
-                    self._logger.debug("In last field")
-                    for idx, path in enumerate(new_paths):
-                        if field.domain.isnode() or i_current_field > 0:
-                            self._produce_data(path, symbol)
+                for idx, path in enumerate(new_paths):
+                    if field.domain.isnode() or i_current_field > 0:
+                        self._produce_data(path, symbol)
+                    else:
+                        # In mutate mode, do not produce when
+                        # itering new_paths, as the
+                        # generatedContent has already been set
+                        # (only works when symbol has one field
+                        # and the field domain is a leaf)
+                        if idx > 0 and self.preset is not None and self.preset.get(field.domain) is not None and self.preset.get(field.domain).mode == FuzzingMode.MUTATE:
+                            pass
                         else:
-                            # Do not produce when itering new_paths,
-                            # as the generatedContent has already been
-                            # set (only works when symbal has one
-                            # field and the field domain is a leaf)
-                            if idx == 0:
-                                self._produce_data(path, symbol)
-                        yield path
+                            self._produce_data(path, symbol)
+                    yield path
 
     def _produce_data(self, retainedPath, symbol):
         first_pass = True  # Tells if the retained path has already a generated content
@@ -219,9 +186,9 @@ class MessageSpecializer(object):
             if len(field.fields) == 0:
                 if first_pass:
                     first_pass = False
-                    retainedPath.generatedContent = retainedPath.getData(field.domain)
+                    retainedPath.generatedContent = retainedPath.getData(field.domain).copy()
                 else:
-                    retainedPath.generatedContent += retainedPath.getData(field.domain)
+                    retainedPath.generatedContent += retainedPath.getData(field.domain).copy()
             else:
                 for child in field.fields:
 
@@ -254,44 +221,9 @@ class MessageSpecializer(object):
         self.__memory = memory
 
     @property
-    def presets(self):
-        """A dictionnary that maps arbitrary values some of the specified fields
-        should take on specialization.
+    def preset(self):
+        return self.__preset
 
-        :type: :class:`dict`
-        :raises: :class:`TypeError`, :class:`ValueError`
-        """
-
-        return self.__presets
-
-    @presets.setter  # type: ignore
-    def presets(self, presets):
-        if presets is None:
-            presets = dict()
-
-        for k, v in presets.items():
-            if not isinstance(k, (Field, str)):
-                raise Exception("Preset's keys must be of Field or string types")
-
-        self.__presets = dict()
-
-        for k, v in presets.items():
-            self.__presets[k] = v
-
-    @typeCheck(Symbol)
-    def _filterPresetsWithFuzz(self, symbol):
-        """Remove preset fields when they are concerned with fuzzing,
-        because mutation has priority over preseting values.
-
-        """
-
-        if self.presets is None:
-            return
-
-        if self.fuzz is None:
-            return
-
-        for (fuzz_k, fuzz_v) in self.fuzz.mappingFieldsMutators.items():
-            if fuzz_k in self.presets.keys():
-                self._logger.debug("Removing preset key '{0}' in self.presets as it is already used in self.fuzz.".format(fuzz_k))
-                self.presets.pop(fuzz_k)
+    @preset.setter  # type: ignore
+    def preset(self, preset):
+        self.__preset = preset

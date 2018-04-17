@@ -48,6 +48,7 @@ from typing import Dict  # noqa: F401
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
+from netzob.Model.Vocabulary.Preset import Preset
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
@@ -62,21 +63,21 @@ class Transition(AbstractTransition):
 
     The Transition constructor expects some parameters:
 
-    :param startState: This parameter is the initial state of the transition.
-    :param endState: This parameter is the end state of the transition.
+    :param startState: The initial state of the transition.
+    :param endState: The end state of the transition.
     :param inputSymbol: The input symbol which triggers the execution of the
                         transition.
-                        The default value is `None`, which means that no symbol
+                        The default value is ``None``, which means that no symbol
                         is expected in a receiving context, and no symbol is sent
                         in a sending context. Internally,
                         `None` symbol will be replaced by an
                         :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param outputSymbols: A list of output symbols that can be expected when
                           the current transition is executed.
-                          The default value is `None`, which means that no
+                          The default value is ``None``, which means that no
                           symbol will be sent in a receiving context, and no
                           symbol is expected in a sending context.
-                          Internally, `None` symbol will be replaced by an
+                          Internally, ``None`` symbol will be replaced by an
                           :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param name: The name of the transition. The default value is `None`.
     :type startState: :class:`~netzob.Model.Grammar.States.State.State`, required
@@ -84,47 +85,75 @@ class Transition(AbstractTransition):
     :type inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, optional
     :type outputSymbols: a :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, optional
     :type name: :class:`str`, optional
-    :param inputSymbolReactionTime: The timeout value in seconds to wait for the
-                                    input value (only used in a receiving context).
-                                    The default value is None (blocking).
-    :param outputSymbolsReactionTime: A :class:`dict` containing, for each output
-                                      symbol, the timeout value in seconds to
-                                      wait for the output value (only used in a
-                                      sending context).
-                                      The default value is None (blocking).
-    :type inputSymbolReactionTime: :class:`float`, optional
-    :type outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}, optional
 
 
     The Transition class provides the following public variables:
 
     :var startState: The initial state of the transition.
     :var endState: The end state of the transition.
-    :var active: Represents the current execution status of the transition.
-                 If a transition is active, it means it has not yet finished
-                 executing it.
-    :var name: The name of the transition.
     :var inputSymbol: The input symbol is the symbol which triggers the
                       execution of the transition.
     :var outputSymbols: Output symbols that can be generated when
                         the current transition is executed.
-    :var description: description of the transition. If not explicitly set,
-                      it is generated from the input and output symbols
+    :var inputSymbolPreset: A :class:`list` of preset configurations
+                            used during specialization and abstraction
+                            of symbols emitted and received. During
+                            specialization, values in this
+                            configuration will override any field
+                            definition, constraints or relationship
+                            dependencies. During abstraction, this
+                            structure is used to validate the data of
+                            the receveived symbol. If the data does
+                            not match, we stay at the
+                            ``startState`` state. See :class:`Preset
+                            <netzob.Model.Vocabulary.Preset.Preset>`
+                            for a complete explanation of Preset
+                            usage.
+    :var outputSymbolsPreset: A :class:`list` of preset configurations
+                              used during specialization and abstraction
+                              of symbols emitted and received. During
+                              specialization, values in this
+                              configuration will override any field
+                              definition, constraints or relationship
+                              dependencies. During abstraction, this
+                              structure is used to validate the data of
+                              the receveived symbol. If the data does
+                              not match, we stay at the
+                              ``startState`` state. See :class:`Preset
+                              <netzob.Model.Vocabulary.Preset.Preset>`
+                              for a complete explanation of Preset
+                              usage.
+    :var name: The name of the transition.
     :var inputSymbolReactionTime: The timeout value in seconds to wait for the
                                   input value (only used in a receiving context).
-    :var outputSymbolsReactionTime: A :class:`dict` containing, for each output
-                                    symbol, the timeout value in seconds to
-                                    wait for the output value (only used in a
+    :var outputSymbolsReactionTime: A :class:`dict` containing, for
+                                    each output symbol, the timeout
+                                    value in seconds to wait for the
+                                    output value (only used in a
                                     sending context).
+    :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The values should be distributed between ``0.0`` and ``100.0``. The biggest values correspond to a high selection probability.
+    :var inverseInitiator: Indicates to inverse the initiator of the communication after the transition.
+    :var rate: This specifies the bandwidth in octets to respect during
+               traffic emission (should be used with :attr:`duration` parameter).
+    :var duration: This indicates for how many seconds the data is continuously
+                         written on the underlying communication channel.
+    :var description: The description of the transition. If not explicitly set,
+                      it is generated from the input and output symbol strings
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`
-    :vartype active: :class:`bool`
-    :vartype name: :class:`str`
     :vartype inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype outputSymbols: :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
-    :vartype description: :class:`str`
+    :vartype inputSymbolPreset: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+    :vartype outputSymbolsPreset: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+    :vartype name: :class:`str`
     :vartype inputSymbolReactionTime: :class:`float`
     :vartype outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
+    :vartype outputSymbolsProbabilities: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
+    :vartype inverseInitiator: :class:`bool`
+    :vartype rate: :class:`int`
+    :vartype duration: :class:`int`
+    :vartype description: :class:`str`
+
 
     The following example shows the definition of a transition `t` between
     two states, `s0` and `s1`:
@@ -160,15 +189,8 @@ class Transition(AbstractTransition):
                  startState,
                  endState,
                  inputSymbol=None,
-                 inputSymbolPresets=None,
                  outputSymbols=None,
-                 outputSymbolsPresets=None,  # type: Dict[Symbol,Dict]
-                 name=None,
-                 inputSymbolReactionTime=None,   # type: float
-                 outputSymbolsReactionTime=None,  # type: Dict[Symbol,float]
-                 inverseInitiator=False,
-                 rate=None,
-                 duration=None
+                 name=None
                  ):
         # type: (...) -> None
         super(Transition, self).__init__(Transition.TYPE,
@@ -177,41 +199,50 @@ class Transition(AbstractTransition):
                                          name,
                                          priority=10)
 
-        if outputSymbols is None:
-            outputSymbols = []
-
+        # Initialize public variables from parameters
         self.inputSymbol = inputSymbol
-        self.inputSymbolPresets = inputSymbolPresets
         self.outputSymbols = outputSymbols
-        self.outputSymbolsPresets = outputSymbolsPresets
-        self.outputSymbolProbabilities = {}  # TODO: not yet exposed in the API
-        self.inputSymbolReactionTime = inputSymbolReactionTime
-        self.outputSymbolsReactionTime = outputSymbolsReactionTime
+
+        # Initialize other public variables
+        self.inputSymbolPreset = None
+        self.outputSymbolsPreset = None
+        self.outputSymbolsProbabilities = {}
+        self.inputSymbolReactionTime = None
+        self.outputSymbolsReactionTime = None
         self.description = None
-        self.inverseInitiator = inverseInitiator
-        self.rate = rate
-        self.duration = duration
+        self.inverseInitiator = False
+        self.rate = None
+        self.duration = None
 
     @public_api
-    def clone(self):
+    def copy(self):
+        r"""Copy the current transition.
+
+        This method copies the transition object but keeps references to the
+        original callbacks and symbols.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Transition <netzob.Model.Grammar.Transitions.Transition.Transition>`
+
+        """
         transition = Transition(startState=None,
                                 endState=self.endState,
                                 inputSymbol=self.inputSymbol,
                                 outputSymbols=self.outputSymbols,
-                                name=self.name,
-                                inputSymbolReactionTime=self.inputSymbolReactionTime,
-                                outputSymbolsReactionTime=self.outputSymbolsReactionTime,
-                                inverseInitiator=self.inverseInitiator)
+                                name=self.name)
         transition._startState = self.startState
         transition.description = self.description
         transition.active = self.active
         transition.priority = self.priority
         transition.cbk_modify_symbol = self.cbk_modify_symbol
         transition.cbk_action = self.cbk_action
-        if self.inputSymbolPresets is not None:
-            transition.inputSymbolPresets = self.inputSymbolPresets.copy()
-        if self.outputSymbolsPresets is not None:
-            transition.outputSymbolsPresets = self.outputSymbolsPresets.copy()
+        if self.inputSymbolPreset is not None:
+            transition.inputSymbolPreset = self.inputSymbolPreset.copy()
+        transition.inputSymbolReactionTime = self.inputSymbolReactionTime
+        if self.outputSymbolsPreset is not None:
+            transition.outputSymbolsPreset = self.outputSymbolsPreset.copy()
+        if self.outputSymbolsReactionTime is not None:
+            transition.outputSymbolsReactionTime = self.outputSymbolsReactionTime.copy()
         transition.inverseInitiator = self.inverseInitiator
         transition.rate = self.rate
         transition.duration = self.duration
@@ -241,16 +272,16 @@ class Transition(AbstractTransition):
 
         # Retrieve the symbol to send
         symbol_to_send = self.inputSymbol
-        symbol_presets = self.inputSymbolPresets
+        symbol_preset = self.inputSymbolPreset
         actor.visit_log.append("  [+]   During transition '{}', sending input symbol '{}'".format(self.name, str(symbol_to_send)))
 
         # If a callback is defined, we can change or modify the selected symbol
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))
         for cbk in self.cbk_modify_symbol:
             self._logger.debug("[actor='{}'] A callback function is defined at transition '{}'".format(str(actor), self.name))
-            (symbol_to_send, symbol_presets) = cbk([symbol_to_send],
+            (symbol_to_send, symbol_preset) = cbk([symbol_to_send],
                                                    symbol_to_send,
-                                                   symbol_presets,
+                                                   symbol_preset,
                                                    self.startState,
                                                    actor.abstractionLayer.last_sent_symbol,
                                                    actor.abstractionLayer.last_sent_message,
@@ -267,12 +298,24 @@ class Transition(AbstractTransition):
             self._logger.debug("[actor='{}'] Nothing to write on abstraction layer (inputSymbol is an EmptySymbol)".format(str(actor)))
         else:
             try:
-                if actor.fuzz is not None and (len(actor.fuzz_states) == 0 or self.startState.name in actor.fuzz_states):
+                fuzzing_preset = None
+                if actor.fuzzing_presets is not None and (len(actor.fuzzing_states) == 0 or self.startState.name in actor.fuzzing_states):
+                    for tmp_fuzzing_preset in actor.fuzzing_presets:
+                        if tmp_fuzzing_preset.symbol == symbol_to_send:
+                            fuzzing_preset = tmp_fuzzing_preset
+                            break
+                if fuzzing_preset is not None:
                     self._logger.debug("[actor='{}'] Fuzzing activated at transition".format(str(actor)))
                     actor.visit_log.append("  [+]   During transition '{}', fuzzing activated".format(self.name))
-                    (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, fuzz=actor.fuzz, actor=actor, cbk_action=self.cbk_action)
+                    tmp_preset = Preset(symbol_to_send)
+                    if symbol_preset is not None:
+                        tmp_preset.update(fuzzing_preset)
+                        tmp_preset.update(symbol_preset)
+                    else:
+                        tmp_preset.update(fuzzing_preset)
                 else:
-                    (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, actor=actor, cbk_action=self.cbk_action)
+                    tmp_preset = symbol_preset
+                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, cbk_action=self.cbk_action)
             except socket.timeout:
                 self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
                 self.active = False
@@ -300,7 +343,7 @@ class Transition(AbstractTransition):
         # Waits for the reception of a symbol
         from netzob.Simulator.Actor import ActorStopException
         try:
-            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(self.outputSymbolsPresets, actor=actor)
+            (received_symbol, received_message, received_structure) = actor.abstractionLayer.readSymbol(self.outputSymbolsPreset)
         except ActorStopException:
             raise
         except socket.timeout:
@@ -401,7 +444,7 @@ class Transition(AbstractTransition):
         self.active = True
 
         # Pick the output symbol to emit
-        (symbol_to_send, symbol_presets) = self.__pickOutputSymbol(actor)
+        (symbol_to_send, symbol_preset) = self.__pickOutputSymbol(actor)
         if symbol_to_send is None:
             self._logger.debug("[actor='{}'] No output symbol to send, we pick an EmptySymbol as output symbol".format(str(actor)))
             symbol_to_send = EmptySymbol()
@@ -414,12 +457,24 @@ class Transition(AbstractTransition):
 
         # Emit the symbol
         try:
-            if actor.fuzz is not None and (len(actor.fuzz_states) == 0 or self.startState in actor.fuzz_states):
+            fuzzing_preset = None
+            if actor.fuzzing_presets is not None and (len(actor.fuzzing_states) == 0 or self.startState.name in actor.fuzzing_states):
+                for tmp_fuzzing_preset in actor.fuzzing_presets:
+                    if tmp_fuzzing_preset.symbol == symbol_to_send:
+                        fuzzing_preset = tmp_fuzzing_preset
+                        break
+            if fuzzing_preset is not None:
                 self._logger.debug("[actor='{}'] Fuzzing activated at transition".format(str(actor)))
                 actor.visit_log.append("  [+]   During transition '{}', fuzzing activated".format(self.name))
-                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, fuzz=actor.fuzz, actor=actor, cbk_action=self.cbk_action)
+                tmp_preset = Preset(symbol_to_send)
+                if symbol_preset is not None:
+                    tmp_preset.update(fuzzing_preset)
+                    tmp_preset.update(symbol_preset)
+                else:
+                    tmp_preset.update(fuzzing_preset)
             else:
-                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, presets=symbol_presets, actor=actor, cbk_action=self.cbk_action)
+                tmp_preset = symbol_preset
+            (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, cbk_action=self.cbk_action)
         except socket.timeout:
             self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
             self.active = False
@@ -460,11 +515,11 @@ class Transition(AbstractTransition):
         nbSymbolWithNoExplicitProbability = 0
         totalProbability = 0
         for outputSymbol in self.outputSymbols:
-            if outputSymbol not in list(self.outputSymbolProbabilities.keys()):
+            if outputSymbol not in list(self.outputSymbolsProbabilities.keys()):
                 probability = None
                 nbSymbolWithNoExplicitProbability += 1
             else:
-                probability = self.outputSymbolProbabilities[outputSymbol]
+                probability = self.outputSymbolsProbabilities[outputSymbol]
                 totalProbability += probability
             outputSymbolsWithProbability[outputSymbol] = probability
 
@@ -491,12 +546,12 @@ class Transition(AbstractTransition):
             for outputSymbolsWithNoProbability in inner
         ]
 
-        # Random selection of the symbol and its associated presets
+        # Random selection of the symbol and its associated preset
         symbol_to_send = random.choice(distribution)
-        symbol_presets = {}
-        if self.outputSymbolsPresets is not None and isinstance(self.outputSymbolsPresets, dict):
-            if symbol_to_send in self.outputSymbolsPresets:
-                symbol_presets = self.outputSymbolsPresets[symbol_to_send]
+        symbol_preset = Preset(symbol_to_send)
+        if self.outputSymbolsPreset is not None and isinstance(self.outputSymbolsPreset, dict):
+            if symbol_to_send in self.outputSymbolsPreset:
+                symbol_preset = self.outputSymbolsPreset[symbol_to_send]
 
         # Update visit log
         actor.visit_log.append("  [+]   During transition '{}', choosing output symbol '{}'".format(self.name, str(symbol_to_send)))
@@ -505,9 +560,9 @@ class Transition(AbstractTransition):
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))
         for cbk in self.cbk_modify_symbol:
             self._logger.debug("[actor='{}'] A callback function is executed at transition '{}'".format(str(actor), self.name))
-            (symbol_to_send, symbol_presets) = cbk(self.outputSymbols,
+            (symbol_to_send, symbol_preset) = cbk(self.outputSymbols,
                                                    symbol_to_send,
-                                                   symbol_presets,
+                                                   symbol_preset,
                                                    self.startState,
                                                    actor.abstractionLayer.last_sent_symbol,
                                                    actor.abstractionLayer.last_sent_message,
@@ -519,10 +574,9 @@ class Transition(AbstractTransition):
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))
 
-        return (symbol_to_send, symbol_presets)
+        return (symbol_to_send, symbol_preset)
 
-
-    ## Properties
+    # Properties
 
     @public_api
     @property
@@ -544,16 +598,15 @@ class Transition(AbstractTransition):
 
     @public_api
     @property
-    def inputSymbolPresets(self):
-        return self.__inputSymbolPresets
+    def inputSymbolPreset(self):
+        return self.__inputSymbolPreset
 
-    @inputSymbolPresets.setter  # type: ignore
-    def inputSymbolPresets(self, inputSymbolPresets):
-        self.__inputSymbolPresets = None
-        # Normalize presets
-        if inputSymbolPresets is not None:
+    @inputSymbolPreset.setter  # type: ignore
+    def inputSymbolPreset(self, inputSymbolPreset):
+        self.__inputSymbolPreset = None
+        if inputSymbolPreset is not None:
             if not isinstance(self.inputSymbol, EmptySymbol):
-                self.__inputSymbolPresets = self.inputSymbol.normalize_presets(inputSymbolPresets)
+                self.__inputSymbolPreset = inputSymbolPreset
 
     @public_api
     @property
@@ -594,36 +647,25 @@ class Transition(AbstractTransition):
 
     @public_api
     @property
-    def outputSymbolsPresets(self):
-        return self.__outputSymbolsPresets
+    def outputSymbolsPreset(self):
+        return self.__outputSymbolsPreset
 
-    @outputSymbolsPresets.setter  # type: ignore
-    def outputSymbolsPresets(self, outputSymbolsPresets):
-        self.__outputSymbolsPresets = {}
-        # Normalize presets
-        if outputSymbolsPresets is not None:
-            for outputSymbol, outputSymbolPresets in outputSymbolsPresets.items():
+    @outputSymbolsPreset.setter  # type: ignore
+    def outputSymbolsPreset(self, outputSymbolsPreset):
+        self.__outputSymbolsPreset = {}
+        if outputSymbolsPreset is not None:
+            for outputSymbol, outputSymbolPreset in outputSymbolsPreset.items():
                 if not isinstance(outputSymbol, EmptySymbol):
-                    self.__outputSymbolsPresets[outputSymbol] = outputSymbol.normalize_presets(outputSymbolPresets)
+                    self.__outputSymbolsPreset[outputSymbol] = outputSymbolPreset
 
     @public_api
     @property
-    def description(self):
-        return self._description
+    def inputSymbolReactionTime(self):
+        return self.__inputSymbolReactionTime
 
-    @description.setter  # type: ignore
-    def description(self, description):
-        if description is not None:
-            self._description = description
-        else:
-            desc = []
-            for outputSymbol in self.outputSymbols:
-                desc.append(str(outputSymbol.name))
-            if self.inputSymbol is not None:
-                inputSymbolName = self.inputSymbol.name
-            else:
-                inputSymbolName = "None"
-            self._description = "{} ({};{}{}{})".format(self.name, inputSymbolName, "{", ",".join(desc), "}")
+    @inputSymbolReactionTime.setter  # type: ignore
+    def inputSymbolReactionTime(self, inputSymbolReactionTime):
+        self.__inputSymbolReactionTime = inputSymbolReactionTime
 
     @public_api
     @property
@@ -640,17 +682,78 @@ class Transition(AbstractTransition):
                             .format(type(outputSymbolsReactionTime).__name__))
         self.__outputSymbolsReactionTime = outputSymbolsReactionTime
 
+    @public_api
+    @property
+    def outputSymbolsProbabilities(self):
+        return self.__outputSymbolsProbabilities
+
+    @outputSymbolsProbabilities.setter  # type: ignore
+    def outputSymbolsProbabilities(self, outputSymbolsProbabilities):
+        if outputSymbolsProbabilities is None:
+            outputSymbolsProbabilities = {}
+        elif not isinstance(outputSymbolsProbabilities, dict):
+            raise TypeError("outputSymbolsProbabilities should be a dict of "
+                            "Symbol and float, not {}"
+                            .format(type(outputSymbolsProbabilities).__name__))
+        self.__outputSymbolsProbabilities = outputSymbolsProbabilities
+
+    @public_api
+    @property
+    def description(self):
+        return self.__description
+
+    @description.setter  # type: ignore
+    def description(self, description):
+        if description is not None:
+            self.__description = description
+        else:
+            desc = []
+            for outputSymbol in self.outputSymbols:
+                desc.append(str(outputSymbol.name))
+            if self.inputSymbol is not None:
+                inputSymbolName = self.inputSymbol.name
+            else:
+                inputSymbolName = "None"
+            self.__description = "{} ({};{}{}{})".format(self.name, inputSymbolName, "{", ",".join(desc), "}")
+
+    @public_api
+    @property
+    def inverseInitiator(self):
+        return self.__inverseInitiator
+
+    @inverseInitiator.setter  # type: ignore
+    def inverseInitiator(self, inverseInitiator):
+        self.__inverseInitiator = inverseInitiator
+
+    @public_api
+    @property
+    def rate(self):
+        return self.__rate
+
+    @rate.setter  # type: ignore
+    def rate(self, rate):
+        self.__rate = rate
+
+    @public_api
+    @property
+    def duration(self):
+        return self.__duration
+
+    @duration.setter  # type: ignore
+    def duration(self, duration):
+        self.__duration = duration
+
 
 def _test():
     r"""
 
-    # Test clone()
+    # Test copy()
 
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> t = Transition(s0, s1, name="transition")
-    >>> t.clone()
+    >>> t.copy()
     transition
 
     """

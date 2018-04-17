@@ -59,7 +59,7 @@ class ZLibEncodingFunction(EncodingFunction):
     >>> f1 = Field(name="f1", domain=String("Data"))
     >>> f2 = Field(name="f2", domain=String("Content"))
     >>> s = Symbol(fields=[f0, f1, f2])
-    >>> s.messages = [RawMessage(s.specialize())]*3
+    >>> s.messages = [RawMessage(next(s.specialize()))]*3
     >>> print(s.str_data())
     f0           | f1     | f2       
     ------------ | ------ | ---------

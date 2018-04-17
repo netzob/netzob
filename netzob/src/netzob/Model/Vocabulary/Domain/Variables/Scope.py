@@ -65,9 +65,9 @@ class Scope(Enum):
     The available scope strategies for a variable are:
 
     * Scope.CONSTANT
+    * Scope.SESSION
     * Scope.MESSAGE (the default strategy for variables)
     * Scope.NONE
-    * Scope.SESSION
 
     Those strategies are explained below. In addition, some following
     examples are shown in order to understand how the strategies can
@@ -90,44 +90,45 @@ class Scope(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, scope=Scope.CONSTANT)
+      >>> st = String("john")
+      >>> f.domain = Data(st, scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> Symbol.abstract("john", [s], memory=m)
-      (S0, OrderedDict([('f1', b'john')]))
+      >>> s.abstract("john", memory=m)
+      OrderedDict([('f1', b'john')])
 
       The following example shows that the abstraction of a data that
-      does not correspond to the expected model returns an unknown
-      symbol:
+      does not correspond to the expected model returns an exception:
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, scope=Scope.CONSTANT)
+      >>> st = String("john")
+      >>> f.domain = Data(st, scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> Symbol.abstract("kurt", [s], memory=m)
-      (Unknown message 'kurt', OrderedDict())
+      >>> s.abstract("kurt", memory=m)
+      Traceback (most recent call last):
+      ...
+      netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'S0', cannot abstract the data: 'kurt'. Error: 'No parsing path returned while parsing 'b'kurt'''
 
       The following example shows the **specialization of constant
       data**:
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, scope=Scope.CONSTANT)
+      >>> st = String("john")
+      >>> f.domain = Data(st, scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> s.specialize(memory=m)
+      >>> next(s.specialize(memory=m))
       b'john'
-      >>> s.specialize(memory=m)
+      >>> next(s.specialize(memory=m))
       b'john'
       >>> len(str(m))
       0
 
       The following example shows that the specialization of
-      constant data raises an exception when no original value is
+      constant data raises an exception when no specific value is
       attached to the definition domain of the variable:
 
       >>> from netzob.all import *
@@ -135,10 +136,10 @@ class Scope(Enum):
       >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.CONSTANT)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> s.specialize(memory=m)
+      >>> next(s.specialize(memory=m))
       Traceback (most recent call last):
-        ...
-      Exception: Cannot specialize this symbol.
+      ...
+      StopIteration
 
 
     * **Scope.SESSION**: A persistent value carries a value, such as
@@ -159,22 +160,23 @@ class Scope(Enum):
       >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.SESSION)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> Symbol.abstract("dylan", [s], memory=m)
-      (S0, OrderedDict([('f1', b'dylan')]))
-      >>> Symbol.abstract("dylan", [s], memory=m)
-      (S0, OrderedDict([('f1', b'dylan')]))
+      >>> s.abstract("dylan", memory=m)
+      OrderedDict([('f1', b'dylan')])
+      >>> s.abstract("dylan", memory=m)
+      OrderedDict([('f1', b'dylan')])
 
       The following example shows that the abstraction of persistent
-      data that does not correspond to the expected model returns a
-      unknown symbol:
+      data that does not correspond to the expected model triggers an exception:
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
       >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.SESSION)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> Symbol.abstract("kurt", [s], memory=m)
-      (Unknown message 'kurt', OrderedDict())
+      >>> s.abstract("kurt", memory=m)
+      Traceback (most recent call last):
+      ...
+      netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'S0', cannot abstract the data: 'kurt'. Error: 'No parsing path returned while parsing 'b'kurt'''
 
 
       The following examples show the **specialization of persistent
@@ -182,11 +184,11 @@ class Scope(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, scope=Scope.SESSION)
+      >>> st = String("john")
+      >>> f.domain = Data(st, scope=Scope.SESSION)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> s.specialize(memory=m)
+      >>> next(s.specialize(memory=m))
       b'john'
       >>> len(str(m))
       0
@@ -196,12 +198,12 @@ class Scope(Enum):
       >>> f.domain = Data(String(nbChars=5), scope=Scope.SESSION)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> generated1 = s.specialize(memory=m)
+      >>> generated1 = next(s.specialize(memory=m))
       >>> len(generated1)
       5
       >>> m.hasValue(f.domain)
       True
-      >>> generated2 = s.specialize(memory=m)
+      >>> generated2 = next(s.specialize(memory=m))
       >>> len(generated2)
       5
       >>> generated1 == generated2
@@ -227,16 +229,16 @@ class Scope(Enum):
       >>> f.domain = Data(String(nbChars=(4, 10)), scope=Scope.MESSAGE)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> Symbol.abstract("john", [s], memory=m)
-      (S0, OrderedDict([('f1', b'john')]))
+      >>> s.abstract("john", memory=m)
+      OrderedDict([('f1', b'john')])
       >>> print(m)
       Data (String(nbChars=(4,10))) from field 'f1': b'john'
-      >>> Symbol.abstract("john", [s], memory=m)
-      (S0, OrderedDict([('f1', b'john')]))
+      >>> s.abstract("john", memory=m)
+      OrderedDict([('f1', b'john')])
       >>> print(m)
       Data (String(nbChars=(4,10))) from field 'f1': b'john'
-      >>> Symbol.abstract("kurt", [s], memory=m)
-      (S0, OrderedDict([('f1', b'kurt')]))
+      >>> s.abstract("kurt", memory=m)
+      OrderedDict([('f1', b'kurt')])
       >>> print(m)
       Data (String(nbChars=(4,10))) from field 'f1': b'kurt'
 
@@ -246,16 +248,16 @@ class Scope(Enum):
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
-      >>> value = String("john").value
-      >>> f.domain = Data(String(), originalValue=value, scope=Scope.MESSAGE)
+      >>> st = String("john")
+      >>> f.domain = Data(st, scope=Scope.MESSAGE)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> m.hasValue(f.domain)
       False
-      >>> generated1 = s.specialize(memory=m)
+      >>> generated1 = next(s.specialize(memory=m))
       >>> m.hasValue(f.domain)
       True
-      >>> generated2 = s.specialize(memory=m)
+      >>> generated2 = next(s.specialize(memory=m))
       >>> generated1 == generated2
       True
 
@@ -277,16 +279,16 @@ class Scope(Enum):
       >>> f.domain = Data(String(nbChars=(4, 10)), scope=Scope.NONE)
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
-      >>> Symbol.abstract("john", [s], memory=m)
-      (S0, OrderedDict([('f1', b'john')]))
+      >>> s.abstract("john", memory=m)
+      OrderedDict([('f1', b'john')])
       >>> len(m)
       0
-      >>> Symbol.abstract("john", [s], memory=m)
-      (S0, OrderedDict([('f1', b'john')]))
+      >>> s.abstract("john", memory=m)
+      OrderedDict([('f1', b'john')])
       >>> len(m)
       0
-      >>> Symbol.abstract("kurt", [s], memory=m)
-      (S0, OrderedDict([('f1', b'kurt')]))
+      >>> s.abstract("kurt", memory=m)
+      OrderedDict([('f1', b'kurt')])
       >>> len(m)
       0
 
@@ -301,7 +303,7 @@ class Scope(Enum):
       >>> m = Memory()
       >>> m.hasValue(f.domain)
       False
-      >>> generated = s.specialize(memory=m)
+      >>> generated = next(s.specialize(memory=m))
       >>> m.hasValue(f.domain)
       False
 

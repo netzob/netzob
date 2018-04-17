@@ -64,27 +64,31 @@ class String(AbstractType):
     The String constructor expects some parameters:
 
     :param value: This parameter is used to describe a domain that contains a fixed string. If None, the constructed string will accept a random sequence of character, whose size may be specified (see :attr:`nbChars` parameter).
-    :param nbChars: This parameter is used to describe a domain that contains an amount of characters. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.
+    :param nbChars: This parameter is used to describe a domain that contains an amount of characters. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 8192.
     :param encoding: The encoding of the string, such as 'ascii' or
-                    'utf-8'. Default value is 'utf-8'.
+                    'utf-8'. Default value is 'utf-8'. Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_.
     :param eos: A list defining the potential terminal characters for
                 the string, with either specific constants or pointers
                 to other fields containing the permitted terminal
                 values. Default value is an empty list, meaning there
                 is no terminal character.
+    :param default: The default value used in specialization.
     :type value: :class:`bitarray` or :class:`str`, optional
     :type nbChars: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
     :type encoding: :class:`str`, optional
     :type eos: a :class:`list` of :class:`str`, optional
+    :type default: :class:`bitarray` or :class:`str`, optional
 
     .. note::
-       :attr:`value` and :attr:`nbChars` attributes are mutually exclusive.
+       :attr:`value` and :attr:`nbChars` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
+       :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
 
     The String class provides the following public variables:
 
-    :var typeName: The name of the implemented data type.
     :var value: The current value of the instance. This value is represented
                 under the bitarray format.
     :var size: The size in bits of the expected data type defined by a tuple (min, max).
@@ -92,21 +96,19 @@ class String(AbstractType):
     :var encoding: The encoding of the current value, such as 'ascii' or 'utf-8'.
     :var eos: A list defining the potential terminal characters for
               the string.
-    :vartype typeName: :class:`str`
+    :var default: The default value used in specialization.
     :vartype value: :class:`bitarray`
     :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`
     :vartype encoding: :class:`str`
-    :type eos: a :class:`list` of :class:`str`
-
-
-    Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_.
+    :vartype eos: a :class:`list` of :class:`str`
+    :vartype default: :class:`bitarray`
 
     Strings can be either static, dynamic with fixed sizes or even
     dynamic with variable sizes.
 
 
     The creation of a String type with no parameter will create a string
-    object whose length ranges from 0 to 65535:
+    object whose length ranges from 0 to 8192:
 
     >>> from netzob.all import *
     >>> i = String()
@@ -177,13 +179,23 @@ class String(AbstractType):
     >>> s = String("abcdef", eos=["123"])
     >>> s.generate().tobytes()
     b'abcdef123'
-    >>> Field(s).specialize()
+    >>> next(Field(s).specialize())
     b'abcdef123'
 
 
     The ``eos`` attribute specifies a list of values that are used as
     potential terminal characters. Terminal characters can be a
     constant (such as ``'\n'`` in the previous example).
+
+
+    **Using a default value**
+
+    This next example shows the usage of a default value:
+
+    >>> from netzob.all import *
+    >>> t = String(nbChars=(1, 4), default="A")
+    >>> t.generate().tobytes()
+    b'A'
 
     """
 
@@ -192,15 +204,21 @@ class String(AbstractType):
                  value=None,
                  nbChars=None,
                  encoding='utf-8',
-                 eos=[],
+                 eos=None,
                  unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
-                 sign=AbstractType.defaultSign()):
+                 sign=AbstractType.defaultSign(),
+                 default=None):
         self.encoding = encoding
+        if eos is None:
+            eos = []
         self.eos = eos
 
         if value is not None and nbChars is not None:
             raise ValueError("A String should have either its value or its nbChars set, but not both")
+
+        if value is not None and default is not None:
+            raise ValueError("A String should have either its constant value or its default value set, but not both")
 
         # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):
@@ -232,6 +250,36 @@ class String(AbstractType):
                 dst_endianness=endianness,
                 dst_sign=sign)
 
+        # Convert default value to bitarray
+        if default is not None and not isinstance(default, bitarray):
+
+            # Check if value is correct, and normalize it in str object, and then in bitarray
+            if isinstance(default, bytes):
+                try:
+                    default = default.decode(self.encoding)
+                except Exception as e:
+                    raise ValueError("Input default value for the following string is incorrect: '{}'. Error: '{}'".format(default, e))
+            elif isinstance(default, str):
+                try:
+                    default.encode(self.encoding)
+                except Exception as e:
+                    raise ValueError("Input default value for the following string is incorrect: '{}'. Error: '{}'".format(default, e))
+            else:
+                raise ValueError("Unsupported input format for default value: '{}', type: '{}'".format(default, type(default)))
+
+            from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+            from netzob.Model.Vocabulary.Types.BitArray import BitArray
+            default = TypeConverter.convert(
+                default,
+                String,
+                BitArray,
+                src_unitSize=unitSize,
+                src_endianness=endianness,
+                src_sign=sign,
+                dst_unitSize=unitSize,
+                dst_endianness=endianness,
+                dst_sign=sign)
+
         # Handle string size if value is None
         if value is None:
             nbBits = self._normalizeNbChars(nbChars)
@@ -244,7 +292,8 @@ class String(AbstractType):
             nbBits,
             unitSize=unitSize,
             endianness=endianness,
-            sign=sign)
+            sign=sign,
+            default=default)
 
     def __str__(self):
         if self.value is not None:
@@ -288,7 +337,7 @@ class String(AbstractType):
         >>> ascii.typeName
         'String'
         >>> data = ascii.buildDataRepresentation()
-        >>> data.currentValue.tobytes()
+        >>> data.dataType.value.tobytes()
         b'hello john !'
         >>> print(data.dataType)
         String('hello john !')
@@ -303,7 +352,7 @@ class String(AbstractType):
         if self.value is not None and not self.eos:
             scope = Scope.CONSTANT
 
-        return Data(dataType=self, originalValue=self.value, scope=scope)
+        return Data(dataType=self, scope=scope)
 
     @public_api
     def count(self):
@@ -372,27 +421,30 @@ class String(AbstractType):
         # Generate the sufficient amount of data
         if self.value is not None:
             random_content = self.value.tobytes().decode(self.encoding)
+        elif self.default is not None:
+            random_content = self.default.tobytes().decode(self.encoding)
         else:
             random_content = ""
-        # Compare the length of the *unicode* value against the targeted size
-        while len(random_content.encode(self.encoding)) < generatedSize:
-            random_content += random.choice(permitted_characters)
 
-            # Be sure that the potential terminal characters are not present in the first part of the generated string
-            if final_character is not None:
-                while True:
-                    random_content_tmp = random_content
-                    for elt in self.eos:
-                        random_content_tmp = random_content_tmp.replace(elt, "")
-                    if len(random_content_tmp) == len(random_content):
-                        random_content = random_content_tmp
-                        break
-                    else:
-                        random_content = random_content_tmp
+            # Compare the length of the *unicode* value against the targeted size
+            while len(random_content.encode(self.encoding)) < generatedSize:
+                random_content += random.choice(permitted_characters)
+
+                # Be sure that the potential terminal characters are not present in the first part of the generated string
+                if final_character is not None:
+                    while True:
+                        random_content_tmp = random_content
+                        for elt in self.eos:
+                            random_content_tmp = random_content_tmp.replace(elt, "")
+                        if len(random_content_tmp) == len(random_content):
+                            random_content = random_content_tmp
+                            break
+                        else:
+                            random_content = random_content_tmp
 
         # Handle terminal character ('end of string')
         if final_character is not None:
-            if self.value is None:
+            if self.value is None or self.default is not None:
                 # Remove the size of the added terminal character to the original random_content, and add the final character
                 random_content = random_content[:len(random_content) - len(final_character)] + final_character
             else:
@@ -769,9 +821,9 @@ def _test(self):
     ...    String("abcd"), String(nbChars=(4, 5)),
     ... ]
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    >>> data = b''.join(f.specialize() for f in symbol.fields)
-    >>> Symbol.abstract(data, [symbol])  #doctest: +ELLIPSIS
-    (Symbol, OrderedDict([('0', b'abcd'), ('1', ...)]))
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    OrderedDict([('0', b'abcd'), ('1', ...)])
 
 
     ## String with terminal character as a constant (specialization and abstraction)
@@ -784,13 +836,14 @@ def _test(self):
     >>> data[-1:] == b'A'
     True
     >>> symbol = Symbol([Field(s)])
-    >>> (symbol1, structured_data) = Symbol.abstract(data, [symbol])
-    >>> symbol1 == symbol
-    True
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    OrderedDict([('Field', b'...A')])
     >>> data = data[:-1] + b'\t'
-    >>> (symbol2, structured_data) = Symbol.abstract(data, [symbol])
-    >>> isinstance(symbol2, UnknownSymbol)
-    True
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'b'...\t''. Error: 'No parsing path returned while parsing 'b'...\t'''
+
 
 
     ## String with terminal character as a list of constants (specialization and abstraction)
@@ -813,13 +866,14 @@ def _test(self):
     >>> data[-1:] == b'A' or data[-1:] == b'B'
     True
     >>> symbol = Symbol([Field(s)])
-    >>> (symbol1, structured_data) = Symbol.abstract(data, [symbol])
-    >>> symbol1 == symbol
-    True
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    OrderedDict([('Field', ...)])
     >>> data = data[:-1] + b'\t'
-    >>> (symbol2, structured_data) = Symbol.abstract(data, [symbol])
-    >>> isinstance(symbol2, UnknownSymbol)
-    True
+    >>> structured_data = symbol.abstract(data)  #doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: .... Error: 'No parsing path returned while parsing ...'
+
 
 
     ## String with terminal character as a mulitple characters constant (specialization and abstraction)
@@ -832,13 +886,13 @@ def _test(self):
     >>> data[-2:] == b'\r\n'
     True
     >>> symbol = Symbol([Field(s)])
-    >>> (symbol1, structured_data) = Symbol.abstract(data, [symbol])
-    >>> symbol1 == symbol
-    True
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    OrderedDict([('Field', b'...\r\n')])
     >>> data = data[:-2] + b'\r\t'
-    >>> (symbol2, structured_data) = Symbol.abstract(data, [symbol])
-    >>> isinstance(symbol2, UnknownSymbol)
-    True
+    >>> symbol.abstract(data)  #doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'b'...\r\t''. Error: 'No parsing path returned while parsing 'b'...\r\t'''
 
 
     # Verify that you cannot create a String with a value AND an nbChars:

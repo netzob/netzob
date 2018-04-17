@@ -36,6 +36,7 @@
 #+---------------------------------------------------------------------------+
 import random
 from typing import Callable, List
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -50,6 +51,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import SpecializingPath
+from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
 
 
 altCbkType = Callable[[GenericPath, List[AbstractVariable]], AbstractVariable]
@@ -68,36 +70,38 @@ class Alt(AbstractVariableNode):
 
     :param children: The set of variable elements permitted in the
                      alternative. The default is None.
-    :param callback: The callback function should return an integer used to
-                     determine the child index to select. The default is None.
+    :param callback: The callback function that may be used to determine the child index to select. The default is None.
     :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
-    :type callback: callable function taking two positional arguments returning
-                    an integer, optional
+    :type callback: :class:`Callable <collections.abc.Callable>`, optional
 
     The Alt class provides the following public variables:
 
     :var children: The sorted typed list of children attached to the variable node.
-    :var varType: The type of the variable (Read-only).
+    :var callback: The callback function that may be used to determine the child index to select.
     :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
-    :vartype varType: :class:`str`
+    :vartype callback: :class:`Callable <collections.abc.Callable>`
 
 
     **Callback prototype**
 
-    A callback function can be used to determine the child index to select.
-    The callback function has the following prototype:
+    The callback function that can be used to determine the child
+    index to select has the following prototype:
 
-    .. function:: callback(path, children)
+    .. function:: cbk_child_selection(path, children)
        :noindex:
 
        :param path: data structure that allows access to the values of the
                     :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
                     elements.
-       :type path: object, required
+       :type path: object
        :param children: children of the
                         :class:`~netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt`
                         variable.
-       :type children: ~typing.List[~netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt], required
+       :type children: ~typing.List[~netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt]
+
+       :return: The callback function should return an integer used to determine
+                the child index to select.
+       :rtype: :class:`int`
 
     Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     values is done through the ``path``, thanks to its methods
@@ -111,6 +115,8 @@ class Alt(AbstractVariableNode):
       to the value specialized or parsed for the child
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
+
+    **Alt examples**
 
     The following code denotes an alternate object that
     accepts either the string "filename1.txt" or the string
@@ -126,8 +132,6 @@ class Alt(AbstractVariableNode):
 
     >>> from netzob.all import *
     >>> domain = Alt([Raw(), String()])
-    >>> domain.varType
-    'Alt'
     >>> print(domain.children[0].dataType)
     Raw(nbBytes=(0,8192))
     >>> print(domain.children[1].dataType)
@@ -140,11 +144,11 @@ class Alt(AbstractVariableNode):
     ...    return -1
     >>> f = Field(Alt([String(_) for _ in "abc"], callback=cbk), "alt")
     >>> sym = Symbol([f])
-    >>> data = sym.specialize()
+    >>> data = next(sym.specialize())
     >>> print(data)
     b'c'
-    >>> Symbol.abstract(data, [sym])
-    (Symbol, OrderedDict([('alt', b'c')]))
+    >>> sym.abstract(data)
+    OrderedDict([('alt', b'c')])
 
 
     .. ifconfig:: scope in ('netzob')
@@ -160,29 +164,39 @@ class Alt(AbstractVariableNode):
        >>> f0 = Field(Alt([v0, v1]), name='f0')
        >>> s = Symbol([f0])
        >>> data = "john"
-       >>> Symbol.abstract(data, [s])
-       (Symbol, OrderedDict([('f0', b'john')]))
+       >>> s.abstract(data)
+       OrderedDict([('f0', b'john')])
        >>> data = "kurt"
-       >>> Symbol.abstract(data, [s])
-       (Symbol, OrderedDict([('f0', b'kurt')]))
+       >>> s.abstract(data)
+       OrderedDict([('f0', b'kurt')])
 
        In the following example, an Alternate variable is defined. A
        message that does not correspond to the expected model is then
-       parsed, thus the returned symbol is unknown:
+       parsed, thus an exception is returned:
 
        >>> data = "nothing"
-       >>> Symbol.abstract(data, [s])
-       (Unknown message 'nothing', OrderedDict())
+       >>> s.abstract(data)
+       Traceback (most recent call last):
+       ...
+       netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol', cannot abstract the data: 'nothing'. Error: 'No parsing path returned while parsing 'b'nothing'''
 
     """
 
     @public_api
-    def __init__(self, children=None, callback=None):
-        super(Alt, self).__init__(self.__class__.__name__, children)
+    def __init__(self, children=None, callback=None, name=None):
+        super(Alt, self).__init__(self.__class__.__name__, children=children, name=name)
         self._callback = callback  # type: altCbkType
 
     @public_api
-    def clone(self, map_objects={}):
+    def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Alt <netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt>`
+
+        """
+        if map_objects is None:
+            map_objects = {}
         if self in map_objects:
             return map_objects[self]
 
@@ -194,7 +208,7 @@ class Alt(AbstractVariableNode):
             if child in map_objects.keys():
                 new_children.append(map_objects[child])
             else:
-                new_child = child.clone(map_objects)
+                new_child = child.copy(map_objects)
                 new_children.append(new_child)
 
         new_alt.children = new_children
@@ -219,7 +233,7 @@ class Alt(AbstractVariableNode):
         # create a path for each child
         if len(self.children) > 1:
             for child in self.children[1:]:
-                newParsingPath = parsingPath.clone()
+                newParsingPath = parsingPath.copy()
                 newParsingPath.assignData(dataToParse.copy(), child)
                 parserPaths.append(newParsingPath)
 
@@ -241,10 +255,10 @@ class Alt(AbstractVariableNode):
         self._logger.debug("End of parsing of Alt variable")
 
     @typeCheck(SpecializingPath)
-    def specialize(self, specializingPath, fuzz=None):
+    def specialize(self, specializingPath, preset=None):
         """Specializes an Alt"""
 
-        from netzob.Fuzzing.Fuzz import MaxFuzzingException
+        from netzob.Fuzzing.Mutator import MaxFuzzingException
 
         if specializingPath is None:
             raise Exception("SpecializingPath cannot be None")
@@ -252,13 +266,11 @@ class Alt(AbstractVariableNode):
         if len(self.children) == 0:
             raise Exception("Cannot specialize ALT if its has no children")
 
-        specializingPaths = []
-
         # If we are in a fuzzing mode
-        if fuzz is not None and fuzz.get(self) is not None:
+        if preset is not None and preset.get(self) is not None:
 
             # Retrieve the mutator
-            mutator = fuzz.get(self)
+            mutator = preset.get(self)
 
             try:
                 # Chose the child according to the integer returned by the mutator
@@ -266,6 +278,17 @@ class Alt(AbstractVariableNode):
             except MaxFuzzingException:
                 self._logger.debug("Maximum mutation counter reached")
                 return
+
+            if mutator.mode == FuzzingMode.FIXED:
+                while True:
+                    if isinstance(generated_value, bitarray):
+                        value = generated_value
+                    else:
+                        value = bitarray(endian='big')
+                        value.frombytes(generated_value)
+
+                    specializingPath.addResult(self, value)
+                    yield specializingPath
 
             if 0 <= generated_value < len(self.children):
                 child = self.children[generated_value]
@@ -284,9 +307,9 @@ class Alt(AbstractVariableNode):
         else:
             child = random.choice(self.children)
 
-        newSpecializingPath = specializingPath.clone()
+        newSpecializingPath = specializingPath.copy()
 
-        for childSpecializingPath in child.specialize(newSpecializingPath, fuzz=fuzz):
+        for childSpecializingPath in child.specialize(newSpecializingPath, preset=preset):
             value = childSpecializingPath.getData(child)
             self._logger.debug("Generated value for {}: {} ({})".format(self, value, id(self)))
             childSpecializingPath.addResult(self, value)
@@ -314,7 +337,6 @@ def _test_alt(self):
     r"""
 
     >>> from netzob.all import *
-    >>> Conf.seed = 0
     >>> Conf.apply()
 
     Here is an example with an Alt variable:
@@ -338,22 +360,22 @@ def _test_alt(self):
     >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'\x01B'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'\x01'), ('f1', b'B')]))
+    b'\x01C'
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x01'), ('f1', b'C')])
 
     Size field targeting a alt variable, with size field on the right:
 
     >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v2, name='f2'), Field(v1, name='f1')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'\x01B'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'\x01'), ('f1', b'B')]))
+    b'\x01A'
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x01'), ('f1', b'A')])
 
 
     ## Size field on the left
@@ -363,22 +385,22 @@ def _test_alt(self):
     >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'A\x01'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'A'), ('f2', b'\x01')]))
+    b'B\x01'
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'B'), ('f2', b'\x01')])
 
     Size field targeting a alt variable, with size field on the left:
 
     >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Size(v1, dataType=uint8())
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'B\x01'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'B'), ('f2', b'\x01')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'B'), ('f2', b'\x01')])
 
 
     ## Value field on the right
@@ -388,22 +410,22 @@ def _test_alt(self):
     >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'CC'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'C'), ('f1', b'C')]))
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'C'), ('f1', b'C')])
 
     Value field targeting a alt variable, with value field on the right:
 
     >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v2, name='f2'), Field(v1, name='f1')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'BB'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f2', b'B'), ('f1', b'B')]))
+    b'AA'
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'A'), ('f1', b'A')])
 
 
     ## Value field on the left
@@ -413,21 +435,21 @@ def _test_alt(self):
     >>> f1 = Field(Alt(["A", "B", "C"]), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
-    b'BB'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'B'), ('f2', b'B')]))
+    b'AA'
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'A'), ('f2', b'A')])
 
     Value field targeting a alt variable, with value field on the left:
 
     >>> v1 = Alt(["A", "B", "C"])
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
-    >>> d = s.specialize()
+    >>> d = next(s.specialize())
     >>> d
     b'BB'
-    >>> Symbol.abstract(d, [s])
-    (Symbol, OrderedDict([('f1', b'B'), ('f2', b'B')]))
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'B'), ('f2', b'B')])
 
     """

@@ -77,6 +77,7 @@ from netzob.Inference.Vocabulary import EntropyMeasurement
 # from netzob.Inference.Grammar.Angluin import Angluin
 from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
 from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAutomataFactory
+from netzob.Inference.Grammar.AutomataFactories.OneStateAutomataFactory import OneStateAutomataFactory
 
 from netzob.Fuzzing.Mutator import Mutator
 from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
@@ -85,6 +86,7 @@ from netzob.Fuzzing.Mutators.AltMutator import AltMutator
 from netzob.Fuzzing.Mutators.AutomataMutator import AutomataMutator
 from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
 from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+from netzob.Fuzzing.Mutators.RawMutator import RawMutator
 from netzob.Fuzzing.Mutators.IPv4Mutator import IPv4Mutator
 from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator
 from netzob.Fuzzing.Mutators.OptMutator import OptMutator
@@ -215,10 +217,13 @@ def getSuite():
         CloseChannelTransition.__module__,
         AbstractionLayer.__module__,
         Automata.__module__,
+        OneStateAutomataFactory.__module__,
+        ChainedStatesAutomataFactory.__module__,
+        PTAAutomataFactory.__module__,
 
         # Modules related to fuzzing
         # --------------------------
-        Fuzz.__module__,
+        Preset.__module__,
         Mutator.__module__,
         DomainMutator.__module__,
         AltMutator.__module__,
@@ -232,8 +237,11 @@ def getSuite():
         XorShiftGenerator.__module__,
         GeneratorFactory.__module__,
         IntegerMutator.__module__,
+        RawMutator.__module__,
         BitArrayMutator.__module__,
         StringMutator.__module__,
+        IPv4Mutator.__module__,
+        TimestampMutator.__module__,
 
         # Modules related to the protocol simulation
         # ------------------------------------------

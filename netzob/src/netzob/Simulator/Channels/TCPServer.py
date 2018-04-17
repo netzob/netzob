@@ -51,12 +51,8 @@ from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 @NetzobLogger
 class TCPServer(AbstractChannel):
-    """A TCPServer is a communication channel. It provides a
-    server listening to a specified IP:Port over a TCP socket.
-
-    When the actor executes an OpenChannelTransition, it calls the open
-    method on the TCP server which starts the server. The objective of
-    the server is to wait for the client to connect.
+    """A TCPServer is a communication channel. It provides a server
+    listening to a specified IP:Port over a TCP socket.
 
     The TCPServer constructor expects some parameters:
 
@@ -101,10 +97,11 @@ class TCPServer(AbstractChannel):
        >>> automata = Automata(s0, [symbol])
 
        >>> channel = TCPServer(localIP="127.0.0.1", localPort=8886, timeout=1.)
-       >>> server = Actor(automata = automata, initiator = False, channel=channel)
+       >>> server = Actor(automata = automata, channel=channel)
+       >>> server.initiator = False
 
        >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8886, timeout=1.)
-       >>> client = Actor(automata = automata, initiator = True, channel=channel)
+       >>> client = Actor(automata = automata, channel=channel)
 
        >>> server.start()
        >>> client.start()

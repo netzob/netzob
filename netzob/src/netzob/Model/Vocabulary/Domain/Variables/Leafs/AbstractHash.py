@@ -101,7 +101,15 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
                                            name=name)
 
     @public_api
-    def clone(self, map_objects={}):
+    def copy(self, map_objects=None):
+        """Copy the current object as well as all its dependencies.
+
+        :return: A new object of the same type.
+        :rtype: :class:`AbstractHash <netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractHash.AbstractHash>`
+
+        """
+        if map_objects is None:
+            map_objects = {}
         if self in map_objects:
             return map_objects[self]
 
@@ -113,7 +121,7 @@ class AbstractHash(AbstractRelationVariableLeaf, metaclass=abc.ABCMeta):
             if target in map_objects.keys():
                 new_targets.append(map_objects[target])
             else:
-                new_target = target.clone(map_objects)
+                new_target = target.copy(map_objects)
                 new_targets.append(new_target)
 
         new_hash.targets = new_targets

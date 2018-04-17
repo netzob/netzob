@@ -31,7 +31,6 @@
 import os
 import subprocess
 import tempfile
-import copy
 
 #+----------------------------------------------
 #| Related third party imports
@@ -51,26 +50,24 @@ from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAut
 
 @NetzobLogger
 class Automata(object):
-    """Class which describes an automaton (of a grammar) of a protocol.
+    """Class which describes an automaton (i.e. state machine) of a
+    protocol. The underlying structure of the automaton is a Mealy
+    machine (cf. https://en.wikipedia.org/wiki/Mealy_machine).
 
     The Automata constructor expects some parameters:
 
-    :param initialState: This parameter is the initial state of the automaton.
-    :param vocabulary: This parameter is the list of permitted symbols for every transition of the automaton.
+    :param initialState: The initial state of the automaton.
+    :param symbols: The list of permitted symbols for every transition of the automaton.
     :type initialState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
-    :type vocabulary: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
-
-    The underlying structure of the automaton in the form of an SMMDT
-    (i.e. Stochastic Mealy Machine with Deterministic Transitions),
-    which is a Mealy machine (cf. https://en.wikipedia.org/wiki/Mealy_machine).
+    :type symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`, required
 
 
     The Automata class provides the following public variables:
 
     :var initialState: The initial state of the automaton.
-    :var vocabulary: The list of permitted symbols for every transition of the automaton.
+    :var symbols: The list of permitted symbols for every transition of the automaton.
     :vartype initialState: :class:`State <netzob.Model.Grammar.States.State.State>`
-    :vartype vocabulary: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+    :vartype symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
 
 
     The following example shows the definition of an automaton with
@@ -97,21 +94,27 @@ class Automata(object):
 
     @public_api
     @typeCheck(State, list)
-    def __init__(self, initialState, vocabulary):
-        self.initialState = initialState
-        self.vocabulary = vocabulary  # A list of symbols
+    def __init__(self, initialState, symbols):
 
-        self.cbk_read_symbol_timeout = None
-        self.cbk_read_unexpected_symbol = None
-        self.cbk_read_unknown_symbol = None
+        # Initialize public variables from parameters
+        self.initialState = initialState
+        self.symbols = symbols  # A list of symbols accepted by the automaton
+
+        # Initialize local variables
+        self.cbk_read_symbol_timeout = None     # list of callbacks
+        self.cbk_read_unexpected_symbol = None  # list of callbacks
+        self.cbk_read_unknown_symbol = None     # list of callbacks
 
     @public_api
-    def clone(self):
-        r"""Clone the current automaton.
+    def copy(self):
+        r"""Copy the current automaton.
 
-        This method clones the states and transitions of the
+        This method copies the states and transitions of the
         automaton, but keeps references to the original callbacks and
         symbols.
+
+        :return: A new object of the same type.
+        :rtype: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
 
         >>> # Creation of some states and transitions
         >>> from netzob.all import *
@@ -125,7 +128,7 @@ class Automata(object):
         >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="close transition")
         >>> # Creation of the automata
         >>> automata = Automata(s0, [inputSymbol, outputSymbol])
-        >>> automata_bis = automata.clone()
+        >>> automata_bis = automata.copy()
 
         """
 
@@ -135,30 +138,30 @@ class Automata(object):
             new_transitions = []
             for transition in state.transitions:
 
-                new_transition = transition.clone()
+                new_transition = transition.copy()
                 new_transitions.append(new_transition)
 
                 # Handle startState
                 if transition.startState in map_new_states.keys():
                     new_transition._startState = map_new_states[transition.startState]
                 else:
-                    new_transition._startState = transition.startState.clone()
+                    new_transition._startState = transition.startState.copy()
                     map_new_states[transition.startState] = new_transition.startState
 
                 # Handle endState
                 if transition.endState in map_new_states.keys():
                     new_transition.endState = map_new_states[transition.endState]
                 else:
-                    new_transition.endState = transition.endState.clone()
+                    new_transition.endState = transition.endState.copy()
                     map_new_states[transition.endState] = new_transition.endState
 
             if state in map_new_states.keys():
                 map_new_states[state].transitions = new_transitions
             else:
-                map_new_states[state] = state.clone()
+                map_new_states[state] = state.copy()
                 map_new_states[state].transitions = new_transitions
 
-        automata = Automata(map_new_states[self.initialState], self.vocabulary)
+        automata = Automata(map_new_states[self.initialState], self.symbols)
         automata.cbk_read_symbol_timeout = self.cbk_read_symbol_timeout
         automata.cbk_read_unexpected_symbol = self.cbk_read_unexpected_symbol
         automata.cbk_read_unknown_symbol = self.cbk_read_unknown_symbol
@@ -168,6 +171,10 @@ class Automata(object):
     @public_api
     def generateASCII(self):
         """Render the ASCII representation of the automaton.
+
+        :return: A string containing an ASCII representation of the automaton.
+        :rtype: :class:`str`
+
         """
 
         f = tempfile.NamedTemporaryFile(delete=False)
@@ -192,6 +199,9 @@ class Automata(object):
     @public_api
     def generateDotCode(self):
         """Generates the dot code representing the automaton.
+
+        :return: A string containing a dot code representation of the automaton.
+        :rtype: :class:`str`
 
         >>> # Create some states and transitions
         >>> from netzob.all import *
@@ -549,29 +559,6 @@ class Automata(object):
         return PTAAutomataFactory.generate(abstractSessions, symbolList)
 
     @public_api
-    @property
-    def initialState(self):
-        return self.__initialState
-
-    @initialState.setter  # type: ignore
-    @typeCheck(State)
-    def initialState(self, initialState):
-        if initialState is None:
-            raise TypeError("AbstractionLayer cannot be None")
-        self.__initialState = initialState
-
-    @public_api
-    @property
-    def vocabulary(self):
-        return self.__vocabulary
-
-    @vocabulary.setter  # type: ignore
-    @typeCheck(list)
-    def vocabulary(self, vocabulary):
-        self.__vocabulary = vocabulary
-
-
-    @public_api
     def set_cbk_read_symbol_timeout(self, cbk_method, states=None):
         """Function called to handle cases where a timeout appears when
         waiting for a symbol. For a server, this symbol would
@@ -583,7 +570,7 @@ class Automata(object):
         :param cbk_method: A function used to handle the selection of the next
                            state when no symbol is received after the timeout
                            has expired.
-        :type cbk_method: ~typing.Callable, required
+        :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
 
         :param states: A list of states on which the callback function should apply.
                        If no states are specified, the callback function is
@@ -592,7 +579,8 @@ class Automata(object):
 
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
-        :attr:`cbk_method` should have the following prototype:
+        The callback function that can be used in the
+        :attr:`cbk_method` parameter has the following prototype:
 
         .. function:: cbk_method(current_state, current_transition=None)
            :noindex:
@@ -608,10 +596,11 @@ class Automata(object):
              in a server context, where no transition has been initiated.
            :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition
 
-           :return:
-             The callback function should return the next :class:`~netzob.Model.Grammar.States.State.State`.
-             For example, to stay at the same state, the callback function
-             would have to return the :attr:`current_state` value.
+           :return: The callback function should return the next
+                    state.  For example, to stay at the same state,
+                    the callback function would have to return the
+                    :attr:`current_state` value.
+           :rtype: :class:`~netzob.Model.Grammar.States.State.State`
 
         """
         if not callable(cbk_method):
@@ -631,7 +620,7 @@ class Automata(object):
 
         :param cbk_method: A function used to handle the selection of the next
                            state when a unexpected symbol is received.
-        :type cbk_method: ~typing.Callable, required
+        :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
 
         :param states: A list of states on which the callback function should apply.
                        If no states are specified, the callback function is
@@ -640,7 +629,8 @@ class Automata(object):
 
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
-        :attr:`cbk_method` should have the following prototype:
+        The callback function that can be used in the
+        :attr:`cbk_method` parameter has the following prototype:
 
         .. function:: cbk_method(current_state, current_transition=None,\
                                  received_symbol=None, received_message=None)
@@ -665,11 +655,11 @@ class Automata(object):
              Corresponds to the received raw message.
            :type current_message: ~netzob.Model.Vocabulary.Messages.RawMessage.RawMessage
 
-           :return:
-             The callback function should return the next state.
-             For example, to stay at the same state, the callback function
-             would have to return the :attr:`current_state` value.
-           :rtype: ~netzob.Model.Grammar.States.State.State
+           :return: The callback function should return the next
+                    state.  For example, to stay at the same state,
+                    the callback function would have to return the
+                    :attr:`current_state` value.
+           :rtype: :class:`~netzob.Model.Grammar.States.State.State`
 
         """
         if not callable(cbk_method):
@@ -689,7 +679,7 @@ class Automata(object):
 
         :param cbk_method: A callable function used to handle the selection of
                            the next state when an unknown symbol is received.
-        :type cbk_method: ~typing.Callback, required
+        :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
 
         :param states: A list of states on which the callback function should apply.
                        If no states are specified, the callback function is
@@ -698,7 +688,8 @@ class Automata(object):
 
         :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
 
-        :attr:`cbk_method` function should have the following prototype:
+        The callback function that can be used in the
+        :attr:`cbk_method` parameter has the following prototype:
 
         .. function:: cbk_method(current_state, current_transition=None,\
                                  received_symbol=None, received_message=None)
@@ -723,13 +714,38 @@ class Automata(object):
              Corresponds to the received raw message.
            :type received_message: ~netzob.Model.Vocabulary.Messages.RawMessage.RawMessage
 
-        The callback function should return the next state
-        (:class:`~netzob.Model.Grammar.States.State.State`). For
-        example, to stay at the same state, the callback function
-        would have to return the ``current_state`` value.
+           :return: The callback function should return the next
+                    state.  For example, to stay at the same state,
+                    the callback function would have to return the
+                    :attr:`current_state` value.
+           :rtype: :class:`~netzob.Model.Grammar.States.State.State`
 
         """
         if not callable(cbk_method):
             raise TypeError("'cbk_method' should be a callable function")
 
         self.cbk_read_unknown_symbol = cbk_method
+
+    ## Public properties ##
+
+    @public_api
+    @property
+    def initialState(self):
+        return self.__initialState
+
+    @initialState.setter  # type: ignore
+    @typeCheck(State)
+    def initialState(self, initialState):
+        if initialState is None:
+            raise TypeError("AbstractionLayer cannot be None")
+        self.__initialState = initialState
+
+    @public_api
+    @property
+    def symbols(self):
+        return self.__symbols
+
+    @symbols.setter  # type: ignore
+    @typeCheck(list)
+    def symbols(self, symbols):
+        self.__symbols = symbols

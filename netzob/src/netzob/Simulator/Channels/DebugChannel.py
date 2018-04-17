@@ -70,7 +70,7 @@ class DebugChannel(AbstractChannel):
     >>> client = DebugChannel("/dev/null")
     >>> symbol = Symbol([Field("Hello everyone!")])
     >>> with client:
-    ...     client.write(symbol.specialize())
+    ...     client.write(next(symbol.specialize()))
     18
     """
 
