@@ -132,11 +132,11 @@ class Actor(Thread):
        :noindex:
 
        :param data: contains the current data received on the communication channel.
-       :type data: :class:`bytes`, required
+       :type data: :class:`bytes`
 
        :return: The callback function should return a :class:`bool`
                 telling if the current actor is concerned by the
-                received data.
+                received data (should be set to ``True`` in such case).
        :rtype: :class:`bool`
 
 
