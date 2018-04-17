@@ -86,11 +86,11 @@ class HexaString(AbstractType):
     >>> from netzob.all import *
     >>> i = HexaString()
     >>> len(i.generate().tobytes())
-    6312
+    534
     >>> len(i.generate().tobytes())
-    4487
+    6625
     >>> len(i.generate().tobytes())
-    7335
+    1458
 
     The following example shows how to define a hexastring object with
     a constant value, and the use of the generation method to produce

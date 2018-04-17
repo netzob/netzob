@@ -47,7 +47,7 @@ from enum import Enum
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import public_api
 from netzob.Common.Utils.Decorators import NetzobLogger
-
+from netzob.conf import Conf
 
 @public_api
 class FuzzingMode(Enum):
@@ -63,7 +63,7 @@ class Mutator(metaclass=abc.ABCMeta):
 
     The Mutator constructor expects some parameters:
 
-    :param seed: The initial seed value of the mutator. Default value is :attr:`SEED_DEFAULT` = 10.
+    :param seed: The initial seed value of the mutator. Default value is :attr:`SEED_DEFAULT` = Conf.seed.
     :type seed: :class:`int`
 
     The Mutator class provides the following public variables:
@@ -76,7 +76,7 @@ class Mutator(metaclass=abc.ABCMeta):
     """
 
     # Class constants
-    SEED_DEFAULT = 10  #: the default seed value
+    SEED_DEFAULT = Conf.seed  #: the default seed value
 
     def __init__(self,
                  generator='xorshift',

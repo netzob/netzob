@@ -88,11 +88,11 @@ class BitArray(AbstractType):
     >>> from netzob.all import *
     >>> i = BitArray()
     >>> len(i.generate().tobytes())
-    6312
+    534
     >>> len(i.generate().tobytes())
-    4487
+    6625
     >>> len(i.generate().tobytes())
-    7335
+    1458
 
     The following example shows how to define a BitArray
     containing a fixed constant.
