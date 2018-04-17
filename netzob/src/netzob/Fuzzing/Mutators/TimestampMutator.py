@@ -325,11 +325,11 @@ def _test_fixed():
     >>> preset[f1] = my_callable
     >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
-    b'B'
-    >>> next(messages_gen)
-    b'B'
+    b'C'
     >>> next(messages_gen)
     b'A'
+    >>> next(messages_gen)
+    b'B'
 
 
     **Fixing the value of a field through its name**

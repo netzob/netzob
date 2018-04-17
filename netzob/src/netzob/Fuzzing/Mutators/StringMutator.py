@@ -412,11 +412,11 @@ def _test_fixed():
     >>> preset[f2_1] = b'\x41'
     >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
-    b'\rA5'
+    b'SA,'
     >>> next(messages_gen)
-    b'\rA$'
+    b'SAq'
     >>> next(messages_gen)
-    b'\rAP'
+    b'SA!'
 
 
     **Fixing the value of a field that contains sub-fields**
@@ -448,11 +448,11 @@ def _test_fixed():
     >>> preset[v1] = b'\x41'
     >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
-    b'AZ'
+    b'A@'
     >>> next(messages_gen)
-    b'A-'
+    b'A4'
     >>> next(messages_gen)
-    b'A#'
+    b'AF'
 
 
     **Fixing the value of a node variable**
@@ -529,9 +529,9 @@ def _test_fixed():
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
-    b'B'
-    >>> next(messages_gen)
     b'A'
+    >>> next(messages_gen)
+    b'C'
 
 
     **Fixing the value of a field through its name**
@@ -562,11 +562,11 @@ def _test_fixed():
     >>> preset['v1'] = b'\x41\x42\x43'
     >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
-    b'ABC<'
+    b'ABC5'
     >>> next(messages_gen)
-    b"ABC'"
+    b'ABCh'
     >>> next(messages_gen)
-    b'ABCD'
+    b'ABCM'
 
 
     **Fixing the value of a variable node through its name**

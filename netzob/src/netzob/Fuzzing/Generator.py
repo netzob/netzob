@@ -51,7 +51,7 @@ class Generator(collections.abc.Iterator):
     """Generates values. Abstract class.
     """
 
-    def __init__(self, seed=0):
+    def __init__(self, seed=10):
         self.seed = seed
         self._reset_iterator()
 

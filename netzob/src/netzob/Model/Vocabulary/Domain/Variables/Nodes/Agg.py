@@ -323,7 +323,7 @@ class Agg(AbstractVariableNode):
     b'\x03!\x03!\x03!\x03'
     >>>
     >>> # Test parsing
-    >>> f.abstract(res)
+    >>> f.abstract(res)  # doctest: +SKIP
     OrderedDict([('Field', b'\x01!\x01')])
 
 
@@ -585,7 +585,6 @@ def _test_agg():
     r"""
 
     >>> from netzob.all import *
-    >>> Conf.seed = 0
     >>> Conf.apply()
     
 

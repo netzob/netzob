@@ -337,7 +337,6 @@ def _test_alt(self):
     r"""
 
     >>> from netzob.all import *
-    >>> Conf.seed = 0
     >>> Conf.apply()
 
     Here is an example with an Alt variable:
@@ -363,9 +362,9 @@ def _test_alt(self):
     >>> s = Symbol([f2, f1])
     >>> d = next(s.specialize())
     >>> d
-    b'\x01B'
+    b'\x01C'
     >>> s.abstract(d)
-    OrderedDict([('f2', b'\x01'), ('f1', b'B')])
+    OrderedDict([('f2', b'\x01'), ('f1', b'C')])
 
     Size field targeting a alt variable, with size field on the right:
 
@@ -374,9 +373,9 @@ def _test_alt(self):
     >>> s = Symbol([Field(v2, name='f2'), Field(v1, name='f1')])
     >>> d = next(s.specialize())
     >>> d
-    b'\x01B'
+    b'\x01A'
     >>> s.abstract(d)
-    OrderedDict([('f2', b'\x01'), ('f1', b'B')])
+    OrderedDict([('f2', b'\x01'), ('f1', b'A')])
 
 
     ## Size field on the left
@@ -388,9 +387,9 @@ def _test_alt(self):
     >>> s = Symbol([f1, f2])
     >>> d = next(s.specialize())
     >>> d
-    b'A\x01'
+    b'B\x01'
     >>> s.abstract(d)
-    OrderedDict([('f1', b'A'), ('f2', b'\x01')])
+    OrderedDict([('f1', b'B'), ('f2', b'\x01')])
 
     Size field targeting a alt variable, with size field on the left:
 
@@ -424,9 +423,9 @@ def _test_alt(self):
     >>> s = Symbol([Field(v2, name='f2'), Field(v1, name='f1')])
     >>> d = next(s.specialize())
     >>> d
-    b'BB'
+    b'AA'
     >>> s.abstract(d)
-    OrderedDict([('f2', b'B'), ('f1', b'B')])
+    OrderedDict([('f2', b'A'), ('f1', b'A')])
 
 
     ## Value field on the left
@@ -438,9 +437,9 @@ def _test_alt(self):
     >>> s = Symbol([f1, f2])
     >>> d = next(s.specialize())
     >>> d
-    b'BB'
+    b'AA'
     >>> s.abstract(d)
-    OrderedDict([('f1', b'B'), ('f2', b'B')])
+    OrderedDict([('f1', b'A'), ('f2', b'A')])
 
     Value field targeting a alt variable, with value field on the left:
 

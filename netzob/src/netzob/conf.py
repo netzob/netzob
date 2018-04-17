@@ -32,8 +32,10 @@ import random
 class Conf(object):
     """Configuration variables.
     """
-    seed = 10  ## Seed for random number generation
-
+    # Seed for random number generation (should be different from 0,
+    # as it is incompatible with the xorshift random generator used
+    # for fuzzing purpose)
+    seed = 10
 
     @staticmethod
     def apply():
@@ -41,5 +43,6 @@ class Conf(object):
         """
 
         if 'seed' in Conf.__dict__.keys():
+            if Conf.seed == 0:
+                raise ValueError("It is not allowed to set the seed to '0'. Use a value > 0")
             random.seed(Conf.seed)
-

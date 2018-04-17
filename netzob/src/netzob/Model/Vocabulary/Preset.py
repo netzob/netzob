@@ -194,7 +194,7 @@ class Preset(object):
     >>> preset = Preset(s)
     >>> preset[f1] = bitarray('11111111')
     >>> next(s.specialize())
-    b'\xff\xd7\x14\x84\xf8\xcf\x9b\xf4\xb7oG\x90G0'
+    b'\xff\x10\xdb\xf7\x07i\xec\xfb\x8eR\x11\xfa\xa7&\x7f'
 
 
     **Fixing the value of a field**
@@ -225,11 +225,11 @@ class Preset(object):
     >>> preset[f2_1] = b'\x41'
     >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
-    b'\x80AK'
+    b'\xb8A\x16'
     >>> next(messages_gen)
-    b'\x80A\x9e'
+    b'\xb8A\xd7'
     >>> next(messages_gen)
-    b'\x80A2'
+    b'\xb8AG'
 
 
     **Fixing the value of a field that contains sub-fields**
@@ -261,11 +261,11 @@ class Preset(object):
     >>> preset[v1] = b'\x41'
     >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
-    b'A%'
+    b'A\xb5'
     >>> next(messages_gen)
-    b'A\xa9'
+    b'A\xc3'
     >>> next(messages_gen)
-    b'A\xf1'
+    b'A\xd7'
 
 
     **Fixing the value of a node variable**
@@ -340,9 +340,9 @@ class Preset(object):
     >>> preset[f1] = my_callable
     >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
-    b'C'
+    b'B'
     >>> next(messages_gen)
-    b'A'
+    b'C'
     >>> next(messages_gen)
     b'B'
 
@@ -375,11 +375,11 @@ class Preset(object):
     >>> preset['v1'] = b'\x41\x42\x43'
     >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
-    b'ABC\xde'
+    b'ABC\xe9'
     >>> next(messages_gen)
-    b'ABC\xa1'
+    b'ABCY'
     >>> next(messages_gen)
-    b'ABCh'
+    b'ABC\x9b'
 
 
     **Fixing the value of a variable node through its name**
@@ -414,7 +414,7 @@ class Preset(object):
     >>> del preset[f1]
     >>> messages_gen = symbol.specialize()
     >>> next(messages_gen)
-    b'\xf4'
+    b'\xb9'
 
 
     """
