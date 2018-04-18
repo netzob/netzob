@@ -238,6 +238,10 @@ class Size(AbstractRelationVariableLeaf):
 
         if dataType is None:
             dataType = uint8()
+        elif not isinstance(dataType, Integer):
+            max_buffer_size = 1 << dataType.size[1]
+            unitsize = AbstractType.computeUnitSize(max_buffer_size)
+            dataType.unitSize = unitsize
 
         super(Size, self).__init__(self.__class__.__name__, dataType=dataType, targets=targets, name=name)
         self.factor = factor
