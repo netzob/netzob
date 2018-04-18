@@ -647,14 +647,9 @@ class Repeat(AbstractVariableNode):
                 i_repeat = Repeat.MAX_REPEAT
             elif isinstance(self.nbRepeat, AbstractVariable):
                 if newSpecializingPath.hasData(self.nbRepeat):
-                    i_repeat = newSpecializingPath.getData(self.nbRepeat)
-                    i_repeat = TypeConverter.convert(i_repeat, BitArray, Integer,
-                                                     src_unitSize=self.nbRepeat.dataType.unitSize,
-                                                     src_endianness=self.nbRepeat.dataType.endianness,
-                                                     src_sign=self.nbRepeat.dataType.sign,
-                                                     dst_unitSize=self.nbRepeat.dataType.unitSize,
-                                                     dst_endianness=self.nbRepeat.dataType.endianness,
-                                                     dst_sign=self.nbRepeat.dataType.sign)
+                    i_repeat_bits = newSpecializingPath.getData(self.nbRepeat)
+                    i_repeat_bytes = i_repeat_bits.tobytes()
+                    i_repeat = int.from_bytes(i_repeat_bytes, byteorder=self.nbRepeat.dataType.endianness.value)
                 else:
                     i_repeat = 0
                     newSpecializingPath.registerVariablesCallBack([self.nbRepeat], self, parsingCB=False)
