@@ -2553,9 +2553,13 @@ def _test_context():
     >>> alice.memory = alice_memory
     >>> alice.initiator = False
     >>>
-    >>> alice.start()
-    >>> bob.start()
-    >>> time.sleep(1)
+    >>> import io, contextlib
+    >>> stdout = io.StringIO()
+    >>> with contextlib.redirect_stdout(stdout):
+    ...     alice.start()
+    ...     bob.start()
+    ...     time.sleep(1)
+    >>> print(stdout.getvalue(), end='')
     [READ] Current state: S1
     [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x82\xe2\xe6b')])
     [WRITE] Current state: S1
