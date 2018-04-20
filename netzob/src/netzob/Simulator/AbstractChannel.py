@@ -489,8 +489,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         """Block until the channel output queue is empty.
 
         """
-        while not self.queue_output.empty():  # Test if the queue is not empty
-            time.sleep(0.1)
+        self.queue_output.join()
 
     ## Properties ##
 
