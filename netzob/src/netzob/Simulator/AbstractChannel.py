@@ -486,7 +486,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
 
     @public_api
     def flush(self):
-        """Block until the queue_output is empty.
+        """Block until the channel output queue is empty.
 
         """
         while not self.queue_output.empty():  # Test if the queue is not empty
