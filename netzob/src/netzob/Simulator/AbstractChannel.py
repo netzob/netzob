@@ -406,7 +406,6 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         self.open()
 
         while not self.__stopEvent.is_set():
-
             self.process_data_to_send()
 
             data = self.check_incoming_data()
@@ -463,6 +462,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         """
 
         # Stop channel
+        self._logger.debug("Stopping the current channel")
         self.close()
 
         self.__stopEvent.set()
@@ -484,6 +484,12 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         """
         return not self.__stopEvent.is_set()
 
+    @public_api
+    def flush(self):
+        """Block until the channel output queue is empty.
+
+        """
+        self.queue_output.join()
 
     ## Properties ##
 

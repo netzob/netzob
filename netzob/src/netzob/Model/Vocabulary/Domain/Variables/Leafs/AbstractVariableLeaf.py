@@ -227,7 +227,14 @@ class AbstractVariableLeaf(AbstractVariable):
 
         # Add information regarding preset configuration
         if preset is not None and preset.get(self) is not None:
-            tab.append(" [{0}]".format(preset.get(self).mode))
+            tmp_data = " ["
+            tmp_data += str(preset.get(self).mode)
+            try:
+                tmp_data += " ({})".format(preset[self])
+            except Exception as e:
+                pass
+            tmp_data += "]"
+            tab.append(tmp_data)
 
         return ''.join(tab)
 

@@ -2052,7 +2052,7 @@ def _test_str_structure_with_preset():
     >>> print(symbol.str_structure())
     symbol 1
     |--  field 1
-         |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED]
+         |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED (b'B')]
     |--  field 2
          |--   Data (Raw(nbBytes=1))
     |--  field 3
@@ -2075,7 +2075,7 @@ def _test_str_structure_with_preset():
     >>> print(symbol.str_structure())
     symbol 1
     |--  field 1
-         |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED]
+         |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED (b'B')]
     |--  field 2
          |--   Agg
                |--   Data (Integer(0,255)) [FuzzingMode.MUTATE]
