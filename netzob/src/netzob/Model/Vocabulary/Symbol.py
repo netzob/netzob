@@ -54,7 +54,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 
 @NetzobLogger
 class Symbol(AbstractField):
-    """The Symbol class is a main component of the Netzob protocol model.
+    r"""The Symbol class is a main component of the Netzob protocol model.
 
     A symbol represents an abstraction of all messages of the same
     type from a protocol perspective. A symbol structure is made of
@@ -212,7 +212,7 @@ class Symbol(AbstractField):
     @public_api
     @typeCheck(int)
     def str_structure(self, deepness=0):
-        """Returns a string which denotes the current symbol definition
+        r"""Returns a string which denotes the current symbol definition
         using a tree display.
 
         :return: The current symbol represented as a string.
@@ -259,7 +259,7 @@ class Symbol(AbstractField):
         >>> print(symbol.str_structure())
         symbol 1
         |--  field 1
-             |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED]
+             |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED (b'B')]
         |--  field 2
              |--   Agg
                    |--   Data (Integer(0,255)) [FuzzingMode.MUTATE]
