@@ -251,7 +251,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[v_opt] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -269,7 +269,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset['v_opt'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)

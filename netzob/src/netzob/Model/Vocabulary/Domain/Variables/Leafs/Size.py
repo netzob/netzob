@@ -543,7 +543,7 @@ def _test_size():
     >>> #
     >>> preset = Preset(symbol_udp)
     >>> preset["udp.payload"] = b"test AAAAAAAA"
-    >>> data = next(symbol_udp.specialize())
+    >>> data = next(symbol_udp.specialize(preset))
     >>>
     >>> symbol_udp.abstract(data)  # doctest: +ELLIPSIS
     OrderedDict([('udp.sport', b'...'), ('udp.dport', b'...'), ('udp.length', b'\x00\x15'), ('udp.checksum', b'...'), ('udp.payload', b'test AAAAAAAA')])

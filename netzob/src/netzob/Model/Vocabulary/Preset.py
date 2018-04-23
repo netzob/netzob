@@ -140,26 +140,26 @@ class Preset(object):
     >>> preset = Preset(symbol_udp)
     >>> preset[f_dport] = 11              # udp.dport expects an int or an Integer
     >>> preset[f_payload] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
-    >>> next(symbol_udp.specialize())
+    >>> next(symbol_udp.specialize(preset))
     b'\x00\x0b\xaa\xbb'
 
     >>> preset = Preset(symbol_udp)
     >>> preset["udp.dport"] = 11              # udp.dport expects an int or an Integer
     >>> preset["udp.payload"] = b"\xaa\xbb"   # udp.payload expects a bytes object or a Raw object
-    >>> next(symbol_udp.specialize())
+    >>> next(symbol_udp.specialize(preset))
     b'\x00\x0b\xaa\xbb'
 
     >>> preset = Preset(symbol_udp)
     >>> preset["udp.dport"] = uint16(11)          # udp.dport expects an int or an Integer
     >>> preset["udp.payload"] = Raw(b"\xaa\xbb")  # udp.payload expects a bytes object or a Raw object
-    >>> next(symbol_udp.specialize())
+    >>> next(symbol_udp.specialize(preset))
     b'\x00\x0b\xaa\xbb'
 
     >>> preset = Preset(symbol_udp)
     >>> preset["udp.dport"] = bitarray('00001011', endian='big')
     >>> preset["udp.payload"] = bitarray('1010101010111011', endian='big')
     >>> preset["udp.payload"] = bitarray('1010101010111011', endian='big')
-    >>> next(symbol_udp.specialize())
+    >>> next(symbol_udp.specialize(preset))
     b'\x0b\xaa\xbb'
 
     The previous example shows the use of BitArray as dict
@@ -174,12 +174,12 @@ class Preset(object):
     >>> preset = Preset(symbol_udp)
     >>> preset[f_dport] = 11
     >>> preset[f_payload] = b"\xaa\xbb"
-    >>> next(symbol_udp.specialize())
+    >>> next(symbol_udp.specialize(preset))
     b'\x00\x0b\xaa\xbb'
     >>> preset = Preset(symbol_udp)
     >>> preset["udp.dport"] = 11
     >>> preset["udp.payload"] = b"\xaa\xbb"
-    >>> next(symbol_udp.specialize())
+    >>> next(symbol_udp.specialize(preset))
     b'\x00\x0b\xaa\xbb'
 
 
@@ -193,7 +193,7 @@ class Preset(object):
     >>> s = Symbol(fields=[f1, f2])
     >>> preset = Preset(s)
     >>> preset[f1] = bitarray('11111111')
-    >>> next(s.specialize())
+    >>> next(s.specialize(preset))
     b'\xff\x10\xdb\xf7\x07i\xec\xfb\x8eR\x11\xfa\xa7&\x7f'
 
 
@@ -204,7 +204,7 @@ class Preset(object):
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[f1] = b'\x41'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -223,7 +223,7 @@ class Preset(object):
     >>> symbol = Symbol([f1, f2], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[f2_1] = b'\x41'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'\xb8A\x16'
     >>> next(messages_gen)
@@ -259,7 +259,7 @@ class Preset(object):
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[v1] = b'\x41'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A\xb5'
     >>> next(messages_gen)
@@ -278,7 +278,7 @@ class Preset(object):
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[v_agg] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -295,7 +295,7 @@ class Preset(object):
     >>> preset = Preset(symbol)
     >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_generator
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -316,7 +316,7 @@ class Preset(object):
     >>> preset = Preset(symbol)
     >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_iter
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -338,7 +338,7 @@ class Preset(object):
     >>> def my_callable():
     ...     return random.choice([b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_callable
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'B'
     >>> next(messages_gen)
@@ -354,7 +354,7 @@ class Preset(object):
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset['f1'] = b'\x41'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -373,7 +373,7 @@ class Preset(object):
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset['v1'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC\xe9'
     >>> next(messages_gen)
@@ -392,7 +392,7 @@ class Preset(object):
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset['v_agg'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -408,11 +408,11 @@ class Preset(object):
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[f1] = b'\x41'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
     >>> del preset[f1]
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'\xb9'
 
@@ -439,6 +439,7 @@ class Preset(object):
 
     @public_api
     def __init__(self, symbol):
+        # Link a preset to its symbol
         self.symbol = symbol
 
         # Initialize counterMax
@@ -889,7 +890,7 @@ class Preset(object):
         >>> symbol = Symbol(fields=[f_data])
         >>> preset = Preset(symbol)
         >>> preset.fuzz(f_data)
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'\x00'
 
 
@@ -900,7 +901,7 @@ class Preset(object):
         >>> symbol = Symbol(name="sym", fields=[f_data])
         >>> preset = Preset(symbol)
         >>> preset.fuzz(f_data, interval=(20, 32000))
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'U*'
 
 
@@ -912,7 +913,7 @@ class Preset(object):
         >>> symbol = Symbol(name="sym", fields=[f_data, f_size])
         >>> preset = Preset(symbol)
         >>> preset.fuzz(f_size, interval=(20, 32000))
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'\x00\x03U*'
 
 
@@ -923,7 +924,7 @@ class Preset(object):
         >>> symbol = Symbol(name="sym", fields=[f_data])
         >>> preset = Preset(symbol)
         >>> preset.fuzz(f_data, mode=FuzzingMode.MUTATE, interval=(20, 32000))
-        >>> res = next(symbol.specialize())
+        >>> res = next(symbol.specialize(preset))
         >>> res != b'\x00\x02'
         True
 
@@ -938,7 +939,7 @@ class Preset(object):
         >>> nbFuzz = 1000
         >>> result = set()
         >>> for i in range(nbFuzz):
-        ...     result.add(next(symbol.specialize()))
+        ...     result.add(next(symbol.specialize(preset)))
         >>> len(result) == 1000
         True
 
@@ -952,7 +953,7 @@ class Preset(object):
         >>> symbol = Symbol(name="sym", fields=[f_parent])
         >>> preset = Preset(symbol)
         >>> preset.fuzz(f_parent)
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'\x00\x00\x00'
 
 
@@ -964,7 +965,7 @@ class Preset(object):
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
         >>> preset = Preset(symbol)
         >>> preset.fuzz(symbol, interval=FuzzingInterval.FULL_INTERVAL)
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'\x00\x00'
 
 
@@ -976,7 +977,7 @@ class Preset(object):
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
         >>> preset = Preset(symbol)
         >>> preset.fuzz(f_data2, interval=FuzzingInterval.FULL_INTERVAL)
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'\x02\x00'
 
 
@@ -988,7 +989,7 @@ class Preset(object):
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
         >>> preset = Preset(symbol)
         >>> preset.fuzz(f_data2, interval=FuzzingInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_16)
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'\x02\x00\x00'
 
 
@@ -1001,7 +1002,7 @@ class Preset(object):
         >>> preset = Preset(symbol)
         >>> preset.fuzz(Integer, interval=(10, 12))
         >>> preset.fuzz(symbol)
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'\x0c\x0c'
 
 
@@ -1018,7 +1019,7 @@ class Preset(object):
         >>> mapping = {}
         >>> mapping[Integer] = {'generator':'determinist'}
         >>> preset.fuzz(f_agg, mappingTypesMutators=mapping)
-        >>> res = next(symbol.specialize())
+        >>> res = next(symbol.specialize(preset))
         >>> res
         b' \x01 \x01'
 
@@ -1036,7 +1037,7 @@ class Preset(object):
         >>> mapping = {}
         >>> mapping[Integer] = {'generator':'determinist'}
         >>> preset.fuzz(f_alt, mappingTypesMutators=mapping)
-        >>> res = next(symbol.specialize())
+        >>> res = next(symbol.specialize(preset))
         >>> res
         b' \x01'
 
@@ -1048,7 +1049,7 @@ class Preset(object):
         >>> symbol = Symbol(name="sym", fields=[f_agg])
         >>> preset = Preset(symbol)
         >>> preset.fuzz(f_agg, mutateChild=False)
-        >>> res = next(symbol.specialize())
+        >>> res = next(symbol.specialize(preset))
         >>> 1 <= res[0] <= 4
         True
         >>> 5 <= res[1] <= 8
@@ -1064,9 +1065,9 @@ class Preset(object):
         >>> preset = Preset(symbol)
         >>> preset.setFuzzingCounterMax(1)
         >>> preset.fuzz(f_alt)
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'\x00'
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         Traceback (most recent call last):
         StopIteration
 
@@ -1081,7 +1082,7 @@ class Preset(object):
         65536
         >>> preset.fuzz(symbol, counterMax=80)
         >>> idx = 0
-        >>> for data in symbol.specialize():
+        >>> for data in symbol.specialize(preset):
         ...     # use data
         ...     idx += 1
         >>> print(idx)
@@ -1100,7 +1101,7 @@ class Preset(object):
         65
         >>> preset.fuzz(symbol, counterMax=0.001)
         >>> idx = 0
-        >>> for data in symbol.specialize():
+        >>> for data in symbol.specialize(preset):
         ...     # use data
         ...     idx += 1
         >>> print(idx)
@@ -1233,10 +1234,10 @@ class Preset(object):
         >>> preset = Preset(symbol)
         >>> preset[f_data1] = b'\x01'
         >>> preset[f_data2] = b'\x02'
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'\x01\x02'
         >>> preset.clear()
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'EW'
 
         """
@@ -1275,27 +1276,14 @@ class Preset(object):
         >>> new_preset[f_data2] = b'\x04'
         >>>
         >>> # Generate data according to the last defined preset (i.e. the 'new' preset)
-        >>> g = symbol.specialize()
+        >>> g = symbol.specialize(new_preset)
         >>> next(g)
         b'\x03\x04'
         >>>
-        >>> # Update preset associated to the current symbol (this will set 'main' preset as the current preset of symbol)
-        >>> symbol.preset = main_preset
-        >>>
-        >>> # We generate data (the generator is still defined according to the 'new' preset)
-        >>> next(g)
-        b'\x03\x04'
-        >>>
-        >>> # New, we produce a new generator (this generator will thus be based on the 'main' preset)
-        >>> g = symbol.specialize()
+        >>> # Generate data according to the first defined preset (i.e. the 'main' preset)
+        >>> g = symbol.specialize(main_preset)
         >>> next(g)
         b'\x01\x02'
-        >>>
-        >>> # We update 'main' preset we the configuration of the 'new' preset, and then generate data
-        >>> main_preset.update(new_preset)
-        >>> g = symbol.specialize()
-        >>> next(g)
-        b'\x03\x04'
 
         """
 
@@ -1328,7 +1316,7 @@ class Preset(object):
         ... }
         >>> p1.bulk_set(presets)
         >>>
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(p1))
         b'*\xff'
         """
         if isinstance(items, collections.Mapping):
@@ -1366,13 +1354,13 @@ class Preset(object):
         >>> new_preset[f_data1] = b'\x03'
         >>> new_preset[f_data2] = b'\x04'
         >>>
-        >>> g = symbol.specialize()
+        >>> # Generate data with the new preset configuration
+        >>> g = symbol.specialize(new_preset)
         >>> next(g)
         b'\x03\x04'
         >>>
-        >>> # Restore the preset configuration of the symbol to the original preset configuration
-        >>> symbol.preset = preset
-        >>> g = symbol.specialize()
+        >>> # Generate data with the first preset configuration
+        >>> g = symbol.specialize(preset)
         >>> next(g)
         b'\x01\x02'
 
@@ -1417,7 +1405,7 @@ class Preset(object):
         >>> preset = Preset(symbol)
         >>> preset.fuzz(symbol, interval=FuzzingInterval.FULL_INTERVAL)
         >>> preset.unset(f_data2)
-        >>> next(symbol.specialize())
+        >>> next(symbol.specialize(preset))
         b'\x00\x04'
 
         """
@@ -1783,7 +1771,6 @@ class Preset(object):
         if not isinstance(symbol, AbstractField):
             raise TypeError("It is expected a symbol or field for the Preset configuration, not '{}' of type '{}'".format(symbol, type(symbol)))
         self.__symbol = symbol
-        symbol.preset = self
 
 
 def _test():
@@ -1798,7 +1785,7 @@ def _test():
     >>> preset.fuzz(f_data)
     >>> datas = set()
     >>> for _ in range(2000):
-    ...     datas.add(next(symbol.specialize()))
+    ...     datas.add(next(symbol.specialize(preset)))
     >>> len(datas)
     256
 
@@ -1809,7 +1796,7 @@ def _test():
     >>> preset.fuzz(f_data)
     >>> datas = set()
     >>> for _ in range(2000):
-    ...     datas.add(next(symbol.specialize()))
+    ...     datas.add(next(symbol.specialize(preset)))
     >>> len(datas)
     256
 
@@ -1820,7 +1807,7 @@ def _test():
     >>> preset.fuzz(f_data)
     >>> datas = set()
     >>> for _ in range(2000):
-    ...     datas.add(next(symbol.specialize()))
+    ...     datas.add(next(symbol.specialize(preset)))
     >>> len(datas)
     256
 
@@ -1834,7 +1821,7 @@ def _test():
     >>> preset.fuzz(f_data, generator=(0., 0.5, 1.))
     >>> datas = set()
     >>> for _ in range(3):
-    ...     datas.add(next(symbol.specialize()))
+    ...     datas.add(next(symbol.specialize(preset)))
     >>> len(datas)
     3
     >>> datas = sorted(datas)
@@ -1851,7 +1838,7 @@ def _test():
     >>> preset.fuzz(f_data, generator=(0., 0.5, 1.))
     >>> datas = set()
     >>> for _ in range(3):
-    ...     datas.add(next(symbol.specialize()))
+    ...     datas.add(next(symbol.specialize(preset)))
     >>> len(datas)
     3
     >>> datas = sorted(datas)
@@ -1868,7 +1855,7 @@ def _test():
     >>> symbol = Symbol([f1, f2])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(symbol, interval=FuzzingInterval.DEFAULT_INTERVAL)
-    >>> g = symbol.specialize()
+    >>> g = symbol.specialize(preset)
     >>> a = []
     >>> for i in range(symbol.count()):
     ...     data = next(g)
@@ -1888,7 +1875,7 @@ def _test():
     >>> preset = Preset(symbol)
     >>> preset.fuzz(Integer, interval=FuzzingInterval.DEFAULT_INTERVAL)
     >>> preset.fuzz(f1)
-    >>> g = symbol.specialize()
+    >>> g = symbol.specialize(preset)
     >>> a = []
     >>> for i in range(symbol.count()):
     ...     a.append(next(g))
@@ -1923,7 +1910,7 @@ def _test_seed():
     >>> preset.fuzz(f_data)
     >>> datas = []
     >>> for _ in range(20):
-    ...     datas.append(next(symbol.specialize()))
+    ...     datas.append(next(symbol.specialize(preset)))
     >>> datas
     [b'\x00', b's', b'T', b'\xe6', b'\xe9', b':', b'\xe3', b'`', b'{', b'\x1c', b'\xfc', b'#', b'\x96', b'\x02', b'\x12', b'\x82', b'\xb6', b'+', b'\xde', b'\x18']
 
@@ -1934,7 +1921,7 @@ def _test_seed():
     >>> preset.fuzz(f_data)
     >>> datas = []
     >>> for _ in range(20):
-    ...     datas.append(next(symbol.specialize()))
+    ...     datas.append(next(symbol.specialize(preset)))
     >>> datas
     [b'\x00', b's', b'T', b'\xe6', b'\xe9', b':', b'\xe3', b'`', b'{', b'\x1c', b'\xfc', b'#', b'\x96', b'\x02', b'\x12', b'\x82', b'\xb6', b'+', b'\xde', b'\x18']
 
@@ -1956,9 +1943,9 @@ def _test_max_mutations():
     >>> preset = Preset(symbol)
     >>> preset.setFuzzingCounterMax(1)
     >>> preset.fuzz(f_alt)
-    >>> next(symbol.specialize())
+    >>> next(symbol.specialize(preset))
     b'\x00'
-    >>> next(symbol.specialize())
+    >>> next(symbol.specialize(preset))
     Traceback (most recent call last):
     StopIteration
 
@@ -1973,7 +1960,7 @@ def _test_max_mutations():
     65536
     >>> preset.fuzz(symbol, counterMax=80)
     >>> idx = 0
-    >>> for data in symbol.specialize():
+    >>> for data in symbol.specialize(preset):
     ...     # use data
     ...     idx += 1
     >>> print(idx)
@@ -1992,7 +1979,7 @@ def _test_max_mutations():
     65
     >>> preset.fuzz(symbol, counterMax=0.001)
     >>> idx = 0
-    >>> for data in symbol.specialize():
+    >>> for data in symbol.specialize(preset):
     ...     # use data
     ...     idx += 1
     >>> print(idx)
@@ -2011,13 +1998,13 @@ def _test_preset_configuration():
     >>> symbol = Symbol(name="symbol 1", fields=[field])
     >>> preset = Preset(symbol)
     >>> preset[field] = b'\x42'
-    >>> next(symbol.specialize())
+    >>> next(symbol.specialize(preset))
     b'B'
     >>> preset["field 1"] = b'\x43'
-    >>> next(symbol.specialize())
+    >>> next(symbol.specialize(preset))
     b'C'
     >>> preset["field 1"] = b'\x44'
-    >>> next(symbol.specialize())
+    >>> next(symbol.specialize(preset))
     b'D'
     >>> len(preset.mappingFieldsMutators)
     1
@@ -2049,7 +2036,7 @@ def _test_str_structure_with_preset():
     >>> preset = Preset(symbol)
     >>> preset[field1] = b'\x42'
     >>> preset.fuzz(field3)
-    >>> print(symbol.str_structure())
+    >>> print(symbol.str_structure(preset))
     symbol 1
     |--  field 1
          |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED (b'B')]
@@ -2072,7 +2059,7 @@ def _test_str_structure_with_preset():
     >>> preset[field1] = b'\x42'
     >>> preset.fuzz('v1', mode=FuzzingMode.MUTATE)
     >>> preset.fuzz(field3)
-    >>> print(symbol.str_structure())
+    >>> print(symbol.str_structure(preset))
     symbol 1
     |--  field 1
          |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED (b'B')]

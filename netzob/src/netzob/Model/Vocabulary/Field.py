@@ -353,8 +353,7 @@ class Field(AbstractField):
         return new_field
 
     @public_api
-    @typeCheck(int)
-    def str_structure(self, deepness=0, preset=None):
+    def str_structure(self, preset=None, deepness=0):
         """Returns a string which denotes the current field definition
         using a tree display.
 
@@ -380,9 +379,9 @@ class Field(AbstractField):
         tab.append(str(self.name))
         lines = [''.join(tab)]
         if len(self.fields) == 0:
-            lines.append(self.domain.str_structure(deepness + 1, preset=preset))
+            lines.append(self.domain.str_structure(preset, deepness + 1))
         for f in self.fields:
-            lines.append(f.str_structure(deepness + 1, preset=preset))
+            lines.append(f.str_structure(preset, deepness + 1))
         return '\n'.join(lines)
 
     def getVariables(self):
@@ -404,12 +403,14 @@ class Field(AbstractField):
         return self.domain.getVariables()
 
     @public_api
-    def specialize(self) -> Iterator[bytes]:
+    def specialize(self, preset=None) -> Iterator[bytes]:
         r"""The :meth:`specialize()` method is intended to produce concrete
         :class:`bytes` data based on the field model. This method
         returns a Python generator that in turn provides data
         :class:`bytes` object at each call to ``next(generator)``.
 
+        :param preset: The configuration used to parameterize values in fields and variables.
+        :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
         :return: A generator that provides data :class:`bytes` at each call to ``next(generator)``.
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
 
@@ -445,7 +446,7 @@ class Field(AbstractField):
                     field.domain.normalize_targets()
 
         from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
-        fs = FieldSpecializer(self, preset=self.preset)
+        fs = FieldSpecializer(self, preset=preset)
 
         specializing_paths = fs.specialize()
         return self._inner_specialize(specializing_paths)
@@ -553,7 +554,7 @@ def _test():
     >>> f = Field(String("hello"))
     >>> preset = Preset(f)
     >>> preset.fuzz(f)
-    >>> next(f.specialize())
+    >>> next(f.specialize(preset))
     b'System("ls -al /")\x00                                                                                                                                                                                                                                             '
     """
 

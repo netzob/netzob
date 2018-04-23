@@ -81,7 +81,7 @@ class AggMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_agg])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_agg)
-    >>> next(symbol.specialize())
+    >>> next(symbol.specialize(preset))
     b'\x00\x00\x00\x00'
 
 
@@ -92,7 +92,7 @@ class AggMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_agg])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_agg, mode=FuzzingMode.MUTATE)
-    >>> res = next(symbol.specialize())
+    >>> res = next(symbol.specialize(preset))
     >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
 
@@ -107,7 +107,7 @@ class AggMutator(DomainMutator):
     >>> mapping = {}
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> preset.fuzz(f_agg, mappingTypesMutators=mapping)
-    >>> res = next(symbol.specialize())
+    >>> res = next(symbol.specialize(preset))
     >>> res
     b' \x01 \x01'
 
@@ -119,7 +119,7 @@ class AggMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_agg])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_agg, mutateChild=False)
-    >>> res = next(symbol.specialize())
+    >>> res = next(symbol.specialize(preset))
     >>> 1 <= res[0] <= 4
     True
     >>> 5 <= res[1] <= 8
@@ -272,7 +272,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[v_agg] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -291,7 +291,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset['v_agg'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)

@@ -255,24 +255,11 @@ class AbstractionLayer(object):
         if symbol is None:
             raise TypeError("The symbol to write on the channel cannot be None")
 
-        tmp_preset = Preset(symbol)
-
-        # Update preset according to actor preset
-        if self.actor is not None and self.actor.presets is not None:
-            for tmp_actor_preset in self.actor.presets:
-                if tmp_actor_preset.symbol == symbol:
-                    tmp_preset.update(tmp_actor_preset)
-                    break
-
-        # Update preset according to preset given in parameter
-        if preset is not None:
-            tmp_preset.update(preset)
-
         data = b''
         data_len = 0
         data_structure = {}
         if duration is None:
-            (data, data_len, data_structure) = self._writeSymbol(symbol, preset=tmp_preset, cbk_action=cbk_action)
+            (data, data_len, data_structure) = self._writeSymbol(symbol, preset=preset, cbk_action=cbk_action)
         else:
 
             t_start = time.time()
@@ -285,7 +272,7 @@ class AbstractionLayer(object):
                     break
 
                 # Specialize the symbol and send it over the channel
-                (data, data_len_tmp, data_structure) = self._writeSymbol(symbol, preset=tmp_preset, cbk_action=cbk_action)
+                (data, data_len_tmp, data_structure) = self._writeSymbol(symbol, preset=preset, cbk_action=cbk_action)
                 data_len += data_len_tmp
 
                 if rate is None:

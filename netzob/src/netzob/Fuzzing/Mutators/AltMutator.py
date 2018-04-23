@@ -106,7 +106,7 @@ class AltMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_alt)
-    >>> next(symbol.specialize())
+    >>> next(symbol.specialize(preset))
     b'\x00\x00'
 
 
@@ -120,7 +120,7 @@ class AltMutator(DomainMutator):
     >>> mapping = {}
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> preset.fuzz(f_alt, mappingTypesMutators=mapping)
-    >>> res = next(symbol.specialize())
+    >>> res = next(symbol.specialize(preset))
     >>> res
     b' \x01'
 
@@ -132,7 +132,7 @@ class AltMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_alt, mutateChild=False)
-    >>> res = next(symbol.specialize())
+    >>> res = next(symbol.specialize(preset))
     >>> 1 <= ord(res) <= 4
     True
 
@@ -145,9 +145,9 @@ class AltMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_alt, maxDepth=2)
-    >>> next(symbol.specialize())
+    >>> next(symbol.specialize(preset))
     b'\x00'
-    >>> next(symbol.specialize())
+    >>> next(symbol.specialize(preset))
     Traceback (most recent call last):
     ...
     netzob.Fuzzing.Mutators.AltMutator.RecursionException: Max depth reached (2)
@@ -343,7 +343,7 @@ def _test_alt_mutator():
     >>> have_int16 = False
     >>> have_raw = False
     >>> for _ in range(10):
-    ...     tmp = len(next(symbol.specialize()))
+    ...     tmp = len(next(symbol.specialize(preset)))
     ...     if tmp == 1:
     ...         have_int8 = True
     ...     elif tmp == 2:
@@ -374,8 +374,8 @@ def _test_alt_use_mutator():
     >>> mapping[Integer] = {'lengthBitSize' : UnitSize.SIZE_64}
     >>> preset.fuzz(f_alt, mappingTypesMutators=mapping)
     >>> res = []
-    >>> res.append(len(next(symbol.specialize())))
-    >>> res.append(len(next(symbol.specialize())))
+    >>> res.append(len(next(symbol.specialize(preset))))
+    >>> res.append(len(next(symbol.specialize(preset))))
     >>> 8 in res
     True
 
@@ -393,9 +393,9 @@ def _test_alt_max_depth():
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_alt, maxDepth=3, generator='mt19937')
-    >>> tmp = next(symbol.specialize())
-    >>> tmp = next(symbol.specialize())
-    >>> tmp = next(symbol.specialize())
+    >>> tmp = next(symbol.specialize(preset))
+    >>> tmp = next(symbol.specialize(preset))
+    >>> tmp = next(symbol.specialize(preset))
     Traceback (most recent call last):
     ...
     netzob.Fuzzing.Mutators.AltMutator.RecursionException: Max depth reached (3)
@@ -422,7 +422,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[v_alt] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -441,7 +441,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset['v_alt'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)

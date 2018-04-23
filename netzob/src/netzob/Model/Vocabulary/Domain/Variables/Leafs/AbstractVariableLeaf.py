@@ -217,7 +217,7 @@ class AbstractVariableLeaf(AbstractVariable):
         else:
             return newParsingPaths
 
-    def str_structure(self, deepness=0, preset=None):
+    def str_structure(self, preset=None, deepness=0):
         """Returns a string which denotes
         the current field definition using a tree display"""
 
