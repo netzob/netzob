@@ -233,7 +233,7 @@ class EthernetChannel(AbstractChannel):
             raise Exception("socket is not available")
 
         self.header_preset["eth.payload"] = data
-        packet = next(self.header.specialize())
+        packet = next(self.header.specialize(self.header_preset))
         len_data = self._socket.sendto(packet, (self.interface,
                                                 EthernetChannel.ETH_P_ALL))
         return len_data
