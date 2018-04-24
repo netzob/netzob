@@ -471,22 +471,27 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         return
 
     @public_api
-    def abstract(self, data, memory=None):
+    def abstract(self, data, preset=None, memory=None):
         """The :meth:`abstract` method is used to abstract the given
         data bytes with the current symbol model.
 
         The :meth:`abstract` static method expects some parameters:
 
         :param data: The concrete message to abstract in symbol.
+        :param preset: The configuration used to check values in symbol structure obtained after message parsing.
         :param memory: A memory used to store variable values during
                        specialization and abstraction of sequence of symbols.
                        The default value is None.
         :type data: :class:`bytes`, required
+        :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
         :return: the structured of the parsed data
         :rtype: a dict[:class:`str`, :class:`bytes`]
         :raises: :class:`AbstractionException <netzob.Model.Vocabulary.AbstractField.AbstractionException>` if an error occurs while abstracting the data
 
+
+        The following code shows an example of abstracting a data
+        according to a symbol definition:
 
         >>> from netzob.all import *
         >>> messages = ["john, what's up in {} ?".format(city)
@@ -525,24 +530,94 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> s.abstract(concrete_message)
         OrderedDict([('Field', b'bbbbbb')])
 
+
+        **Usage of Preset during message abstraction**
+
+        The following code shows an example of abstracting a data
+        according to a symbol definition and a defined Preset configuration:
+
+        >>> from netzob.all import *
+        >>>
+        >>> f1 = Field(name="name", domain="john")
+        >>> f2 = Field(name="question", domain=", what's up in ")
+        >>> f3 = Field(name="city", domain=Alt(["Paris", "Berlin"]))
+        >>> f4 = Field(name="mark", domain=" ?")
+        >>> symbol = Symbol([f1, f2, f3, f4], name="Symbol-john")
+        >>>
+        >>> preset = Preset(symbol)
+        >>> preset[f3] = b"Paris"
+        >>>
+        >>> data = "john, what's up in Berlin ?"
+        >>> data_structure = symbol.abstract(data, preset=preset)
+        Traceback (most recent call last):
+        ...
+        netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'Symbol-john', can abstract the data: 'john, what's up in Berlin ?', but some parsed values do not match the expected preset.
+        >>>
+        >>> data = "john, what's up in Paris ?"
+        >>> data_structure = symbol.abstract(data, preset=preset)
+
+        >>> data_structure
+        OrderedDict([('name', b'john'), ('question', b", what's up in "), ('city', b'Paris'), ('mark', b' ?')])
+
         """
 
-        from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
-        from netzob.Model.Vocabulary.Domain.Parser.MessageParser import InvalidParsingPathException
+        from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser, InvalidParsingPathException
 
         try:
             # Try to align/parse the data with the current field
-            alignedData = DataAlignment.align([data], self, encoded=False, memory=memory)
+            messageParser = MessageParser(memory=memory)
+            alignedData = next(messageParser.parseRaw(data, self.getLeafFields()))
 
             # If it matches, we build a dict that contains, for each field, the associated value that was present in the message
-            structured_data = OrderedDict()
-            for fields_value in alignedData:
-                for i, field_value in enumerate(fields_value):
-                    structured_data[alignedData.headers[i]] = field_value
-            return structured_data
+            data_structure = OrderedDict()
+            for idx, field in enumerate(self.getLeafFields()):
+                data_structure[field.name] = alignedData[idx].tobytes()
+
+            # Check that parsed data are coherent with the given preset configuration
+            is_preset_ok = True
+            if preset is not None:
+                is_preset_ok = self.check_preset(data_structure, preset)
+
+            if is_preset_ok:
+                return data_structure
+            else:
+                raise AbstractionException("With the symbol/field '{}', can abstract the data: '{}', but some parsed values do not match the expected preset.".format(self, data)) from None
         except InvalidParsingPathException as e:
             raise AbstractionException("With the symbol/field '{}', cannot abstract the data: '{}'. Error: '{}'".format(self, data, e)) from None
             #logging.warn(traceback.format_exc())
+
+    def check_preset(self, data_structure, preset):
+        self._logger.debug("Checking symbol consistency regarding its expected preset, for symbol '{}'".format(self))
+
+        if preset.symbol != self:
+            raise Exception("The preset configuration is linked to the symbol '{}', but we were given the symbol '{}'".format(preset.symbol, self))
+
+        result = True
+        from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
+
+        for (key, key_preset) in preset.mappingFieldsMutators.items():
+            field_name = key.field.name
+
+            if field_name in data_structure.keys():
+                key_mutator = key_preset
+
+                if key_mutator.mode == FuzzingMode.FIXED:
+                    expected_value = preset[key]
+                    observed_value = data_structure[field_name]
+
+                    self._logger.debug("Checking field consistence, for field '{}'".format(field_name))
+                    if expected_value == observed_value:
+                        self._logger.debug("Field '{}' consistency is ok: expected value '{}' == observed value '{}'".format(field_name, expected_value, observed_value))
+                    else:
+                        self._logger.debug("Field '{}' consistency is not ok: expected value '{}' != observed value '{}'".format(field_name, expected_value, observed_value))
+                        result = False
+                        break
+
+        if result:
+            self._logger.debug("Symbol '{}' consistency is ok".format(self))
+        else:
+            self._logger.debug("Symbol '{}' consistency is not ok".format(self))
+        return result
 
     @public_api
     def getSymbol(self):
