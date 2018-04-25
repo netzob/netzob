@@ -616,14 +616,14 @@ class Transition(AbstractTransition):
         >>> transition = Transition(State(), State())
         >>> transition.outputSymbols = None
         >>> len(transition.outputSymbols)
-        0
+        1
         >>> transition.outputSymbols.append(Symbol())
         >>> transition.outputSymbols.extend([Symbol(), Symbol()])
         >>> len(transition.outputSymbols)
-        3
+        4
         >>> transition.outputSymbols = []
         >>> len(transition.outputSymbols)
-        0
+        1
 
         :type: list of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         :raise: TypeError if not valid.
