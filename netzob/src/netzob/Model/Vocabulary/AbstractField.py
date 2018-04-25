@@ -37,6 +37,7 @@
 #+---------------------------------------------------------------------------+
 import abc
 from collections import OrderedDict
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -603,6 +604,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
                 if key_mutator.mode == FuzzingMode.FIXED:
                     expected_value = preset[key]
+                    if isinstance(expected_value, bitarray):
+                        expected_value = expected_value.tobytes()
                     observed_value = data_structure[field_name]
 
                     self._logger.debug("Checking field consistence, for field '{}'".format(field_name))
