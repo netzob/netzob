@@ -129,7 +129,7 @@ class AbstractVariableNode(AbstractVariable):
                 normalizedChild = DomainFactory.normalizeDomain(child)
             self._children.append(normalizedChild)
 
-    def str_structure(self, deepness=0, preset=None):
+    def str_structure(self, preset=None, deepness=0):
         """Returns a string which denotes the current variable definition
         using a tree display
 
@@ -145,7 +145,7 @@ class AbstractVariableNode(AbstractVariable):
 
         lines = [''.join(tab)]
         for f in self.children:
-            lines.append(" " + f.str_structure(deepness + 1, preset=preset))
+            lines.append(" " + f.str_structure(preset, deepness + 1))
         return '\n'.join(lines)
 
     @property

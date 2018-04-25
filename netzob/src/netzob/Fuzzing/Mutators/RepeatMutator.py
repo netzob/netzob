@@ -100,7 +100,7 @@ class RepeatMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_rep)
-    >>> gen = symbol.specialize()
+    >>> gen = symbol.specialize(preset)
     >>> len(next(gen))
     512
 
@@ -111,7 +111,7 @@ class RepeatMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_rep)
-    >>> len(next(symbol.specialize()))
+    >>> len(next(symbol.specialize(preset)))
     512
 
 
@@ -121,7 +121,7 @@ class RepeatMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_rep])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_rep, mode=FuzzingMode.MUTATE)
-    >>> res = next(symbol.specialize())
+    >>> res = next(symbol.specialize(preset))
     >>> res != b'\x00\x01' and res != b'\x00\x02'
     True
 
@@ -135,7 +135,7 @@ class RepeatMutator(DomainMutator):
     >>> mapping = {}
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> preset.fuzz(f_repeat, mappingTypesMutators=mapping)
-    >>> len(next(symbol.specialize()))
+    >>> len(next(symbol.specialize(preset)))
     512
 
 
@@ -145,7 +145,7 @@ class RepeatMutator(DomainMutator):
     >>> symbol = Symbol(name="sym", fields=[f_repeat])
     >>> preset = Preset(symbol)
     >>> preset.fuzz(f_repeat, mutateChild=False)
-    >>> res = next(symbol.specialize())
+    >>> res = next(symbol.specialize(preset))
     >>> for i in range(int(len(res))):
     ...     assert 5 <= ord(res[i:i+1]) <= 8
 
@@ -337,7 +337,7 @@ def _test_fuzz_children_with_specific_mutator():
     >>> mapping = {}
     >>> mapping[Integer] = {'generator':'determinist'}
     >>> preset.fuzz(f_repeat, mappingTypesMutators=mapping)
-    >>> len(next(symbol.specialize()))
+    >>> len(next(symbol.specialize(preset)))
     512
 
     """
@@ -361,7 +361,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[v_repeat] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -379,7 +379,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset['v_repeat'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)

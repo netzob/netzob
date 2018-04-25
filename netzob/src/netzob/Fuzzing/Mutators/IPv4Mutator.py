@@ -192,7 +192,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[f1] = b'\x41'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -211,7 +211,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1, f2], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[f2_1] = b'\x41'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'\x93\tn|A\x94\x045w'
     >>> next(messages_gen)
@@ -247,7 +247,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[v1] = b'\x41'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A\x86~T\x14'
     >>> next(messages_gen)
@@ -266,7 +266,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset[v_agg] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)
@@ -283,7 +283,7 @@ def _test_fixed():
     >>> preset = Preset(symbol)
     >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_generator
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -304,7 +304,7 @@ def _test_fixed():
     >>> preset = Preset(symbol)
     >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_iter
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -326,7 +326,7 @@ def _test_fixed():
     >>> def my_callable():
     ...     return random.choice([b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_callable
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -342,7 +342,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset['f1'] = b'\x41'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
     >>> next(messages_gen)
@@ -361,7 +361,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset['v1'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABCblI\xd4'
     >>> next(messages_gen)
@@ -380,7 +380,7 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> preset['v_agg'] = b'\x41\x42\x43'
-    >>> messages_gen = symbol.specialize()
+    >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
     >>> next(messages_gen)

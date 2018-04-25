@@ -83,11 +83,9 @@ class Symbol(AbstractField):
     :var name: The name of the symbol.
     :var description: The description of the symbol.
     :var fields: The sorted list of sub-fields.
-    :var preset: The current :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>` configuration of the symbol.
     :vartype name: :class:`str`
     :vartype description: :class:`str`
     :vartype fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`
-    :vartype preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
 
 
     **Usage of Symbol for protocol modeling**
@@ -210,11 +208,12 @@ class Symbol(AbstractField):
         return id(self)
 
     @public_api
-    @typeCheck(int)
-    def str_structure(self, deepness=0):
+    def str_structure(self, preset=None, deepness=0):
         r"""Returns a string which denotes the current symbol definition
         using a tree display.
 
+        :param preset: The configuration used to parameterize values in fields and variables.
+        :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
         :return: The current symbol represented as a string.
         :rtype: :class:`str`
 
@@ -256,7 +255,7 @@ class Symbol(AbstractField):
         >>> preset[field1] = b'\x42'
         >>> preset.fuzz('v1', mode=FuzzingMode.MUTATE)
         >>> preset.fuzz(field3)
-        >>> print(symbol.str_structure())
+        >>> print(symbol.str_structure(preset))
         symbol 1
         |--  field 1
              |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED (b'B')]
@@ -272,11 +271,12 @@ class Symbol(AbstractField):
         tab.append(str(self.name))
         lines = [''.join(tab)]
         for f in self.fields:
-            lines.append(f.str_structure(deepness + 1, preset=self.preset))
+            lines.append(f.str_structure(preset, deepness + 1))
         return '\n'.join(lines)
 
     @public_api
     def specialize(self,
+                   preset=None,
                    memory: Memory = None) -> Iterator[bytes]:
         r"""The :meth:`specialize()` method is intended to produce concrete
         :class:`bytes` data based on the symbol model and the current :class:`Preset` <netzob.Vocabulary.Preset.Preset> configuration. This method
@@ -285,12 +285,15 @@ class Symbol(AbstractField):
 
         The specialize() method expects some parameters:
 
+        :param preset: The configuration used to parameterize values in fields and variables.
         :param memory: A memory used to store variable values during
                        specialization and abstraction of successive
                        symbols, especially to handle inter-symbol
                        relationships. If None, a temporary memory is
                        created by default and used internally during the scope of the
                        specialization process.
+        :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
+        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
         :return: A generator that provides data :class:`bytes` at each call to ``next(generator)``.
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
 
@@ -308,7 +311,7 @@ class Symbol(AbstractField):
         """
 
         from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
-        msg = MessageSpecializer(preset=self.preset, memory=memory)
+        msg = MessageSpecializer(preset=preset, memory=memory)
 
         specializing_paths = msg.specializeSymbol(self)
         return self._inner_specialize(specializing_paths)
@@ -318,13 +321,15 @@ class Symbol(AbstractField):
             yield specializing_path.generatedContent.tobytes()
 
     @public_api
-    def count(self) -> int:
+    def count(self, preset=None) -> int:
         r"""The :meth:`count` method computes the expected number of unique
         messages produced, considering the initial symbol model and the
         preset configuration of fields.
 
         The :meth:`count` method expects the same parameters as the :meth:`specialize` method:
 
+        :param preset: The configuration used to parameterize values in fields and variables. This configuration will impact the expected number of unique messages the symbol would produce.
+        :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
         :return: The number of unique values the symbol specialization can produce.
         :rtype: :class:`int`
 
@@ -351,20 +356,20 @@ class Symbol(AbstractField):
         >>> # Specify a preset configuration for field 'f2'
         >>> preset = Preset(symbol)
         >>> preset[f2] = 42
-        >>> symbol.count()  # Here, the following computation is done: 951*1*256 (as the f2 field value is set to 42, f2 can now produce only 1 possible value)
+        >>> symbol.count(preset)  # Here, the following computation is done: 951*1*256 (as the f2 field value is set to 42, f2 can now produce only 1 possible value)
         243456
         >>>
         >>> # Specify a preset configuration for field 'f3' by activating fuzzing
         >>> preset.fuzz(f3, generator='determinist')
         >>>
-        >>> symbol.count()  # Here, the following computation is done: 951*1*29 (29 corresponds to the number of possible values generated by the determinist generator)
+        >>> symbol.count(preset)  # Here, the following computation is done: 951*1*29 (29 corresponds to the number of possible values generated by the determinist generator)
         27579
 
         """
 
         count = 1
         for field in self.fields:
-            count *= field.count(preset=self.preset)
+            count *= field.count(preset=preset)
         return count
 
     def clearMessages(self):
@@ -445,7 +450,7 @@ def _test_many_relation_abstractions():
     ...                          eth_crc_802_3])
     >>> preset = Preset(symbol)
     >>> preset['eth.payload'] = b"PAYLOAD"
-    >>> symbol.abstract(next(symbol.specialize()))  # doctest: +ELLIPSIS
+    >>> symbol.abstract(next(symbol.specialize(preset)))  # doctest: +ELLIPSIS
     OrderedDict([('eth.length', b'\x00\n'), ('eth.llc', b'...'), ('eth.payload', b'PAYLOAD'), ('eth.padding', b'...'), ('eth.crc', ...)])
 
 

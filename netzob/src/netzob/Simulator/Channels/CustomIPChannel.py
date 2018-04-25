@@ -190,7 +190,7 @@ class CustomIPChannel(AbstractChannel):
         """
 
         self.header_preset['ip.payload'] = data
-        packet = next(self.header.specialize())
+        packet = next(self.header.specialize(self.header_preset))
         len_data = self._socket.sendto(packet, (self.remoteIP, 0))
         return len_data
 

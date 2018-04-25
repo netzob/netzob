@@ -116,7 +116,7 @@ class Actor(Thread):
     :vartype fuzzing_states: :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype keep_open: :class:`bool`
     :vartype memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`
-    :vartype preset: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+    :vartype presets: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
     :vartype cbk_select_data: :class:`Callable <collections.abc.Callable>`
     :vartype target_state: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype current_state: :class:`State <netzob.Model.Grammar.States.State.State>`

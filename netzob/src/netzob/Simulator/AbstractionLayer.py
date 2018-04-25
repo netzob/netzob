@@ -255,24 +255,11 @@ class AbstractionLayer(object):
         if symbol is None:
             raise TypeError("The symbol to write on the channel cannot be None")
 
-        tmp_preset = Preset(symbol)
-
-        # Update preset according to actor preset
-        if self.actor is not None and self.actor.presets is not None:
-            for tmp_actor_preset in self.actor.presets:
-                if tmp_actor_preset.symbol == symbol:
-                    tmp_preset.update(tmp_actor_preset)
-                    break
-
-        # Update preset according to preset given in parameter
-        if preset is not None:
-            tmp_preset.update(preset)
-
         data = b''
         data_len = 0
         data_structure = {}
         if duration is None:
-            (data, data_len, data_structure) = self._writeSymbol(symbol, preset=tmp_preset, cbk_action=cbk_action)
+            (data, data_len, data_structure) = self._writeSymbol(symbol, preset=preset, cbk_action=cbk_action)
         else:
 
             t_start = time.time()
@@ -285,7 +272,7 @@ class AbstractionLayer(object):
                     break
 
                 # Specialize the symbol and send it over the channel
-                (data, data_len_tmp, data_structure) = self._writeSymbol(symbol, preset=tmp_preset, cbk_action=cbk_action)
+                (data, data_len_tmp, data_structure) = self._writeSymbol(symbol, preset=preset, cbk_action=cbk_action)
                 data_len += data_len_tmp
 
                 if rate is None:
@@ -500,42 +487,12 @@ class AbstractionLayer(object):
 
         # Check symbol regarding its expected preset
         if not isinstance(symbol, (UnknownSymbol, EmptySymbol)):
-            if symbols_preset is not None:
-                if not self._check_preset(symbol, data_structure, symbols_preset):
+            if symbols_preset is not None and symbol in symbols_preset:
+                if not symbol.check_preset(data_structure, symbols_preset[symbol]):
                     self._logger.debug("Receive good symbol but with wrong setting")
                     raise SymbolBadSettingsException()
 
         return (symbol, data, data_structure)
-
-    def _check_preset(self, symbol, data_structure, symbols_preset):
-        self._logger.debug("Checking symbol consistency regarding its expected preset, for symbol '{}'".format(symbol))
-
-        if symbol not in symbols_preset.keys():
-            return True
-
-        result = True
-        symbol_preset = symbols_preset[symbol]
-        for (field, field_preset) in symbol_preset.items():
-            if isinstance(field, Field):
-                field_name = field.name
-            else:
-                field_name = field
-            if field_name in data_structure.keys():
-                expected_value = field_preset.tobytes()
-                observed_value = data_structure[field_name]
-                self._logger.debug("Checking field consistence, for field '{}'".format(field_name))
-                if expected_value == observed_value:
-                    self._logger.debug("Field '{}' consistency is ok: expected value '{}' == observed value '{}'".format(field_name, expected_value, observed_value))
-                else:
-                    self._logger.debug("Field '{}' consistency is not ok: expected value '{}' != observed value '{}'".format(field_name, expected_value, observed_value))
-                    result = False
-                    break
-
-        if result:
-            self._logger.debug("Symbol '{}' consistency is ok".format(symbol))
-        else:
-            self._logger.debug("Symbol '{}' consistency is not ok".format(symbol))
-        return result
 
     def openChannel(self):
         """Open the underlying communication channel.
