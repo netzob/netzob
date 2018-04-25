@@ -37,6 +37,7 @@
 import random
 # import traceback
 import socket
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -204,14 +205,24 @@ class State(AbstractState):
                 raise Exception("The abstraction layer returned a None received symbol")
             self._logger.debug("[actor='{}'] Input symbol: '{}'".format(str(actor), str(received_symbol)))
 
-            # Find the transition which accepts the received symbol as an input symbol
+            actor.visit_log.append("  [+] At state '{}'".format(self.name))
+
+            # Find the transition which accepts the received symbol as an input symbol, along with the correct input symbol preset
             nextTransition = None
             for transition in self.transitions:
                 if transition.type == Transition.TYPE and id(transition.inputSymbol) == id(received_symbol):
-                    nextTransition = transition
-                    break
+                    if transition.inputSymbolPreset is not None:
+                        self._logger.debug("Checking input symbol preset")
+                        # Check preset
+                        if received_symbol.check_preset(received_structure, transition.inputSymbolPreset):
+                            self._logger.debug("Receive good symbol with good preset setting")
+                            actor.visit_log.append("  [+]   At state '{}', received one of the expected symbols, with good preset settings, leading to state '{}'".format(self.name, self.name))
+                            nextTransition = transition
+                            break
+                    else:
+                        nextTransition = transition
+                        break
 
-            actor.visit_log.append("  [+] At state '{}'".format(self.name))
             actor.visit_log.append("  [+]   Receiving input symbol '{}', which corresponds to transition '{}'".format(str(received_symbol), str(nextTransition)))
 
         except ActorStopException:
@@ -320,16 +331,19 @@ class State(AbstractState):
         :return: the next transition or None if no transition available
         :rtype: :class:`AbstractTransition <netzob.Model.Grammar.Transition.AbstractTransition.AbstractTransition>`
         """
-        if len(self.transitions) == 0:
-            return None
 
         # create a dictionnary to host the available transition
         prioritizedTransitions = dict()
         for transition in self.transitions:
-            if transition.priority in list(prioritizedTransitions.keys()):
-                prioritizedTransitions[transition.priority].append(transition.copy())
-            else:
-                prioritizedTransitions[transition.priority] = [transition.copy()]
+            # Only select transitions that does not expect to receive the input symbol
+            if not transition.inverseInitiator:
+                if transition.priority in list(prioritizedTransitions.keys()):
+                    prioritizedTransitions[transition.priority].append(transition.copy())
+                else:
+                    prioritizedTransitions[transition.priority] = [transition.copy()]
+
+        if len(prioritizedTransitions) == 0:
+            return None
 
         availableTransitions = prioritizedTransitions[sorted(prioritizedTransitions.keys())[0]]
 

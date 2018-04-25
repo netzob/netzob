@@ -335,7 +335,7 @@ class Transition(AbstractTransition):
                 self._logger.debug(errorMessage)
                 raise Exception(errorMessage)
 
-        if len(self.outputSymbols) == 0:
+        if len(self.outputSymbols) == 0 or (len(self.outputSymbols) == 1 and isinstance(self.outputSymbols[0], EmptySymbol)):
             self.active = False
             actor.visit_log.append("  [+]   During transition '{}', receiving no symbol which was expected".format(self.name))
             actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
@@ -633,7 +633,9 @@ class Transition(AbstractTransition):
     @outputSymbols.setter  # type: ignore
     def outputSymbols(self, outputSymbols):
         if outputSymbols is None:
-            self.__outputSymbols = []
+            self.__outputSymbols = [EmptySymbol()]
+        elif outputSymbols == []:
+            self.__outputSymbols = [EmptySymbol()]
         else:
             for symbol in outputSymbols:
                 if not isinstance(symbol, Symbol):
