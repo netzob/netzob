@@ -288,7 +288,8 @@ class Transition(AbstractTransition):
                                                    actor.abstractionLayer.last_sent_structure,
                                                    actor.abstractionLayer.last_received_symbol,
                                                    actor.abstractionLayer.last_received_message,
-                                                   actor.abstractionLayer.last_received_structure)
+                                                   actor.abstractionLayer.last_received_structure,
+                                                   actor)
             actor.visit_log.append("  [+]   During transition '{}', modifying input symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))
@@ -578,7 +579,8 @@ class Transition(AbstractTransition):
                                                    actor.abstractionLayer.last_sent_structure,
                                                    actor.abstractionLayer.last_received_symbol,
                                                    actor.abstractionLayer.last_received_message,
-                                                   actor.abstractionLayer.last_received_structure)
+                                                   actor.abstractionLayer.last_received_structure,
+                                                   actor)
             actor.visit_log.append("  [+]   During transition '{}', modifying output symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))

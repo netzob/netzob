@@ -259,7 +259,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
         .. function:: cbk_method(available_symbols, current_symbol, current_state,\
                                  last_sent_symbol, last_sent_message, last_sent_structure,\
-                                 last_received_symbol, last_received_message, last_received_structure)
+                                 last_received_symbol, last_received_message,\
+                                 last_received_structure, actor)
            :noindex:
 
            :param available_symbols:
@@ -294,6 +295,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                   Last received message structure on the abstraction
                   layer, and thus making it possible to create relationships
                   with the previously received message structure.
+           :param actor:
+                  Corresponds to the current actor.
 
            :type available_symbols: ~typing.List[~netzob.Model.Vocabulary.Symbol.Symbol]
            :type current_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
@@ -305,6 +308,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
            :type last_received_message: :class:`~bitarray.bitarray`
            :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
+           :type actor: :class:`~netzob.Simulation.Actor.Actor`
 
            :return: The callback function should return a tuple. The
                     first tuple element is the symbol (:class:`Symbol
