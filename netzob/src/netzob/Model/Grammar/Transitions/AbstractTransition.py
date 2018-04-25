@@ -78,9 +78,11 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         self.name = name
         self.priority = priority
         self.__description = description
+
         self.active = False
         self.cbk_modify_symbol = []
         self.cbk_action = []
+        self.inverseInitiator = False
 
     def __str__(self):
         return str(self.name)
@@ -243,6 +245,19 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     @typeCheck(str)
     def description(self, description):
         self.__description = description
+
+    @public_api
+    @property
+    def inverseInitiator(self):
+        """
+        :type: :class:`bool`
+        """
+        return self.__inverseInitiator
+
+    @inverseInitiator.setter  # type: ignore
+    @typeCheck(bool)
+    def inverseInitiator(self, inverseInitiator):
+        self.__inverseInitiator = inverseInitiator
 
     @public_api
     def add_cbk_modify_symbol(self, cbk_method):

@@ -210,7 +210,6 @@ class Transition(AbstractTransition):
         self.inputSymbolReactionTime = None
         self.outputSymbolsReactionTime = None
         self.description = None
-        self.inverseInitiator = False
         self.rate = None
         self.duration = None
 
@@ -341,10 +340,6 @@ class Transition(AbstractTransition):
             actor.visit_log.append("  [+]   During transition '{}', receiving no symbol which was expected".format(self.name))
             actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
 
-            if self.inverseInitiator:
-                actor.initiator = not actor.initiator
-                actor.visit_log.append("  [+]   Transition '{}' triggers inversion of initiator flag (now: {})".format(self.name, actor.initiator))
-
             return self.endState
 
         # Waits for the reception of a symbol
@@ -390,10 +385,6 @@ class Transition(AbstractTransition):
             self.active = False
             actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol '{}'".format(self.name, str(received_symbol)))
             actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
-
-            if self.inverseInitiator:
-                actor.initiator = not actor.initiator
-                actor.visit_log.append("  [+]   Transition '{}' triggers inversion of initiator flag (now: {})".format(self.name, actor.initiator))
 
             for cbk in self.cbk_action:
                 self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), self.name))
@@ -503,10 +494,6 @@ class Transition(AbstractTransition):
 
         # Update visit log
         actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
-
-        if self.inverseInitiator:
-            actor.initiator = not actor.initiator
-            actor.visit_log.append("  [+]   Transition '{}' triggers inversion of initiator flag (now: {})".format(self.name, actor.initiator))
 
         return self.endState
 

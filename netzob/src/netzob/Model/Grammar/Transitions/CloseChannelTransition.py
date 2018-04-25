@@ -127,6 +127,7 @@ class CloseChannelTransition(AbstractTransition):
         transition.priority = self.priority
         transition.cbk_modify_symbol = self.cbk_modify_symbol
         transition.cbk_action = self.cbk_action
+        transition.inverseInitiator = self.inverseInitiator
         return transition
 
     def executeAsInitiator(self, actor):
