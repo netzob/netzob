@@ -108,6 +108,13 @@ class State(AbstractState):
         """This method picks the next available transition and executes it.
 
         """
+
+        # Check if the actor has received a message. If so, we execute the step as not an initiator
+        if actor.abstractionLayer.check_received():
+            actor.visit_log.append("  [+] At state '{}', received packet on communication channel. Switching to execution as not initiator.".format(self.name))
+            self._logger.debug("Data received on the communication channel. Switching to execution as not initiator to handle the received message.")
+            return self.executeAsNotInitiator(actor)
+
         self._logger.debug(
             "[actor='{}'] Execute state {} as an initiator".format(str(actor), self.name))
 
@@ -119,7 +126,8 @@ class State(AbstractState):
 
         if nextTransition is None:
             self.active = False
-            return
+            time.sleep(1.0)
+            return self
 
         # Execute picked transition as an initiator
         try:
