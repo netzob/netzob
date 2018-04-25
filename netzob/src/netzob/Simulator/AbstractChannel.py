@@ -451,6 +451,8 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
             if abstraction_layer.is_data_interesting(data):
                 self._logger.debug("Adding received message to input queue of abstraction layer '{}'".format(id(abstraction_layer)))
                 abstraction_layer.queue_input.put(data)
+            else:
+                self._logger.debug("Abstraction layer {} is not interesed by the received data".format(id(abstraction_layer)))
 
     @public_api
     def stop(self):
