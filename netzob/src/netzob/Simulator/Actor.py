@@ -434,7 +434,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that returns a new transition
     >>> def cbk_modifySymbol(available_symbols, current_symbol, current_preset, current_state,
     ...                     last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                     last_received_symbol, last_received_message, last_received_structure):
+    ...                     last_received_symbol, last_received_message, last_received_structure, actor):
     ...
     ...    if last_received_symbol:
     ...        last_received_symbol_name = last_received_symbol.name
@@ -611,7 +611,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that returns a new symbol
     >>> def cbk_modifySymbol(available_symbols, current_symbol, current_preset, current_state,
     ...                      last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                      last_received_symbol, last_received_message, last_received_structure):
+    ...                      last_received_symbol, last_received_message, last_received_structure, actor):
     ...
     ...    if last_received_symbol:
     ...        last_received_symbol_name = last_received_symbol.name
@@ -780,7 +780,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that returns a new transition
     >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
     ...                          last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                          last_received_symbol, last_received_message, last_received_structure):
+    ...                          last_received_symbol, last_received_message, last_received_structure, actor):
     ...
     ...     # Modify the selected transition
     ...     if nextTransition in availableTransitions:
@@ -986,7 +986,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that returns a new transition
     >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
     ...                          last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                          last_received_symbol, last_received_message, last_received_structure):
+    ...                          last_received_symbol, last_received_message, last_received_structure, actor):
     ...
     ...     # Modify the selected transition so that we change the next state
     ...     initialTransition = nextTransition
@@ -1750,7 +1750,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that always returns alice_transition2 to handle reception of fuzzed messages
     >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
     ...                          last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                          last_received_symbol, last_received_message, last_received_structure):
+    ...                          last_received_symbol, last_received_message, last_received_structure, actor):
     ...     if nextTransition is None:
     ...         return alice_transition2
     ...     else:
@@ -1899,7 +1899,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that always returns alice_transition2 to handle reception of fuzzed messages
     >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
     ...                          last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                          last_received_symbol, last_received_message, last_received_structure):
+    ...                          last_received_symbol, last_received_message, last_received_structure, actor):
     ...     if nextTransition is None:
     ...         return alice_transition2
     ...     else:
@@ -2647,7 +2647,7 @@ def _test_callback_modify_symbol():
     >>> # Creation of a callback function that returns a new transition
     >>> def cbk_modifySymbol(available_symbols, current_symbol, current_preset, current_state,
     ...                     last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                     last_received_symbol, last_received_message, last_received_structure):
+    ...                     last_received_symbol, last_received_message, last_received_structure, actor):
     ...
     ...    if last_received_symbol:
     ...        last_received_symbol_name = last_received_symbol.name

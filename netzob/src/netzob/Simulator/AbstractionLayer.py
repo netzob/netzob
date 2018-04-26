@@ -494,6 +494,17 @@ class AbstractionLayer(object):
 
         return (symbol, data, data_structure)
 
+    def check_received(self):
+        r"""Check is a message has been received on the underlying
+        communicaton channel and which concerns the current actor.
+
+        """
+        if self.channel is not None and self.channel.threaded_mode:
+            if not self.queue_input.empty():
+                self._logger.debug("Input queue contains messages")
+                return True
+        return False
+
     def openChannel(self):
         """Open the underlying communication channel.
 

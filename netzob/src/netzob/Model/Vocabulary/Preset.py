@@ -1126,10 +1126,20 @@ class Preset(object):
         r"""
 
         >>> from netzob.all import *
+        >>> from bitarray import bitarray
+        >>> f_int = Field(int8())
         >>> f = Field(Raw())
         >>> s = Symbol([f])
         >>> preset = Preset(s)
+        >>> preset[f_int] = 4
+        >>> preset[f_int]
+        b'\x04'
+        >>> preset[f] = bitarray('00000001')
+        >>> preset[f]
+        bitarray('00000001')
         >>> preset[f] = b'\xaa'
+        >>> preset[f]
+        b'\xaa'
         >>> new_var = preset[f]
         >>>
         >>> preset.fuzz(f)

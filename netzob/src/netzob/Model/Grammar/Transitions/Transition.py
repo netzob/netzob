@@ -210,7 +210,6 @@ class Transition(AbstractTransition):
         self.inputSymbolReactionTime = None
         self.outputSymbolsReactionTime = None
         self.description = None
-        self.inverseInitiator = False
         self.rate = None
         self.duration = None
 
@@ -288,7 +287,8 @@ class Transition(AbstractTransition):
                                                    actor.abstractionLayer.last_sent_structure,
                                                    actor.abstractionLayer.last_received_symbol,
                                                    actor.abstractionLayer.last_received_message,
-                                                   actor.abstractionLayer.last_received_structure)
+                                                   actor.abstractionLayer.last_received_structure,
+                                                   actor)
             actor.visit_log.append("  [+]   During transition '{}', modifying input symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))
@@ -335,14 +335,10 @@ class Transition(AbstractTransition):
                 self._logger.debug(errorMessage)
                 raise Exception(errorMessage)
 
-        if len(self.outputSymbols) == 0:
+        if len(self.outputSymbols) == 0 or (len(self.outputSymbols) == 1 and isinstance(self.outputSymbols[0], EmptySymbol)):
             self.active = False
             actor.visit_log.append("  [+]   During transition '{}', receiving no symbol which was expected".format(self.name))
             actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
-
-            if self.inverseInitiator:
-                actor.initiator = not actor.initiator
-                actor.visit_log.append("  [+]   Transition '{}' triggers inversion of initiator flag (now: {})".format(self.name, actor.initiator))
 
             return self.endState
 
@@ -389,10 +385,6 @@ class Transition(AbstractTransition):
             self.active = False
             actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol '{}'".format(self.name, str(received_symbol)))
             actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
-
-            if self.inverseInitiator:
-                actor.initiator = not actor.initiator
-                actor.visit_log.append("  [+]   Transition '{}' triggers inversion of initiator flag (now: {})".format(self.name, actor.initiator))
 
             for cbk in self.cbk_action:
                 self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), self.name))
@@ -503,10 +495,6 @@ class Transition(AbstractTransition):
         # Update visit log
         actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
 
-        if self.inverseInitiator:
-            actor.initiator = not actor.initiator
-            actor.visit_log.append("  [+]   Transition '{}' triggers inversion of initiator flag (now: {})".format(self.name, actor.initiator))
-
         return self.endState
 
     def __pickOutputSymbol(self, actor):
@@ -578,7 +566,8 @@ class Transition(AbstractTransition):
                                                    actor.abstractionLayer.last_sent_structure,
                                                    actor.abstractionLayer.last_received_symbol,
                                                    actor.abstractionLayer.last_received_message,
-                                                   actor.abstractionLayer.last_received_structure)
+                                                   actor.abstractionLayer.last_received_structure,
+                                                   actor)
             actor.visit_log.append("  [+]   During transition '{}', modifying output symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))
@@ -627,14 +616,14 @@ class Transition(AbstractTransition):
         >>> transition = Transition(State(), State())
         >>> transition.outputSymbols = None
         >>> len(transition.outputSymbols)
-        0
+        1
         >>> transition.outputSymbols.append(Symbol())
         >>> transition.outputSymbols.extend([Symbol(), Symbol()])
         >>> len(transition.outputSymbols)
-        3
+        4
         >>> transition.outputSymbols = []
         >>> len(transition.outputSymbols)
-        0
+        1
 
         :type: list of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         :raise: TypeError if not valid.
@@ -644,7 +633,9 @@ class Transition(AbstractTransition):
     @outputSymbols.setter  # type: ignore
     def outputSymbols(self, outputSymbols):
         if outputSymbols is None:
-            self.__outputSymbols = []
+            self.__outputSymbols = [EmptySymbol()]
+        elif outputSymbols == []:
+            self.__outputSymbols = [EmptySymbol()]
         else:
             for symbol in outputSymbols:
                 if not isinstance(symbol, Symbol):

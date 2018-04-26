@@ -37,6 +37,7 @@
 import random
 # import traceback
 import socket
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -108,6 +109,13 @@ class State(AbstractState):
         """This method picks the next available transition and executes it.
 
         """
+
+        # Check if the actor has received a message. If so, we execute the step as not an initiator
+        if actor.abstractionLayer.check_received():
+            actor.visit_log.append("  [+] At state '{}', received packet on communication channel. Switching to execution as not initiator.".format(self.name))
+            self._logger.debug("Data received on the communication channel. Switching to execution as not initiator to handle the received message.")
+            return self.executeAsNotInitiator(actor)
+
         self._logger.debug(
             "[actor='{}'] Execute state {} as an initiator".format(str(actor), self.name))
 
@@ -119,7 +127,8 @@ class State(AbstractState):
 
         if nextTransition is None:
             self.active = False
-            return
+            time.sleep(1.0)
+            return self
 
         # Execute picked transition as an initiator
         try:
@@ -196,14 +205,24 @@ class State(AbstractState):
                 raise Exception("The abstraction layer returned a None received symbol")
             self._logger.debug("[actor='{}'] Input symbol: '{}'".format(str(actor), str(received_symbol)))
 
-            # Find the transition which accepts the received symbol as an input symbol
+            actor.visit_log.append("  [+] At state '{}'".format(self.name))
+
+            # Find the transition which accepts the received symbol as an input symbol, along with the correct input symbol preset
             nextTransition = None
             for transition in self.transitions:
                 if transition.type == Transition.TYPE and id(transition.inputSymbol) == id(received_symbol):
-                    nextTransition = transition
-                    break
+                    if transition.inputSymbolPreset is not None:
+                        self._logger.debug("Checking input symbol preset")
+                        # Check preset
+                        if received_symbol.check_preset(received_structure, transition.inputSymbolPreset):
+                            self._logger.debug("Receive good symbol with good preset setting")
+                            actor.visit_log.append("  [+]   At state '{}', received one of the expected symbols, with good preset settings, leading to state '{}'".format(self.name, self.name))
+                            nextTransition = transition
+                            break
+                    else:
+                        nextTransition = transition
+                        break
 
-            actor.visit_log.append("  [+] At state '{}'".format(self.name))
             actor.visit_log.append("  [+]   Receiving input symbol '{}', which corresponds to transition '{}'".format(str(received_symbol), str(nextTransition)))
 
         except ActorStopException:
@@ -256,7 +275,8 @@ class State(AbstractState):
                                  actor.abstractionLayer.last_sent_structure,
                                  actor.abstractionLayer.last_received_symbol,
                                  actor.abstractionLayer.last_received_message,
-                                 actor.abstractionLayer.last_received_structure)
+                                 actor.abstractionLayer.last_received_structure,
+                                 actor)
 
             actor.visit_log.append("  [+]   Changing transition to '{}', through callback".format(str(nextTransition)))
         else:
@@ -311,16 +331,19 @@ class State(AbstractState):
         :return: the next transition or None if no transition available
         :rtype: :class:`AbstractTransition <netzob.Model.Grammar.Transition.AbstractTransition.AbstractTransition>`
         """
-        if len(self.transitions) == 0:
-            return None
 
         # create a dictionnary to host the available transition
         prioritizedTransitions = dict()
         for transition in self.transitions:
-            if transition.priority in list(prioritizedTransitions.keys()):
-                prioritizedTransitions[transition.priority].append(transition.copy())
-            else:
-                prioritizedTransitions[transition.priority] = [transition.copy()]
+            # Only select transitions that does not expect to receive the input symbol
+            if not transition.inverseInitiator:
+                if transition.priority in list(prioritizedTransitions.keys()):
+                    prioritizedTransitions[transition.priority].append(transition.copy())
+                else:
+                    prioritizedTransitions[transition.priority] = [transition.copy()]
+
+        if len(prioritizedTransitions) == 0:
+            return None
 
         availableTransitions = prioritizedTransitions[sorted(prioritizedTransitions.keys())[0]]
 
@@ -345,7 +368,8 @@ class State(AbstractState):
                                  actor.abstractionLayer.last_sent_structure,
                                  actor.abstractionLayer.last_received_symbol,
                                  actor.abstractionLayer.last_received_message,
-                                 actor.abstractionLayer.last_received_structure)
+                                 actor.abstractionLayer.last_received_structure,
+                                 actor)
             actor.visit_log.append("  [+]   Changing transition to '{}', through callback".format(str(nextTransition)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at state '{}'".format(str(actor), self.name))

@@ -75,3 +75,6 @@ class EmptySymbol(Symbol):
 
     def __str__(self):
         return "Empty Symbol"
+
+    def __hash__(self):
+        return id(self)
