@@ -332,7 +332,7 @@ class State(AbstractState):
         :rtype: :class:`AbstractTransition <netzob.Model.Grammar.Transition.AbstractTransition.AbstractTransition>`
         """
 
-        # create a dictionnary to host the available transition
+        # create a dictionary to host the available transition
         prioritizedTransitions = dict()
         for transition in self.transitions:
             # Only select transitions that does not expect to receive the input symbol
