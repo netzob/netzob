@@ -386,6 +386,17 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
     def __exit__(self, exc_type, exc_value, traceback):
         """Exit the runtime channel context by closing the channel.
         This methods is implied in the with statement.
+
+        This method should not be called explicitly. However, the following
+        arguments are accepted:
+
+        :param exc_type: the potential exception type caught in context
+        :type exc_type: Exception
+        :param exc_value: the potential exception value caught in context
+        :type exc_type: object
+        :param traceback: the traceback of the potential exception caught in
+                          context
+        :type traceback: a traceback object
         """
         self.close()
 
