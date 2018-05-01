@@ -352,7 +352,7 @@ class AbstractionLayer(object):
         self.last_sent_structure = data_structure
 
         for cbk in cbk_action:
-            self._logger.debug("[actor='{}'] A callback function is defined at the end of the transition".format(self.actor))
+            self._logger.debug("[actor='{}'] A callback function is defined for the write symbol event".format(self.actor))
             cbk(symbol, data, data_structure, Operation.WRITE, self.actor)
 
         return (data, data_len, data_structure)
@@ -574,124 +574,19 @@ class AbstractionLayer(object):
 
 
 def _test():
-    """
+    r"""
     >>> from netzob.all import *
     >>> channel = IPChannel(remoteIP="127.0.0.1")
     >>> automata = Automata(State(), [Symbol()])
     >>> actor_c = Actor(automata, channel=channel)
     >>> actor_d = Actor(automata, channel=channel)
-
-    # Verify that similar actors have the same channel
+    >>>
+    >>> # Verify that similar actors have the same channel
     >>> id(actor_d.abstractionLayer.channel) == id(actor_c.abstractionLayer.channel)
     True
-
-    # Verify that similar actors have different abstraction layers
+    >>>
+    >>> # Verify that similar actors have different abstraction layers
     >>> id(actor_d.abstractionLayer) != id(actor_c.abstractionLayer)
     True
-
-
-    >>> from netzob.all import *
-    >>> import time
     >>>
-    >>> # First we create the symbols
-    >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
-    >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
-    >>> symbolList = [aliceSymbol, bobSymbol]
-    >>>
-    >>> # Create the grammar
-    >>> s0 = State(name="S0")
-    >>> s1 = State(name="S1")
-    >>> s2 = State(name="S2")
-    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
-    >>> mainTransition = Transition(startState=s1, endState=s1,
-    ...                             inputSymbol=bobSymbol, outputSymbols=[aliceSymbol],
-    ...                             name="hello")
-    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2, name="Close")
-    >>> automata = Automata(s0, symbolList)
-    >>>
-    >>> automata_ascii = automata.generateASCII()
-    >>> print(automata_ascii)
-    #=========================#
-    H           S0            H
-    #=========================#
-      |
-      | OpenChannelTransition
-      v
-    +-------------------------+   hello (Bob-Hello;{Alice-Hello})
-    |                         | ----------------------------------+
-    |           S1            |                                   |
-    |                         | <---------------------------------+
-    +-------------------------+
-      |
-      | CloseChannelTransition
-      v
-    +-------------------------+
-    |           S2            |
-    +-------------------------+
-    <BLANKLINE>
-    >>>
-    >>> def cbk_select_data_bob(data):
-    ...     if data[:6] == b"alice>":
-    ...         return True
-    ...     else:
-    ...         return False
-    >>>
-    >>> def cbk_select_data_alice(data):
-    ...     if data[:4] == b"bob>":
-    ...         return True
-    ...     else:
-    ...         return False
-    >>>
-    >>> # Create actors: Alice (a server) and Bob (a client)
-    >>> channel = IPChannel(localIP="127.0.0.1", remoteIP="127.0.0.1")
-    >>> alice = Actor(automata=automata, channel=channel, name='Alice')
-    >>> alice.cbk_select_data = cbk_select_data_alice
-    >>> alice.initiator = False
-    >>>
-    >>> bob = Actor(automata=automata, channel=channel, name='Bob')
-    >>> bob.cbk_select_data = cbk_select_data_bob
-    >>> bob.nbMaxTransitions = 3
-    >>>
-    >>> channel.start()
-    >>>
-    >>> alice.start()
-    >>> time.sleep(0.5)
-    >>> bob.start()
-    >>>
-    >>> time.sleep(1)
-    >>>
-    >>> bob.wait()
-    >>> alice.stop()
-    >>>
-    >>> channel.stop()
-    >>> print(bob.generateLog())
-    Activity log for actor 'Bob':
-      [+] At state 'S0'
-      [+]   Picking transition 'Open'
-      [+]   Transition 'Open' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Picking transition 'hello'
-      [+]   During transition 'hello', sending input symbol 'Bob-Hello'
-      [+]   During transition 'hello', receiving expected output symbol 'Alice-Hello'
-      [+]   Transition 'hello' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Picking transition 'hello'
-      [+]   During transition 'hello', sending input symbol 'Bob-Hello'
-      [+]   During transition 'hello', receiving expected output symbol 'Alice-Hello'
-      [+]   Transition 'hello' lead to state 'S1'
-      [+] At state 'S1', we reached the max number of transitions (3), so we stop
-    >>> print(alice.generateLog())
-    Activity log for actor 'Alice':
-      [+] At state 'S0'
-      [+]   Picking transition 'Open'
-      [+]   Transition 'Open' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Receiving input symbol 'Bob-Hello', which corresponds to transition 'hello'
-      [+]   During transition 'hello', choosing output symbol 'Alice-Hello'
-      [+]   Transition 'hello' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Receiving input symbol 'Bob-Hello', which corresponds to transition 'hello'
-      [+]   During transition 'hello', choosing output symbol 'Alice-Hello'
-      [+]   Transition 'hello' lead to state 'S1'
-
     """
