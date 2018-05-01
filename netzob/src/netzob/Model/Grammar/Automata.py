@@ -726,6 +726,499 @@ class Automata(object):
 
         self.cbk_read_unknown_symbol = cbk_method
 
+    ## Automata Fuzzing ##
+
+    def mutate(self, strategy=None, target=None, generator=None, seed=None):
+        r"""This is the mutation method of the automaton. This method returns
+        a new automaton that may be used for fuzzing purpose.
+
+        The mutate method expects some parameters:
+
+        :param strategy: The strategy used to build the new automaton.
+
+                         The following strategies are available:
+
+                         * :attr:`AutomataMutatorStrategy.RANDOM`: Randomly insert and remove transitions between states of the original automaton,
+                         * :attr:`AutomataMutatorStrategy.FULL`: At each state of the automaton, it is possible to reach any states,
+                         * :attr:`AutomataMutatorStrategy.ONESTATE`: Build an automaton with one main state that accepts every symbols.
+                         * :attr:`AutomataMutatorStrategy.TARGETED`: Build an automaton similar to the original one, where a targeted state, given in parameters, will accept every symbols.
+
+                         If set to None, the default strategy is :attr:`AutomataMutatorStrategy.RANDOM`.
+        :param target: The name of the state considered for targeted fuzzing (should be used with :attr:`AutomataMutatorStrategy.TARGETED`).
+        :param generator: The underlying generator used to produce
+                          pseudo-random or deterministic
+                          values.
+
+                          Default generator is ``'xorshift'``, which is
+                          efficient to produce unique pseudo-random
+                          numbers.
+
+                          Available generators from :class:`randomstate` module are:
+
+                          * ``'mt19937'``
+                          * ``'mlfg_1279_861'``
+                          * ``'mrg32k3a'``
+                          * ``'pcg32'``
+                          * ``'pcg64'``
+                          * ``'xorshift128'``
+                          * ``'xoroshiro128plus'``
+                          * ``'xorshift1024'``
+                          * ``'dsfmt'``
+
+        :param seed: An integer used to initialize the underlying
+                     generator.
+
+                     If None, the default value will be set to :attr:`Mutator.SEED_DEFAULT`. The :attr:`Mutator.SEED_DEFAULT` constant is initialized from the configuration variable :attr:`Conf.seed` from the Netzob API :class:`Conf` class.
+
+        :type strategy: :class:`AutomataMutatorStrategy`, optional
+        :type target: :class:`str`, optional
+        :type generator: :class:`iter`, optional
+        :type seed: :class:`int`, optional
+        :return: The mutated automata.
+        :rtype: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
+
+
+        **Basic example of automata fuzzing**
+
+        Mutators may be used in order to create fuzzed/mutated automaton.
+
+        The following code shows the creation of the new automaton with
+        random transitions between the existing states:
+
+        >>> from netzob.all import *
+        >>> import time
+        >>> sym1 = Symbol([Field(String(nbChars=3))], name='Sym1')
+        >>> sym2 = Symbol([Field(String(nbChars=5))], name='Sym2')
+        >>> symbols = [sym1, sym2]
+        >>> s0 = State(name="s0")
+        >>> s1 = State(name="s1")
+        >>> s2 = State(name="s2")
+        >>> s3 = State(name="s3")
+        >>> s4 = State(name="s4")
+        >>> t0 = OpenChannelTransition(startState=s0, endState=s1,
+        ...                            name="t0")
+        >>> t1 = Transition(startState=s1, endState=s1,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t1")
+        >>> t2 = Transition(startState=s1, endState=s2,
+        ...                 inputSymbol=sym2, outputSymbols=[sym2],
+        ...                 name="t2")
+        >>> t3 = Transition(startState=s2, endState=s3,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t3")
+        >>> t4 = CloseChannelTransition(startState=s2, endState=s4,
+        ...                             name="t4")
+        >>>
+        >>> automata = Automata(s0, symbols=symbols)
+        >>> automata_ascii = automata.generateASCII()
+        >>> print(automata_ascii)
+                                         #========================#
+                                         H           s0           H
+                                         #========================#
+                                           |
+                                           | OpenChannelTransition
+                                           v
+                                         +------------------------+   t1 (Sym1;{Sym1})
+                                         |                        | -------------------+
+                                         |           s1           |                    |
+                                         |                        | <------------------+
+                                         +------------------------+
+                                           |
+                                           | t2 (Sym2;{Sym2})
+                                           v
+        +----+  CloseChannelTransition   +------------------------+
+        | s4 | <------------------------ |           s2           |
+        +----+                           +------------------------+
+                                           |
+                                           | t3 (Sym1;{Sym1})
+                                           v
+                                         +------------------------+
+                                         |           s3           |
+                                         +------------------------+
+        <BLANKLINE>
+        >>>
+        >>> # Generate a random automaton
+        >>>
+        >>> mutatedAutomata = automata.mutate()
+        >>> automata_ascii_2 = mutatedAutomata.generateASCII()
+        >>> print(automata_ascii_2)
+        #========================#
+        H           s0           H
+        #========================#
+          |
+          | OpenChannelTransition
+          v
+        +----------------------------------------------------------------------------------------+   t1 (Sym1;{Sym1})
+        |                                                                                        | -------------------+
+        |                                           s1                                           |                    |
+        |                                                                                        | <------------------+
+        +----------------------------------------------------------------------------------------+
+          |                         ^                               ^
+          | t2 (Sym2;{Sym2})        | t_random (Sym1;{Sym1,Sym2})   | t_random (Sym2;{Sym1,Sym2})
+          v                         |                               |
+        +----------------------------------------------------------------------------------------+
+        |                                           s2                                           |
+        +----------------------------------------------------------------------------------------+
+          |                                                         |
+          | t3 (Sym1;{Sym1})                                        | CloseChannelTransition
+          v                                                         v
+        +------------------------+                                +------------------------------+
+        |           s3           |                                |              s4              |
+        +------------------------+                                +------------------------------+
+        <BLANKLINE>
+        >>>
+        >>> # Generate a full automaton
+        >>>
+        >>> mutatedAutomata = automata.mutate(strategy=AutomataMutatorStrategy.FULL)
+        >>>
+        >>> # The ASCII representation is not displayed as it is too big
+        >>>
+        >>> # Generate an automaton with one main state
+        >>>
+        >>> mutatedAutomata = automata.mutate(strategy=AutomataMutatorStrategy.ONESTATE)
+        >>> automata_ascii_2 = mutatedAutomata.generateASCII()
+        >>> print(automata_ascii_2)
+                                          #========================#
+                                          H     Initial state      H
+                                          #========================#
+                                            |
+                                            | OpenChannelTransition
+                                            v
+            t_random (Sym2;{Sym1,Sym2})   +------------------------+   t_random (Sym1;{Sym1,Sym2})
+          +------------------------------ |                        | ------------------------------+
+          |                               |       Main state       |                               |
+          +-----------------------------> |                        | <-----------------------------+
+                                          +------------------------+
+        <BLANKLINE>
+        >>>
+        >>> # Generate an automaton with targeted fuzzing on one specific state
+        >>>
+        >>> mutatedAutomata = automata.mutate(strategy=AutomataMutatorStrategy.TARGETED, target=s2.name)
+        >>> automata_ascii_2 = mutatedAutomata.generateASCII()
+        >>> print(automata_ascii_2)
+                                          #========================#
+                                          H           s0           H
+                                          #========================#
+                                            |
+                                            | OpenChannelTransition
+                                            v
+                                          +------------------------+
+                                          |           s1           |
+                                          +------------------------+
+                                            |
+                                            | t2 (Sym2;{Sym2})
+                                            v
+            t_random (Sym2;{Sym1,Sym2})   +------------------------+   t_random (Sym1;{Sym1,Sym2})
+          +------------------------------ |                        | ------------------------------+
+          |                               |           s2           |                               |
+          +-----------------------------> |                        | <-----------------------------+
+                                          +------------------------+
+        <BLANKLINE>
+
+
+        **Combining message formats and automata fuzzing**
+
+        By combining message formats and automata fuzzing, it is possible
+        to fuzz specific message formats at specific states in the
+        automaton.
+
+        The following code shows the creation of a mutated automaton
+        with targeted automaton mutations at state 's6', and with a
+        precision concerning the state at which fuzzing of message
+        formats will be performed. Here, the message format fuzzing
+        only applies at state 's6'. An actor is also created to
+        simulate a target.
+
+        >>> from netzob.all import *
+        >>> import time
+        >>> sym1 = Symbol([Field(String(nbChars=3))], name='Sym1')
+        >>> sym2 = Symbol([Field(String(nbChars=5))], name='Sym2')
+        >>> symbols = [sym1, sym2]
+        >>> s0 = State(name="s0")
+        >>> s1 = State(name="s1")
+        >>> s2 = State(name="s2")
+        >>> s3 = State(name="s3")
+        >>> s4 = State(name="s4")
+        >>> s5 = State(name="s5")
+        >>> s6 = State(name="s6")
+        >>> s7 = State(name="s7")
+        >>> t0 = OpenChannelTransition(startState=s0, endState=s1,
+        ...                            name="t0")
+        >>> t1 = Transition(startState=s1, endState=s1,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t1")
+        >>> t2 = Transition(startState=s1, endState=s2,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t2")
+        >>> t3 = Transition(startState=s2, endState=s3,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t3")
+        >>> t4 = Transition(startState=s2, endState=s4,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t4")
+        >>> t5 = Transition(startState=s4, endState=s6,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t5")
+        >>> t6 = Transition(startState=s3, endState=s5,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t6")
+        >>> t7 = Transition(startState=s5, endState=s6,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t7")
+        >>> t8 = Transition(startState=s6, endState=s6,
+        ...                 inputSymbol=sym1, outputSymbols=[sym1],
+        ...                 name="t8")
+        >>> t9 = Transition(startState=s6, endState=s6,
+        ...                 inputSymbol=sym2, outputSymbols=[sym1],
+        ...                 name="t9")
+        >>> t10 = CloseChannelTransition(startState=s6, endState=s7,
+        ...                             name="t10")
+        >>>
+        >>> automata = Automata(s0, symbols=symbols)
+        >>> automata_ascii = automata.generateASCII()
+        >>> print(automata_ascii)
+                                     #=========================#
+                                     H           s0            H
+                                     #=========================#
+                                       |
+                                       | OpenChannelTransition
+                                       v
+                                     +-------------------------+   t1 (Sym1;{Sym1})
+                                     |                         | -------------------+
+                                     |           s1            |                    |
+                                     |                         | <------------------+
+                                     +-------------------------+
+                                       |
+                                       | t2 (Sym1;{Sym1})
+                                       v
+        +----+  t4 (Sym1;{Sym1})     +-------------------------+
+        | s4 | <-------------------- |           s2            |
+        +----+                       +-------------------------+
+          |                            |
+          |                            | t3 (Sym1;{Sym1})
+          |                            v
+          |                          +-------------------------+
+          |                          |           s3            |
+          |                          +-------------------------+
+          |                            |
+          |                            | t6 (Sym1;{Sym1})
+          |                            v
+          |                          +-------------------------+
+          |                          |           s5            |
+          |                          +-------------------------+
+          |                            |
+          |                            | t7 (Sym1;{Sym1})
+          |                            v
+          |       t9 (Sym2;{Sym1})   +------------------------------------------------+   t8 (Sym1;{Sym1})
+          |     +------------------- |                                                | -------------------+
+          |     |                    |                       s6                       |                    |
+          |     +------------------> |                                                | <------------------+
+          |                          +------------------------------------------------+
+          |                            |                          ^
+          |                            | CloseChannelTransition   | t5 (Sym1;{Sym1})
+          |                            v                          |
+          |                          +-------------------------+  |
+          |                          |           s7            |  |
+          |                          +-------------------------+  |
+          |                                                       |
+          +-------------------------------------------------------+
+        <BLANKLINE>
+        >>> # Creation of a mutated automaton
+        >>> mutatedAutomata = automata.mutate(strategy=AutomataMutatorStrategy.TARGETED, target=s6.name, seed=42)
+        >>> automata_ascii = mutatedAutomata.generateASCII()
+        >>> print(automata_ascii)
+                                          #========================#
+                                          H           s0           H
+                                          #========================#
+                                            |
+                                            | OpenChannelTransition
+                                            v
+                                          +------------------------+
+                                          |           s1           |
+                                          +------------------------+
+                                            |
+                                            | t2 (Sym1;{Sym1})
+                                            v
+                                          +------------------------+
+                                          |           s2           |
+                                          +------------------------+
+                                            |
+                                            | t4 (Sym1;{Sym1})
+                                            v
+                                          +------------------------+
+                                          |           s4           |
+                                          +------------------------+
+                                            |
+                                            | t5 (Sym1;{Sym1})
+                                            v
+            t_random (Sym1;{Sym1,Sym2})   +------------------------+   t_random (Sym2;{Sym1,Sym2})
+          +------------------------------ |                        | ------------------------------+
+          |                               |           s6           |                               |
+          +-----------------------------> |                        | <-----------------------------+
+                                          +------------------------+
+        <BLANKLINE>
+        >>>
+        >>> # Define fuzzing configuration
+        >>> preset_symbol1 = Preset(sym1)
+        >>> preset_symbol1.fuzz(sym1)
+        >>> preset_symbol2 = Preset(sym2)
+        >>> preset_symbol2.fuzz(sym2)
+        >>>
+        >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
+        >>> bob_channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+        >>> bob_actor = Actor(automata=mutatedAutomata, channel=bob_channel, name='Fuzzer')
+        >>> bob_actor.fuzzing_presets = [preset_symbol1, preset_symbol2]
+        >>> bob_actor.fuzzing_states = [s6.name]
+        >>> bob_actor.nbMaxTransitions = 7
+        >>>
+        >>> # Create Alice's automaton
+        >>> alice_s0 = State(name="s0")
+        >>> alice_s1 = State(name="s1")
+        >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+        >>> alice_transition1 = Transition(startState=alice_s1, endState=alice_s1,
+        ...                                inputSymbol=sym1, outputSymbols=[sym1],
+        ...                                name="T1")
+        >>> alice_transition2 = Transition(startState=alice_s1, endState=alice_s1,
+        ...                                inputSymbol=sym2, outputSymbols=[sym2],
+        ...                                name="T2")
+        >>> alice_automata = Automata(alice_s0, symbols)
+        >>> automata_ascii = alice_automata.generateASCII()
+        >>> print(automata_ascii)
+                               #========================#
+                               H           s0           H
+                               #========================#
+                                 |
+                                 | OpenChannelTransition
+                                 v
+            T2 (Sym2;{Sym2})   +------------------------+   T1 (Sym1;{Sym1})
+          +------------------- |                        | -------------------+
+          |                    |           s1           |                    |
+          +------------------> |                        | <------------------+
+                               +------------------------+
+        <BLANKLINE>
+        >>>
+        >>> # Creation of an automaton visitor/actor and a channel on which to receive the fuzzing traffic
+        >>> alice_channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+        >>>
+        >>> # Creation of a callback function that returns a new transition
+        >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
+        ...                          last_sent_symbol, last_sent_message, last_sent_structure,
+        ...                          last_received_symbol, last_received_message, last_received_structure, actor):
+        ...     if nextTransition is None:
+        ...         return alice_transition2
+        ...     else:
+        ...         return nextTransition
+        >>>
+        >>> alice_automata.getState('s1').add_cbk_modify_transition(cbk_modifyTransition)
+        >>>
+        >>> alice_actor = Actor(automata=alice_automata, channel=alice_channel, initiator=False, name='Target')
+        >>>
+        >>> # We start the targeted actor
+        >>> alice_actor.start()
+        >>> time.sleep(0.5)
+        >>>
+        >>> # We start the visitor, thus the fuzzing of message formats will be applied when specific states are reached
+        >>> bob_actor.start()
+        >>> time.sleep(1)
+        >>>
+        >>> bob_actor.stop()
+        >>> alice_actor.stop()
+        >>>
+        >>> print(bob_actor.generateLog())
+        Activity log for actor 'Fuzzer':
+          [+] At state 's0'
+          [+]   Picking transition 't0'
+          [+]   Transition 't0' lead to state 's1'
+          [+] At state 's1'
+          [+]   Picking transition 't2'
+          [+]   During transition 't2', sending input symbol 'Sym1'
+          [+]   During transition 't2', receiving expected output symbol 'Sym1'
+          [+]   Transition 't2' lead to state 's2'
+          [+] At state 's2'
+          [+]   Picking transition 't4'
+          [+]   During transition 't4', sending input symbol 'Sym1'
+          [+]   During transition 't4', receiving expected output symbol 'Sym1'
+          [+]   Transition 't4' lead to state 's4'
+          [+] At state 's4'
+          [+]   Picking transition 't5'
+          [+]   During transition 't5', sending input symbol 'Sym1'
+          [+]   During transition 't5', receiving expected output symbol 'Sym1'
+          [+]   Transition 't5' lead to state 's6'
+          [+] At state 's6'
+          [+]   Picking transition 't_random'
+          [+]   During transition 't_random', sending input symbol 'Sym2'
+          [+]   During transition 't_random', fuzzing activated
+          [+]   During transition 't_random', receiving expected output symbol 'Sym2'
+          [+]   Transition 't_random' lead to state 's6'
+          [+] At state 's6'
+          [+]   Picking transition 't_random'
+          [+]   During transition 't_random', sending input symbol 'Sym1'
+          [+]   During transition 't_random', fuzzing activated
+          [+]   During transition 't_random', receiving expected output symbol 'Sym2'
+          [+]   Transition 't_random' lead to state 's6'
+          [+] At state 's6'
+          [+]   Picking transition 't_random'
+          [+]   During transition 't_random', sending input symbol 'Sym2'
+          [+]   During transition 't_random', fuzzing activated
+          [+]   During transition 't_random', receiving expected output symbol 'Sym2'
+          [+]   Transition 't_random' lead to state 's6'
+          [+] At state 's6', we reached the max number of transitions (7), so we stop
+        >>> print(alice_actor.generateLog())
+        Activity log for actor 'Target':
+          [+] At state 's0'
+          [+]   Picking transition 'Open'
+          [+]   Transition 'Open' lead to state 's1'
+          [+] At state 's1'
+          [+]   Receiving input symbol 'Sym1', which corresponds to transition 'T1'
+          [+]   Changing transition to 'T1', through callback
+          [+]   During transition 'T1', choosing output symbol 'Sym1'
+          [+]   Transition 'T1' lead to state 's1'
+          [+] At state 's1'
+          [+]   Receiving input symbol 'Sym1', which corresponds to transition 'T1'
+          [+]   Changing transition to 'T1', through callback
+          [+]   During transition 'T1', choosing output symbol 'Sym1'
+          [+]   Transition 'T1' lead to state 's1'
+          [+] At state 's1'
+          [+]   Receiving input symbol 'Sym1', which corresponds to transition 'T1'
+          [+]   Changing transition to 'T1', through callback
+          [+]   During transition 'T1', choosing output symbol 'Sym1'
+          [+]   Transition 'T1' lead to state 's1'
+          [+] At state 's1'
+          [+]   Receiving input symbol 'Unknown message b'System("ls -al /")\x00 '', which corresponds to transition 'None'
+          [+]   Changing transition to 'T2', through callback
+          [+]   During transition 'T2', choosing output symbol 'Sym2'
+          [+]   Transition 'T2' lead to state 's1'
+          [+] At state 's1'
+          [+]   Receiving input symbol 'Unknown message b'System("ls -al /")\x00 '', which corresponds to transition 'None'
+          [+]   Changing transition to 'T2', through callback
+          [+]   During transition 'T2', choosing output symbol 'Sym2'
+          [+]   Transition 'T2' lead to state 's1'
+          [+] At state 's1'
+          [+]   Receiving input symbol 'Unknown message b'$ENV{"HOME"}\x00       '', which corresponds to transition 'None'
+          [+]   Changing transition to 'T2', through callback
+          [+]   During transition 'T2', choosing output symbol 'Sym2'
+          [+]   Transition 'T2' lead to state 's1'
+
+        """
+
+        from netzob.Fuzzing.Mutators.AutomataMutator import AutomataMutator, AutomataMutatorStrategy
+        from netzob.Fuzzing.Mutator import Mutator
+
+        if generator is None:
+            generator = 'xorshift'
+        if seed is None:
+            seed = Mutator.SEED_DEFAULT
+        if strategy is None:
+            strategy = AutomataMutatorStrategy.RANDOM
+
+        # Create mutator
+        mutator = AutomataMutator(self, generator=generator, seed=seed)
+
+        # Mutat automata
+        mutatedAutomata = mutator.mutate(strategy=strategy, target=target)
+
+        return mutatedAutomata
+
     ## Public properties ##
 
     @public_api
