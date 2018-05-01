@@ -67,8 +67,8 @@ class IPv4Mutator(DomainMutator):
         Default value is ``'xorshift'``.
     :param seed: The seed used in pseudo-random Mutator.
         Default value is :attr:`SEED_DEFAULT <netzob.Fuzzing.Mutator.Mutator.SEED_DEFAULT>`.
-    :type domain: :class:`AbstractVariable
-        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type domain: :class:`Variable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
     :type mode: :class:`int`, optional
     :type generator: :class:`str`, optional
     :type seed: :class:`int`, optional

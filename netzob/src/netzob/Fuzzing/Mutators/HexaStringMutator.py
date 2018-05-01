@@ -65,8 +65,8 @@ class HexaStringMutator(DomainMutator):
     :param lengthBitSize: The size in bits of the memory on which the generated
         length will be encoded.
         Default value is UnitSize.SIZE_8.
-    :type domain: :class:`AbstractVariable
-        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type domain: :class:`Variable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
     :type mode: :class:`int`, optional
     :type lengthBitSize: :class:`int`, optional
 

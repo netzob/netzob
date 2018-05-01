@@ -76,36 +76,31 @@ class Field(AbstractField):
                           internally to help the computation
                           of the value of another field, but does
                           not directly produce data. The default value is False.
-    :type domain: ~typing.Union[Variable,
-                  ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType,
-                  list[~netzob.Model.Vocabulary.Field.Field]], optional
+    :type domain: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`,
+                  :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`,
+                  :class:`bytes`, :class:`str`, :class:`int`, :class:`bitarray <bitarray.bitarray>`,
+                  or :class:`list`, optional
     :type name: :class:`str`, optional
     :type isPseudoField: :class:`bool`, optional
 
 
     The Field class provides the following public variables:
 
-    :var name: The name of the field.
-    :var description: The description of the field.
     :var domain: The definition domain of the field (i.e. the
                  set of values the field accepts).
                  ``None`` when ``self.fields`` is set.
+    :var name: The name of the field.
+    :var description: The description of the field.
     :var fields: The sorted list of sub-fields.
-                 This variable should be used only if sub-field domains have basic
-                 types (for example :class:`~netzob.Model.Vocabulary.Types.Integer.Integer`
-                 or :class:`~netzob.Model.Vocabulary.Types.Raw.Raw`).
-                 More generally, preferably use :class:`~netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg.Agg`.
     :var parent: The parent element.
     :var isPseudoField: A flag indicating if the field is a
                         pseudo field, meaning it is used
                         internally to help the computation
                         of the value of another field, but does
                         not directly produce data.
+    :vartype domain: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     :vartype name: :class:`str`
     :vartype description: :class:`str`
-    :vartype domain: ~typing.Union[Variable,
-                     ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType,
-                     None]
     :vartype fields: list[~netzob.Model.Vocabulary.Field.Field]
     :vartype parent: ~typing.Union[~netzob.Model.Vocabulary.Field.Field,
                      ~netzob.Model.Vocabulary.Symbol.Symbol]
@@ -116,7 +111,7 @@ class Field(AbstractField):
 
     A field can be composed of sub-fields. This is useful for example
     to separate a header, composed of multiple fields, from its
-    payload.  The parent field can be seen as a facility to access 
+    payload. The parent field can be seen as a facility to access
     a group of fields.
 
     In the following example, the ``fheader`` field is a parent field
@@ -129,7 +124,7 @@ class Field(AbstractField):
     >>> fheader = Field([fh0, fh1], name='fheader')
 
     More generally, a field is part of a tree whose root is a symbol
-    and whose all all other nodes are fields. Hence, a field
+    and whose all other nodes are fields. Hence, a field
     always has a parent which can be another field or a symbol if it
     is the root.
 
@@ -388,7 +383,7 @@ class Field(AbstractField):
         r"""Returns the list of all underlying variables.
 
         :return: the list of variables
-        :rtype: :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`.
+        :rtype: :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`.
 
         >>> from netzob.all import *
         >>> v1 = Data(uint8(), name='v1')

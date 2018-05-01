@@ -71,14 +71,17 @@ class Alt(AbstractVariableNode):
     :param children: The set of variable elements permitted in the
                      alternative. The default is None.
     :param callback: The callback function that may be used to determine the child index to select. The default is None.
-    :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+    :param name: The name of the variable (if None, the name will
+                 be generated).
+    :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, optional
     :type callback: :class:`Callable <collections.abc.Callable>`, optional
+    :type name: :class:`str`, optional
 
     The Alt class provides the following public variables:
 
     :var children: The sorted typed list of children attached to the variable node.
     :var callback: The callback function that may be used to determine the child index to select.
-    :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
+    :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     :vartype callback: :class:`Callable <collections.abc.Callable>`
 
 

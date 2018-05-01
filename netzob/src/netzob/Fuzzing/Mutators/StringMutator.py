@@ -88,8 +88,8 @@ class StringMutator(DomainMutator):
         length will be encoded.
     :param naughtyStrings: The list of potentially dangerous strings.
         Default value is :attr:`DEFAULT_NAUGHTY_STRINGS`.
-    :type domain: :class:`AbstractVariable
-        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type domain: :class:`Variable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
     :type mode: :class:`int`, optional
     :type endchar: :class:`str`, optional
     :type interval: :class:`tuple`, optional

@@ -66,8 +66,8 @@ class OptMutator(DomainMutator):
         Default value is :const:`True`.
     :param mappingTypesMutators: Override the global default mapping of types with their default
         mutators.
-    :type domain: :class:`AbstractVariable
-        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type domain: :class:`Variable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
     :type mode: :class:`int`, optional
     :type mutateChild: :class:`bool`, optional
     :type mappingTypesMutators: :class:`dict` where keys are :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>` and values are :class:`Mutator <netzob.Fuzzing.Mutator.Mutator>`, optional
