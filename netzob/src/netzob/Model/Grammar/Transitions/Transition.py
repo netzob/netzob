@@ -401,7 +401,6 @@ class Transition(AbstractTransition):
                 if actor.automata.cbk_read_unknown_symbol is not None:
                     nextState = actor.automata.cbk_read_unknown_symbol(current_state=self.startState,
                                                                        current_transition=self,
-                                                                       received_symbol=received_symbol,
                                                                        received_message=received_message)
                     actor.visit_log.append("  [+]   During transition '{}', receiving unknown symbol triggered a callback that lead to state '{}'".format(self.name, str(nextState)))
                     return nextState

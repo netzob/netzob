@@ -151,14 +151,14 @@ class AbstractState(object, metaclass=abc.ABCMeta):
            :param current_state:
                   Current state in the automaton.
            :param last_sent_symbol:
-                  Last sent symbol on the abstraction layer, and thus making it
+                  Last sent symbol by the actor on the communication channel, and thus making it
                   possible to create relationships with the previously sent symbol.
            :param last_sent_message:
-                  Corresponds to the last sent message on the abstraction layer,
+                  Corresponds to the last sent message by the actor on the communication channel,
                   and thus making it possible to create relationships with
                   the previously sent message.
            :param last_sent_structure:
-                  Corresponds to the last sent message structure on the abstraction layer,
+                  Corresponds to the last sent message structure by the actor on the communication channel,
                   and thus making it possible to create relationships with
                   the previously sent message structure.
            :param last_received_symbol:

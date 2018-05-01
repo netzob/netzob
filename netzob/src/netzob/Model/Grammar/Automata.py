@@ -368,7 +368,11 @@ class Automata(object):
 
     @public_api
     def getTransitions(self):
-        """Visits the automata to discover all the available transitions.
+        """Return all the transitions of the automaton.
+
+        :return: A list containing all the automaton transitions.
+        :rtype: a :class:`list` of :class:`Transition <netzob.Model.Grammar.States.AbstractTransition.AbstractTransition>`
+
         """
         states = self.getStates()
         transitions = set()
@@ -582,12 +586,12 @@ class Automata(object):
         The callback function that can be used in the
         :attr:`cbk_method` parameter has the following prototype:
 
-        .. function:: cbk_method(current_state, current_transition=None)
+        .. function:: cbk_method(current_state, current_transition)
            :noindex:
 
            :param current_state:
              Corresponds to the current state in the automaton.
-             It is expected that the current state may not be ``None``.
+             It is expected that the current state cannot be ``None``.
            :type current_state: ~netzob.Model.Grammar.States.State.State
 
            :param current_transition:
@@ -632,13 +636,13 @@ class Automata(object):
         The callback function that can be used in the
         :attr:`cbk_method` parameter has the following prototype:
 
-        .. function:: cbk_method(current_state, current_transition=None,\
-                                 received_symbol=None, received_message=None)
+        .. function:: cbk_method(current_state, current_transition,\
+                                 received_symbol, received_message)
            :noindex:
 
            :param current_state:
              Corresponds to the current state in the automaton.
-             It is expected that the current state may not be ``None``.
+             It is expected that the current state cannot be ``None``.
            :type current_state: ~netzob.Model.Grammar.States.State.State
 
            :param current_transition:
@@ -651,9 +655,9 @@ class Automata(object):
              Corresponds to the received symbol.
            :type received_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
 
-           :param current_message:
+           :param received_message:
              Corresponds to the received raw message.
-           :type current_message: ~netzob.Model.Vocabulary.Messages.RawMessage.RawMessage
+           :type received_message: :class:`bytes`
 
            :return: The callback function should return the next
                     state.  For example, to stay at the same state,
@@ -691,13 +695,13 @@ class Automata(object):
         The callback function that can be used in the
         :attr:`cbk_method` parameter has the following prototype:
 
-        .. function:: cbk_method(current_state, current_transition=None,\
-                                 received_symbol=None, received_message=None)
+        .. function:: cbk_method(current_state, current_transition,\
+                                 received_message)
            :noindex:
 
            :param current_state:
              Corresponds to the current state in the automaton.
-             It is expected that the current state may not be ``None``.
+             It is expected that the current state cannot be ``None``.
            :type current_state: ~netzob.Model.Grammar.States.State.State
 
            :param current_transition:
@@ -706,13 +710,9 @@ class Automata(object):
              especially in a server context, where no transition has been initiated.
            :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition
 
-           :param received_symbol:
-             Corresponds to the received symbol.
-           :type received_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol
-
-           :param current_message:
+           :param received_message:
              Corresponds to the received raw message.
-           :type received_message: ~netzob.Model.Vocabulary.Messages.RawMessage.RawMessage
+           :type received_message: :class:`bytes`
 
            :return: The callback function should return the next
                     state.  For example, to stay at the same state,

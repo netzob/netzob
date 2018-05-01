@@ -49,8 +49,13 @@ from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransiti
 @NetzobLogger
 class CloseChannelTransition(AbstractTransition):
     """This class represents a transition which, when executed, requests
-    to close the current underlying communication channel, and leads
-    to a terminal state in the automaton.
+    to close the underlying communication channel that the actor uses
+    to exchange messages with the peer (i.e. a call
+    to the :meth:`close` method of the channel is made). The ending state of this
+    transition corresponds to a terminal state of the automaton. From
+    an automaton point of view, we can have multiple
+    CloseChannelTransition, and therefore we can have multiple
+    terminal states in the automaton.
 
     The CloseChannelTransition expects some parameters:
 
@@ -66,14 +71,11 @@ class CloseChannelTransition(AbstractTransition):
 
     :var startState: The initial state of the transition.
     :var endState: The end state of the transition.
-    :var active: Represents the current execution status of the transition.
-                 If a transition is active, it means it has not yet finished executing it.
     :var name: The name of the transition.
     :var description: description of the transition. If not explicitly set,
                       its value is 'CloseChannelTransition'.
     :vartype startState: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype endState: :class:`State <netzob.Model.Grammar.States.State.State>`
-    :vartype active: :class:`bool`
     :vartype name: :class:`str`
     :vartype description: :class:`str`
 

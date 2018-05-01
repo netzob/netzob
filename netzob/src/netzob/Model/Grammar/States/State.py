@@ -128,7 +128,7 @@ class State(AbstractState):
         if nextTransition is None:
             self.active = False
             time.sleep(1.0)
-            return self
+            return None
 
         # Execute picked transition as an initiator
         try:
@@ -162,7 +162,7 @@ class State(AbstractState):
         if len(self.transitions) == 0:
             self._logger.debug("[actor='{}'] The current state '{}' has no transitions available".format(str(actor), self.name))
             self.active = False
-            return
+            return None
 
         nextTransition = None
         nextState = None
@@ -293,7 +293,6 @@ class State(AbstractState):
                 if actor.automata.cbk_read_unknown_symbol is not None:
                     actor.automata.cbk_read_unknown_symbol(current_state=self,
                                                            current_transition=None,
-                                                           received_symbol=received_symbol,
                                                            received_message=received_message)
                 else:
                     raise Exception("The received message is unknown")

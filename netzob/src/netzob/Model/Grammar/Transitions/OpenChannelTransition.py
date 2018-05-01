@@ -49,7 +49,11 @@ from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransiti
 @NetzobLogger
 class OpenChannelTransition(AbstractTransition):
     """This class represents a transition which, when executed, requests
-    to open the current underlying communication channel (i.e. a call to the :meth:`open` method of the channel is made).
+    to open the underlying communication channel that the actor uses
+    to exchange messages with the peer (i.e. a call
+    to the :meth:`open` method of the channel is made). The starting
+    state of this transition corresponds to the initial state of the
+    automaton.
 
     The OpenChannelTransition expects some parameters:
 
@@ -65,14 +69,11 @@ class OpenChannelTransition(AbstractTransition):
 
     :var startState: The initial state of the transition.
     :var endState: The end state of the transition.
-    :var active: Represents the current execution status of the transition.
-                 If a transition is active, it means it has not yet finished executing it.
     :var name: The name of the transition.
     :var description: description of the transition. If not explicitly set,
                       its value is 'OpenChannelTransition'.
     :vartype startState: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype endState: :class:`State <netzob.Model.Grammar.States.State.State>`
-    :vartype active: :class:`bool`
     :vartype name: :class:`str`
     :vartype description: :class:`str`
 
