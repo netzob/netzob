@@ -238,7 +238,7 @@ class Value(AbstractRelationVariableLeaf):
     """
 
     @public_api
-    def __init__(self, target=None, name=None, operation=None):
+    def __init__(self, target, name=None, operation=None):
 
         if target is not None:
             targets = [target]
@@ -262,15 +262,8 @@ class Value(AbstractRelationVariableLeaf):
         if self in map_objects:
             return map_objects[self]
 
-        new_value = Value(name=self.name, operation=self.operation)
+        new_value = Value(self.targets[0], name=self.name, operation=self.operation)
         map_objects[self] = new_value
-
-        if len(self.targets) > 0:
-            if self.targets[0] in map_objects.keys():
-                new_target = map_objects[self.targets[0]]
-            else:
-                new_target = self.targets[0].copy(map_objects)
-            new_value.targets = [new_target]
 
         return new_value
 

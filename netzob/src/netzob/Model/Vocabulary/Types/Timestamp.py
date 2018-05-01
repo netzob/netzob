@@ -93,7 +93,7 @@ class Timestamp(AbstractType):
                   If ``None``, the default generated value is the current time
                   in UTC.
     :param epoch: The initial date expressed in UTC from which
-                  timestamp is measured. Default value is :attr:`Epoch.UNIX`.
+                  timestamp is measured.
 
                   Available values for `epoch` parameter are:
 
@@ -104,19 +104,18 @@ class Timestamp(AbstractType):
                   * Epoch.NTP = datetime(1900, 1, 1)
                   * Epoch.MACOS_9 = datetime(1904, 1, 1)
                   * Epoch.PICKOS = datetime(1967, 12, 31)
-                  * Epoch.UNIX = datetime(1970, 1, 1)
+                  * Epoch.UNIX = datetime(1970, 1, 1) (default epoch)
                   * Epoch.FAT = datetime(1980, 1, 1)
                   * Epoch.GPS = datetime(1980, 1, 6)
                   * Epoch.ZIGBEE = datetime(2000, 1, 1)
                   * Epoch.COCOA = datetime(2001, 1, 1)
 
     :param unity: This specifies the unity of the value (seconds,
-                  milliseconds, nanoseconds). The default value is
-                  :attr:`Unity.SECOND`.
+                  milliseconds, nanoseconds).
 
                   Available values for `unity` parameter are:
 
-                  * Unity.SECOND = 1
+                  * Unity.SECOND = 1 (default unity)
                   * Unity.DECISECOND = 10
                   * Unity.CENTISECOND = 100
                   * Unity.MILLISECOND = 1000
@@ -125,6 +124,7 @@ class Timestamp(AbstractType):
 
     :param unitSize: The unitsize of the current value. Values must be one of
                      ``UnitSize.SIZE_*``.
+
                      The following unit sizes are available:
 
                      * UnitSize.SIZE_1

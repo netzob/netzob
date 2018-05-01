@@ -80,12 +80,12 @@ class Symbol(AbstractField):
 
     The Symbol class provides the following public variables:
 
+    :var fields: The sorted list of sub-fields.
     :var name: The name of the symbol.
     :var description: The description of the symbol.
-    :var fields: The sorted list of sub-fields.
+    :vartype fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`
     :vartype name: :class:`str`
     :vartype description: :class:`str`
-    :vartype fields: a :class:`list` of :class:`Field <netzob.Model.Vocabulary.Field.Field>`
 
 
     **Usage of Symbol for protocol modeling**
@@ -159,7 +159,7 @@ class Symbol(AbstractField):
         self.fields = fields
 
     @public_api
-    def copy(self, map_objects: Dict = None) -> 'Symbol':
+    def copy(self, map_objects=None):
         """Copy the current object as well as all its dependencies. This
         method returns a new object of the same type.
 
@@ -277,7 +277,7 @@ class Symbol(AbstractField):
     @public_api
     def specialize(self,
                    preset=None,
-                   memory: Memory = None) -> Iterator[bytes]:
+                   memory=None):
         r"""The :meth:`specialize()` method is intended to produce concrete
         :class:`bytes` data based on the symbol model and the current :class:`Preset` <netzob.Vocabulary.Preset.Preset> configuration. This method
         returns a Python generator that in turn provides data
@@ -321,12 +321,12 @@ class Symbol(AbstractField):
             yield specializing_path.generatedContent.tobytes()
 
     @public_api
-    def count(self, preset=None) -> int:
+    def count(self, preset=None):
         r"""The :meth:`count` method computes the expected number of unique
         messages produced, considering the initial symbol model and the
         preset configuration of fields.
 
-        The :meth:`count` method expects the same parameters as the :meth:`specialize` method:
+        The :meth:`count` method expects the following parameters:
 
         :param preset: The configuration used to parameterize values in fields and variables. This configuration will impact the expected number of unique messages the symbol would produce.
         :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
@@ -350,7 +350,7 @@ class Symbol(AbstractField):
         >>> symbol = Symbol(fields=[f1, f2, f3])
         >>>
         >>> # Count the expected number of unique produced messages
-        >>> symbol.count()  #  Here, the following computation is done: 951*256*256 (f1 is able to produce 1000-50+1=951 possible values, based on its interva)
+        >>> symbol.count()  #  Here, the following computation is done: 951*256*256 (f1 is able to produce 1000-50+1=951 possible values, based on its interval)
         62324736
         >>>
         >>> # Specify a preset configuration for field 'f2'

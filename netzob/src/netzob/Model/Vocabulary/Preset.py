@@ -80,16 +80,16 @@ from netzob.Common.Utils.Decorators import NetzobLogger, public_api, typeCheck
 
 @NetzobLogger
 class Preset(object):
-    r"""The Preset class may be used to configure symbol specialization, by
-    fixing the expected value of a field or a variable.
+    r"""The Preset class is used to configure symbol specialization, by
+    fixing the expected value of a field or a variable. The Preset
+    component also works at the Field level, in the context of field
+    specialization. The Preset class is also the component responsible
+    for format message fuzzing (see below).
 
     The Preset constructor expects some parameters:
 
-    :param symbol: A symbol/field on which to apply Preset configuration.
+    :param symbol: A symbol (or fieldà on which to apply Preset configuration.
     :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`
-
-    .. note::
-       An instanciation ``p = Preset(symbol)`` will automatically set the :attr:`preset` attribute of the symbol.
 
     The Preset works like a Python :class:`dict` with a key:value principle:
 
@@ -99,7 +99,7 @@ class Preset(object):
                 <netzob.Model.Vocabulary.Field.Field>`,
                 or :class:`Variable
                 <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
-    :type key: :class:`bytes`, :class:`bitarray <bitarray.bitarray>` or the type associated with of the overridden field
+    :type value: :class:`bytes`, :class:`bitarray <bitarray.bitarray>` or the type associated with of the overridden field
                variable, required
 
     .. note::
@@ -108,7 +108,7 @@ class Preset(object):
 
     **The different ways to specify a field to preset**
 
-    It is possible to parameterize fields during symbol
+    It is possible to parameterize fields during symbol (or field)
     specialization. Values configured for fields will override any
     field definition, constraints or relationship dependencies.
 
@@ -158,7 +158,6 @@ class Preset(object):
     >>> preset = Preset(symbol_udp)
     >>> preset["udp.dport"] = bitarray('00001011', endian='big')
     >>> preset["udp.payload"] = bitarray('1010101010111011', endian='big')
-    >>> preset["udp.payload"] = bitarray('1010101010111011', endian='big')
     >>> next(symbol_udp.specialize(preset))
     b'\x0b\xaa\xbb'
 
@@ -166,21 +165,6 @@ class Preset(object):
     values. BitArray are always permitted for any parameterized
     field, as it is the internal type for variables in the Netzob
     library.
-
-    The following example shows the same way to express the
-    parameterized **keys** during specialization of the fields
-    ``udp_dport`` and ``udp_payload``:
-
-    >>> preset = Preset(symbol_udp)
-    >>> preset[f_dport] = 11
-    >>> preset[f_payload] = b"\xaa\xbb"
-    >>> next(symbol_udp.specialize(preset))
-    b'\x00\x0b\xaa\xbb'
-    >>> preset = Preset(symbol_udp)
-    >>> preset["udp.dport"] = 11
-    >>> preset["udp.payload"] = b"\xaa\xbb"
-    >>> next(symbol_udp.specialize(preset))
-    b'\x00\x0b\xaa\xbb'
 
 
     A preset value bypasses all the constraint checks on the field definition.
@@ -416,7 +400,6 @@ class Preset(object):
     >>> next(messages_gen)
     b'\xb9'
 
-
     """
 
     mappingTypesMutators = {}   # type: Dict[AbstractType, Union[DomainMutator, dict]]
@@ -514,12 +497,12 @@ class Preset(object):
         :param seed: An integer used to initialize the underlying
                      generator.
 
-                     Default value is :attr:`Mutator.SEED_DEFAULT` = Conf.seed.
+                     If None, the default value will be set to :attr:`Mutator.SEED_DEFAULT`. The :attr:`Mutator.SEED_DEFAULT` constant is initialized from the configuration variable :attr:`Conf.seed` from the Netzob API :class:`Conf` class.
 
         :param counterMax: An integer used to limit the number of
                            mutations.
 
-                           Default value is :attr:`COUNTER_MAX_DEFAULT` = ``2**32``.
+                           If None, the default value will be set to :attr:`COUNTER_MAX_DEFAULT` = ``2**32``.
 
         :param kwargs: Some context dependent parameters (see below)
                        (optional).
@@ -1237,7 +1220,7 @@ class Preset(object):
 
         >>> from netzob.all import *
         >>> import random
-        >>> random.seed(0)
+        >>> random.seed(0)  # This is necessary only for unit test purpose
         >>> f_data1 = Field(name="data1", domain=int8())
         >>> f_data2 = Field(name="data2", domain=int8())
         >>> symbol = Symbol(name="sym", fields=[f_data1, f_data2])
