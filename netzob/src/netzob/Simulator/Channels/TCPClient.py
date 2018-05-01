@@ -106,12 +106,12 @@ class TCPClient(AbstractChannel):
        >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
        >>> automata = Automata(s0, [symbol])
 
-       >>> channel = TCPServer(localIP="127.0.0.1", localPort=8885, timeout=1.)
-       >>> server = Actor(automata = automata, channel=channel)
+       >>> channel_server = TCPServer(localIP="127.0.0.1", localPort=8885, timeout=1.)
+       >>> server = Actor(automata = automata, channel=channel_server)
        >>> server.initiator = False
 
-       >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885, timeout=1.)
-       >>> client = Actor(automata = automata, channel=channel)
+       >>> channel_client = TCPClient(remoteIP="127.0.0.1", remotePort=8885, timeout=1.)
+       >>> client = Actor(automata = automata, channel=channel_client)
 
        >>> server.start()
        >>> client.start()
@@ -119,6 +119,8 @@ class TCPClient(AbstractChannel):
        >>> time.sleep(1)
        >>> client.stop()
        >>> server.stop()
+       >>> channel_client.close()
+       >>> channel_server.close()
 
     """
 
@@ -357,6 +359,7 @@ def _test_tcp_write_read():
     >>> client.start()
     >>> time.sleep(1)
     >>> client.wait()
+    >>> channel.close()
 
     >>> process.wait()  # doctest: +SKIP
     0
@@ -402,6 +405,7 @@ def _test_tcp_write_read_large_packet():
     >>> client.start()
     >>> time.sleep(1)
     >>> client.wait()
+    >>> channel.close()
 
     >>> process.wait()  # doctest: +SKIP
     0

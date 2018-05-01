@@ -177,9 +177,9 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
     :var isOpen: The status of the communication channel.
     :var timeout: The default timeout in seconds for opening a connection (only effective in the context of a client), as well as for
                   waiting a message when calling the :meth:`read` method.
-    :var header: A Symbol that makes it possible to access the protocol header.
+    :var header: A Symbol that makes it possible to access the underlying protocol header.
     :var header_preset: A Preset used to preset
-                        (parameterize) the header fields during symbol
+                        (parameterize) the fields of the underlying protocol header during symbol
                         specialization. See :meth:`Symbol.specialize() <netzob.Model.Vocabulary.Symbol.Symbol.specialize>` for more information.
     :vartype isOpen: :class:`bool`
     :vartype timeout: :class:`int`
