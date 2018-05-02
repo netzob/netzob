@@ -276,7 +276,7 @@ class State(AbstractState):
                                  actor.abstractionLayer.last_received_symbol,
                                  actor.abstractionLayer.last_received_message,
                                  actor.abstractionLayer.last_received_structure,
-                                 actor)
+                                 actor.memory)
 
             actor.visit_log.append("  [+]   Changing transition to '{}', through callback".format(str(nextTransition)))
         else:
@@ -312,7 +312,7 @@ class State(AbstractState):
 
             for cbk in nextTransition.cbk_action:
                 self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), nextTransition.name))
-                cbk(received_symbol, received_message, received_structure, Operation.READ, actor)
+                cbk(received_symbol, received_message, received_structure, Operation.READ, self, actor.memory)
 
             nextState = nextTransition.executeAsNotInitiator(actor)
             self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(nextTransition), str(nextState)))
@@ -368,7 +368,7 @@ class State(AbstractState):
                                  actor.abstractionLayer.last_received_symbol,
                                  actor.abstractionLayer.last_received_message,
                                  actor.abstractionLayer.last_received_structure,
-                                 actor)
+                                 actor.memory)
             actor.visit_log.append("  [+]   Changing transition to '{}', through callback".format(str(nextTransition)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at state '{}'".format(str(actor), self.name))

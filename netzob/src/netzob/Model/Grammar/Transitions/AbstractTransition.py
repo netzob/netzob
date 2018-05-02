@@ -275,7 +275,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         .. function:: cbk_method(available_symbols, current_symbol, current_symbol_preset, current_state,\
                                  last_sent_symbol, last_sent_message, last_sent_structure,\
                                  last_received_symbol, last_received_message,\
-                                 last_received_structure, actor)
+                                 last_received_structure, memory)
            :noindex:
 
            :param available_symbols:
@@ -309,8 +309,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :param last_received_structure:
                   Last received message structure by the actor on the communication channel, and thus making it possible to create relationships
                   with the previously received message structure.
-           :param actor:
-                  Corresponds to the current actor.
+           :param memory:
+                  Corresponds to the current memory context.
 
            :type available_symbols: ~typing.List[~netzob.Model.Vocabulary.Symbol.Symbol]
            :type current_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
@@ -322,7 +322,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
            :type last_received_message: :class:`~bitarray.bitarray`
            :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
-           :type actor: :class:`~netzob.Simulation.Actor.Actor`
+           :type memory: :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
 
            :return: The callback function should return a tuple. The
                     first tuple element is the symbol (:class:`Symbol
@@ -355,7 +355,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         The callback function that can be used in the
         :attr:`cbk_method` parameter has the following prototype:
 
-        .. function:: cbk_method(symbol, data, data_structure, operation, actor)
+        .. function:: cbk_method(symbol, data, data_structure, operation, current_state, memory)
            :noindex:
 
            :param symbol:
@@ -368,14 +368,17 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                   Tells the direction of the symbol: either
                   :attr:`Operation.READ` for received symbols or
                   :attr:`Operation.WRITE` for sent symbols.
-           :param actor:
-                  The actor that is sending or receiving the symbol.
+           :param current_state:
+                  Current state in the automaton.
+           :param memory:
+                  Corresponds to the current memory context.
 
            :type symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
            :type data: :class:`bytes`
            :type data_structure: :class:`OrderedDict`
            :type operation: :class:`~netzob.Simulation.AbstractionLayer.Operation`
-           :type actor: :class:`~netzob.Simulation.Actor.Actor`
+           :type current_state: :class:`~netzob.Model.Grammar.States.State.State`
+           :type memory: :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
 
         The callback method is not expected to return something.
 

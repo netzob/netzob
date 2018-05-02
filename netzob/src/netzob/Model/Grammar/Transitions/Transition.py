@@ -133,10 +133,6 @@ class Transition(AbstractTransition):
                                     sending context).
     :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The values should be distributed between ``0.0`` and ``100.0``. The biggest values correspond to a high selection probability.
     :var inverseInitiator: Indicates to inverse the initiator of the communication after the transition.
-    :var rate: This specifies the bandwidth in octets to respect during
-               traffic emission (should be used with :attr:`duration` parameter).
-    :var duration: This indicates for how many seconds the data is continuously
-                         written on the underlying communication channel.
     :var description: The description of the transition. If not explicitly set,
                       it is generated from the input and output symbol strings
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
@@ -150,8 +146,6 @@ class Transition(AbstractTransition):
     :vartype outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
     :vartype outputSymbolsProbabilities: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
     :vartype inverseInitiator: :class:`bool`
-    :vartype rate: :class:`int`
-    :vartype duration: :class:`int`
     :vartype description: :class:`str`
 
 
@@ -210,8 +204,6 @@ class Transition(AbstractTransition):
         self.inputSymbolReactionTime = None
         self.outputSymbolsReactionTime = None
         self.description = None
-        self.rate = None
-        self.duration = None
 
     @public_api
     def copy(self):
@@ -243,8 +235,6 @@ class Transition(AbstractTransition):
         if self.outputSymbolsReactionTime is not None:
             transition.outputSymbolsReactionTime = self.outputSymbolsReactionTime.copy()
         transition.inverseInitiator = self.inverseInitiator
-        transition.rate = self.rate
-        transition.duration = self.duration
 
         return transition
 
@@ -288,7 +278,7 @@ class Transition(AbstractTransition):
                                                    actor.abstractionLayer.last_received_symbol,
                                                    actor.abstractionLayer.last_received_message,
                                                    actor.abstractionLayer.last_received_structure,
-                                                   actor)
+                                                   actor.memory)
             actor.visit_log.append("  [+]   During transition '{}', modifying input symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))
@@ -321,7 +311,7 @@ class Transition(AbstractTransition):
                         break
 
             try:
-                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, cbk_action=self.cbk_action)
+                (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, preset=tmp_preset, cbk_action=self.cbk_action)
             except socket.timeout:
                 self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
                 self.active = False
@@ -388,7 +378,7 @@ class Transition(AbstractTransition):
 
             for cbk in self.cbk_action:
                 self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), self.name))
-                cbk(received_symbol, received_message, received_structure, Operation.READ, actor)
+                cbk(received_symbol, received_message, received_structure, Operation.READ, self.startState, actor.memory)
 
             return self.endState
         else:
@@ -474,7 +464,7 @@ class Transition(AbstractTransition):
 
         # Emit the symbol
         try:
-            (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, rate=self.rate, duration=self.duration, preset=tmp_preset, cbk_action=self.cbk_action)
+            (data, data_len, data_structure) = actor.abstractionLayer.writeSymbol(symbol_to_send, preset=tmp_preset, cbk_action=self.cbk_action)
         except socket.timeout:
             self._logger.debug("[actor='{}'] In transition '{}', timeout on abstractionLayer.writeSymbol()".format(str(actor), self.name))
             self.active = False
@@ -566,7 +556,7 @@ class Transition(AbstractTransition):
                                                    actor.abstractionLayer.last_received_symbol,
                                                    actor.abstractionLayer.last_received_message,
                                                    actor.abstractionLayer.last_received_structure,
-                                                   actor)
+                                                   actor.memory)
             actor.visit_log.append("  [+]   During transition '{}', modifying output symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))
@@ -723,24 +713,6 @@ class Transition(AbstractTransition):
     @inverseInitiator.setter  # type: ignore
     def inverseInitiator(self, inverseInitiator):
         self.__inverseInitiator = inverseInitiator
-
-    @public_api
-    @property
-    def rate(self):
-        return self.__rate
-
-    @rate.setter  # type: ignore
-    def rate(self, rate):
-        self.__rate = rate
-
-    @public_api
-    @property
-    def duration(self):
-        return self.__duration
-
-    @duration.setter  # type: ignore
-    def duration(self, duration):
-        self.__duration = duration
 
 
 def _test():

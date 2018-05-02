@@ -353,7 +353,7 @@ class AbstractionLayer(object):
 
         for cbk in cbk_action:
             self._logger.debug("[actor='{}'] A callback function is defined for the write symbol event".format(self.actor))
-            cbk(symbol, data, data_structure, Operation.WRITE, self.actor)
+            cbk(symbol, data, data_structure, Operation.WRITE, self.actor.current_state, self.actor.memory)
 
         return (data, data_len, data_structure)
 

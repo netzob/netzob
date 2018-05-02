@@ -465,7 +465,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that returns a new transition
     >>> def cbk_modifySymbol(available_symbols, current_symbol, current_preset, current_state,
     ...                     last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                     last_received_symbol, last_received_message, last_received_structure, actor):
+    ...                     last_received_symbol, last_received_message, last_received_structure, memory):
     ...
     ...    if last_received_symbol:
     ...        last_received_symbol_name = last_received_symbol.name
@@ -641,7 +641,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that returns a new symbol
     >>> def cbk_modifySymbol(available_symbols, current_symbol, current_preset, current_state,
     ...                      last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                      last_received_symbol, last_received_message, last_received_structure, actor):
+    ...                      last_received_symbol, last_received_message, last_received_structure, memory):
     ...
     ...    if last_received_symbol:
     ...        last_received_symbol_name = last_received_symbol.name
@@ -809,7 +809,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that returns a new transition
     >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
     ...                          last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                          last_received_symbol, last_received_message, last_received_structure, actor):
+    ...                          last_received_symbol, last_received_message, last_received_structure, memory):
     ...
     ...     # Modify the selected transition
     ...     if nextTransition in availableTransitions:
@@ -1014,7 +1014,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that returns a new transition
     >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
     ...                          last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                          last_received_symbol, last_received_message, last_received_structure, actor):
+    ...                          last_received_symbol, last_received_message, last_received_structure, memory):
     ...
     ...     # Modify the selected transition so that we change the next state
     ...     initialTransition = nextTransition
@@ -1773,7 +1773,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that always returns alice_transition2 to handle reception of fuzzed messages
     >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
     ...                          last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                          last_received_symbol, last_received_message, last_received_structure, actor):
+    ...                          last_received_symbol, last_received_message, last_received_structure, memory):
     ...     if nextTransition is None:
     ...         return alice_transition2
     ...     else:
@@ -1921,7 +1921,7 @@ class Actor(Thread):
     >>> # Creation of a callback function that always returns alice_transition2 to handle reception of fuzzed messages
     >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
     ...                          last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                          last_received_symbol, last_received_message, last_received_structure, actor):
+    ...                          last_received_symbol, last_received_message, last_received_structure, memory):
     ...     if nextTransition is None:
     ...         return alice_transition2
     ...     else:
@@ -2622,19 +2622,19 @@ def _test_context():
     >>> alice_memory.memorize(alice_var_integer, alice_var_integer.dataType.generate())
     >>>
     >>> # Creation of a callback function that will be called after each transition, to update the context
-    >>> def cbk_action(symbol_to_send, data, data_structure, operation, actor):
+    >>> def cbk_action(symbol_to_send, data, data_structure, operation, current_state, memory):
     ...     if operation == Operation.WRITE:
     ...         var_integer_bytes = data_structure['Alice Field f2']
     ...         var_integer = int.from_bytes(var_integer_bytes, byteorder='big')
-    ...         print("[WRITE] Current state: {}".format(actor.current_state))
+    ...         print("[WRITE] Current state: {}".format(current_state))
     ...         print("[WRITE] Current structure: {}".format(data_structure))
     ...         print("[WRITE] Current value for f2: {}".format(var_integer))
     ...         var_integer += 1
     ...         var_integer_bytes = var_integer.to_bytes(4, byteorder='big')
-    ...         actor.memory.memorize(alice_var_integer, var_integer_bytes)
-    ...     elif actor.current_state.name != 'S0':
+    ...         memory.memorize(alice_var_integer, var_integer_bytes)
+    ...     elif current_state.name != 'S0':
     ...         var_integer_bits = data_structure
-    ...         print("[READ] Current state: {}".format(actor.current_state))
+    ...         print("[READ] Current state: {}".format(current_state))
     ...         print("[READ] Current structure: {}".format(data_structure))
     >>>
     >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
@@ -2772,7 +2772,7 @@ def _test_callback_modify_symbol():
     >>> # Creation of a callback function that returns a new transition
     >>> def cbk_modifySymbol(available_symbols, current_symbol, current_preset, current_state,
     ...                     last_sent_symbol, last_sent_message, last_sent_structure,
-    ...                     last_received_symbol, last_received_message, last_received_structure, actor):
+    ...                     last_received_symbol, last_received_message, last_received_structure, memory):
     ...
     ...    if last_received_symbol:
     ...        last_received_symbol_name = last_received_symbol.name

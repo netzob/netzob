@@ -139,7 +139,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
                                  current_state, last_sent_symbol,\
                                  last_sent_message, last_sent_structure,\
                                  last_received_symbol, last_received_message, \
-                                 last_received_structure, actor)
+                                 last_received_structure, memory)
            :noindex:
 
            :param availableTransitions:
@@ -173,8 +173,8 @@ class AbstractState(object, metaclass=abc.ABCMeta):
                   Corresponds to the last received message structure on the abstraction
                   layer, and thus making it possible to create relationships
                   with the previously received message structure.
-           :param actor:
-                  Corresponds to the current actor.
+           :param memory:
+                  Corresponds to the current memory context.
 
            :type availableTransitions: ~typing.List[~netzob.Model.Grammar.Transitions.Transition.Transition]
            :type nextTransition: :class:`~netzob.Model.Grammar.Transitions.Transition.Transition`
@@ -185,7 +185,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
            :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
            :type last_received_message: :class:`~bitarray.bitarray`
            :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
-           :type actor: :class:`~netzob.Simulation.Actor.Actor`
+           :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
 
            :return: The callback function should return a transition
                     object, which could be the original transition or
