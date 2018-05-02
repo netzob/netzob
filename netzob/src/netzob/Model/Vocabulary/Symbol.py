@@ -168,6 +168,8 @@ class Symbol(AbstractField):
 
         """
 
+        # map_objects is a dict that contains already copied instances. This allows to copy objects, such as fields, that contains relationships with already copied elements.
+
         if map_objects is None:
             map_objects = {}
         if self in map_objects:

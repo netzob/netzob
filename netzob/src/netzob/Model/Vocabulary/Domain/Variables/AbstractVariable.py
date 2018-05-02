@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 class AbstractVariable(object):
     """A variable participates in the definition domain of a field.
 
-    The AbstractVariable defines the API of a variable, which can be a leaf or a node variable.
+    The AbstractVariable class defines the API of a variable, which can be a leaf or a node variable.
     """
 
     def __init__(self, varType, name=None, scope=None):

@@ -87,11 +87,11 @@ class Field(AbstractField):
     The Field class provides the following public variables:
 
     :var domain: The definition domain of the field (i.e. the
-                 set of values the field accepts).
+                 set of values the field accepts). Only applicable when the current field has a definition domain. Setting this attribute will clean the list of sub-fields (i.e. the :attr:`fields` attribute will be set to ``[]``).
                  ``None`` when ``self.fields`` is set.
     :var name: The name of the field.
     :var description: The description of the field.
-    :var fields: The sorted list of sub-fields.
+    :var fields: The sorted list of sub-fields. Only applicable when the current field has sub-fields. Setting this attribute will clean the definition domain of the current field.
     :var parent: The parent element.
     :var isPseudoField: A flag indicating if the field is a
                         pseudo field, meaning it is used

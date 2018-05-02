@@ -203,7 +203,7 @@ class Actor(Thread):
     * How to catch all receptions of unknown messages (see ActorExample10_.)
     * Message format fuzzing from an actor (see ActorExample11_.)
     * Message format fuzzing from an actor, at a specific state (see ActorExample12_.)
-    * Multiple actors on the same communication channel (see ActorExample13_.)
+    * Several actors on the same communication channel (see ActorExample13_.)
 
 
     .. _ActorExample1:
@@ -2006,9 +2006,9 @@ class Actor(Thread):
 
     .. _ActorExample13:
 
-    **Multiple actors on the same communication channel**
+    **Several actors on the same communication channel**
 
-    The following example shows the capability to create mutiplie
+    The following example shows the capability to create several
     actors that share the same underlying communication channel. In
     order for the communication channel to retrieve the actor
     concerned by received packets, a :attr:`cbk_select_data` callback
