@@ -55,8 +55,13 @@ class Opt(Repeat):
     The Opt constructor expects some parameters:
 
     :param child: The optional variable element.
-    :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :param name: The name of the variable (if None, the name will
+                 be generated).
+    :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
+    :type name: :class:`str`, optional
 
+
+    The following code shows an example of the Opt usage.
 
     >>> from netzob.all import *
     >>> f0 = Field(String("a"), "f0")

@@ -53,7 +53,7 @@ class Value(AbstractRelationVariableLeaf):
     r"""The Value class is a variable whose content is the value of another field.
 
     It is possible to define a field so that its value is equal to the
-    value of another field, on which a transformation operation can be
+    value of another field, on which an operation can be
     performed.
 
     The Value constructor expects some parameters:
@@ -64,7 +64,7 @@ class Value(AbstractRelationVariableLeaf):
     :param operation: An optional transformation operation to be
                       applied to the targeted field value, through a callback.
                       The default is None.
-    :type target: :class:`Field <netzob.Model.Vocabulary.Field>`, required
+    :type target: :class:`Field <netzob.Model.Vocabulary.Field>` or :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
     :type name: :class:`str`, optional
     :type operation: :class:`Callable <collections.abc.Callable>`, optional
 
@@ -75,7 +75,7 @@ class Value(AbstractRelationVariableLeaf):
                  the value of this relation.
     :var operation: Defines the operation to be performed on the found value.
                     The prototype of this callback is detailed below.
-    :vartype target: :class:`~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+    :vartype target: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     :vartype operation: :class:`Callable <collections.abc.Callable>`
 
 
@@ -238,7 +238,7 @@ class Value(AbstractRelationVariableLeaf):
     """
 
     @public_api
-    def __init__(self, target=None, name=None, operation=None):
+    def __init__(self, target, name=None, operation=None):
 
         if target is not None:
             targets = [target]
@@ -262,15 +262,8 @@ class Value(AbstractRelationVariableLeaf):
         if self in map_objects:
             return map_objects[self]
 
-        new_value = Value(name=self.name, operation=self.operation)
+        new_value = Value(self.targets[0], name=self.name, operation=self.operation)
         map_objects[self] = new_value
-
-        if len(self.targets) > 0:
-            if self.targets[0] in map_objects.keys():
-                new_target = map_objects[self.targets[0]]
-            else:
-                new_target = self.targets[0].copy(map_objects)
-            new_value.targets = [new_target]
 
         return new_value
 

@@ -53,7 +53,7 @@ from netzob.Common.Utils.Decorators import public_api
 
 
 class Integer(AbstractType):
-    r"""The Integer class makes it possible to represent an integer, with the
+    r"""The Integer class represents an integer, with the
     capability to express constraints regarding the sign, the
     endianness and the unit size.
 

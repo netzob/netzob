@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 class AbstractVariable(object):
     """A variable participates in the definition domain of a field.
 
-    This class is abstract and so should not be instantiated directly.
+    The AbstractVariable class defines the API of a variable, which can be a leaf or a node variable.
     """
 
     def __init__(self, varType, name=None, scope=None):
@@ -96,7 +96,12 @@ class AbstractVariable(object):
 
     @abc.abstractmethod
     def isnode(self):
-        """Tells if the current variable is a node variable, which means it as children."""
+        """Tells if the current variable is a node variable, which means it as children.
+
+       :return: Return ``True`` if the current variable is a node variable.
+       :rtype: :class:`bool`
+
+        """
         raise NotImplementedError("Method isnode() is not implemented")
 
     def getFixedBitSize(self):

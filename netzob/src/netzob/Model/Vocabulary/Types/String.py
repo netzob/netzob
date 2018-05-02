@@ -68,9 +68,7 @@ class String(AbstractType):
     :param encoding: The encoding of the string, such as 'ascii' or
                     'utf-8'. Default value is 'utf-8'. Supported encodings are available on the Python reference documentation: `Python Standard Encodings <https://docs.python.org/3.4/library/codecs.html#standard-encodings>`_.
     :param eos: A list defining the potential terminal characters for
-                the string, with either specific constants or pointers
-                to other fields containing the permitted terminal
-                values. Default value is an empty list, meaning there
+                the string. Default value is an empty list, meaning there
                 is no terminal character.
     :param default: The default value used in specialization.
     :type value: :class:`bitarray` or :class:`str`, optional

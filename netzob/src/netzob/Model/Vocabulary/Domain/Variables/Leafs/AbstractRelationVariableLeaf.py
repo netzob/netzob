@@ -363,7 +363,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     def targets(self):
         """A list of variables that are required before computing the value of this relation
 
-        :type: a list of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+        :type: a list of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
         """
         return self.__targets
 

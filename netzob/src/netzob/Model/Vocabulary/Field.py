@@ -76,36 +76,31 @@ class Field(AbstractField):
                           internally to help the computation
                           of the value of another field, but does
                           not directly produce data. The default value is False.
-    :type domain: ~typing.Union[Variable,
-                  ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType,
-                  list[~netzob.Model.Vocabulary.Field.Field]], optional
+    :type domain: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`,
+                  :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`,
+                  :class:`bytes`, :class:`str`, :class:`int`, :class:`bitarray <bitarray.bitarray>`,
+                  or :class:`list`, optional
     :type name: :class:`str`, optional
     :type isPseudoField: :class:`bool`, optional
 
 
     The Field class provides the following public variables:
 
+    :var domain: The definition domain of the field (i.e. the
+                 set of values the field accepts). Only applicable when the current field has a definition domain. Setting this attribute will clean the list of sub-fields (i.e. the :attr:`fields` attribute will be set to ``[]``).
+                 ``None`` when ``self.fields`` is set.
     :var name: The name of the field.
     :var description: The description of the field.
-    :var domain: The definition domain of the field (i.e. the
-                 set of values the field accepts).
-                 ``None`` when ``self.fields`` is set.
-    :var fields: The sorted list of sub-fields.
-                 This variable should be used only if sub-field domains have basic
-                 types (for example :class:`~netzob.Model.Vocabulary.Types.Integer.Integer`
-                 or :class:`~netzob.Model.Vocabulary.Types.Raw.Raw`).
-                 More generally, preferably use :class:`~netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg.Agg`.
+    :var fields: The sorted list of sub-fields. Only applicable when the current field has sub-fields. Setting this attribute will clean the definition domain of the current field.
     :var parent: The parent element.
     :var isPseudoField: A flag indicating if the field is a
                         pseudo field, meaning it is used
                         internally to help the computation
                         of the value of another field, but does
                         not directly produce data.
+    :vartype domain: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     :vartype name: :class:`str`
     :vartype description: :class:`str`
-    :vartype domain: ~typing.Union[Variable,
-                     ~netzob.Model.Vocabulary.Types.AbstractType.AbstractType,
-                     None]
     :vartype fields: list[~netzob.Model.Vocabulary.Field.Field]
     :vartype parent: ~typing.Union[~netzob.Model.Vocabulary.Field.Field,
                      ~netzob.Model.Vocabulary.Symbol.Symbol]
@@ -116,7 +111,7 @@ class Field(AbstractField):
 
     A field can be composed of sub-fields. This is useful for example
     to separate a header, composed of multiple fields, from its
-    payload.  The parent field can be seen as a facility to access 
+    payload. The parent field can be seen as a facility to access
     a group of fields.
 
     In the following example, the ``fheader`` field is a parent field
@@ -129,7 +124,7 @@ class Field(AbstractField):
     >>> fheader = Field([fh0, fh1], name='fheader')
 
     More generally, a field is part of a tree whose root is a symbol
-    and whose all all other nodes are fields. Hence, a field
+    and whose all other nodes are fields. Hence, a field
     always has a parent which can be another field or a symbol if it
     is the root.
 
@@ -152,11 +147,14 @@ class Field(AbstractField):
     >>> f = Field(10)
 
     If these fields are equivalent, this is because the first
-    parameter of the Field constructor is :attr:`domain`, thus its name can
-    be omitted. Besides, the domain parameter will be parsed by a
-    factory, which accepts either the canonical form of a definition
-    domain (such as `domain=Data(Integer(10))`) or a shortened form
-    (such as `domain=Integer(10)`, or even `domain=10`).
+    parameter of the Field constructor is :attr:`domain`, thus its
+    name can be omitted. Besides, the domain parameter will be parsed
+    by a factory, which accepts either the canonical form of a
+    definition domain (such as `domain=Data(Integer(10))`) or a
+    shortened form (such as `domain=Integer(10)`, or even
+    `domain=10`). In the later case, this means that it is possible to
+    use a Python native type that will be automatically converted to its equivalent in
+    Netzob type. Supported Python native types are :class:`bytes` (converted in :class:`Raw <netzob.Model.Vocabulary.Types.Raw.Raw>`), :class:`str` (converted in :class:`String <netzob.Model.Vocabulary.Types.String.String>`), :class:`int` (converted in :class:`Integer <netzob.Model.Vocabulary.Types.Integer.Integer>`) and :class:`bitarray <bitarray.bitarray>` (converted in :class:`BitArray <netzob.Model.Vocabulary.Types.BitArray.BitArray>`).
 
     .. ifconfig:: scope in ('netzob')
 
@@ -388,7 +386,7 @@ class Field(AbstractField):
         r"""Returns the list of all underlying variables.
 
         :return: the list of variables
-        :rtype: :class:`list` of :class:`AbstractVariable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`.
+        :rtype: :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`.
 
         >>> from netzob.all import *
         >>> v1 = Data(uint8(), name='v1')
@@ -455,7 +453,52 @@ class Field(AbstractField):
         for specializing_path in specializing_paths:
             yield specializing_path.getData(self.domain).tobytes()
 
+    @public_api
     def count(self, preset=None):
+        r"""The :meth:`count` method computes the expected number of unique
+        messages produced, considering the initial field model and the
+        preset configuration.
+
+        The :meth:`count` method expects the following parameters:
+
+        :param preset: The configuration used to parameterize values in fields and variables. This configuration will impact the expected number of unique messages the field would produce.
+        :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
+        :return: The number of unique values the field specialization can produce.
+        :rtype: :class:`int`
+
+        .. note::
+           The theoretical value returned by :meth:`~count`
+           may be huge. Therefore, we force the returned value to be
+           :attr:`MAXIMUM_POSSIBLE_VALUES` (86400000000), if the
+           theoretical result is beyond this threshold. This limit
+           corresponds to 1 day of data generation based on a generation
+           bandwith of 1 million per second.
+
+        >>> # Field definition
+        >>> from netzob.all import *
+        >>> from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
+        >>> f1 = Field(uint16(interval=(50, 1000)))
+        >>> f2 = Field(uint8())
+        >>> f3 = Field(uint8())
+        >>> f = Field([f1, f2, f3])
+        >>>
+        >>> # Count the expected number of unique produced messages
+        >>> f.count()  #  Here, the following computation is done: 951*256*256 (f1 is able to produce 1000-50+1=951 possible values, based on its interval)
+        62324736
+        >>>
+        >>> # Specify a preset configuration for field 'f2'
+        >>> preset = Preset(f)
+        >>> preset[f2] = 42
+        >>> f.count(preset)  # Here, the following computation is done: 951*1*256 (as the f2 field value is set to 42, f2 can now produce only 1 possible value)
+        243456
+        >>>
+        >>> # Specify a preset configuration for field 'f3' by activating fuzzing
+        >>> preset.fuzz(f3, generator='determinist')
+        >>>
+        >>> f.count(preset)  # Here, the following computation is done: 951*1*29 (29 corresponds to the number of possible values generated by the determinist generator)
+        27579
+
+        """
         count = 1
         if len(self.fields) > 0:
             for field in self.fields:

@@ -85,7 +85,7 @@ class Size(AbstractRelationVariableLeaf):
                    parameter). The default value is 0.
     :param name: The name of the variable. If None, the name
                  will be generated.
-    :type targets: a :class:`list` of :class:`~netzob.Model.Vocabulary.Field.Field`, required
+    :type targets: a :class:`~netzob.Model.Vocabulary.Field.Field` or a :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>` or a :class:`list` of :class:`~netzob.Model.Vocabulary.Field.Field` or :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
     :type dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, optional
     :type factor: :class:`float`, optional
     :type offset: :class:`int`, optional
@@ -101,7 +101,7 @@ class Size(AbstractRelationVariableLeaf):
                  length.
     :var offset: Defines the offset to apply to the computed length.
     :vartype targets: a list of
-                      :class:`~netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
+                      :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     :vartype dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
     :vartype factor: :class:`float`
     :vartype offset: :class:`int`

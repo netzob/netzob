@@ -272,7 +272,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         The callback function that can be used in the
         :attr:`cbk_method` parameter has the following prototype:
 
-        .. function:: cbk_method(available_symbols, current_symbol, current_state,\
+        .. function:: cbk_method(available_symbols, current_symbol, current_symbol_preset, current_state,\
                                  last_sent_symbol, last_sent_message, last_sent_structure,\
                                  last_received_symbol, last_received_message,\
                                  last_received_structure, actor)
@@ -288,27 +288,26 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :param current_state:
                   Current state in the automaton.
            :param last_sent_symbol:
-                  Last sent symbol on the abstraction layer, and thus making it
+                  Last sent symbol by the actor on the communication channel, and thus making it
                   possible to create relationships with the previously sent symbol.
            :param last_sent_message:
-                  Last sent message on the abstraction layer, and thus making
+                  Last sent message by the actor on the communication channel, and thus making
                   it possible to create relationships with the previously sent
                   message.
            :param last_sent_structure:
-                  Last sent message structure on the abstraction layer,
+                  Last sent message structure by the actor on the communication channel,
                   and thus making it possible to create relationships with
                   the previously sent message structure.
            :param last_received_symbol:
-                  Last received symbol on the abstraction layer, and thus
+                  Last received symbol by the actor on the communication channel, and thus
                   making it possible to create relationships with the
                   previously received symbol.
            :param last_received_message:
-                  Last received message (:class:`bitarray`) on the abstraction layer,
+                  Last received message (:class:`bitarray`) by the actor on the communication channel,
                   and this makes it possible to create relationships with
                   received message.
            :param last_received_structure:
-                  Last received message structure on the abstraction
-                  layer, and thus making it possible to create relationships
+                  Last received message structure by the actor on the communication channel, and thus making it possible to create relationships
                   with the previously received message structure.
            :param actor:
                   Corresponds to the current actor.
@@ -338,7 +337,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                     relationship dependencies (see
                     :meth:`~netzob.Model.Vocabulary.Symbol.Symbol.specialize`,
                     for more information).
-           :rtype: ~typing.Tuple[~netzob.Model.Vocabulary.Symbol.Symbol,~typing.Dict]
+           :rtype: ~typing.Tuple[~netzob.Model.Vocabulary.Symbol.Symbol,~netzob.Model.Vocabulary.Preset.Preset]
 
         """
         if not callable(cbk_method):
@@ -347,7 +346,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
     def add_cbk_action(self, cbk_method):
         """Function called after sending or receiving a symbol in the
-        transition. This function could be used to change memory or actor behavior.
+        transition. This function may typically be used to change memory or actor behavior.
 
         :param cbk_method: the callback function
         :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
@@ -372,9 +371,9 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :param actor:
                   The actor that is sending or receiving the symbol.
 
-           :type symbol_to_send: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
-           :type data: :class:`str`
-           :type data_structure: :class:`dict`
+           :type symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+           :type data: :class:`bytes`
+           :type data_structure: :class:`OrderedDict`
            :type operation: :class:`~netzob.Simulation.AbstractionLayer.Operation`
            :type actor: :class:`~netzob.Simulation.Actor.Actor`
 

@@ -85,14 +85,16 @@ class Repeat(AbstractVariableNode):
     :param child: The variable element that will be repeated.
     :param nbRepeat: The number of repetitions of the element. This value can be a fixed integer, a tuple of integers defining the minimum and maximum of permitted repetitions, a constant from the calling script, a value present in another field, or can be identified by calling a callback function. In the latter case, the callback function should return a boolean telling if the expected number of repetitions is reached. Those use cases are described below.
     :param delimiter: The delimiter used to separate the repeated element. The default is None.
-    :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :param name: The name of the variable (if None, the name will
+                 be generated).
+    :type child: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
     :type nbRepeat: an :class:`int` or a :class:`tuple` of :class:`int` or
                     a Python variable containing an :class:`int` or a
                     :class:`Field
                     <netzob.Model.Vocabulary.Field.Field>` or a
                     :class:`Callable <collections.abc.Callable>`, required
     :type delimiter: :class:`bitarray`, optional
-
+    :type name: :class:`str`, optional
 
     The Repeat class provides the following public variables:
 
@@ -149,8 +151,8 @@ class Repeat(AbstractVariableNode):
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
     Besides, it is possible to test if a ``child`` variable is a node
-    of the tree structure through the :meth:`isnode(child)` method. A
-    node may represent an ``Agg``, an ``Alt``, a ``Repeat`` or a
+    of the tree structure through the ``isnode(child)`` method. A
+    node may represent an ``Agg``, an ``Alt``, a ``Repeat`` or an
     ``Opt`` variable. Access to the node leafs is possible with the
     attribute ``children`` (i.e. ``child.children``). The type of the
     children leafs is also :class:`Variable

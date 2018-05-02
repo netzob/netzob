@@ -69,8 +69,11 @@ class Agg(AbstractVariableNode):
     :param children: The sequence of variable elements contained in
                      the aggregate. The default value is None.
     :param last_optional: A flag indicating if the last element of the children is optional or not. The default value is False.
-    :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+    :param name: The name of the variable (if None, the name will
+                 be generated).
+    :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, optional
     :type last_optional: :class:`bool`, optional
+    :type name: :class:`str`, optional
 
 
     The Agg class supports modeling of direct recursions on the
@@ -80,7 +83,7 @@ class Agg(AbstractVariableNode):
     The Agg class provides the following public variables:
 
     :var children: The sorted typed list of children attached to the variable node.
-    :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
+    :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
 
 
     **Aggregate examples**
@@ -168,7 +171,7 @@ class Agg(AbstractVariableNode):
     **Optional last variable**
 
     This example shows the specialization and parsing of an aggregate
-    with an optional last variable*:
+    with an optional last variable:
 
     >>> from netzob.all import *
     >>> a = Agg([int8(2), int8(3)], last_optional=True)
@@ -234,7 +237,7 @@ class Agg(AbstractVariableNode):
           B: B' ")"
            : <split the statement ...>
           B': ( "(" B ) | "."
-            : <to transform a direct recursion into an indirect recursion on the right side>
+            : <direct recursion converted in an indirect one on the right>
 
        *valid recursion examples*:
 

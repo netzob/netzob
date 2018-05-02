@@ -71,14 +71,17 @@ class Alt(AbstractVariableNode):
     :param children: The set of variable elements permitted in the
                      alternative. The default is None.
     :param callback: The callback function that may be used to determine the child index to select. The default is None.
-    :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, optional
+    :param name: The name of the variable (if None, the name will
+                 be generated).
+    :type children: a :class:`list` of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, optional
     :type callback: :class:`Callable <collections.abc.Callable>`, optional
+    :type name: :class:`str`, optional
 
     The Alt class provides the following public variables:
 
     :var children: The sorted typed list of children attached to the variable node.
     :var callback: The callback function that may be used to determine the child index to select.
-    :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Variables.Variable>`
+    :vartype children: a list of :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     :vartype callback: :class:`Callable <collections.abc.Callable>`
 
 
@@ -114,6 +117,14 @@ class Alt(AbstractVariableNode):
     * ``path.getData(child)`` will return a :class:`bitarray` that corresponds
       to the value specialized or parsed for the child
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+
+    Besides, it is possible to test if a ``child`` variable is a node
+    of the tree structure through the ``isnode(child)`` method. A
+    node may represent an ``Agg``, an ``Alt``, a ``Repeat`` or an
+    ``Opt`` variable. Access to the node leafs is possible with the
+    attribute ``children`` (i.e. ``child.children``). The type of the
+    children leafs is also :class:`Variable
+    <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
 
     **Alt examples**

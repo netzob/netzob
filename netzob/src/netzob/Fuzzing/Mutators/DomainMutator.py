@@ -92,8 +92,8 @@ class DomainMutator(Mutator):
     :param counterMax: The max number of mutations to produce (a :class:`int` should be used to represent an absolute value, whereas a :class:`float` should be used to represent a ratio in percent). Default value is :attr:`COUNTER_MAX_DEFAULT` = 2**32.
     :param lengthBitSize: The storage size in bits of the integer used to generate the length of the data.
         Default value is `None`, which indicates to use the unit size set in the field domain.
-    :type domain: :class:`AbstractVariable
-        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable>`, required
+    :type domain: :class:`Variable
+        <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
     :type mode: :class:`FuzzingMode`, optional
     :type generator: :class:`iter`, optional
     :type seed: :class:`int`, optional

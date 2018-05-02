@@ -57,12 +57,12 @@ from netzob.Model.Vocabulary.Types.Integer import uint16be
 
 
 @NetzobLogger
-class EthernetChannel(AbstractChannel):
-    r"""A EthernetChannel is a communication channel to send Ethernet
+class CustomEthernetChannel(AbstractChannel):
+    r"""A CustomEthernetChannel is a communication channel to send Ethernet
     frames. This channel is responsible for building the Ethernet
     layer.
 
-    The EthernetChannel constructor expects some parameters:
+    The CustomEthernetChannel constructor expects some parameters:
 
     :param remoteMac: This parameter is the remote MAC address to connect to.
     :param localMac: This parameter is the local MAC address.
@@ -74,7 +74,7 @@ class EthernetChannel(AbstractChannel):
 
     .. todo:: add support of netaddr.EUI
 
-    Adding to AbstractChannel variables, the EthernetChannel class provides
+    Adding to AbstractChannel variables, the CustomEthernetChannel class provides
     the following public variables:
 
     :var remoteMac: The remote MAC address to connect to.
@@ -86,12 +86,12 @@ class EthernetChannel(AbstractChannel):
     :vartype interface: :class:`str`
 
 
-    The following example shows how to instantiate an EthernetChannel.
+    The following example shows how to instantiate a CustomEthernetChannel.
 
     >>> from netzob.all import *
     >>> from binascii import hexlify
     >>> def example_channel():
-    ...     client = EthernetChannel(
+    ...     client = CustomEthernetChannel(
     ...        remoteMac="00:01:02:03:04:05",
     ...        localMac="00:06:07:08:09:10")
     ...     client.open()
@@ -112,7 +112,7 @@ class EthernetChannel(AbstractChannel):
                  remoteMac,
                  localMac,
                  timeout=AbstractChannel.DEFAULT_TIMEOUT):
-        super(EthernetChannel, self).__init__(timeout=timeout)
+        super(CustomEthernetChannel, self).__init__(timeout=timeout)
         self.remoteMac = remoteMac
         self.localMac = localMac
         self.__interface = NetUtils.getLocalInterfaceFromMac(self.localMac)
@@ -125,7 +125,7 @@ class EthernetChannel(AbstractChannel):
 
     @staticmethod
     def getBuilder():
-        return EthernetChannelBuilder
+        return CustomEthernetChannelBuilder
 
     def initHeader(self):
         eth_dst = Field(name='eth.dst',
@@ -171,9 +171,9 @@ class EthernetChannel(AbstractChannel):
         self._socket = socket.socket(
             socket.AF_PACKET,
             socket.SOCK_RAW,
-            socket.htons(EthernetChannel.ETH_P_ALL))
+            socket.htons(CustomEthernetChannel.ETH_P_ALL))
         self._socket.settimeout(timeout or self.timeout)
-        self._socket.bind((self.interface, EthernetChannel.ETH_P_ALL))
+        self._socket.bind((self.interface, CustomEthernetChannel.ETH_P_ALL))
         self.isOpen = True
 
     @public_api
@@ -235,13 +235,13 @@ class EthernetChannel(AbstractChannel):
         self.header_preset["eth.payload"] = data
         packet = next(self.header.specialize(self.header_preset))
         len_data = self._socket.sendto(packet, (self.interface,
-                                                EthernetChannel.ETH_P_ALL))
+                                                CustomEthernetChannel.ETH_P_ALL))
         return len_data
 
     def macToBitarray(self, addr):
         """Converts a mac address represented as a string to its bitarray value.
 
-        >>> client = EthernetChannel('00:01:02:03:04:05', '06:07:08:09:10:11')
+        >>> client = CustomEthernetChannel('00:01:02:03:04:05', '06:07:08:09:10:11')
         >>> client.macToBitarray('00:01:02:03:04:05')
         bitarray('000000000000000100000010000000110000010000000101')
         >>> client.macToBitarray(b'\\x00\\x01\\x02\\x03\\x04\\x05')
@@ -317,26 +317,26 @@ class EthernetChannel(AbstractChannel):
         return self.__interface
 
 
-class EthernetChannelBuilder(ChannelBuilder):
+class CustomEthernetChannelBuilder(ChannelBuilder):
     """
     This builder is used to create an
-    :class:`~netzob.Simulator.Channels.EthernetChannel.EthernetChannel` instance
+    :class:`~netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel` instance
 
     >>> from netzob.Simulator.Channels.NetInfo import NetInfo
     >>> netinfo = NetInfo(dst_addr="00:00:00:00:00:00",
     ...                   src_addr="00:00:00:00:00:00",
     ...                   protocol=0x0800,
     ...                   interface="lo")
-    >>> builder = EthernetChannelBuilder().set_map(netinfo.getDict())
+    >>> builder = CustomEthernetChannelBuilder().set_map(netinfo.getDict())
     >>> chan = builder.build()
     >>> type(chan)
-    <class 'netzob.Simulator.Channels.EthernetChannel.EthernetChannel'>
+    <class 'netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel'>
     >>> chan.localMac  # src_addr key has been mapped to localMac attribute
     '00:00:00:00:00:00'
     """
 
     def __init__(self):
-        super().__init__(EthernetChannel)
+        super().__init__(CustomEthernetChannel)
 
     def set_src_addr(self, value):
         self.attrs['localMac'] = value

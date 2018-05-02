@@ -474,22 +474,61 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
     @public_api
     def abstract(self, data, preset=None, memory=None):
         """The :meth:`abstract` method is used to abstract the given
-        data bytes with the current symbol model.
+        data bytes with the current symbol (or field) model. This method also works on fields, in order to abstract a :class:`bytes` into a field object.
 
-        The :meth:`abstract` static method expects some parameters:
+        Similarly to the :meth:`specialize` method, it is possible to
+        indicate a Preset configuration that will be used to check
+        content parsed for specific fields. However, for the
+        :meth:`abstract` method, it is only possible to specify field
+        names for keys of the Preset configuration. The reason of this
+        restriction is that the :meth:`abstract` method returns an
+        :class:`OrderedDict` containing also field names as keys.
 
-        :param data: The concrete message to abstract in symbol.
-        :param preset: The configuration used to check values in symbol structure obtained after message parsing.
+        The :meth:`abstract` method expects some parameters:
+
+        :param data: The concrete message to abstract in symbol (or field).
+        :param preset: The configuration used to check values in symbol (or field) structure obtained after message parsing.
         :param memory: A memory used to store variable values during
-                       specialization and abstraction of sequence of symbols.
+                       specialization and abstraction of sequence of symbols (or fields).
                        The default value is None.
         :type data: :class:`bytes`, required
         :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
         :return: the structured of the parsed data
-        :rtype: a dict[:class:`str`, :class:`bytes`]
+        :rtype: an :class:`OrderedDict` where keys are :class:`str` and values are :class:`bytes`
         :raises: :class:`AbstractionException <netzob.Model.Vocabulary.AbstractField.AbstractionException>` if an error occurs while abstracting the data
 
+
+        .. note::
+           When using the :meth:`abstract` method, it is
+           important to explicitly name all the fields with different
+           names, because the resulting OrderedDict will use field
+           names as its keys.
+
+
+        **Abstracting data into a field**
+
+        The following code shows an example of abstracting a data
+        according to a field definition:
+
+        >>> from netzob.all import *
+        >>> messages = ["john, what's up in {} ?".format(city)
+        ...             for city in ['Paris', 'Berlin']]
+        >>>
+        >>> f1a = Field(name="name", domain="john")
+        >>> f2a = Field(name="question", domain=", what's up in ")
+        >>> f3a = Field(name="city", domain=Alt(["Paris", "Berlin"]))
+        >>> f4a = Field(name="mark", domain=" ?")
+        >>> f = Field([f1a, f2a, f3a, f4a], name="field-john")
+        >>>
+        >>> for m in messages:
+        ...    structured_data = f.abstract(m)
+        ...    print(structured_data)
+        OrderedDict([('name', b'john'), ('question', b", what's up in "), ('city', b'Paris'), ('mark', b' ?')])
+        OrderedDict([('name', b'john'), ('question', b", what's up in "), ('city', b'Berlin'), ('mark', b' ?')])
+
+
+        **Abstracting data into a symbol**
 
         The following code shows an example of abstracting a data
         according to a symbol definition:
@@ -521,15 +560,15 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :meth:`~netzob.Model.Vocabulary.Symbol.abstract` method:
 
         >>> from netzob.all import *
-        >>> f0 = Field("aaaa")
-        >>> f1 = Field(" # ")
-        >>> f2 = Field("bbbbbb")
+        >>> f0 = Field("aaaa", name="f0")
+        >>> f1 = Field(" # ", name="f1")
+        >>> f2 = Field("bbbbbb", name="f2")
         >>> s = Symbol(fields=[f0, f1, f2])
         >>> concrete_message = next(s.specialize())
         >>> concrete_message
         b'aaaa # bbbbbb'
         >>> s.abstract(concrete_message)
-        OrderedDict([('Field', b'bbbbbb')])
+        OrderedDict([('f0', b'aaaa'), ('f1', b' # '), ('f2', b'bbbbbb')])
 
 
         **Usage of Preset during message abstraction**
@@ -545,6 +584,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> f4 = Field(name="mark", domain=" ?")
         >>> symbol = Symbol([f1, f2, f3, f4], name="Symbol-john")
         >>>
+        >>> # We build a Preset configuration indicating that we expect "Paris" for the field f3
         >>> preset = Preset(symbol)
         >>> preset[f3] = b"Paris"
         >>>
@@ -556,7 +596,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>>
         >>> data = "john, what's up in Paris ?"
         >>> data_structure = symbol.abstract(data, preset=preset)
-
+        >>>
         >>> data_structure
         OrderedDict([('name', b'john'), ('question', b", what's up in "), ('city', b'Paris'), ('mark', b' ?')])
 
@@ -677,6 +717,10 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         >>> fheader = Field(name="fheader")  # create a Field named 'fheader'
         >>> fheader.fields = [f1, f2, f3] # this Field is parent of 3 existing Fields
         >>> type(fheader.getField('f2')) # get the sub-field named 'f2'
+        <class 'netzob.Model.Vocabulary.Field.Field'>
+        >>>
+        >>> s = Symbol([f1, f2, f3])
+        >>> type(s.getField('f2')) # get the field named 'f2' in the symbol
         <class 'netzob.Model.Vocabulary.Field.Field'>
 
         """
