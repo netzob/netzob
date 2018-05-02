@@ -174,7 +174,7 @@ class CloseChannelTransition(AbstractTransition):
 
         for cbk in self.cbk_action:
             self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), self.name))
-            cbk(None, None, None, None, actor)
+            cbk(None, None, None, None, self.startState, actor.memory)
 
         actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
         return self.endState

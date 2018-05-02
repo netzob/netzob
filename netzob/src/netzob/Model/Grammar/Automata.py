@@ -778,6 +778,153 @@ class Automata(object):
         :rtype: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
 
 
+        **Catching abnormal responses from the remote target**
+
+        By default, the state machine is configured so that the
+        reception of abnormal messages from the remote peer will
+        terminate the visit loop of the automaton from the current
+        actor. When applying fuzzing, this behavior could be annoying
+        as it will quickly stop the fuzzing session as soon as a
+        non-legitimate response is received. In order to catch this
+        kind of responses and adapt the current actor behavior, it is
+        recommended to set the following callback on the automaton:
+
+        * :attr:`set_cbk_read_symbol_timeout <netzob.Model.Grammar.Automata.Automata.set_cbk_read_symbol_timeout>`
+        * :attr:`set_cbk_read_unexpected_symbol <netzob.Model.Grammar.Automata.Automata.set_cbk_read_unexpected_symbol>`
+        * :attr:`set_cbk_read_unknown_symbol <netzob.Model.Grammar.Automata.Automata.set_cbk_read_unknown_symbol>`
+
+
+        The following example shows how to specify a global behavior,
+        on all states and transitions, in order to catch reception of
+        unexpected symbols (i.e. symbols that are known but not
+        expected at this state/transition) and unknown messages
+        (i.e. messages that cannot be abstracted to a symbol).
+
+        >>> from netzob.all import *
+        >>> import time
+        >>>
+        >>> # First we create the symbols
+        >>> symbol1 = Symbol(name="Hello1", fields=[Field("hello1")])
+        >>> symbol2 = Symbol(name="Hello2", fields=[Field("hello2")])
+        >>> symbolList = [symbol1, symbol2]
+        >>>
+        >>> # Create Bob's automaton
+        >>> bob_s0 = State(name="S0")
+        >>> bob_s1 = State(name="S1")
+        >>> bob_s2 = State(name="S2")
+        >>> bob_s3 = State(name="S3")
+        >>> bob_error_state = State(name="Error state")
+        >>> bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name="Open")
+        >>> bob_mainTransition = Transition(startState=bob_s1, endState=bob_s2,
+        ...                                 inputSymbol=symbol1, outputSymbols=[symbol2],
+        ...                                 name="T1")
+        >>> bob_closeTransition1 = CloseChannelTransition(startState=bob_error_state, endState=bob_s3, name="Close")
+        >>> bob_closeTransition2 = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
+        >>> bob_automata = Automata(bob_s0, symbolList)
+        >>>
+        >>> def cbk_method(current_state, current_transition=None, received_symbol=None, received_message=None):
+        ...     return bob_error_state
+        >>> bob_automata.set_cbk_read_unexpected_symbol(cbk_method)
+        >>> bob_automata.set_cbk_read_unknown_symbol(cbk_method)
+        >>>
+        >>> automata_ascii = bob_automata.generateASCII()
+        >>> print(automata_ascii)
+        #=========================#
+        H           S0            H
+        #=========================#
+          |
+          | OpenChannelTransition
+          v
+        +-------------------------+
+        |           S1            |
+        +-------------------------+
+          |
+          | T1 (Hello1;{Hello2})
+          v
+        +-------------------------+
+        |           S2            |
+        +-------------------------+
+          |
+          | CloseChannelTransition
+          v
+        +-------------------------+
+        |           S3            |
+        +-------------------------+
+        <BLANKLINE>
+        >>>
+        >>> # Create Alice's automaton
+        >>> alice_s0 = State(name="S0")
+        >>> alice_s1 = State(name="S1")
+        >>> alice_s2 = State(name="S2")
+        >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
+        >>> alice_mainTransition = Transition(startState=alice_s1, endState=alice_s1,
+        ...                                   inputSymbol=symbol1, outputSymbols=[symbol1],
+        ...                                   name="T1")
+        >>> alice_closeTransition = CloseChannelTransition(startState=alice_s1, endState=alice_s2, name="Close")
+        >>> alice_automata = Automata(alice_s0, symbolList)
+        >>>
+        >>> automata_ascii = alice_automata.generateASCII()
+        >>> print(automata_ascii)
+        #=========================#
+        H           S0            H
+        #=========================#
+          |
+          | OpenChannelTransition
+          v
+        +-------------------------+   T1 (Hello1;{Hello1})
+        |                         | -----------------------+
+        |           S1            |                        |
+        |                         | <----------------------+
+        +-------------------------+
+          |
+          | CloseChannelTransition
+          v
+        +-------------------------+
+        |           S2            |
+        +-------------------------+
+        <BLANKLINE>
+        >>>
+        >>> # Create Bob actor (a client)
+        >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
+        >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
+        >>> bob.nbMaxTransitions = 10
+        >>>
+        >>> # Create Alice actor (a server)
+        >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
+        >>> alice = Actor(automata=alice_automata, channel=channel, initiator=False, name="Alice")
+        >>>
+        >>> alice.start()
+        >>> time.sleep(0.5)
+        >>> bob.start()
+        >>>
+        >>> time.sleep(1)
+        >>>
+        >>> bob.stop()
+        >>> alice.stop()
+        >>>
+        >>> print(bob.generateLog())
+        Activity log for actor 'Bob':
+          [+] At state 'S0'
+          [+]   Picking transition 'Open'
+          [+]   Transition 'Open' lead to state 'S1'
+          [+] At state 'S1'
+          [+]   Picking transition 'T1'
+          [+]   During transition 'T1', sending input symbol 'Hello1'
+          [+]   During transition 'T1', receiving unexpected symbol triggered a callback that lead to state 'Error state'
+          [+] At state 'Error state'
+          [+]   Picking transition 'Close'
+          [+]   Transition 'Close' lead to state 'S3'
+        >>> print(alice.generateLog())
+        Activity log for actor 'Alice':
+          [+] At state 'S0'
+          [+]   Picking transition 'Open'
+          [+]   Transition 'Open' lead to state 'S1'
+          [+] At state 'S1'
+          [+]   Receiving input symbol 'Hello1', which corresponds to transition 'T1'
+          [+]   During transition 'T1', choosing output symbol 'Hello1'
+          [+]   Transition 'T1' lead to state 'S1'
+
+
         **Basic example of automata fuzzing**
 
         Mutators may be used in order to create fuzzed/mutated automaton.
@@ -1103,7 +1250,7 @@ class Automata(object):
         >>> # Creation of a callback function that returns a new transition
         >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
         ...                          last_sent_symbol, last_sent_message, last_sent_structure,
-        ...                          last_received_symbol, last_received_message, last_received_structure, actor):
+        ...                          last_received_symbol, last_received_message, last_received_structure, memory):
         ...     if nextTransition is None:
         ...         return alice_transition2
         ...     else:
@@ -1152,7 +1299,7 @@ class Automata(object):
           [+]   Transition 't_random' lead to state 's6'
           [+] At state 's6'
           [+]   Picking transition 't_random'
-          [+]   During transition 't_random', sending input symbol 'Sym1'
+          [+]   During transition 't_random', sending input symbol 'Sym2'
           [+]   During transition 't_random', fuzzing activated
           [+]   During transition 't_random', receiving expected output symbol 'Sym2'
           [+]   Transition 't_random' lead to state 's6'
@@ -1189,12 +1336,12 @@ class Automata(object):
           [+]   During transition 'T2', choosing output symbol 'Sym2'
           [+]   Transition 'T2' lead to state 's1'
           [+] At state 's1'
-          [+]   Receiving input symbol 'Unknown message b'System("ls -al /")\x00 '', which corresponds to transition 'None'
+          [+]   Receiving input symbol 'Unknown message b'$ENV{"HOME"}\x00       '', which corresponds to transition 'None'
           [+]   Changing transition to 'T2', through callback
           [+]   During transition 'T2', choosing output symbol 'Sym2'
           [+]   Transition 'T2' lead to state 's1'
           [+] At state 's1'
-          [+]   Receiving input symbol 'Unknown message b'$ENV{"HOME"}\x00       '', which corresponds to transition 'None'
+          [+]   Receiving input symbol 'Unknown message b'%x("ls -al /")\x00     '', which corresponds to transition 'None'
           [+]   Changing transition to 'T2', through callback
           [+]   During transition 'T2', choosing output symbol 'Sym2'
           [+]   Transition 'T2' lead to state 's1'
