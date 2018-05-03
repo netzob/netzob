@@ -532,25 +532,31 @@ class Preset(object):
 
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
-        ====================  =================================================
+        ====================  =========================================================================
                Option                           Description
-        ====================  =================================================
+        ====================  =========================================================================
         interval              The scope of values to generate.
 
-                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be generated between the min and max values of the domain.
-                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
-                              * If it is a tuple of integers (min, max), the values will be generated between min and max.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be
+                                generated between the min and max values of the domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be
+                                generated in [0, 2^N-1], where N is the bitsize (storage) of the field.
+                              * If it is a tuple of integers (min, max), the values will be generated
+                                between min and max.
 
                               Default value is dependant on the chosen generator:
 
-                              * If the generator is `determinist`, default interval will be :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
+                              * If the generator is `determinist`,
+                                default interval will be :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
                               * Else, default interval will be :attr:`FuzzingInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The size in bits of the memory on which the generated values have to be encoded.
+        lengthBitSize         The size in bits of the memory on which the generated values have to
+                              be encoded.
 
                               The following sizes are available:
 
-                              * ``None`` (default value), which indicates to use the unit size set in the field domain.
+                              * ``None`` (default value), which indicates to use the unit size set
+                                in the field domain.
                               * ``UnitSize.SIZE_1``
                               * ``UnitSize.SIZE_4``
                               * ``UnitSize.SIZE_8``
@@ -558,7 +564,7 @@ class Preset(object):
                               * ``UnitSize.SIZE_24``
                               * ``UnitSize.SIZE_32``
                               * ``UnitSize.SIZE_64``
-        ====================  =================================================
+        ====================  =========================================================================
 
 
         .. raw:: latex
@@ -569,25 +575,40 @@ class Preset(object):
 
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
-        ====================  =================================================
+        ====================  =========================================================================
                Option                           Description
-        ====================  =================================================
-        endChar               The :class:`str` character(s) which will end the string. This terminal symbol will be mutated by truncating its value if defined on several bytes.
+        ====================  =========================================================================
+        endChar               The :class:`str` character(s) which will end the string. This terminal
+                              symbol will be mutated by truncating its value if defined on several
+                              bytes.
 
-                              Default value is :attr:`DEFAULT_END_CHAR`. It is used to set the eos parameter of :class:`String <netzob.Model.Vocabulary.Types.String>`.
+                              Default value is :attr:`DEFAULT_END_CHAR`. It is used to set the eos
+                              parameter of :class:`String <netzob.Model.Vocabulary.Types.String>`.
+
         interval              The scope of values to generate.
 
-                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
-                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the String length.
-                              * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be
+                                randomly generated with a size between the min and max values of the
+                                domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be
+                                randomly generated with a size of [0, 2^N-1], where N is the length in
+                                bits of the integer used to represent the String length.
+                              * If it is a tuple of integers (min, max), the values will be randomly
+                                generated with a size between min and max.
 
                               Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order to generate String with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be
+                              encoded. This parameter should be used in conjunction with
+                              :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order
+                              to generate String with a length bigger than the original full interval.
+                              This parameter will not have any effect when used with
+                              :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
-                              * ``None`` (default value), which indicates to use the unit size set in the field domain.
+                              * ``None`` (default value), which indicates to use the unit size set in
+                                the field domain.
                               * ``UnitSize.SIZE_1``
                               * ``UnitSize.SIZE_4``
                               * ``UnitSize.SIZE_8``
@@ -599,7 +620,7 @@ class Preset(object):
 
                               Default value is :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS`.
 
-        ====================  =================================================
+        ====================  =========================================================================
 
         The :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS` default value is the following:
 
@@ -625,22 +646,33 @@ class Preset(object):
 
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
-        ====================  =================================================
+        ====================  =========================================================================
                Option                           Description
-        ====================  =================================================
+        ====================  =========================================================================
         interval              The scope of values to generate.
 
-                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
-                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the Raw data length.
-                              * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be
+                                randomly generated with a size between the min and max values of the
+                                domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be
+                                randomly generated with a size of [0, 2^N-1], where N is the length in
+                                bits of the integer used to represent the Raw data length.
+                              * If it is a tuple of integers (min, max), the values will be randomly
+                                generated with a size between min and max.
 
                               Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order to generate Raw data with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be
+                              encoded. This parameter should be used in conjunction with
+                              :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order
+                              to generate Raw data with a length bigger than the original full
+                              interval. This parameter will not have any effect when used with
+                              :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
-                              * ``None`` (default value), which indicates to use the unit size set in the field domain.
+                              * ``None`` (default value), which indicates to use the unit size set in
+                                the field domain.
                               * ``UnitSize.SIZE_1``
                               * ``UnitSize.SIZE_4``
                               * ``UnitSize.SIZE_8``
@@ -648,7 +680,7 @@ class Preset(object):
                               * ``UnitSize.SIZE_24``
                               * ``UnitSize.SIZE_32``
                               * ``UnitSize.SIZE_64``
-        ====================  =================================================
+        ====================  =========================================================================
 
 
         .. raw:: latex
@@ -659,22 +691,33 @@ class Preset(object):
 
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
-        ====================  =================================================
+        ====================  =========================================================================
                Option                           Description
-        ====================  =================================================
+        ====================  =========================================================================
         interval              The scope of values to generate.
 
-                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
-                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the HexaString length.
-                              * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be
+                                randomly generated with a size between the min and max values of the
+                                domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be
+                                randomly generated with a size of [0, 2^N-1], where N is the length in
+                                bits of the integer used to represent the HexaString length.
+                              * If it is a tuple of integers (min, max), the values will be randomly
+                                generated with a size between min and max.
 
                               Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order to generate HexaStrings with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be
+                              encoded. This parameter should be used in conjunction with
+                              :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order
+                              to generate HexaStrings with a length bigger than the original full
+                              interval. This parameter will not have any effect when used with
+                              :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
-                              * ``None`` (default value), which indicates to use the unit size set in the field domain.
+                              * ``None`` (default value), which indicates to use the unit size set in
+                                the field domain.
                               * ``UnitSize.SIZE_1``
                               * ``UnitSize.SIZE_4``
                               * ``UnitSize.SIZE_8``
@@ -682,7 +725,7 @@ class Preset(object):
                               * ``UnitSize.SIZE_24``
                               * ``UnitSize.SIZE_32``
                               * ``UnitSize.SIZE_64``
-        ====================  =================================================
+        ====================  =========================================================================
 
 
         .. raw:: latex
@@ -693,22 +736,33 @@ class Preset(object):
 
         .. tabularcolumns:: |p{3cm}|p{10cm}|
 
-        ====================  =================================================
+        ====================  =========================================================================
                Option                           Description
-        ====================  =================================================
+        ====================  =========================================================================
         interval              The scope of values to generate.
 
-                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
-                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the BitArray length.
-                              * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be
+                                randomly generated with a size between the min and max values of the
+                                domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be
+                                randomly generated with a size of [0, 2^N-1], where N is the length in
+                                bits of the integer used to represent the BitArray length.
+                              * If it is a tuple of integers (min, max), the values will be randomly
+                                generated with a size between min and max.
 
                               Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order to generate BitArrays with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be
+                              encoded. This parameter should be used in conjunction with
+                              :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order
+                              to generate BitArrays with a length bigger than the original full
+                              interval. This parameter will not have any effect when used with
+                              :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
-                              * ``None`` (default value), which indicates to use the unit size set in the field domain.
+                              * ``None`` (default value), which indicates to use the unit size set in
+                                the field domain.
                               * ``UnitSize.SIZE_1``
                               * ``UnitSize.SIZE_4``
                               * ``UnitSize.SIZE_8``
@@ -716,7 +770,7 @@ class Preset(object):
                               * ``UnitSize.SIZE_24``
                               * ``UnitSize.SIZE_32``
                               * ``UnitSize.SIZE_64``
-        ====================  =================================================
+        ====================  =========================================================================
 
 
         .. raw:: latex
@@ -752,15 +806,21 @@ class Preset(object):
         ====================  =================================================
                Option                           Description
         ====================  =================================================
-        mutateChild           If :const:`True`, the children variables will also be fuzzed.
+        mutateChild           If :const:`True`, the children variables will
+                              also be fuzzed.
 
                               Default value is :const:`True`.
-        mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with their default mutators.
+
+        mappingTypesMutators  A :class:`dict` used to override the global
+                              default mapping of types with their default
+                              mutators.
 
                               Default value is ``{}``.
-        maxDepth              An :class:`int` used to limit the recursive calls to the mutator.
+        maxDepth              An :class:`int` used to limit the recursive calls
+                              to the mutator.
 
-                              Default value is ``AltMutator.DEFAULT_MAX_DEPTH = 20``
+                              Default value is
+                              ``AltMutator.DEFAULT_MAX_DEPTH = 20``
         ====================  =================================================
 
 
@@ -771,10 +831,13 @@ class Preset(object):
         ====================  =================================================
                Option                           Description
         ====================  =================================================
-        mutateChild           If :const:`True`, the children variables will also be fuzzed.
+        mutateChild           If :const:`True`, the children variables will
+                              also be fuzzed.
 
                               Default value is :const:`True`.
-        mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with their default mutators.
+        mappingTypesMutators  A :class:`dict` used to override the global
+                              default mapping of types with their default
+                              mutators.
 
                               Default value is ``{}``.
         ====================  =================================================
@@ -788,28 +851,41 @@ class Preset(object):
 
         .. tabularcolumns:: |p{4cm}|p{10cm}|
 
-        ====================  =================================================
+        ====================  =========================================================================
                Option                           Description
-        ====================  =================================================
+        ====================  =========================================================================
         mutateChild           If :const:`True`, the children variables will also be fuzzed.
 
                               Default value is :const:`True`.
-        mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with their default mutators.
+
+        mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with
+                              their default mutators.
 
                               Default value is ``{}``.
         interval              The scope of values to generate.
 
-                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be randomly generated with a size between the min and max values of the domain.
-                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be randomly generated with a size of [0, 2^N-1], where N is the length in bits of the integer used to represent the number of repetitions.
-                              * If it is a tuple of integers (min, max), the values will be randomly generated with a size between min and max.
+                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be
+                                randomly generated with a size between the min and max values of the
+                                domain.
+                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be
+                                randomly generated with a size of [0, 2^N-1], where N is the length in
+                                bits of the integer used to represent the number of repetitions.
+                              * If it is a tuple of integers (min, max), the values will be randomly
+                                generated with a size between min and max.
 
                               Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.
 
-        lengthBitSize         The size in bits of the memory on which the generated length will be encoded. This parameter should be used in conjunction with :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order to generate a Repeat with a length bigger than the original full interval. This parameter will not have any effect when used with :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
+        lengthBitSize         The size in bits of the memory on which the generated length will be
+                              encoded. This parameter should be used in conjunction with
+                              :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order
+                              to generate a Repeat with a length bigger than the original full
+                              interval. This parameter will not have any effect when used with
+                              :attr:`FuzzingInterval.DEFAULT_INTERVAL`.
 
                               The following sizes are available:
 
-                              * ``None`` (default value), which indicates to use the unit size set in the field domain.
+                              * ``None`` (default value), which indicates to use the unit size set in
+                                the field domain.
                               * ``UnitSize.SIZE_1``
                               * ``UnitSize.SIZE_4``
                               * ``UnitSize.SIZE_8``
@@ -817,7 +893,7 @@ class Preset(object):
                               * ``UnitSize.SIZE_24``
                               * ``UnitSize.SIZE_32``
                               * ``UnitSize.SIZE_64``
-        ====================  =================================================
+        ====================  =========================================================================
 
 
         .. raw:: latex
@@ -831,10 +907,14 @@ class Preset(object):
         ====================  =================================================
                Option                           Description
         ====================  =================================================
-        mutateChild           If :const:`True`, the children variable will also be fuzzed.
+        mutateChild           If :const:`True`, the children variable will also
+                              be fuzzed.
 
                               Default value is :const:`True`.
-        mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with their default mutators.
+
+        mappingTypesMutators  A :class:`dict` used to override the global
+                              default mapping of types with their default
+                              mutators.
 
                               Default value is ``{}``.
         ====================  =================================================
