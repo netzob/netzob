@@ -119,17 +119,6 @@ class StringMutator(DomainMutator):
     PADDING_CHAR = ' '
     DATA_TYPE = String
 
-    DEFAULT_NAUGHTY_STRINGS = [
-        'System("ls -al /")',
-        '`ls -al /`',
-        'Kernel.exec("ls -al /")',
-        'Kernel.exit(1)',
-        '%x("ls -al /")',
-        '<img \\x00src=x onerror="alert(1)">',
-        '$ENV{"HOME"}',
-        '%d',
-        '%s']
-
     def __init__(self,
                  domain,
                  mode=FuzzingMode.GENERATE,
@@ -282,7 +271,7 @@ class StringMutator(DomainMutator):
     @naughtyStrings.setter  # type: ignore
     def naughtyStrings(self, naughtyStrings):
         if not isinstance(naughtyStrings, list):
-            self._naughtyStrings = StringMutator.DEFAULT_NAUGHTY_STRINGS
+            self._naughtyStrings = Mutator.DEFAULT_NAUGHTY_STRINGS
         else:
             self._naughtyStrings = naughtyStrings
 
@@ -354,7 +343,7 @@ def _test_string_values():
     >>> fieldString = Field(String(nbChars=(35, 60)))
     >>> eos_symbol = '123456789'
     >>> mutator = StringMutator(fieldString.domain, seed=10, lengthBitSize=UnitSize.SIZE_8, endChar=eos_symbol)
-    >>> naughty_string = StringMutator.DEFAULT_NAUGHTY_STRINGS
+    >>> naughty_string = Mutator.DEFAULT_NAUGHTY_STRINGS
 
     >>> has_naughty_str = False
     >>> has_several_eos_symbol = False
