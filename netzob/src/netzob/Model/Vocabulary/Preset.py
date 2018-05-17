@@ -618,11 +618,11 @@ class Preset(object):
                               * ``UnitSize.SIZE_64``
         naughtyStrings        The :class:`list` of potentially dangerous :class:`str` elements.
 
-                              Default value is :attr:`Mutator.DEFAULT_NAUGHTY_STRINGS`.
+                              Default value is :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS`.
 
         ====================  =========================================================================
 
-        The :attr:`Mutator.DEFAULT_NAUGHTY_STRINGS` default value is the following:
+        The :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS` default value is the following:
 
         .. code-block:: python
 
@@ -820,7 +820,7 @@ class Preset(object):
                               to the mutator.
 
                               Default value is
-                              ``Mutator.DEFAULT_MAX_DEPTH = 20``
+                              ``AltMutator.DEFAULT_MAX_DEPTH = 20``
         ====================  =================================================
 
 

@@ -83,21 +83,6 @@ class Mutator(metaclass=abc.ABCMeta):
     # Class constants
     SEED_DEFAULT = Conf.seed  #: the default seed value
 
-    # Used in AltMutator
-    DEFAULT_MAX_DEPTH = 20
-
-    # Used in StringMutator
-    DEFAULT_NAUGHTY_STRINGS = [
-        'System("ls -al /")',
-        '`ls -al /`',
-        'Kernel.exec("ls -al /")',
-        'Kernel.exit(1)',
-        '%x("ls -al /")',
-        '<img \\x00src=x onerror="alert(1)">',
-        '$ENV{"HOME"}',
-        '%d',
-        '%s']
-
     def __init__(self,
                  generator='xorshift',
                  seed=SEED_DEFAULT):

@@ -156,6 +156,8 @@ class AltMutator(DomainMutator):
     **Constant definitions:**
     """
 
+    DEFAULT_MAX_DEPTH = 20
+
     def __init__(self,
                  domain,
                  mode=FuzzingMode.GENERATE,
@@ -164,7 +166,7 @@ class AltMutator(DomainMutator):
                  counterMax=DomainMutator.COUNTER_MAX_DEFAULT,
                  mutateChild=True,
                  mappingTypesMutators={},
-                 maxDepth=Mutator.DEFAULT_MAX_DEPTH):
+                 maxDepth=DEFAULT_MAX_DEPTH):
 
         # Call parent init
         super().__init__(domain,
