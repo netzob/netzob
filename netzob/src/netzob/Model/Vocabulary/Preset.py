@@ -168,7 +168,7 @@ class Preset(object):
 
 
     A preset value bypasses all the constraint checks on the field definition.
-    In the following example, it can be used to bypass a size field definition.
+    In the following example, it is used to bypass a size field definition.
 
     >>> from netzob.all import *
     >>> f1 = Field()
