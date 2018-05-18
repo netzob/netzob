@@ -94,7 +94,7 @@ class Integer(AbstractType):
       * Sign.UNSIGNED
 
     :type sign: :class:`Sign <netzob.Model.Vocabulary.Types.AbstractType.Sign>`, optional
-    :param default: The default value used in specialization.
+    :param default: This parameter is the default value used in specialization.
     :type default: :class:`bitarray` or :class:`int`, optional
 
     .. note::

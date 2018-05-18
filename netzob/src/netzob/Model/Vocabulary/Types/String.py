@@ -70,7 +70,7 @@ class String(AbstractType):
     :param eos: A list defining the potential terminal characters for
                 the string. Default value is an empty list, meaning there
                 is no terminal character.
-    :param default: The default value used in specialization.
+    :param default: This parameter is the default value used in specialization.
     :type value: :class:`bitarray` or :class:`str`, optional
     :type nbChars: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
     :type encoding: :class:`str`, optional
