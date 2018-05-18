@@ -494,8 +494,8 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         :type data: :class:`bytes`, required
         :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
-        :return: the structured of the parsed data
-        :rtype: an :class:`OrderedDict` where keys are :class:`str` and values are :class:`bytes`
+        :return: The structure of the parsed data.
+        :rtype: An :class:`OrderedDict` where keys are :class:`str` and values are :class:`bytes`
         :raises: :class:`AbstractionException <netzob.Model.Vocabulary.AbstractField.AbstractionException>` if an error occurs while abstracting the data
 
 

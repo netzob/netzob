@@ -72,7 +72,7 @@ class Transition(AbstractTransition):
                         in a sending context. Internally,
                         `None` symbol will be replaced by an
                         :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
-    :param outputSymbols: A list of output symbols that can be expected when
+    :param outputSymbols: A list of expected output symbols when
                           the current transition is executed.
                           The default value is ``None``, which means that no
                           symbol will be sent in a receiving context, and no

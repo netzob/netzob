@@ -98,7 +98,7 @@ class Scope(Enum):
       OrderedDict([('f1', b'john')])
 
       The following example shows that the abstraction of a data that
-      does not correspond to the expected model returns an exception:
+      do not correspond to the expected model returns an exception:
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
