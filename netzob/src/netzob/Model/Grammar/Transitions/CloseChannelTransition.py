@@ -60,8 +60,9 @@ class CloseChannelTransition(AbstractTransition):
     The CloseChannelTransition expects some parameters:
 
     :param startState: This parameter is the initial state of the transition.
-    :param endState: This parameter is the end state of the transition.
-    :param name: The name of the transition. The default value is `None`
+    :param endState: This parameter is the ending state of the transition. This also corresponds to an ending state of the
+                     automaton.
+    :param name: The name of the transition. The default value is `CloseChannelTransition`
     :type startState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type endState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type name: :class:`str`, optional

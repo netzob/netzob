@@ -262,7 +262,7 @@ class Automata(object):
 
                 for cbk in transition.cbk_modify_symbol:
                     descr += " [CBK modify symbol] "
-                
+
                 dotCode.append(
                     '"{}" -> "{}" [fontsize=5, label="{}", URL="{}"];'.
 
@@ -591,7 +591,7 @@ class Automata(object):
 
            :param current_state:
              Corresponds to the current state in the automaton.
-             It is expected that the current state cannot be ``None``.
+             It is expected that the current state cannot be ``None``, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).
            :type current_state: ~netzob.Model.Grammar.States.State.State
 
            :param current_transition:
@@ -642,7 +642,7 @@ class Automata(object):
 
            :param current_state:
              Corresponds to the current state in the automaton.
-             It is expected that the current state cannot be ``None``.
+             It is expected that the current state cannot be ``None``, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).
            :type current_state: ~netzob.Model.Grammar.States.State.State
 
            :param current_transition:
@@ -701,7 +701,7 @@ class Automata(object):
 
            :param current_state:
              Corresponds to the current state in the automaton.
-             It is expected that the current state cannot be ``None``.
+             It is expected that the current state cannot be ``None``, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).
            :type current_state: ~netzob.Model.Grammar.States.State.State
 
            :param current_transition:

@@ -83,6 +83,9 @@ class Scope(Enum):
       a constant value is a magic number in a protocol or a delimiter
       field.
 
+      .. note::
+         When creating a data type with a defined value, a normalization step will automatically set the data Scope to :attr:`Scope.CONSTANT`.
+
 
       The following example shows the **abstraction of constant
       data**, through the parsing of a message that corresponds to the
@@ -142,18 +145,17 @@ class Scope(Enum):
       StopIteration
 
 
-    * **Scope.SESSION**: A persistent value carries a value, such as
+    * **Scope.SESSION**: This kind of variable carries a value, such as
       a session identifier, generated and memorized during its first
       specialization and reused as such in the remainder of the
-      session. Conversely, the first time a persistent field such as this is
+      session. Conversely, the first time a Session Scope field is
       abstracted, the value of its variable is not defined and the received
       value is saved. Later in the session, if this field is
       abstracted again, the corresponding variable is then defined and
       we compare the received field value against the memorized one.
 
 
-      The following example shows the **abstraction of a persistent
-      data**:
+      The following example shows the **abstraction of data with Session Scope**:
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
@@ -165,7 +167,7 @@ class Scope(Enum):
       >>> s.abstract("dylan", memory=m)
       OrderedDict([('f1', b'dylan')])
 
-      The following example shows that the abstraction of persistent
+      The following example shows that the abstraction of Session Scope
       data that does not correspond to the expected model triggers an exception:
 
       >>> from netzob.all import *
@@ -179,8 +181,7 @@ class Scope(Enum):
       netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'S0', cannot abstract the data: 'kurt'. Error: 'No parsing path returned while parsing 'b'kurt'''
 
 
-      The following examples show the **specialization of persistent
-      data**:
+      The following examples show the **specialization of data with Session Scope**:
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
@@ -210,19 +211,18 @@ class Scope(Enum):
       True
   
 
-    * **Scope.MESSAGE**: The value of an ephemeral variable is
-      regenerated each time it is specialized. The generated value is
-      memorized, and can then be used afterwards to abstract or
-      specialize other fields. During abstraction, the value of this
-      field is always learned for the same reason. For example, the
-      IRC `nick` command includes such an ephemeral field that denotes
-      the new nick name of the user. This nick name can afterwards be
-      used in other fields, but whenever a NICK command is emitted, its
-      value is regenerated.
+    * **Scope.MESSAGE**: With this kind of variable, the value is
+      generated and then memorized during the first specialization and
+      is always memorized during abstraction. For further specialization, the value is taken from memory. However, in contrary to
+      the Session Scope, no comparison is made during abstraction with
+      the current memorized value (i.e. the received value is always memorized). For example, the IRC `nick` command
+      corresponds to a Message Scope, that denotes the new nick name
+      of the user. This nick name can afterwards be used in other
+      fields, but whenever a NICK command is emitted, its value is
+      regenerated.
 
 
-      The following example shows the **abstraction of ephemeral
-      data**:
+      The following example shows the **abstraction of data with Message Scope**:
   
       >>> from netzob.all import *
       >>> f = Field(name='f1')
@@ -243,8 +243,7 @@ class Scope(Enum):
       Data (String(nbChars=(4,10))) from field 'f1': b'kurt'
 
 
-      The following examples show the **specialization of ephemeral
-      data**:
+      The following examples show the **specialization of data with Message Scope**:
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
@@ -262,17 +261,14 @@ class Scope(Enum):
       True
 
 
-    * **Scope.NONE**: A volatile variable denotes a value which
+    * **Scope.NONE**: This kind of variable denotes a value which
       changes whenever it is specialized and is never
-      memorized. It can be seen as an optimization of an ephemeral
-      variable to reduce memory usage. Thus, the abstraction
+      memorized. The abstraction
       process of such a field only verifies that the received value
       complies with the field definition domain without memorizing
-      it. For example, a size field or a CRC field is a volatile
-      field.
+      it. For example, a size field or a CRC field should have such a scope.
 
-      The following example shows the **abstraction of volatile
-      data**:
+      The following example shows the **abstraction data without persistence**:
   
       >>> from netzob.all import *
       >>> f = Field(name='f1')
@@ -293,8 +289,7 @@ class Scope(Enum):
       0
 
 
-      The following example shows the **specialization of volatile
-      data**:
+      The following example shows the **specialization data without persistence**:
 
       >>> from netzob.all import *
       >>> f = Field(name='f1')
@@ -310,6 +305,6 @@ class Scope(Enum):
     """
 
     CONSTANT = "Constant Scope"
-    SESSION = "Persistent Scope"
-    MESSAGE = "Ephemeral Scope"
-    NONE = "Volatile Scope"
+    SESSION = "Session Scope"
+    MESSAGE = "Message Scope"
+    NONE = "None Scope"

@@ -130,7 +130,7 @@ class HexaString(AbstractType):
     This next example shows the usage of a default value:
 
     >>> from netzob.all import *
-    >>> t = HexaString(nbBytes=(2), default=b"aabb")
+    >>> t = HexaString(nbBytes=2, default=b"aabb")
     >>> t.generate().tobytes()
     b'\xaa\xbb'
 

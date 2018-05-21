@@ -136,7 +136,7 @@ class Repeat(AbstractVariableNode):
        :rtype: :class:`int`
 
     The ``child`` parameter allows access to the root of a tree structure.
-    The ``child`` :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
+    The ``child`` (:class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`)
     can have children.
     Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
     values is done through the ``path``, thanks to its methods

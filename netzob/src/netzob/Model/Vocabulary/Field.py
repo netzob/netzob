@@ -68,7 +68,7 @@ class Field(AbstractField):
                    the field accepts). If not specified, the default definition
                    domain will be ``Raw()``, meaning it accepts any values.
                    When this parameter is a list of fields, the constructor set
-                   ``self.fields=domain`` and ``self.domain=None``.
+                   ``self.fields=domain`` and ``self.domain=None``. Otherwise, it sets the :attr:`domain` attribute. During this later operation, a normalization is done in order to convert the provided domain into a :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
     :param name: The name of the field. If not specified, the
                  default name will be "Field".
     :param isPseudoField: A flag indicating if the field is a
@@ -79,7 +79,7 @@ class Field(AbstractField):
     :type domain: :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`,
                   :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`,
                   :class:`bytes`, :class:`str`, :class:`int`, :class:`bitarray <bitarray.bitarray>`,
-                  or :class:`list`, optional
+                  or :class:`list` of :class:`~netzob.Model.Vocabulary.Field.Field`, optional
     :type name: :class:`str`, optional
     :type isPseudoField: :class:`bool`, optional
 
@@ -401,15 +401,23 @@ class Field(AbstractField):
         return self.domain.getVariables()
 
     @public_api
-    def specialize(self, preset=None) -> Iterator[bytes]:
+    def specialize(self, preset=None, memory=None) -> Iterator[bytes]:
         r"""The :meth:`specialize()` method is intended to produce concrete
         :class:`bytes` data based on the field model. This method
         returns a Python generator that in turn provides data
         :class:`bytes` object at each call to ``next(generator)``.
 
         :param preset: The configuration used to parameterize values in fields and variables.
+        :param memory: A memory used to store variable values during
+                       specialization and abstraction of successive
+                       fields, especially to handle inter-symbol
+                       relationships. If None, a temporary memory is
+                       created by default and used internally during the scope of the
+                       specialization process.
         :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
+        :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
         :return: A generator that provides data :class:`bytes` at each call to ``next(generator)``.
+        :rtype: :class:`Generator[bytes]`
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
 
         The following example shows the :meth:`specialize()` method used for a

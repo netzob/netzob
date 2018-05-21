@@ -73,16 +73,15 @@ class Actor(Thread):
     Without any special directive, the visit loop will stop if it
     reaches one of the terminal states of the automaton.
 
-    It is possible to force the stop of the visit loop through the
+    It is possible to stop the visit loop using the
     :meth:`stop <netzob.Simulator.Actor.Actor.stop>` method. An actor always stops its visit loop at a
     state, and never during a transition. This means that when calling
     the :meth:`stop <netzob.Simulator.Actor.Actor.stop>` method, if the actor is currently executing a
-    transition, it will finish the transition and will be lead to the
+    transition, it will finish the transition and will reach the
     ending state of the transition.
 
     It is also possible to define exit conditions where the actor
-    quits the visit loop when it encounters specific
-    conditions. Currently available exit conditions are
+    exits the visit loop if specific conditions are met. Currently available exit conditions are
     :attr:`nbMaxTransitions` and :attr:`target_state` (see explanation below).
 
     When an actor either reaches an exit condition, a terminal state, or is forced to
@@ -94,32 +93,23 @@ class Actor(Thread):
 
     :param automata: The automaton the actor will visit.
     :param channel: The underlying communication channel.
-    :param name: The name of the actor. Default value is 'Actor'.
     :param initiator: If ``True``, indicates that the actor initiates the
                       communication and emits the input symbol.
                       If False, indicates that the actor is waiting for another
                       peer to initiate the connection. Default value is
-                      :const:`True`. The value can be changed
-                      during a communication, in order to reverse the
-                      way the actors communicate together. Default value is ``True``.
+                      :const:`True`. Default value is ``True``.
+    :param name: The name of the actor. Default value is 'Actor'.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
                     required
     :type channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`, required
-    :type initiator: :class:`bool`, optional
     :type name: :class:`str`, optional
+    :type initiator: :class:`bool`, optional
 
     The Actor class provides the following public variables:
 
     :var automata: The automaton the actor will visit.
     :var channel: The underlying communication channel.
     :var name: The name of the actor.
-    :var initiator: If ``True``, indicates that the actor initiates the
-                    communication and emits the input symbol.
-                    If False, indicates that the actor is waiting for another
-                    peer to initiate the connection. Default value is
-                    :const:`True`. The value can be changed
-                    during a communication, in order to reverse the
-                    way the actors communicate together.
     :var fuzzing_presets: A list of preset configurations, used for fuzzing purpose at
                          specific states (see ``fuzzing_states`` attribute), only when sending symbols.
                          Values in this fuzzing configuration will
@@ -138,13 +128,12 @@ class Actor(Thread):
                  for a complete explanation of its usage.
     :var cbk_select_data: A callback used to tell if the current actor is concerned by the data received on the communication channel.
     :var current_state: The current state of the actor.
-    :var target_state: A state at which position the actor will exit the visit loop. This is an exit condition of the visit loop.
-    :var nbMaxTransitions: The maximum number of transitions the actor will visit. This is an exit condition of the visit loop.
+    :var target_state: A state at which position the actor will exit the visit loop. This is an exit condition of the visit loop. ``None`` (the default value) means no target state.
+    :var nbMaxTransitions: The maximum number of transitions the actor will visit. This is an exit condition of the visit loop. ``None`` (the default value) means no limit.
 
     :vartype automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
     :vartype channel: :class:`AbstractChannel <netzob.Model.Simulator.AbstractChannel.AbstractChannel>`
     :vartype name: :class:`str`
-    :vartype initiator: :class:`bool`
     :vartype fuzzing_presets: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
     :vartype fuzzing_states: :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype memory: :class:`Memory <netzob.Model.Vocabular.Domain.Variables.Memory.Memory>`

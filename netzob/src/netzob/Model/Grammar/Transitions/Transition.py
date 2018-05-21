@@ -131,8 +131,8 @@ class Transition(AbstractTransition):
                                     value in seconds to wait for the
                                     output value (only used in a
                                     sending context).
-    :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The values should be distributed between ``0.0`` and ``100.0``. The biggest values correspond to a high selection probability.
-    :var inverseInitiator: Indicates to inverse the initiator of the communication after the transition.
+    :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The value between ``0.0`` and ``100.0`` corresponds to the weight of the symbol in terms of selection probability.
+    :var inverseInitiator: Indicates to inverse the behavior of the actor initiator flag (e.g. in case of a server, this indicates that the inputSymbol of the transition is sent rather than being expected).
     :var description: The description of the transition. If not explicitly set,
                       it is generated from the input and output symbol strings
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
