@@ -247,7 +247,7 @@ class State(AbstractState):
                 self.active = False
 
                 if actor.automata.cbk_read_symbol_timeout is not None:
-                    actor.automata.cbk_read_symbol_timeout(current_state=self, current_transition=None)
+                    actor.automata.cbk_read_symbol_timeout(self, None)
 
                 # Returning None here will stop the actor
                 return
@@ -291,9 +291,9 @@ class State(AbstractState):
             if isinstance(received_symbol, UnknownSymbol):
 
                 if actor.automata.cbk_read_unknown_symbol is not None:
-                    actor.automata.cbk_read_unknown_symbol(current_state=self,
-                                                           current_transition=None,
-                                                           received_message=received_message)
+                    actor.automata.cbk_read_unknown_symbol(self,
+                                                           None,
+                                                           received_message)
                 else:
                     raise Exception("The received message is unknown")
 
@@ -301,10 +301,11 @@ class State(AbstractState):
             else:
 
                 if actor.automata.cbk_read_unexpected_symbol is not None:
-                    actor.automata.cbk_read_unexpected_symbol(current_state=self,
-                                                              current_transition=None,
-                                                              received_symbol=received_symbol,
-                                                              received_message=received_message)
+                    actor.automata.cbk_read_unexpected_symbol(self,
+                                                              None,
+                                                              received_symbol,
+                                                              received_message,
+                                                              received_structure)
                 else:
                     raise Exception("The received symbol did not match any of expected symbols, for actor '{}'".format(actor))
 

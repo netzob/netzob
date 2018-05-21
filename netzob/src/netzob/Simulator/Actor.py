@@ -465,8 +465,7 @@ class Actor(Thread):
     ...    # Building the output symbol by incrementing the value of the last
     ...    # received symbol
     ...    if last_received_symbol is not None and last_received_message is not None:
-    ...        structured_data = last_received_symbol.abstract(last_received_message)
-    ...        field_data = structured_data[last_received_symbol.fields[0].name]
+    ...        field_data = last_received_structure[last_received_symbol.fields[0].name]
     ...        field_data_int = int.from_bytes(field_data, byteorder='big')
     ...        field_data = int(field_data_int + 1).to_bytes(length=1, byteorder='big')
     ...        preset[current_symbol.fields[0]] = field_data
@@ -640,8 +639,7 @@ class Actor(Thread):
     ...
     ...    # Building the output symbol by incrementing the value of the last received symbol
     ...    if last_received_symbol is not None and last_received_message is not None:
-    ...        structured_data = last_received_symbol.abstract(last_received_message)
-    ...        field_data = structured_data[last_received_symbol.fields[0].name]
+    ...        field_data = last_received_structure[last_received_symbol.fields[0].name]
     ...        field_data_int = int.from_bytes(field_data, byteorder='big')
     ...        field_data = int(field_data_int + 1).to_bytes(length=1, byteorder='big')
     ...        preset[current_symbol.fields[0]] = field_data
@@ -1366,7 +1364,7 @@ class Actor(Thread):
     >>> closeTransition2 = CloseChannelTransition(startState=s1, endState=s2, name="Close")
     >>> automata = Automata(s0, symbolList)
     >>>
-    >>> def cbk_method(current_state, current_transition=None):
+    >>> def cbk_method(current_state, current_transition):
     ...     return error_state
     >>> automata.set_cbk_read_symbol_timeout(cbk_method)
     >>>
@@ -1461,7 +1459,7 @@ class Actor(Thread):
     >>> bob_closeTransition2 = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
     >>> bob_automata = Automata(bob_s0, symbolList)
     >>>
-    >>> def cbk_method(current_state, current_transition=None, received_symbol=None, received_message=None):
+    >>> def cbk_method(current_state, current_transition, received_symbol, received_message, received_structure):
     ...     return bob_error_state
     >>> bob_automata.set_cbk_read_unexpected_symbol(cbk_method)
     >>>
@@ -1594,7 +1592,7 @@ class Actor(Thread):
     >>> bob_closeTransition2 = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
     >>> bob_automata = Automata(bob_s0, symbolList)
     >>>
-    >>> def cbk_method(current_state, current_transition=None, received_symbol=None, received_message=None):
+    >>> def cbk_method(current_state, current_transition, received_message):
     ...     return bob_error_state
     >>> bob_automata.set_cbk_read_unknown_symbol(cbk_method)
     >>>
@@ -2007,11 +2005,11 @@ class Actor(Thread):
     >>> import time
     >>>
     >>> # First we create the symbols
-    >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field("bob>hello")])
-    >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field("alice>hello")])
+    >>> bobSymbol = Symbol(name="Bob-Hello", fields=[Field(b"bob>hello")])
+    >>> aliceSymbol = Symbol(name="Alice-Hello", fields=[Field(b"alice>hello")])
     >>> symbolList = [aliceSymbol, bobSymbol]
     >>>
-    >>> # Create the grammar
+    >>> # Create the automaton
     >>> s0 = State(name="S0")
     >>> s1 = State(name="S1")
     >>> s2 = State(name="S2")
@@ -2772,8 +2770,7 @@ def _test_callback_modify_symbol():
     ...    # Building the output symbol by incrementing the value of the last
     ...    # received symbol
     ...    if last_received_symbol is not None and last_received_message is not None:
-    ...        structured_data = last_received_symbol.abstract(last_received_message)
-    ...        field_data = structured_data[last_received_symbol.fields[0].name]
+    ...        field_data = last_received_structure[last_received_symbol.fields[0].name]
     ...        field_data_int = int.from_bytes(field_data, byteorder='big')
     ...        field_data = int(field_data_int + 1).to_bytes(length=1, byteorder='big')
     ...        preset[current_symbol.fields[0]] = field_data
