@@ -452,7 +452,7 @@ class Field(AbstractField):
                     field.domain.normalize_targets()
 
         from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
-        fs = FieldSpecializer(self, preset=preset)
+        fs = FieldSpecializer(self, preset=preset, memory=memory)
 
         specializing_paths = fs.specialize()
         return self._inner_specialize(specializing_paths)
