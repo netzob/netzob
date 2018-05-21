@@ -45,10 +45,9 @@ from os.path import join
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 from netzob.Model.Symbols import Symbols
 from netzob.Model.Grammar.Automata import Automata
-from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
 
 
 @NetzobLogger
@@ -146,6 +145,26 @@ class Protocol(object):
 
             if self.path_zdl is not None:
                 self._load_zdl_files()
+
+    @staticmethod
+    @public_api
+    def load_format(path):
+        r"""Load and return the symbols contained in the provided ZDL format file.
+
+        :param path: Path of the ZDL format file.
+        :type path: :class:`str`
+        :return: The list of symbols defined in the ZDL format file.
+        :rtype: a :class:`dict` where keys are symbol names and values are :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
+
+        >>> from netzob.all import *
+        >>> symbols = Protocol.load_format("test/resources/files/UDP_example/UDP_format.zdl")
+        >>> type(symbols["udp"])
+        <class 'netzob.Model.Vocabulary.Symbol.Symbol'>
+
+        """
+        modLoaded = imp.load_source("format", path)
+        symbols = Symbols(modLoaded.symbols)
+        return symbols
 
     def _load_zdl_files(self):
         format_zdl = join(self.path_zdl, self.name + "_format.zdl")
