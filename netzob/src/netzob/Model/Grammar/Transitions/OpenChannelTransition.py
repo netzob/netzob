@@ -98,7 +98,7 @@ class OpenChannelTransition(AbstractTransition):
     TYPE = "OpenChannelTransition"
 
     @public_api
-    def __init__(self, startState, endState, name=None):
+    def __init__(self, startState, endState, name="OpenChannelTransition"):
         super(OpenChannelTransition, self).__init__(
             OpenChannelTransition.TYPE,
             startState,
