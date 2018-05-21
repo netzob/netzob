@@ -112,9 +112,19 @@ class State(AbstractState):
 
         # Check if the actor has received a message. If so, we execute the step as not an initiator
         if actor.abstractionLayer.check_received():
-            actor.visit_log.append("  [+] At state '{}', received packet on communication channel. Switching to execution as not initiator.".format(self.name))
-            self._logger.debug("Data received on the communication channel. Switching to execution as not initiator to handle the received message.")
-            return self.executeAsNotInitiator(actor)
+
+            # Check if we should consider reception (i.e. there exists at least one transition in inverseInitiator mode)
+            should_consider_reception = False
+            for transition in self.transitions:
+                # Only select transitions that expect to receive an input symbol
+                if transition.inverseInitiator:
+                    should_consider_reception = True
+                    break
+
+            if should_consider_reception:
+                actor.visit_log.append("  [+] At state '{}', received packet on communication channel. Switching to execution as not initiator.".format(self.name))
+                self._logger.debug("Data received on the communication channel. Switching to execution as not initiator to handle the received message.")
+                return self.executeAsNotInitiator(actor)
 
         self._logger.debug(
             "[actor='{}'] Execute state {} as an initiator".format(str(actor), self.name))
@@ -128,7 +138,7 @@ class State(AbstractState):
         if nextTransition is None:
             self.active = False
             time.sleep(1.0)
-            return None
+            return self
 
         # Execute picked transition as an initiator
         try:
