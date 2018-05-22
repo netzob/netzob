@@ -260,7 +260,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
 
         :param data_iterator: data iterator used to write on the channel.
         :param rate: This specifies the bandwidth in octets to respect during
-                     traffic emission (should be used with duration= parameter).
+                     traffic emission (should be used with :attr:`duration` parameter).
         :param duration: This indicates for how many seconds the data is continuously
                          written on the channel.
         :type data_iterator: ~typing.Iterator[bytes], required
@@ -391,12 +391,12 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         arguments are accepted:
 
         :param exc_type: the potential exception type caught in context
-        :type exc_type: Exception
+        :type exc_type: Exception, required
         :param exc_value: the potential exception value caught in context
-        :type exc_type: object
+        :type exc_type: object, required
         :param traceback: the traceback of the potential exception caught in
                           context
-        :type traceback: a traceback object
+        :type traceback: a traceback object, required
         """
         self.close()
 

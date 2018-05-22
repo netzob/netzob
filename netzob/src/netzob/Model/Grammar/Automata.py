@@ -64,8 +64,8 @@ class Automata(object):
 
     The Automata class provides the following public variables:
 
-    :var initialState: The initial state of the automaton.
-    :var symbols: The list of permitted symbols for every transition of the automaton.
+    :var initialState: This parameter is the initial state of the automaton.
+    :var symbols: This parameter is the list of permitted symbols for every transition of the automaton.
     :vartype initialState: :class:`State <netzob.Model.Grammar.States.State.State>`
     :vartype symbols: a :class:`list` of :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
 
@@ -278,7 +278,7 @@ class Automata(object):
         """Visits the automata to discover all the available states.
 
         :param main_states: Specify that all states except the initial state and the closing states are returned. Default value is ``False``, meaning that all states are returned.
-        :type main_states: :class:`bool`
+        :type main_states: :class:`bool`, optional
         :return: A list containing all the automaton states.
         :rtype: a :class:`list` of :class:`State <netzob.Model.Grammar.States.State.State>`
 
@@ -787,7 +787,7 @@ class Automata(object):
         as it will quickly stop the fuzzing session as soon as a
         non-legitimate response is received. In order to catch this
         kind of responses and adapt the current actor behavior, it is
-        recommended to set the following callback on the automaton:
+        recommended to set the following callbacks on the automaton:
 
         * :attr:`set_cbk_read_symbol_timeout <netzob.Model.Grammar.Automata.Automata.set_cbk_read_symbol_timeout>`
         * :attr:`set_cbk_read_unexpected_symbol <netzob.Model.Grammar.Automata.Automata.set_cbk_read_unexpected_symbol>`

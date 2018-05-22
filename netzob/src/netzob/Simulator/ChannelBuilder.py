@@ -49,7 +49,7 @@ from netzob.Common.Utils.Decorators import NetzobLogger
 @NetzobLogger
 class ChannelBuilder(object):
     """This builder pattern enables the creation of any kind of
-    :class:`~netzob.Simulator.AbstractChannel.AbstractChannel`
+    :class:`~netzob.Simulator.AbstractChannel.AbstractChannel`.
 
     Initialize the builder context by providing the kind of object to build.
 
@@ -76,11 +76,12 @@ class ChannelBuilder(object):
 
     def set(self, key, value):
         """
-        Set a named parameter that will be passed to :meth:`build`
+        Set a named parameter that will be passed to :meth:`build`.
 
         :param key: a named parameter expected by :meth:`self.kind.__init__`
-        :type key: str
+        :type key: str, required
         :param value: any object
+        :type value: required
         """
         setter_name = "set_{}".format(key)
         setter = getattr(self, setter_name, None)
@@ -94,13 +95,13 @@ class ChannelBuilder(object):
     def set_map(self, mapping):
         # type: (Mapping) -> ChannelBuilder
         """
-        Set a mapping of key-value named parametres.
+        Set a mapping of key-value named parameters.
 
         It is a shortcut method to address multiple key-value pairs successively.
         See :meth:`set` for details.
 
         :param mapping: A key-value parameter mapping
-        :type mapping: ~typing.Mapping[str, ~typing.Any]
+        :type mapping: ~typing.Mapping[str, ~typing.Any], required
         """
         for key, value in mapping.items():
             self.set(key, value)
