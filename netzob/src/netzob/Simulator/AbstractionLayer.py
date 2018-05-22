@@ -434,7 +434,8 @@ class AbstractionLayer(object):
                     time.sleep(0.1)
                     elapsed_time += 0.1
                     if elapsed_time > timeout:
-                        break
+                        self._logger.debug("Timeout during symbol read")
+                        raise socket.timeout("timed out")
             else:
                 data = self.channel.read()
         except Empty:

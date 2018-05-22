@@ -322,7 +322,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
            :type last_received_message: :class:`~bitarray.bitarray`
            :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
-           :type memory: :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
+           :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
 
            :return: The callback function should return a tuple. The
                     first tuple element is the symbol (:class:`Symbol
@@ -346,7 +346,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
     def add_cbk_action(self, cbk_method):
         """Function called after sending or receiving a symbol in the
-        transition. This function may typically be used to change memory or actor behavior.
+        transition. This function should be used to modify the memory context.
 
         :param cbk_method: the callback function
         :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
@@ -378,7 +378,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :type data_structure: :class:`OrderedDict`
            :type operation: :class:`~netzob.Simulation.AbstractionLayer.Operation`
            :type current_state: :class:`~netzob.Model.Grammar.States.State.State`
-           :type memory: :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
+           :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
 
         The callback method is not expected to return something.
 

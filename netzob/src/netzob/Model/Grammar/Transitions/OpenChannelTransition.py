@@ -57,9 +57,10 @@ class OpenChannelTransition(AbstractTransition):
 
     The OpenChannelTransition expects some parameters:
 
-    :param startState: This parameter is the initial state of the transition.
+    :param startState: This parameter is the initial state of the transition. This also corresponds to the initial state of the
+                       automaton.
     :param endState: This parameter is the end state of the transition.
-    :param name: The name of the transition. The default value is `None`.
+    :param name: The name of the transition. The default value is `OpenChannelTransition`.
     :type startState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type endState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
     :type name: :class:`str`, optional
@@ -97,7 +98,7 @@ class OpenChannelTransition(AbstractTransition):
     TYPE = "OpenChannelTransition"
 
     @public_api
-    def __init__(self, startState, endState, name=None):
+    def __init__(self, startState, endState, name="OpenChannelTransition"):
         super(OpenChannelTransition, self).__init__(
             OpenChannelTransition.TYPE,
             startState,

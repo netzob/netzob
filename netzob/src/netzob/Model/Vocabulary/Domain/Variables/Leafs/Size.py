@@ -70,7 +70,7 @@ class Size(AbstractRelationVariableLeaf):
 
     The Size constructor expects some parameters:
 
-    :param targets: The targeted fields of the relationship.
+    :param targets: The targeted objects of the relationship. If a :class:`~netzob.Model.Vocabulary.Field.Field` is provided, it will be normalized by the associated :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
     :param dataType: Specify that the produced value should be
                      represented according to this dataType. If None, default
                      value is Raw(nbBytes=1).

@@ -262,7 +262,7 @@ class Automata(object):
 
                 for cbk in transition.cbk_modify_symbol:
                     descr += " [CBK modify symbol] "
-                
+
                 dotCode.append(
                     '"{}" -> "{}" [fontsize=5, label="{}", URL="{}"];'.
 
@@ -591,7 +591,7 @@ class Automata(object):
 
            :param current_state:
              Corresponds to the current state in the automaton.
-             It is expected that the current state cannot be ``None``.
+             It is expected that the current state cannot be ``None``, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).
            :type current_state: ~netzob.Model.Grammar.States.State.State
 
            :param current_transition:
@@ -637,12 +637,12 @@ class Automata(object):
         :attr:`cbk_method` parameter has the following prototype:
 
         .. function:: cbk_method(current_state, current_transition,\
-                                 received_symbol, received_message)
+                                 received_symbol, received_message, received_structure)
            :noindex:
 
            :param current_state:
              Corresponds to the current state in the automaton.
-             It is expected that the current state cannot be ``None``.
+             It is expected that the current state cannot be ``None``, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).
            :type current_state: ~netzob.Model.Grammar.States.State.State
 
            :param current_transition:
@@ -658,6 +658,10 @@ class Automata(object):
            :param received_message:
              Corresponds to the received raw message.
            :type received_message: :class:`bytes`
+
+           :param received_structure:
+             Corresponds to the received message structure.
+           :type received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
 
            :return: The callback function should return the next
                     state.  For example, to stay at the same state,
@@ -701,7 +705,7 @@ class Automata(object):
 
            :param current_state:
              Corresponds to the current state in the automaton.
-             It is expected that the current state cannot be ``None``.
+             It is expected that the current state cannot be ``None``, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).
            :type current_state: ~netzob.Model.Grammar.States.State.State
 
            :param current_transition:
@@ -822,7 +826,7 @@ class Automata(object):
         >>> bob_closeTransition2 = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name="Close")
         >>> bob_automata = Automata(bob_s0, symbolList)
         >>>
-        >>> def cbk_method(current_state, current_transition=None, received_symbol=None, received_message=None):
+        >>> def cbk_method(current_state, current_transition, received_symbol, received_message, received_structure):
         ...     return bob_error_state
         >>> bob_automata.set_cbk_read_unexpected_symbol(cbk_method)
         >>> bob_automata.set_cbk_read_unknown_symbol(cbk_method)

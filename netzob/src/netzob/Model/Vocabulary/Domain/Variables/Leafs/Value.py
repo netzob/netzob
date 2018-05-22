@@ -58,7 +58,7 @@ class Value(AbstractRelationVariableLeaf):
 
     The Value constructor expects some parameters:
 
-    :param target: The targeted field of the relationship.
+    :param target: The targeted object of the relationship. If a :class:`~netzob.Model.Vocabulary.Field.Field` is provided, it will be normalized by the associated :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
     :param name: The name of the variable. If None, the name
                      will be generated.
     :param operation: An optional transformation operation to be

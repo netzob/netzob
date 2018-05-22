@@ -60,8 +60,13 @@ class Memory(object):
 
        **Relationships between fields of successive messages**
 
-       The following example shows how to define a relationship between a
-       received message and the next message to send.
+       The following example shows how to define a relationship
+       between a received message and the next message to send. A
+       memory is used to store the value of each variable. During the
+       first call to :meth:`specialize` on the ``s1`` symbol, the
+       value associated to the field ``f3`` is notably stored in
+       memory, so that it can be retrieved when calling
+       :meth:`specialize` on the ``s2`` symbol.
 
        >>> from netzob.all import *
        >>> f1 = Field(domain=String("hello"), name="F1")
@@ -84,20 +89,27 @@ class Memory(object):
 
        **Relationships between a message field and the environment**
 
-       The following example shows how to define a relationship between a
-       message to send and an environment variable.
+       The following example shows how to define a relationship
+       between a message to send and an environment variable. The
+       symbol is first defined, and then an environment variable is
+       created. The first step consists in overloading the definition
+       domain of the ``f9`` field to link the environment variable.
 
        >>> from netzob.all import *
-       >>> # Environment variable definition
-       >>> memory = Memory()
-       >>> env1 = Data(String(), name="env1")
-       >>> memory.memorize(env1, String("John").value)
        >>>
        >>> # Symbol definition
        >>> f7 = Field(domain=String("master"), name="F7")
        >>> f8 = Field(domain=String(">"), name="F8")
-       >>> f9 = Field(domain=Value(env1), name="F9")
+       >>> f9 = Field(domain=String(), name="F9")
        >>> s3 = Symbol(fields=[f7, f8, f9])
+       >>>
+       >>> # Environment variables definition
+       >>> memory = Memory()
+       >>> env1 = Data(String(), name="env1")
+       >>> memory.memorize(env1, String("John").value)
+       >>>
+       >>> # Overloading f9 field definition to link the environment variable
+       >>> f9.domain = Value(env1)
        >>>
        >>> # Symbol specialization
        >>> next(s3.specialize(memory=memory))
