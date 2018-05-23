@@ -63,8 +63,8 @@ class Transition(AbstractTransition):
 
     The Transition constructor expects some parameters:
 
-    :param startState: The initial state of the transition.
-    :param endState: The end state of the transition.
+    :param startState: This parameter is the initial state of the transition.
+    :param endState: This parameter is the end state of the transition.
     :param inputSymbol: The input symbol which triggers the execution of the
                         transition.
                         The default value is ``None``, which means that no symbol
@@ -95,7 +95,7 @@ class Transition(AbstractTransition):
                       execution of the transition.
     :var outputSymbols: Output symbols that can be generated when
                         the current transition is executed.
-    :var inputSymbolPreset: A :class:`list` of preset configurations
+    :var inputSymbolPreset: A preset configuration
                             used during specialization and abstraction
                             of symbols emitted and received. During
                             specialization, values in this
@@ -103,7 +103,7 @@ class Transition(AbstractTransition):
                             definition, constraints or relationship
                             dependencies. During abstraction, this
                             structure is used to validate the data of
-                            the receveived symbol. If the data does
+                            the received symbol. If the data does
                             not match, we stay at the
                             ``startState`` state. See :class:`Preset
                             <netzob.Model.Vocabulary.Preset.Preset>`
@@ -117,7 +117,7 @@ class Transition(AbstractTransition):
                               definition, constraints or relationship
                               dependencies. During abstraction, this
                               structure is used to validate the data of
-                              the receveived symbol. If the data does
+                              the received symbol. If the data does
                               not match, we stay at the
                               ``startState`` state. See :class:`Preset
                               <netzob.Model.Vocabulary.Preset.Preset>`
@@ -134,12 +134,12 @@ class Transition(AbstractTransition):
     :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The value between ``0.0`` and ``100.0`` corresponds to the weight of the symbol in terms of selection probability.
     :var inverseInitiator: Indicates to inverse the behavior of the actor initiator flag (e.g. in case of a server, this indicates that the inputSymbol of the transition is sent rather than being expected).
     :var description: The description of the transition. If not explicitly set,
-                      it is generated from the input and output symbol strings
+                      it is generated from the input and output symbol strings.
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype outputSymbols: :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
-    :vartype inputSymbolPreset: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+    :vartype inputSymbolPreset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
     :vartype outputSymbolsPreset: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
     :vartype name: :class:`str`
     :vartype inputSymbolReactionTime: :class:`float`

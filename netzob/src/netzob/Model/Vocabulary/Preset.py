@@ -89,7 +89,7 @@ class Preset(object):
     The Preset constructor expects some parameters:
 
     :param symbol: A symbol (or field) on which to apply Preset configuration.
-    :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`
+    :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`, required
 
     The Preset works like a Python :class:`dict` with a key:value principle:
 
@@ -1329,7 +1329,7 @@ class Preset(object):
         preset is updated.
 
         :param new_preset: The preset configuration from which we want to retrieve the information.
-        :type new_preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+        :type new_preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, required
 
         Example of updating the Preset configuration:
 
@@ -1373,7 +1373,7 @@ class Preset(object):
         The :meth:`bulk_set` method inserts multiple items at once.
 
         :param items: the mapping to merge into the current object
-        :type items: dict
+        :type items: dict, required
 
         Example:
 
@@ -1466,7 +1466,7 @@ class Preset(object):
                    or :class:`Symbol
                    <netzob.Model.Vocabulary.Symbol.Symbol>`,
                    or :class:`Variable
-                   <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
+                   <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`, required
 
 
         Example of fuzzing of a whole symbol except one field:
@@ -1823,7 +1823,7 @@ class Preset(object):
         The default maximum value is :attr:`COUNTER_MAX_DEFAULT` = ``2**32``
 
         :param counterMax: the maximum number of mutations to produce.
-        :type counterMax: :class:`int` or :class:`float`
+        :type counterMax: :class:`int` or :class:`float`, required
 
         """
         DomainMutator.globalCounterMax = counterMax

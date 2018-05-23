@@ -92,7 +92,7 @@ class Timestamp(AbstractType):
     :param value: This parameter is used to describe a domain that contains a fixed timestamp (in seconds by default).
                   If ``None``, the default generated value is the current time
                   in UTC.
-    :param epoch: The initial date expressed in UTC from which
+    :param epoch: This parameter is the initial date expressed in UTC from which
                   timestamp is measured.
 
                   Available values for `epoch` parameter are:
@@ -142,7 +142,7 @@ class Timestamp(AbstractType):
     :param sign: The sign of the current value.
                  Values must be :attr:`Sign.SIGNED` or :attr:`Sign.UNSIGNED`.
                  The default value is :attr:`Sign.UNSIGNED`.
-    :param default: The default value used in specialization.
+    :param default: This parameter is the default value used in specialization.
     :type value: :class:`bitarray` or :class:`int`, optional
     :type epoch: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Epoch`, optional
     :type unity: :class:`~netzob.Model.Vocabulary.Types.Timestamp.Unity`, optional

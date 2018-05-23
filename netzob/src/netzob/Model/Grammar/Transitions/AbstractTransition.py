@@ -288,29 +288,29 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
            :param current_state:
                   Current state in the automaton.
            :param last_sent_symbol:
-                  Last sent symbol by the actor on the communication channel, and thus making it
+                  This parameter is the last sent symbol by the actor on the communication channel, and thus making it
                   possible to create relationships with the previously sent symbol.
            :param last_sent_message:
-                  Last sent message by the actor on the communication channel, and thus making
+                  This parameter is the last sent message by the actor on the communication channel, and thus making
                   it possible to create relationships with the previously sent
                   message.
            :param last_sent_structure:
-                  Last sent message structure by the actor on the communication channel,
+                  This parameter is the last sent message structure by the actor on the communication channel,
                   and thus making it possible to create relationships with
                   the previously sent message structure.
            :param last_received_symbol:
-                  Last received symbol by the actor on the communication channel, and thus
+                  This parameter is the last received symbol by the actor on the communication channel, and thus
                   making it possible to create relationships with the
                   previously received symbol.
            :param last_received_message:
-                  Last received message (:class:`bitarray`) by the actor on the communication channel,
+                  This parameter is the last received message (:class:`bitarray`) by the actor on the communication channel,
                   and this makes it possible to create relationships with
                   received message.
            :param last_received_structure:
-                  Last received message structure by the actor on the communication channel, and thus making it possible to create relationships
+                  This parameter is the last received message structure by the actor on the communication channel, and thus making it possible to create relationships
                   with the previously received message structure.
            :param memory:
-                  Corresponds to the current memory context.
+                  This parameter corresponds to the current memory context.
 
            :type available_symbols: ~typing.List[~netzob.Model.Vocabulary.Symbol.Symbol]
            :type current_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`

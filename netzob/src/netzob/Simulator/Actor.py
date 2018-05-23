@@ -91,9 +91,9 @@ class Actor(Thread):
 
     The Actor constructor expects some parameters:
 
-    :param automata: The automaton the actor will visit.
-    :param channel: The underlying communication channel.
-    :param initiator: If ``True``, indicates that the actor initiates the
+    :param automata: This parameter is the automaton the actor will visit.
+    :param channel: This parameter is the underlying communication channel.
+    :param initiator: This parameter, if ``True``, indicates that the actor initiates the
                       communication and emits the input symbol.
                       If False, indicates that the actor is waiting for another
                       peer to initiate the connection. Default value is
@@ -180,19 +180,19 @@ class Actor(Thread):
 
     Several illustrations of actor usages are provided below:
 
-    * Common automaton for a client and a server (see ActorExample1_.)
-    * Dedicated automaton for a client and a server (see ActorExample2_.)
-    * Modification of the emitted symbol by a client through a callback (see ActorExample3_.)
-    * Modification of the emitted symbol by a server through a callback (see ActorExample4_.)
-    * Modification of the selected transition by a client through a callback (see ActorExample5_.)
-    * Modification of the current transition of a server through a callback (see ActorExample6_.)
-    * Transition with no input symbol (see ActorExample7_.)
-    * How to catch all read symbol timeout (see ActorExample8_.)
-    * How to catch all receptions of unexpected symbols (see ActorExample9_.)
-    * How to catch all receptions of unknown messages (see ActorExample10_.)
-    * Message format fuzzing from an actor (see ActorExample11_.)
-    * Message format fuzzing from an actor, at a specific state (see ActorExample12_.)
-    * Several actors on the same communication channel (see ActorExample13_.)
+    * Common automaton for a client and a server (see ActorExample1_).
+    * Dedicated automaton for a client and a server (see ActorExample2_).
+    * Modification of the emitted symbol by a client through a callback (see ActorExample3_).
+    * Modification of the emitted symbol by a server through a callback (see ActorExample4_).
+    * Modification of the selected transition by a client through a callback (see ActorExample5_).
+    * Modification of the current transition of a server through a callback (see ActorExample6_).
+    * Transition with no input symbol (see ActorExample7_).
+    * How to catch all read symbol timeout (see ActorExample8_).
+    * How to catch all receptions of unexpected symbols (see ActorExample9_).
+    * How to catch all receptions of unknown messages (see ActorExample10_).
+    * Message format fuzzing from an actor (see ActorExample11_).
+    * Message format fuzzing from an actor, at a specific state (see ActorExample12_).
+    * Several actors on the same communication channel (see ActorExample13_).
 
 
     .. _ActorExample1:

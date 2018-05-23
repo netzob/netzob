@@ -60,7 +60,7 @@ class HexaString(AbstractType):
 
     :param value: This parameter is used to describe a domain that contains a fixed hexastring. If None, the constructed hexastring will accept a random sequence of bytes, whose size may be specified (see :attr:`nbBytes` parameter).
     :param nbBytes: This parameter is used to describe a domain that contains an amount of bytes. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 8192.
-    :param default: The default value used in specialization.
+    :param default: This parameter is the default value used in specialization.
     :type value: :class:`bitarray` or :class:`bytes`, optional
     :type nbBytes: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional
     :type default: :class:`bitarray` or :class:`bytes`, optional
