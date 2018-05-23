@@ -131,8 +131,8 @@ class Transition(AbstractTransition):
                                     value in seconds to wait for the
                                     output value (only used in a
                                     sending context).
-    :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The values should be distributed between ``0.0`` and ``100.0``. The biggest values correspond to a high selection probability.
-    :var inverseInitiator: Indicates to inverse the initiator of the communication after the transition.
+    :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The value between ``0.0`` and ``100.0`` corresponds to the weight of the symbol in terms of selection probability.
+    :var inverseInitiator: Indicates to inverse the behavior of the actor initiator flag (e.g. in case of a server, this indicates that the inputSymbol of the transition is sent rather than being expected).
     :var description: The description of the transition. If not explicitly set,
                       it is generated from the input and output symbol strings.
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
@@ -343,7 +343,7 @@ class Transition(AbstractTransition):
             self.active = False
 
             if actor.automata.cbk_read_symbol_timeout is not None:
-                nextState = actor.automata.cbk_read_symbol_timeout(current_state=self.startState, current_transition=self)
+                nextState = actor.automata.cbk_read_symbol_timeout(self.startState, self)
 
                 actor.visit_log.append("  [+]   During transition '{}', timeout in reception triggered a callback that lead to state '{}'".format(self.name, str(nextState)))
 
@@ -357,9 +357,9 @@ class Transition(AbstractTransition):
             self._logger.debug("[actor='{}'] The underlying abstraction channel seems to be closed, so we stop the current actor".format(str(actor)))
             return
         except SymbolBadSettingsException:
-            actor.visit_log.append("  [+]   During transition '{}', received expected symbol with wrong settings, leading to state '{}'".format(self.name, str(self.startState)))
+            actor.visit_log.append("  [+]   During transition '{}', received expected symbol with wrong settings".format(self.name))
             # Return the start state so that we accept a new message
-            return self.startState
+            return
         except Exception as e:
             self.active = False
             errorMessage = "[actor='{}'] An error occured while executing the transition {} as an initiator: {}".format(str(actor), self.name, e)
@@ -389,9 +389,9 @@ class Transition(AbstractTransition):
             if isinstance(received_symbol, UnknownSymbol):
 
                 if actor.automata.cbk_read_unknown_symbol is not None:
-                    nextState = actor.automata.cbk_read_unknown_symbol(current_state=self.startState,
-                                                                       current_transition=self,
-                                                                       received_message=received_message)
+                    nextState = actor.automata.cbk_read_unknown_symbol(self.startState,
+                                                                       self,
+                                                                       received_message)
                     actor.visit_log.append("  [+]   During transition '{}', receiving unknown symbol triggered a callback that lead to state '{}'".format(self.name, str(nextState)))
                     return nextState
                 else:
@@ -404,10 +404,11 @@ class Transition(AbstractTransition):
             else:
 
                 if actor.automata.cbk_read_unexpected_symbol is not None:
-                    nextState = actor.automata.cbk_read_unexpected_symbol(current_state=self,
-                                                                          current_transition=self,
-                                                                          received_symbol=received_symbol,
-                                                                          received_message=received_message)
+                    nextState = actor.automata.cbk_read_unexpected_symbol(self,
+                                                                          self,
+                                                                          received_symbol,
+                                                                          received_message,
+                                                                          received_structure)
                     actor.visit_log.append("  [+]   During transition '{}', receiving unexpected symbol triggered a callback that lead to state '{}'".format(self.name, str(nextState)))
                     return nextState
                 else:
@@ -547,16 +548,16 @@ class Transition(AbstractTransition):
         for cbk in self.cbk_modify_symbol:
             self._logger.debug("[actor='{}'] A callback function is executed at transition '{}'".format(str(actor), self.name))
             (symbol_to_send, symbol_preset) = cbk(self.outputSymbols,
-                                                   symbol_to_send,
-                                                   symbol_preset,
-                                                   self.startState,
-                                                   actor.abstractionLayer.last_sent_symbol,
-                                                   actor.abstractionLayer.last_sent_message,
-                                                   actor.abstractionLayer.last_sent_structure,
-                                                   actor.abstractionLayer.last_received_symbol,
-                                                   actor.abstractionLayer.last_received_message,
-                                                   actor.abstractionLayer.last_received_structure,
-                                                   actor.memory)
+                                                  symbol_to_send,
+                                                  symbol_preset,
+                                                  self.startState,
+                                                  actor.abstractionLayer.last_sent_symbol,
+                                                  actor.abstractionLayer.last_sent_message,
+                                                  actor.abstractionLayer.last_sent_structure,
+                                                  actor.abstractionLayer.last_received_symbol,
+                                                  actor.abstractionLayer.last_received_message,
+                                                  actor.abstractionLayer.last_received_structure,
+                                                  actor.memory)
             actor.visit_log.append("  [+]   During transition '{}', modifying output symbol to '{}', through callback".format(self.name, str(symbol_to_send)))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))

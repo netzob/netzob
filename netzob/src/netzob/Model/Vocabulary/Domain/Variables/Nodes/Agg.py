@@ -237,7 +237,8 @@ class Agg(AbstractVariableNode):
           B: B' ")"
            : <split the statement ...>
           B': ( "(" B ) | "."
-            : <direct recursion converted in an indirect one on the right>
+            : <direct recursion converted in an indirect one
+            : on the right>
 
        *valid recursion examples*:
 

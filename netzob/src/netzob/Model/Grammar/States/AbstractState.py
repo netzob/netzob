@@ -162,16 +162,13 @@ class AbstractState(object, metaclass=abc.ABCMeta):
                   and thus making it possible to create relationships with
                   the previously sent message structure.
            :param last_received_symbol:
-                  Corresponds to the last received symbol on the abstraction
-                  layer, and thus making it possible to create relationships
+                  Corresponds to the last received symbol by the actor on the communication channel, and thus making it possible to create relationships
                   with the previously received symbol.
            :param last_received_message:
-                  Corresponds to the last received message on the abstraction
-                  layer, and thus making it possible to create relationships
+                  Corresponds to the last received message by the actor on the communication channel, and thus making it possible to create relationships
                   with the previously received message.
            :param last_received_structure:
-                  Corresponds to the last received message structure on the abstraction
-                  layer, and thus making it possible to create relationships
+                  Corresponds to the last received message structure by the actor on the communication channel, and thus making it possible to create relationships
                   with the previously received message structure.
            :param memory:
                   Corresponds to the current memory context.

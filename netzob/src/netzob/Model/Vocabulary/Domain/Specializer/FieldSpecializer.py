@@ -108,17 +108,18 @@ class FieldSpecializer(object):
 
     """
 
-    def __init__(self, field, preset=None):
+    def __init__(self, field, preset=None, memory=None):
         self._logger.debug("Creating a new FieldSpecializer for field '{}'".format(field))
 
         self.field = field
         self.preset = preset
+        self.memory = memory
 
     def specialize(self, specializingPath=None):
         """Execute the specialize operation"""
 
         if specializingPath is None:
-            specializingPath = SpecializingPath(memory=Memory())
+            specializingPath = SpecializingPath(memory=self.memory)
 
         self._logger.debug("Specialize field {0}".format(self.field.name))
 

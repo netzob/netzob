@@ -61,7 +61,7 @@ class Padding(AbstractRelationVariableLeaf):
 
     The Padding constructor expects some parameters:
 
-    :param targets: The targeted fields of the relationship.
+    :param targets: The targeted objects of the relationship. If a :class:`~netzob.Model.Vocabulary.Field.Field` is provided, it will be normalized by the associated :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
     :param data: Specify that the produced value should be represented
                  according to this data. A callback function,
                  returning the padding value, can be used here.

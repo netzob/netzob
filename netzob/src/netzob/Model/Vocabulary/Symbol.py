@@ -281,7 +281,7 @@ class Symbol(AbstractField):
                    preset=None,
                    memory=None):
         r"""The :meth:`specialize()` method is intended to produce concrete
-        :class:`bytes` data based on the symbol model and the current :class:`Preset` <netzob.Vocabulary.Preset.Preset> configuration. This method
+        :class:`bytes` data based on the symbol model and the current :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>` configuration. This method
         returns a Python generator that in turn provides data
         :class:`bytes` object at each call to ``next(generator)``.
 
@@ -297,6 +297,7 @@ class Symbol(AbstractField):
         :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
         :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`, optional
         :return: A generator that provides data :class:`bytes` at each call to ``next(generator)``.
+        :rtype: :class:`Generator[bytes]`
         :raises: :class:`GenerationException <netzob.Model.Vocabulary.AbstractField.GenerationException>` if an error occurs while specializing the field.
 
         The following example shows the :meth:`specialize()` method used for a
