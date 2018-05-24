@@ -95,9 +95,8 @@ class Actor(Thread):
     :param channel: This parameter is the underlying communication channel.
     :param initiator: This parameter, if ``True``, indicates that the actor initiates the
                       communication and emits the input symbol.
-                      If False, indicates that the actor is waiting for another
-                      peer to initiate the connection. Default value is
-                      :const:`True`. Default value is ``True``.
+                      If ``False``, indicates that the actor is waiting for another
+                      peer to initiate the connection. Default value is ``True``.
     :param name: The name of the actor. Default value is 'Actor'.
     :type automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`,
                     required
@@ -128,7 +127,7 @@ class Actor(Thread):
                  for a complete explanation of its usage.
     :var cbk_select_data: A callback used to tell if the current actor is concerned by the data received on the communication channel.
     :var current_state: The current state of the actor.
-    :var target_state: A state at which position the actor will exit the visit loop. This is an exit condition of the visit loop. ``None`` (the default value) means no target state.
+    :var target_state: A state at which position the actor will exit the visit loop. This is an exit condition of the visit loop. ``None`` (the default value) means no targeted state.
     :var nbMaxTransitions: The maximum number of transitions the actor will visit. This is an exit condition of the visit loop. ``None`` (the default value) means no limit.
 
     :vartype automata: :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
