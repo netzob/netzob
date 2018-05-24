@@ -109,7 +109,7 @@ class Transition(AbstractTransition):
                             <netzob.Model.Vocabulary.Preset.Preset>`
                             for a complete explanation of Preset
                             usage.
-    :var outputSymbolsPreset: A :class:`list` of preset configurations
+    :var outputSymbolsPreset: A :class:`dict` of preset configurations
                               used during specialization and abstraction
                               of symbols emitted and received. During
                               specialization, values in this
@@ -140,7 +140,7 @@ class Transition(AbstractTransition):
     :vartype inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype outputSymbols: :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype inputSymbolPreset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
-    :vartype outputSymbolsPreset: :class:`list` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
+    :vartype outputSymbolsPreset: :class:`dict` of :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
     :vartype name: :class:`str`
     :vartype inputSymbolReactionTime: :class:`float`
     :vartype outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}
