@@ -358,6 +358,9 @@ class Field(AbstractField):
         :return: The current field represented as a string.
         :rtype: :class:`str`
 
+        :param preset: The configuration used to parameterize values in fields and variables.
+        :type preset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`, optional
+
         >>> from netzob.all import *
         >>> f1 = Field(String(), name="field1")
         >>> f2 = Field(Integer(interval=(10, 100)), name="field2")
