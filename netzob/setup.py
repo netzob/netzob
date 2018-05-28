@@ -186,17 +186,17 @@ cythonModules = cythonize([
 # +----------------------------------------------------------------------------
 def get_dependencies():
     return """
-    pcapy==0.10.10
-    netaddr==0.7.18
-    bitarray==0.8.1
+    pcapy
+    netaddr
+    bitarray
     numpy
-    colorama==0.3.3
-    bintrees==2.0.7
-    minepy==1.0.0
-    arpreq==0.3.1
-    PyCRC==1.21
-    randomstate==1.13.1
-    impacket>0.9.15
+    colorama
+    bintrees
+    minepy
+    arpreq
+    PyCRC
+    randomstate
+    impacket
     """.split()
 
 extra_dependencies = {
