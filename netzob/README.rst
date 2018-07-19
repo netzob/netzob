@@ -91,7 +91,8 @@ following bunch of prerequisites before initiating Netzob's install process.
 * python3
 * python3-dev
 * python3-setuptools
-* build-essential  
+* build-essential
+* libpcap-dev
   
 We also highly recommend to install the following additional dependencies:
 
