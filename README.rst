@@ -31,7 +31,7 @@ About
 
 Welcome to the official repository of Netzob.
 
-Netzob is a tool that can be use to **reverse engineer**, **model** and **fuzz** communication protocols. It is made of two components:
+Netzob is a tool that can be used to **reverse engineer**, **model** and **fuzz** communication protocols. It is made of two components:
 
 * **netzob** a python project that exposes all the features of netzob (except GUI) you can import in your own tool or use in CLI,
 * **netzob_web** a graphical interface that leverages web technologies. 
