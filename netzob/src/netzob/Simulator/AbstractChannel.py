@@ -235,9 +235,9 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
 
         :param data: The data to write on the channel.
         :param rate: This specifies the bandwidth in octets to respect during
-                     traffic emission (should be used with :attr:`duration` parameter).
+                     traffic emission (should be used with :attr:`duration` parameter). Default value is ``None``, which means that the bandwidth is only limited by the underlying physical layer.
         :param duration: This indicates for how many seconds the data is continuously
-                         written on the channel.
+                         written on the channel. Default value is ``None``, which means that the data is sent only once.
         :type data: bytes, required
         :type rate: int, optional
         :type duration: int, optional
@@ -260,9 +260,9 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
 
         :param data_iterator: data iterator used to write on the channel.
         :param rate: This specifies the bandwidth in octets to respect during
-                     traffic emission (should be used with :attr:`duration` parameter).
+                     traffic emission (should be used with :attr:`duration` parameter). Default value is ``None``, which means that the bandwidth is only limited by the underlying physical layer.
         :param duration: This indicates for how many seconds the data is continuously
-                         written on the channel.
+                         written on the channel. Default value is ``None``, which means that the data is sent only once.
         :type data_iterator: ~typing.Iterator[bytes], required
         :type rate: int, optional
         :type duration: int, optional
@@ -393,10 +393,10 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         :param exc_type: the potential exception type caught in context
         :type exc_type: Exception, required
         :param exc_value: the potential exception value caught in context
-        :type exc_type: object, required
+        :type exc_value: object, required
         :param traceback: the traceback of the potential exception caught in
                           context
-        :type traceback: a traceback object, required
+        :type traceback: object, required
         """
         self.close()
 
