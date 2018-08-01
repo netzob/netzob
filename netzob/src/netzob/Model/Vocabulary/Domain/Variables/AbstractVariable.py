@@ -104,6 +104,17 @@ class AbstractVariable(object):
         """
         raise NotImplementedError("Method isnode() is not implemented")
 
+    def is_same_symbol(self, variable):
+        """Tells if the current variable and the variable in parameter are
+        part of the same symbol.
+
+        """
+        if self.field is None or self.field.getAncestor() is None:
+            return False
+        if variable.field is None or variable.field.getAncestor() is None:
+            return False
+        return self.field.getAncestor() == variable.field.getAncestor()
+
     def getFixedBitSize(self):
         """Provide the length of a theoretical value that would be generated.
         It is not the length of an effective value but a prediction of its
