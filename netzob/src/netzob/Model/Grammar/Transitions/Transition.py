@@ -450,10 +450,13 @@ class Transition(AbstractTransition):
         tmp_preset = Preset(symbol_to_send)
 
         # Handle actor preset
-        if actor is not None and actor.presets is not None and symbol_to_send in actor.presets:
-            tmp_preset.update(self.actor.presets[symbol_to_send])
+        if actor is not None and actor.presets is not None:
+            for tmp_actor_preset in actor.presets:
+                if tmp_actor_preset.symbol == symbol_to_send:
+                    tmp_preset.update(tmp_actor_preset)
+                    break
 
-        # Handly symbol preset specified at current transition
+        # Handle symbol preset specified at current transition
         if isinstance(symbol_preset, Preset):
             tmp_preset.update(symbol_preset)
 
