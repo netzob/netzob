@@ -327,8 +327,14 @@ class Value(AbstractRelationVariableLeaf):
 
         # Check target variable consistency
         target_data = None
-        if len(self.targets) > 0 and parsingPath.hasData(self.targets[0]):
-            target_data = parsingPath.getData(self.targets[0])
+        if len(self.targets) > 0:
+            # Check is target is part of the current symbol or not
+            if self.is_same_symbol(self.targets[0]):
+                if parsingPath.hasData(self.targets[0]):
+                    target_data = parsingPath.getData(self.targets[0])
+            else:
+                if parsingPath.hasDataInMemory(self.targets[0]):
+                    target_data = parsingPath.getDataInMemory(self.targets[0])
 
         # Check if a callback operation is defined
         if self.__operation is None:

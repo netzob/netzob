@@ -282,10 +282,18 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         hasValue = True
         errorMessage = ""
         for variable in self.targets:
-            if variable is not self and not parsingPath.hasData(variable):
-                errorMessage = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)
-                self._logger.debug(errorMessage)
-                hasValue = False
+            if variable is self:
+                continue
+            if self.is_same_symbol(variable):
+                if not parsingPath.hasData(variable):
+                    errorMessage = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)
+                    self._logger.debug(errorMessage)
+                    hasValue = False
+            else:
+                if not parsingPath.hasDataInMemory(variable):
+                    errorMessage = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)
+                    self._logger.debug(errorMessage)
+                    hasValue = False
 
         if not hasValue:
             raise Exception(
@@ -298,7 +306,10 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 size = random.randint(variable.dataType.size[0], variable.dataType.size[1])
                 value = TypeConverter.convert(b"\x00" * int(size / 8), Raw, BitArray)
             else:
-                value = parsingPath.getData(variable)
+                if self.is_same_symbol(variable):
+                    value = parsingPath.getData(variable)
+                else:
+                    value = parsingPath.getDataInMemory(variable)
 
             if value is None:
                 raise Exception("Cannot generate value for variable: '{}'".format(variable.name))

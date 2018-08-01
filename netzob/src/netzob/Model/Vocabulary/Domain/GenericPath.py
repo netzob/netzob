@@ -125,14 +125,12 @@ class GenericPath(object):
             raise Exception("Variable cannot be None")
         if variable in self._dataAssignedToVariable:
             return self._dataAssignedToVariable[variable]
-        elif self.memory is not None and self.memory.hasValue(variable):
-            return self.memory.getValue(variable)
-
-        raise Exception(
-            "In path '{}', no data assigned to variable '{}' (id={}), which is linked to field '{}'".format(self,
-                                                                                                            variable,
-                                                                                                            id(variable),
-                                                                                                            variable.field))
+        else:
+            raise Exception(
+                "In path '{}', no data assigned to variable '{}' (id={}), which is linked to field '{}'".format(self,
+                                                                                                                variable,
+                                                                                                                id(variable),
+                                                                                                                variable.field))
 
     def hasData(self, variable):
         """Return True if a data has been assigned to the specified variable.
@@ -142,9 +140,43 @@ class GenericPath(object):
             raise Exception("Variable cannot be None")
         if variable in self._dataAssignedToVariable:
             return True
+        else:
+            return False
+
+    def getDataInMemory(self, variable):
+        """Return the data that is assigned to the specified variable in the memory.
+
+        >>> from netzob.all import *
+        >>> path = GenericPath(memory=Memory())
+        >>> v1 = Data(dataType=String(nbChars=(5, 10)), name="netzob")
+        >>> print(path.hasDataInMemory(v1))
+        False
+        >>> path.memory.memorize(v1, String("kurt").value)
+        >>> print(path.getDataInMemory(v1))
+        bitarray('01101011011101010111001001110100')
+
+        """
+
+        if variable is None:
+            raise Exception("Variable cannot be None")
+        if self.memory is not None and self.memory.hasValue(variable):
+            return self.memory.getValue(variable)
+        raise Exception(
+            "In path '{}', no data assigned to variable '{}' (id={}), which is linked to field '{}'".format(self,
+                                                                                                            variable,
+                                                                                                            id(variable),
+                                                                                                            variable.field))
+
+    def hasDataInMemory(self, variable):
+        """Return True if a data has been assigned to the specified variable in the memory.
+        """
+
+        if variable is None:
+            raise Exception("Variable cannot be None")
         if self.memory is not None:
             return self.memory.hasValue(variable)
-        return False
+        else:
+            return False
 
     def assignData(self, data, variable):
         """Assign a data to the specified variable.
