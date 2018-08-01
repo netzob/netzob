@@ -1007,3 +1007,22 @@ def _test_24_bits_integers():
     -1
 
     """
+
+
+def _test_int_endianness():
+    r"""
+
+    >>> from netzob.all import *
+    >>> f1 = Field(domain=Raw(nbBytes=2), name="f1")
+    >>> f2 = Field(name="f2")
+    >>> f2.domain = Size([f1, f2], dataType=uint16le())
+    >>> f1.domain.dataType.endianness
+    Endianness.BIG
+    >>> f2.domain.dataType.endianness
+    Endianness.LITTLE
+    >>> s0 = Symbol([f2, f1])
+    >>> s1 = Symbol([f1, f2])
+    >>> print(next(s0.specialize()).hex() + ' - ' + next(s1.specialize()).hex())
+    0400f707 - ecfb0400
+
+    """

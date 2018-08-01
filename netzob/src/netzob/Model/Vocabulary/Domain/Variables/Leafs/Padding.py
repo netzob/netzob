@@ -187,7 +187,7 @@ class Padding(AbstractRelationVariableLeaf):
     ...     length_to_pad = modulo - (current_length % modulo)  # Length in bits
     ...     length_to_pad = int(length_to_pad / 8)  # Length in bytes
     ...     res_bytes = b"".join([t.to_bytes(1, byteorder='big') for t in list(range(length_to_pad))])
-    ...     res_bits = bitarray(endian='big')
+    ...     res_bits = bitarray()
     ...     res_bits.frombytes(res_bytes)
     ...     return res_bits
     >>> f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))
@@ -210,7 +210,7 @@ class Padding(AbstractRelationVariableLeaf):
     ...     length_to_pad = modulo - (current_length % modulo)  # Length in bits
     ...     length_to_pad = int(length_to_pad / 8)  # Length in bytes
     ...     res_bytes = b"".join([int(length_to_pad).to_bytes(1, byteorder='big') * length_to_pad])
-    ...     res_bits = bitarray(endian='big')
+    ...     res_bits = bitarray()
     ...     res_bits.frombytes(res_bytes)
     ...     return res_bits
     >>> f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))
@@ -324,7 +324,7 @@ class Padding(AbstractRelationVariableLeaf):
 
             # Retrieve variable value
             if variable is self:
-                value = bitarray(endian=self.dataType.endianness.value)
+                value = bitarray()
             else:
                 value = parsingPath.getData(variable)
 
@@ -351,7 +351,7 @@ class Padding(AbstractRelationVariableLeaf):
         size = int(size * self.factor + self.offset)
 
         # Compute the padding value according to the current size
-        padding_value = bitarray(endian=self.dataType.endianness.value)
+        padding_value = bitarray()
 
         length_to_pad = 0
         if self.data_callback is not None:

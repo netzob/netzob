@@ -378,7 +378,7 @@ class BitArray(AbstractType):
 
         generatedSize = random.randint(minSize, maxSize)
         randomContent = [random.randint(0, 1) for i in range(0, generatedSize)]
-        return bitarray(randomContent, endian=self.endianness.value)
+        return bitarray(randomContent)
 
     @staticmethod
     @typeCheck(bitarray)
@@ -427,8 +427,6 @@ class BitArray(AbstractType):
         >>> from netzob.Model.Vocabulary.Types.BitArray import BitArray
         >>> BitArray.encode(Integer.decode(20))
         bitarray('00010100')
-        >>> BitArray.encode(Integer.decode(20), endianness=Endianness.LITTLE)
-        bitarray('00101000')
 
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
@@ -453,7 +451,7 @@ class BitArray(AbstractType):
         else:
             raise TypeError("Invalid type for: '{}'. Expected bytes or str, and got '{}'".format(data, type(data)))
 
-        b = bitarray(endian=endianness.value)
+        b = bitarray()
         b.frombytes(norm_data)
         return b
 

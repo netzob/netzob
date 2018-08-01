@@ -378,7 +378,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         generatedSize = random.randint(minSize, maxSize)
         randomContent = [random.randint(0, 1) for i in range(0, generatedSize)]
-        return bitarray(randomContent, endian=self.endianness.value)
+        return bitarray(randomContent)
 
     @staticmethod
     def computeUnitSize(length):
@@ -821,8 +821,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         self.__endianness = endianness
 
-        if self.value is not None and self.value.endian() != self.__endianness:
-            self.value = bitarray(self.value, endian=self.__endianness.value)
+        ## Note: this two lines are commented are bit-ordering is not supported
+        # if self.value is not None and self.value.endian() != self.__endianness:
+        #     self.value = bitarray(self.value, endian=self.__endianness.value)
 
     @property
     def sign(self):
