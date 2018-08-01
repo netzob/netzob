@@ -182,7 +182,7 @@ class String(AbstractType):
 
 
     The ``eos`` attribute specifies a list of values that are used as
-    potential terminal characters. Terminal characters should be
+    potential terminal characters. Terminal characters shall be
     constant (such as ``'\n'`` in the previous example).
 
 
@@ -771,14 +771,14 @@ class String(AbstractType):
             if isinstance(elt, str):
                 eos_list.append(elt)
             else:
-                raise Exception("'eos' parameter must be a list of string")
+                raise Exception("'eos' parameter must be a string list")
 
             # Check that each string element have the same size
             if size_elt is None:
                 size_elt = len(elt)
             else:
                 if size_elt != len(elt):
-                    raise Exception("'eos' parameter must be a list of string of the same size")
+                    raise Exception("'eos' parameter must be a string list of the same size")
 
         self.__eos = eos_list
 
@@ -939,7 +939,7 @@ def _test(self):
 def _test_eos():
     r"""
 
-    # Test specializaion and then abstraction
+    # Test specialization and then abstraction
 
     >>> from netzob.all import *
     >>> f = Field(String("john", eos=['\0']), name='field-john')
@@ -957,5 +957,5 @@ def _test_eos():
     >>> f = Field(String("john", eos=["A", "B", "CC"]), name='field-john')
     Traceback (most recent call last):
     ...
-    Exception: 'eos' parameter must be a list of string of the same size
+    Exception: 'eos' parameter must be a string list of the same size
     """
