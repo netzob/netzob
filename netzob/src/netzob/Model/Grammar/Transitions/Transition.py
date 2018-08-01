@@ -132,7 +132,7 @@ class Transition(AbstractTransition):
                                     output value (only used in a
                                     sending context).
     :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The value between ``0.0`` and ``100.0`` corresponds to the weight of the symbol in terms of selection probability.
-    :var inverseInitiator: Indicates to inverse the behavior of the actor initiator flag (e.g. in case of a server, this indicates that the inputSymbol of the transition is sent rather than being expected).
+    :var inverseInitiator: Indicates to inverse the behavior of the actor initiator flag. This capability is only available for a client initiator. When set to ``True``, this indicates that the input symbol of the transition is expected to be received rather than being sent, and then one of the output symbols is sent. If set to ``True`` in a server context (non initiator), it will not have any effect.
     :var description: The description of the transition. If not explicitly set,
                       it is generated from the input and output symbol strings.
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
@@ -204,6 +204,9 @@ class Transition(AbstractTransition):
         self.inputSymbolReactionTime = None
         self.outputSymbolsReactionTime = None
         self.description = None
+
+        # Initialize internal variables
+        self.cbk_action = []
 
     @public_api
     def copy(self):
@@ -378,7 +381,7 @@ class Transition(AbstractTransition):
 
             for cbk in self.cbk_action:
                 self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), self.name))
-                cbk(received_symbol, received_message, received_structure, Operation.READ, self.startState, actor.memory)
+                cbk(received_symbol, received_message, received_structure, Operation.ABSTRACT, self.startState, actor.memory)
 
             return self.endState
         else:
@@ -563,6 +566,49 @@ class Transition(AbstractTransition):
             self._logger.debug("[actor='{}'] No callback function is defined at transition '{}'".format(str(actor), self.name))
 
         return (symbol_to_send, symbol_preset)
+
+    def add_cbk_action(self, cbk_method):
+        """Function called after sending or receiving a symbol in the
+        transition. This function should be used to modify the memory context.
+
+        :param cbk_method: the callback function
+        :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
+        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
+
+        The callback function that can be used in the
+        :attr:`cbk_method` parameter has the following prototype:
+
+        .. function:: cbk_method(symbol, data, data_structure, operation, current_state, memory)
+           :noindex:
+
+           :param symbol:
+                  Corresponds to the last sent or received symbol.
+           :param data:
+                  Corresponds to the last sent or received data.
+           :param data_structure:
+                  Corresponds to the last sent or received data structure.
+           :param operation:
+                  Tells the way the symbol is manipulated: either
+                  :attr:`Operation.ABSTRACT` for symbols that are abstracted or
+                  :attr:`Operation.SPECIALIZE` for symbols that are specialized.
+           :param current_state:
+                  Current state in the automaton.
+           :param memory:
+                  Corresponds to the current memory context.
+
+           :type symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+           :type data: :class:`bytes`
+           :type data_structure: :class:`OrderedDict`
+           :type operation: :class:`~netzob.Simulation.AbstractionLayer.Operation`
+           :type current_state: :class:`~netzob.Model.Grammar.States.State.State`
+           :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
+
+        The callback method is not expected to return something.
+
+        """
+        if not callable(cbk_method):
+            raise TypeError("'cbk_method' should be a callable function")
+        self.cbk_action.append(cbk_method)
 
     # Properties
 

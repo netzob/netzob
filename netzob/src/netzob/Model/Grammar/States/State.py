@@ -226,7 +226,7 @@ class State(AbstractState):
                         # Check preset
                         if received_symbol.check_preset(received_structure, transition.inputSymbolPreset):
                             self._logger.debug("Receive good symbol with good preset setting")
-                            actor.visit_log.append("  [+]   At state '{}', received one of the expected symbols, with good preset settings, leading to state '{}'".format(self.name, self.name))
+                            actor.visit_log.append("  [+]   At state '{}', received one of the expected symbols, with good preset settings".format(self.name))
                             nextTransition = transition
                             break
                     else:
@@ -323,7 +323,7 @@ class State(AbstractState):
 
             for cbk in nextTransition.cbk_action:
                 self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), nextTransition.name))
-                cbk(received_symbol, received_message, received_structure, Operation.READ, self, actor.memory)
+                cbk(received_symbol, received_message, received_structure, Operation.ABSTRACT, self, actor.memory)
 
             nextState = nextTransition.executeAsNotInitiator(actor)
             self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(nextTransition), str(nextState)))

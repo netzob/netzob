@@ -81,7 +81,6 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
         self.active = False
         self.cbk_modify_symbol = []
-        self.cbk_action = []
         self.inverseInitiator = False
 
     def __str__(self):
@@ -343,46 +342,3 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         if not callable(cbk_method):
             raise TypeError("'cbk_method' should be a callable function")
         self.cbk_modify_symbol.append(cbk_method)
-
-    def add_cbk_action(self, cbk_method):
-        """Function called after sending or receiving a symbol in the
-        transition. This function should be used to modify the memory context.
-
-        :param cbk_method: the callback function
-        :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
-        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
-
-        The callback function that can be used in the
-        :attr:`cbk_method` parameter has the following prototype:
-
-        .. function:: cbk_method(symbol, data, data_structure, operation, current_state, memory)
-           :noindex:
-
-           :param symbol:
-                  Corresponds to the last sent or received symbol.
-           :param data:
-                  Corresponds to the last sent or received data.
-           :param data_structure:
-                  Corresponds to the last sent or received data structure.
-           :param operation:
-                  Tells the direction of the symbol: either
-                  :attr:`Operation.READ` for received symbols or
-                  :attr:`Operation.WRITE` for sent symbols.
-           :param current_state:
-                  Current state in the automaton.
-           :param memory:
-                  Corresponds to the current memory context.
-
-           :type symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
-           :type data: :class:`bytes`
-           :type data_structure: :class:`OrderedDict`
-           :type operation: :class:`~netzob.Simulation.AbstractionLayer.Operation`
-           :type current_state: :class:`~netzob.Model.Grammar.States.State.State`
-           :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
-
-        The callback method is not expected to return something.
-
-        """
-        if not callable(cbk_method):
-            raise TypeError("'cbk_method' should be a callable function")
-        self.cbk_action.append(cbk_method)
