@@ -348,6 +348,14 @@ class Size(AbstractRelationVariableLeaf):
         size = self.__computeExpectedValue_stage1(self.targets, parsingPath, remainingVariables, preset=preset)
         size += self.__computeExpectedValue_stage2(parsingPath, remainingVariables)
         size = int(size * self.factor + self.offset)
+
+        # Check if we can encode the size in the Size field structure
+        max_size = (1 << self.dataType.unitSize.value)
+        if size > max_size:
+            error_message = "The computed size of the targets (which is '{}') cannot be encoded in the current Size field (which can encode at most a value of '{}'). You should consider using a bigger dataType to model the Size field.".format(size, max_size)
+            self._logger.warn(error_message)
+            raise ValueError(error_message)
+
         b = TypeConverter.convert(size, Integer, BitArray,
                                   src_unitSize=self.dataType.unitSize,
                                   dst_unitSize=self.dataType.unitSize,
@@ -429,6 +437,7 @@ class Size(AbstractRelationVariableLeaf):
             raise TypeError(
                 "Offset cannot be None, use 0 if no offset should be applied.")
         self.__offset = offset
+
 
 def _test_size():
     r"""
@@ -628,5 +637,36 @@ def _test_size_contains_itself():
     b'\x00\x00\r\x00\x00\x00\x00\x00\xd9\x9d"\x97^'
     >>> symbol.abstract(data)
     OrderedDict([('f0', b'\x00'), ('f1', b'\x00'), ('len', b'\r\x00'), ('f3', b'\x00\x00\x00\x00'), ('f4', b'\xd9\x9d"\x97^')])
+
+    """
+
+
+def _test_size_default_datatype_value():
+    r"""
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Raw(nbBytes=1000), "F1")
+    >>> f2 = Field(Size([f1]), "F2")
+    >>> s = Symbol([f1, f2])
+    >>> next(s.specialize()) # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    Exception: In path 'Path(...)', no data assigned to variable 'Size(['Data']) - Type:Integer(0,255)' (id=...), which is linked to field 'F2'
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Raw(nbBytes=1000), "F1")
+    >>> f2 = Field(Size([f1], dataType=uint8be()), "F2")
+    >>> s = Symbol([f1, f2])
+    >>> next(s.specialize()) # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    Exception: In path 'Path(...)', no data assigned to variable 'Size(['Data']) - Type:Integer(0,255)' (id=...), which is linked to field 'F2'
+
+    >>> from netzob.all import *
+    >>> f1 = Field(Raw(nbBytes=1000), "F1")
+    >>> f2 = Field(Size([f1], dataType=uint8be(), factor=1./32), "F2")
+    >>> s = Symbol([f1, f2])
+    >>> len(next(s.specialize()))
+    1001
 
     """
