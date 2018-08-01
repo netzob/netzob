@@ -821,7 +821,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
         self.__endianness = endianness
 
-        ## Note: this two lines are commented are bit-ordering is not supported
+        ## Note: this two lines are commented because bit-ordering is not supported
         # if self.value is not None and self.value.endian() != self.__endianness:
         #     self.value = bitarray(self.value, endian=self.__endianness.value)
 
