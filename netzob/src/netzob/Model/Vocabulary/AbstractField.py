@@ -672,7 +672,7 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
         To retrieve the associated symbol, this method recursively
         calls the parent of the current object until the root is found.
-        
+
         If the root is not a :class:`Symbol
         <netzob.Model.Vocabulary.Symbol.Symbol>`, this raises an Exception.
 
@@ -696,6 +696,14 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
         else:
             raise NoSymbolException(
                 "Impossible to retrieve the symbol attached to this element")
+
+    def getAncestor(self):
+        """Return the ancestor of the current field/symbol.
+        """
+        if self.hasParent():
+            return self.parent.getAncestor()
+        else:
+            return self
 
     @public_api
     def getField(self, field_name):
