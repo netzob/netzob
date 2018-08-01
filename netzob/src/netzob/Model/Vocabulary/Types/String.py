@@ -182,7 +182,7 @@ class String(AbstractType):
 
 
     The ``eos`` attribute specifies a list of values that are used as
-    potential terminal characters. Terminal characters can be a
+    potential terminal characters. Terminal characters shall be
     constant (such as ``'\n'`` in the previous example).
 
 
@@ -450,6 +450,20 @@ class String(AbstractType):
 
         return TypeConverter.convert(random_content, String, BitArray)
 
+    def getFixedBitSize(self):
+        self._logger.debug("Determine the deterministic size of the value of "
+                           "the type")
+        if self.value:
+            current_size = len(self.value)
+            if len(self.eos) > 0:
+                current_size += len(self.eos[0] * 8)
+            return current_size
+        elif any(self.size) and self.size[0] == self.size[1]:
+            return self.size[0]
+        else:
+            raise ValueError("Cannot determine a fixed size for type '{}'"
+                             .format(self))
+
     @typeCheck(str)
     def mutate(self, prefixDescription=None):
         """Generate various mutations of the current String value.
@@ -604,10 +618,18 @@ class String(AbstractType):
 
         # Compare with self.value if it is defined
         if self.value is not None:
-            if self.value == data:
-                return True
+            if len(self.eos) > 0:
+                for permitted_element in self.eos:
+                    tmp_value_bytes = self.value.tobytes() + str.encode(permitted_element)
+                    if tmp_value_bytes == data.tobytes():
+                        return True
+                else:
+                    return False
             else:
-                return False
+                if self.value == data:
+                    return True
+                else:
+                    return False
 
         # Else, compare with expected size
         if len(data) % 8 != 0:  # Ascii must be 8 bits modulo length
@@ -743,11 +765,21 @@ class String(AbstractType):
             raise Exception("'eos' parameter must be a list")
         eos_list = []
 
+        size_elt = None
         for elt in eos:
+            # Check that each element is a string
             if isinstance(elt, str):
                 eos_list.append(elt)
             else:
-                raise Exception("'eos' parameter must be a list of string or AbstractField")
+                raise Exception("'eos' parameter must be a string list")
+
+            # Check that each string element have the same size
+            if size_elt is None:
+                size_elt = len(elt)
+            else:
+                if size_elt != len(elt):
+                    raise Exception("'eos' parameter must be a string list of the same size")
+
         self.__eos = eos_list
 
 
@@ -901,4 +933,29 @@ def _test(self):
     ValueError: A String should have either its value or its nbChars set, but not both
 
 
+    """
+
+
+def _test_eos():
+    r"""
+
+    # Test specialization and then abstraction
+
+    >>> from netzob.all import *
+    >>> f = Field(String("john", eos=['\0']), name='field-john')
+    >>> symbol = Symbol([f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'john\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field-john', b'john\x00')])
+
+    # Test exception triggered when using different sizes of eos elements
+
+    >>> from netzob.all import *
+    >>> f = Field(String("john", eos=["A", "B"]), name='field-john')
+    >>> f = Field(String("john", eos=["A", "B", "CC"]), name='field-john')
+    Traceback (most recent call last):
+    ...
+    Exception: 'eos' parameter must be a string list of the same size
     """
