@@ -155,7 +155,7 @@ class Data(AbstractVariableLeaf):
 
         content = parsingPath.getData(self)
 
-        self._logger.debug("DomainCMP {0} with {1}".format(content, self.dataType))
+        self._logger.debug("DomainCMP {} with {} ({})".format(content.tobytes(), self.dataType, self.name))
 
         (minSize, maxSize) = self.dataType.size
         if maxSize is None:
@@ -194,6 +194,8 @@ class Data(AbstractVariableLeaf):
         if content is None:
             raise Exception("No data assigned to the variable")
 
+        self._logger.debug("ValueCMP {} with {} ({})".format(content.tobytes(), self.dataType, self.name))
+
         results = []
         if len(content) >= len(expectedValue) and content[:len(
                 expectedValue)].tobytes() == expectedValue.tobytes():
@@ -212,8 +214,8 @@ class Data(AbstractVariableLeaf):
         content = parsingPath.getData(self)
         actualSize = len(content)
 
-        self._logger.debug("Learn '{0}' with {1}".format(content.tobytes(),
-                                                         self.dataType))
+        self._logger.debug("Learn '{}' with {} ({})".format(content.tobytes(),
+                                                            self.dataType, self.name))
 
         try:
             minSize = maxSize = self.getFixedBitSize()
@@ -259,7 +261,7 @@ class Data(AbstractVariableLeaf):
         """
 
         while True:
-            self._logger.debug("Use variable {0}".format(self))
+            self._logger.debug("Use variable {} ({})".format(self.dataType, self.name))
 
             if variableSpecializerPath is None:
                 raise Exception("VariableSpecializerPath cannot be None")
@@ -282,7 +284,7 @@ class Data(AbstractVariableLeaf):
         """
 
         while True:
-            self._logger.debug("Regenerate variable {0}".format(self))
+            self._logger.debug("Regenerate variable {} ({})".format(self.dataType, self.name))
 
             if variableSpecializerPath is None:
                 raise Exception("VariableSpecializerPath cannot be None")
@@ -304,7 +306,7 @@ class Data(AbstractVariableLeaf):
         """
 
         while True:
-            self._logger.debug("Regenerate and memorize variable '{}' for field '{}'".format(self, self.field))
+            self._logger.debug("Regenerate and memorize variable '{}' ({}) for field '{}'".format(self.dataType, self.name, self.field))
 
             if variableSpecializerPath is None:
                 raise Exception("VariableSpecializerPath cannot be None")

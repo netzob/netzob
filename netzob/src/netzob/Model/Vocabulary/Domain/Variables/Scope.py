@@ -64,7 +64,6 @@ class Scope(Enum):
 
     The available scope strategies for a variable are:
 
-    * Scope.CONSTANT
     * Scope.SESSION
     * Scope.MESSAGE (the default strategy for variables)
     * Scope.NONE
@@ -74,77 +73,6 @@ class Scope(Enum):
     be applied during abstraction and specialization of Field with
     Data variables.
 
-    * **Scope.CONSTANT**: A constant value denotes a static content
-      defined once and for all in the protocol. When abstracting, the
-      concrete value is compared with the symbolic value, which is a
-      constant and succeeds only if it matches. On the other hand, the
-      specialization of a constant value does not imply any additional
-      operations than just using the value as it is. A typical example of
-      a constant value is a magic number in a protocol or a delimiter
-      field.
-
-      .. note::
-         When creating a data type with a defined value, a normalization step will automatically set the data Scope to :attr:`Scope.CONSTANT`.
-
-
-      The following example shows the **abstraction of constant
-      data**, through the parsing of a message that corresponds to the
-      expected model:
-
-      >>> from netzob.all import *
-      >>> f = Field(name='f1')
-      >>> st = String("john")
-      >>> f.domain = Data(st, scope=Scope.CONSTANT)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> s.abstract("john", memory=m)
-      OrderedDict([('f1', b'john')])
-
-      The following example shows that the abstraction of a data that
-      do not correspond to the expected model returns an exception:
-
-      >>> from netzob.all import *
-      >>> f = Field(name='f1')
-      >>> st = String("john")
-      >>> f.domain = Data(st, scope=Scope.CONSTANT)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> s.abstract("kurt", memory=m)
-      Traceback (most recent call last):
-      ...
-      netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'S0', cannot abstract the data: 'kurt'. Error: 'No parsing path returned while parsing 'b'kurt'''
-
-      The following example shows the **specialization of constant
-      data**:
-
-      >>> from netzob.all import *
-      >>> f = Field(name='f1')
-      >>> st = String("john")
-      >>> f.domain = Data(st, scope=Scope.CONSTANT)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> next(s.specialize(memory=m))
-      b'john'
-      >>> next(s.specialize(memory=m))
-      b'john'
-      >>> len(str(m))
-      0
-
-      The following example shows that the specialization of
-      constant data raises an exception when no specific value is
-      attached to the definition domain of the variable:
-
-      >>> from netzob.all import *
-      >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.CONSTANT)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> next(s.specialize(memory=m))
-      Traceback (most recent call last):
-      ...
-      StopIteration
-
-
     * **Scope.SESSION**: This kind of variable carries a value, such as
       a session identifier, generated and memorized during its first
       specialization and reused as such in the remainder of the
@@ -153,6 +81,38 @@ class Scope(Enum):
       value is saved. Later in the session, if this field is
       abstracted again, the corresponding variable is then defined and
       we compare the received field value against the memorized one.
+
+      The following example shows the **abstraction and specialization of data with Session Scope**:
+
+      >>> from netzob.all import *
+      >>> f = Field(domain=Data(String(nbChars=4), scope=Scope.SESSION), name='f1')
+      >>> s = Symbol(name="S0", fields=[f])
+      >>> m = Memory()
+      >>> next(s.specialize(memory=m))
+      b'SZ,1'
+      >>> s.abstract(b'SZ,1', memory=m)
+      OrderedDict([('f1', b'SZ,1')])
+      >>> next(s.specialize(memory=m))
+      b'SZ,1'
+      >>> s.abstract(b'test', memory=m)
+      Traceback (most recent call last):
+      ...
+      netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'S0', cannot abstract the data: 'b'test''. Error: 'No parsing path returned while parsing 'b'test'''
+
+      >>> from netzob.all import *
+      >>> f = Field(domain=Data(String(nbChars=4), scope=Scope.SESSION), name='f1')
+      >>> s = Symbol(name="S0", fields=[f])
+      >>> m = Memory()
+      >>> s.abstract("john", memory=m)
+      OrderedDict([('f1', b'john')])
+      >>> next(s.specialize(memory=m))
+      b'john'
+      >>> s.abstract("john", memory=m)
+      OrderedDict([('f1', b'john')])
+      >>> s.abstract(b'test', memory=m)
+      Traceback (most recent call last):
+      ...
+      netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'S0', cannot abstract the data: 'b'test''. Error: 'No parsing path returned while parsing 'b'test'''
 
 
       The following example shows the **abstraction of data with Session Scope**:
@@ -209,7 +169,7 @@ class Scope(Enum):
       5
       >>> generated1 == generated2
       True
-  
+
 
     * **Scope.MESSAGE**: With this kind of variable, the value is
       generated and then memorized during the first specialization and
@@ -221,9 +181,33 @@ class Scope(Enum):
       fields, but whenever a NICK command is emitted, its value is
       regenerated.
 
+      The following example shows the **abstraction and specialization of data with Message Scope**:
+
+      >>> from netzob.all import *
+      >>> f = Field(domain=Data(String(nbChars=4), scope=Scope.MESSAGE), name='f1')
+      >>> s = Symbol(name="S0", fields=[f])
+      >>> m = Memory()
+      >>> next(s.specialize(memory=m))
+      b'%!F9'
+      >>> s.abstract("john", memory=m)
+      OrderedDict([('f1', b'john')])
+      >>> next(s.specialize(memory=m))
+      b'john'
+
+      >>> from netzob.all import *
+      >>> f = Field(domain=Data(String(nbChars=4), scope=Scope.MESSAGE), name='f1')
+      >>> s = Symbol(name="S0", fields=[f])
+      >>> m = Memory()
+      >>> s.abstract("john", memory=m)
+      OrderedDict([('f1', b'john')])
+      >>> next(s.specialize(memory=m))
+      b'john'
+      >>> s.abstract("kurt", memory=m)
+      OrderedDict([('f1', b'kurt')])
+
 
       The following example shows the **abstraction of data with Message Scope**:
-  
+
       >>> from netzob.all import *
       >>> f = Field(name='f1')
       >>> f.domain = Data(String(nbChars=(4, 10)), scope=Scope.MESSAGE)
@@ -268,6 +252,32 @@ class Scope(Enum):
       complies with the field definition domain without memorizing
       it. For example, a size field or a CRC field should have such a scope.
 
+
+      The following example shows the **abstraction and specializaion of data without persistence**:
+
+      >>> from netzob.all import *
+      >>> f = Field(domain=Data(String(nbChars=4), scope=Scope.NONE), name='f1')
+      >>> s = Symbol(name="S0", fields=[f])
+      >>> m = Memory()
+      >>> next(s.specialize(memory=m))
+      b'5Rh:'
+      >>> s.abstract("john", memory=m)
+      OrderedDict([('f1', b'john')])
+      >>> next(s.specialize(memory=m))
+      b'MRA]'
+
+      >>> from netzob.all import *
+      >>> f = Field(domain=Data(String(nbChars=4), scope=Scope.NONE), name='f1')
+      >>> s = Symbol(name="S0", fields=[f])
+      >>> m = Memory()
+      >>> s.abstract("john", memory=m)
+      OrderedDict([('f1', b'john')])
+      >>> next(s.specialize(memory=m))
+      b'Wm^C'
+      >>> s.abstract("kurt", memory=m)
+      OrderedDict([('f1', b'kurt')])
+
+
       The following example shows the **abstraction data without persistence**:
   
       >>> from netzob.all import *
@@ -308,3 +318,78 @@ class Scope(Enum):
     SESSION = "Session Scope"
     MESSAGE = "Message Scope"
     NONE = "None Scope"
+
+
+def _test():
+    r"""
+
+    **Scope.CONSTANT**: A constant value denotes a static content
+    defined once and for all in the protocol. When abstracting, the
+    concrete value is compared with the symbolic value, which is a
+    constant and succeeds only if it matches. On the other hand, the
+    specialization of a constant value does not imply any additional
+    operations than just using the value as it is. A typical example of
+    a constant value is a magic number in a protocol or a delimiter
+    field.
+
+    .. note::
+       When creating a data type with a defined value, a normalization step will automatically set the data Scope to :attr:`Scope.CONSTANT`.
+
+    The following example shows the **abstraction of constant
+    data**, through the parsing of a message that corresponds to the
+    expected model:
+
+    >>> from netzob.all import *
+    >>> f = Field(name='f1')
+    >>> st = String("john")
+    >>> f.domain = Data(st, scope=Scope.CONSTANT)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> s.abstract("john", memory=m)
+    OrderedDict([('f1', b'john')])
+
+    The following example shows that the abstraction of a data that
+    do not correspond to the expected model returns an exception:
+
+    >>> from netzob.all import *
+    >>> f = Field(name='f1')
+    >>> st = String("john")
+    >>> f.domain = Data(st, scope=Scope.CONSTANT)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> s.abstract("kurt", memory=m)
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'S0', cannot abstract the data: 'kurt'. Error: 'No parsing path returned while parsing 'b'kurt'''
+
+    The following example shows the **specialization of constant
+    data**:
+
+    >>> from netzob.all import *
+    >>> f = Field(name='f1')
+    >>> st = String("john")
+    >>> f.domain = Data(st, scope=Scope.CONSTANT)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> next(s.specialize(memory=m))
+    b'john'
+    >>> next(s.specialize(memory=m))
+    b'john'
+    >>> len(str(m))
+    0
+
+    The following example shows that the specialization of constant
+    data raises an exception when no specific value is attached to the
+    definition domain of the variable:
+
+    >>> from netzob.all import *
+    >>> f = Field(name='f1')
+    >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.CONSTANT)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> next(s.specialize(memory=m))
+    Traceback (most recent call last):
+    ...
+    StopIteration
+
+    """

@@ -196,7 +196,7 @@ class Raw(AbstractType):
     def __str__(self):
         if self.value is not None:
             return "{}({})".format(self.typeName,
-                                          repr(self.value.tobytes()))
+                                   repr(self.value.tobytes()))
         else:
             if self.size[0] == self.size[1]:
                 return "{}(nbBytes={})".format(self.typeName, int(self.size[0] / 8))

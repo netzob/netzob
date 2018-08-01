@@ -77,7 +77,7 @@ class Memory(object):
        >>> f4 = Field(domain=String("master"), name="F4")
        >>> f5 = Field(domain=String(">"), name="F5")
        >>> f6 = Field(domain=Value(f3), name="F6")
-       >>> s2 = Symbol(fields=[f4, f5, f6])
+       >>> s2 = Symbol(fields=[f4, f5, f6], name="S2")
        >>>
        >>> memory = Memory()
        >>> m1 = next(s1.specialize(memory=memory))
