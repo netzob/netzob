@@ -71,10 +71,10 @@ class Operation(Enum):
     """Tells the direction of the symbol on the communication channel.
 
     """
-    READ = 'read'
-    """Indicates that the symbol has been received from the communication channel."""
-    WRITE = 'write'
-    """Indicates that the symbol has been sent on the communication channel."""
+    ABSTRACT = 'abstract'
+    """Indicates that the symbol has been abstracted from a concrete representation."""
+    SPECIALIZE = 'specialize'
+    """Indicates that the symbol has been specialized into a concrete representation."""
     __repr__ = Enum.__str__
 
 
@@ -353,7 +353,7 @@ class AbstractionLayer(object):
 
         for cbk in cbk_action:
             self._logger.debug("[actor='{}'] A callback function is defined for the write symbol event".format(self.actor))
-            cbk(symbol, data, data_structure, Operation.WRITE, self.actor.current_state, self.actor.memory)
+            cbk(symbol, data, data_structure, Operation.SPECIALIZE, self.actor.current_state, self.actor.memory)
 
         return (data, data_len, data_structure)
 

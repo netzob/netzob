@@ -381,7 +381,7 @@ class Transition(AbstractTransition):
 
             for cbk in self.cbk_action:
                 self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), self.name))
-                cbk(received_symbol, received_message, received_structure, Operation.READ, self.startState, actor.memory)
+                cbk(received_symbol, received_message, received_structure, Operation.ABSTRACT, self.startState, actor.memory)
 
             return self.endState
         else:
