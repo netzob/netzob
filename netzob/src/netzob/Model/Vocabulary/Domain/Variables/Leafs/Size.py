@@ -634,9 +634,9 @@ def _test_size_contains_itself():
     >>> symbol = Symbol([f0, f1, f2, f3, f4])
     >>> data = next(symbol.specialize())
     >>> data
-    b'\x00\x00\r\x00\x00\x00\x00\x00\xd9\x9d"\x97^'
+    b'\x00\x00\r\x00\x00\x00\x00\x00\x9b\xb9D\xe9z'
     >>> symbol.abstract(data)
-    OrderedDict([('f0', b'\x00'), ('f1', b'\x00'), ('len', b'\r\x00'), ('f3', b'\x00\x00\x00\x00'), ('f4', b'\xd9\x9d"\x97^')])
+    OrderedDict([('f0', b'\x00'), ('f1', b'\x00'), ('len', b'\r\x00'), ('f3', b'\x00\x00\x00\x00'), ('f4', b'\x9b\xb9D\xe9z')])
 
     """
 

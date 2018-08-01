@@ -317,7 +317,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             values.append(value)
 
         # Aggregate all values in a uniq bitarray object
-        concatValues = bitarray(endian=self.dataType.endianness.value)
+        concatValues = bitarray()
         for f in values:
             concatValues += f
 

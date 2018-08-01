@@ -147,10 +147,7 @@ class Memory(object):
         if isinstance(value, bitarray):
             self.memory[variable] = value
         elif isinstance(value, bytes):
-            if not variable.isnode():
-                b_value = bitarray(endian=variable.dataType.endianness.value)
-            else:
-                b_value = bitarray(endian='big')
+            b_value = bitarray()
             b_value.frombytes(value)
             self.memory[variable] = b_value
         else:
