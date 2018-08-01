@@ -81,7 +81,7 @@ class ChannelBuilder(object):
         :param key: a named parameter expected by :meth:`self.kind.__init__`
         :type key: str, required
         :param value: any object
-        :type value: required
+        :type value: object, required
         """
         setter_name = "set_{}".format(key)
         setter = getattr(self, setter_name, None)
