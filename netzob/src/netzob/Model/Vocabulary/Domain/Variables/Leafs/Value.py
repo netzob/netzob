@@ -46,6 +46,9 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+from netzob.Model.Vocabulary.Field import Field
+from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
 
 @NetzobLogger
@@ -281,9 +284,26 @@ class Value(AbstractRelationVariableLeaf):
         # we verify we have access to the expected value
         expectedValue = self.computeExpectedValue(parsingPath)
 
+        # Inner function to check targets consistency (i.e. it should not contain a Repeat element, as it makes parsing ambiguous)
+        def check_target_consistency(tmp_target):
+            if isinstance(tmp_target, Field):
+                tmp_target = tmp_target.domain
+            if isinstance(tmp_target, Repeat):
+                raise TypeError("Value target contains a Repeat variable, which is not supported")
+            if tmp_target.isnode():
+                for tmp_target_child in tmp_target.children:
+                    check_target_consistency(tmp_target_child)
+
         if expectedValue is None:
             if len(self.targets) > 0:
+
+                # Check targets consistency
+                for target in self.targets:
+                    check_target_consistency(target)
+
                 self._logger.debug("Let's compute what could be the possible value based on the target datatype")
+
+                target_type_aligned_octets = False  # Tells if we are sure that the target type is aligned on octets
                 if self.targets[0].isnode():
                     minSizeDep = 0
                     maxSizeDep = len(content)
@@ -294,7 +314,15 @@ class Value(AbstractRelationVariableLeaf):
                         self._logger.debug("Size of the content to parse is smaller than the min expected size of the dependency field")
                         return results
 
-                for size in range(min(maxSizeDep, len(content)), minSizeDep - 1, -1):
+                    if not isinstance(type(self.targets[0].dataType), BitArray):
+                       target_type_aligned_octets = True
+
+                if target_type_aligned_octets is True:
+                    step = -8
+                else:
+                    step = -1  # In order to support a target that manipulates bitarays
+
+                for size in range(min(maxSizeDep, len(content)), minSizeDep - 1, step):
                     # we create a new parsing path and returns it
                     newParsingPath = parsingPath.copy()
                     newParsingPath.addResult(self, content[:size].copy())
