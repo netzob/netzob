@@ -76,7 +76,7 @@ nbRepeatType = Union[int, Tuple[int, int], nbRepeatCbkType, AbstractVariable]
 
 @NetzobLogger
 class Repeat(AbstractVariableNode):
-    """The Repeat class is a node variable that represents a sequence of
+    r"""The Repeat class is a node variable that represents a sequence of
     the same variable. This denotes an n-time repetition of a
     variable, which can be a terminal leaf or a non-terminal node.
 
@@ -222,8 +222,11 @@ class Repeat(AbstractVariableNode):
     number of repetitions is limited by the value of another field:
 
     >>> from netzob.all import *
-    >>> f_end = Field(Integer(interval=(2, 5)))
-    >>> f1 = Field(Repeat(String("john"), nbRepeat=f_end)) # doctest: +SKIP
+    >>> f_nb = Field(Integer(interval=(2, 5)))
+    >>> f_pattern = Field(Repeat(String("john"), nbRepeat=f_nb))
+    >>> f_header = Field([f_nb, f_pattern])
+    >>> next(f_header.specialize())
+    b'\x00\x05johnjohnjohnjohnjohn'
 
 
     **Limiting the number of repetitions by calling a callback function**
@@ -763,9 +766,9 @@ def _test_repeat():
     >>> from netzob.all import *
     >>> Conf.apply()
 
-    ## Size field on the right
+    ## Size field on the left
 
-    Size field targeting a field containing a repeat variable, with size field on the right:
+    Size field targeting a field containing a repeat variable, with size field on the left:
 
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
@@ -776,7 +779,7 @@ def _test_repeat():
     >>> s.abstract(d)
     OrderedDict([('f2', b'\x04'), ('f1', b'AAAA')])
 
-    Size field targeting a field containing a repeat variable of non fixed size, with size field on the right:
+    Size field targeting a field containing a repeat variable of non fixed size, with size field on the left:
 
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
@@ -787,7 +790,7 @@ def _test_repeat():
     >>> s.abstract(d)
     OrderedDict([('f2', b'\x05'), ('f1', b'AAAAA')])
 
-    Size field targeting a repeat variable, with size field on the right:
+    Size field targeting a repeat variable, with size field on the left:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Size(v1, dataType=uint8())
@@ -798,7 +801,7 @@ def _test_repeat():
     >>> s.abstract(d)
     OrderedDict([('f1', b'\x05'), ('f2', b'AAAAA')])
 
-    Size field targeting a repeat variable of non fixed size, with size field on the right:
+    Size field targeting a repeat variable of non fixed size, with size field on the left:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Size(v1, dataType=uint8())
@@ -810,9 +813,9 @@ def _test_repeat():
     OrderedDict([('f1', b'\x02'), ('f2', b'AA')])
 
 
-    ## Size field on the left
+    ## Size field on the right
 
-    Size field targeting a field containing a repeat variable, with size field on the left:
+    Size field targeting a field containing a repeat variable, with size field on the right:
 
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
@@ -823,7 +826,7 @@ def _test_repeat():
     >>> s.abstract(d)
     OrderedDict([('f1', b'AAAA'), ('f2', b'\x04')])
 
-    Size field targeting a field containing a repeat variable of non fixed size, with size field on the left:
+    Size field targeting a field containing a repeat variable of non fixed size, with size field on the right:
 
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Size(f1, dataType=uint8()), name='f2')
@@ -834,7 +837,7 @@ def _test_repeat():
     >>> s.abstract(d)
     OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')])
 
-    Size field targeting a repeat variable, with size field on the left:
+    Size field targeting a repeat variable, with size field on the right:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Size(v1, dataType=uint8())
@@ -845,7 +848,7 @@ def _test_repeat():
     >>> s.abstract(d)
     OrderedDict([('f1', b'AAAAA'), ('f2', b'\x05')])
 
-    Size field targeting a repeat variable of non fixed size, with size field on the left:
+    Size field targeting a repeat variable of non fixed size, with size field on the right:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Size(v1, dataType=uint8())
@@ -855,56 +858,6 @@ def _test_repeat():
     b'AAAA\x04'
     >>> s.abstract(d)
     OrderedDict([('f1', b'AAAA'), ('f2', b'\x04')])
-
-
-    ## Value field on the right
-
-    Value field targeting a field containing a repeat variable, with value field on the right:
-
-    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
-    >>> f2 = Field(Value(f1), name='f2')
-    >>> s = Symbol([f2, f1])
-    >>> d = next(s.specialize())
-    >>> d
-    b'AAAAAAAA'
-
-    >>> s.abstract(d)  # doctest: +SKIP
-    OrderedDict([('f2', b'AAAA'), ('f1', b'AAAA')])
-
-    Value field targeting a field containing a repeat variable of non fixed size, with value field on the right:
-
-    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
-    >>> f2 = Field(Value(f1), name='f2')
-    >>> s = Symbol([f2, f1])
-    >>> d = next(s.specialize())
-    >>> d
-    b'AAAA'
-    >>> s.abstract(d)  # doctest: +SKIP
-    OrderedDict([('f2', b'AAA'), ('f1', b'AAA')])
-
-
-    Value field targeting a repeat variable, with value field on the right:
-
-    >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
-    >>> v2 = Value(v1)
-    >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = next(s.specialize())
-    >>> d
-    b'AAAAAAAAAA'
-    >>> s.abstract(d)  # doctest: +SKIP
-    OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')])
-
-
-    Value field targeting a repeat variable of non fixed size, with value field on the right:
-
-    >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
-    >>> v2 = Value(v1)
-    >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = next(s.specialize())
-    >>> d
-    b'AAAAAAAA'
-    >>> s.abstract(d)  # doctest: +SKIP
-    OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')])
 
 
     ## Value field on the left
@@ -913,6 +866,64 @@ def _test_repeat():
 
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
+    >>> s = Symbol([f2, f1])
+    >>> d = next(s.specialize())
+    >>> d
+    b'AAAAAAAA'
+    >>> s.abstract(d)
+    Traceback (most recent call last):
+    ...
+    TypeError: Value target contains a Repeat variable, which is not supported
+
+
+    Value field targeting a field containing a repeat variable of non fixed size, with value field on the left:
+
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
+    >>> f2 = Field(Value(f1), name='f2')
+    >>> s = Symbol([f2, f1])
+    >>> d = next(s.specialize())
+    >>> d
+    b'AAAA'
+    >>> s.abstract(d)
+    Traceback (most recent call last):
+    ...
+    TypeError: Value target contains a Repeat variable, which is not supported
+
+
+    Value field targeting a repeat variable, with value field on the left:
+
+    >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
+    >>> v2 = Value(v1)
+    >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
+    >>> d = next(s.specialize())
+    >>> d
+    b'AAAAAAAAAA'
+    >>> s.abstract(d)
+    Traceback (most recent call last):
+    ...
+    TypeError: Value target contains a Repeat variable, which is not supported
+
+
+    Value field targeting a repeat variable of non fixed size, with value field on the left:
+
+    >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
+    >>> v2 = Value(v1)
+    >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
+    >>> d = next(s.specialize())
+    >>> d
+    b'AAAAAAAA'
+    >>> s.abstract(d)
+    Traceback (most recent call last):
+    ...
+    TypeError: Value target contains a Repeat variable, which is not supported
+
+
+    ## Value field on the right
+
+    Value field targeting a field containing a repeat variable, with value field on the right:
+
+    >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
+    >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f1, f2])
     >>> d = next(s.specialize())
     >>> d
@@ -920,7 +931,7 @@ def _test_repeat():
     >>> s.abstract(d)
     OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')])
 
-    Value field targeting a field containing a repeat variable of non fixed size, with value field on the left:
+    Value field targeting a field containing a repeat variable of non fixed size, with value field on the right:
 
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
@@ -932,7 +943,7 @@ def _test_repeat():
     OrderedDict([('f1', b'AAA'), ('f2', b'AAA')])
 
 
-    Value field targeting a repeat variable, with value field on the left:
+    Value field targeting a repeat variable, with value field on the right:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Value(v1)
@@ -943,7 +954,7 @@ def _test_repeat():
     >>> s.abstract(d)
     OrderedDict([('f1', b'AAAAA'), ('f2', b'AAAAA')])
 
-    Value field targeting a repeat variable of non fixed size, with value field on the left:
+    Value field targeting a repeat variable of non fixed size, with value field on the right:
 
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Value(v1)
