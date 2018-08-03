@@ -625,11 +625,11 @@ def _test_field_integer():
     >>> i3 = Integer(-2, unitSize=UnitSize.SIZE_8, sign=Sign.SIGNED)
     >>> i4 = Integer(255, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)
     >>> i5 = Integer(255, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)
-    >>> i6 = Integer(255, unitSize=UnitSize.SIZE_24) # doctest: +SKIP
+    >>> i6 = Integer(255, unitSize=UnitSize.SIZE_24)
     >>> i7 = Integer(255, unitSize=UnitSize.SIZE_32)
     >>> i8 = Integer(255, unitSize=UnitSize.SIZE_64)
 
-    >>> field = Field(domain=[i1, i2, i3, i4, i5, i7, i8])
+    >>> field = Field(domain=[i1, i2, i3, i4, i5, i6, i7, i8])
     >>> s = Symbol([field])
     >>> list = []
     >>> for _ in range(40):
@@ -656,17 +656,17 @@ def _test_field_integer():
     True
 
     # i6
-    >>> b'\x00\x00\xff' in list # doctest: +SKIP
+    >>> b'\x00\x00\xff' in list
     True
 
     # i7
     >>> b'\x00\x00\x00\xff' in list
     True
-    
+
     # i8
     >>> b'\x00\x00\x00\x00\x00\x00\x00\xff' in list
     True
-    
+
     """
 
 
@@ -697,6 +697,7 @@ def _test_field_bitarray():
 
     """
 
+
 def _test_field_string():
     r"""
 
@@ -711,10 +712,11 @@ def _test_field_string():
     >>> next(Field(domain=String('abcdefΩ')).specialize())
     b'abcdef\xce\xa9'
 
-    >>> next(Field(domain=String('abcdef', eos=['123'])).specialize()) # doctest: +SKIP
+    >>> next(Field(domain=String('abcdef', eos=['123'])).specialize())
     b'abcdef123'
 
     """
+
 
 def _test_field_padding():
     r"""
@@ -737,6 +739,7 @@ def _test_field_padding():
     256
 
     """
+
 
 def _test_field_padding_callback():
     r"""
@@ -761,6 +764,7 @@ def _test_field_padding_callback():
     128
 
     """
+
 
 def _test_field_multi_type():
     r"""

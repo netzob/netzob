@@ -1013,6 +1013,7 @@ def _test_int_endianness():
     r"""
 
     >>> from netzob.all import *
+    >>> Conf.apply()
     >>> f1 = Field(domain=Raw(nbBytes=2), name="f1")
     >>> f2 = Field(name="f2")
     >>> f2.domain = Size([f1, f2], dataType=uint16le())
