@@ -359,18 +359,18 @@ def _test_string_values():
     >>> has_naughty_str = False
     >>> has_several_eos_symbol = False
     >>> for _ in range(20):
-    ...     str = mutator.generate()
+    ...     a_str = mutator.generate()
     ...     for ns in naughty_string:
-    ...         if ns in str.decode():
+    ...         if ns in a_str.decode():
     ...             has_naughty_str = True
-    ...     idx = str.find(eos_symbol.encode())
+    ...     idx = a_str.find(eos_symbol.encode())
     ...     if idx != -1:
-    ...         if str[idx+1 :].find(eos_symbol.encode()) != -1:
+    ...         if a_str[idx :].find(eos_symbol.encode()) != -1:
     ...             has_several_eos_symbol = True
 
     >>> has_naughty_str
     True
-    >>> has_several_eos_symbol  # doctest: +SKIP
+    >>> has_several_eos_symbol
     True
     """
 
