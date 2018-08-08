@@ -35,7 +35,7 @@ from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Types.IPv4 import IPv4
-from netzob.Model.Vocabulary.Types.Timestamp import Timestamp
+from netzob.Model.Vocabulary.Types.Timestamp import Timestamp, Epoch, Unity
 from netzob.Model.Vocabulary.Types.AbstractType import Endianness
 from netzob.Model.Vocabulary.Types.AbstractType import Sign
 from netzob.Model.Vocabulary.Types.AbstractType import UnitSize

@@ -374,6 +374,12 @@ class Integer(AbstractType):
                 dst_sign=sign)
 
         # Handle interval
+        if unitSize is None:
+            raise TypeError("unitSize cannot be None")
+        if sign is None:
+            raise TypeError("sign cannot be None")
+        if endianness is None:
+            raise TypeError("endianness cannot be None")
         interval = self._normalizeInterval(interval, unitSize, sign)
 
         super().__init__(
@@ -399,9 +405,20 @@ class Integer(AbstractType):
 
         if interval is None:
             interval = (None, None)
+        else:
+            if not (isinstance(interval, tuple) and len(interval) == 2):
+                raise ValueError("Input interval shoud be a tuple of two integers. Value received: '{}'".format(interval))
 
-        if not (isinstance(interval, tuple) and len(interval) == 2):
-            raise ValueError("Input interval shoud be a tuple of two integers. Value received: '{}'".format(interval))
+            if not isinstance(interval[0], int):
+                raise TypeError("First element of interval should be an integer")
+            if not isinstance(interval[1], int):
+                raise TypeError("Second element of interval should be an integer")
+
+            if interval[0] == interval[1] == 0:
+                raise TypeError("Interval must be defined with a tuple of integers, and cannot be both equal to zero")
+
+            if interval[1] < interval[0]:
+                ValueError("Internal must be defined with a tuple of integers, where the second value is greater than the first value")
 
         # Compute min and max values
         min_interval = getMinStorageValue(unitSize=unitSize, sign=sign)
@@ -1025,5 +1042,270 @@ def _test_int_endianness():
     >>> s1 = Symbol([f1, f2])
     >>> print(next(s0.specialize()).hex() + ' - ' + next(s1.specialize()).hex())
     0400f707 - ecfb0400
+
+    """
+
+
+def _test_specialize_abstract():
+    r"""
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
+
+    >>> possible_parameters = {}
+    >>> possible_parameters["value"] = [None, b'', b'a', b'bb', "bb", 42, -5]
+    >>> possible_parameters["interval"] = [None, 4, (4, 10), (-10, 10), (20, 10), ("a", 4), (4, "b")]
+    >>> possible_parameters["unitSize"] = [None, UnitSize.SIZE_1, UnitSize.SIZE_16]
+    >>> possible_parameters["endianness"] = [None, Endianness.LITTLE, Endianness.BIG]
+    >>> possible_parameters["sign"] = [None, Sign.SIGNED, Sign.UNSIGNED]
+    >>> possible_parameters["default"] = [None, b"", b"e", b"eeee", b"ff", "ff", 44, -10]
+
+    >>> data_type = Integer
+
+    >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
+    {'value': None}
+    {'value': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input value shoud be a integer. Value received: 'b''''
+    {'value': b'a'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input value shoud be a integer. Value received: 'b'a'''
+    {'value': b'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input value shoud be a integer. Value received: 'b'bb'''
+    {'value': 'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input value shoud be a integer. Value received: 'bb''
+    {'value': 42}
+    {'value': -5}
+    {'interval': None}
+    {'interval': 4}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input interval shoud be a tuple of two integers. Value received: '4''
+    {'interval': (4, 10)}
+    {'interval': (-10, 10)}
+    {'interval': (20, 10)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Size must be defined with a tuple of integers, where the second value is greater than the first value'
+    {'interval': ('a', 4)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'First element of interval should be an integer'
+    {'interval': (4, 'b')}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Second element of interval should be an integer'
+    {'unitSize': None}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unitSize cannot be None'
+    {'unitSize': UnitSize.SIZE_1}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Provided unitSize 'UnitSize.SIZE_1' is too small to encode the maximum length of the potential values to generate (unitSize should be: 'UnitSize.SIZE_4')'
+    {'unitSize': UnitSize.SIZE_16}
+    {'endianness': None}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'endianness cannot be None'
+    {'endianness': Endianness.LITTLE}
+    {'endianness': Endianness.BIG}
+    {'sign': None}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'sign cannot be None'
+    {'sign': Sign.SIGNED}
+    {'sign': Sign.UNSIGNED}
+    {'default': None}
+    {'default': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input default value shoud be a integer. Default value received: 'b''''
+    {'default': b'e'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input default value shoud be a integer. Default value received: 'b'e'''
+    {'default': b'eeee'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input default value shoud be a integer. Default value received: 'b'eeee'''
+    {'default': b'ff'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input default value shoud be a integer. Default value received: 'b'ff'''
+    {'default': 'ff'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input default value shoud be a integer. Default value received: 'ff''
+    {'default': 44}
+    {'default': -10}
+
+    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'ushort format requires 0 <= number <= (0x7fff * 2 + 1)'
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'argument out of range'
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b',\x00'') that cannot be parsed (current type: Integer(4,10))'
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\xf6\xff'') that cannot be parsed (current type: Integer(4,10))'
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b',\x00'') that cannot be parsed (current type: Integer(4,10))'
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'ushort format requires 0 <= number <= (0x7fff * 2 + 1)'
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00,'') that cannot be parsed (current type: Integer(4,10))'
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\xff\xf6'') that cannot be parsed (current type: Integer(4,10))'
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00,'') that cannot be parsed (current type: Integer(4,10))'
+    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'argument out of range'
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b',\x00'') that cannot be parsed (current type: Integer(-10,10))'
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Specified interval '(-10, 10)' does not fit in specified unitSize 'UnitSize.SIZE_16''
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Specified interval '(-10, 10)' does not fit in specified unitSize 'UnitSize.SIZE_16''
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'ushort format requires 0 <= number <= (0x7fff * 2 + 1)'
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00,'') that cannot be parsed (current type: Integer(-10,10))'
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Specified interval '(-10, 10)' does not fit in specified unitSize 'UnitSize.SIZE_16''
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Specified interval '(-10, 10)' does not fit in specified unitSize 'UnitSize.SIZE_16''
+    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'argument out of range'
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'ushort format requires 0 <= number <= (0x7fff * 2 + 1)'
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'argument out of range'
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
+
+    >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
 
     """

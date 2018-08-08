@@ -43,7 +43,8 @@ from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
+#from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Opt import Opt
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
@@ -191,7 +192,7 @@ class FieldSplitDelimiter(object):
             observedValues = set()
             has_inserted_empty_value = False
 
-            isEmptyField = True  # To avoid adding an empty field            
+            isEmptyField = True  # To avoid adding an empty field
             for v in splittedMessages[i]:
                 if v != "" and v is not None:
                     isEmptyField = False
@@ -200,14 +201,17 @@ class FieldSplitDelimiter(object):
                         fieldDomain.append(Raw(v))
                         observedValues.add(v)
                 else:
-                    if not has_inserted_empty_value:
-                        fieldDomain.append(Raw(nbBytes=0))
-                        has_inserted_empty_value = True
+                    has_inserted_empty_value = True
 
             if not isEmptyField:
-                newField = Field(
-                    domain=DomainFactory.normalizeDomain(fieldDomain),
-                    name="Field-" + str(iField))
+                if has_inserted_empty_value:
+                    newField = Field(
+                        domain=DomainFactory.normalizeDomain(Opt(fieldDomain)),
+                        name="Field-" + str(iField))
+                else:
+                    newField = Field(
+                        domain=DomainFactory.normalizeDomain(fieldDomain),
+                        name="Field-" + str(iField))
                 newField.encodingFunctions = list(
                     field.encodingFunctions.values())
                 newFields.append(newField)
@@ -218,7 +222,7 @@ class FieldSplitDelimiter(object):
             fieldName = "Field-sep-{}".format(str_delimiter)
 
             newFields.append(
-                Field(domain=Alt([delimiter, Raw(nbBytes=0)]), name=fieldName))
+                Field(domain=Opt(delimiter), name=fieldName))
 
         newFields.pop()
 

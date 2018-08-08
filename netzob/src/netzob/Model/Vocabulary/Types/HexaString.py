@@ -151,6 +151,10 @@ class HexaString(AbstractType):
         if value is not None and default is not None:
             raise ValueError("A HexaString should have either its constant value or its default value set, but not both")
 
+        if value is not None:
+            if len(value) == 0:
+                raise ValueError("HexaString value cannot have a length equal to 0")
+
         if value is not None and not isinstance(value, bitarray):
             if isinstance(value, bytes):
                 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
@@ -197,12 +201,18 @@ class HexaString(AbstractType):
         nbMaxBit = None
         if nbBytes is not None:
             if isinstance(nbBytes, int):
+                if nbBytes <= 0:
+                    raise ValueError("nbBytes should be > 0")
                 nbMinBit = nbBytes * 8
                 nbMaxBit = nbMinBit
             else:
                 if nbBytes[0] is not None:
+                    if not isinstance(nbBytes[0], int) or nbBytes[0] < 0:
+                        raise ValueError("first element of nbBytes should be an integer >= 0")
                     nbMinBit = nbBytes[0] * 8
                 if nbBytes[1] is not None:
+                    if not isinstance(nbBytes[1], int) or nbBytes[1] <= 0:
+                        raise ValueError("second element of nbBytes should be an integer > 0")
                     nbMaxBit = nbBytes[1] * 8
         return (nbMinBit, nbMaxBit)
 
@@ -460,5 +470,93 @@ def _test():
     Traceback (most recent call last):
     ...
     ValueError: A HexaString should have either its value or its nbBytes set, but not both
+
+    """
+
+
+def _test_specialize_abstract():
+    r"""
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
+
+    >>> possible_parameters = {}
+    >>> possible_parameters["value"] = [None, '', b'', b'a', b'bb', "bb", 42]
+    >>> possible_parameters["nbBytes"] = [None, (), -4, 8, (0, 0), (2, 8), (8, 2), (-4, -2), (-4, 2), (2, -4), "test", ("test1", "test2"), (1, "test2")]
+    >>> possible_parameters["default"] = [None, '', b"", b"e", b"bb", "ff", 42]
+
+    >>> data_type = HexaString
+
+    >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
+    {'value': None}
+    {'value': ''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'HexaString value cannot have a length equal to 0'
+    {'value': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'HexaString value cannot have a length equal to 0'
+    {'value': b'a'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'The data 'b'a'' should be aligned on the octet'
+    {'value': b'bb'}
+    {'value': 'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for value: 'bb', type is: '<class 'str'>', expected type is 'bitarray' or 'bytes''
+    {'value': 42}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'object of type 'int' has no len()'
+    {'nbBytes': None}
+    {'nbBytes': ()}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'tuple index out of range'
+    {'nbBytes': -4}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'nbBytes should be > 0'
+    {'nbBytes': 8}
+    {'nbBytes': (0, 0)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBytes should be an integer > 0'
+    {'nbBytes': (2, 8)}
+    {'nbBytes': (8, 2)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Size must be defined with a tuple of integers, where the second value is greater than the first value'
+    {'nbBytes': (-4, -2)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
+    {'nbBytes': (-4, 2)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
+    {'nbBytes': (2, -4)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBytes should be an integer > 0'
+    {'nbBytes': 'test'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
+    {'nbBytes': ('test1', 'test2')}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
+    {'nbBytes': (1, 'test2')}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBytes should be an integer > 0'
+    {'default': None}
+    {'default': ''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: '', type is: '<class 'str'>', expected type is 'bitarray' or 'bytes''
+    {'default': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Cannot set a default Type value (here 'b''') that cannot be parsed (current type: HexaString(nbBytes=(0,8192)))'
+    {'default': b'e'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'The data 'b'e'' should be aligned on the octet'
+    {'default': b'bb'}
+    {'default': 'ff'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'ff', type is: '<class 'str'>', expected type is 'bitarray' or 'bytes''
+    {'default': 42}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: '42', type is: '<class 'int'>', expected type is 'bitarray' or 'bytes''
+
+    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
+    {'value': None, 'nbBytes': None, 'default': None}
+    {'value': None, 'nbBytes': None, 'default': b'bb'}
+    {'value': None, 'nbBytes': 8, 'default': None}
+    {'value': None, 'nbBytes': 8, 'default': b'bb'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\xbb'') that cannot be parsed (current type: HexaString(nbBytes=8))'
+    {'value': None, 'nbBytes': (2, 8), 'default': None}
+    {'value': None, 'nbBytes': (2, 8), 'default': b'bb'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\xbb'') that cannot be parsed (current type: HexaString(nbBytes=(2,8)))'
+    {'value': b'bb', 'nbBytes': None, 'default': None}
+    {'value': b'bb', 'nbBytes': None, 'default': b'bb'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A HexaString should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': 8, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A HexaString should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 8, 'default': b'bb'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A HexaString should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A HexaString should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'default': b'bb'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A HexaString should have either its value or its nbBytes set, but not both'
+
+    >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
 
     """

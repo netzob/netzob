@@ -285,6 +285,13 @@ class Timestamp(AbstractType):
         self.epoch = epoch
         self.unity = unity
 
+        # Handle size
+        if unitSize is None:
+            raise TypeError("unitSize cannot be None")
+        if sign is None:
+            raise TypeError("sign cannot be None")
+        if endianness is None:
+            raise TypeError("endianness cannot be None")
         size = (0, 1 << unitSize.value)
 
         super(Timestamp, self).__init__(
@@ -473,8 +480,22 @@ class Timestamp(AbstractType):
     @epoch.setter  # type: ignore
     def epoch(self, epoch):
         if epoch is None:
-            raise Exception("Epoch cannot be None")
+            raise Exception("epoch value cannot be None")
+        if epoch not in Epoch:
+            raise TypeError("epoch value should a member of the Epoch enum")
         self.__epoch = epoch
+
+    @property
+    def unity(self):
+        return self.__unity
+
+    @unity.setter  # type: ignore
+    def unity(self, unity):
+        if unity is None:
+            raise Exception("unity value cannot be None")
+        if unity not in Unity:
+            raise TypeError("unity value should a member of the Unity enum")
+        self.__unity = unity
 
 
 def _test():
@@ -501,5 +522,108 @@ def _test():
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
     >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
     >>> assert symbol.abstract(data)
+
+    """
+
+
+def _test_specialize_abstract():
+    r"""
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
+
+    >>> possible_parameters = {}
+    >>> possible_parameters["value"] = [None, b'', b'a', b'bb', "bb", 1444737333]
+    >>> possible_parameters["epoch"] = [None, b'', b'a', b'bb', "bb", 42, Epoch.UNIX]
+    >>> possible_parameters["unity"] = [None, b'', b'a', b'bb', "bb", 42, Unity.SECOND]
+    >>> possible_parameters["unitSize"] = [None, UnitSize.SIZE_32]
+    >>> possible_parameters["endianness"] = [None, Endianness.LITTLE, Endianness.BIG]
+    >>> possible_parameters["sign"] = [None, Sign.SIGNED, Sign.UNSIGNED]
+    >>> possible_parameters["default"] = [None, b'', b'a', b'bb', "bb", 1444737333]
+
+    >>> data_type = Timestamp
+
+    >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
+    {'value': None}
+    {'value': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'''
+    {'value': b'a'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'a''
+    {'value': b'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'bb''
+    {'value': 'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: 'bb''
+    {'value': 1444737333}
+    {'epoch': None}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value cannot be None'
+    {'epoch': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
+    {'epoch': b'a'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
+    {'epoch': b'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
+    {'epoch': 'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
+    {'epoch': 42}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
+    {'epoch': Epoch.UNIX}
+    {'unity': None}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value cannot be None'
+    {'unity': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
+    {'unity': b'a'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
+    {'unity': b'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
+    {'unity': 'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
+    {'unity': 42}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
+    {'unity': Unity.SECOND}
+    {'unitSize': None}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unitSize cannot be None'
+    {'unitSize': UnitSize.SIZE_32}
+    {'endianness': None}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'endianness cannot be None'
+    {'endianness': Endianness.LITTLE}
+    {'endianness': Endianness.BIG}
+    {'sign': None}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'sign cannot be None'
+    {'sign': Sign.SIGNED}
+    {'sign': Sign.UNSIGNED}
+    {'default': None}
+    {'default': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'''
+    {'default': b'a'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'a''
+    {'default': b'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'bb''
+    {'default': 'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: 'bb''
+    {'default': 1444737333}
+
+    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
+    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 1444737333}
+    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 1444737333}
+    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 1444737333}
+    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 1444737333}
+    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 1444737333}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
+    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 1444737333}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
+    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 1444737333}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
+    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 1444737333}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
+
+    >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
 
     """

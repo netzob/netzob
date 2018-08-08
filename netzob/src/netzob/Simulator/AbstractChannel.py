@@ -55,7 +55,6 @@ from queue import Queue, Empty
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-import arpreq
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -557,6 +556,8 @@ class NetUtils(object):
     address and interface resolutions.
 
     """
+
+    import arpreq
 
     @staticmethod
     def getRemoteMacAddress(remoteIP):

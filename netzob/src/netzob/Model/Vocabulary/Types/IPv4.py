@@ -517,3 +517,199 @@ def _test():
     ValueError: An IPv4 should have either its value or its network set, but not both
 
     """
+
+
+def _test_specialize_abstract():
+    r"""
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
+
+    >>> possible_parameters = {}
+    >>> possible_parameters["value"] = [None, b'', b'a', b'bb', "bb", 42, "127.0.0.1", b"127.0.0.1"]
+    >>> possible_parameters["network"] = [None, (), 4, "127.0.0.1", "127.0.0.1/16", b"127.0.0.1"]
+    >>> possible_parameters["endianness"] = [None, Endianness.LITTLE, Endianness.BIG]
+    >>> possible_parameters["default"] = [None, b'', b'a', b'bb', "bb", 42, "127.0.0.1", b"127.0.0.1"]
+
+    >>> data_type = IPv4
+
+    >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
+    {'value': None}
+    {'value': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
+    {'value': b'a'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
+    {'value': b'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
+    {'value': 'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
+    {'value': 42}
+    {'value': '127.0.0.1'}
+    {'value': b'127.0.0.1'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
+    {'network': None}
+    {'network': ()}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Specified network constraints is not valid IPv4 Network.'
+    {'network': 4}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Specified network constraints is not valid IPv4 Network.'
+    {'network': '127.0.0.1'}
+    {'network': '127.0.0.1/16'}
+    {'network': b'127.0.0.1'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Specified network constraints is not valid IPv4 Network.'
+    {'endianness': None}
+    {'endianness': Endianness.LITTLE}
+    {'endianness': Endianness.BIG}
+    {'default': None}
+    {'default': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
+    {'default': b'a'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
+    {'default': b'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
+    {'default': 'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
+    {'default': 42}
+    {'default': '127.0.0.1'}
+    {'default': b'127.0.0.1'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
+
+    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
+    {'value': None, 'network': None, 'endianness': None, 'default': None}
+    {'value': None, 'network': None, 'endianness': None, 'default': 42}
+    {'value': None, 'network': None, 'endianness': None, 'default': '127.0.0.1'}
+    {'value': None, 'network': None, 'endianness': Endianness.LITTLE, 'default': None}
+    {'value': None, 'network': None, 'endianness': Endianness.LITTLE, 'default': 42}
+    {'value': None, 'network': None, 'endianness': Endianness.LITTLE, 'default': '127.0.0.1'}
+    {'value': None, 'network': None, 'endianness': Endianness.BIG, 'default': None}
+    {'value': None, 'network': None, 'endianness': Endianness.BIG, 'default': 42}
+    {'value': None, 'network': None, 'endianness': Endianness.BIG, 'default': '127.0.0.1'}
+    {'value': None, 'network': '127.0.0.1', 'endianness': None, 'default': None}
+    {'value': None, 'network': '127.0.0.1', 'endianness': None, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/32"))'
+    {'value': None, 'network': '127.0.0.1', 'endianness': None, 'default': '127.0.0.1'}
+    {'value': None, 'network': '127.0.0.1', 'endianness': Endianness.LITTLE, 'default': None}
+    {'value': None, 'network': '127.0.0.1', 'endianness': Endianness.LITTLE, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/32"))'
+    {'value': None, 'network': '127.0.0.1', 'endianness': Endianness.LITTLE, 'default': '127.0.0.1'}
+    {'value': None, 'network': '127.0.0.1', 'endianness': Endianness.BIG, 'default': None}
+    {'value': None, 'network': '127.0.0.1', 'endianness': Endianness.BIG, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/32"))'
+    {'value': None, 'network': '127.0.0.1', 'endianness': Endianness.BIG, 'default': '127.0.0.1'}
+    {'value': None, 'network': '127.0.0.1/16', 'endianness': None, 'default': None}
+    {'value': None, 'network': '127.0.0.1/16', 'endianness': None, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/16"))'
+    {'value': None, 'network': '127.0.0.1/16', 'endianness': None, 'default': '127.0.0.1'}
+    {'value': None, 'network': '127.0.0.1/16', 'endianness': Endianness.LITTLE, 'default': None}
+    {'value': None, 'network': '127.0.0.1/16', 'endianness': Endianness.LITTLE, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/16"))'
+    {'value': None, 'network': '127.0.0.1/16', 'endianness': Endianness.LITTLE, 'default': '127.0.0.1'}
+    {'value': None, 'network': '127.0.0.1/16', 'endianness': Endianness.BIG, 'default': None}
+    {'value': None, 'network': '127.0.0.1/16', 'endianness': Endianness.BIG, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/16"))'
+    {'value': None, 'network': '127.0.0.1/16', 'endianness': Endianness.BIG, 'default': '127.0.0.1'}
+    {'value': 42, 'network': None, 'endianness': None, 'default': None}
+    {'value': 42, 'network': None, 'endianness': None, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': 42, 'network': None, 'endianness': None, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': 42, 'network': None, 'endianness': Endianness.LITTLE, 'default': None}
+    {'value': 42, 'network': None, 'endianness': Endianness.LITTLE, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': 42, 'network': None, 'endianness': Endianness.LITTLE, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': 42, 'network': None, 'endianness': Endianness.BIG, 'default': None}
+    {'value': 42, 'network': None, 'endianness': Endianness.BIG, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': 42, 'network': None, 'endianness': Endianness.BIG, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': 42, 'network': '127.0.0.1', 'endianness': None, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1', 'endianness': None, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1', 'endianness': None, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1', 'endianness': Endianness.LITTLE, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1', 'endianness': Endianness.LITTLE, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1', 'endianness': Endianness.LITTLE, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1', 'endianness': Endianness.BIG, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1', 'endianness': Endianness.BIG, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1', 'endianness': Endianness.BIG, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1/16', 'endianness': None, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1/16', 'endianness': None, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1/16', 'endianness': None, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1/16', 'endianness': Endianness.LITTLE, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1/16', 'endianness': Endianness.LITTLE, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1/16', 'endianness': Endianness.LITTLE, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1/16', 'endianness': Endianness.BIG, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1/16', 'endianness': Endianness.BIG, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': 42, 'network': '127.0.0.1/16', 'endianness': Endianness.BIG, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': None, 'endianness': None, 'default': None}
+    {'value': '127.0.0.1', 'network': None, 'endianness': None, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': '127.0.0.1', 'network': None, 'endianness': None, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': '127.0.0.1', 'network': None, 'endianness': Endianness.LITTLE, 'default': None}
+    {'value': '127.0.0.1', 'network': None, 'endianness': Endianness.LITTLE, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': '127.0.0.1', 'network': None, 'endianness': Endianness.LITTLE, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': '127.0.0.1', 'network': None, 'endianness': Endianness.BIG, 'default': None}
+    {'value': '127.0.0.1', 'network': None, 'endianness': Endianness.BIG, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': '127.0.0.1', 'network': None, 'endianness': Endianness.BIG, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1', 'endianness': None, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1', 'endianness': None, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1', 'endianness': None, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1', 'endianness': Endianness.LITTLE, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1', 'endianness': Endianness.LITTLE, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1', 'endianness': Endianness.LITTLE, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1', 'endianness': Endianness.BIG, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1', 'endianness': Endianness.BIG, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1', 'endianness': Endianness.BIG, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1/16', 'endianness': None, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1/16', 'endianness': None, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1/16', 'endianness': None, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1/16', 'endianness': Endianness.LITTLE, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1/16', 'endianness': Endianness.LITTLE, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1/16', 'endianness': Endianness.LITTLE, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1/16', 'endianness': Endianness.BIG, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1/16', 'endianness': Endianness.BIG, 'default': 42}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    {'value': '127.0.0.1', 'network': '127.0.0.1/16', 'endianness': Endianness.BIG, 'default': '127.0.0.1'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+
+    >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
+
+    """

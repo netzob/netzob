@@ -196,6 +196,16 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                  default=None):
         self.typeName = typeName
         self.value = value
+
+        # Handle endianness and sign attributes
+        if endianness is None:
+            endianness = AbstractType.defaultEndianness()
+        self.endianness = endianness
+        if sign is None:
+            sign = AbstractType.defaultSign()
+        self.sign = sign
+
+        # Handle size attribute
         self.size = size
 
         # Compute unit size (i.e. the size used to store the length attribute of the current object)
@@ -219,16 +229,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
             else:
                 self.unitSize = unitSize
 
-        #self._logger.error(self.unitSize)
-        #self._logger.error(self.size)
-
-        # Handle endianness and sign attributes
-        if endianness is None:
-            endianness = AbstractType.defaultEndianness()
-        self.endianness = endianness
-        if sign is None:
-            sign = AbstractType.defaultSign()
-        self.sign = sign
+        # Handle default attribute
         self.default = default
 
     def __str__(self):
@@ -643,10 +644,20 @@ class AbstractType(object, metaclass=abc.ABCMeta):
                 maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
 
             if minSize is not None and not isinstance(minSize, int):
-                raise TypeError("Size must be defined with a tuple of int")
+                raise TypeError("Size must be defined with a tuple of integers")
 
             if maxSize is not None and not isinstance(maxSize, int):
-                raise TypeError("Size must be defined with a tuple of int")
+                raise TypeError("Size must be defined with a tuple of integers")
+
+            if self.sign == Sign.UNSIGNED:
+                if minSize < 0 or maxSize < 0:
+                    raise TypeError("Size must be defined with a tuple of positive integers")
+
+                if minSize == maxSize == 0:
+                    raise TypeError("Size must be defined with a tuple of integers that cannot be both equal to zero")
+
+            if maxSize < minSize:
+                raise TypeError("Size must be defined with a tuple of integers, where the second value is greater than the first value")
 
             self.__size = (minSize, maxSize)
         else:
@@ -665,6 +676,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     @default.setter  # type: ignore
     @typeCheck(bitarray)
     def default(self, default):
+        if default is not None:
+            if not self.canParse(default):
+                raise ValueError("Cannot set a default Type value (here '{}') that cannot be parsed (current type: {})".format(default.tobytes(), self))
         self.__default = default
 
     @staticmethod
@@ -792,9 +806,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def unitSize(self, unitSize):
         if unitSize is None:
             raise TypeError("UnitSize cannot be None")
-        if unitSize not in AbstractType.supportedUnitSizes():
+        if unitSize not in UnitSize:
             raise TypeError(
-                "Specified UnitSize is not supported, please refer to the list in AbstractType.supportedUnitSize()."
+                "Specified UnitSize is not supported, please refer to the UnitSize enum."
             )
         self.__unitSize = unitSize
 
@@ -814,9 +828,9 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def endianness(self, endianness):
         if endianness is None:
             raise TypeError("Endianness cannot be None")
-        if endianness not in AbstractType.supportedEndianness():
+        if endianness not in Endianness:
             raise TypeError(
-                "Specified Endianness is not supported, please refer to the list in AbstractType.supportedEndianness()."
+                "Specified Endianness is not supported, please refer to the Endianness enum."
             )
 
         self.__endianness = endianness
@@ -840,8 +854,88 @@ class AbstractType(object, metaclass=abc.ABCMeta):
     def sign(self, sign):
         if sign is None:
             raise TypeError("Sign cannot be None")
-        if sign not in AbstractType.supportedSign():
+        if sign not in Sign:
             raise TypeError(
-                "Specified Sign is not supported, please refer to the list in AbstractType.supportedSign()."
+                "Specified Sign is not supported, please refer to the Sign enum."
             )
         self.__sign = sign
+
+
+def test_type_one_parameter(data_type, possible_parameters):
+    functional_possible_parameters = {}
+    for parameter_name, parameter_contents in possible_parameters.items():
+        functional_parameter_contents = []
+        for parameter_content in parameter_contents:
+            parameters = {parameter_name: parameter_content}
+            try:
+                print(parameters)
+                data_type(**parameters)
+            except Exception as e:
+                print("EXCEPTION IN MODELING WITH ONE PARAMETER: '{}'".format(e))
+            else:
+                functional_parameter_contents.append(parameter_content)
+        functional_possible_parameters[parameter_name] = functional_parameter_contents
+
+    return functional_possible_parameters
+
+
+def test_type_multiple_parameters(data_type, functional_possible_parameters):
+    import itertools
+
+    #print(functional_possible_parameters)
+    parameter_names = functional_possible_parameters.keys()
+    functional_combinations_possible_parameters = []
+    combinations_possible_parameters = list(itertools.product(*functional_possible_parameters.values()))
+    for current_combination in combinations_possible_parameters:
+        parameters = {}
+        for idx, parameter_name in enumerate(parameter_names):
+            parameters[parameter_name] = current_combination[idx]
+        try:
+            print(parameters)
+            data_type(**parameters)
+        except Exception as e:
+            print("EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: '{}'".format(e))
+        else:
+            functional_combinations_possible_parameters.append(current_combination)
+
+    return (parameter_names, functional_combinations_possible_parameters)
+
+
+def test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters):
+    from netzob.all import Field, Symbol
+
+    def specialize_abstract(parameters):
+        try:
+            t = data_type(**parameters)
+            f = Field(t)
+            s = Symbol([f])
+            d = next(s.specialize())
+        except Exception as e:
+            print(parameters)
+            print("EXCEPTION IN SPECIALIZATION: '{}'".format(e))
+            return
+
+        try:
+            assert len(d) > 0
+        except Exception as e:
+            print(parameters)
+            print("EXCEPTION IN GENERATING VALUE")
+            return
+
+        try:
+            data_structure = s.abstract(d)
+        except Exception as e:
+            print(parameters)
+            print("EXCEPTION IN PARSING: '{}'".format(e))
+
+        try:
+            assert data_structure['Field'] == d
+        except Exception as e:
+            print(parameters)
+            print("EXCEPTION IN COMPARING SPECIALIZATION AND ABSTRACTION RESULTS")
+
+    for current_combination in functional_combinations_possible_parameters:
+        parameters = {}
+        for idx, parameter_name in enumerate(parameter_names):
+            parameters[parameter_name] = current_combination[idx]
+        specialize_abstract(parameters)
