@@ -138,9 +138,9 @@ class Raw(AbstractType):
     This next example shows the usage of a default value:
 
     >>> from netzob.all import *
-    >>> raw = Raw(nbBytes=6, default=b'\x02')
+    >>> raw = Raw(nbBytes=2, default=b'\x01\x02')
     >>> raw.generate().tobytes()
-    b'\x02'
+    b'\x01\x02'
 
     """
 
@@ -159,6 +159,13 @@ class Raw(AbstractType):
 
         if value is not None and default is not None:
             raise ValueError("A Raw should have either its constant value or its default value set, but not both")
+
+        if value is not None and alphabet is not None:
+            raise ValueError("A Raw should have either its constant value or its alphabet value set, but not both")
+
+        if value is not None:
+            if len(value) == 0:
+                raise ValueError("Raw value cannot have a length equal to 0")
 
         if value is not None and not isinstance(value, bitarray):
             if isinstance(value, bytes):
@@ -231,12 +238,18 @@ class Raw(AbstractType):
         nbMaxBit = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
         if nbBytes is not None:
             if isinstance(nbBytes, int):
+                if nbBytes <= 0:
+                    raise ValueError("nbBytes should be > 0")
                 nbMinBit = nbBytes * 8
                 nbMaxBit = nbMinBit
             else:
                 if nbBytes[0] is not None:
+                    if not isinstance(nbBytes[0], int) or nbBytes[0] < 0:
+                        raise ValueError("first element of nbBytes should be an integer >= 0")
                     nbMinBit = nbBytes[0] * 8
                 if nbBytes[1] is not None:
+                    if not isinstance(nbBytes[1], int) or nbBytes[1] <= 0:
+                        raise ValueError("second element of nbBytes should be an integer > 0")
                     nbMaxBit = nbBytes[1] * 8
 
         return (nbMinBit, nbMaxBit)
@@ -418,12 +431,30 @@ class Raw(AbstractType):
                 return False
 
         if self.alphabet is not None:
-            data_set = set(data)
-            for element in data_set:
-                if element not in self.alphabet:
+            raw_data_set = set(rawData)
+            for element in raw_data_set:
+                if bytes([element]) not in self.alphabet:
                     return False
 
         return True
+
+    @property
+    def alphabet(self):
+        return self.__alphabet
+
+    @alphabet.setter  # type: ignore
+    def alphabet(self, alphabet):
+        if alphabet is not None:
+            if not isinstance(alphabet, list):
+                raise TypeError("'alphabet' parameter must be a list")
+            if len(alphabet) == 0:
+                raise TypeError("'alphabet' parameter must be a non-empty list")
+            for elt in alphabet:
+                if not isinstance(elt, bytes):
+                    raise TypeError("'alphabet' parameter must be a list of bytes")
+                if len(elt) != 1:
+                    raise TypeError("'alphabet' parameter must be a list of unique bytes")
+        self.__alphabet = alphabet
 
 
 def _test(self):
@@ -447,13 +478,13 @@ def _test(self):
     Raw(b'abcd')
 
 
-    from netzob.all import Field, Symbol
-    domains = [
-        Raw(b"xxxx"), Raw(nbBytes=2),
-    ]
-    symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
-    data = b''.join(next(f.specialize()) for f in symbol.fields)
-    assert symbol.abstract(data)
+    >>> from netzob.all import Field, Symbol
+    >>> domains = [
+    ...     Raw(b"xxxx"), Raw(nbBytes=2),
+    ... ]
+    >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
+    >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
+    >>> assert symbol.abstract(data)
 
 
     # Verify that you cannot create a Raw with a value AND an nbBytes:
@@ -462,5 +493,350 @@ def _test(self):
     Traceback (most recent call last):
     ...
     ValueError: A Raw should have either its value or its nbBytes set, but not both
+
+    """
+
+
+def _test_specialize_abstract():
+    r"""
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
+
+    >>> possible_parameters = {}
+    >>> possible_parameters["value"] = [None, b'', b'a', b'bb', "bb", 42]
+    >>> possible_parameters["nbBytes"] = [None, (), -4, 4, (0, 0), (2, 8), (8, 2), (-4, -2), (-4, 2), (2, -4), "test", ("test1", "test2"), (1, "test2")]
+    >>> possible_parameters["alphabet"] = [None, [], [b"c"], [b"e"], [b"c", b"d"], [b"c", b""], [b"aa"], ["aa"], [42], "c", b"c"]
+    >>> possible_parameters["default"] = [None, b"", b"e", b"eeee", b"ff", "ff"]
+
+    >>> data_type = Raw
+
+    >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
+    {'value': None}
+    {'value': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Raw value cannot have a length equal to 0'
+    {'value': b'a'}
+    {'value': b'bb'}
+    {'value': 'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for value: 'bb', type is: '<class 'str'>', expected type is 'bitarray' or 'bytes''
+    {'value': 42}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'object of type 'int' has no len()'
+    {'nbBytes': None}
+    {'nbBytes': ()}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'tuple index out of range'
+    {'nbBytes': -4}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'nbBytes should be > 0'
+    {'nbBytes': 4}
+    {'nbBytes': (0, 0)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBytes should be an integer > 0'
+    {'nbBytes': (2, 8)}
+    {'nbBytes': (8, 2)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Size must be defined with a tuple of integers, where the second value is greater than the first value'
+    {'nbBytes': (-4, -2)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
+    {'nbBytes': (-4, 2)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
+    {'nbBytes': (2, -4)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBytes should be an integer > 0'
+    {'nbBytes': 'test'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
+    {'nbBytes': ('test1', 'test2')}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
+    {'nbBytes': (1, 'test2')}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBytes should be an integer > 0'
+    {'alphabet': None}
+    {'alphabet': []}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''alphabet' parameter must be a non-empty list'
+    {'alphabet': [b'c']}
+    {'alphabet': [b'e']}
+    {'alphabet': [b'c', b'd']}
+    {'alphabet': [b'c', b'']}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''alphabet' parameter must be a list of unique bytes'
+    {'alphabet': [b'aa']}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''alphabet' parameter must be a list of unique bytes'
+    {'alphabet': ['aa']}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''alphabet' parameter must be a list of bytes'
+    {'alphabet': [42]}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''alphabet' parameter must be a list of bytes'
+    {'alphabet': 'c'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''alphabet' parameter must be a list'
+    {'alphabet': b'c'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''alphabet' parameter must be a list'
+    {'default': None}
+    {'default': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Cannot set a default Type value (here 'b''') that cannot be parsed (current type: Raw(nbBytes=(0,8192)))'
+    {'default': b'e'}
+    {'default': b'eeee'}
+    {'default': b'ff'}
+    {'default': 'ff'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'ff', type is: '<class 'str'>', expected type is 'bitarray' or 'bytes''
+
+    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
+    {'value': None, 'nbBytes': None, 'alphabet': None, 'default': None}
+    {'value': None, 'nbBytes': None, 'alphabet': None, 'default': b'e'}
+    {'value': None, 'nbBytes': None, 'alphabet': None, 'default': b'eeee'}
+    {'value': None, 'nbBytes': None, 'alphabet': None, 'default': b'ff'}
+    {'value': None, 'nbBytes': None, 'alphabet': [b'c'], 'default': None}
+    {'value': None, 'nbBytes': None, 'alphabet': [b'c'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'e'') that cannot be parsed (current type: Raw(nbBytes=(0,8192)))'
+    {'value': None, 'nbBytes': None, 'alphabet': [b'c'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'eeee'') that cannot be parsed (current type: Raw(nbBytes=(0,8192)))'
+    {'value': None, 'nbBytes': None, 'alphabet': [b'c'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: Raw(nbBytes=(0,8192)))'
+    {'value': None, 'nbBytes': None, 'alphabet': [b'e'], 'default': None}
+    {'value': None, 'nbBytes': None, 'alphabet': [b'e'], 'default': b'e'}
+    {'value': None, 'nbBytes': None, 'alphabet': [b'e'], 'default': b'eeee'}
+    {'value': None, 'nbBytes': None, 'alphabet': [b'e'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: Raw(nbBytes=(0,8192)))'
+    {'value': None, 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': None}
+    {'value': None, 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'e'') that cannot be parsed (current type: Raw(nbBytes=(0,8192)))'
+    {'value': None, 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'eeee'') that cannot be parsed (current type: Raw(nbBytes=(0,8192)))'
+    {'value': None, 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: Raw(nbBytes=(0,8192)))'
+    {'value': None, 'nbBytes': 4, 'alphabet': None, 'default': None}
+    {'value': None, 'nbBytes': 4, 'alphabet': None, 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'e'') that cannot be parsed (current type: Raw(nbBytes=4))'
+    {'value': None, 'nbBytes': 4, 'alphabet': None, 'default': b'eeee'}
+    {'value': None, 'nbBytes': 4, 'alphabet': None, 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: Raw(nbBytes=4))'
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'c'], 'default': None}
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'c'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'e'') that cannot be parsed (current type: Raw(nbBytes=4))'
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'c'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'eeee'') that cannot be parsed (current type: Raw(nbBytes=4))'
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'c'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: Raw(nbBytes=4))'
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'e'], 'default': None}
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'e'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'e'') that cannot be parsed (current type: Raw(nbBytes=4))'
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'e'], 'default': b'eeee'}
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'e'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: Raw(nbBytes=4))'
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': None}
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'e'') that cannot be parsed (current type: Raw(nbBytes=4))'
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'eeee'') that cannot be parsed (current type: Raw(nbBytes=4))'
+    {'value': None, 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: Raw(nbBytes=4))'
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': None, 'default': None}
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': None, 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'e'') that cannot be parsed (current type: Raw(nbBytes=(2,8)))'
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': None, 'default': b'eeee'}
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': None, 'default': b'ff'}
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': None}
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'e'') that cannot be parsed (current type: Raw(nbBytes=(2,8)))'
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'eeee'') that cannot be parsed (current type: Raw(nbBytes=(2,8)))'
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: Raw(nbBytes=(2,8)))'
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': None}
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'e'') that cannot be parsed (current type: Raw(nbBytes=(2,8)))'
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': b'eeee'}
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: Raw(nbBytes=(2,8)))'
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': None}
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'e'') that cannot be parsed (current type: Raw(nbBytes=(2,8)))'
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'eeee'') that cannot be parsed (current type: Raw(nbBytes=(2,8)))'
+    {'value': None, 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: Raw(nbBytes=(2,8)))'
+    {'value': b'a', 'nbBytes': None, 'alphabet': None, 'default': None}
+    {'value': b'a', 'nbBytes': None, 'alphabet': None, 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': None, 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': None, 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'c'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its alphabet value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'c'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'c'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'c'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'e'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its alphabet value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'e'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'e'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'e'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its alphabet value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': None, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': None, 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': None, 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': None, 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'c'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'c'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'c'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'c'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'e'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'e'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'e'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'e'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': None, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': None, 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': None, 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': None, 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'a', 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': None, 'default': None}
+    {'value': b'bb', 'nbBytes': None, 'alphabet': None, 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': None, 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': None, 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'c'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its alphabet value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'c'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'c'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'c'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'e'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its alphabet value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'e'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'e'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'e'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its alphabet value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': None, 'alphabet': [b'c', b'd'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its constant value or its default value set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': None, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': None, 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': None, 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': None, 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'c'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'c'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'c'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'c'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'e'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'e'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'e'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'e'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': 4, 'alphabet': [b'c', b'd'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': None, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': None, 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': None, 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': None, 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'c'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'e'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': b'e'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': b'eeee'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+    {'value': b'bb', 'nbBytes': (2, 8), 'alphabet': [b'c', b'd'], 'default': b'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Raw should have either its value or its nbBytes set, but not both'
+
+    >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
 
     """
