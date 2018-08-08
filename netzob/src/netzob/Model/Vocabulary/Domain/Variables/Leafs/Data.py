@@ -81,14 +81,14 @@ class Data(AbstractVariableLeaf):
 
     The following example shows the definition of the Data `pseudo`
     with a String type and a `"hello"` default value. This means that
-    this Data object accepts any string, and the current value
+    this Data object accepts any string, and the default generated value
     of this object is `"hello"`.
 
     >>> from netzob.all import *
-    >>> s = String(nbChars=20, default='hello')
+    >>> s = String(nbChars=5, default='hello')
     >>> data = Data(dataType=s, name="pseudo")
     >>> print(data.dataType)
-    String(nbChars=20)
+    String(nbChars=5)
     >>> data.name
     'pseudo'
     >>> s.generate().tobytes()
