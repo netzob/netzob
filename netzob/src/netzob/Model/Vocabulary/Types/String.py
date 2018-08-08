@@ -37,6 +37,7 @@
 import random
 import string
 import collections
+import encodings
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -218,16 +219,15 @@ class String(AbstractType):
         if value is not None and default is not None:
             raise ValueError("A String should have either its constant value or its default value set, but not both")
 
+        if value is not None:
+            if len(value) == 0:
+                raise ValueError("String value cannot have a length equal to 0")
+
         # Convert value to bitarray
         if value is not None and not isinstance(value, bitarray):
 
             # Check if value is correct, and normalize it in str object, and then in bitarray
-            if isinstance(value, bytes):
-                try:
-                    value = value.decode(self.encoding)
-                except Exception as e:
-                    raise ValueError("Input value for the following string is incorrect: '{}'. Error: '{}'".format(value, e))
-            elif isinstance(value, str):
+            if isinstance(value, str):
                 try:
                     value.encode(self.encoding)
                 except Exception as e:
@@ -252,12 +252,7 @@ class String(AbstractType):
         if default is not None and not isinstance(default, bitarray):
 
             # Check if value is correct, and normalize it in str object, and then in bitarray
-            if isinstance(default, bytes):
-                try:
-                    default = default.decode(self.encoding)
-                except Exception as e:
-                    raise ValueError("Input default value for the following string is incorrect: '{}'. Error: '{}'".format(default, e))
-            elif isinstance(default, str):
+            if isinstance(default, str):
                 try:
                     default.encode(self.encoding)
                 except Exception as e:
@@ -307,20 +302,18 @@ class String(AbstractType):
         nbMaxBits = None
         if nbChars is not None:
             if isinstance(nbChars, int):
+                if nbChars <= 0:
+                    raise ValueError("nbChars should be > 0")
                 nbMinBits = nbChars * 8
                 nbMaxBits = nbChars * 8
             else:
                 if nbChars[0] is not None:
-                    if not isinstance(nbChars[0], int):
-                        raise TypeError(
-                            "First element of the tuple of the nbChars must be an int if defined."
-                        )
+                    if not isinstance(nbChars[0], int) or nbChars[0] < 0:
+                        raise ValueError("first element of nbChars should be an integer >= 0")
                     nbMinBits = nbChars[0] * 8
                 if nbChars[1] is not None:
-                    if not isinstance(nbChars[1], int):
-                        raise TypeError(
-                            "Second element of the tuple of the nbChars must be an int if defined."
-                        )
+                    if not isinstance(nbChars[1], int) or nbChars[1] <= 0:
+                        raise ValueError("second element of nbChars should be an integer > 0")
                     nbMaxBits = nbChars[1] * 8
 
         return (nbMinBits, nbMaxBits)
@@ -747,6 +740,8 @@ class String(AbstractType):
     def encoding(self, encoding):
         if encoding is None:
             raise TypeError("Encoding cannot be None")
+        if encodings.normalize_encoding(encoding) not in encodings.aliases.aliases.values():
+            raise ValueError("Wrong encoding specified: '{}'".format(encoding))
         self.__encoding = encoding
 
     @property
@@ -787,6 +782,7 @@ def _test(self):
     r"""
 
     >>> from netzob.all import *
+    >>> Conf.apply()
     >>> t = String()
     >>> print(t)
     String(nbChars=(0,8192))
@@ -942,6 +938,7 @@ def _test_eos():
     # Test specialization and then abstraction
 
     >>> from netzob.all import *
+    >>> Conf.apply()
     >>> f = Field(String("john", eos=['\0']), name='field-john')
     >>> symbol = Symbol([f])
     >>> data = next(symbol.specialize())
@@ -958,4 +955,215 @@ def _test_eos():
     Traceback (most recent call last):
     ...
     Exception: 'eos' parameter must be a string list of the same size
+    """
+
+
+def _test_specialize_abstract():
+    r"""
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
+
+    >>> possible_parameters = {}
+    >>> possible_parameters["value"] = [None, '', b'', b'a', b'bb', "bb", 42]
+    >>> possible_parameters["nbChars"] = [None, (), -4, 8, (0, 0), (2, 8), (8, 2), (-4, -2), (-4, 2), (2, -4), "test", ("test1", "test2"), (1, "test2")]
+    >>> possible_parameters["encoding"] = [None, '', b'', b'a', b'bb', "bb", 42, "utf-8"]
+    >>> possible_parameters["eos"] = [None, "a", b"c", 42, [], [b"c"], [b"e"], [b"c", b"d"], [b"c", b""], [b"aa"], ["aa"], ["a", "b"], ["aa", "b"], ["aaa", "bbb"], [42], "c", b"c"]
+    >>> possible_parameters["default"] = [None, '', b"", b"e", b"bb", "ff", 42]
+
+    >>> data_type = String
+
+    >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
+    {'value': None}
+    {'value': ''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'String value cannot have a length equal to 0'
+    {'value': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'String value cannot have a length equal to 0'
+    {'value': b'a'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for value: 'b'a'', type: '<class 'bytes'>''
+    {'value': b'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for value: 'b'bb'', type: '<class 'bytes'>''
+    {'value': 'bb'}
+    {'value': 42}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'object of type 'int' has no len()'
+    {'nbChars': None}
+    {'nbChars': ()}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'tuple index out of range'
+    {'nbChars': -4}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'nbChars should be > 0'
+    {'nbChars': 8}
+    {'nbChars': (0, 0)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbChars should be an integer > 0'
+    {'nbChars': (2, 8)}
+    {'nbChars': (8, 2)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Size must be defined with a tuple of integers, where the second value is greater than the first value'
+    {'nbChars': (-4, -2)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbChars should be an integer >= 0'
+    {'nbChars': (-4, 2)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbChars should be an integer >= 0'
+    {'nbChars': (2, -4)}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbChars should be an integer > 0'
+    {'nbChars': 'test'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbChars should be an integer >= 0'
+    {'nbChars': ('test1', 'test2')}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbChars should be an integer >= 0'
+    {'nbChars': (1, 'test2')}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbChars should be an integer > 0'
+    {'encoding': None}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Encoding cannot be None'
+    {'encoding': ''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Wrong encoding specified: '''
+    {'encoding': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Invalid type for arguments, expecting: str and received bytes'
+    {'encoding': b'a'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Invalid type for arguments, expecting: str and received bytes'
+    {'encoding': b'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Invalid type for arguments, expecting: str and received bytes'
+    {'encoding': 'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Wrong encoding specified: 'bb''
+    {'encoding': 42}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Invalid type for arguments, expecting: str and received int'
+    {'encoding': 'utf-8'}
+    {'eos': None}
+    {'eos': 'a'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a list'
+    {'eos': b'c'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a list'
+    {'eos': 42}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a list'
+    {'eos': []}
+    {'eos': [b'c']}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
+    {'eos': [b'e']}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
+    {'eos': [b'c', b'd']}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
+    {'eos': [b'c', b'']}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
+    {'eos': [b'aa']}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
+    {'eos': ['aa']}
+    {'eos': ['a', 'b']}
+    {'eos': ['aa', 'b']}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list of the same size'
+    {'eos': ['aaa', 'bbb']}
+    {'eos': [42]}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
+    {'eos': 'c'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a list'
+    {'eos': b'c'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a list'
+    {'default': None}
+    {'default': ''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Cannot set a default Type value (here 'b''') that cannot be parsed (current type: String(nbChars=(0,8192)))'
+    {'default': b''}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'b''', type: '<class 'bytes'>''
+    {'default': b'e'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'b'e'', type: '<class 'bytes'>''
+    {'default': b'bb'}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'b'bb'', type: '<class 'bytes'>''
+    {'default': 'ff'}
+    {'default': 42}
+    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: '42', type: '<class 'int'>''
+
+    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
+    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': None, 'default': None}
+    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
+    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': [], 'default': None}
+    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
+    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
+    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(0,8192)))'
+    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
+    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(0,8192)))'
+    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
+    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(0,8192)))'
+    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': None, 'default': None}
+    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=8))'
+    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': [], 'default': None}
+    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=8))'
+    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
+    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=8))'
+    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
+    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=8))'
+    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
+    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=8))'
+    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': None, 'default': None}
+    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
+    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': [], 'default': None}
+    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
+    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
+    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(2,8)))'
+    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
+    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(2,8)))'
+    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
+    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(2,8)))'
+    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': None, 'default': None}
+    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its constant value or its default value set, but not both'
+    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': [], 'default': None}
+    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its constant value or its default value set, but not both'
+    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
+    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its constant value or its default value set, but not both'
+    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
+    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its constant value or its default value set, but not both'
+    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
+    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its constant value or its default value set, but not both'
+    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': None, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': [], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': None, 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': [], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
+
+    >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
+
     """
