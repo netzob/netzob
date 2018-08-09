@@ -453,7 +453,20 @@ def _test_many_relation_abstractions():
     ...                          eth_crc_802_3])
     >>> preset = Preset(symbol)
     >>> preset['eth.payload'] = b"PAYLOAD"
-    >>> symbol.abstract(next(symbol.specialize(preset)))  # doctest: +ELLIPSIS
+    >>> print(symbol.str_structure())
+    ethernet_802_3
+    |--  eth.length
+         |--   Size(['eth.llc', 'eth.payload']) - Type:Integer(0,65535)
+    |--  eth.llc
+         |--   Data (Raw(nbBytes=3))
+    |--  eth.payload
+         |--   Data (Raw(nbBytes=(0,8192)))
+    |--  eth.padding
+         |--   Padding(['eth.length', 'eth.llc', 'eth.payload']) - Type:Raw(nbBytes=1)
+    |--  eth.crc
+         |--   Relation(['eth.length', 'eth.llc', 'eth.payload', 'eth.padding']) - Type:Raw(nbBytes=4)
+    >>> data = next(symbol.specialize(preset))
+    >>> symbol.abstract(data)  # doctest: +ELLIPSIS
     OrderedDict([('eth.length', b'\x00\n'), ('eth.llc', b'...'), ('eth.payload', b'PAYLOAD'), ('eth.padding', b'...'), ('eth.crc', ...)])
 
 

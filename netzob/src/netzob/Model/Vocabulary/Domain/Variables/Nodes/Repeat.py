@@ -409,7 +409,7 @@ class Repeat(AbstractVariableNode):
                 return count
 
     @typeCheck(ParsingPath)
-    def parse(self, parsingPath, **kwargs):
+    def parse(self, parsingPath, acceptCallBack=True, **kwargs):
         """Parse the content with the definition domain of the Repeat
         """
 
@@ -608,7 +608,7 @@ class Repeat(AbstractVariableNode):
         yield from newParsingPaths
 
     @typeCheck(SpecializingPath)
-    def specialize(self, originalSpecializingPath, preset=None, acceptCallBack=True):
+    def specialize(self, originalSpecializingPath, acceptCallBack=True, preset=None):
         """Specializes a Repeat"""
 
         from netzob.Fuzzing.Mutator import MaxFuzzingException

@@ -65,6 +65,13 @@ class RelationException(Exception):
     pass
 
 
+class RelationDependencyException(Exception):
+    """Exception triggered when a dependency has no value"""
+    def __init__(self, error_message, current_target):
+        self.error_message = error_message
+        self.current_target = current_target
+
+
 @NetzobLogger
 class AbstractRelationVariableLeaf(AbstractVariableLeaf):
     """Represents a relation relation between variables, one being updated with the others.
@@ -280,25 +287,27 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
 
         # first checks the pointed variables all have a value
         hasValue = True
-        errorMessage = ""
+        current_target = None
+        error_message = ""
         for variable in self.targets:
+            current_target = variable
             if variable is self:
                 continue
             if self.is_same_symbol(variable):
                 if not parsingPath.hasData(variable):
-                    errorMessage = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)
-                    self._logger.debug(errorMessage)
+                    error_message = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)
+                    self._logger.debug(error_message)
                     hasValue = False
+                    break
             else:
                 if not parsingPath.hasDataInMemory(variable):
-                    errorMessage = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)
-                    self._logger.debug(errorMessage)
+                    error_message = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)
+                    self._logger.debug(error_message)
                     hasValue = False
+                    break
 
         if not hasValue:
-            raise Exception(
-                "Expected value cannot be computed, some dependencies are "
-                "missing for domain {}. Error: '{}'".format(self, errorMessage))
+            raise RelationDependencyException(error_message, current_target)
 
         values = []
         for variable in self.targets:
@@ -351,19 +360,30 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                     return (variableSpecializerPath,)
             else:
                 raise Exception("Target value is not defined currently")
-        except Exception as e:
+        except RelationDependencyException as e:
             self._logger.debug(
-                "Value not available in the relation dependencies, a callback function is created to compute later: {}".
-                format(e))
+                "Value not available in the relation dependencies: {}".format(e.current_target))
 
             if moreCallBackAccepted:
-                #                for field in self.fields:
+                self._logger.debug("A callback function is created to be computed later")
+
+                ancestor_node = self
+                parent = self.parent
+                while parent is not None:
+                    if parent.isnode():
+                        ancestor_node = parent
+                    parent = parent.parent
+
+                self._logger.debug("Callback registered on ancestor node: '{}'".format(ancestor_node))
+                self._logger.debug("Callback registered due to absence of content in target: '{}'".format(e.current_target))
                 variableSpecializerPath.registerVariablesCallBack(
-                    self.targets, self, parsingCB=False)
+                    [e.current_target], ancestor_node, parsingCB=False)
             else:
                 raise
 
             return (variableSpecializerPath, )
+        except Exception as e:
+            raise
 
     @abc.abstractmethod
     def relationOperation(self, data):

@@ -226,7 +226,7 @@ class Alt(AbstractVariableNode):
         return new_alt
 
     @typeCheck(ParsingPath)
-    def parse(self, parsingPath, carnivorous=False):
+    def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """Parse the content with the definition domain of the alternate."""
 
         if parsingPath is None:
@@ -266,7 +266,7 @@ class Alt(AbstractVariableNode):
         self._logger.debug("End of parsing of Alt variable")
 
     @typeCheck(SpecializingPath)
-    def specialize(self, specializingPath, preset=None):
+    def specialize(self, specializingPath, acceptCallBack=True, preset=None):
         """Specializes an Alt"""
 
         from netzob.Fuzzing.Mutator import MaxFuzzingException

@@ -43,7 +43,7 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf, RelationDependencyException
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
@@ -282,7 +282,10 @@ class Value(AbstractRelationVariableLeaf):
             raise Exception("No data assigned.")
 
         # we verify we have access to the expected value
-        expectedValue = self.computeExpectedValue(parsingPath)
+        try:
+            expectedValue = self.computeExpectedValue(parsingPath)
+        except RelationDependencyException as e:
+            expectedValue = None
 
         # Inner function to check targets consistency (i.e. it should not contain a Repeat element, as it makes parsing ambiguous)
         def check_target_consistency(tmp_target):
@@ -315,7 +318,7 @@ class Value(AbstractRelationVariableLeaf):
                         return results
 
                     if not isinstance(type(self.targets[0].dataType), BitArray):
-                       target_type_aligned_octets = True
+                        target_type_aligned_octets = True
 
                 if target_type_aligned_octets is True:
                     step = -8
@@ -363,13 +366,18 @@ class Value(AbstractRelationVariableLeaf):
             else:
                 if parsingPath.hasDataInMemory(self.targets[0]):
                     target_data = parsingPath.getDataInMemory(self.targets[0])
+        else:
+            raise Exception("No dependency field specified.")
+
+        if target_data is None:
+            current_target = self.targets[0]
+            error_message = "The following variable has no value: '{}' for field '{}'".format(current_target, current_target.field)
+            self._logger.debug(error_message)
+            raise RelationDependencyException(error_message, current_target)
 
         # Check if a callback operation is defined
         if self.__operation is None:
-            if len(self.targets) == 0:
-                raise Exception("No dependency field specified.")
-            else:
-                return target_data
+            return target_data
         else:
             self._logger.debug("Use callback to compute expected value")
             return self.__operation(target_data, parsingPath, self)
