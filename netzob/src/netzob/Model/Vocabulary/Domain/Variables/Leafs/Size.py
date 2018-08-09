@@ -45,7 +45,7 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf, RelationDependencyException
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
@@ -279,7 +279,6 @@ class Size(AbstractRelationVariableLeaf):
         Compute the total size of targets
         """
         size = 0
-        missing_variables = []
 
         from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
         for variable in targets:
@@ -303,18 +302,13 @@ class Size(AbstractRelationVariableLeaf):
                     size += self.__computeExpectedValue_stage1(
                         variable.children, parsingPath, remainingVariables)
                 else:
-                    missing_variables.append(variable)
-                    continue
-
+                    error_message = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)
+                    self._logger.debug(error_message)
+                    raise RelationDependencyException(error_message, variable)
             else:
                 remainingVariables.append(variable)
 
-        if len(missing_variables) == 0:
-            return size
-
-        raise Exception("Expected value cannot be computed, some "
-                        "dependencies are missing for domain '{}', from field '{}'"
-                        .format(self, self.field))
+        return size
 
     def __computeExpectedValue_stage2(self, parsingPath, remainingVariables):
         """
@@ -328,7 +322,12 @@ class Size(AbstractRelationVariableLeaf):
             if variable is self:
                 value = self.dataType.generate()
             else:
-                value = parsingPath.getData(variable)
+                if parsingPath.hasData(variable):
+                    value = parsingPath.getData(variable)
+                else:
+                    error_message = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)
+                    self._logger.debug(error_message)
+                    raise RelationDependencyException(error_message, variable)
 
             if value is None:
                 break
@@ -353,7 +352,7 @@ class Size(AbstractRelationVariableLeaf):
         max_size = (1 << self.dataType.unitSize.value)
         if size > max_size:
             error_message = "The computed size of the targets (which is '{}') cannot be encoded in the current Size field (which can encode at most a value of '{}'). You should consider using a bigger dataType to model the Size field.".format(size, max_size)
-            self._logger.warn(error_message)
+            self._logger.debug(error_message)
             raise ValueError(error_message)
 
         b = TypeConverter.convert(size, Integer, BitArray,
@@ -651,7 +650,7 @@ def _test_size_default_datatype_value():
     >>> next(s.specialize()) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    Exception: In path 'Path(...)', no data assigned to variable 'Size(['Data']) - Type:Integer(0,255)' (id=...), which is linked to field 'F2'
+    ValueError: The computed size of the targets (which is '1000') cannot be encoded in the current Size field (which can encode at most a value of '256'). You should consider using a bigger dataType to model the Size field.
 
     >>> from netzob.all import *
     >>> f1 = Field(Raw(nbBytes=1000), "F1")
@@ -660,7 +659,7 @@ def _test_size_default_datatype_value():
     >>> next(s.specialize()) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    Exception: In path 'Path(...)', no data assigned to variable 'Size(['Data']) - Type:Integer(0,255)' (id=...), which is linked to field 'F2'
+    ValueError: The computed size of the targets (which is '1000') cannot be encoded in the current Size field (which can encode at most a value of '256'). You should consider using a bigger dataType to model the Size field.
 
     >>> from netzob.all import *
     >>> f1 = Field(Raw(nbBytes=1000), "F1")

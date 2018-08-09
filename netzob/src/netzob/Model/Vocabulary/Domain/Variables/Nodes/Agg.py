@@ -415,7 +415,7 @@ class Agg(AbstractVariableNode):
         return new_agg
 
     @typeCheck(ParsingPath)
-    def parse(self, parsingPath, carnivorous=False):
+    def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
         """Parse the content with the definition domain of the aggregate.
         """
         dataToParse = parsingPath.getData(self).copy()
@@ -487,7 +487,7 @@ class Agg(AbstractVariableNode):
                 yield childParsingPath
 
     @typeCheck(SpecializingPath)
-    def specialize(self, specializingPath, preset=None):
+    def specialize(self, specializingPath, acceptCallBack=True, preset=None):
         """Specializes an Agg"""
 
         from netzob.Fuzzing.Mutator import MaxFuzzingException
@@ -549,7 +549,11 @@ class Agg(AbstractVariableNode):
             # Nothing to specialize in this case (the recursive specialization is done later)
             childSpecializingPaths = (specializingPath, )
         else:
-            childSpecializingPaths = child.specialize(specializingPath, preset=preset)
+            if not specializingPath.hasData(child):
+                childSpecializingPaths = child.specialize(specializingPath, preset=preset)
+            else:
+                self._logger.debug("Not specializing the AGG.child as it has already a data")
+                childSpecializingPaths = (specializingPath, )
 
         for path in childSpecializingPaths:
 
@@ -568,6 +572,7 @@ class Agg(AbstractVariableNode):
 
             if idx == len(self.children) - 1:
                 self._produce_data(path, specialize_last_child)
+                self._logger.debug("End of specialization for AGG '{}'".format(self))
                 yield path
             else:
                 yield from self._inner_specialize(path, idx + 1, preset)
@@ -580,7 +585,11 @@ class Agg(AbstractVariableNode):
             elif type(child) == type and child == SELF:
                 pass
             else:
-                data += path.getData(child)
+                if path.hasData(child):
+                    data += path.getData(child)
+                else:
+                    self._logger.debug("At least one AGG child ('{}') has no content, therefore we don't produce content for the AGG".format(child))
+                    return
         self._logger.debug("Generated value for {}: {}".format(self, data.tobytes()))
         path.addResult(self, data)
 
@@ -590,7 +599,7 @@ def _test_agg():
 
     >>> from netzob.all import *
     >>> Conf.apply()
-    
+
 
     ## Size field on the right
 
@@ -690,5 +699,28 @@ def _test_agg():
     b'ABCABC'
     >>> s.abstract(d)
     OrderedDict([('f1', b'ABC'), ('f2', b'ABC')])
+
+    """
+
+
+def _test_agg_complex():
+    r"""
+
+    ## Create a complex structure that contains multiple Aggregates with a Checksum
+
+    >>> from netzob.all import *
+    >>> v1 = Data(Raw(b'1'), name="V1")
+    >>> v2 = Data(Raw(b'2'), name="V2")
+    >>> icmp_ext_checksum = InternetChecksum([], dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))
+    >>> extension_header = Agg([v1, v2, icmp_ext_checksum], name='AGG extension_header')
+    >>> v4 = Data(Raw(b'AAAA'), name="V4")
+    >>> icmp_extension = Field(Agg([extension_header, v4], name='AGG icmp_extension'), "icmp.ext")
+    >>> icmp_ext_checksum.targets = [v1, v2, icmp_ext_checksum, v4]
+    >>> s = Symbol([icmp_extension])
+    >>> data = next(s.specialize())
+    >>> data
+    b'12LKAAAA'
+    >>> s.abstract(data)
+    OrderedDict([('icmp.ext', b'12LKAAAA')])
 
     """

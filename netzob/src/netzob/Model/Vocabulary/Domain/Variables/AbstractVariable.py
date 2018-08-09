@@ -77,6 +77,9 @@ class AbstractVariable(object):
         # Parent field
         self.field = None
 
+        # Parent variable
+        self.parent = None
+
     @abc.abstractmethod
     def copy(self, map_objects=None):
         """Clone the current object as well as all its dependencies. This
@@ -201,3 +204,11 @@ class AbstractVariable(object):
     @field.setter  # type: ignore
     def field(self, field):
         self.__field = field
+
+    @property
+    def parent(self):
+        return self.__parent
+
+    @parent.setter  # type: ignore
+    def parent(self, parent):
+        self.__parent = parent

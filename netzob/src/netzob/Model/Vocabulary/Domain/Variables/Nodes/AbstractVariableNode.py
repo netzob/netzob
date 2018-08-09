@@ -128,6 +128,7 @@ class AbstractVariableNode(AbstractVariable):
             else:
                 normalizedChild = DomainFactory.normalizeDomain(child)
             self._children.append(normalizedChild)
+            normalizedChild.parent = self
 
     def str_structure(self, preset=None, deepness=0):
         """Returns a string which denotes the current variable definition
