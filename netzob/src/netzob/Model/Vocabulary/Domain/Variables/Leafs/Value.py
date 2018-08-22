@@ -43,10 +43,11 @@
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf, RelationDependencyException
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf, RelationDependencyException, InaccessibleVariableException
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 
@@ -270,6 +271,27 @@ class Value(AbstractRelationVariableLeaf):
 
         return new_value
 
+    @staticmethod
+    def check_target_consistency(tmp_target):
+        """Function used to check targets consistency (i.e. it should not
+        contain a Repeat element, as it makes parsing ambiguous)
+        """
+        if isinstance(tmp_target, Field):
+            tmp_target = tmp_target.domain
+        if isinstance(tmp_target, Repeat):
+            raise TypeError("Value target contains a Repeat variable, which is not supported")
+        if tmp_target.isnode():
+            for tmp_target_child in tmp_target.children:
+                Value.check_target_consistency(tmp_target_child)
+        else:
+            current_parent = tmp_target.parent
+            while current_parent is not None:
+                if isinstance(current_parent, Repeat):
+                    raise TypeError("Value target is a child of a Repeat variable, which is not supported")
+                if isinstance(current_parent, AbstractField):
+                    break
+                current_parent = current_parent.parent
+
     @typeCheck(GenericPath)
     def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         self._logger.debug("ValueCMP")
@@ -287,22 +309,12 @@ class Value(AbstractRelationVariableLeaf):
         except RelationDependencyException as e:
             expectedValue = None
 
-        # Inner function to check targets consistency (i.e. it should not contain a Repeat element, as it makes parsing ambiguous)
-        def check_target_consistency(tmp_target):
-            if isinstance(tmp_target, Field):
-                tmp_target = tmp_target.domain
-            if isinstance(tmp_target, Repeat):
-                raise TypeError("Value target contains a Repeat variable, which is not supported")
-            if tmp_target.isnode():
-                for tmp_target_child in tmp_target.children:
-                    check_target_consistency(tmp_target_child)
-
         if expectedValue is None:
             if len(self.targets) > 0:
 
                 # Check targets consistency
                 for target in self.targets:
-                    check_target_consistency(target)
+                    Value.check_target_consistency(target)
 
                 self._logger.debug("Let's compute what could be the possible value based on the target datatype")
 
@@ -359,6 +371,11 @@ class Value(AbstractRelationVariableLeaf):
         # Check target variable consistency
         target_data = None
         if len(self.targets) > 0:
+            if parsingPath.isVariableInaccessible(self.targets[0]):
+                error_message = "The following variable is inaccessible: '{}' for field '{}'. This may be because a parent field or variable is preset.".format(self.targets[0], self.targets[0].field)
+                self._logger.debug(error_message)
+                raise InaccessibleVariableException(error_message)
+
             # Check is target is part of the current symbol or not
             if self.is_same_symbol(self.targets[0]):
                 if parsingPath.hasData(self.targets[0]):
@@ -370,6 +387,10 @@ class Value(AbstractRelationVariableLeaf):
             raise Exception("No dependency field specified.")
 
         if target_data is None:
+            # Check targets consistency
+            for target in self.targets:
+                Value.check_target_consistency(target)
+
             current_target = self.targets[0]
             error_message = "The following variable has no value: '{}' for field '{}'".format(current_target, current_target.field)
             self._logger.debug(error_message)
