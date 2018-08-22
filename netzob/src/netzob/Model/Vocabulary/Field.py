@@ -796,7 +796,7 @@ def _test_field_multi_type():
     """
 
 
-def _test_inaccessible_variable_during_specialization():
+def _test_inaccessible_variable_during_specialization_agg():
     r"""
 
     >>> from netzob.all import *
@@ -826,5 +826,109 @@ def _test_inaccessible_variable_during_specialization():
     Traceback (most recent call last):
     ...
     netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf.InaccessibleVariableException: The following variable is inaccessible: 'Padding(['Data']) - Type:Raw(b'\x00')' for field 'icmp.payload'. This may be because a parent field or variable is preset.
+
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw1 = Data(Raw(nbBytes=2))
+    >>> v_raw2 = Data(Raw(nbBytes=4))
+    >>> v_agg = Agg([v_raw1, v_raw2])
+    >>> f1 = Field(v_agg)
+    >>> f2 = Field(Value(v_agg))
+    >>> s = Symbol([f1, f2])
+    >>> next(s.specialize())
+    b'\xdb\xf7i\xec\xfb\x8e\xdb\xf7i\xec\xfb\x8e'
+    >>> preset = Preset(s)
+    >>> preset[v_agg] = b"aa"
+    >>> next(s.specialize(preset))
+    b'aaaa'
+
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw1 = Data(Raw(nbBytes=2))
+    >>> v_raw2 = Data(Raw(nbBytes=4))
+    >>> v_agg = Agg([v_raw1, v_raw2])
+    >>> f1 = Field(v_agg)
+    >>> f2 = Field(Value(v_raw1))
+    >>> s = Symbol([f1, f2])
+    >>> next(s.specialize())
+    b'\xdb\xf7i\xec\xfb\x8e\xdb\xf7'
+    >>> preset = Preset(s)
+    >>> preset[v_agg] = b"aa"
+    >>> next(s.specialize(preset))
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf.InaccessibleVariableException: The following variable is inaccessible: 'Data (Raw(nbBytes=2))' for field 'Field'. This may be because a parent field or variable is preset.
+
+    """
+
+
+def _test_inaccessible_variable_during_specialization_alt():
+    r"""
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw1 = Data(Raw(nbBytes=2))
+    >>> v_raw2 = Data(Raw(nbBytes=4))
+    >>> v_alt = Alt([v_raw1, v_raw2])
+    >>> f1 = Field(v_alt)
+    >>> f2 = Field(Value(v_alt))
+    >>> s = Symbol([f1, f2])
+    >>> next(s.specialize())
+    b'\xf7\x07\xf7\x07'
+    >>> preset = Preset(s)
+    >>> preset[v_alt] = b"aa"
+    >>> next(s.specialize(preset))
+    b'aaaa'
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw1 = Data(Raw(nbBytes=2))
+    >>> v_raw2 = Data(Raw(nbBytes=4))
+    >>> v_alt = Alt([v_raw1, v_raw2])
+    >>> f1 = Field(v_alt)
+    >>> f2 = Field(Value(v_raw1))
+    >>> s = Symbol([f1, f2])
+    >>> next(s.specialize())
+    b'\xf7\x07\xf7\x07'
+    >>> preset = Preset(s)
+    >>> preset[v_alt] = b"aa"
+    >>> next(s.specialize(preset))
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf.InaccessibleVariableException: The following variable is inaccessible: 'Data (Raw(nbBytes=2))' for field 'Field'. This may be because a parent field or variable is preset.
+
+    """
+
+
+def _test_inaccessible_variable_during_specialization_repeat():
+    r"""
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw1 = Data(Raw(nbBytes=2))
+    >>> v_repeat = Repeat(v_raw1, nbRepeat=2)
+    >>> f1 = Field(v_repeat)
+    >>> f2 = Field(Value(v_repeat))
+    >>> s = Symbol([f1, f2])
+    >>> next(s.specialize())
+    b'\xf7\x07\xec\xfb\xf7\x07\xec\xfb'
+    >>> preset = Preset(s)
+    >>> preset[v_repeat] = b"aa"
+    >>> next(s.specialize(preset))
+    b'aaaa'
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw1 = Data(Raw(nbBytes=2))
+    >>> v_repeat = Repeat(v_raw1, nbRepeat=2)
+    >>> f1 = Field(v_repeat)
+    >>> f2 = Field(Value(v_raw1))
+    >>> s = Symbol([f1, f2])
+    >>> next(s.specialize())
+    Traceback (most recent call last):
+    ...
+    TypeError: Value target is a child of a Repeat variable, which is not supported
 
     """
