@@ -794,3 +794,37 @@ def _test_field_multi_type():
     True
 
     """
+
+
+def _test_inaccessible_variable_during_specialization():
+    r"""
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> length = Field(uint8be(), "icmp.length")
+    >>> payloadVar = Data(Raw(nbBytes=(1, 10)))
+    >>> paddingVar = Padding([payloadVar],
+    ...                       data=Raw(b"\x00"),
+    ...                       modulo=32,
+    ...                       once=False)
+    >>> field_payload_padding = Field(Agg([payloadVar, paddingVar]), "icmp.payload")
+    >>> length.domain = Size([field_payload_padding],
+    ...                      dataType=uint8be())
+    ...                      #factor=1./32)
+    >>> checksum = Field(InternetChecksum([paddingVar],
+    ...                                   dataType=Raw(nbBytes=2,
+    ...                                   unitSize=UnitSize.SIZE_16)),
+    ...                  "icmp.checksum")
+    >>> s = Symbol(
+    ...     [checksum, length, field_payload_padding],
+    ...     name="unreach")
+    >>> print(next(s.specialize()))
+    b'\xff\xff\x04\xdb\x00\x00\x00'
+    >>> preset = Preset(s)
+    >>> preset['icmp.payload'] = b'PAYLOAD\x00'
+    >>> print(next(s.specialize(preset=preset)))
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf.InaccessibleVariableException: The following variable is inaccessible: 'Padding(['Data']) - Type:Raw(b'\x00')' for field 'icmp.payload'. This may be because a parent field or variable is preset.
+
+    """

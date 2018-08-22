@@ -46,7 +46,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
@@ -70,6 +70,13 @@ class RelationDependencyException(Exception):
     def __init__(self, error_message, current_target):
         self.error_message = error_message
         self.current_target = current_target
+
+
+@public_api
+class InaccessibleVariableException(Exception):
+    """Exception triggered when a dependency cannot be reached"""
+    def __init__(self, error_message):
+        self.error_message = error_message
 
 
 @NetzobLogger
@@ -293,6 +300,10 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             current_target = variable
             if variable is self:
                 continue
+            if parsingPath.isVariableInaccessible(variable):
+                error_message = "The following variable is inaccessible: '{}' for field '{}'. This may be because a parent field or variable is preset.".format(variable, variable.field)
+                self._logger.debug(error_message)
+                raise InaccessibleVariableException(error_message)
             if self.is_same_symbol(variable):
                 if not parsingPath.hasData(variable):
                     error_message = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)

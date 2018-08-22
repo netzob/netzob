@@ -74,6 +74,10 @@ class GenericPath(object):
 
         self._current_callbacks_operation = []
 
+        # List of inaccessible variables during specialization, due to preseting a parent variable
+        # If a relationship targets one of those inaccessible variables, this should trigger an InaccessibleVariableException
+        self._inaccessibleVariables = []
+
     def __str__(self):
         return "Path({})".format(str(id(self)))
 
@@ -222,6 +226,34 @@ class GenericPath(object):
                 else:
                     self.removeDataRecursively(child)
 
+    def setInaccessibleVariableRecursively(self, variable):
+        from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import SELF
+
+        self._logger.debug("Set the variable (and its children) inaccessible: {}".format(variable))
+        if variable is None:
+            raise Exception("Variable cannot be None")
+
+        self._inaccessibleVariables.append(variable)
+
+        if hasattr(variable, 'children'):
+            for child in variable.children:
+                # We check if we reach the recursive pattern 'SELF' (in such case, no propagation is needed)
+                if type(child) == type and child == SELF:
+                    pass
+                else:
+                    self.setInaccessibleVariableRecursively(child)
+
+    def isVariableInaccessible(self, variable):
+        """Return True if a variable is inaccessible.
+        """
+
+        if variable is None:
+            raise Exception("Variable cannot be None")
+        if variable in self._inaccessibleVariables:
+            return True
+        else:
+            return False
+
     def registerVariablesCallBack(self, targetVariables, currentVariable, parsingCB=True):
         if targetVariables is None:
             raise Exception("Target variables cannot be None")
@@ -302,7 +334,7 @@ class GenericPath(object):
                         break
                 if found:
                     self._logger.debug("Found a callback on '{}' that should be able to be computed due to indirect triggering variable '{}' from field '{}'".format(currentVariable, triggeringVariable, triggeringVariable.field))
-                    #break
+                    break
                 else:
                     self._logger.debug("Callback not concerned by the triggering variable: '{}'".format(callBackToExecute))
                     callBackToExecute = None

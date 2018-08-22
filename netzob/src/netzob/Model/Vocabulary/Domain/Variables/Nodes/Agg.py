@@ -498,6 +498,9 @@ class Agg(AbstractVariableNode):
             # Retrieve the mutator
             mutator = preset.get(self)
 
+            for child in self.children:
+                specializingPath.setInaccessibleVariableRecursively(child)
+
             if mutator.mode == FuzzingMode.FIXED:
                 while True:
                     generated_value = mutator.generate()
