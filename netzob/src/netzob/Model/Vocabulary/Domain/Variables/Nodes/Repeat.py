@@ -626,6 +626,10 @@ class Repeat(AbstractVariableNode):
             # Retrieve the mutator
             mutator = preset.get(self)
 
+            # As the current node variable is preset, we set its children to be inaccessible when targeted by another field/variable
+            for child in self.children:
+                originalSpecializingPath.setInaccessibleVariableRecursively(child)
+
             try:
                 # Chose the child according to the integer returned by the mutator
                 generated_value = mutator.generate()
@@ -867,10 +871,11 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=4), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = next(s.specialize())
-    >>> d
-    b'AAAAAAAA'
-    >>> s.abstract(d)
+    >>> next(s.specialize())
+    Traceback (most recent call last):
+    ...
+    TypeError: Value target contains a Repeat variable, which is not supported
+    >>> s.abstract(b'AAAAAAAA')
     Traceback (most recent call last):
     ...
     TypeError: Value target contains a Repeat variable, which is not supported
@@ -881,10 +886,11 @@ def _test_repeat():
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=(2,5)), name='f1')
     >>> f2 = Field(Value(f1), name='f2')
     >>> s = Symbol([f2, f1])
-    >>> d = next(s.specialize())
-    >>> d
-    b'AAAA'
-    >>> s.abstract(d)
+    >>> next(s.specialize())
+    Traceback (most recent call last):
+    ...
+    TypeError: Value target contains a Repeat variable, which is not supported
+    >>> s.abstract(b'AAAA')
     Traceback (most recent call last):
     ...
     TypeError: Value target contains a Repeat variable, which is not supported
@@ -895,10 +901,11 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=5)
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = next(s.specialize())
-    >>> d
-    b'AAAAAAAAAA'
-    >>> s.abstract(d)
+    >>> next(s.specialize())
+    Traceback (most recent call last):
+    ...
+    TypeError: Value target contains a Repeat variable, which is not supported
+    >>> s.abstract(b'AAAAAAAAAA')
     Traceback (most recent call last):
     ...
     TypeError: Value target contains a Repeat variable, which is not supported
@@ -909,10 +916,11 @@ def _test_repeat():
     >>> v1 = Repeat(Raw(b"A"), nbRepeat=(2, 5))
     >>> v2 = Value(v1)
     >>> s = Symbol([Field(v2, name='f1'), Field(v1, name='f2')])
-    >>> d = next(s.specialize())
-    >>> d
-    b'AAAAAAAA'
-    >>> s.abstract(d)
+    >>> next(s.specialize())
+    Traceback (most recent call last):
+    ...
+    TypeError: Value target contains a Repeat variable, which is not supported
+    >>> s.abstract(b'AAAAAAAA')
     Traceback (most recent call last):
     ...
     TypeError: Value target contains a Repeat variable, which is not supported
@@ -938,9 +946,9 @@ def _test_repeat():
     >>> s = Symbol([f1, f2])
     >>> d = next(s.specialize())
     >>> d
-    b'AAAAAA'
+    b'AAAA'
     >>> s.abstract(d)
-    OrderedDict([('f1', b'AAA'), ('f2', b'AAA')])
+    OrderedDict([('f1', b'AA'), ('f2', b'AA')])
 
 
     Value field targeting a repeat variable, with value field on the right:
@@ -961,9 +969,9 @@ def _test_repeat():
     >>> s = Symbol([Field(v1, name='f1'), Field(v2, name='f2')])
     >>> d = next(s.specialize())
     >>> d
-    b'AAAA'
+    b'AAAAAAAA'
     >>> s.abstract(d)
-    OrderedDict([('f1', b'AA'), ('f2', b'AA')])
+    OrderedDict([('f1', b'AAAA'), ('f2', b'AAAA')])
 
 
     # Repeat variable whose nbRepeat is a field/variable on the left
@@ -983,10 +991,11 @@ def _test_repeat():
     >>> s = Symbol([f1, f2])
     >>> d = next(s.specialize())
     >>> d
-    b'\xd7AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    b'&AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     >>>
     >>> s.abstract(d)
-    OrderedDict([('Nb repeat', b'\xd7'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')])
+    OrderedDict([('Nb repeat', b'&'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')])
+
 
     >>> f1 = Field(uint8(), name='Nb repeat')
     >>> f2 = Field(Repeat(Raw(b"A"), nbRepeat=f1), name='Repeat')
@@ -994,10 +1003,10 @@ def _test_repeat():
     >>> s = Symbol([f1, f2, f3])
     >>> d = next(s.specialize())
     >>> d
-    b'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    b'\x7fAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
     >>>
     >>> s.abstract(d)
-    OrderedDict([('Nb repeat', b'G'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A')])
+    OrderedDict([('Nb repeat', b'\x7f'), ('Repeat', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A')])
 
 
     # Repeat variable whose nbRepeat is a field/variable on the right
@@ -1017,9 +1026,9 @@ def _test_repeat():
     >>> s = Symbol([f1, f2])
     >>> d = next(s.specialize())
     >>> d
-    b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xb5'
+    b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xb8'
     >>> s.abstract(d)
-    OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Size field', b'\xb5')])
+    OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Size field', b'\xb8')])
 
     >>> f3 = Field(uint8(), name='Size field')
     >>> f1 = Field(Repeat(Raw(b"A"), nbRepeat=f3), name='Repeat field')
@@ -1027,9 +1036,9 @@ def _test_repeat():
     >>> s = Symbol([f1, f2, f3])
     >>> d = next(s.specialize())
     >>> d
-    b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xc3'
+    b'AAAAAAAAAAAAAAAAAAAAAAA\x16'
     >>> s.abstract(d)
-    OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A'), ('Size field', b'\xc3')])
+    OrderedDict([('Repeat field', b'AAAAAAAAAAAAAAAAAAAAAA'), ('Field', b'A'), ('Size field', b'\x16')])
 
 
     # Test of Repeat and Length field encoded with a Raw datatype

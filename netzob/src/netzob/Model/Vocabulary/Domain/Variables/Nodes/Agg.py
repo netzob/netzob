@@ -498,6 +498,10 @@ class Agg(AbstractVariableNode):
             # Retrieve the mutator
             mutator = preset.get(self)
 
+            # As the current node variable is preset, we set its children to be inaccessible when targeted by another field/variable
+            for child in self.children:
+                specializingPath.setInaccessibleVariableRecursively(child)
+
             if mutator.mode == FuzzingMode.FIXED:
                 while True:
                     generated_value = mutator.generate()
