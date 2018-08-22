@@ -72,6 +72,7 @@ from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransiti
 from netzob.Model.Grammar.States.AbstractState import AbstractState
 
 from netzob.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Simulator.AbstractChannel import AbstractChannel
 
 from netzob.Inference.Vocabulary import EntropyMeasurement
 # from netzob.Inference.Grammar.Angluin import Angluin
@@ -204,6 +205,7 @@ def getSuite():
 
         FlowParser.__module__,
         AbstractionLayer.__module__,
+        AbstractChannel.__module__,
         EntropyMeasurement,
 
         # Modules related to the grammatical inference

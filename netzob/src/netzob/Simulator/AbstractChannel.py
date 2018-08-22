@@ -557,20 +557,30 @@ class NetUtils(object):
 
     """
 
-    import arpreq
-
     @staticmethod
     def getRemoteMacAddress(remoteIP):
-        """
+        r"""
         Retrieve remote MAC address from the remote IP address
+
+        >>> from netzob.all import *
+        >>> NetUtils.getRemoteMacAddress("127.0.0.1")
+        b'\x00\x00\x00\x00\x00\x00'
+        >>> NetUtils.getRemoteMacAddress("192.168.249.247")
+        Traceback (most recent call last):
+        ...
+        Exception: Cannot resolve IP address to a MAC address for IP: '192.168.249.247'
+
+
         """
+        import arpreq
+
         dstMacAddr = arpreq.arpreq(remoteIP)
         if dstMacAddr is not None:
             dstMacAddr = dstMacAddr.replace(':', '')
             dstMacAddr = binascii.unhexlify(dstMacAddr)
         else:
             # Force ARP resolution
-            p = subprocess.Popen(["/bin/ping", "-c1", remoteIP])
+            p = subprocess.Popen(["/bin/ping", "-c1", "-W1", "-q", remoteIP])
             p.wait()
             time.sleep(0.1)
 
@@ -584,8 +594,17 @@ class NetUtils(object):
 
     @staticmethod
     def getLocalMacAddress(interface):
-        """
+        r"""
         Retrieve local MAC address from the network interface.
+
+        >>> from netzob.all import *
+        >>> NetUtils.getLocalMacAddress("lo")
+        b'\x00\x00\x00\x00\x00\x00'
+        >>> NetUtils.getLocalMacAddress("eth42")
+        Traceback (most recent call last):
+        ...
+        Exception: Cannot retrieve local mac address from interface: 'eth42'
+
         """
         def get_interface_addr(ifname):
             s = socket.socket()
@@ -595,15 +614,19 @@ class NetUtils(object):
             s.close()
             return struct.unpack("16xh6s8x", response)
 
-        srcMacAddr = get_interface_addr(bytes(interface, 'utf-8'))[1]
-        return srcMacAddr
+        try:
+            srcMacAddr = get_interface_addr(bytes(interface, 'utf-8'))[1]
+        except OSError as e:
+            raise Exception("Cannot retrieve local mac address from interface: '{}'".format(interface)) from None
+        else:
+            return srcMacAddr
 
     # Static methods used to retrieve local network interface
     # and local IP according to a remote IP
 
     @staticmethod
     def getIPFromInterface(ifname):
-        """
+        r"""
         Retrieve the local IP corresponding to the given local network
         interface.
 
@@ -611,24 +634,44 @@ class NetUtils(object):
         :type ifname: :class:`str`
         :return: The local IP address.
         :type: :class:`str`
+
+        >>> from netzob.all import *
+        >>> NetUtils.getIPFromInterface("lo")
+        '127.0.0.1'
+        >>> NetUtils.getIPFromInterface("eth42")
+        Traceback (most recent call last):
+        ...
+        Exception: Cannot retrieve IP address from interface: 'eth42'
+
         """
 
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        return socket.inet_ntoa(ioctl(
-            s.fileno(),
-            0x8915,  # SIOCGIFADDR
-            struct.pack('256s', bytes(ifname[:15], 'utf-8'))
-        )[20:24])
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            return socket.inet_ntoa(ioctl(
+                s.fileno(),
+                0x8915,  # SIOCGIFADDR
+                struct.pack('256s', bytes(ifname[:15], 'utf-8'))
+            )[20:24])
+        except OSError as e:
+            raise Exception("Cannot retrieve IP address from interface: '{}'".format(ifname)) from None
 
     @staticmethod
     def getLocalInterface(localIP):
-        """
+        r"""
         Retrieve the network interface from the local IP address.
 
         :param localIP: The local IP address
         :type localIP: :class:`str`
         :return: The network interface name.
         :type: :class:`str`
+
+        >>> from netzob.all import *
+        >>> NetUtils.getLocalInterface("127.0.0.1")
+        'lo'
+        >>> res = NetUtils.getLocalInterface("192.168.247.249")
+        >>> print(res)
+        None
+
         """
 
         for (networkInterface, ip) in NetUtils.getLocalInterfaces():
@@ -638,11 +681,16 @@ class NetUtils(object):
 
     @staticmethod
     def getLocalIP(remoteIP):
-        """Retrieve the source IP address which will be used to connect to the
+        r"""Retrieve the source IP address which will be used to connect to the
         destination IP address.
 
         :param remoteIP: the remote IP address
         :type localIP: :class:`str`
+
+        >>> from netzob.all import *
+        >>> NetUtils.getLocalIP("127.0.0.1")
+        '127.0.0.1'
+
         """
 
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -653,10 +701,16 @@ class NetUtils(object):
 
     @staticmethod
     def getLocalInterfaces():
-        """ Retrieve the list of all network interfaces and their associated IP.
+        r""" Retrieve the list of all network interfaces and their associated IP.
 
         :return: The list of (interface name, IP) tuples.
         :type: :class:`list` of :class:`tuple` (:class:`str`, :class:`str`)
+
+        >>> from netzob.all import *
+        >>> res = NetUtils.getLocalInterfaces()
+        >>> ('lo', '127.0.0.1') in res
+        True
+
         """
 
         # source : http://code.activestate.com/recipes/439093-get-names-of-all-up-network-interfaces-linux-only/
@@ -689,13 +743,18 @@ class NetUtils(object):
 
     @staticmethod
     def getLocalInterfaceFromMac(localMac):
-        """
+        r"""
         Retrieve the network interface from the local MAC address.
 
         :param localMac: The local MAC address
         :type localMac: :class:`str`
         :return: The network interface name.
         :type: :class:`str`
+
+        >>> from netzob.all import *
+        >>> NetUtils.getLocalInterfaceFromMac("000000000000")
+        'lo'
+
         """
 
         MacInBytes = localMac.replace(':', '')
@@ -708,22 +767,34 @@ class NetUtils(object):
 
     @staticmethod
     def getMtu(localInterface):
-        """
+        r"""
         Retrieve the MTU of the given network interface.
 
         :param localInterface: The local network interface
         :type localInterface: :class:`str`
         :return: The MTU value.
         :type: :class:`int`
+
+        >>> from netzob.all import *
+        >>> NetUtils.getMtu('lo')
+        0
+        >>> NetUtils.getMtu('eth42')
+        Traceback (most recent call last):
+        ...
+        Exception: Cannot get MTU from interface: 'eth42'
+
         """
 
-        ifname = bytes(localInterface, 'utf-8')
-        s = socket.socket(type=socket.SOCK_DGRAM)
-        response = ioctl(s,
-                         0x8921,  # SIOCGIFMTU
-                         struct.pack("16s16x", ifname))
-        mtu = struct.unpack("16xH14x", response)[0]
-        return mtu
+        try:
+            ifname = bytes(localInterface, 'utf-8')
+            s = socket.socket(type=socket.SOCK_DGRAM)
+            response = ioctl(s,
+                             0x8921,  # SIOCGIFMTU
+                             struct.pack("16s16x", ifname))
+            mtu = struct.unpack("16xH14x", response)[0]
+            return mtu
+        except OSError as e:
+            raise Exception("Cannot get MTU from interface: '{}'".format(localInterface)) from None
 
     @staticmethod
     def setMtu(localInterface, mtu):
@@ -742,11 +813,16 @@ class NetUtils(object):
 
     @staticmethod
     def isUp(localInterface):
-        """
+        r"""
         Check if the given network interface is up.
 
         :param localInterface: The local network interface
         :type localInterface: :class:`str`
+
+        >>> from netzob.all import *
+        >>> NetUtils.isUp('lo')
+        True
+
         """
         try:
             with open('/proc/mounts', 'r') as f:
