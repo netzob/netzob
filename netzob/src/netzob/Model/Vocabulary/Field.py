@@ -932,3 +932,34 @@ def _test_inaccessible_variable_during_specialization_repeat():
     TypeError: Value target is a child of a Repeat variable, which is not supported
 
     """
+
+
+def _test_field_multiple_targets():
+    r"""
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> length = Field(uint8be(), "icmp.length")
+    >>> payloadVar = Data(Raw(nbBytes=(1, 10)))
+    >>> paddingVar = Padding([payloadVar],
+    ...                      data=Raw(b"\x00"),
+    ...                      modulo=32,
+    ...                      once=False)
+    >>> field_payload_padding = Field(Agg([payloadVar, paddingVar]), name='icmp.padding')
+    >>> length.domain = Size([field_payload_padding],
+    ...                      dataType=uint8be(),
+    ...                      factor=1./32)
+    >>> checksum = Field(InternetChecksum([field_payload_padding],
+    ...                                   dataType=Raw(nbBytes=2,
+    ...                                   unitSize=UnitSize.SIZE_16)),
+    ...                  "icmp.checksum")
+    >>> s = Symbol(
+    ...     [checksum, length, field_payload_padding],
+    ...     name="unreach")
+    >>> data = next(s.specialize())
+    >>> data
+    b'$\xff\x01\xdb\x00\x00\x00'
+    >>> s.abstract(data)
+    OrderedDict([('icmp.checksum', b'$\xff'), ('icmp.length', b'\x01'), ('icmp.padding', b'\xdb\x00\x00\x00')])
+
+    """
