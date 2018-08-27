@@ -964,3 +964,166 @@ def _test_field_multiple_targets():
     OrderedDict([('icmp.checksum', b'$\xff'), ('icmp.length', b'\x01'), ('icmp.padding', b'\xdb\x00\x00\x00')])
 
     """
+
+
+def _test_field_alt_with_future_dependency():
+    r"""
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw1 = Data(Raw(nbBytes=2))
+    >>> v_value = Value(v_raw1)
+    >>> v_alt = Alt([v_value])
+    >>> f1 = Field(v_alt, name="f1")
+    >>> f2 = Field(v_raw1, name="f2")
+    >>> s = Symbol([f1, f2])
+    >>> d = next(s.specialize())
+    >>> d
+    b'\xf7\x07\xf7\x07'
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'\xf7\x07'), ('f2', b'\xf7\x07')])
+
+    """
+
+
+def _test_field_repeat_with_future_dependency():
+    r"""
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw1 = Data(Raw(nbBytes=2))
+    >>> v_value = Value(v_raw1)
+    >>> v_repeat = Repeat(v_value, nbRepeat=2)
+    >>> f1 = Field(v_repeat, name="f1")
+    >>> f2 = Field(v_raw1, name="f2")
+    >>> s = Symbol([f1, f2])
+    >>> d = next(s.specialize())
+    >>> d
+    b'\xf7\x07\xf7\x07\xf7\x07'
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'\xf7\x07\xf7\x07'), ('f2', b'\xf7\x07')])
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw1 = Data(Raw(nbBytes=(1, 4)))
+    >>> v_value = Value(v_raw1)
+    >>> v_repeat = Repeat(v_value, nbRepeat=(2, 5))
+    >>> f1 = Field(v_repeat, name="f1")
+    >>> f2 = Field(v_raw1, name="f2")
+    >>> s = Symbol([f1, f2])
+    >>> d = next(s.specialize())
+    >>> d
+    b'\xf7\x07\xf7\x07\xf7\x07\xf7\x07'
+    >>> s.abstract(d)  # doctest: +SKIP
+    OrderedDict([('f1', b'\xf7\x07\xf7\x07\xf7'), ('f2', b'\x07')])
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw1 = Data(Raw(nbBytes=2))
+    >>> v_size = Size(v_raw1)
+    >>> v_repeat = Repeat(v_size, nbRepeat=(2, 5))
+    >>> f1 = Field(v_repeat, name="f1")
+    >>> f2 = Field(v_raw1, name="f2")
+    >>> s = Symbol([f1, f2])
+    >>> d = next(s.specialize())
+    >>> d
+    b'\x02\x02\xf7\x07'
+    >>> s.abstract(d)
+    OrderedDict([('f1', b'\x02\x02'), ('f2', b'\xf7\x07')])
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw1 = Data(Raw(nbBytes=(1, 4)))
+    >>> v_size = Size(v_raw1)
+    >>> v_repeat = Repeat(v_size, nbRepeat=(2, 5))
+    >>> f1 = Field(v_repeat, name="f1")
+    >>> f2 = Field(v_raw1, name="f2")
+    >>> s = Symbol([f1, f2])
+    >>> d = next(s.specialize())
+    >>> d
+    b'\x02\x02\x02\xf7\x07'
+    >>> s.abstract(d)  # doctest: +SKIP
+    OrderedDict([('f1', b'\x02\x02'), ('f2', b'\xf7\x07')])
+
+    """
+
+
+def _test_field_with_future_common_target_for_multiple_variables():
+    r"""
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw = Data(Raw(nbBytes=2))
+    >>> v_value1 = Value(v_raw)
+    >>> v_value2 = Value(v_raw)
+    >>> f1 = Field(v_raw, name="f1")
+    >>> f2 = Field(v_value1, name="f2")
+    >>> f3 = Field(v_value2, name="f3")
+    >>> s = Symbol([f2, f3, f1])
+    >>> d = next(s.specialize())
+    >>> d
+    b'\xdb\xf7\xdb\xf7\xdb\xf7'
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\xdb\xf7'), ('f3', b'\xdb\xf7'), ('f1', b'\xdb\xf7')])
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw = Data(Raw(nbBytes=(1, 4)))
+    >>> v_value1 = Value(v_raw)
+    >>> v_value2 = Value(v_raw)
+    >>> f1 = Field(v_raw, name="f1")
+    >>> f2 = Field(v_value1, name="f2")
+    >>> f3 = Field(v_value2, name="f3")
+    >>> s = Symbol([f2, f3, f1])
+    >>> d = next(s.specialize())
+    >>> d
+    b'\x10\xdb\xf7\x10\xdb\xf7\x10\xdb\xf7'
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x10\xdb\xf7'), ('f3', b'\x10\xdb\xf7'), ('f1', b'\x10\xdb\xf7')])
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw = Data(Raw(nbBytes=2))
+    >>> v_value1 = Size(v_raw)
+    >>> v_value2 = Size(v_raw)
+    >>> f1 = Field(v_raw, name="f1")
+    >>> f2 = Field(v_value1, name="f2")
+    >>> f3 = Field(v_value2, name="f3")
+    >>> s = Symbol([f2, f3, f1])
+    >>> d = next(s.specialize())
+    >>> d
+    b'\x02\x02\xdb\xf7'
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x02'), ('f3', b'\x02'), ('f1', b'\xdb\xf7')])
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw = Data(Raw(nbBytes=(1, 4)))
+    >>> v_value1 = Size(v_raw)
+    >>> v_value2 = Size(v_raw)
+    >>> f1 = Field(v_raw, name="f1")
+    >>> f2 = Field(v_value1, name="f2")
+    >>> f3 = Field(v_value2, name="f3")
+    >>> s = Symbol([f2, f3, f1])
+    >>> d = next(s.specialize())
+    >>> d
+    b'\x03\x03\x10\xdb\xf7'
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x03'), ('f3', b'\x03'), ('f1', b'\x10\xdb\xf7')])
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> v_raw = Data(Raw(nbBytes=(1, 4)))
+    >>> v_value1 = Size(v_raw)
+    >>> v_value2 = Size([v_raw, v_value1])
+    >>> f1 = Field(v_raw, name="f1")
+    >>> f2 = Field(v_value2, name="f2")
+    >>> f3 = Field(v_value1, name="f3")
+    >>> s = Symbol([f2, f3, f1])
+    >>> d = next(s.specialize())
+    >>> d
+    b'\x04\x03\x10\xdb\xf7'
+    >>> s.abstract(d)
+    OrderedDict([('f2', b'\x04'), ('f3', b'\x03'), ('f1', b'\x10\xdb\xf7')])
+
+   """
