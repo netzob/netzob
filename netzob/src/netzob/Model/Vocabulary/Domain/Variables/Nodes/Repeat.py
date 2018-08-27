@@ -678,14 +678,29 @@ class Repeat(AbstractVariableNode):
         break_repeat = RepeatResult.CONTINUE
 
         child = self.children[0]
+
         for path in child.specialize(newSpecializingPath, preset=preset):
 
-            oldResult = bitarray()
+            # Compute precedent REPEAT result
             if path.hasData(self):
-                oldResult += path.getData(self)
+                oldResult = path.getData(self)
+                newResult = path.getData(self)
                 if self.delimiter is not None:
-                    oldResult += self.delimiter
-            newResult = oldResult + path.getData(child)
+                    newResult += self.delimiter
+            else:
+                oldResult = bitarray('')
+                newResult = bitarray('')
+
+            # Compute current REPEAT result
+            if path.hasData(child):
+                newResult += path.getData(child)
+            else:
+                self._logger.debug("The REPEAT child ('{}') has no content, therefore we don't produce content for the REPEAT".format(child))
+                self._logger.debug("Callback registered on ancestor node: '{}'".format(self))
+                self._logger.debug("Callback registered due to absence of content in target: '{}'".format(child))
+                path.registerVariablesCallBack(
+                    [child], self, parsingCB=False)
+                yield path
 
             if callable(self.nbRepeat):
                 break_repeat = self.nbRepeat(i_repeat + 1, newResult,
