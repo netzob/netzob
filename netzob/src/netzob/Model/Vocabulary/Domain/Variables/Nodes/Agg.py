@@ -593,7 +593,12 @@ class Agg(AbstractVariableNode):
                     data += path.getData(child)
                 else:
                     self._logger.debug("At least one AGG child ('{}') has no content, therefore we don't produce content for the AGG".format(child))
+                    self._logger.debug("Callback registered on ancestor node: '{}'".format(self))
+                    self._logger.debug("Callback registered due to absence of content in target: '{}'".format(child))
+                    path.registerVariablesCallBack(
+                        [child], self, parsingCB=False)
                     return
+
         self._logger.debug("Generated value for {}: {}".format(self, data.tobytes()))
         path.addResult(self, data)
 

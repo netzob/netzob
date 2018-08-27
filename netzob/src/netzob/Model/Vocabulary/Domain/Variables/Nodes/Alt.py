@@ -322,14 +322,30 @@ class Alt(AbstractVariableNode):
         else:
             child = random.choice(self.children)
 
-        newSpecializingPath = specializingPath.copy()
+        newSpecializingPath = specializingPath#.copy()
 
-        for childSpecializingPath in child.specialize(newSpecializingPath, preset=preset):
-            value = childSpecializingPath.getData(child)
-            self._logger.debug("Generated value for {}: {} ({})".format(self, value, id(self)))
-            childSpecializingPath.addResult(self, value)
+        self._logger.debug("Specialize {0} child with {1}".format(child, newSpecializingPath))
 
-            yield childSpecializingPath
+        if not newSpecializingPath.hasData(child):
+            childSpecializingPaths = child.specialize(newSpecializingPath, preset=preset)
+        else:
+            self._logger.debug("Not specializing the ALT.child as it has already a data")
+            childSpecializingPaths = (newSpecializingPath, )
+
+        for childSpecializingPath in childSpecializingPaths:
+            if childSpecializingPath.hasData(child):
+                value = childSpecializingPath.getData(child)
+                self._logger.debug("Generated value for {}: {} ({})".format(self, value, id(self)))
+                childSpecializingPath.addResult(self, value)
+
+                yield childSpecializingPath
+            else:
+                self._logger.debug("The ALT child ('{}') has no content, therefore we don't produce content for the ALT".format(child))
+                self._logger.debug("Callback registered on ancestor node: '{}'".format(self))
+                self._logger.debug("Callback registered due to absence of content in target: '{}'".format(child))
+                childSpecializingPath.registerVariablesCallBack(
+                    [child], self, parsingCB=False)
+                yield childSpecializingPath
 
     @public_api
     @property
