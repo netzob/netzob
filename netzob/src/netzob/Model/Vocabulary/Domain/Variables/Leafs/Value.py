@@ -398,10 +398,13 @@ class Value(AbstractRelationVariableLeaf):
 
         # Check if a callback operation is defined
         if self.__operation is None:
+            self._logger.debug("Computed value for {}: '{}'".format(self, target_data.tobytes()))
             return target_data
         else:
             self._logger.debug("Use callback to compute expected value")
-            return self.__operation(target_data, parsingPath, self)
+            target_data = self.__operation(target_data, parsingPath, self)
+            self._logger.debug("Computed value for {}: '{}'".format(self, target_data.tobytes()))
+            return target_data
 
     def __str__(self):
         """The str method."""

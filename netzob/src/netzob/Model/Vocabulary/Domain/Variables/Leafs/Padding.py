@@ -46,7 +46,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf import AbstractVariableLeaf
-from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf, RelationDependencyException
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import AbstractVariableNode
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
@@ -326,7 +326,12 @@ class Padding(AbstractRelationVariableLeaf):
             if variable is self:
                 value = bitarray()
             else:
-                value = parsingPath.getData(variable)
+                if parsingPath.hasData(variable):
+                    value = parsingPath.getData(variable)
+                else:
+                    error_message = "The following variable has no value: '{}' for field '{}'".format(variable, variable.field)
+                    self._logger.debug(error_message)
+                    raise RelationDependencyException(error_message, variable)
 
             if value is None:
                 break
