@@ -379,11 +379,11 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
                 self._logger.debug("A callback function is created to be computed later")
 
                 ancestor_node = self
-                parent = self.parent
-                while parent is not None:
-                    if parent.isnode():
-                        ancestor_node = parent
-                    parent = parent.parent
+                # parent = self.parent
+                # while parent is not None:
+                #     if parent.isnode():
+                #         ancestor_node = parent
+                #     parent = parent.parent
 
                 self._logger.debug("Callback registered on ancestor node: '{}'".format(ancestor_node))
                 self._logger.debug("Callback registered due to absence of content in target: '{}'".format(e.current_target))
