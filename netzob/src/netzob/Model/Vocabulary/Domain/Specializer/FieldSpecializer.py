@@ -149,13 +149,14 @@ class FieldSpecializer(object):
 
             if idx == len(self.field.fields) - 1:
 
+                value = bitarray('')
+
                 for f in self.field.fields:
                     # do no produce content if it is a pseudo field
                     if path.hasData(f.domain) and not f.isPseudoField:
-                        value = path.getData(f.domain)
-                        if path.hasData(self.field.domain):
-                            value = path.getData(self.field.domain) + value
-                        path.addResult(self.field.domain, value)
+                        value += path.getData(f.domain)
+
+                path.addResult(self.field.domain, value)
 
                 yield path
             else:
