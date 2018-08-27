@@ -535,6 +535,7 @@ class Field(AbstractField):
     def domain(self, domain):
         if domain is None:
             self.__domain = Data(Raw())
+            self.__domain.field = self
         else:
             # Normalize the domain
             normalizedDomain = DomainFactory.normalizeDomain(domain)
