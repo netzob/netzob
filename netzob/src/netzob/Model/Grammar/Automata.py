@@ -1297,13 +1297,13 @@ class Automata(object):
           [+]   Transition 't5' lead to state 's6'
           [+] At state 's6'
           [+]   Picking transition 't_random'
-          [+]   During transition 't_random', sending input symbol 'Sym2'
+          [+]   During transition 't_random', sending input symbol 'Sym1'
           [+]   During transition 't_random', fuzzing activated
           [+]   During transition 't_random', receiving expected output symbol 'Sym2'
           [+]   Transition 't_random' lead to state 's6'
           [+] At state 's6'
           [+]   Picking transition 't_random'
-          [+]   During transition 't_random', sending input symbol 'Sym2'
+          [+]   During transition 't_random', sending input symbol 'Sym1'
           [+]   During transition 't_random', fuzzing activated
           [+]   During transition 't_random', receiving expected output symbol 'Sym2'
           [+]   Transition 't_random' lead to state 's6'
@@ -1345,7 +1345,7 @@ class Automata(object):
           [+]   During transition 'T2', choosing output symbol 'Sym2'
           [+]   Transition 'T2' lead to state 's1'
           [+] At state 's1'
-          [+]   Receiving input symbol 'Unknown message b'%x("ls -al /")\x00     '', which corresponds to transition 'None'
+          [+]   Receiving input symbol 'Unknown message b'System("ls -al /")\x00 '', which corresponds to transition 'None'
           [+]   Changing transition to 'T2', through callback
           [+]   During transition 'T2', choosing output symbol 'Sym2'
           [+]   Transition 'T2' lead to state 's1'

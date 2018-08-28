@@ -65,8 +65,8 @@ class Scope(Enum):
     The available scope strategies for a variable are:
 
     * Scope.SESSION
-    * Scope.MESSAGE (the default strategy for variables)
-    * Scope.NONE
+    * Scope.MESSAGE
+    * Scope.NONE (the default strategy for variables)
 
     Those strategies are explained below. In addition, some following
     examples are shown in order to understand how the strategies can

@@ -752,7 +752,7 @@ class AbstractType(object, metaclass=abc.ABCMeta):
         if self.value is not None:
             scope = Scope.CONSTANT
         else:
-            scope = Scope.MESSAGE
+            scope = Scope.NONE
 
         return Data(dataType=self, scope=scope)
 
