@@ -57,7 +57,7 @@ class FieldParser():
     >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
     >>> f1 = Field(name="f1", domain=String(nbChars=(1,10)))
     >>> print(f1.domain.scope)
-    Scope.MESSAGE
+    Scope.NONE
     
     >>> content = TypeConverter.convert("toto", String, BitArray)
     >>> parser = FieldParser(f1)

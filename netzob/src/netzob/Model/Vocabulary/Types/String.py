@@ -337,7 +337,7 @@ class String(AbstractType):
         :rtype: :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leads.Data.Data>`
 
         """
-        scope = Scope.MESSAGE
+        scope = Scope.NONE
 
         # Do not use constant when some EOS values has been set
         if self.value is not None and not self.eos:
@@ -633,7 +633,7 @@ class String(AbstractType):
 
         try:
             rawData.decode(self.encoding)
-        except:
+        except Exception as e:
             return False
 
         (minChar, maxChar) = self.size
@@ -970,7 +970,6 @@ def _test_specialize_abstract():
     >>> possible_parameters["encoding"] = [None, '', b'', b'a', b'bb', "bb", 42, "utf-8"]
     >>> possible_parameters["eos"] = [None, "a", b"c", 42, [], [b"c"], [b"e"], [b"c", b"d"], [b"c", b""], [b"aa"], ["aa"], ["a", "b"], ["aa", "b"], ["aaa", "bbb"], [42], "c", b"c"]
     >>> possible_parameters["default"] = [None, '', b"", b"e", b"bb", "ff", 42]
-
     >>> data_type = String
 
     >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)

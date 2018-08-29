@@ -74,7 +74,7 @@ class MessageSpecializer(object):
 
     >>> f11 = Field(domain=String("hello"), name="F11")
     >>> f12 = Field(domain=String(";"), name="F12")
-    >>> f13 = Field(domain=String(nbChars=(5,10)), name="F13")
+    >>> f13 = Field(domain=Data(String(nbChars=(5,10)), scope=Scope.MESSAGE), name="F13")
     >>> s1 = Symbol(fields=[f11, f12, f13], name="S1")
 
     >>> f21 = Field(domain=String("master"), name="F21")

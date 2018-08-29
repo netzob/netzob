@@ -71,7 +71,7 @@ class AbstractVariable(object):
 
         self.__varType = varType
         if scope is None:
-            scope = Scope.MESSAGE
+            scope = Scope.NONE
         self.scope = scope
 
         # Parent field

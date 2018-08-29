@@ -66,12 +66,14 @@ class Memory(object):
        first call to :meth:`specialize` on the ``s1`` symbol, the
        value associated to the field ``f3`` is notably stored in
        memory, so that it can be retrieved when calling
-       :meth:`specialize` on the ``s2`` symbol.
+       :meth:`specialize` on the ``s2`` symbol. In order to create
+       persistence for the ``f3`` field, it is mandatory to use the
+       ``scope`` parameter.
 
        >>> from netzob.all import *
        >>> f1 = Field(domain=String("hello"), name="F1")
        >>> f2 = Field(domain=String(";"), name="F2")
-       >>> f3 = Field(domain=String(nbChars=(5,10)), name="F3")
+       >>> f3 = Field(domain=Data(String(nbChars=(5,10)), scope=Scope.MESSAGE), name="F3")
        >>> s1 = Symbol(fields=[f1, f2, f3], name="S1")
        >>>
        >>> f4 = Field(domain=String("master"), name="F4")

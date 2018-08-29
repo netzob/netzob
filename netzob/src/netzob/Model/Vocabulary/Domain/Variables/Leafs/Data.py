@@ -65,7 +65,7 @@ class Data(AbstractVariableLeaf):
                  be generated).
     :param scope: The Scope strategy defining how the Data value is
                  used during the abstraction and specialization process.
-                 The default strategy is Scope.MESSAGE.
+                 The default strategy is ``Scope.NONE``.
     :type dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, required
     :type name: :class:`str`, optional
     :type scope: :class:`~netzob.Model.Vocabulary.Domain.Variables.Scope.Scope`, optional
@@ -145,35 +145,48 @@ class Data(AbstractVariableLeaf):
             return False
 
     def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
-        """Checks if the value assigned to this variable could be parsed against
-        the definition domain of the data.
-
-        """
 
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
 
         content = parsingPath.getData(self)
+        actualSize = len(content)
 
-        self._logger.debug("DomainCMP {} with {} ({})".format(content.tobytes(), self.dataType, self.name))
+        self._logger.debug("Learn '{}' with {} ({})".format(content.tobytes(),
+                                                            self.dataType, self.name))
 
-        (minSize, maxSize) = self.dataType.size
-        if maxSize is None:
-            maxSize = len(content)
+        try:
+            minSize = maxSize = self.getFixedBitSize()
+        except ValueError:
+            (minSize, maxSize) = self.dataType.size
+            if minSize is None:
+                minSize = 0
+            if maxSize is None:
+                maxSize = actualSize
 
-        if len(content) < minSize:
+        if actualSize < minSize:
             self._logger.debug(
                 "Length of the content is too short ({0}), expect data of at least {1} bits".
                 format(len(content), minSize))
         else:
-            for size in range(min(maxSize, len(content)), minSize - 1, -1):
+            # Handle specific case where the parsing can be made at the bit level
+            if isinstance(self.dataType, BitArray):
+                step = -1
+            else:
+                step = -8
+
+            for size in range(min(maxSize, len(content)), minSize - 1, step):
+                self._logger.debug("Try to parse {}/{} bits for variable '{}'".format(size, min(maxSize, len(content)), self.field))
                 # size == 0 : deals with 'optional' data
                 if size == 0 or self.dataType.canParse(content[:size]):
                     # we create a new parsing path and returns it
                     newParsingPath = parsingPath.copy()
-
-                    newParsingPath.addResult(self, content[:size].copy())
-                    yield newParsingPath
+                    (addresult_succeed, addresult_parsingPaths) = newParsingPath.addResult(self, content[:size].copy())
+                    if addresult_succeed:
+                        for addresult_parsingPath in addresult_parsingPaths:
+                            yield addresult_parsingPath
+                    else:
+                        self._logger.debug("Parsed data does not respect a relation")
 
     def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
         if parsingPath is None:
