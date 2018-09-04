@@ -431,7 +431,7 @@ class Agg(AbstractVariableNode):
 
         #parsingPaths = [parsingPath]
 
-        for path in  self._inner_parse(parsingPath, 0, False, carnivorous):
+        for path in self._inner_parse(parsingPath, 0, False, carnivorous):
             parsedData = None
             for child in self.children:
                 if path.hasData(child):

@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -165,11 +166,16 @@ class IPChannel(AbstractChannel):
         :param data: the data to write on the channel
         :type data: :class:`bytes`
         """
-        if self._socket is not None:
-            len_data = self._socket.sendto(data, (self.remoteIP, 0))
-            return len_data
-        else:
+        if self._socket is None:
             raise Exception("socket is not available")
+
+        try:
+            len_data = self._socket.sendto(data, (self.remoteIP, 0))
+        except OSError as e:
+            self._logger.warning("OSError durring socket.sendto(): '{}'. Trying a second time after sleeping 1s...".format(e))
+            time.sleep(1)
+            len_data = self._socket.sendto(data, (self.remoteIP, 0))
+        return len_data
 
     @public_api
     def sendReceive(self, data):

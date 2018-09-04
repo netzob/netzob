@@ -36,6 +36,7 @@
 #+---------------------------------------------------------------------------+
 import socket
 from bitarray import bitarray
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -191,7 +192,13 @@ class CustomIPChannel(AbstractChannel):
 
         self.header_preset['ip.payload'] = data
         packet = next(self.header.specialize(self.header_preset))
-        len_data = self._socket.sendto(packet, (self.remoteIP, 0))
+
+        try:
+            len_data = self._socket.sendto(packet, (self.remoteIP, 0))
+        except OSError as e:
+            self._logger.warning("OSError durring socket.sendto(): '{}'. Trying a second time after sleeping 1s...".format(e))
+            time.sleep(1)
+            len_data = self._socket.sendto(packet, (self.remoteIP, 0))
         return len_data
 
     @public_api
