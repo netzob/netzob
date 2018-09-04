@@ -35,8 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import socket
-import binascii
-from bitarray import bitarray
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -170,9 +169,16 @@ class RawEthernetChannel(AbstractChannel):
         if self._socket is None:
             raise Exception("socket is not available")
 
-        len_data = self._socket.sendto(
-            data, (self.interface,
-                   RawEthernetChannel.ETH_P_ALL))
+        try:
+            len_data = self._socket.sendto(
+                data, (self.interface,
+                       RawEthernetChannel.ETH_P_ALL))
+        except OSError as e:
+            self._logger.warning("OSError durring socket.sendto(): '{}'. Trying a second time after sleeping 1s...".format(e))
+            time.sleep(1)
+            len_data = self._socket.sendto(
+                data, (self.interface,
+                       RawEthernetChannel.ETH_P_ALL))
         return len_data
 
     # Properties

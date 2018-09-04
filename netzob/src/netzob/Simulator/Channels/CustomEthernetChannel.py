@@ -37,6 +37,7 @@
 import socket
 import binascii
 from bitarray import bitarray
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -234,8 +235,15 @@ class CustomEthernetChannel(AbstractChannel):
 
         self.header_preset["eth.payload"] = data
         packet = next(self.header.specialize(self.header_preset))
-        len_data = self._socket.sendto(packet, (self.interface,
-                                                CustomEthernetChannel.ETH_P_ALL))
+
+        try:
+            len_data = self._socket.sendto(packet, (self.interface,
+                                                    CustomEthernetChannel.ETH_P_ALL))
+        except OSError as e:
+            self._logger.warning("OSError durring socket.sendto(): '{}'. Trying a second time after sleeping 1s...".format(e))
+            time.sleep(1)
+            len_data = self._socket.sendto(packet, (self.interface,
+                                                    CustomEthernetChannel.ETH_P_ALL))
         return len_data
 
     def macToBitarray(self, addr):
