@@ -811,6 +811,16 @@ class NetUtils(object):
               0x8922,  # SIOCSIFMTU
               struct.pack("16sH14x", ifname, mtu))
 
+        # changing MTU set the interface down
+        time.sleep(1.0)  # give some time to see the status change
+        isUp = False
+        for _ in range(60):  # 30s to let the interface to be up
+            if NetUtils.isUp(localInterface):
+                isUp = True
+                break
+            time.sleep(0.5)
+        return isUp
+
     @staticmethod
     def isUp(localInterface):
         r"""
