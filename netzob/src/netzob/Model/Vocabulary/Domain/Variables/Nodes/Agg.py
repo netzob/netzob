@@ -415,7 +415,7 @@ class Agg(AbstractVariableNode):
         return new_agg
 
     @typeCheck(ParsingPath)
-    def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
+    def parse(self, parsingPath, acceptCallBack=True, carnivorous=False, triggered=False):
         """Parse the content with the definition domain of the aggregate.
         """
         dataToParse = parsingPath.getData(self).copy()
@@ -429,21 +429,23 @@ class Agg(AbstractVariableNode):
         # initialy, there is a unique path to test (the provided one)
         parsingPath.assignData(dataToParse.copy(), self.children[0])
 
-        #parsingPaths = [parsingPath]
+        try:
+            for path in self._inner_parse(parsingPath, 0, False, carnivorous):
+                parsedData = None
+                for child in self.children:
+                    if path.hasData(child):
+                        child_data = path.getData(child).copy()
+                        if parsedData is None:
+                            parsedData = child_data
+                        else:
+                            parsedData += child_data
 
-        for path in self._inner_parse(parsingPath, 0, False, carnivorous):
-            parsedData = None
-            for child in self.children:
-                if path.hasData(child):
-                    child_data = path.getData(child).copy()
-                    if parsedData is None:
-                        parsedData = child_data
-                    else:
-                        parsedData += child_data
-
-            self._logger.debug("Alt data successfuly parsed with {}: '{}'".format(self, parsedData.tobytes()))
-            path.addResult(self, parsedData)
-            yield path
+                if parsedData is not None:
+                    self._logger.debug("Agg data successfuly parsed with {}: '{}'".format(self, parsedData.tobytes()))
+                    path.addResult(self, parsedData)
+                    yield path
+        except Exception as e:
+            pass
 
     def _inner_parse(self, parsingPath, i_child, all_parsed, carnivorous):
         # we parse all the children with the parserPaths produced by previous children
@@ -461,11 +463,7 @@ class Agg(AbstractVariableNode):
         self._logger.debug("Parse {} (child {}/{}) with {}".format(current_child, i_child + 1, len(self.children), parsingPath))
         value_before_parsing = parsingPath.getData(current_child).copy()
 
-        try:
-            childParsingPaths = current_child.parse(parsingPath, carnivorous=carnivorous)
-        except ParsingException:
-            self._logger.debug("Error in parsing of child")
-            return
+        childParsingPaths = current_child.parse(parsingPath, carnivorous=carnivorous)
 
         for childParsingPath in childParsingPaths:
             value_after_parsing = childParsingPath.getData(current_child).copy()
@@ -482,12 +480,19 @@ class Agg(AbstractVariableNode):
                 else:
                     childParsingPath.assignData(remainingValue, next_child)
 
-                yield from self._inner_parse(childParsingPath, i_child + 1, all_parsed, carnivorous)
+                # Recursive call to parse next child
+                try:
+                    yield from self._inner_parse(childParsingPath, i_child + 1, all_parsed, carnivorous)
+                except Exception as e:
+                    pass
             else:
+                # Final child has been parsed
                 yield childParsingPath
+        else:
+            raise ParsingException()
 
     @typeCheck(SpecializingPath)
-    def specialize(self, specializingPath, acceptCallBack=True, preset=None):
+    def specialize(self, specializingPath, acceptCallBack=True, preset=None, triggered=False):
         """Specializes an Agg"""
 
         from netzob.Fuzzing.Mutator import MaxFuzzingException

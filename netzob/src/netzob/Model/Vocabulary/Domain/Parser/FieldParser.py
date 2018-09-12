@@ -78,7 +78,7 @@ class FieldParser():
     >>> parsingPaths = parser.parse(parsingPath)
     >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto.txt
-    
+
     >>> f1 = Field(name="f1", domain=Agg([String("toto"), String(" "), String("tata")]))
     >>> content = TypeConverter.convert("toto tata", String, BitArray)
     >>> parser = FieldParser(f1)
@@ -133,7 +133,6 @@ class FieldParser():
 
     >>> f1 = Field(name="f1", domain=Agg([String(nbChars=(1,10)), String(".txt")]))
     >>> content = TypeConverter.convert("helloword.tot", String, BitArray)
-    >>> parser = FieldParser(f1)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignData(content, f1.domain)

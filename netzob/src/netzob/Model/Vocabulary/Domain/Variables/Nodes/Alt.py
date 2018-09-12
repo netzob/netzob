@@ -106,19 +106,24 @@ class Alt(AbstractVariableNode):
                 the child index to select.
        :rtype: :class:`int`
 
-    Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-    values is done through the ``path``, thanks to its methods
+    The ``children`` is a list of :class:`Variable
+    <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`. Each
+    ``child`` can have children if it is a node. Access to child
+    values, as well as to its own children values, is done through the
+    ``path`` data structure, thanks to its methods
     :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.hasData` and
-    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.getData`:
+    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.getData`. Those
+    methods therefore allow access to a hierarchy of elements for
+    which the ``child`` is the root element:
 
-    * ``path.hasData(child)`` will return a :class:`bool` telling if a data has
-      been specialized or parsed for the child
+    * ``path.hasData(element)`` will return a :class:`bool` telling if a data has
+      been specialized or parsed for the element
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
-    * ``path.getData(child)`` will return a :class:`bitarray` that corresponds
-      to the value specialized or parsed for the child
+    * ``path.getData(element)`` will return a :class:`bitarray` that corresponds
+      to the value specialized or parsed for the element
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
-    Besides, it is possible to test if a ``child`` variable is a node
+    It is possible to test if a ``child`` variable is a node
     of the tree structure through the ``isnode(child)`` method. A
     node may represent an ``Agg``, an ``Alt``, a ``Repeat`` or an
     ``Opt`` variable. Access to the node leafs is possible with the
@@ -226,7 +231,7 @@ class Alt(AbstractVariableNode):
         return new_alt
 
     @typeCheck(ParsingPath)
-    def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
+    def parse(self, parsingPath, acceptCallBack=True, carnivorous=False, triggered=False):
         """Parse the content with the definition domain of the alternate."""
 
         if parsingPath is None:
@@ -266,7 +271,7 @@ class Alt(AbstractVariableNode):
         self._logger.debug("End of parsing of Alt variable")
 
     @typeCheck(SpecializingPath)
-    def specialize(self, specializingPath, acceptCallBack=True, preset=None):
+    def specialize(self, specializingPath, acceptCallBack=True, preset=None, triggered=False):
         """Specializes an Alt"""
 
         from netzob.Fuzzing.Mutator import MaxFuzzingException

@@ -394,6 +394,11 @@ class Timestamp(AbstractType):
     def getMaxStorageValue(self):
             return 2**self.unitSize.value - 1
 
+    def getFixedBitSize(self):
+        self._logger.debug("Determine the deterministic size of the value of "
+                           "the type")
+        return self.unitSize.value
+
     def generate(self, generationStrategy=None):
         """Generates a Timestamp that follows the specified generationStrategy
 

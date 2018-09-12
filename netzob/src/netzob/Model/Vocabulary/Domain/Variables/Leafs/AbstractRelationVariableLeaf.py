@@ -177,7 +177,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             return False
 
     @typeCheck(ParsingPath)
-    def valueCMP(self, parsingPath, carnivorous=False):
+    def valueCMP(self, parsingPath, carnivorous=False, triggered=False):
         results = []
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
@@ -211,7 +211,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             results.append(parsingPath)
 
     @typeCheck(ParsingPath)
-    def learn(self, parsingPath, carnivours=False):
+    def learn(self, parsingPath, carnivours=False, triggered=False):
         raise Exception("not implemented")
         self._logger.debug("RELATION LEARN")
         if parsingPath is None:
@@ -229,7 +229,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             return False
 
     @typeCheck(ParsingPath)
-    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
+    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False, triggered=False):
         """This method participates in the abstraction process.
 
         It creates a result in the provided path if the remainingData
@@ -269,7 +269,10 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
             else:
                 raise RelationException()
         except RelationException as e:
-            parsingPath.ok = False
+            if triggered:
+                raise RelationDependencyException("Computed result for current variable targets does not match the expected value", []) from None
+            else:
+                parsingPath.ok = False
         except Exception as e:
             self._logger.debug("The expected value cannot be computed. Reason: '{}'".format(e))
             if acceptCallBack:
@@ -348,7 +351,7 @@ class AbstractRelationVariableLeaf(AbstractVariableLeaf):
         return result
 
     @typeCheck(SpecializingPath)
-    def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True, preset=None):
+    def regenerate(self, variableSpecializerPath, moreCallBackAccepted=True, preset=None, triggered=False):
         """This method participates in the specialization proces.
 
         It creates a result in the provided path that contains a
