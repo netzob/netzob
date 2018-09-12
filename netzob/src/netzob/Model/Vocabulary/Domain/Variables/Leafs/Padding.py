@@ -283,8 +283,21 @@ class Padding(AbstractRelationVariableLeaf):
         new_padding.targets = new_targets
         return new_padding
 
-    def compareValues(self, content, expectedSize, computedValue, preset=None):
+    def compareLength(self, content, expectedSize, computedValue, preset=None):
         return len(content[:self._current_length_to_pad]) == len(computedValue)
+
+    def compareValues(self, content, expectedSize, computedValue):
+        if self.dataType.value is None:
+            return self.compareLength(content, expectedSize, computedValue)
+
+        if content[:self._current_length_to_pad].tobytes() == computedValue.tobytes():
+            msg = "The current variable data '{}' contain the expected value '{}'".format(content[:self._current_length_to_pad].tobytes(), computedValue.tobytes())
+            self._logger.debug(msg)
+            return True
+        else:
+            msg = "The current variable data '{}' does not contain the expected value '{}'".format(content[:expectedSize].tobytes(), computedValue.tobytes())
+            self._logger.debug(msg)
+            return False
 
     def __computeExpectedValue_stage1(self, targets, parsingPath, remainingVariables):
         """
