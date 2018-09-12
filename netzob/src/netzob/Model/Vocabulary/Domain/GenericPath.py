@@ -105,6 +105,7 @@ class GenericPath(object):
         self.assignData(result, variable)
 
         if notify:
+            self._logger.debug("Testing variable callbacks after addResult()")
             return self._triggerVariablesCallbacks(variable)
         return (True, (self, ))
 
@@ -288,7 +289,7 @@ class GenericPath(object):
             self._logger.debug("Testing a new callback")
 
             if potentialCallback in tested_callbacks:
-                self._logger.debug("Potential callback already tested: '{}'".format(potentialCallback))
+                self._logger.debug("Potential callback already tested")
                 potentialCallback = None
                 continue
 
@@ -296,7 +297,7 @@ class GenericPath(object):
             tested_callbacks.append(potentialCallback)
 
             if potentialCallback in self._current_callbacks_operation:
-                self._logger.debug("Potential callback is currently tested: '{}'".format(potentialCallback))
+                self._logger.debug("Potential callback is currently tested")
                 potentialCallback = None
                 continue
 
@@ -344,15 +345,14 @@ class GenericPath(object):
                     else:
                         self._logger.debug("Found a callback on '{}' that should be able to be computed due to indirect triggering variable '{}' from field '{}'".format(currentVariable, triggeringVariable, triggeringVariable.field))
                 else:
-                    self._logger.debug("Callback not concerned by the triggering variable: '{}'".format(potentialCallback))
+                    self._logger.debug("Callback not concerned by the triggering variable")
                     potentialCallback = None
                     continue
 
             if potentialCallback is not None:
                 callbacks_to_execute.append(potentialCallback)
-            else:
-                raise Exception("PAS NORMAL")
 
+        last_callback_succeed = True
         if len(callbacks_to_execute) > 0:
             from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import RelationDependencyException
             while len(callbacks_to_execute) > 0:
@@ -362,9 +362,11 @@ class GenericPath(object):
                     # This avoids computing a callback that is being already computing
                     self._current_callbacks_operation.append(callback_to_execute)
 
-                    self._logger.debug("Executing a callback: '{}'".format(callback_to_execute))
+                    self._logger.debug("Executing a callback")
                     results = self._processCallback(callback_to_execute)
+                    last_callback_succeed = True
                 except RelationDependencyException as e:
+                    last_callback_succeed = False
                     self._logger.debug("Callback execution did not succeed")
                     continue
                 else:
@@ -375,7 +377,7 @@ class GenericPath(object):
 
         # If no callback execution succeed, or there were no callback at all
         resultingPaths = (self, )
-        return (True, resultingPaths)
+        return (last_callback_succeed, resultingPaths)
 
     def _processCallback(self, callBackToExecute):
         from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
@@ -388,7 +390,7 @@ class GenericPath(object):
         from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import RelationDependencyException
         try:
             if parsingCB:
-                resultingPaths = currentVariable.parse(self, acceptCallBack=True)
+                resultingPaths = currentVariable.parse(self, acceptCallBack=True, triggered=True)
             else:
                 resultingPaths = currentVariable.specialize(self, acceptCallBack=False)
         except RelationDependencyException as e:

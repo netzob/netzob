@@ -69,6 +69,7 @@ class VariableParser(object):
                            format(dataToParse.tobytes(), self.variable))
 
         try:
+            self._logger.debug("Parsing variable '{}' from field '{}'".format(self.variable.name, self.variable.field.name))
             paths = self.variable.parse(parsingPath, carnivorous=carnivorous)
         except ParsingException:
             return iter(())

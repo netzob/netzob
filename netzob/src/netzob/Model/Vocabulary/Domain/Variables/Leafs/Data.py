@@ -144,7 +144,7 @@ class Data(AbstractVariableLeaf):
         else:
             return False
 
-    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
+    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False, triggered=False):
 
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
@@ -188,7 +188,7 @@ class Data(AbstractVariableLeaf):
                     else:
                         self._logger.debug("Parsed data does not respect a relation")
 
-    def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
+    def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False, triggered=False):
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
 
@@ -219,7 +219,7 @@ class Data(AbstractVariableLeaf):
             self._logger.debug("Data '{}' cannot be parsed with variable {}".format(content.tobytes(), self))
         return results
 
-    def learn(self, parsingPath, acceptCallBack=True, carnivorous=False):
+    def learn(self, parsingPath, acceptCallBack=True, carnivorous=False, triggered=False):
 
         if parsingPath is None:
             raise Exception("ParsingPath cannot be None")
@@ -265,7 +265,7 @@ class Data(AbstractVariableLeaf):
                     else:
                         self._logger.debug("Parsed data does not respect a relation")
 
-    def use(self, variableSpecializerPath, acceptCallBack=True, preset=None):
+    def use(self, variableSpecializerPath, acceptCallBack=True, preset=None, triggered=False):
         """This method participates in the specialization proces.
 
         It creates a result in the provided path that either contains
@@ -288,7 +288,7 @@ class Data(AbstractVariableLeaf):
 
             yield variableSpecializerPath
 
-    def regenerate(self, variableSpecializerPath, acceptCallBack=True, preset=None):
+    def regenerate(self, variableSpecializerPath, acceptCallBack=True, preset=None, triggered=False):
         """This method participates in the specialization proces.
 
         It creates a result in the provided path that contains a
@@ -313,7 +313,7 @@ class Data(AbstractVariableLeaf):
     def regenerateAndMemorize(self,
                               variableSpecializerPath,
                               acceptCallBack=True,
-                              preset=None):
+                              preset=None, triggered=False):
         """This method participates in the specialization proces.
         It memorizes the value present in the path of the variable
         """

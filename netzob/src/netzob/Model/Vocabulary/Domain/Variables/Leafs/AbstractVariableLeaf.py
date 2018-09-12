@@ -79,7 +79,7 @@ class AbstractVariableLeaf(AbstractVariable):
         else:
             return self.dataType.count()
 
-    def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
+    def parse(self, parsingPath, acceptCallBack=True, carnivorous=False, triggered=False):
         """@toto TO BE DOCUMENTED"""
 
         if self.scope is None:
@@ -90,13 +90,13 @@ class AbstractVariableLeaf(AbstractVariable):
             if self.isDefined(parsingPath):
                 if self.scope == Scope.CONSTANT or self.scope == Scope.SESSION:
                     return self.valueCMP(
-                        parsingPath, acceptCallBack, carnivorous=carnivorous)
+                        parsingPath, acceptCallBack, carnivorous=carnivorous, triggered=triggered)
                 elif self.scope == Scope.MESSAGE:
                     return self.learn(
-                        parsingPath, acceptCallBack, carnivorous=carnivorous)
+                        parsingPath, acceptCallBack, carnivorous=carnivorous, triggered=triggered)
                 elif self.scope == Scope.NONE:
                     return self.domainCMP(
-                        parsingPath, acceptCallBack, carnivorous=carnivorous)
+                        parsingPath, acceptCallBack, carnivorous=carnivorous, triggered=triggered)
             else:
                 if self.scope == Scope.CONSTANT:
                     self._logger.debug(
@@ -105,10 +105,10 @@ class AbstractVariableLeaf(AbstractVariable):
                     return []
                 elif self.scope == Scope.MESSAGE or self.scope == Scope.SESSION:
                     return self.learn(
-                        parsingPath, acceptCallBack, carnivorous=carnivorous)
+                        parsingPath, acceptCallBack, carnivorous=carnivorous, triggered=triggered)
                 elif self.scope == Scope.NONE:
                     return self.domainCMP(
-                        parsingPath, acceptCallBack, carnivorous=carnivorous)
+                        parsingPath, acceptCallBack, carnivorous=carnivorous, triggered=triggered)
         except ParsingException:
             self._logger.info("Error in parsing of variable")
             return []
@@ -137,7 +137,7 @@ class AbstractVariableLeaf(AbstractVariable):
     def getVariables(self):
         return [self]
 
-    def specialize(self, parsingPath, preset=None, acceptCallBack=True):
+    def specialize(self, parsingPath, preset=None, acceptCallBack=True, triggered=False):
         """Specializes a Leaf"""
 
         from netzob.Fuzzing.Mutator import MaxFuzzingException
@@ -183,11 +183,11 @@ class AbstractVariableLeaf(AbstractVariable):
 
         if self.isDefined(parsingPath):
             if self.scope == Scope.CONSTANT or self.scope == Scope.SESSION:
-                newParsingPaths = self.use(parsingPath, acceptCallBack, preset=preset)
+                newParsingPaths = self.use(parsingPath, acceptCallBack, preset=preset, triggered=triggered)
             elif self.scope == Scope.MESSAGE:
-                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack, preset=preset)
+                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack, preset=preset, triggered=triggered)
             elif self.scope == Scope.NONE:
-                newParsingPaths = self.regenerate(parsingPath, acceptCallBack, preset=preset)
+                newParsingPaths = self.regenerate(parsingPath, acceptCallBack, preset=preset, triggered=triggered)
         else:
             if self.scope == Scope.CONSTANT:
                 self._logger.debug(
@@ -195,9 +195,9 @@ class AbstractVariableLeaf(AbstractVariable):
                     format(self))
                 newParsingPaths = iter(())
             elif self.scope == Scope.MESSAGE or self.scope == Scope.SESSION:
-                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack, preset=preset)
+                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack, preset=preset, triggered=triggered)
             elif self.scope == Scope.NONE:
-                newParsingPaths = self.regenerate(parsingPath, acceptCallBack, preset=preset)
+                newParsingPaths = self.regenerate(parsingPath, acceptCallBack, preset=preset, triggered=triggered)
 
         if preset is not None and preset.get(self) is not None and preset.get(self).mode == FuzzingMode.MUTATE:
 

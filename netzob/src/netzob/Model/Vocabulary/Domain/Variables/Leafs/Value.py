@@ -293,7 +293,7 @@ class Value(AbstractRelationVariableLeaf):
                 current_parent = current_parent.parent
 
     @typeCheck(GenericPath)
-    def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
+    def valueCMP(self, parsingPath, acceptCallBack=True, carnivorous=False, triggered=False):
         self._logger.debug("ValueCMP")
         results = []
         if parsingPath is None:
@@ -355,7 +355,7 @@ class Value(AbstractRelationVariableLeaf):
         return results
 
     @typeCheck(ParsingPath)
-    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False):
+    def domainCMP(self, parsingPath, acceptCallBack=True, carnivorous=False, triggered=False):
         """This method participates in the abstraction process.
 
         It creates a result in the provided path if the remainingData
