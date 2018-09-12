@@ -49,7 +49,7 @@ from netzob.Common.Utils.Decorators import NetzobLogger, public_api
 @public_api
 @NetzobLogger
 class Scope(Enum):
-    """This class represents the Assignment Strategy of a variable.
+    r"""This class represents the Assignment Strategy of a variable.
 
     The scope of a variable defines how its value is used while
     abstracting and specializing, and therefore impacts the
@@ -115,62 +115,6 @@ class Scope(Enum):
       netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'S0', cannot abstract the data: 'b'test''. Error: 'No parsing path returned while parsing 'b'test'''
 
 
-      The following example shows the **abstraction of data with Session Scope**:
-
-      >>> from netzob.all import *
-      >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.SESSION)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> s.abstract("dylan", memory=m)
-      OrderedDict([('f1', b'dylan')])
-      >>> s.abstract("dylan", memory=m)
-      OrderedDict([('f1', b'dylan')])
-
-      The following example shows that the abstraction of Session Scope
-      data that does not correspond to the expected model triggers an exception:
-
-      >>> from netzob.all import *
-      >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.SESSION)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> s.abstract("kurt", memory=m)
-      Traceback (most recent call last):
-      ...
-      netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'S0', cannot abstract the data: 'kurt'. Error: 'No parsing path returned while parsing 'b'kurt'''
-
-
-      The following examples show the **specialization of data with Session Scope**:
-
-      >>> from netzob.all import *
-      >>> f = Field(name='f1')
-      >>> st = String("john")
-      >>> f.domain = Data(st, scope=Scope.SESSION)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> next(s.specialize(memory=m))
-      b'john'
-      >>> len(str(m))
-      0
-
-      >>> from netzob.all import *
-      >>> f = Field()
-      >>> f.domain = Data(String(nbChars=5), scope=Scope.SESSION)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> generated1 = next(s.specialize(memory=m))
-      >>> len(generated1)
-      5
-      >>> m.hasValue(f.domain)
-      True
-      >>> generated2 = next(s.specialize(memory=m))
-      >>> len(generated2)
-      5
-      >>> generated1 == generated2
-      True
-
-
     * **Scope.MESSAGE**: With this kind of variable, the value is
       generated and then memorized during the first specialization and
       is always memorized during abstraction. For further specialization, the value is taken from memory. However, in contrary to
@@ -188,9 +132,11 @@ class Scope(Enum):
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> next(s.specialize(memory=m))
-      b'%!F9'
+      b'X!z@'
       >>> s.abstract("john", memory=m)
       OrderedDict([('f1', b'john')])
+      >>> next(s.specialize(memory=m))
+      b'john'
       >>> next(s.specialize(memory=m))
       b'john'
 
@@ -204,45 +150,8 @@ class Scope(Enum):
       b'john'
       >>> s.abstract("kurt", memory=m)
       OrderedDict([('f1', b'kurt')])
-
-
-      The following example shows the **abstraction of data with Message Scope**:
-
-      >>> from netzob.all import *
-      >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(4, 10)), scope=Scope.MESSAGE)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> s.abstract("john", memory=m)
-      OrderedDict([('f1', b'john')])
-      >>> print(m)
-      Data (String(nbChars=(4,10))) from field 'f1': b'john'
-      >>> s.abstract("john", memory=m)
-      OrderedDict([('f1', b'john')])
-      >>> print(m)
-      Data (String(nbChars=(4,10))) from field 'f1': b'john'
-      >>> s.abstract("kurt", memory=m)
-      OrderedDict([('f1', b'kurt')])
-      >>> print(m)
-      Data (String(nbChars=(4,10))) from field 'f1': b'kurt'
-
-
-      The following examples show the **specialization of data with Message Scope**:
-
-      >>> from netzob.all import *
-      >>> f = Field(name='f1')
-      >>> st = String("john")
-      >>> f.domain = Data(st, scope=Scope.MESSAGE)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> m.hasValue(f.domain)
-      False
-      >>> generated1 = next(s.specialize(memory=m))
-      >>> m.hasValue(f.domain)
-      True
-      >>> generated2 = next(s.specialize(memory=m))
-      >>> generated1 == generated2
-      True
+      >>> next(s.specialize(memory=m))
+      b'kurt'
 
 
     * **Scope.NONE**: This kind of variable denotes a value which
@@ -260,11 +169,11 @@ class Scope(Enum):
       >>> s = Symbol(name="S0", fields=[f])
       >>> m = Memory()
       >>> next(s.specialize(memory=m))
-      b'5Rh:'
+      b'4%!F'
       >>> s.abstract("john", memory=m)
       OrderedDict([('f1', b'john')])
       >>> next(s.specialize(memory=m))
-      b'MRA]'
+      b'v\tK5'
 
       >>> from netzob.all import *
       >>> f = Field(domain=Data(String(nbChars=4), scope=Scope.NONE), name='f1')
@@ -273,44 +182,9 @@ class Scope(Enum):
       >>> s.abstract("john", memory=m)
       OrderedDict([('f1', b'john')])
       >>> next(s.specialize(memory=m))
-      b'Wm^C'
+      b'h:JM'
       >>> s.abstract("kurt", memory=m)
       OrderedDict([('f1', b'kurt')])
-
-
-      The following example shows the **abstraction data without persistence**:
-  
-      >>> from netzob.all import *
-      >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(4, 10)), scope=Scope.NONE)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> s.abstract("john", memory=m)
-      OrderedDict([('f1', b'john')])
-      >>> len(m)
-      0
-      >>> s.abstract("john", memory=m)
-      OrderedDict([('f1', b'john')])
-      >>> len(m)
-      0
-      >>> s.abstract("kurt", memory=m)
-      OrderedDict([('f1', b'kurt')])
-      >>> len(m)
-      0
-
-
-      The following example shows the **specialization data without persistence**:
-
-      >>> from netzob.all import *
-      >>> f = Field(name='f1')
-      >>> f.domain = Data(String(nbChars=(5,10)), scope=Scope.NONE)
-      >>> s = Symbol(name="S0", fields=[f])
-      >>> m = Memory()
-      >>> m.hasValue(f.domain)
-      False
-      >>> generated = next(s.specialize(memory=m))
-      >>> m.hasValue(f.domain)
-      False
 
     """
 
@@ -391,5 +265,134 @@ def _test():
     Traceback (most recent call last):
     ...
     StopIteration
+
+    The following example shows the **abstraction of data with Session Scope**:
+
+    >>> from netzob.all import *
+    >>> f = Field(name='f1')
+    >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.SESSION)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> s.abstract("dylan", memory=m)
+    OrderedDict([('f1', b'dylan')])
+    >>> s.abstract("dylan", memory=m)
+    OrderedDict([('f1', b'dylan')])
+
+    The following example shows that the abstraction of Session Scope
+    data that does not correspond to the expected model triggers an exception:
+
+    >>> from netzob.all import *
+    >>> f = Field(name='f1')
+    >>> f.domain = Data(String(nbChars=(5, 10)), scope=Scope.SESSION)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> s.abstract("kurt", memory=m)
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field 'S0', cannot abstract the data: 'kurt'. Error: 'No parsing path returned while parsing 'b'kurt'''
+
+
+    The following examples show the **specialization of data with Session Scope**:
+
+    >>> from netzob.all import *
+    >>> f = Field(name='f1')
+    >>> st = String("john")
+    >>> f.domain = Data(st, scope=Scope.SESSION)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> next(s.specialize(memory=m))
+    b'john'
+    >>> len(str(m))
+    0
+
+    >>> from netzob.all import *
+    >>> f = Field()
+    >>> f.domain = Data(String(nbChars=5), scope=Scope.SESSION)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> generated1 = next(s.specialize(memory=m))
+    >>> len(generated1)
+    5
+    >>> m.hasValue(f.domain)
+    True
+    >>> generated2 = next(s.specialize(memory=m))
+    >>> len(generated2)
+    5
+    >>> generated1 == generated2
+    True
+
+
+    The following example shows the **abstraction of data with Message Scope**:
+
+    >>> from netzob.all import *
+    >>> f = Field(name='f1')
+    >>> f.domain = Data(String(nbChars=(4, 10)), scope=Scope.MESSAGE)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> s.abstract("john", memory=m)
+    OrderedDict([('f1', b'john')])
+    >>> print(m)
+    Data (String(nbChars=(4,10))) from field 'f1': b'john'
+    >>> s.abstract("john", memory=m)
+    OrderedDict([('f1', b'john')])
+    >>> print(m)
+    Data (String(nbChars=(4,10))) from field 'f1': b'john'
+    >>> s.abstract("kurt", memory=m)
+    OrderedDict([('f1', b'kurt')])
+    >>> print(m)
+    Data (String(nbChars=(4,10))) from field 'f1': b'kurt'
+
+
+    The following examples show the **specialization of data with Message Scope**:
+
+    >>> from netzob.all import *
+    >>> f = Field(name='f1')
+    >>> st = String("john")
+    >>> f.domain = Data(st, scope=Scope.MESSAGE)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> m.hasValue(f.domain)
+    False
+    >>> generated1 = next(s.specialize(memory=m))
+    >>> m.hasValue(f.domain)
+    True
+    >>> generated2 = next(s.specialize(memory=m))
+    >>> generated1 == generated2
+    True
+
+
+    The following example shows the **abstraction data without persistence**:
+  
+    >>> from netzob.all import *
+    >>> f = Field(name='f1')
+    >>> f.domain = Data(String(nbChars=(4, 10)), scope=Scope.NONE)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> s.abstract("john", memory=m)
+    OrderedDict([('f1', b'john')])
+    >>> len(m)
+    0
+    >>> s.abstract("john", memory=m)
+    OrderedDict([('f1', b'john')])
+    >>> len(m)
+    0
+    >>> s.abstract("kurt", memory=m)
+    OrderedDict([('f1', b'kurt')])
+    >>> len(m)
+    0
+
+
+    The following example shows the **specialization data without persistence**:
+
+    >>> from netzob.all import *
+    >>> f = Field(name='f1')
+    >>> f.domain = Data(String(nbChars=(5,10)), scope=Scope.NONE)
+    >>> s = Symbol(name="S0", fields=[f])
+    >>> m = Memory()
+    >>> m.hasValue(f.domain)
+    False
+    >>> generated = next(s.specialize(memory=m))
+    >>> m.hasValue(f.domain)
+    False
 
     """
