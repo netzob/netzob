@@ -135,22 +135,24 @@ class Repeat(AbstractVariableNode):
 
        :rtype: :class:`int`
 
-    The ``child`` parameter allows access to the root of a tree structure.
-    The ``child`` (:class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`)
-    can have children.
-    Access to :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`
-    values is done through the ``path``, thanks to its methods
+    The ``child`` is a :class:`Variable
+    <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`. The
+    ``child`` can have children if it is a node. Access to child
+    values, as well as to its own children values, is done through the
+    ``path`` data structure, thanks to its methods
     :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.hasData` and
-    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.getData`:
+    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.getData`. Those
+    methods therefore allow access to a hierarchy of elements for
+    which the ``child`` is the root element:
 
-    * ``path.hasData(child)`` will return a :class:`bool` telling if a data has
-      been specialized or parsed for the child
+    * ``path.hasData(element)`` will return a :class:`bool` telling if a data has
+      been specialized or parsed for the element
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
-    * ``path.getData(child)`` will return a :class:`bitarray` that corresponds
-      to the value specialized or parsed for the child
+    * ``path.getData(element)`` will return a :class:`bitarray` that corresponds
+      to the value specialized or parsed for the element
       :class:`Variable <netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable>`.
 
-    Besides, it is possible to test if a ``child`` variable is a node
+    It is possible to test if a ``child`` variable is a node
     of the tree structure through the ``isnode(child)`` method. A
     node may represent an ``Agg``, an ``Alt``, a ``Repeat`` or an
     ``Opt`` variable. Access to the node leafs is possible with the
