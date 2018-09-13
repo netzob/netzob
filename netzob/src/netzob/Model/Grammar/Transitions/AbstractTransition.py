@@ -261,8 +261,8 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     @public_api
     def add_cbk_modify_symbol(self, cbk_method):
         """Function called during transition execution, to help
-        choose/modify the output symbol to send (in a server
-        context) or the input symbol to send (in a client context).
+        choose/modify the output symbol to send (in a non initiator
+        context) or the input symbol to send (in an initiator context).
 
         :param cbk_method: the callback function
         :type cbk_method: ~typing.Callable, required
