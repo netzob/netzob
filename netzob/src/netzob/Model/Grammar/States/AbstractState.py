@@ -125,8 +125,8 @@ class AbstractState(object, metaclass=abc.ABCMeta):
     @public_api
     def add_cbk_modify_transition(self, cbk_method):
         """Add a function called during state execution to help choose the
-        next transition (in a client context) or modifying the current
-        transition (in a server context).
+        next transition (in an initiator context) or modifying the current
+        transition (in a non initiator context).
 
         :param cbk_method: the callback function
         :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
@@ -144,7 +144,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
            :param availableTransitions:
                   Corresponds to the list of available transitions starting
-                  from the current state. In a client context (i.e. the peer is the initiator of the connection), this list is filtered so that it only contains transitions where the :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inverseInitiator` attribute has the same value as for the initial transition. In a server context, no filtering is applied.
+                  from the current state. This list is filtered so that it only contains transitions for which the :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inverseInitiator` attribute has the same value as for the initial transition.
            :param nextTransition:
                   Currently selected transition, either the initial transition
                   or the transition returned by the previous callback.
@@ -186,7 +186,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
            :return: The callback function should return a transition
                     object, which could be the original transition or
-                    another one in the available transitions. In a client context (i.e. the peer is the initiator of the connection), the returned transition should have its :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inverseInitiator` attribute set to the same value as for the initial transition.
+                    another one in the available transitions. The returned transition should have its :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inverseInitiator` attribute set to the same value as for the initial transition.
            :rtype: :class:`Transition<netzob.Model.Grammar.Transitions.Transition.Transition>`
 
         """

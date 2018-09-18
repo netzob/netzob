@@ -91,6 +91,7 @@ class Transition(AbstractTransition):
 
     :var startState: The initial state of the transition.
     :var endState: The end state of the transition.
+    :var priority: The priority of the transition, between 0 and 100. A low value corresponds to a high priority. The default priority value is set to 10.
     :var inputSymbol: The input symbol is the symbol which triggers the
                       execution of the transition.
     :var outputSymbols: Output symbols that can be generated when
@@ -132,11 +133,12 @@ class Transition(AbstractTransition):
                                     output value (only used in a
                                     sending context).
     :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The value between ``0.0`` and ``100.0`` corresponds to the weight of the symbol in terms of selection probability.
-    :var inverseInitiator: Indicates to inverse the behavior of the actor initiator flag. This capability is only available for a client initiator. When set to ``True``, this indicates that the input symbol of the transition is expected to be received rather than being sent, and then one of the output symbols is sent. If set to ``True`` in a server context (non initiator), it will not have any effect.
+    :var inverseInitiator: Indicates to inverse the behavior of the actor initiator flag. In an initiator context, when set to ``True``, this flag indicates that the input symbol of the transition is expected to be received rather than being sent, and then one of the output symbols is sent. In a non initiator context, when set to ``True``, this flag indicates that the input symbol of the transition is sent rather than being expected, and then one of the output symbols is expected.
     :var description: The description of the transition. If not explicitly set,
                       it is generated from the input and output symbol strings.
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`
+    :vartype priority: :class:`int`
     :vartype inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype outputSymbols: :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype inputSymbolPreset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
