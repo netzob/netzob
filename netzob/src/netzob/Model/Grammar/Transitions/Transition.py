@@ -282,7 +282,7 @@ class Transition(AbstractTransition):
         # Retrieve the symbol to send
         symbol_to_send = self.inputSymbol
         symbol_preset = self.inputSymbolPreset
-        actor.visit_log.append("  [+]   During transition '{}', sending input symbol '{}'".format(self.name, str(symbol_to_send)))
+        actor.visit_log.append("  [+]   During transition '{}', sending input symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), self.inputSymbolPreset))
 
         # If a callback is defined, we can change or modify the selected symbol
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))
@@ -393,7 +393,11 @@ class Transition(AbstractTransition):
 
         if received_symbol in self.outputSymbols:
             self.active = False
-            actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol '{}'".format(self.name, str(received_symbol)))
+            if received_symbol in self.outputSymbolsPreset:
+                output_preset = self.outputSymbolsPreset[received_symbol]
+            else:
+                output_preset = None
+            actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol ('{}'), with good preset settings ('{}')".format(self.name, str(received_symbol), output_preset))
             actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
 
             for cbk in self.cbk_action:
@@ -564,7 +568,7 @@ class Transition(AbstractTransition):
                 symbol_preset = self.outputSymbolsPreset[symbol_to_send]
 
         # Update visit log
-        actor.visit_log.append("  [+]   During transition '{}', choosing output symbol '{}'".format(self.name, str(symbol_to_send)))
+        actor.visit_log.append("  [+]   During transition '{}', choosing an output symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), symbol_preset))
 
         # Potentialy modify the selected symbol if a callback is defined
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))

@@ -2139,6 +2139,7 @@ class Actor(Thread):
         # Initialize local variables
         self.visit_log = []  # Visit log, which contains the information regarding the different transitions and states visited by the actor
         self.abstractionLayer = AbstractionLayer(channel, self.automata.symbols, actor=self)
+        self.current_state = self.automata.initialState
 
     def __str__(self):
         return str(self.name)
@@ -2146,7 +2147,6 @@ class Actor(Thread):
     def run(self):
         """Start the visit of the automaton from its initial state."""
 
-        self.current_state = self.automata.initialState
         while not self.__stopEvent.is_set():
             try:
                 do_stop = self.execute_transition()
@@ -2174,10 +2174,8 @@ class Actor(Thread):
 
         self._logger.debug("Current state for actor '{}': '{}'.".format(self.name, self.current_state))
 
-        if self.initiator:
-            self.current_state = self.current_state.executeAsInitiator(self)
-        else:
-            self.current_state = self.current_state.executeAsNotInitiator(self)
+        # Execute state action
+        self.current_state = self.current_state.execute(self)
 
         if self.current_state is None:
             self._logger.debug("The execution of transition did not returned a state, for actor '{}'".format(self.name))
@@ -2246,7 +2244,7 @@ class Actor(Thread):
         :rtype: :class:`str`
 
         """
-        result = "Activity log for actor '{}':\n".format(self.name)
+        result = "Activity log for actor '{}' ({}):\n".format(self.name, "initiator" if self.initiator else "not initiator")
         result += "\n".join(self.visit_log)
         return result
 
