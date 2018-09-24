@@ -248,6 +248,7 @@ class UDPServerBuilder(ChannelBuilder):
     32000
     """
 
+    @public_api
     def __init__(self):
         super().__init__(UDPServer)
 

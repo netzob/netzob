@@ -287,6 +287,7 @@ class IPChannelBuilder(ChannelBuilder):
     '1.2.3.4'
     """
 
+    @public_api
     def __init__(self):
         super().__init__(IPChannel)
 

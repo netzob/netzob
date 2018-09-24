@@ -534,10 +534,11 @@ def _test():
 def _test_specialize_abstract():
     r"""
     >>> from netzob.all import *
+    >>> from collections import OrderedDict
     >>> Conf.apply()
     >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
 
-    >>> possible_parameters = {}
+    >>> possible_parameters = OrderedDict()
     >>> possible_parameters["value"] = [None, b'', b'a', b'bb', "bb", 1444737333]
     >>> possible_parameters["epoch"] = [None, b'', b'a', b'bb', "bb", 42, Epoch.UNIX]
     >>> possible_parameters["unity"] = [None, b'', b'a', b'bb', "bb", 42, Unity.SECOND]
@@ -549,84 +550,84 @@ def _test_specialize_abstract():
     >>> data_type = Timestamp
 
     >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
-    {'value': None}
-    {'value': b''}
+    OrderedDict([('value', None)])
+    OrderedDict([('value', b'')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'''
-    {'value': b'a'}
+    OrderedDict([('value', b'a')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'a''
-    {'value': b'bb'}
+    OrderedDict([('value', b'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'bb''
-    {'value': 'bb'}
+    OrderedDict([('value', 'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: 'bb''
-    {'value': 1444737333}
-    {'epoch': None}
+    OrderedDict([('value', 1444737333)])
+    OrderedDict([('epoch', None)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value cannot be None'
-    {'epoch': b''}
+    OrderedDict([('epoch', b'')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
-    {'epoch': b'a'}
+    OrderedDict([('epoch', b'a')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
-    {'epoch': b'bb'}
+    OrderedDict([('epoch', b'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
-    {'epoch': 'bb'}
+    OrderedDict([('epoch', 'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
-    {'epoch': 42}
+    OrderedDict([('epoch', 42)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
-    {'epoch': Epoch.UNIX}
-    {'unity': None}
+    OrderedDict([('epoch', Epoch.UNIX)])
+    OrderedDict([('unity', None)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value cannot be None'
-    {'unity': b''}
+    OrderedDict([('unity', b'')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
-    {'unity': b'a'}
+    OrderedDict([('unity', b'a')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
-    {'unity': b'bb'}
+    OrderedDict([('unity', b'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
-    {'unity': 'bb'}
+    OrderedDict([('unity', 'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
-    {'unity': 42}
+    OrderedDict([('unity', 42)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
-    {'unity': Unity.SECOND}
-    {'unitSize': None}
+    OrderedDict([('unity', Unity.SECOND)])
+    OrderedDict([('unitSize', None)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'unitSize cannot be None'
-    {'unitSize': UnitSize.SIZE_32}
-    {'endianness': None}
+    OrderedDict([('unitSize', UnitSize.SIZE_32)])
+    OrderedDict([('endianness', None)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'endianness cannot be None'
-    {'endianness': Endianness.LITTLE}
-    {'endianness': Endianness.BIG}
-    {'sign': None}
+    OrderedDict([('endianness', Endianness.LITTLE)])
+    OrderedDict([('endianness', Endianness.BIG)])
+    OrderedDict([('sign', None)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'sign cannot be None'
-    {'sign': Sign.SIGNED}
-    {'sign': Sign.UNSIGNED}
-    {'default': None}
-    {'default': b''}
+    OrderedDict([('sign', Sign.SIGNED)])
+    OrderedDict([('sign', Sign.UNSIGNED)])
+    OrderedDict([('default', None)])
+    OrderedDict([('default', b'')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'''
-    {'default': b'a'}
+    OrderedDict([('default', b'a')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'a''
-    {'default': b'bb'}
+    OrderedDict([('default', b'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'bb''
-    {'default': 'bb'}
+    OrderedDict([('default', 'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: 'bb''
-    {'default': 1444737333}
+    OrderedDict([('default', 1444737333)])
 
     >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
-    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
-    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 1444737333}
-    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
-    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 1444737333}
-    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
-    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 1444737333}
-    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
-    {'value': None, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 1444737333}
-    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
-    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 1444737333}
+    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 1444737333)])
+    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
+    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 1444737333)])
+    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 1444737333)])
+    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
+    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 1444737333)])
+    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 1444737333)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
-    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
-    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 1444737333}
+    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
+    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 1444737333)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
-    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
-    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 1444737333}
+    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 1444737333)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
-    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
-    {'value': 1444737333, 'epoch': Epoch.UNIX, 'unity': Unity.SECOND, 'unitSize': UnitSize.SIZE_32, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 1444737333}
+    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
+    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 1444737333)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
 
     >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)

@@ -565,9 +565,9 @@ class Automata(object):
     @public_api
     def set_cbk_read_symbol_timeout(self, cbk_method, states=None):
         """Function called to handle cases where a timeout appears when
-        waiting for a symbol. For a server, this symbol would
+        waiting for a symbol. In a non initiator context, this symbol would
         correspond to the input symbol that should trigger a
-        transition. For a client, this symbol would correspond to an
+        transition. In an initiator context, this symbol would correspond to an
         output symbol that is expected according to the current
         transition.
 
@@ -597,7 +597,7 @@ class Automata(object):
            :param current_transition:
              Corresponds to the current transition in the automaton.
              It is expected that the current transition may be ``None``, especially
-             in a server context, where no transition has been initiated.
+             in a non initiator context, where no transition has been initiated.
            :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition
 
            :return: The callback function should return the next
@@ -615,8 +615,8 @@ class Automata(object):
     @public_api
     def set_cbk_read_unexpected_symbol(self, cbk_method, states=None):
         """Function called to handle cases where a symbol is received but not
-        expected. In a server context, this symbol would not match the input
-        symbol of the available transitions. In a client context, this
+        expected. In a non initiator context, this symbol would not match the input
+        symbol of the available transitions. In an initiator context, this
         symbol would not match the expected output symbols of the current
         transition.
 
@@ -648,7 +648,7 @@ class Automata(object):
            :param current_transition:
              Corresponds to the current transition in the automaton.
              It is expected that the current transition may be ``None``, especially
-             in a server context, where no transition has been initiated.
+             in a non initiator context, where no transition has been initiated.
            :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition
 
            :param received_symbol:
@@ -678,9 +678,9 @@ class Automata(object):
     @public_api
     def set_cbk_read_unknown_symbol(self, cbk_method, states=None):
         """Function called to handle cases where a message is received but
-        does not correspond to a known symbol. In a server context,
+        does not correspond to a known symbol. In a non initiator context,
         this message would not match the input symbol of the available
-        transitions. In a client context, this message would not match
+        transitions. In an initiator context, this message would not match
         the expected output symbols of the current transition.
 
         The method expects some parameters:
@@ -711,7 +711,7 @@ class Automata(object):
            :param current_transition:
              Corresponds to the current transition in the automaton.
              It is expected that the current transition may be ``None``,
-             especially in a server context, where no transition has been initiated.
+             especially in a non initiator context, where no transition has been initiated.
            :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition
 
            :param received_message:
@@ -732,6 +732,7 @@ class Automata(object):
 
     ## Automata Fuzzing ##
 
+    @public_api
     def mutate(self, strategy=None, target=None, generator=None, seed=None):
         r"""This is the mutation method of the automaton. This method returns
         a new automaton that may be used for fuzzing purpose.
@@ -907,26 +908,38 @@ class Automata(object):
         >>> alice.stop()
         >>>
         >>> print(bob.generateLog())
-        Activity log for actor 'Bob':
+        Activity log for actor 'Bob' (initiator):
           [+] At state 'S0'
-          [+]   Picking transition 'Open'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 'Open' (open channel)
           [+]   Transition 'Open' lead to state 'S1'
           [+] At state 'S1'
-          [+]   Picking transition 'T1'
-          [+]   During transition 'T1', sending input symbol 'Hello1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 'T1' (initiator)
+          [+]   During transition 'T1', sending input symbol ('Hello1') with preset ('None')
           [+]   During transition 'T1', receiving unexpected symbol triggered a callback that lead to state 'Error state'
           [+] At state 'Error state'
-          [+]   Picking transition 'Close'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 'Close' (close channel)
           [+]   Transition 'Close' lead to state 'S3'
+          [+] At state 'S3'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
         >>> print(alice.generateLog())
-        Activity log for actor 'Alice':
+        Activity log for actor 'Alice' (not initiator):
           [+] At state 'S0'
-          [+]   Picking transition 'Open'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 'Open' (open channel)
+          [+]   Going to execute transition 'Open'
           [+]   Transition 'Open' lead to state 'S1'
           [+] At state 'S1'
-          [+]   Receiving input symbol 'Hello1', which corresponds to transition 'T1'
-          [+]   During transition 'T1', choosing output symbol 'Hello1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Waiting for an input symbol to decide the transition (not initiator)
+          [+]   Input symbol 'Hello1' corresponds to transition 'T1'
+          [+]   During transition 'T1', choosing an output symbol ('Hello1') with preset ('preset')
           [+]   Transition 'T1' lead to state 'S1'
+          [+] At state 'S1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Waiting for an input symbol to decide the transition (not initiator)
 
 
         **Basic example of automata fuzzing**
@@ -1276,79 +1289,104 @@ class Automata(object):
         >>> alice_actor.stop()
         >>>
         >>> print(bob_actor.generateLog())
-        Activity log for actor 'Fuzzer':
+        Activity log for actor 'Fuzzer' (initiator):
           [+] At state 's0'
-          [+]   Picking transition 't0'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 't0' (open channel)
           [+]   Transition 't0' lead to state 's1'
           [+] At state 's1'
-          [+]   Picking transition 't2'
-          [+]   During transition 't2', sending input symbol 'Sym1'
-          [+]   During transition 't2', receiving expected output symbol 'Sym1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 't2' (initiator)
+          [+]   During transition 't2', sending input symbol ('Sym1') with preset ('None')
+          [+]   During transition 't2', receiving expected output symbol ('Sym1'), with good preset settings ('None')
           [+]   Transition 't2' lead to state 's2'
           [+] At state 's2'
-          [+]   Picking transition 't4'
-          [+]   During transition 't4', sending input symbol 'Sym1'
-          [+]   During transition 't4', receiving expected output symbol 'Sym1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 't4' (initiator)
+          [+]   During transition 't4', sending input symbol ('Sym1') with preset ('None')
+          [+]   During transition 't4', receiving expected output symbol ('Sym1'), with good preset settings ('None')
           [+]   Transition 't4' lead to state 's4'
           [+] At state 's4'
-          [+]   Picking transition 't5'
-          [+]   During transition 't5', sending input symbol 'Sym1'
-          [+]   During transition 't5', receiving expected output symbol 'Sym1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 't5' (initiator)
+          [+]   During transition 't5', sending input symbol ('Sym1') with preset ('None')
+          [+]   During transition 't5', receiving expected output symbol ('Sym1'), with good preset settings ('None')
           [+]   Transition 't5' lead to state 's6'
           [+] At state 's6'
-          [+]   Picking transition 't_random'
-          [+]   During transition 't_random', sending input symbol 'Sym1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 't_random' (initiator)
+          [+]   During transition 't_random', sending input symbol ('Sym1') with preset ('None')
           [+]   During transition 't_random', fuzzing activated
-          [+]   During transition 't_random', receiving expected output symbol 'Sym2'
+          [+]   During transition 't_random', receiving expected output symbol ('Sym2'), with good preset settings ('None')
           [+]   Transition 't_random' lead to state 's6'
           [+] At state 's6'
-          [+]   Picking transition 't_random'
-          [+]   During transition 't_random', sending input symbol 'Sym1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 't_random' (initiator)
+          [+]   During transition 't_random', sending input symbol ('Sym2') with preset ('None')
           [+]   During transition 't_random', fuzzing activated
-          [+]   During transition 't_random', receiving expected output symbol 'Sym2'
+          [+]   During transition 't_random', receiving expected output symbol ('Sym2'), with good preset settings ('None')
           [+]   Transition 't_random' lead to state 's6'
           [+] At state 's6'
-          [+]   Picking transition 't_random'
-          [+]   During transition 't_random', sending input symbol 'Sym2'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 't_random' (initiator)
+          [+]   During transition 't_random', sending input symbol ('Sym2') with preset ('None')
           [+]   During transition 't_random', fuzzing activated
-          [+]   During transition 't_random', receiving expected output symbol 'Sym2'
+          [+]   During transition 't_random', receiving expected output symbol ('Sym2'), with good preset settings ('None')
           [+]   Transition 't_random' lead to state 's6'
           [+] At state 's6', we reached the max number of transitions (7), so we stop
         >>> print(alice_actor.generateLog())
-        Activity log for actor 'Target':
+        Activity log for actor 'Target' (not initiator):
           [+] At state 's0'
-          [+]   Picking transition 'Open'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Picking transition 'Open' (open channel)
+          [+]   Going to execute transition 'Open'
           [+]   Transition 'Open' lead to state 's1'
           [+] At state 's1'
-          [+]   Receiving input symbol 'Sym1', which corresponds to transition 'T1'
-          [+]   Changing transition to 'T1', through callback
-          [+]   During transition 'T1', choosing output symbol 'Sym1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Waiting for an input symbol to decide the transition (not initiator)
+          [+]   Input symbol 'Sym1' corresponds to transition 'T1'
+          [+]   Changing transition to 'T1' (not initiator), through callback
+          [+]   During transition 'T1', choosing an output symbol ('Sym1') with preset ('preset')
           [+]   Transition 'T1' lead to state 's1'
           [+] At state 's1'
-          [+]   Receiving input symbol 'Sym1', which corresponds to transition 'T1'
-          [+]   Changing transition to 'T1', through callback
-          [+]   During transition 'T1', choosing output symbol 'Sym1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Waiting for an input symbol to decide the transition (not initiator)
+          [+]   Input symbol 'Sym1' corresponds to transition 'T1'
+          [+]   Changing transition to 'T1' (not initiator), through callback
+          [+]   During transition 'T1', choosing an output symbol ('Sym1') with preset ('preset')
           [+]   Transition 'T1' lead to state 's1'
           [+] At state 's1'
-          [+]   Receiving input symbol 'Sym1', which corresponds to transition 'T1'
-          [+]   Changing transition to 'T1', through callback
-          [+]   During transition 'T1', choosing output symbol 'Sym1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Waiting for an input symbol to decide the transition (not initiator)
+          [+]   Input symbol 'Sym1' corresponds to transition 'T1'
+          [+]   Changing transition to 'T1' (not initiator), through callback
+          [+]   During transition 'T1', choosing an output symbol ('Sym1') with preset ('preset')
           [+]   Transition 'T1' lead to state 's1'
           [+] At state 's1'
-          [+]   Receiving input symbol 'Unknown message b'System("ls -al /")\x00 '', which corresponds to transition 'None'
-          [+]   Changing transition to 'T2', through callback
-          [+]   During transition 'T2', choosing output symbol 'Sym2'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Waiting for an input symbol to decide the transition (not initiator)
+          [+]   Input symbol 'Unknown message b'System("ls -al /")\x00 '' corresponds to transition 'None'
+          [+]   Changing transition to 'T2' (not initiator), through callback
+          [+]   During transition 'T2', choosing an output symbol ('Sym2') with preset ('preset')
           [+]   Transition 'T2' lead to state 's1'
           [+] At state 's1'
-          [+]   Receiving input symbol 'Unknown message b'$ENV{"HOME"}\x00       '', which corresponds to transition 'None'
-          [+]   Changing transition to 'T2', through callback
-          [+]   During transition 'T2', choosing output symbol 'Sym2'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Waiting for an input symbol to decide the transition (not initiator)
+          [+]   Input symbol 'Unknown message b'System("ls -al /")\x00 '' corresponds to transition 'None'
+          [+]   Changing transition to 'T2' (not initiator), through callback
+          [+]   During transition 'T2', choosing an output symbol ('Sym2') with preset ('preset')
           [+]   Transition 'T2' lead to state 's1'
           [+] At state 's1'
-          [+]   Receiving input symbol 'Unknown message b'System("ls -al /")\x00 '', which corresponds to transition 'None'
-          [+]   Changing transition to 'T2', through callback
-          [+]   During transition 'T2', choosing output symbol 'Sym2'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Waiting for an input symbol to decide the transition (not initiator)
+          [+]   Input symbol 'Unknown message b'$ENV{"HOME"}\x00       '' corresponds to transition 'None'
+          [+]   Changing transition to 'T2' (not initiator), through callback
+          [+]   During transition 'T2', choosing an output symbol ('Sym2') with preset ('preset')
           [+]   Transition 'T2' lead to state 's1'
+          [+] At state 's1'
+          [+]   Randomly choosing a transition to execute or to wait for an input symbol
+          [+]   Waiting for an input symbol to decide the transition (not initiator)
+
 
         """
 

@@ -247,6 +247,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
 
         if self.threaded_mode:
             self.queue_output.put(data)
+            self.queue_output.join()
             return len(data)
         else:
             return self.write_map(repeat(data), rate=rate, duration=duration)
@@ -404,7 +405,6 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         if self._socket is not None:
             self._socket.settimeout(self.timeout)
 
-
     ## Thread management ##
 
     def run(self):
@@ -413,7 +413,12 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
 
         self.timeout = 0.1
 
-        self.open()
+        try:
+            self.open()
+        except Exception as e:
+            self.__stopEvent.set()
+            self._logger.error(e)
+            return
 
         while not self.__stopEvent.is_set():
             self.process_data_to_send()

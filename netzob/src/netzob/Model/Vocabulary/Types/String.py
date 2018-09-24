@@ -961,10 +961,11 @@ def _test_eos():
 def _test_specialize_abstract():
     r"""
     >>> from netzob.all import *
+    >>> from collections import OrderedDict
     >>> Conf.apply()
     >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
 
-    >>> possible_parameters = {}
+    >>> possible_parameters = OrderedDict()
     >>> possible_parameters["value"] = [None, '', b'', b'a', b'bb', "bb", 42]
     >>> possible_parameters["nbChars"] = [None, (), -4, 8, (0, 0), (2, 8), (8, 2), (-4, -2), (-4, 2), (2, -4), "test", ("test1", "test2"), (1, "test2")]
     >>> possible_parameters["encoding"] = [None, '', b'', b'a', b'bb', "bb", 42, "utf-8"]
@@ -973,194 +974,194 @@ def _test_specialize_abstract():
     >>> data_type = String
 
     >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
-    {'value': None}
-    {'value': ''}
+    OrderedDict([('value', None)])
+    OrderedDict([('value', '')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'String value cannot have a length equal to 0'
-    {'value': b''}
+    OrderedDict([('value', b'')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'String value cannot have a length equal to 0'
-    {'value': b'a'}
+    OrderedDict([('value', b'a')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for value: 'b'a'', type: '<class 'bytes'>''
-    {'value': b'bb'}
+    OrderedDict([('value', b'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for value: 'b'bb'', type: '<class 'bytes'>''
-    {'value': 'bb'}
-    {'value': 42}
+    OrderedDict([('value', 'bb')])
+    OrderedDict([('value', 42)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'object of type 'int' has no len()'
-    {'nbChars': None}
-    {'nbChars': ()}
+    OrderedDict([('nbChars', None)])
+    OrderedDict([('nbChars', ())])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'tuple index out of range'
-    {'nbChars': -4}
+    OrderedDict([('nbChars', -4)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'nbChars should be > 0'
-    {'nbChars': 8}
-    {'nbChars': (0, 0)}
+    OrderedDict([('nbChars', 8)])
+    OrderedDict([('nbChars', (0, 0))])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbChars should be an integer > 0'
-    {'nbChars': (2, 8)}
-    {'nbChars': (8, 2)}
+    OrderedDict([('nbChars', (2, 8))])
+    OrderedDict([('nbChars', (8, 2))])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Size must be defined with a tuple of integers, where the second value is greater than the first value'
-    {'nbChars': (-4, -2)}
+    OrderedDict([('nbChars', (-4, -2))])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbChars should be an integer >= 0'
-    {'nbChars': (-4, 2)}
+    OrderedDict([('nbChars', (-4, 2))])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbChars should be an integer >= 0'
-    {'nbChars': (2, -4)}
+    OrderedDict([('nbChars', (2, -4))])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbChars should be an integer > 0'
-    {'nbChars': 'test'}
+    OrderedDict([('nbChars', 'test')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbChars should be an integer >= 0'
-    {'nbChars': ('test1', 'test2')}
+    OrderedDict([('nbChars', ('test1', 'test2'))])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbChars should be an integer >= 0'
-    {'nbChars': (1, 'test2')}
+    OrderedDict([('nbChars', (1, 'test2'))])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbChars should be an integer > 0'
-    {'encoding': None}
+    OrderedDict([('encoding', None)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Encoding cannot be None'
-    {'encoding': ''}
+    OrderedDict([('encoding', '')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Wrong encoding specified: '''
-    {'encoding': b''}
+    OrderedDict([('encoding', b'')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Invalid type for arguments, expecting: str and received bytes'
-    {'encoding': b'a'}
+    OrderedDict([('encoding', b'a')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Invalid type for arguments, expecting: str and received bytes'
-    {'encoding': b'bb'}
+    OrderedDict([('encoding', b'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Invalid type for arguments, expecting: str and received bytes'
-    {'encoding': 'bb'}
+    OrderedDict([('encoding', 'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Wrong encoding specified: 'bb''
-    {'encoding': 42}
+    OrderedDict([('encoding', 42)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Invalid type for arguments, expecting: str and received int'
-    {'encoding': 'utf-8'}
-    {'eos': None}
-    {'eos': 'a'}
+    OrderedDict([('encoding', 'utf-8')])
+    OrderedDict([('eos', None)])
+    OrderedDict([('eos', 'a')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a list'
-    {'eos': b'c'}
+    OrderedDict([('eos', b'c')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a list'
-    {'eos': 42}
+    OrderedDict([('eos', 42)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a list'
-    {'eos': []}
-    {'eos': [b'c']}
+    OrderedDict([('eos', [])])
+    OrderedDict([('eos', [b'c'])])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
-    {'eos': [b'e']}
+    OrderedDict([('eos', [b'e'])])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
-    {'eos': [b'c', b'd']}
+    OrderedDict([('eos', [b'c', b'd'])])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
-    {'eos': [b'c', b'']}
+    OrderedDict([('eos', [b'c', b''])])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
-    {'eos': [b'aa']}
+    OrderedDict([('eos', [b'aa'])])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
-    {'eos': ['aa']}
-    {'eos': ['a', 'b']}
-    {'eos': ['aa', 'b']}
+    OrderedDict([('eos', ['aa'])])
+    OrderedDict([('eos', ['a', 'b'])])
+    OrderedDict([('eos', ['aa', 'b'])])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list of the same size'
-    {'eos': ['aaa', 'bbb']}
-    {'eos': [42]}
+    OrderedDict([('eos', ['aaa', 'bbb'])])
+    OrderedDict([('eos', [42])])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a string list'
-    {'eos': 'c'}
+    OrderedDict([('eos', 'c')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a list'
-    {'eos': b'c'}
+    OrderedDict([('eos', b'c')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: ''eos' parameter must be a list'
-    {'default': None}
-    {'default': ''}
+    OrderedDict([('default', None)])
+    OrderedDict([('default', '')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Cannot set a default Type value (here 'b''') that cannot be parsed (current type: String(nbChars=(0,8192)))'
-    {'default': b''}
+    OrderedDict([('default', b'')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'b''', type: '<class 'bytes'>''
-    {'default': b'e'}
+    OrderedDict([('default', b'e')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'b'e'', type: '<class 'bytes'>''
-    {'default': b'bb'}
+    OrderedDict([('default', b'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'b'bb'', type: '<class 'bytes'>''
-    {'default': 'ff'}
-    {'default': 42}
+    OrderedDict([('default', 'ff')])
+    OrderedDict([('default', 42)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: '42', type: '<class 'int'>''
 
     >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
-    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': None, 'default': None}
-    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
-    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': [], 'default': None}
-    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
-    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
-    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    OrderedDict([('value', None), ('nbChars', None), ('encoding', 'utf-8'), ('eos', None), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', None), ('encoding', 'utf-8'), ('eos', None), ('default', 'ff')])
+    OrderedDict([('value', None), ('nbChars', None), ('encoding', 'utf-8'), ('eos', []), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', None), ('encoding', 'utf-8'), ('eos', []), ('default', 'ff')])
+    OrderedDict([('value', None), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(0,8192)))'
-    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
-    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    OrderedDict([('value', None), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(0,8192)))'
-    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
-    {'value': None, 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    OrderedDict([('value', None), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(0,8192)))'
-    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': None, 'default': None}
-    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
+    OrderedDict([('value', None), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', None), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', None), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=8))'
-    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': [], 'default': None}
-    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
+    OrderedDict([('value', None), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', []), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', []), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=8))'
-    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
-    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    OrderedDict([('value', None), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=8))'
-    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
-    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    OrderedDict([('value', None), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=8))'
-    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
-    {'value': None, 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    OrderedDict([('value', None), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=8))'
-    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': None, 'default': None}
-    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
-    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': [], 'default': None}
-    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
-    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
-    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    OrderedDict([('value', None), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', None), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', None), ('default', 'ff')])
+    OrderedDict([('value', None), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', []), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', []), ('default', 'ff')])
+    OrderedDict([('value', None), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(2,8)))'
-    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
-    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    OrderedDict([('value', None), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(2,8)))'
-    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
-    {'value': None, 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    OrderedDict([('value', None), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', None)])
+    OrderedDict([('value', None), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'ff'') that cannot be parsed (current type: String(nbChars=(2,8)))'
-    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': None, 'default': None}
-    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', None), ('encoding', 'utf-8'), ('eos', None), ('default', None)])
+    OrderedDict([('value', 'bb'), ('nbChars', None), ('encoding', 'utf-8'), ('eos', None), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its constant value or its default value set, but not both'
-    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': [], 'default': None}
-    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', None), ('encoding', 'utf-8'), ('eos', []), ('default', None)])
+    OrderedDict([('value', 'bb'), ('nbChars', None), ('encoding', 'utf-8'), ('eos', []), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its constant value or its default value set, but not both'
-    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
-    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', None)])
+    OrderedDict([('value', 'bb'), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its constant value or its default value set, but not both'
-    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
-    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', None)])
+    OrderedDict([('value', 'bb'), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its constant value or its default value set, but not both'
-    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
-    {'value': 'bb', 'nbChars': None, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', None)])
+    OrderedDict([('value', 'bb'), ('nbChars', None), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its constant value or its default value set, but not both'
-    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': None, 'default': None}
+    OrderedDict([('value', 'bb'), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', None), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', None), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': [], 'default': None}
+    OrderedDict([('value', 'bb'), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', []), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', []), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
+    OrderedDict([('value', 'bb'), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
+    OrderedDict([('value', 'bb'), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
+    OrderedDict([('value', 'bb'), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': 8, 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', 8), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': None, 'default': None}
+    OrderedDict([('value', 'bb'), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', None), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': None, 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', None), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': [], 'default': None}
+    OrderedDict([('value', 'bb'), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', []), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': [], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', []), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aa'], 'default': None}
+    OrderedDict([('value', 'bb'), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aa'], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['aa']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': None}
+    OrderedDict([('value', 'bb'), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['a', 'b'], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['a', 'b']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': None}
+    OrderedDict([('value', 'bb'), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
-    {'value': 'bb', 'nbChars': (2, 8), 'encoding': 'utf-8', 'eos': ['aaa', 'bbb'], 'default': 'ff'}
+    OrderedDict([('value', 'bb'), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
 
     >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)

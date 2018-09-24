@@ -144,7 +144,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
            :param availableTransitions:
                   Corresponds to the list of available transitions starting
-                  from the current state. This list is filtered so that it only contains transitions for which the :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inverseInitiator` attribute has the same value as for the initial transition.
+                  from the current state.
            :param nextTransition:
                   Currently selected transition, either the initial transition
                   or the transition returned by the previous callback.
@@ -186,7 +186,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
            :return: The callback function should return a transition
                     object, which could be the original transition or
-                    another one in the available transitions. The returned transition should have its :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inverseInitiator` attribute set to the same value as for the initial transition.
+                    another one in the available transitions.
            :rtype: :class:`Transition<netzob.Model.Grammar.Transitions.Transition.Transition>`
 
         """

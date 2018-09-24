@@ -292,6 +292,7 @@ class UDPClientBuilder(ChannelBuilder):
     32000
     """
 
+    @public_api
     def __init__(self):
         super().__init__(UDPClient)
 
@@ -351,19 +352,22 @@ def _test_udp_write_read():
     >>> client.stop()
     >>> server.stop()
     >>> print(client.generateLog())
-    Activity log for actor 'Actor':
+    Activity log for actor 'Actor' (initiator):
       [+] At state 's0'
-      [+]   Picking transition 'open channel'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'open channel' (open channel)
       [+]   Transition 'open channel' lead to state 's1'
       [+] At state 's1'
-      [+]   Picking transition 'main transition'
-      [+]   During transition 'main transition', sending input symbol 'Symbol'
-      [+]   During transition 'main transition', receiving expected output symbol 'Symbol'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'main transition' (initiator)
+      [+]   During transition 'main transition', sending input symbol ('Symbol') with preset ('None')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol'), with good preset settings ('None')
       [+]   Transition 'main transition' lead to state 's1'
       [+] At state 's1'
-      [+]   Picking transition 'main transition'
-      [+]   During transition 'main transition', sending input symbol 'Symbol'
-      [+]   During transition 'main transition', receiving expected output symbol 'Symbol'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'main transition' (initiator)
+      [+]   During transition 'main transition', sending input symbol ('Symbol') with preset ('None')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol'), with good preset settings ('None')
       [+]   Transition 'main transition' lead to state 's1'
       [+] At state 's1', we reached the max number of transitions (3), so we stop
 

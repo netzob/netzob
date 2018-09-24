@@ -172,9 +172,24 @@ class Transition(AbstractTransition):
     that accepts a specific input symbol and produces an output
     symbol from a list that contains one symbol element:
 
+    >>> from netzob.all import *
     >>> t = Transition(State(), State(), name="testTransition")
     >>> t.inputSymbol = Symbol()
     >>> t.outputSymbols = [Symbol()]
+
+    The following example shows the definition of a state with two
+    transitions that have a different priority. The transition T1,
+    which has a higher priority than the transition T2, is therefore
+    executed in priority.
+
+    >>> from netzob.all import *
+    >>> s0 = State()
+    >>> s1 = State()
+    >>> s2 = State()
+    >>> t1 = Transition(s0, s1, name="T1")
+    >>> t1.priority = 1
+    >>> t2 = Transition(s0, s2, name="T2")
+    >>> t2.priority = 2
 
     """
 
@@ -267,7 +282,7 @@ class Transition(AbstractTransition):
         # Retrieve the symbol to send
         symbol_to_send = self.inputSymbol
         symbol_preset = self.inputSymbolPreset
-        actor.visit_log.append("  [+]   During transition '{}', sending input symbol '{}'".format(self.name, str(symbol_to_send)))
+        actor.visit_log.append("  [+]   During transition '{}', sending input symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), self.inputSymbolPreset))
 
         # If a callback is defined, we can change or modify the selected symbol
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))
@@ -378,7 +393,11 @@ class Transition(AbstractTransition):
 
         if received_symbol in self.outputSymbols:
             self.active = False
-            actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol '{}'".format(self.name, str(received_symbol)))
+            if received_symbol in self.outputSymbolsPreset:
+                output_preset = self.outputSymbolsPreset[received_symbol]
+            else:
+                output_preset = None
+            actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol ('{}'), with good preset settings ('{}')".format(self.name, str(received_symbol), output_preset))
             actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
 
             for cbk in self.cbk_action:
@@ -549,7 +568,7 @@ class Transition(AbstractTransition):
                 symbol_preset = self.outputSymbolsPreset[symbol_to_send]
 
         # Update visit log
-        actor.visit_log.append("  [+]   During transition '{}', choosing output symbol '{}'".format(self.name, str(symbol_to_send)))
+        actor.visit_log.append("  [+]   During transition '{}', choosing an output symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), symbol_preset))
 
         # Potentialy modify the selected symbol if a callback is defined
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))
@@ -572,6 +591,7 @@ class Transition(AbstractTransition):
 
         return (symbol_to_send, symbol_preset)
 
+    @public_api
     def add_cbk_action(self, cbk_method):
         """Function called after sending or receiving a symbol in the
         transition. This function should be used to modify the memory context.
