@@ -351,7 +351,12 @@ class Size(AbstractRelationVariableLeaf):
         # Check if we can encode the size in the Size field structure
         max_size = (1 << self.dataType.unitSize.value)
         if size > max_size:
-            error_message = "The computed size of the targets (which is '{}') cannot be encoded in the current Size field (which can encode at most a value of '{}'). You should consider using a bigger dataType to model the Size field.".format(size, max_size)
+            error_message = "The computed size (which is '{}') cannot be encoded in the current Size field".format(size)
+            if self.field is not None and len(self.field.name) > 0:
+                error_message = error_message + " '{}' (which can encode at most a value of '{}').".format(self.field.name, max_size)
+            else:
+                error_message = error_message + " (which can encode at most a value of '{}').".format(max_size)
+            error_message = error_message + " You should consider using a bigger dataType."
             self._logger.debug(error_message)
             raise ValueError(error_message)
 
@@ -650,7 +655,7 @@ def _test_size_default_datatype_value():
     >>> next(s.specialize()) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    ValueError: The computed size of the targets (which is '1000') cannot be encoded in the current Size field (which can encode at most a value of '256'). You should consider using a bigger dataType to model the Size field.
+    ValueError: The computed size (which is '1000') cannot be encoded in the current Size field 'F2' (which can encode at most a value of '256'). You should consider using a bigger dataType.
 
     >>> from netzob.all import *
     >>> f1 = Field(Raw(nbBytes=1000), "F1")
@@ -659,7 +664,7 @@ def _test_size_default_datatype_value():
     >>> next(s.specialize()) # doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    ValueError: The computed size of the targets (which is '1000') cannot be encoded in the current Size field (which can encode at most a value of '256'). You should consider using a bigger dataType to model the Size field.
+    ValueError: The computed size (which is '1000') cannot be encoded in the current Size field 'F2' (which can encode at most a value of '256'). You should consider using a bigger dataType.
 
     >>> from netzob.all import *
     >>> f1 = Field(Raw(nbBytes=1000), "F1")
