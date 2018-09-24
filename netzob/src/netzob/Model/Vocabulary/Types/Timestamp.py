@@ -534,10 +534,11 @@ def _test():
 def _test_specialize_abstract():
     r"""
     >>> from netzob.all import *
+    >>> from collections import OrderedDict
     >>> Conf.apply()
     >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
 
-    >>> possible_parameters = {}
+    >>> possible_parameters = OrderedDict()
     >>> possible_parameters["value"] = [None, b'', b'a', b'bb', "bb", 1444737333]
     >>> possible_parameters["epoch"] = [None, b'', b'a', b'bb', "bb", 42, Epoch.UNIX]
     >>> possible_parameters["unity"] = [None, b'', b'a', b'bb', "bb", 42, Unity.SECOND]

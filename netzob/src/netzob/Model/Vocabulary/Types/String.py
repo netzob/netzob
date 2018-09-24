@@ -961,10 +961,11 @@ def _test_eos():
 def _test_specialize_abstract():
     r"""
     >>> from netzob.all import *
+    >>> from collections import OrderedDict
     >>> Conf.apply()
     >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
 
-    >>> possible_parameters = {}
+    >>> possible_parameters = OrderedDict()
     >>> possible_parameters["value"] = [None, '', b'', b'a', b'bb', "bb", 42]
     >>> possible_parameters["nbChars"] = [None, (), -4, 8, (0, 0), (2, 8), (8, 2), (-4, -2), (-4, 2), (2, -4), "test", ("test1", "test2"), (1, "test2")]
     >>> possible_parameters["encoding"] = [None, '', b'', b'a', b'bb', "bb", 42, "utf-8"]
