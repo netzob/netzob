@@ -565,9 +565,9 @@ class Automata(object):
     @public_api
     def set_cbk_read_symbol_timeout(self, cbk_method, states=None):
         """Function called to handle cases where a timeout appears when
-        waiting for a symbol. For a server, this symbol would
+        waiting for a symbol. In a non initiator context, this symbol would
         correspond to the input symbol that should trigger a
-        transition. For a client, this symbol would correspond to an
+        transition. In an initiator context, this symbol would correspond to an
         output symbol that is expected according to the current
         transition.
 
@@ -597,7 +597,7 @@ class Automata(object):
            :param current_transition:
              Corresponds to the current transition in the automaton.
              It is expected that the current transition may be ``None``, especially
-             in a server context, where no transition has been initiated.
+             in a non initiator context, where no transition has been initiated.
            :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition
 
            :return: The callback function should return the next
@@ -615,8 +615,8 @@ class Automata(object):
     @public_api
     def set_cbk_read_unexpected_symbol(self, cbk_method, states=None):
         """Function called to handle cases where a symbol is received but not
-        expected. In a server context, this symbol would not match the input
-        symbol of the available transitions. In a client context, this
+        expected. In a non initiator context, this symbol would not match the input
+        symbol of the available transitions. In an initiator context, this
         symbol would not match the expected output symbols of the current
         transition.
 
@@ -648,7 +648,7 @@ class Automata(object):
            :param current_transition:
              Corresponds to the current transition in the automaton.
              It is expected that the current transition may be ``None``, especially
-             in a server context, where no transition has been initiated.
+             in a non initiator context, where no transition has been initiated.
            :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition
 
            :param received_symbol:
@@ -678,9 +678,9 @@ class Automata(object):
     @public_api
     def set_cbk_read_unknown_symbol(self, cbk_method, states=None):
         """Function called to handle cases where a message is received but
-        does not correspond to a known symbol. In a server context,
+        does not correspond to a known symbol. In a non initiator context,
         this message would not match the input symbol of the available
-        transitions. In a client context, this message would not match
+        transitions. In an initiator context, this message would not match
         the expected output symbols of the current transition.
 
         The method expects some parameters:
@@ -711,7 +711,7 @@ class Automata(object):
            :param current_transition:
              Corresponds to the current transition in the automaton.
              It is expected that the current transition may be ``None``,
-             especially in a server context, where no transition has been initiated.
+             especially in a non initiator context, where no transition has been initiated.
            :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition
 
            :param received_message:

@@ -172,9 +172,24 @@ class Transition(AbstractTransition):
     that accepts a specific input symbol and produces an output
     symbol from a list that contains one symbol element:
 
+    >>> from netzob.all import *
     >>> t = Transition(State(), State(), name="testTransition")
     >>> t.inputSymbol = Symbol()
     >>> t.outputSymbols = [Symbol()]
+
+    The following example shows the definition of a state with two
+    transitions that have a different priority. The transition T1,
+    which has a higher priority than the transition T2, is therefore
+    executed in priority.
+
+    >>> from netzob.all import *
+    >>> s0 = State()
+    >>> s1 = State()
+    >>> s2 = State()
+    >>> t1 = Transition(s0, s1, name="T1")
+    >>> t1.priority = 1
+    >>> t2 = Transition(s0, s2, name="T2")
+    >>> t2.priority = 2
 
     """
 
