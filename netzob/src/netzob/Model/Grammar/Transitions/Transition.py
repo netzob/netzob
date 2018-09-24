@@ -591,6 +591,7 @@ class Transition(AbstractTransition):
 
         return (symbol_to_send, symbol_preset)
 
+    @public_api
     def add_cbk_action(self, cbk_method):
         """Function called after sending or receiving a symbol in the
         transition. This function should be used to modify the memory context.

@@ -43,7 +43,7 @@ from typing import Mapping
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import NetzobLogger, public_api
 
 
 @NetzobLogger
@@ -69,11 +69,13 @@ class ChannelBuilder(object):
     :type kind: an AbstractChannel class
     """
 
+    @public_api
     def __init__(self, kind):
         self.kind = kind  # type: Type[AbstractChannel]
         self.attrs = {}
         self.after_init_callbacks = []
 
+    @public_api
     def set(self, key, value):
         """
         Set a named parameter that will be passed to :meth:`build`.
@@ -92,6 +94,7 @@ class ChannelBuilder(object):
                                .format(setter_name, type(self).__name__))
         return self
 
+    @public_api
     def set_map(self, mapping):
         # type: (Mapping) -> ChannelBuilder
         """
@@ -113,6 +116,7 @@ class ChannelBuilder(object):
         """
         self.attrs['timeout'] = value
 
+    @public_api
     def build(self):
         """
         Generate the final object instance using gathered information.

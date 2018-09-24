@@ -271,6 +271,7 @@ class CustomEthernetChannel(AbstractChannel):
         binary = "0" * (48 - binLength) + binary
         return bitarray(binary)
 
+    @public_api
     @typeCheck(int)
     def setProtocol(self, upperProtocol):
         """Set the code of the upper protocol
@@ -343,6 +344,7 @@ class CustomEthernetChannelBuilder(ChannelBuilder):
     '00:00:00:00:00:00'
     """
 
+    @public_api
     def __init__(self):
         super().__init__(CustomEthernetChannel)
 

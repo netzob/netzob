@@ -267,6 +267,7 @@ class TCPServerBuilder(ChannelBuilder):
     '4.3.2.1'
     """
 
+    @public_api
     def __init__(self):
         super().__init__(TCPServer)
 

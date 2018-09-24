@@ -732,6 +732,7 @@ class Automata(object):
 
     ## Automata Fuzzing ##
 
+    @public_api
     def mutate(self, strategy=None, target=None, generator=None, seed=None):
         r"""This is the mutation method of the automaton. This method returns
         a new automaton that may be used for fuzzing purpose.

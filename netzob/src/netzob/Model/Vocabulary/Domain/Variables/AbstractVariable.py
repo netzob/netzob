@@ -47,6 +47,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
 from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
+from netzob.Common.Utils.Decorators import public_api
 
 
 class AbstractVariable(object):
@@ -55,6 +56,7 @@ class AbstractVariable(object):
     The AbstractVariable class defines the API of a variable, which can be a leaf or a node variable.
     """
 
+    @public_api
     def __init__(self, varType, name=None, scope=None):
         """Constructor
 
@@ -80,6 +82,7 @@ class AbstractVariable(object):
         # Parent variable
         self.parent = None
 
+    @public_api
     @abc.abstractmethod
     def copy(self, map_objects=None):
         """Clone the current object as well as all its dependencies. This
@@ -97,6 +100,7 @@ class AbstractVariable(object):
     def count(self, preset=None):
         raise NotImplementedError("Method count() is not implemented")
 
+    @public_api
     @abc.abstractmethod
     def isnode(self):
         """Tells if the current variable is a node variable, which means it as children.

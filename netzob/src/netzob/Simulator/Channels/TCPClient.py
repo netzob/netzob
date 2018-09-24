@@ -317,6 +317,7 @@ class TCPClientBuilder(ChannelBuilder):
     1024
     """
 
+    @public_api
     def __init__(self):
         super().__init__(TCPClient)
 

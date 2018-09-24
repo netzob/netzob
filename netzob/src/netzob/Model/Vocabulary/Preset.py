@@ -1818,6 +1818,7 @@ class Preset(object):
 
         return tmp_new_keys
 
+    @public_api
     def getFuzzingCounterMax(self):
         """Return the default value for the maximum number of mutations to
         produce in the context of the Preset instance. A :class:`int`
@@ -1830,6 +1831,7 @@ class Preset(object):
         """
         return DomainMutator.globalCounterMax
 
+    @public_api
     def setFuzzingCounterMax(self, counterMax: Integer):
         """Set the default value for the maximum number of mutations to
         produce in the context of the Preset instance. A :class:`int`

@@ -208,6 +208,7 @@ class RawEthernetChannelBuilder(ChannelBuilder):
     'eth0'
     """
 
+    @public_api
     def __init__(self):
         super().__init__(RawEthernetChannel)
 

@@ -175,6 +175,7 @@ class DebugChannelBuilder(ChannelBuilder):
     <class 'netzob.Simulator.Channels.DebugChannel.DebugChannel'>
     """
 
+    @public_api
     def __init__(self):
         super().__init__(DebugChannel)
 
