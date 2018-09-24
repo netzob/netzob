@@ -40,6 +40,7 @@ from bitarray import bitarray
 import random
 import collections
 from enum import Enum
+from collections import OrderedDict
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -862,11 +863,12 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
 
 def test_type_one_parameter(data_type, possible_parameters):
-    functional_possible_parameters = {}
+    functional_possible_parameters = OrderedDict()
     for parameter_name, parameter_contents in possible_parameters.items():
         functional_parameter_contents = []
         for parameter_content in parameter_contents:
-            parameters = {parameter_name: parameter_content}
+            parameters = OrderedDict()
+            parameters[parameter_name] = parameter_content
             try:
                 print(parameters)
                 data_type(**parameters)
@@ -887,7 +889,7 @@ def test_type_multiple_parameters(data_type, functional_possible_parameters):
     functional_combinations_possible_parameters = []
     combinations_possible_parameters = list(itertools.product(*functional_possible_parameters.values()))
     for current_combination in combinations_possible_parameters:
-        parameters = {}
+        parameters = OrderedDict()
         for idx, parameter_name in enumerate(parameter_names):
             parameters[parameter_name] = current_combination[idx]
         try:
@@ -935,7 +937,7 @@ def test_type_specialize_abstract(data_type, parameter_names, functional_combina
             print("EXCEPTION IN COMPARING SPECIALIZATION AND ABSTRACTION RESULTS")
 
     for current_combination in functional_combinations_possible_parameters:
-        parameters = {}
+        parameters = OrderedDict()
         for idx, parameter_name in enumerate(parameter_names):
             parameters[parameter_name] = current_combination[idx]
         specialize_abstract(parameters)

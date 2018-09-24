@@ -1063,247 +1063,247 @@ def _test_specialize_abstract():
     >>> data_type = Integer
 
     >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
-    {'value': None}
-    {'value': b''}
+    OrderedDict([('value', None)])
+    OrderedDict([('value', b'')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input value shoud be a integer. Value received: 'b''''
-    {'value': b'a'}
+    OrderedDict([('value', b'a')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input value shoud be a integer. Value received: 'b'a'''
-    {'value': b'bb'}
+    OrderedDict([('value', b'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input value shoud be a integer. Value received: 'b'bb'''
-    {'value': 'bb'}
+    OrderedDict([('value', 'bb')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input value shoud be a integer. Value received: 'bb''
-    {'value': 42}
-    {'value': -5}
-    {'interval': None}
-    {'interval': 4}
+    OrderedDict([('value', 42)])
+    OrderedDict([('value', -5)])
+    OrderedDict([('interval', None)])
+    OrderedDict([('interval', 4)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input interval shoud be a tuple of two integers. Value received: '4''
-    {'interval': (4, 10)}
-    {'interval': (-10, 10)}
-    {'interval': (20, 10)}
+    OrderedDict([('interval', (4, 10))])
+    OrderedDict([('interval', (-10, 10))])
+    OrderedDict([('interval', (20, 10))])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Size must be defined with a tuple of integers, where the second value is greater than the first value'
-    {'interval': ('a', 4)}
+    OrderedDict([('interval', ('a', 4))])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'First element of interval should be an integer'
-    {'interval': (4, 'b')}
+    OrderedDict([('interval', (4, 'b'))])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Second element of interval should be an integer'
-    {'unitSize': None}
+    OrderedDict([('unitSize', None)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'unitSize cannot be None'
-    {'unitSize': UnitSize.SIZE_1}
+    OrderedDict([('unitSize', UnitSize.SIZE_1)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Provided unitSize 'UnitSize.SIZE_1' is too small to encode the maximum length of the potential values to generate (unitSize should be: 'UnitSize.SIZE_4')'
-    {'unitSize': UnitSize.SIZE_16}
-    {'endianness': None}
+    OrderedDict([('unitSize', UnitSize.SIZE_16)])
+    OrderedDict([('endianness', None)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'endianness cannot be None'
-    {'endianness': Endianness.LITTLE}
-    {'endianness': Endianness.BIG}
-    {'sign': None}
+    OrderedDict([('endianness', Endianness.LITTLE)])
+    OrderedDict([('endianness', Endianness.BIG)])
+    OrderedDict([('sign', None)])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'sign cannot be None'
-    {'sign': Sign.SIGNED}
-    {'sign': Sign.UNSIGNED}
-    {'default': None}
-    {'default': b''}
+    OrderedDict([('sign', Sign.SIGNED)])
+    OrderedDict([('sign', Sign.UNSIGNED)])
+    OrderedDict([('default', None)])
+    OrderedDict([('default', b'')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input default value shoud be a integer. Default value received: 'b''''
-    {'default': b'e'}
+    OrderedDict([('default', b'e')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input default value shoud be a integer. Default value received: 'b'e'''
-    {'default': b'eeee'}
+    OrderedDict([('default', b'eeee')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input default value shoud be a integer. Default value received: 'b'eeee'''
-    {'default': b'ff'}
+    OrderedDict([('default', b'ff')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input default value shoud be a integer. Default value received: 'b'ff'''
-    {'default': 'ff'}
+    OrderedDict([('default', 'ff')])
     EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input default value shoud be a integer. Default value received: 'ff''
-    {'default': 44}
-    {'default': -10}
+    OrderedDict([('default', 44)])
+    OrderedDict([('default', -10)])
 
     >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 44)])
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', -10)])
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 44)])
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'ushort format requires 0 <= number <= (0x7fff * 2 + 1)'
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
-    {'value': None, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 44)])
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', -10)])
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 44)])
+    OrderedDict([('value', None), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'argument out of range'
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b',\x00'') that cannot be parsed (current type: Integer(4,10))'
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\xf6\xff'') that cannot be parsed (current type: Integer(4,10))'
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b',\x00'') that cannot be parsed (current type: Integer(4,10))'
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'ushort format requires 0 <= number <= (0x7fff * 2 + 1)'
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00,'') that cannot be parsed (current type: Integer(4,10))'
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\xff\xf6'') that cannot be parsed (current type: Integer(4,10))'
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00,'') that cannot be parsed (current type: Integer(4,10))'
-    {'value': None, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', None), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'argument out of range'
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b',\x00'') that cannot be parsed (current type: Integer(-10,10))'
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', -10)])
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Specified interval '(-10, 10)' does not fit in specified unitSize 'UnitSize.SIZE_16''
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Specified interval '(-10, 10)' does not fit in specified unitSize 'UnitSize.SIZE_16''
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'ushort format requires 0 <= number <= (0x7fff * 2 + 1)'
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00,'') that cannot be parsed (current type: Integer(-10,10))'
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', -10)])
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Specified interval '(-10, 10)' does not fit in specified unitSize 'UnitSize.SIZE_16''
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Specified interval '(-10, 10)' does not fit in specified unitSize 'UnitSize.SIZE_16''
-    {'value': None, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', None), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'argument out of range'
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': 42, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': 42, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', 42), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'ushort format requires 0 <= number <= (0x7fff * 2 + 1)'
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'argument out of range'
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': -5, 'interval': None, 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', None), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its constant value or its default value set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (4, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', (4, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': None}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.LITTLE, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': None}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.SIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': None}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': 44}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 44)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
-    {'value': -5, 'interval': (-10, 10), 'unitSize': UnitSize.SIZE_16, 'endianness': Endianness.BIG, 'sign': Sign.UNSIGNED, 'default': -10}
+    OrderedDict([('value', -5), ('interval', (-10, 10)), ('unitSize', UnitSize.SIZE_16), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', -10)])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An Integer should have either its value or its interval set, but not both'
 
     >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
