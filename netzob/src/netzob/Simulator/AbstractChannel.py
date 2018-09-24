@@ -233,7 +233,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         parameters.
 
         :param data: The data to write on the channel.
-        :param rate: This specifies the bandwidth in octets to respect during
+        :param rate: This specifies the bandwidth in bytes per second to respect during
                      traffic emission (should be used with :attr:`duration` parameter). Default value is ``None``, which means that the bandwidth is only limited by the underlying physical layer.
         :param duration: This indicates for how many seconds the data is continuously
                          written on the channel. Default value is ``None``, which means that the data is sent only once.
@@ -258,7 +258,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         parameters.
 
         :param data_iterator: data iterator used to write on the channel.
-        :param rate: This specifies the bandwidth in octets to respect during
+        :param rate: This specifies the bandwidth in bytes per second to respect during
                      traffic emission (should be used with :attr:`duration` parameter). Default value is ``None``, which means that the bandwidth is only limited by the underlying physical layer.
         :param duration: This indicates for how many seconds the data is continuously
                          written on the channel. Default value is ``None``, which means that the data is sent only once.
