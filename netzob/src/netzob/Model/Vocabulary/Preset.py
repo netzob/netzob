@@ -89,7 +89,9 @@ class Preset(object):
     The Preset constructor expects some parameters:
 
     :param symbol: A symbol (or field) on which to apply Preset configuration.
+    :param name: The name of the preset configuration. Can be omitted. Default value is 'preset'.
     :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`, required
+    :type name: :class:`str`
 
     The Preset works like a Python :class:`dict` with a key:value principle:
 
@@ -421,9 +423,11 @@ class Preset(object):
         Preset.mappingTypesMutators[Agg] = (AggMutator, {})
 
     @public_api
-    def __init__(self, symbol):
+    def __init__(self, symbol, name="preset"):
         # Link a preset to its symbol
         self.symbol = symbol
+
+        self.name = name
 
         # Initialize counterMax
         DomainMutator.globalCounterMax = DomainMutator.COUNTER_MAX_DEFAULT
@@ -435,6 +439,18 @@ class Preset(object):
 
         # Initialize mapping between Field/Symbol and Mutators
         self.mappingFieldsMutators = {}
+
+    def __str__(self):
+        """Return the name of the current preset object.
+
+        >>> from netzob.all import *
+        >>> s = Symbol()
+        >>> p = Preset(s, name="test")
+        >>> print(p)
+        test
+
+        """
+        return self.name
 
     @public_api
     def fuzz(self,
@@ -1439,7 +1455,7 @@ class Preset(object):
 
         """
 
-        new_preset = Preset(self.symbol)
+        new_preset = Preset(self.symbol, name=self.name)
 
         # Copy fields mapping
         for k, mutator in self.mappingFieldsMutators.items():
