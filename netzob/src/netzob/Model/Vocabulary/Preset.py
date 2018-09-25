@@ -89,9 +89,9 @@ class Preset(object):
     The Preset constructor expects some parameters:
 
     :param symbol: A symbol (or field) on which to apply Preset configuration.
-    :param name: The name of the preset configuration. Can be omitted. Default value is 'preset'.
+    :param name: The name of the preset configuration. Default value is 'preset'.
     :type symbol: :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>` or :class:`Field <netzob.Model.Vocabulary.Field.Field>`, required
-    :type name: :class:`str`
+    :type name: :class:`str`, optional
 
     The Preset works like a Python :class:`dict` with a key:value principle:
 
