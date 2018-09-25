@@ -42,8 +42,8 @@ appname = name
 #|    Development version has version number increased and is
 #|    postfixed by .dev0
 #+---------------------------------------------------------------------------+
-version = "1.1.18-cottontail"
-versionName = "WorkingFly"
+version = "1.1.19-cottontail"
+versionName = "SpittingLama"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
