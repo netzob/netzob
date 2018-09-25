@@ -212,6 +212,7 @@ class Actor(Thread):
     output symbol.
 
     >>> from netzob.all import *
+    >>> Conf.seed = 10
     >>> import time
     >>>
     >>> # First we create the symbols
@@ -842,7 +843,8 @@ class Actor(Thread):
     of a client in its automaton, through a callback method.
 
     >>> from netzob.all import *
-    >>> random.seed(0)  # This is necessary only for unit test purpose
+    >>> Conf.apply()
+    >>> import random
     >>> import time
     >>>
     >>> # Creation of a callback function that returns a new transition
@@ -992,25 +994,18 @@ class Actor(Thread):
       [+]   Transition 'Open' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'T2' (initiator)
-      [+]   Changing transition to 'T1' (initiator), through callback
-      [+]   During transition 'T1', sending input symbol ('Symbol') with preset ('None')
-      [+]   During transition 'T1', receiving expected output symbol ('Symbol'), with good preset settings ('None')
-      [+]   Transition 'T1' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'T2' (initiator)
-      [+]   Changing transition to 'T1' (initiator), through callback
-      [+]   During transition 'T1', sending input symbol ('Symbol') with preset ('None')
-      [+]   During transition 'T1', receiving expected output symbol ('Symbol'), with good preset settings ('None')
-      [+]   Transition 'T1' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
       [+]   Changing transition to 'T2' (initiator), through callback
       [+]   During transition 'T2', sending input symbol ('Symbol') with preset ('None')
       [+]   During transition 'T2', receiving expected output symbol ('Symbol'), with good preset settings ('None')
       [+]   Transition 'T2' lead to state 'S2'
+      [+] At state 'S2'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'T4' (initiator)
+      [+]   Changing transition to 'T3' (initiator), through callback
+      [+]   During transition 'T3', sending input symbol ('Symbol') with preset ('None')
+      [+]   During transition 'T3', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   Transition 'T3' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T4' (initiator)
@@ -1065,12 +1060,6 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
-      [+]   Input symbol 'Symbol' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Symbol') with preset ('preset')
-      [+]   Transition 'T1' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Waiting for an input symbol to decide the transition (not initiator)
 
 
     .. _ActorExample6:
@@ -1081,8 +1070,9 @@ class Actor(Thread):
     of a server in its automaton, through a callback method.
 
     >>> from netzob.all import *
+    >>> Conf.apply()
     >>> import time
-    >>> random.seed(0)  # This is necessary only for unit test purpose
+    >>> import random
     >>>
     >>> # Creation of a callback function that returns a new transition
     >>> def cbk_modifyTransition(availableTransitions, nextTransition, current_state,
@@ -2135,11 +2125,11 @@ class Actor(Thread):
       [+]   Transition 'T1' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'T3' (initiator)
-      [+]   During transition 'T3', sending input symbol ('Symbol 1') with preset ('None')
-      [+]   During transition 'T3', fuzzing activated
-      [+]   During transition 'T3', receiving expected output symbol ('Symbol 2'), with good preset settings ('None')
-      [+]   Transition 'T3' lead to state 'S2'
+      [+]   Picking transition 'T2' (initiator)
+      [+]   During transition 'T2', sending input symbol ('Symbol 2') with preset ('None')
+      [+]   During transition 'T2', fuzzing activated
+      [+]   During transition 'T2', receiving expected output symbol ('Symbol 2'), with good preset settings ('None')
+      [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
@@ -2361,6 +2351,10 @@ class Actor(Thread):
 
         self._logger.debug("Current state for actor '{}': '{}'.".format(self.name, self.current_state))
 
+        if self.current_state is None:
+            self._logger.debug("Cannot execute transition as current state is None, for actor '{}'".format(self.name))
+            return True
+
         # Execute state action
         self.current_state = self.current_state.execute(self)
 
@@ -2570,6 +2564,8 @@ def _test_client_and_server_actors():
     times. Alice answers every time with the data ``"hello"``.
 
     >>> from netzob.all import *
+    >>> Conf.seed = 10
+    >>> Conf.apply()
     >>> import time
     >>>
     >>> # First we create the symbols
@@ -2727,9 +2723,9 @@ def _test_context():
     An integer variable is created and memorized for Alice actor. Its value is incremented at each transition.
 
     >>> from netzob.all import *
+    >>> Conf.seed = 10
+    >>> Conf.apply()
     >>> import time
-    >>> import random
-    >>> random.seed(0)  # This is necessary only for unit test purpose
     >>>
     >>> # We create bob's symbol
     >>> f1 = Field("hello", name="Bob hello")
@@ -2789,7 +2785,7 @@ def _test_context():
     >>> alice_symbolList = [alice_symbol_input]
     >>>
     >>> # Output symbol
-    >>> alice_var_integer = Data(uint32(), name='Alice integer')
+    >>> alice_var_integer = Data(uint32(), scope=Scope.MESSAGE, name='Alice integer')
     >>> alice_f1_output = Field("hello", name="Alice Field f1")
     >>> alice_f2_output = Field(alice_var_integer, name="Alice Field f2")
     >>> alice_symbol_output = Symbol(name="Alice Output Symbol", fields=[alice_f1_output, alice_f2_output])
@@ -2865,29 +2861,30 @@ def _test_context():
     >>> stdout = io.StringIO()
     >>> with contextlib.redirect_stdout(stdout):
     ...     alice.start()
+    ...     time.sleep(0.5)
     ...     bob.start()
     ...     time.sleep(1)
     >>> print(stdout.getvalue(), end='')
     [READ] Current state: S1
-    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'z\x02B\x04')])
+    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xcf\x84\xb6\x83')])
     [WRITE] Current state: S1
-    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'#\xa7q\x1a')])
-    [WRITE] Current value for f2: 598176026
+    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x85J\x96W')])
+    [WRITE] Current value for f2: 2236257879
     [READ] Current state: S1
-    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xe6\xf4Y\x0b')])
+    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xff\x1e[\xef')])
     [WRITE] Current state: S1
-    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'T\x87\xce\x1e')])
-    [WRITE] Current value for f2: 1418186270
+    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x85J\x96X')])
+    [WRITE] Current value for f2: 2236257880
     [READ] Current state: S1
-    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'o%\xe2\xa2')])
+    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x9aj\xb3)')])
     [WRITE] Current state: S1
-    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x8dr1\x04')])
-    [WRITE] Current value for f2: 2373071108
+    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x85J\x96Y')])
+    [WRITE] Current value for f2: 2236257881
     [READ] Current state: S1
-    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xea~\x9dI')])
+    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b"C'y\xee")])
     [WRITE] Current state: S1
-    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xde\x1b7*')])
-    [WRITE] Current value for f2: 3726325546
+    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x85J\x96Z')])
+    [WRITE] Current value for f2: 2236257882
     >>>
     >>> bob.stop()
     >>> alice.stop()
@@ -2968,6 +2965,8 @@ def _test_callback_modify_symbol():
     by the client to the server, through a callback method.
 
     >>> from netzob.all import *
+    >>> Conf.seed = 10
+    >>> Conf.apply()
     >>> import time
     >>>
     >>> # Creation of a callback function that returns a new transition
