@@ -373,8 +373,8 @@ def _test_tcp_write_read():
       [+] At state 's1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'main transition' (initiator)
-      [+]   During transition 'main transition', sending input symbol ('Symbol') with preset ('None')
-      [+]   During transition 'main transition', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
       [+]   Transition 'main transition' lead to state 's1'
       [+] At state 's1', we reached the max number of transitions (2), so we stop
 
@@ -421,8 +421,8 @@ def _test_tcp_write_read_large_packet():
       [+] At state 's1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'main transition' (initiator)
-      [+]   During transition 'main transition', sending input symbol ('Symbol') with preset ('None')
-      [+]   During transition 'main transition', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
       [+]   Transition 'main transition' lead to state 's1'
       [+] At state 's1', we reached the max number of transitions (2), so we stop
 

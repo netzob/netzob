@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Preset import Preset
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
-from netzob.Simulator.AbstractionLayer import SymbolBadSettingsException, Operation
+from netzob.Simulator.AbstractionLayer import Operation
 
 
 @NetzobLogger
@@ -105,8 +105,7 @@ class Transition(AbstractTransition):
                             dependencies. During abstraction, this
                             structure is used to validate the data of
                             the received symbol. If the data does
-                            not match, we stay at the
-                            ``startState`` state. See :class:`Preset
+                            not match, we leave the automaton or execute the function set by the :meth:`set_cbk_read_unexepected_symbol` method. See :class:`Preset
                             <netzob.Model.Vocabulary.Preset.Preset>`
                             for a complete explanation of Preset
                             usage.
@@ -119,8 +118,7 @@ class Transition(AbstractTransition):
                               dependencies. During abstraction, this
                               structure is used to validate the data of
                               the received symbol. If the data does
-                              not match, we stay at the
-                              ``startState`` state. See :class:`Preset
+                              not match, we leave the automaton or execute the function set by the :meth:`~netzob.Grammar.Automata.Automata.Automata.set_cbk_read_unexepected_symbol` method. See :class:`Preset
                               <netzob.Model.Vocabulary.Preset.Preset>`
                               for a complete explanation of Preset
                               usage.
@@ -282,7 +280,10 @@ class Transition(AbstractTransition):
         # Retrieve the symbol to send
         symbol_to_send = self.inputSymbol
         symbol_preset = self.inputSymbolPreset
-        actor.visit_log.append("  [+]   During transition '{}', sending input symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), self.inputSymbolPreset))
+        if self.inputSymbolPreset is not None:
+            actor.visit_log.append("  [+]   During transition '{}', sending input symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), self.inputSymbolPreset))
+        else:
+            actor.visit_log.append("  [+]   During transition '{}', sending input symbol ('{}')".format(self.name, str(symbol_to_send)))
 
         # If a callback is defined, we can change or modify the selected symbol
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))
@@ -376,10 +377,6 @@ class Transition(AbstractTransition):
         except OSError as e:
             self._logger.debug("[actor='{}'] The underlying abstraction channel seems to be closed, so we stop the current actor".format(str(actor)))
             return
-        except SymbolBadSettingsException:
-            actor.visit_log.append("  [+]   During transition '{}', received expected symbol with wrong settings".format(self.name))
-            # Return the start state so that we accept a new message
-            return
         except Exception as e:
             self.active = False
             errorMessage = "[actor='{}'] An error occured while executing the transition {} as an initiator: {}".format(str(actor), self.name, e)
@@ -387,17 +384,30 @@ class Transition(AbstractTransition):
             raise Exception(errorMessage)
 
         # Computes the next state following the received symbol
-        for outputSymbol in self.outputSymbols:
-            self._logger.debug("[actor='{}'] Possible output symbol: '{}' (id={}).".
-                               format(str(actor), str(outputSymbol), id(outputSymbol)))
-
         if received_symbol in self.outputSymbols:
             self.active = False
             if received_symbol in self.outputSymbolsPreset:
                 output_preset = self.outputSymbolsPreset[received_symbol]
             else:
                 output_preset = None
-            actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol ('{}'), with good preset settings ('{}')".format(self.name, str(received_symbol), output_preset))
+
+            # Check symbol regarding its expected preset
+            if output_preset is not None:
+                actor.visit_log.append("  [+]   PAN")
+                if received_symbol.check_preset(received_structure, output_preset):
+                    self._logger.debug("Receive good symbol with good preset setting")
+                    actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol ('{}'), with good preset settings ('{}')".format(self.name, str(received_symbol), output_preset))
+                else:
+                    self._logger.debug("Receive good symbol but with wrong preset setting")
+                    actor.visit_log.append("  [+]   During transition '{}', received expected symbol with wrong settings".format(self.name))
+
+                    # We leave the automaton
+                    return None
+
+            else:
+                actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol ('{}')".format(self.name, str(received_symbol)))
+
+            # Set next state
             actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
 
             for cbk in self.cbk_action:
@@ -421,8 +431,8 @@ class Transition(AbstractTransition):
                 else:
                     actor.visit_log.append("  [+]   During transition '{}', receiving unknown symbol, so we stay at state '{}'".format(self.name, str(self.startState)))
 
-                    # Return the start state so that we accept a new message
-                    return self.startState
+                    # We leave the automaton
+                    return None
 
             # Handle case where received symbol is known but unexpected
             else:
@@ -438,8 +448,8 @@ class Transition(AbstractTransition):
                 else:
                     actor.visit_log.append("  [+]   During transition '{}', receiving unexpected symbol '{}', so we stay at state '{}'".format(self.name, received_symbol, str(self.startState)))
 
-                    # Return the start state so that we accept a new message
-                    return self.startState
+                    # We leave the automaton
+                    return None
 
     def executeAsNotInitiator(self, actor):
         """Execute the current transition as a not initiator.
@@ -562,13 +572,17 @@ class Transition(AbstractTransition):
 
         # Random selection of the symbol and its associated preset
         symbol_to_send = random.choice(distribution)
-        symbol_preset = Preset(symbol_to_send)
+
         if self.outputSymbolsPreset is not None and isinstance(self.outputSymbolsPreset, dict):
             if symbol_to_send in self.outputSymbolsPreset:
                 symbol_preset = self.outputSymbolsPreset[symbol_to_send]
+            else:
+                symbol_preset = None
 
-        # Update visit log
-        actor.visit_log.append("  [+]   During transition '{}', choosing an output symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), symbol_preset))
+        if symbol_preset is not None:
+            actor.visit_log.append("  [+]   During transition '{}', choosing an output symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), symbol_preset))
+        else:
+            actor.visit_log.append("  [+]   During transition '{}', choosing an output symbol ('{}')".format(self.name, str(symbol_to_send)))
 
         # Potentialy modify the selected symbol if a callback is defined
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))

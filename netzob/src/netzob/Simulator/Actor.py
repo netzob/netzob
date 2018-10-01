@@ -278,14 +278,14 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'hello' (initiator)
-      [+]   During transition 'hello', sending input symbol ('Bob-Hello') with preset ('None')
-      [+]   During transition 'hello', receiving expected output symbol ('Alice-Hello'), with good preset settings ('None')
+      [+]   During transition 'hello', sending input symbol ('Bob-Hello')
+      [+]   During transition 'hello', receiving expected output symbol ('Alice-Hello')
       [+]   Transition 'hello' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'hello' (initiator)
-      [+]   During transition 'hello', sending input symbol ('Bob-Hello') with preset ('None')
-      [+]   During transition 'hello', receiving expected output symbol ('Alice-Hello'), with good preset settings ('None')
+      [+]   During transition 'hello', sending input symbol ('Bob-Hello')
+      [+]   During transition 'hello', receiving expected output symbol ('Alice-Hello')
       [+]   Transition 'hello' lead to state 'S1'
       [+] At state 'S1', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
@@ -299,13 +299,13 @@ class Actor(Thread):
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Bob-Hello' corresponds to transition 'hello'
-      [+]   During transition 'hello', choosing an output symbol ('Alice-Hello') with preset ('preset')
+      [+]   During transition 'hello', choosing an output symbol ('Alice-Hello')
       [+]   Transition 'hello' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Bob-Hello' corresponds to transition 'hello'
-      [+]   During transition 'hello', choosing an output symbol ('Alice-Hello') with preset ('preset')
+      [+]   During transition 'hello', choosing an output symbol ('Alice-Hello')
       [+]   Transition 'hello' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -431,14 +431,14 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Hello') with preset ('None')
-      [+]   During transition 'T1', receiving expected output symbol ('Hello'), with good preset settings ('None')
+      [+]   During transition 'T1', sending input symbol ('Hello')
+      [+]   During transition 'T1', receiving expected output symbol ('Hello')
       [+]   Transition 'T1' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T2' (initiator)
-      [+]   During transition 'T2', sending input symbol ('Hello') with preset ('None')
-      [+]   During transition 'T2', receiving expected output symbol ('Hello'), with good preset settings ('None')
+      [+]   During transition 'T2', sending input symbol ('Hello')
+      [+]   During transition 'T2', receiving expected output symbol ('Hello')
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
@@ -452,13 +452,13 @@ class Actor(Thread):
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Hello' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Hello') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Hello')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Hello' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Hello') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Hello')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -609,21 +609,21 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'main transition' (initiator)
-      [+]   During transition 'main transition', sending input symbol ('Symbol') with preset ('None')
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
       [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
-      [+]   During transition 'main transition', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
       [+]   Transition 'main transition' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'main transition' (initiator)
-      [+]   During transition 'main transition', sending input symbol ('Symbol') with preset ('None')
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
       [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
-      [+]   During transition 'main transition', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
       [+]   Transition 'main transition' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'main transition' (initiator)
-      [+]   During transition 'main transition', sending input symbol ('Symbol') with preset ('None')
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
       [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
@@ -636,13 +636,13 @@ class Actor(Thread):
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Symbol') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Symbol')
       [+]   Transition 'T1' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol' corresponds to transition 'T2'
-      [+]   During transition 'T2', choosing an output symbol ('Symbol') with preset ('preset')
+      [+]   During transition 'T2', choosing an output symbol ('Symbol')
       [+]   Transition 'T2' lead to state 'S3'
       [+] At state 'S3'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -651,6 +651,7 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+] Issue in last transition. Leaving the automaton.
 
 
     .. _ActorExample4:
@@ -794,14 +795,14 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('symbol2') with preset ('None')
-      [+]   During transition 'T1', receiving expected output symbol ('symbol1'), with good preset settings ('None')
+      [+]   During transition 'T1', sending input symbol ('symbol2')
+      [+]   During transition 'T1', receiving expected output symbol ('symbol1')
       [+]   Transition 'T1' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T2' (initiator)
-      [+]   During transition 'T2', sending input symbol ('symbol2') with preset ('None')
-      [+]   During transition 'T2', receiving expected output symbol ('symbol1'), with good preset settings ('None')
+      [+]   During transition 'T2', sending input symbol ('symbol2')
+      [+]   During transition 'T2', receiving expected output symbol ('symbol1')
       [+]   Transition 'T2' lead to state 'S3'
       [+] At state 'S3'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -809,6 +810,7 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -820,14 +822,14 @@ class Actor(Thread):
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'symbol1' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('symbol1') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('symbol1')
       [+]   During transition 'T1', modifying output symbol to 'symbol1', through callback
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'symbol1' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('symbol1') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('symbol1')
       [+]   During transition 'T1', modifying output symbol to 'symbol1', through callback
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
@@ -996,29 +998,29 @@ class Actor(Thread):
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
       [+]   Changing transition to 'T2' (initiator), through callback
-      [+]   During transition 'T2', sending input symbol ('Symbol') with preset ('None')
-      [+]   During transition 'T2', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'T2', sending input symbol ('Symbol')
+      [+]   During transition 'T2', receiving expected output symbol ('Symbol')
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T4' (initiator)
       [+]   Changing transition to 'T3' (initiator), through callback
-      [+]   During transition 'T3', sending input symbol ('Symbol') with preset ('None')
-      [+]   During transition 'T3', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'T3', sending input symbol ('Symbol')
+      [+]   During transition 'T3', receiving expected output symbol ('Symbol')
       [+]   Transition 'T3' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T4' (initiator)
       [+]   Changing transition to 'T3' (initiator), through callback
-      [+]   During transition 'T3', sending input symbol ('Symbol') with preset ('None')
-      [+]   During transition 'T3', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'T3', sending input symbol ('Symbol')
+      [+]   During transition 'T3', receiving expected output symbol ('Symbol')
       [+]   Transition 'T3' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T3' (initiator)
       [+]   Changing transition to 'T4' (initiator), through callback
-      [+]   During transition 'T4', sending input symbol ('Symbol') with preset ('None')
-      [+]   During transition 'T4', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'T4', sending input symbol ('Symbol')
+      [+]   During transition 'T4', receiving expected output symbol ('Symbol')
       [+]   Transition 'T4' lead to state 'S3'
       [+] At state 'S3'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -1026,6 +1028,7 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -1037,25 +1040,25 @@ class Actor(Thread):
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Symbol') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Symbol')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Symbol') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Symbol')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Symbol') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Symbol')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Symbol') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Symbol')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -1210,19 +1213,19 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Symbol') with preset ('None')
-      [+]   During transition 'T1', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'T1', sending input symbol ('Symbol')
+      [+]   During transition 'T1', receiving expected output symbol ('Symbol')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Symbol') with preset ('None')
-      [+]   During transition 'T1', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'T1', sending input symbol ('Symbol')
+      [+]   During transition 'T1', receiving expected output symbol ('Symbol')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Symbol') with preset ('None')
+      [+]   During transition 'T1', sending input symbol ('Symbol')
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -1235,14 +1238,14 @@ class Actor(Thread):
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol' corresponds to transition 'T1'
       [+]   Changing transition to 'T2' (not initiator), through callback
-      [+]   During transition 'T2', choosing an output symbol ('Symbol') with preset ('preset')
+      [+]   During transition 'T2', choosing an output symbol ('Symbol')
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol' corresponds to transition 'T3'
       [+]   Changing transition to 'T4' (not initiator), through callback
-      [+]   During transition 'T4', choosing an output symbol ('Symbol') with preset ('preset')
+      [+]   During transition 'T4', choosing an output symbol ('Symbol')
       [+]   Transition 'T4' lead to state 'S3'
       [+] At state 'S3'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -1251,6 +1254,7 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+] Issue in last transition. Leaving the automaton.
 
 
     .. _ActorExample7:
@@ -1394,14 +1398,14 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('HelloAlice') with preset ('None')
-      [+]   During transition 'T1', receiving expected output symbol ('HelloBob'), with good preset settings ('None')
+      [+]   During transition 'T1', sending input symbol ('HelloAlice')
+      [+]   During transition 'T1', receiving expected output symbol ('HelloBob')
       [+]   Transition 'T1' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T2' (initiator)
-      [+]   During transition 'T2', sending input symbol ('Empty Symbol') with preset ('None')
-      [+]   During transition 'T2', receiving expected output symbol ('Bye'), with good preset settings ('None')
+      [+]   During transition 'T2', sending input symbol ('Empty Symbol')
+      [+]   During transition 'T2', receiving expected output symbol ('Bye')
       [+]   Transition 'T2' lead to state 'S3'
       [+] At state 'S3'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -1409,6 +1413,7 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -1420,13 +1425,13 @@ class Actor(Thread):
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'HelloAlice' corresponds to transition 'Hello'
-      [+]   During transition 'Hello', choosing an output symbol ('HelloBob') with preset ('preset')
+      [+]   During transition 'Hello', choosing an output symbol ('HelloBob')
       [+]   Transition 'Hello' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Receiving no symbol (EmptySymbol) corresponds to transition 'Bye'
-      [+]   During transition 'Bye', choosing an output symbol ('Bye') with preset ('preset')
+      [+]   During transition 'Bye', choosing an output symbol ('Bye')
       [+]   Transition 'Bye' lead to state 'S3'
       [+] At state 'S3'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -1435,6 +1440,7 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+] Issue in last transition. Leaving the automaton.
 
 
     .. _ActorExample8:
@@ -1521,7 +1527,7 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Hello') with preset ('None')
+      [+]   During transition 'T1', sending input symbol ('Hello')
       [+]   During transition 'T1', timeout in reception triggered a callback that lead to state 'Error state'
       [+] At state 'Error state'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -1529,6 +1535,7 @@ class Actor(Thread):
       [+]   Transition 'Close with error' lead to state 'Close state'
       [+] At state 'Close state'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'Start state'
@@ -1540,11 +1547,12 @@ class Actor(Thread):
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Hello' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Hello') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Hello')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
+      [+] Issue in last transition. Leaving the automaton.
 
 
     .. _ActorExample9:
@@ -1665,7 +1673,7 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Hello1') with preset ('None')
+      [+]   During transition 'T1', sending input symbol ('Hello1')
       [+]   During transition 'T1', receiving unexpected symbol triggered a callback that lead to state 'Error state'
       [+] At state 'Error state'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -1673,6 +1681,7 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S3'
       [+] At state 'S3'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -1684,7 +1693,7 @@ class Actor(Thread):
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Hello1' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Hello1') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Hello1')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -1810,7 +1819,7 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Hello1') with preset ('None')
+      [+]   During transition 'T1', sending input symbol ('Hello1')
       [+]   During transition 'T1', receiving unknown symbol triggered a callback that lead to state 'Error state'
       [+] At state 'Error state'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -1818,6 +1827,7 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S3'
       [+] At state 'S3'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -1829,7 +1839,7 @@ class Actor(Thread):
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Hello1' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Hello2') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Hello2')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -1957,15 +1967,15 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Symbol 1') with preset ('None')
+      [+]   During transition 'T1', sending input symbol ('Symbol 1')
       [+]   During transition 'T1', fuzzing activated
-      [+]   During transition 'T1', receiving expected output symbol ('Symbol 2'), with good preset settings ('None')
+      [+]   During transition 'T1', receiving expected output symbol ('Symbol 2')
       [+]   Transition 'T1' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T2' (initiator)
-      [+]   During transition 'T2', sending input symbol ('Symbol 2') with preset ('None')
-      [+]   During transition 'T2', receiving expected output symbol ('Symbol 2'), with good preset settings ('None')
+      [+]   During transition 'T2', sending input symbol ('Symbol 2')
+      [+]   During transition 'T2', receiving expected output symbol ('Symbol 2')
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
@@ -1980,14 +1990,14 @@ class Actor(Thread):
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Unknown message b'\x00'' corresponds to transition 'None'
       [+]   Changing transition to 'T2' (not initiator), through callback
-      [+]   During transition 'T2', choosing an output symbol ('Symbol 2') with preset ('preset')
+      [+]   During transition 'T2', choosing an output symbol ('Symbol 2')
       [+]   Transition 'T2' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol 2' corresponds to transition 'T2'
       [+]   Changing transition to 'T2' (not initiator), through callback
-      [+]   During transition 'T2', choosing an output symbol ('Symbol 2') with preset ('preset')
+      [+]   During transition 'T2', choosing an output symbol ('Symbol 2')
       [+]   Transition 'T2' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -2120,15 +2130,15 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Symbol 1') with preset ('None')
-      [+]   During transition 'T1', receiving expected output symbol ('Symbol 1'), with good preset settings ('None')
+      [+]   During transition 'T1', sending input symbol ('Symbol 1')
+      [+]   During transition 'T1', receiving expected output symbol ('Symbol 1')
       [+]   Transition 'T1' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T2' (initiator)
-      [+]   During transition 'T2', sending input symbol ('Symbol 2') with preset ('None')
+      [+]   During transition 'T2', sending input symbol ('Symbol 2')
       [+]   During transition 'T2', fuzzing activated
-      [+]   During transition 'T2', receiving expected output symbol ('Symbol 2'), with good preset settings ('None')
+      [+]   During transition 'T2', receiving expected output symbol ('Symbol 2')
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
@@ -2143,14 +2153,14 @@ class Actor(Thread):
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol 1' corresponds to transition 'T1'
       [+]   Changing transition to 'T1' (not initiator), through callback
-      [+]   During transition 'T1', choosing an output symbol ('Symbol 1') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Symbol 1')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Unknown message b'\x00'' corresponds to transition 'None'
       [+]   Changing transition to 'T2' (not initiator), through callback
-      [+]   During transition 'T2', choosing an output symbol ('Symbol 2') with preset ('preset')
+      [+]   During transition 'T2', choosing an output symbol ('Symbol 2')
       [+]   Transition 'T2' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -2248,14 +2258,14 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'hello' (initiator)
-      [+]   During transition 'hello', sending input symbol ('Bob-Hello') with preset ('None')
-      [+]   During transition 'hello', receiving expected output symbol ('Alice-Hello'), with good preset settings ('None')
+      [+]   During transition 'hello', sending input symbol ('Bob-Hello')
+      [+]   During transition 'hello', receiving expected output symbol ('Alice-Hello')
       [+]   Transition 'hello' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'hello' (initiator)
-      [+]   During transition 'hello', sending input symbol ('Bob-Hello') with preset ('None')
-      [+]   During transition 'hello', receiving expected output symbol ('Alice-Hello'), with good preset settings ('None')
+      [+]   During transition 'hello', sending input symbol ('Bob-Hello')
+      [+]   During transition 'hello', receiving expected output symbol ('Alice-Hello')
       [+]   Transition 'hello' lead to state 'S1'
       [+] At state 'S1', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
@@ -2269,13 +2279,13 @@ class Actor(Thread):
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Bob-Hello' corresponds to transition 'hello'
-      [+]   During transition 'hello', choosing an output symbol ('Alice-Hello') with preset ('preset')
+      [+]   During transition 'hello', choosing an output symbol ('Alice-Hello')
       [+]   Transition 'hello' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Bob-Hello' corresponds to transition 'hello'
-      [+]   During transition 'hello', choosing an output symbol ('Alice-Hello') with preset ('preset')
+      [+]   During transition 'hello', choosing an output symbol ('Alice-Hello')
       [+]   Transition 'hello' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -2360,6 +2370,7 @@ class Actor(Thread):
 
         if self.current_state is None:
             self._logger.debug("The execution of transition did not returned a state, for actor '{}'".format(self.name))
+            self.visit_log.append("  [+] Issue in last transition. Leaving the automaton.")
             return True
 
         if self.current_state is not None and self.target_state is not None and self.target_state.name == self.current_state.name:
@@ -2673,14 +2684,14 @@ def _test_client_and_server_actors():
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Hello') with preset ('None')
-      [+]   During transition 'T1', receiving expected output symbol ('Hello'), with good preset settings ('None')
+      [+]   During transition 'T1', sending input symbol ('Hello')
+      [+]   During transition 'T1', receiving expected output symbol ('Hello')
       [+]   Transition 'T1' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T2' (initiator)
-      [+]   During transition 'T2', sending input symbol ('Hello') with preset ('None')
-      [+]   During transition 'T2', receiving expected output symbol ('Hello'), with good preset settings ('None')
+      [+]   During transition 'T2', sending input symbol ('Hello')
+      [+]   During transition 'T2', receiving expected output symbol ('Hello')
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
@@ -2694,13 +2705,13 @@ def _test_client_and_server_actors():
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Hello' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Hello') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Hello')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Hello' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Hello') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Hello')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -2898,26 +2909,26 @@ def _test_context():
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Hello') with preset ('None')
-      [+]   During transition 'T1', receiving expected output symbol ('Hello'), with good preset settings ('None')
+      [+]   During transition 'T1', sending input symbol ('Hello')
+      [+]   During transition 'T1', receiving expected output symbol ('Hello')
       [+]   Transition 'T1' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T2' (initiator)
-      [+]   During transition 'T2', sending input symbol ('Hello') with preset ('None')
-      [+]   During transition 'T2', receiving expected output symbol ('Hello'), with good preset settings ('None')
+      [+]   During transition 'T2', sending input symbol ('Hello')
+      [+]   During transition 'T2', receiving expected output symbol ('Hello')
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T2' (initiator)
-      [+]   During transition 'T2', sending input symbol ('Hello') with preset ('None')
-      [+]   During transition 'T2', receiving expected output symbol ('Hello'), with good preset settings ('None')
+      [+]   During transition 'T2', sending input symbol ('Hello')
+      [+]   During transition 'T2', receiving expected output symbol ('Hello')
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T2' (initiator)
-      [+]   During transition 'T2', sending input symbol ('Hello') with preset ('None')
-      [+]   During transition 'T2', receiving expected output symbol ('Hello'), with good preset settings ('None')
+      [+]   During transition 'T2', sending input symbol ('Hello')
+      [+]   During transition 'T2', receiving expected output symbol ('Hello')
       [+]   Transition 'T2' lead to state 'S2'
       [+] At state 'S2', we reached the max number of transitions (5), so we stop
     >>> print(alice.generateLog())
@@ -2931,25 +2942,25 @@ def _test_context():
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Alice Input Symbol' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Alice Output Symbol') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Alice Output Symbol')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Alice Input Symbol' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Alice Output Symbol') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Alice Output Symbol')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Alice Input Symbol' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Alice Output Symbol') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Alice Output Symbol')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Alice Input Symbol' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Alice Output Symbol') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Alice Output Symbol')
       [+]   Transition 'T1' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -3103,21 +3114,21 @@ def _test_callback_modify_symbol():
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'main transition' (initiator)
-      [+]   During transition 'main transition', sending input symbol ('Symbol') with preset ('None')
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
       [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
-      [+]   During transition 'main transition', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
       [+]   Transition 'main transition' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'main transition' (initiator)
-      [+]   During transition 'main transition', sending input symbol ('Symbol') with preset ('None')
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
       [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
-      [+]   During transition 'main transition', receiving expected output symbol ('Symbol'), with good preset settings ('None')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
       [+]   Transition 'main transition' lead to state 'S1'
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'main transition' (initiator)
-      [+]   During transition 'main transition', sending input symbol ('Symbol') with preset ('None')
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
       [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
@@ -3130,13 +3141,13 @@ def _test_callback_modify_symbol():
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol' corresponds to transition 'T1'
-      [+]   During transition 'T1', choosing an output symbol ('Symbol') with preset ('preset')
+      [+]   During transition 'T1', choosing an output symbol ('Symbol')
       [+]   Transition 'T1' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
       [+]   Input symbol 'Symbol' corresponds to transition 'T2'
-      [+]   During transition 'T2', choosing an output symbol ('Symbol') with preset ('preset')
+      [+]   During transition 'T2', choosing an output symbol ('Symbol')
       [+]   Transition 'T2' lead to state 'S3'
       [+] At state 'S3'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -3145,5 +3156,6 @@ def _test_callback_modify_symbol():
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+] Issue in last transition. Leaving the automaton.
 
     """
