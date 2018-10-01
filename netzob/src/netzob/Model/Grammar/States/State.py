@@ -190,9 +190,9 @@ class State(AbstractState):
         nextTransition = None
         nextState = None
 
-        # Execute the first special transition (priority equals 0)
+        # Execute the first special transition (inputSymbolProbability equals 100.0)
         for transition in self.transitions:
-            if transition.priority == 0:
+            if transition.inputSymbolProbability == 100.0:
                 nextTransition = transition
 
         # Else, execute the closing transition, if it is the last one remaining
@@ -348,8 +348,7 @@ class State(AbstractState):
         return nextState
 
     def __pickNextTransition(self, actor):
-        """Returns the next transition by considering the priority
-        and a random choice.
+        """Returns the next transition by considering the priority (inputSymbolProbability) of the transition and a random choice.
 
         It can return None.
 
@@ -360,16 +359,18 @@ class State(AbstractState):
         # create a dictionary to host the available transition
         prioritizedTransitions = dict()
         for transition in self.transitions:
-            # Handle priority
-            if transition.priority in list(prioritizedTransitions.keys()):
-                prioritizedTransitions[transition.priority].append(transition.copy())
+            # Handle transition priority (inputSymbolProbability)
+            if transition.inputSymbolProbability in list(prioritizedTransitions.keys()):
+                prioritizedTransitions[transition.inputSymbolProbability].append(transition.copy())
             else:
-                prioritizedTransitions[transition.priority] = [transition.copy()]
+                prioritizedTransitions[transition.inputSymbolProbability] = [transition.copy()]
 
         if len(prioritizedTransitions) == 0:
             return None
 
-        availableTransitions = prioritizedTransitions[sorted(prioritizedTransitions.keys())[0]]
+        list_probabilities = sorted(prioritizedTransitions.keys())
+        list_probabilities = list_probabilities[::-1]
+        availableTransitions = prioritizedTransitions[list_probabilities[0]]
 
         # Randomly select the next transition
         nextTransition = random.choice(availableTransitions)

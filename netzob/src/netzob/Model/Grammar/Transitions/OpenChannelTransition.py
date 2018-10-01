@@ -103,10 +103,10 @@ class OpenChannelTransition(AbstractTransition):
             OpenChannelTransition.TYPE,
             startState,
             endState,
-            name,
-            priority=0)
+            name)
 
         self.description = "OpenChannelTransition"
+        self.inputSymbolProbability = 100.0
 
     @public_api
     def copy(self):
@@ -125,7 +125,7 @@ class OpenChannelTransition(AbstractTransition):
         transition._startState = self.startState
         transition.description = self.description
         transition.active = self.active
-        transition.priority = self.priority
+        transition.inputSymbolProbability = self.inputSymbolProbability
         transition.cbk_modify_symbol = self.cbk_modify_symbol
         transition.inverseInitiator = self.inverseInitiator
         return transition

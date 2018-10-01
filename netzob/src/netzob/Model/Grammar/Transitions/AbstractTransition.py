@@ -55,7 +55,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     :param startState: The initial state of the transition.
     :param endState: The end state of the transition.
     :param str name: The name of the transition.
-    :param int priority: the priority of the transition.
+    :param float inputSymbolProbability: the priority of the transition.
     :param str description: The description of the transition.
     :type startState: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
     :type endState: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
@@ -67,7 +67,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                  startState,
                  endState,
                  name=None,
-                 priority=10,
+                 inputSymbolProbability=10.0,
                  description=None):
         self._startState = None
         self._endState = None
@@ -76,7 +76,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         self.startState = startState
         self.endState = endState
         self.name = name
-        self.priority = priority
+        self.inputSymbolProbability = inputSymbolProbability
         self.__description = description
 
         self.active = False
@@ -183,41 +183,41 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         self._endState = endState
 
     @property
-    def priority(self):
-        """The priority of the transition. The lower its its
+    def inputSymbolProbability(self):
+        """The priority of the transition. The higher it is
         the highest priority it gets.
         For instance, an open and close channel transition are both declared
-        with a priority of 0 whereas per default a transition has a priority
-        of 10.
+        with a priority of 100.0, whereas per default a transition has a priority
+        of 10.0.
 
         >>> from netzob.all import *
         >>> s0 = State(name="Start")
         >>> s1 = State(name="End")
         >>> openTransition = OpenChannelTransition(s0, s1)
-        >>> openTransition.priority
-        0
+        >>> openTransition.inputSymbolProbability
+        100.0
         >>> transition = Transition(s1, s1)
-        >>> transition.priority=1
-        >>> transition.priority
-        1
-        >>> transition.priority = 50
-        >>> transition.priority
-        50
+        >>> transition.inputSymbolProbability = 20.0
+        >>> transition.inputSymbolProbability
+        20.0
+        >>> transition.inputSymbolProbability = 40.0
+        >>> transition.inputSymbolProbability
+        40.0
 
         :type: :class:`int`
         """
-        return self.__priority
+        return self.__inputSymbolProbability
 
-    @priority.setter  # type: ignore
-    @typeCheck(int)
-    def priority(self, priority):
-        if priority is None:
-            raise TypeError("Priority cannot be None")
-        if priority < 0 or priority > 100:
+    @inputSymbolProbability.setter  # type: ignore
+    @typeCheck(float)
+    def inputSymbolProbability(self, inputSymbolProbability):
+        if inputSymbolProbability is None:
+            raise TypeError("inputSymbolProbability cannot be None")
+        if inputSymbolProbability < 0.0 or inputSymbolProbability > 100.0:
             raise TypeError(
-                "The priority must respect range : 0<=priority<100")
+                "The inputSymbolProbability value must respect range : 0.0 <= value <= 100.0")
 
-        self.__priority = priority
+        self.__inputSymbolProbability = inputSymbolProbability
 
     @public_api
     @property

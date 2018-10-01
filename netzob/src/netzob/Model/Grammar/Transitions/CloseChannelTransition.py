@@ -105,10 +105,10 @@ class CloseChannelTransition(AbstractTransition):
             CloseChannelTransition.TYPE,
             startState,
             endState,
-            name,
-            priority=20)
+            name)
 
         self.description = "CloseChannelTransition"
+        self.inputSymbolProbability = 5.0
 
     @public_api
     def copy(self):
@@ -127,7 +127,7 @@ class CloseChannelTransition(AbstractTransition):
         transition._startState = self.startState
         transition.description = self.description
         transition.active = self.active
-        transition.priority = self.priority
+        transition.inputSymbolProbability = self.inputSymbolProbability
         transition.cbk_modify_symbol = self.cbk_modify_symbol
         transition.inverseInitiator = self.inverseInitiator
         return transition

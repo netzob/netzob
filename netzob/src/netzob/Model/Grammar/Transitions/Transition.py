@@ -91,7 +91,7 @@ class Transition(AbstractTransition):
 
     :var startState: The initial state of the transition.
     :var endState: The end state of the transition.
-    :var priority: The priority of the transition, between 0 and 100. A low value corresponds to a high priority. The default priority value is set to 10.
+    :var inputSymbolProbability: This value holds the probability of the current transition of being chosen when processing the state where it is attached. The value between ``0.0`` and ``100.0`` corresponds to the weight of the transition in terms of selection probability. The default value is set to 10.0.
     :var inputSymbol: The input symbol is the symbol which triggers the
                       execution of the transition.
     :var outputSymbols: Output symbols that can be generated when
@@ -136,7 +136,7 @@ class Transition(AbstractTransition):
                       it is generated from the input and output symbol strings.
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`
-    :vartype priority: :class:`int`
+    :vartype inputSymbolProbability: :class:`float`
     :vartype inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype outputSymbols: :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype inputSymbolPreset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
@@ -176,18 +176,16 @@ class Transition(AbstractTransition):
     >>> t.outputSymbols = [Symbol()]
 
     The following example shows the definition of a state with two
-    transitions that have a different priority. The transition T1,
-    which has a higher priority than the transition T2, is therefore
-    executed in priority.
+    transitions that have a different probability. Here, the transition T2 is twice as likely to be chosen as T1.
 
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> s2 = State()
     >>> t1 = Transition(s0, s1, name="T1")
-    >>> t1.priority = 1
+    >>> t1.inputSymbolProbability = 20.0
     >>> t2 = Transition(s0, s2, name="T2")
-    >>> t2.priority = 2
+    >>> t2.inputSymbolProbability = 40.0
 
     """
 
@@ -205,8 +203,7 @@ class Transition(AbstractTransition):
         super(Transition, self).__init__(Transition.TYPE,
                                          startState,
                                          endState,
-                                         name,
-                                         priority=10)
+                                         name)
 
         # Initialize public variables from parameters
         self.inputSymbol = inputSymbol
@@ -215,6 +212,7 @@ class Transition(AbstractTransition):
         # Initialize other public variables
         self.inputSymbolPreset = None
         self.outputSymbolsPreset = None
+        self.inputSymbolProbability = 10.0
         self.outputSymbolsProbabilities = {}
         self.inputSymbolReactionTime = None
         self.outputSymbolsReactionTime = None
@@ -242,7 +240,7 @@ class Transition(AbstractTransition):
         transition._startState = self.startState
         transition.description = self.description
         transition.active = self.active
-        transition.priority = self.priority
+        transition.inputSymbolProbability = self.inputSymbolProbability
         transition.cbk_modify_symbol = self.cbk_modify_symbol
         transition.cbk_action = self.cbk_action
         if self.inputSymbolPreset is not None:
