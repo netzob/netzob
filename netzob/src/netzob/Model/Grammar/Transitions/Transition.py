@@ -61,6 +61,41 @@ class Transition(AbstractTransition):
     state and an end state) in an automaton. The initial state and the
     end state can be the same.
 
+    A transition is either in an initiator or non initiator
+    context. In an initator context, the input symbol of the
+    transition is emitted and one of the output symbols of the
+    transition is expected. In non initator context, the input symbol
+    of the transition is expected and one of the output symbols of the
+    transition is emitted.
+
+    The context of the transition (either initiator or non initiator)
+    is defined from the actor type that visits the automaton and from the
+    value of the ``inverseInitiator`` attribute of the transition
+    (which is by default set to ``False``). The context is defined as
+    follows:
+
+    * if the actor has is ``initiator`` attribute set to ``True``, and if the ``inverseInitiator`` attribute is set to ``True``, the transition context is ``initiator``;
+    * if the actor has is ``initiator`` attribute set to ``True``, and if the ``inverseInitiator`` attribute is set to ``False``, the transition context is ``non initiator``;
+    * if the actor has is ``initiator`` attribute set to ``False``, and if the ``inverseInitiator`` attribute is set to ``True``, the transition context is ``initiator``;
+    * if the actor has is ``initiator`` attribute set to ``False``, and if the ``inverseInitiator`` attribute is set to ``False``, the transition context is ``non initiator``.
+
+    When an actor encounters a state where multiple transitions are
+    defined, a random choice is made amongst all these transitions by
+    considering their probabilities. Two scenarios are possible:
+
+    * if the picked transition is in an ``initator`` context, this transition is executed;
+    * otherwise, the executed transition depends on the received symbol.
+
+    It is possible to define probability on transition selection during
+    state processing, through the
+    :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inputSymbolProbability`
+    attribute. This functionality makes it possible to implement a
+    variety of state machines.
+
+    .. note::
+       In a state, if several transitions are available, where some of them expect to receive the input symbol (non initator context) and the others expect to send the input symbol (initator context), it is recommended in the last case to not set any output symbols to be received. In such a situation, it is better to handle the receiving of the potential peer symbols in a second state.
+
+
     The Transition constructor expects some parameters:
 
     :param startState: This parameter is the initial state of the transition.
@@ -68,15 +103,15 @@ class Transition(AbstractTransition):
     :param inputSymbol: The input symbol which triggers the execution of the
                         transition.
                         The default value is ``None``, which means that no symbol
-                        is expected in a receiving context, and no symbol is sent
-                        in a sending context. Internally,
+                        is expected in a non initiator context, and no symbol is sent
+                        in an initiator context. Internally,
                         `None` symbol will be replaced by an
                         :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param outputSymbols: A list of expected output symbols when
                           the current transition is executed.
                           The default value is ``None``, which means that no
-                          symbol will be sent in a receiving context, and no
-                          symbol is expected in a sending context.
+                          symbol will be sent in a non initiator context, and no
+                          symbol is expected in an initiator context.
                           Internally, ``None`` symbol will be replaced by an
                           :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param name: The name of the transition. The default value is `None`.
@@ -94,7 +129,7 @@ class Transition(AbstractTransition):
     :var inputSymbolProbability: This value holds the probability of the current transition of being chosen when processing the state where it is attached. The value between ``0.0`` and ``100.0`` corresponds to the weight of the transition in terms of selection probability. The default value is set to 10.0.
     :var inputSymbol: The input symbol is the symbol which triggers the
                       execution of the transition.
-    :var outputSymbols: Output symbols that can be generated when
+    :var outputSymbols: Output symbols that can be generated or expected when
                         the current transition is executed.
     :var inputSymbolPreset: A preset configuration
                             used during specialization and abstraction
@@ -124,14 +159,13 @@ class Transition(AbstractTransition):
                               usage.
     :var name: The name of the transition.
     :var inputSymbolReactionTime: The timeout value in seconds to wait for the
-                                  input value (only used in a receiving context).
+                                  input value (only used in a non initiator context).
     :var outputSymbolsReactionTime: A :class:`dict` containing, for
                                     each output symbol, the timeout
                                     value in seconds to wait for the
-                                    output value (only used in a
-                                    sending context).
+                                    output value (only used in an initiator context).
     :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The value between ``0.0`` and ``100.0`` corresponds to the weight of the symbol in terms of selection probability.
-    :var inverseInitiator: Indicates to inverse the behavior of the actor initiator flag. In an initiator context, when set to ``True``, this flag indicates that the input symbol of the transition is expected to be received rather than being sent, and then one of the output symbols is sent. In a non initiator context, when set to ``True``, this flag indicates that the input symbol of the transition is sent rather than being expected, and then one of the output symbols is expected.
+    :var inverseInitiator: Indicates to inverse the behavior of the actor ``initiator`` attribute.
     :var description: The description of the transition. If not explicitly set,
                       it is generated from the input and output symbol strings.
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`

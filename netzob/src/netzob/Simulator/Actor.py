@@ -183,7 +183,7 @@ class Actor(Thread):
     * Dedicated automaton for a client and a server (see ActorExample2_).
     * Modification of the emitted symbol by a client through a callback (see ActorExample3_).
     * Modification of the emitted symbol by a server through a callback (see ActorExample4_).
-    * Modification of the selected transition by a client through a callback (see ActorExample5_).
+    * Modification of the current transition by a client through a callback (see ActorExample5_).
     * Modification of the current transition of a server through a callback (see ActorExample6_).
     * Transition with no input symbol (see ActorExample7_).
     * How to catch all read symbol timeout (see ActorExample8_).
@@ -839,9 +839,9 @@ class Actor(Thread):
 
     .. _ActorExample5:
 
-    **Modification of the selected transition by a client through a callback**
+    **Modification of the current transition by a client through a callback**
 
-    The following example shows how to modify the selected transition
+    The following example shows how to modify the current transition
     of a client in its automaton, through a callback method.
 
     >>> from netzob.all import *
@@ -997,24 +997,24 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T1' (initiator)
+      [+]   Changing transition to 'T1' (initiator), through callback
+      [+]   During transition 'T1', sending input symbol ('Symbol')
+      [+]   During transition 'T1', receiving expected output symbol ('Symbol')
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'T2' (initiator)
+      [+]   Changing transition to 'T1' (initiator), through callback
+      [+]   During transition 'T1', sending input symbol ('Symbol')
+      [+]   During transition 'T1', receiving expected output symbol ('Symbol')
+      [+]   Transition 'T1' lead to state 'S1'
+      [+] At state 'S1'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'T2' (initiator)
       [+]   Changing transition to 'T2' (initiator), through callback
       [+]   During transition 'T2', sending input symbol ('Symbol')
       [+]   During transition 'T2', receiving expected output symbol ('Symbol')
       [+]   Transition 'T2' lead to state 'S2'
-      [+] At state 'S2'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'T4' (initiator)
-      [+]   Changing transition to 'T3' (initiator), through callback
-      [+]   During transition 'T3', sending input symbol ('Symbol')
-      [+]   During transition 'T3', receiving expected output symbol ('Symbol')
-      [+]   Transition 'T3' lead to state 'S2'
-      [+] At state 'S2'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'T4' (initiator)
-      [+]   Changing transition to 'T3' (initiator), through callback
-      [+]   During transition 'T3', sending input symbol ('Symbol')
-      [+]   During transition 'T3', receiving expected output symbol ('Symbol')
-      [+]   Transition 'T3' lead to state 'S2'
       [+] At state 'S2'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Picking transition 'T3' (initiator)

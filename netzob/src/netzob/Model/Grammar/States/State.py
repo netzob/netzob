@@ -35,9 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import random
-# import traceback
 import socket
-import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -104,21 +102,25 @@ class State(AbstractState):
         state.transitions = self.transitions
         state.active = self.active
         state.cbk_modify_transition = self.cbk_modify_transition
+        state.cbk_filter_transitions = self.cbk_filter_transitions
         return state
 
     def execute(self, actor):
         self._logger.debug("  [+] At state '{}'".format(self.name))
         actor.visit_log.append("  [+] At state '{}'".format(self.name))
 
+        # If necessary, filter available transitions
+        available_transitions = self.__filter_available_transitions(actor, self.transitions)
+
         # Check if the actor has received a message. If so, we execute the step as not an initiator
         if actor.abstractionLayer.check_received():
 
             # Check if we should consider reception (i.e. there exists at least one transition in inverseInitiator mode)
             should_consider_reception = False
-            for transition in self.transitions:
+            for transition in available_transitions:
                 if isinstance(transition, Transition):
-                    initiator_mode = "initiator" if (actor.initiator and not transition.inverseInitiator) or (not actor.initiator and transition.inverseInitiator) else "not initiator"
-                    if initiator_mode == "not initiator":
+                    is_transition_initiator = (actor.initiator and not transition.inverseInitiator) or (not actor.initiator and transition.inverseInitiator)
+                    if is_transition_initiator is False:
                         should_consider_reception = True
                         break
 
@@ -129,20 +131,26 @@ class State(AbstractState):
 
         # Else, randomly pick a transition
         actor.visit_log.append("  [+]   Randomly choosing a transition to execute or to wait for an input symbol")
-        nextTransition = self.__pickNextTransition(actor)
+        next_transition = self.__pick_next_transition(actor, available_transitions)
 
-        if nextTransition is None:
+        if next_transition is None:
             return None
 
-        # If transition in initiator mode
-        if (actor.initiator and not nextTransition.inverseInitiator) or (not actor.initiator and nextTransition.inverseInitiator):
-            nextState = self.executeAsInitiator(actor, nextTransition)
+        # If transition is in initiator mode
+        if (actor.initiator and not next_transition.inverseInitiator) or (not actor.initiator and next_transition.inverseInitiator):
+
+            # If necessary, modify the current transition
+            next_transition = self.__modify_current_transition(actor, next_transition, available_transitions)
+
+            # Execute next transition as initiator
+            nextState = self.executeAsInitiator(actor, next_transition)
         else:
-            nextState = self.executeAsNotInitiator(actor)
+            # Execute next transition as not initiator
+            nextState = self.executeAsNotInitiator(actor, available_transitions)
 
         return nextState
 
-    def executeAsInitiator(self, actor, nextTransition):
+    def executeAsInitiator(self, actor, next_transition):
         """This method picks the next available transition and executes it.
 
         """
@@ -151,24 +159,24 @@ class State(AbstractState):
 
         self.active = True
 
-        self._logger.debug("[actor='{}'] Next transition for state '{}': {}.".format(str(actor), self.name, nextTransition))
+        self._logger.debug("[actor='{}'] Next transition for state '{}': {}.".format(str(actor), self.name, next_transition))
 
         # Execute picked transition as an initiator
         try:
-            nextState = nextTransition.executeAsInitiator(actor)
-            self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(nextTransition), str(nextState)))
+            nextState = next_transition.executeAsInitiator(actor)
+            self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(next_transition), str(nextState)))
         except Exception as e:
             self.active = False
             raise
 
         if nextState is None:
-            self._logger.debug("[actor='{}'] The execution of transition '{}' on state '{}' did not return the next state".format(str(actor), str(nextTransition), self.name))
+            self._logger.debug("[actor='{}'] The execution of transition '{}' on state '{}' did not return the next state".format(str(actor), str(next_transition), self.name))
 
         self.active = False
 
         return nextState
 
-    def executeAsNotInitiator(self, actor):
+    def executeAsNotInitiator(self, actor, available_transitions):
         """This method executes the current state as not an initiator.
 
         This method will wait for a maximum amount of time the
@@ -187,32 +195,32 @@ class State(AbstractState):
             self.active = False
             return None
 
-        nextTransition = None
+        next_transition = None
         nextState = None
 
         # Execute the first special transition (inputSymbolProbability equals 100.0)
         for transition in self.transitions:
             if transition.inputSymbolProbability == 100.0:
-                nextTransition = transition
+                next_transition = transition
 
         # Else, execute the closing transition, if it is the last one remaining
-        if nextTransition is None:
+        if next_transition is None:
             if len(self.transitions) == 1 and self.transitions[
                     0].TYPE == CloseChannelTransition.TYPE:
-                nextTransition = self.transitions[0]
+                next_transition = self.transitions[0]
 
-        if nextTransition is not None:
+        if next_transition is not None:
 
-            actor.visit_log.append("  [+]   Going to execute transition '{}'".format(str(nextTransition)))
+            actor.visit_log.append("  [+]   Going to execute transition '{}'".format(str(next_transition)))
 
-            nextState = nextTransition.executeAsNotInitiator(actor)
+            nextState = next_transition.executeAsNotInitiator(actor)
             self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(
-                str(actor), str(nextTransition), str(nextState)))
+                str(actor), str(next_transition), str(nextState)))
             if nextState is None:
                 self.active = False
                 raise Exception(
                     "The execution of transition '{}' on state '{}' did not return the next state.".
-                    format(nextTransition.name, self.name))
+                    format(next_transition.name, self.name))
 
             return nextState
 
@@ -228,12 +236,12 @@ class State(AbstractState):
             self._logger.debug("[actor='{}'] Input symbol: '{}'".format(str(actor), str(received_symbol)))
 
             # Find the transition which accepts the received symbol as an input symbol, along with the correct input symbol preset
-            nextTransition = None
+            next_transition = None
             for transition in self.transitions:
 
-                initiator_mode = "initiator" if (actor.initiator and not transition.inverseInitiator) or (not actor.initiator and transition.inverseInitiator) else "not initiator"
+                is_transition_initiator = (actor.initiator and not transition.inverseInitiator) or (not actor.initiator and transition.inverseInitiator)
 
-                if initiator_mode == "initiator":
+                if is_transition_initiator:
                     continue
 
                 if transition.type == Transition.TYPE and id(transition.inputSymbol) == id(received_symbol):
@@ -243,13 +251,13 @@ class State(AbstractState):
                         if received_symbol.check_preset(received_structure, transition.inputSymbolPreset):
                             self._logger.debug("Receive good symbol with good preset setting")
                             actor.visit_log.append("  [+]   Received one of the expected symbols ('{}'), with good preset settings ('{}')".format(received_symbol, transition.inputSymbolPreset))
-                            nextTransition = transition
+                            next_transition = transition
                             break
                     else:
-                        nextTransition = transition
+                        next_transition = transition
                         break
 
-            actor.visit_log.append("  [+]   Input symbol '{}' corresponds to transition '{}'".format(str(received_symbol), str(nextTransition)))
+            actor.visit_log.append("  [+]   Input symbol '{}' corresponds to transition '{}'".format(str(received_symbol), str(next_transition)))
 
         except ActorStopException:
             raise
@@ -258,13 +266,13 @@ class State(AbstractState):
 
             # Check if there is a transition with an EmptySymbol as input symbol
             self._logger.debug("[actor='{}'] Check if a transition expects an EmptySymbol as input symbol".format(str(actor)))
-            nextTransition = None
+            next_transition = None
             for transition in self.transitions:
                 if transition.type == Transition.TYPE and isinstance(transition.inputSymbol, EmptySymbol):
                     self._logger.debug("[actor='{}'] The transition '{}' expects an EmptySymbol as input symbol ".format(str(actor), str(transition)))
-                    nextTransition = transition
+                    next_transition = transition
 
-                    actor.visit_log.append("  [+]   Receiving no symbol (EmptySymbol) corresponds to transition '{}'".format(str(nextTransition)))
+                    actor.visit_log.append("  [+]   Receiving no symbol (EmptySymbol) corresponds to transition '{}'".format(str(next_transition)))
 
                     break
             else:
@@ -285,30 +293,11 @@ class State(AbstractState):
             self.active = False
             raise
 
-        # If a callback function is defined, we call it in order to
-        # execute an external program that may change the selected
-        # transition
-        self._logger.debug("[actor='{}'] Test if a callback function is defined at state '{}'".format(str(actor), self.name))
-        for cbk in self.cbk_modify_transition:
-            self._logger.debug("[actor='{}'] A callback function is defined at state '{}'".format(str(actor), self.name))
-            availableTransitions = [cloned_transition.copy() for cloned_transition in self.transitions]
-            nextTransition = cbk(availableTransitions,
-                                 nextTransition,
-                                 self,
-                                 actor.abstractionLayer.last_sent_symbol,
-                                 actor.abstractionLayer.last_sent_message,
-                                 actor.abstractionLayer.last_sent_structure,
-                                 actor.abstractionLayer.last_received_symbol,
-                                 actor.abstractionLayer.last_received_message,
-                                 actor.abstractionLayer.last_received_structure,
-                                 actor.memory)
-
-            actor.visit_log.append("  [+]   Changing transition to '{}' (not initiator), through callback".format(str(nextTransition)))
-        else:
-            self._logger.debug("[actor='{}'] No callback function is defined at state '{}'".format(str(actor), self.name))
+        # If a callback function is defined, we call it in order to execute an external program that may change the selected transition
+        next_transition = self.__modify_current_transition(actor, next_transition, available_transitions)
 
         # Execute the retained transition
-        if nextTransition is None:
+        if next_transition is None:
             self._logger.debug("[actor='{}'] The received symbol did not match any of the registered transition".format(str(actor)))
             #nextState = self
 
@@ -336,18 +325,18 @@ class State(AbstractState):
 
         else:
 
-            for cbk in nextTransition.cbk_action:
-                self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), nextTransition.name))
+            for cbk in next_transition.cbk_action:
+                self._logger.debug("[actor='{}'] A callback function is defined at the end of transition '{}'".format(str(actor), next_transition.name))
                 cbk(received_symbol, received_message, received_structure, Operation.ABSTRACT, self, actor.memory)
 
-            nextState = nextTransition.executeAsNotInitiator(actor)
-            self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(nextTransition), str(nextState)))
+            nextState = next_transition.executeAsNotInitiator(actor)
+            self._logger.debug("[actor='{}'] Transition '{}' leads to state: {}.".format(str(actor), str(next_transition), str(nextState)))
 
         self.active = False
 
         return nextState
 
-    def __pickNextTransition(self, actor):
+    def __pick_next_transition(self, actor, available_transitions):
         """Returns the next transition by considering the priority (inputSymbolProbability) of the transition and a random choice.
 
         It can return None.
@@ -358,7 +347,7 @@ class State(AbstractState):
 
         # create a dictionary to host the available transition
         prioritizedTransitions = dict()
-        for transition in self.transitions:
+        for transition in available_transitions:
             # Handle transition priority (inputSymbolProbability)
             if transition.inputSymbolProbability in list(prioritizedTransitions.keys()):
                 prioritizedTransitions[transition.inputSymbolProbability].append(transition.copy())
@@ -370,49 +359,82 @@ class State(AbstractState):
 
         list_probabilities = sorted(prioritizedTransitions.keys())
         list_probabilities = list_probabilities[::-1]
-        availableTransitions = prioritizedTransitions[list_probabilities[0]]
+        available_transitions = prioritizedTransitions[list_probabilities[0]]
 
         # Randomly select the next transition
-        nextTransition = random.choice(availableTransitions)
+        next_transition = random.choice(available_transitions)
 
-        # Handle initiator mode
-        if isinstance(nextTransition, Transition):
-            initiator_mode = "initiator" if (actor.initiator and not nextTransition.inverseInitiator) or (not actor.initiator and nextTransition.inverseInitiator) else "not initiator"
-            if initiator_mode == "initiator":
-                actor.visit_log.append("  [+]   Picking transition '{}' ({})".format(nextTransition, initiator_mode))
+        # Log initiator mode
+        if isinstance(next_transition, Transition):
+            is_transition_initiator = (actor.initiator and not next_transition.inverseInitiator) or (not actor.initiator and next_transition.inverseInitiator)
+            if is_transition_initiator:
+                actor.visit_log.append("  [+]   Picking transition '{}' (initiator)".format(next_transition))
             else:
-                actor.visit_log.append("  [+]   Waiting for an input symbol to decide the transition ({})".format(initiator_mode))
-        elif isinstance(nextTransition, OpenChannelTransition):
+                actor.visit_log.append("  [+]   Waiting for an input symbol to decide the transition (not initiator)")
+        elif isinstance(next_transition, OpenChannelTransition):
             initiator_mode = "open channel"
-            actor.visit_log.append("  [+]   Picking transition '{}' ({})".format(nextTransition, initiator_mode))
+            actor.visit_log.append("  [+]   Picking transition '{}' ({})".format(next_transition, initiator_mode))
         else:
             initiator_mode = "close channel"
-            actor.visit_log.append("  [+]   Picking transition '{}' ({})".format(nextTransition, initiator_mode))
+            actor.visit_log.append("  [+]   Picking transition '{}' ({})".format(next_transition, initiator_mode))
 
-        if initiator_mode != "initiator":
-            return nextTransition
+        return next_transition
 
-        # If a callback function is defined, we call it in order to
-        # execute an external program that may change the selected
-        # transition
+    def __modify_current_transition(self, actor, current_transition, available_transitions):
+        r"""If a callback function is defined, we call it in order to execute
+        an external program that may change the selected transition.
+
+        """
+
         self._logger.debug("[actor='{}'] Test if a callback function is defined at state '{}'".format(actor, self.name))
         for cbk in self.cbk_modify_transition:
             self._logger.debug("[actor='{}'] A callback function is defined at state '{}'".format(actor, self.name))
-            nextTransition = cbk(availableTransitions,
-                                 nextTransition,
-                                 self,
-                                 actor.abstractionLayer.last_sent_symbol,
-                                 actor.abstractionLayer.last_sent_message,
-                                 actor.abstractionLayer.last_sent_structure,
-                                 actor.abstractionLayer.last_received_symbol,
-                                 actor.abstractionLayer.last_received_message,
-                                 actor.abstractionLayer.last_received_structure,
-                                 actor.memory)
-            actor.visit_log.append("  [+]   Changing transition to '{}' (initiator), through callback".format(nextTransition))
+            available_transitions = [cloned_transition.copy() for cloned_transition in available_transitions]
+            current_transition = cbk(available_transitions,
+                                     current_transition,
+                                     self,
+                                     actor.abstractionLayer.last_sent_symbol,
+                                     actor.abstractionLayer.last_sent_message,
+                                     actor.abstractionLayer.last_sent_structure,
+                                     actor.abstractionLayer.last_received_symbol,
+                                     actor.abstractionLayer.last_received_message,
+                                     actor.abstractionLayer.last_received_structure,
+                                     actor.memory)
+            is_transition_initiator = (actor.initiator and not current_transition.inverseInitiator) or (not actor.initiator and current_transition.inverseInitiator)
+            if is_transition_initiator:
+                transition_mode = "initiator"
+            else:
+                transition_mode = "not initiator"
+            actor.visit_log.append("  [+]   Changing transition to '{}' ({}), through callback".format(current_transition, transition_mode))
         else:
             self._logger.debug("[actor='{}'] No callback function is defined at state '{}'".format(actor, self.name))
 
-        return nextTransition
+        return current_transition
+
+    def __filter_available_transitions(self, actor, available_transitions):
+        r"""If a callback function is defined, we call it in order to execute
+        an external program that may change the available transitions.
+
+        """
+
+        self._logger.debug("[actor='{}'] Test if a callback function is defined at state '{}'".format(actor, self.name))
+        for cbk in self.cbk_filter_transitions:
+            self._logger.debug("[actor='{}'] A callback function is defined at state '{}'".format(actor, self.name))
+            available_transitions = [cloned_transition.copy() for cloned_transition in available_transitions]
+            available_transitions = cbk(available_transitions,
+                                        self,
+                                        actor.abstractionLayer.last_sent_symbol,
+                                        actor.abstractionLayer.last_sent_message,
+                                        actor.abstractionLayer.last_sent_structure,
+                                        actor.abstractionLayer.last_received_symbol,
+                                        actor.abstractionLayer.last_received_message,
+                                        actor.abstractionLayer.last_received_structure,
+                                        actor.memory)
+            actor.visit_log.append("  [+]   Filtering available transitions through callback")
+        else:
+            self._logger.debug("[actor='{}'] No callback function is defined at state '{}'".format(actor, self.name))
+
+        return available_transitions
 
     @typeCheck(AbstractTransition)
     def removeTransition(self, transition):

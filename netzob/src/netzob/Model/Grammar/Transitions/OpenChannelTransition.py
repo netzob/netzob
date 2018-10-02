@@ -42,7 +42,7 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
+from netzob.Common.Utils.Decorators import public_api, NetzobLogger
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
 
 
