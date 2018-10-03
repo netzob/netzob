@@ -55,7 +55,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
     :param startState: The initial state of the transition.
     :param endState: The end state of the transition.
     :param str name: The name of the transition.
-    :param float inputSymbolProbability: the priority of the transition.
+    :param float inputSymbolProbability: This value holds the probability of the current transition of being chosen when processing the state where it is attached. The value between ``0.0`` and ``100.0`` corresponds to the weight of the transition in terms of selection probability. The default value is set to 10.0.
     :param str description: The description of the transition.
     :type startState: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
     :type endState: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`
@@ -67,7 +67,6 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
                  startState,
                  endState,
                  name=None,
-                 inputSymbolProbability=10.0,
                  description=None):
         self._startState = None
         self._endState = None
@@ -76,7 +75,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         self.startState = startState
         self.endState = endState
         self.name = name
-        self.inputSymbolProbability = inputSymbolProbability
+        self.inputSymbolProbability = 10.0
         self.__description = description
 
         self.active = False
@@ -184,8 +183,12 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
 
     @property
     def inputSymbolProbability(self):
-        """The priority of the transition. The higher it is
-        the highest priority it gets.
+        """This value holds the probability of the current transition of being
+        chosen when processing the state where it is attached. The
+        value between ``0.0`` and ``100.0`` corresponds to the weight
+        of the transition in terms of selection probability. The
+        default value is set to 10.0.
+
         For instance, an open and close channel transition are both declared
         with a priority of 100.0, whereas per default a transition has a priority
         of 10.0.
@@ -205,6 +208,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         40.0
 
         :type: :class:`int`
+
         """
         return self.__inputSymbolProbability
 

@@ -95,6 +95,14 @@ class Transition(AbstractTransition):
     .. note::
        In a state, if several transitions are available, where some of them expect to receive the input symbol (non initator context) and the others expect to send the input symbol (initator context), it is recommended in the last case to not set any output symbols to be received. In such a situation, it is better to handle the receiving of the potential peer symbols in a second state.
 
+    Two transitions that start at the same state cannot have the same
+    input symbol, as this symbol is used to determine the
+    corresponding transition when receiving a new message. The only
+    exception is when the transitions that have the same input symbol
+    leverage the ``inputSymbolPreset`` attribute. In such case, the
+    ``inputSymbolPreset`` attribute makes it possible to determine the
+    corresponding transition based on field content from the same
+    input symbol.
 
     The Transition constructor expects some parameters:
 
