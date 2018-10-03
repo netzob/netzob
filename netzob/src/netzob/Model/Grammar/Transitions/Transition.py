@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Preset import Preset
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.UnknownSymbol import UnknownSymbol
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
-from netzob.Simulator.AbstractionLayer import SymbolBadSettingsException, Operation
+from netzob.Simulator.AbstractionLayer import Operation
 
 
 @NetzobLogger
@@ -61,6 +61,49 @@ class Transition(AbstractTransition):
     state and an end state) in an automaton. The initial state and the
     end state can be the same.
 
+    A transition is either in an initiator or non initiator
+    context. In an initator context, the input symbol of the
+    transition is emitted and one of the output symbols of the
+    transition is expected. In non initator context, the input symbol
+    of the transition is expected and one of the output symbols of the
+    transition is emitted.
+
+    The context of the transition (either initiator or non initiator)
+    is defined from the actor type that visits the automaton and from the
+    value of the ``inverseInitiator`` attribute of the transition
+    (which is by default set to ``False``). The context is defined as
+    follows:
+
+    * if the actor has is ``initiator`` attribute set to ``True``, and if the ``inverseInitiator`` attribute is set to ``True``, the transition context is ``initiator``;
+    * if the actor has is ``initiator`` attribute set to ``True``, and if the ``inverseInitiator`` attribute is set to ``False``, the transition context is ``non initiator``;
+    * if the actor has is ``initiator`` attribute set to ``False``, and if the ``inverseInitiator`` attribute is set to ``True``, the transition context is ``initiator``;
+    * if the actor has is ``initiator`` attribute set to ``False``, and if the ``inverseInitiator`` attribute is set to ``False``, the transition context is ``non initiator``.
+
+    When an actor encounters a state where multiple transitions are
+    defined, a random choice is made amongst all these transitions by
+    considering their probabilities. Two scenarios are possible:
+
+    * if the picked transition is in an ``initator`` context, this transition is executed;
+    * otherwise, the executed transition depends on the received symbol.
+
+    It is possible to define probability on transition selection during
+    state processing, through the
+    :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inputSymbolProbability`
+    attribute. This functionality makes it possible to implement a
+    variety of state machines.
+
+    .. note::
+       In a state, if several transitions are available, where some of them expect to receive the input symbol (non initator context) and the others expect to send the input symbol (initator context), it is recommended in the last case to not set any output symbols to be received. In such a situation, it is better to handle the receiving of the potential peer symbols in a second state.
+
+    Two transitions that start at the same state cannot have the same
+    input symbol, as this symbol is used to determine the
+    corresponding transition when receiving a new message. The only
+    exception is when the transitions that have the same input symbol
+    leverage the ``inputSymbolPreset`` attribute. In such case, the
+    ``inputSymbolPreset`` attribute makes it possible to determine the
+    corresponding transition based on field content from the same
+    input symbol.
+
     The Transition constructor expects some parameters:
 
     :param startState: This parameter is the initial state of the transition.
@@ -68,15 +111,15 @@ class Transition(AbstractTransition):
     :param inputSymbol: The input symbol which triggers the execution of the
                         transition.
                         The default value is ``None``, which means that no symbol
-                        is expected in a receiving context, and no symbol is sent
-                        in a sending context. Internally,
+                        is expected in a non initiator context, and no symbol is sent
+                        in an initiator context. Internally,
                         `None` symbol will be replaced by an
                         :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param outputSymbols: A list of expected output symbols when
                           the current transition is executed.
                           The default value is ``None``, which means that no
-                          symbol will be sent in a receiving context, and no
-                          symbol is expected in a sending context.
+                          symbol will be sent in a non initiator context, and no
+                          symbol is expected in an initiator context.
                           Internally, ``None`` symbol will be replaced by an
                           :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.
     :param name: The name of the transition. The default value is `None`.
@@ -91,10 +134,10 @@ class Transition(AbstractTransition):
 
     :var startState: The initial state of the transition.
     :var endState: The end state of the transition.
-    :var priority: The priority of the transition, between 0 and 100. A low value corresponds to a high priority. The default priority value is set to 10.
+    :var inputSymbolProbability: This value holds the probability of the current transition of being chosen when processing the state where it is attached. The value between ``0.0`` and ``100.0`` corresponds to the weight of the transition in terms of selection probability. The default value is set to 10.0.
     :var inputSymbol: The input symbol is the symbol which triggers the
                       execution of the transition.
-    :var outputSymbols: Output symbols that can be generated when
+    :var outputSymbols: Output symbols that can be generated or expected when
                         the current transition is executed.
     :var inputSymbolPreset: A preset configuration
                             used during specialization and abstraction
@@ -105,8 +148,7 @@ class Transition(AbstractTransition):
                             dependencies. During abstraction, this
                             structure is used to validate the data of
                             the received symbol. If the data does
-                            not match, we stay at the
-                            ``startState`` state. See :class:`Preset
+                            not match, we leave the automaton or execute the function set by the :meth:`set_cbk_read_unexepected_symbol` method. See :class:`Preset
                             <netzob.Model.Vocabulary.Preset.Preset>`
                             for a complete explanation of Preset
                             usage.
@@ -119,26 +161,24 @@ class Transition(AbstractTransition):
                               dependencies. During abstraction, this
                               structure is used to validate the data of
                               the received symbol. If the data does
-                              not match, we stay at the
-                              ``startState`` state. See :class:`Preset
+                              not match, we leave the automaton or execute the function set by the :meth:`~netzob.Grammar.Automata.Automata.Automata.set_cbk_read_unexepected_symbol` method. See :class:`Preset
                               <netzob.Model.Vocabulary.Preset.Preset>`
                               for a complete explanation of Preset
                               usage.
     :var name: The name of the transition.
     :var inputSymbolReactionTime: The timeout value in seconds to wait for the
-                                  input value (only used in a receiving context).
+                                  input value (only used in a non initiator context).
     :var outputSymbolsReactionTime: A :class:`dict` containing, for
                                     each output symbol, the timeout
                                     value in seconds to wait for the
-                                    output value (only used in a
-                                    sending context).
+                                    output value (only used in an initiator context).
     :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The value between ``0.0`` and ``100.0`` corresponds to the weight of the symbol in terms of selection probability.
-    :var inverseInitiator: Indicates to inverse the behavior of the actor initiator flag. In an initiator context, when set to ``True``, this flag indicates that the input symbol of the transition is expected to be received rather than being sent, and then one of the output symbols is sent. In a non initiator context, when set to ``True``, this flag indicates that the input symbol of the transition is sent rather than being expected, and then one of the output symbols is expected.
+    :var inverseInitiator: Indicates to inverse the behavior of the actor ``initiator`` attribute.
     :var description: The description of the transition. If not explicitly set,
                       it is generated from the input and output symbol strings.
     :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`
     :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`
-    :vartype priority: :class:`int`
+    :vartype inputSymbolProbability: :class:`float`
     :vartype inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype outputSymbols: :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
     :vartype inputSymbolPreset: :class:`Preset <netzob.Model.Vocabulary.Preset.Preset>`
@@ -178,18 +218,16 @@ class Transition(AbstractTransition):
     >>> t.outputSymbols = [Symbol()]
 
     The following example shows the definition of a state with two
-    transitions that have a different priority. The transition T1,
-    which has a higher priority than the transition T2, is therefore
-    executed in priority.
+    transitions that have a different probability. Here, the transition T2 is twice as likely to be chosen as T1.
 
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
     >>> s2 = State()
     >>> t1 = Transition(s0, s1, name="T1")
-    >>> t1.priority = 1
+    >>> t1.inputSymbolProbability = 20.0
     >>> t2 = Transition(s0, s2, name="T2")
-    >>> t2.priority = 2
+    >>> t2.inputSymbolProbability = 40.0
 
     """
 
@@ -207,8 +245,7 @@ class Transition(AbstractTransition):
         super(Transition, self).__init__(Transition.TYPE,
                                          startState,
                                          endState,
-                                         name,
-                                         priority=10)
+                                         name)
 
         # Initialize public variables from parameters
         self.inputSymbol = inputSymbol
@@ -217,6 +254,7 @@ class Transition(AbstractTransition):
         # Initialize other public variables
         self.inputSymbolPreset = None
         self.outputSymbolsPreset = None
+        self.inputSymbolProbability = 10.0
         self.outputSymbolsProbabilities = {}
         self.inputSymbolReactionTime = None
         self.outputSymbolsReactionTime = None
@@ -244,7 +282,7 @@ class Transition(AbstractTransition):
         transition._startState = self.startState
         transition.description = self.description
         transition.active = self.active
-        transition.priority = self.priority
+        transition.inputSymbolProbability = self.inputSymbolProbability
         transition.cbk_modify_symbol = self.cbk_modify_symbol
         transition.cbk_action = self.cbk_action
         if self.inputSymbolPreset is not None:
@@ -282,7 +320,10 @@ class Transition(AbstractTransition):
         # Retrieve the symbol to send
         symbol_to_send = self.inputSymbol
         symbol_preset = self.inputSymbolPreset
-        actor.visit_log.append("  [+]   During transition '{}', sending input symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), self.inputSymbolPreset))
+        if self.inputSymbolPreset is not None:
+            actor.visit_log.append("  [+]   During transition '{}', sending input symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), self.inputSymbolPreset))
+        else:
+            actor.visit_log.append("  [+]   During transition '{}', sending input symbol ('{}')".format(self.name, str(symbol_to_send)))
 
         # If a callback is defined, we can change or modify the selected symbol
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))
@@ -376,10 +417,6 @@ class Transition(AbstractTransition):
         except OSError as e:
             self._logger.debug("[actor='{}'] The underlying abstraction channel seems to be closed, so we stop the current actor".format(str(actor)))
             return
-        except SymbolBadSettingsException:
-            actor.visit_log.append("  [+]   During transition '{}', received expected symbol with wrong settings".format(self.name))
-            # Return the start state so that we accept a new message
-            return
         except Exception as e:
             self.active = False
             errorMessage = "[actor='{}'] An error occured while executing the transition {} as an initiator: {}".format(str(actor), self.name, e)
@@ -387,17 +424,30 @@ class Transition(AbstractTransition):
             raise Exception(errorMessage)
 
         # Computes the next state following the received symbol
-        for outputSymbol in self.outputSymbols:
-            self._logger.debug("[actor='{}'] Possible output symbol: '{}' (id={}).".
-                               format(str(actor), str(outputSymbol), id(outputSymbol)))
-
         if received_symbol in self.outputSymbols:
             self.active = False
             if received_symbol in self.outputSymbolsPreset:
                 output_preset = self.outputSymbolsPreset[received_symbol]
             else:
                 output_preset = None
-            actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol ('{}'), with good preset settings ('{}')".format(self.name, str(received_symbol), output_preset))
+
+            # Check symbol regarding its expected preset
+            if output_preset is not None:
+                actor.visit_log.append("  [+]   PAN")
+                if received_symbol.check_preset(received_structure, output_preset):
+                    self._logger.debug("Receive good symbol with good preset setting")
+                    actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol ('{}'), with good preset settings ('{}')".format(self.name, str(received_symbol), output_preset))
+                else:
+                    self._logger.debug("Receive good symbol but with wrong preset setting")
+                    actor.visit_log.append("  [+]   During transition '{}', received expected symbol with wrong settings".format(self.name))
+
+                    # We leave the automaton
+                    return None
+
+            else:
+                actor.visit_log.append("  [+]   During transition '{}', receiving expected output symbol ('{}')".format(self.name, str(received_symbol)))
+
+            # Set next state
             actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
 
             for cbk in self.cbk_action:
@@ -421,8 +471,8 @@ class Transition(AbstractTransition):
                 else:
                     actor.visit_log.append("  [+]   During transition '{}', receiving unknown symbol, so we stay at state '{}'".format(self.name, str(self.startState)))
 
-                    # Return the start state so that we accept a new message
-                    return self.startState
+                    # We leave the automaton
+                    return None
 
             # Handle case where received symbol is known but unexpected
             else:
@@ -438,8 +488,8 @@ class Transition(AbstractTransition):
                 else:
                     actor.visit_log.append("  [+]   During transition '{}', receiving unexpected symbol '{}', so we stay at state '{}'".format(self.name, received_symbol, str(self.startState)))
 
-                    # Return the start state so that we accept a new message
-                    return self.startState
+                    # We leave the automaton
+                    return None
 
     def executeAsNotInitiator(self, actor):
         """Execute the current transition as a not initiator.
@@ -562,13 +612,17 @@ class Transition(AbstractTransition):
 
         # Random selection of the symbol and its associated preset
         symbol_to_send = random.choice(distribution)
-        symbol_preset = Preset(symbol_to_send)
+
         if self.outputSymbolsPreset is not None and isinstance(self.outputSymbolsPreset, dict):
             if symbol_to_send in self.outputSymbolsPreset:
                 symbol_preset = self.outputSymbolsPreset[symbol_to_send]
+            else:
+                symbol_preset = None
 
-        # Update visit log
-        actor.visit_log.append("  [+]   During transition '{}', choosing an output symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), symbol_preset))
+        if symbol_preset is not None:
+            actor.visit_log.append("  [+]   During transition '{}', choosing an output symbol ('{}') with preset ('{}')".format(self.name, str(symbol_to_send), symbol_preset))
+        else:
+            actor.visit_log.append("  [+]   During transition '{}', choosing an output symbol ('{}')".format(self.name, str(symbol_to_send)))
 
         # Potentialy modify the selected symbol if a callback is defined
         self._logger.debug("[actor='{}'] Test if a callback function is defined at transition '{}'".format(str(actor), self.name))

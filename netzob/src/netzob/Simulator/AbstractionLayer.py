@@ -51,8 +51,6 @@ from enum import Enum
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Symbol import Symbol
-from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Preset import Preset
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
@@ -485,13 +483,6 @@ class AbstractionLayer(object):
 
         self._logger.debug("Receiving the following data from the commnunication channel: '{}'".format(data))
         self._logger.debug("Receiving the following symbol from the commnunication channel: '{}'".format(symbol.name))
-
-        # Check symbol regarding its expected preset
-        if not isinstance(symbol, (UnknownSymbol, EmptySymbol)):
-            if symbols_preset is not None and symbol in symbols_preset:
-                if not symbol.check_preset(data_structure, symbols_preset[symbol]):
-                    self._logger.debug("Receive good symbol but with wrong setting")
-                    raise SymbolBadSettingsException()
 
         return (symbol, data, data_structure)
 

@@ -42,7 +42,7 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
+from netzob.Common.Utils.Decorators import public_api, NetzobLogger
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
 
 
@@ -105,10 +105,10 @@ class CloseChannelTransition(AbstractTransition):
             CloseChannelTransition.TYPE,
             startState,
             endState,
-            name,
-            priority=20)
+            name)
 
         self.description = "CloseChannelTransition"
+        self.inputSymbolProbability = 5.0
 
     @public_api
     def copy(self):
@@ -127,7 +127,7 @@ class CloseChannelTransition(AbstractTransition):
         transition._startState = self.startState
         transition.description = self.description
         transition.active = self.active
-        transition.priority = self.priority
+        transition.inputSymbolProbability = self.inputSymbolProbability
         transition.cbk_modify_symbol = self.cbk_modify_symbol
         transition.inverseInitiator = self.inverseInitiator
         return transition

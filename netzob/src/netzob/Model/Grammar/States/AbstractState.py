@@ -62,6 +62,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         self.name = name
         self.active = False
         self.cbk_modify_transition = []
+        self.cbk_filter_transitions = []
 
     def __str__(self):
         return str(self.name)
@@ -124,9 +125,18 @@ class AbstractState(object, metaclass=abc.ABCMeta):
 
     @public_api
     def add_cbk_modify_transition(self, cbk_method):
-        """Add a function called during state execution to help choose the
-        next transition (in an initiator context) or modifying the current
-        transition (in a non initiator context).
+        """Add a function called during state execution to help modify the
+        currently selected transition. The original transition may
+        therefore be replaced by a new transition. The transition
+        returned by the callback should have its
+        :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inverseInitiator`
+        attribute set to the same value as for the currently selected
+        transition.
+
+        Depending on the context of the original transition, the transition modification has a different impact:
+
+        * If the original transition has its context defined to be ``initiator``, the input symbol of the new transition is emitted and one of the output symbols of the new transition is expected. The exiting state corresponds to the ending state of the new transition.
+        * If the original transition has its context defined to be ``non initiator``, as the input symbol of the original transition has already been received when the callback is called, it only remains to emit one of the output symbols of the new transition. The exiting state corresponds to the ending state of the new transition.
 
         :param cbk_method: the callback function
         :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
@@ -135,19 +145,18 @@ class AbstractState(object, metaclass=abc.ABCMeta):
         The callback function that can be used in the
         :attr:`cbk_method` parameter has the following prototype:
 
-        .. function:: cbk_method(availableTransitions, nextTransition,\
+        .. function:: cbk_method(available_transitions, current_transition,\
                                  current_state, last_sent_symbol,\
                                  last_sent_message, last_sent_structure,\
                                  last_received_symbol, last_received_message, \
                                  last_received_structure, memory)
            :noindex:
 
-           :param availableTransitions:
+           :param available_transitions:
                   Corresponds to the list of available transitions starting
                   from the current state.
-           :param nextTransition:
-                  Currently selected transition, either the initial transition
-                  or the transition returned by the previous callback.
+           :param current_transition:
+                  Currently selected transition.
            :param current_state:
                   Current state in the automaton.
            :param last_sent_symbol:
@@ -173,8 +182,8 @@ class AbstractState(object, metaclass=abc.ABCMeta):
            :param memory:
                   Corresponds to the current memory context.
 
-           :type availableTransitions: ~typing.List[~netzob.Model.Grammar.Transitions.Transition.Transition]
-           :type nextTransition: :class:`~netzob.Model.Grammar.Transitions.Transition.Transition`
+           :type available_transitions: ~typing.List[~netzob.Model.Grammar.Transitions.Transition.Transition]
+           :type current_transition: :class:`~netzob.Model.Grammar.Transitions.Transition.Transition`
            :type current_state: :class:`~netzob.Model.Grammar.States.State.State`
            :type last_sent_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
            :type last_sent_message: :class:`~bitarray.bitarray`
@@ -185,12 +194,83 @@ class AbstractState(object, metaclass=abc.ABCMeta):
            :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
 
            :return: The callback function should return a transition
-                    object, which could be the original transition or
-                    another one in the available transitions.
+                    object. The returned transition should have its
+                    :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inverseInitiator`
+                    attribute set to the same value as for the current
+                    transition.
            :rtype: :class:`Transition<netzob.Model.Grammar.Transitions.Transition.Transition>`
 
         """
 
         if not callable(cbk_method):
-            raise TypeError("'cbk_modifyTransition' should be a callable function")
+            raise TypeError("'cbk_method' should be a callable function")
         self.cbk_modify_transition.append(cbk_method)
+
+    @public_api
+    def add_cbk_filter_transitions(self, cbk_method):
+        """Add a function called during state execution to filter the
+        available transitions. Callbacks defined through this method
+        are executed before the random choice made by the actor,
+        amongst the available transitions, when it visits the current
+        state of the automaton.
+
+        :param cbk_method: the callback function
+        :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
+        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function
+
+        The callback function that can be used in the
+        :attr:`cbk_method` parameter has the following prototype:
+
+        .. function:: cbk_method(available_transitions, current_state, last_sent_symbol,\
+                                 last_sent_message, last_sent_structure,\
+                                 last_received_symbol, last_received_message, \
+                                 last_received_structure, memory)
+           :noindex:
+
+           :param available_transitions:
+                  Corresponds to the list of available transitions starting
+                  from the current state.
+           :param current_state:
+                  Current state in the automaton.
+           :param last_sent_symbol:
+                  Last sent symbol by the actor on the communication channel, and thus making it
+                  possible to create relationships with the previously sent symbol.
+           :param last_sent_message:
+                  Corresponds to the last sent message by the actor on the communication channel,
+                  and thus making it possible to create relationships with
+                  the previously sent message.
+           :param last_sent_structure:
+                  Corresponds to the last sent message structure by the actor on the communication channel,
+                  and thus making it possible to create relationships with
+                  the previously sent message structure.
+           :param last_received_symbol:
+                  Corresponds to the last received symbol by the actor on the communication channel, and thus making it possible to create relationships
+                  with the previously received symbol.
+           :param last_received_message:
+                  Corresponds to the last received message by the actor on the communication channel, and thus making it possible to create relationships
+                  with the previously received message.
+           :param last_received_structure:
+                  Corresponds to the last received message structure by the actor on the communication channel, and thus making it possible to create relationships
+                  with the previously received message structure.
+           :param memory:
+                  Corresponds to the current memory context.
+
+           :type available_transitions: ~typing.List[~netzob.Model.Grammar.Transitions.Transition.Transition]
+           :type current_state: :class:`~netzob.Model.Grammar.States.State.State`
+           :type last_sent_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+           :type last_sent_message: :class:`~bitarray.bitarray`
+           :type last_sent_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
+           :type last_received_symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`
+           :type last_received_message: :class:`~bitarray.bitarray`
+           :type last_received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`
+           :type memory: :class:`Memory <netzob.Model.Vocabulary.Domain.Variables.Memory.Memory>`
+
+           :return: The callback function should return a list of transition
+                    objects.
+           :rtype: :class:`list` of :class:`Transition<netzob.Model.Grammar.Transitions.Transition.Transition>`
+
+        """
+
+        if not callable(cbk_method):
+            raise TypeError("'cbk_method' should be a callable function")
+        self.cbk_filter_transitions.append(cbk_method)
