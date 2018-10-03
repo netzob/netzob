@@ -190,7 +190,7 @@ class AbstractTransition(object, metaclass=abc.ABCMeta):
         default value is set to 10.0.
 
         For instance, an open and close channel transition are both declared
-        with a priority of 100.0, whereas per default a transition has a priority
+        with a weight of 100.0, whereas per default a transition has a weight
         of 10.0.
 
         >>> from netzob.all import *
