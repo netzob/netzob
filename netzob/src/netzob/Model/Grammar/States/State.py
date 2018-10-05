@@ -127,7 +127,7 @@ class State(AbstractState):
             if should_consider_reception:
                 actor.visit_log.append("  [+] At state '{}', received packet on communication channel. Switching to execution as not initiator.".format(self.name))
                 self._logger.debug("Data received on the communication channel. Switching to execution as not initiator to handle the received message.")
-                return self.executeAsNotInitiator(actor)
+                return self.executeAsNotInitiator(actor, available_transitions)
 
         # Else, randomly pick a transition
         actor.visit_log.append("  [+]   Randomly choosing a transition to execute or to wait for an input symbol")
