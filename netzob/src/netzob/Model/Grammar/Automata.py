@@ -924,7 +924,6 @@ class Automata(object):
           [+]   Transition 'Close' lead to state 'S3'
           [+] At state 'S3'
           [+]   Randomly choosing a transition to execute or to wait for an input symbol
-          [+] Issue in last transition. Leaving the automaton.
         >>> print(alice.generateLog())
         Activity log for actor 'Alice' (not initiator):
           [+] At state 'S0'
