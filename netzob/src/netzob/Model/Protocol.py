@@ -125,26 +125,18 @@ class Protocol(object):
 
     """
 
-    # Constants
-    SYMBOLS = 0
-    AUTOMATA = 1
-
-    # Static variables
-    definitions = {}
-
     @public_api
     def __init__(self, name, path_zdl=None):
         self.__name = name
         self.__path_zdl = path_zdl
-        self.definition = [{}, None, None]
 
-        if self.name in Protocol.definitions:
-            self.definition = Protocol.definitions[self.name]
-        else:
-            Protocol.definitions[self.name] = self.definition
+        # Initialize local variables
+        self.__symbols = {}
+        self.__automata = None
 
-            if self.path_zdl is not None:
-                self._load_zdl_files()
+        # Load protocol from specified path
+        if self.path_zdl is not None:
+            self._load_zdl_files()
 
     @staticmethod
     @public_api
@@ -172,11 +164,9 @@ class Protocol(object):
 
         if len(format_zdl) > 0:
             self._initializeSymbols(format_zdl)
-            self.definition[Protocol.SYMBOLS] = self.symbols
 
         if len(automata_zdl) > 0:
             self._initializeAutomata(automata_zdl)
-            self.definition[Protocol.AUTOMATA] = self.automata
 
     def _initializeSymbols(self, path, modLoaded=None):
         """Parse a dictionary of symbols from a ZDL file.
@@ -185,11 +175,9 @@ class Protocol(object):
             # Load module from source ZDL file
             modLoaded = imp.load_source("format", path)
 
-        symbols = Symbols(modLoaded.symbols)
+        self.symbols = Symbols(modLoaded.symbols)
 
-        if len(symbols) > 0:
-            self.definition[Protocol.SYMBOLS] = symbols
-        else:
+        if len(self.symbols) == 0:
             raise Exception("No symbol defined in '{}'.".format(path))
 
     def _initializeAutomata(self, path):
@@ -197,7 +185,7 @@ class Protocol(object):
         """
         # Load module from source ZDL file
         mod = imp.load_source("automata", path)
-        self.definition[Protocol.AUTOMATA] = mod.automata
+        self.automata = mod.automata
 
     @property
     def name(self):
@@ -227,18 +215,12 @@ class Protocol(object):
 
         :type: a :class:`dict` where keys are symbol string names and values are :class:`Symbol <netzob.Model.Vocabulary.Symbol.Symbol>`
         """
-        if self.name in Protocol.definitions:
-            if Protocol.definitions[self.name][Protocol.SYMBOLS] is not None:
-                return Protocol.definitions[self.name][Protocol.SYMBOLS]
-            else:
-                return {}
-        else:
-            return {}
+        return self.__symbols
 
     @symbols.setter  # type: ignore
     @typeCheck(dict)
     def symbols(self, symbols):
-        Protocol.definitions[self.name][Protocol.SYMBOLS] = symbols
+        self.__symbols = symbols
 
     @property
     def automata(self):
@@ -248,12 +230,9 @@ class Protocol(object):
 
         :type: an :class:`Automata <netzob.Model.Grammar.Automata.Automata>`
         """
-        if self.name in Protocol.definitions:
-            return Protocol.definitions[self.name][Protocol.AUTOMATA]
-        else:
-            return None
+        return self.__automata
 
     @automata.setter  # type: ignore
     @typeCheck(Automata)
     def automata(self, automata):
-        Protocol.definitions[self.name][Protocol.AUTOMATA] = automata
+        self.__automata = automata
