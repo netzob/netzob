@@ -128,7 +128,7 @@ class CloseChannelTransition(AbstractTransition):
         transition.description = self.description
         transition.active = self.active
         transition.inputSymbolProbability = self.inputSymbolProbability
-        transition.cbk_modify_symbol = self.cbk_modify_symbol
+        transition.cbk_modify_symbol = list(self.cbk_modify_symbol)
         transition.inverseInitiator = self.inverseInitiator
         return transition
 
