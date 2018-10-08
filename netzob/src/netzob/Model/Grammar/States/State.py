@@ -99,10 +99,10 @@ class State(AbstractState):
 
         """
         state = State(name=self.name)
-        state.transitions = self.transitions
+        state.transitions = list(self.transitions)
         state.active = self.active
-        state.cbk_modify_transition = self.cbk_modify_transition
-        state.cbk_filter_transitions = self.cbk_filter_transitions
+        state.cbk_modify_transition = list(self.cbk_modify_transition)
+        state.cbk_filter_transitions = list(self.cbk_filter_transitions)
         return state
 
     def execute(self, actor):

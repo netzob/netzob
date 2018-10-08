@@ -74,10 +74,10 @@ class Transition(AbstractTransition):
     (which is by default set to ``False``). The context is defined as
     follows:
 
-    * if the actor has is ``initiator`` attribute set to ``True``, and if the ``inverseInitiator`` attribute is set to ``True``, the transition context is ``initiator``;
-    * if the actor has is ``initiator`` attribute set to ``True``, and if the ``inverseInitiator`` attribute is set to ``False``, the transition context is ``non initiator``;
-    * if the actor has is ``initiator`` attribute set to ``False``, and if the ``inverseInitiator`` attribute is set to ``True``, the transition context is ``initiator``;
-    * if the actor has is ``initiator`` attribute set to ``False``, and if the ``inverseInitiator`` attribute is set to ``False``, the transition context is ``non initiator``.
+    * if the actor has its ``initiator`` attribute set to ``True``, and if the ``inverseInitiator`` attribute is set to ``True``, the transition context is ``initiator``;
+    * if the actor has its ``initiator`` attribute set to ``True``, and if the ``inverseInitiator`` attribute is set to ``False``, the transition context is ``non initiator``;
+    * if the actor has its ``initiator`` attribute set to ``False``, and if the ``inverseInitiator`` attribute is set to ``True``, the transition context is ``initiator``;
+    * if the actor has its ``initiator`` attribute set to ``False``, and if the ``inverseInitiator`` attribute is set to ``False``, the transition context is ``non initiator``.
 
     When an actor encounters a state where multiple transitions are
     defined, a random choice is made amongst all these transitions by
@@ -283,8 +283,8 @@ class Transition(AbstractTransition):
         transition.description = self.description
         transition.active = self.active
         transition.inputSymbolProbability = self.inputSymbolProbability
-        transition.cbk_modify_symbol = self.cbk_modify_symbol
-        transition.cbk_action = self.cbk_action
+        transition.cbk_modify_symbol = list(self.cbk_modify_symbol)
+        transition.cbk_action = list(self.cbk_action)
         if self.inputSymbolPreset is not None:
             transition.inputSymbolPreset = self.inputSymbolPreset.copy()
         transition.inputSymbolReactionTime = self.inputSymbolReactionTime

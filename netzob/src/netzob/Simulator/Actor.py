@@ -651,7 +651,6 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+] Issue in last transition. Leaving the automaton.
 
 
     .. _ActorExample4:
@@ -810,7 +809,6 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -1028,7 +1026,6 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -1254,7 +1251,6 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+] Issue in last transition. Leaving the automaton.
 
 
     .. _ActorExample7:
@@ -1413,7 +1409,6 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -1440,7 +1435,6 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+] Issue in last transition. Leaving the automaton.
 
 
     .. _ActorExample8:
@@ -1535,7 +1529,6 @@ class Actor(Thread):
       [+]   Transition 'Close with error' lead to state 'Close state'
       [+] At state 'Close state'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'Start state'
@@ -1552,7 +1545,6 @@ class Actor(Thread):
       [+] At state 'S1'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
       [+]   Waiting for an input symbol to decide the transition (not initiator)
-      [+] Issue in last transition. Leaving the automaton.
 
 
     .. _ActorExample9:
@@ -1681,7 +1673,6 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S3'
       [+] At state 'S3'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -1827,7 +1818,6 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S3'
       [+] At state 'S3'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+] Issue in last transition. Leaving the automaton.
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -2370,7 +2360,6 @@ class Actor(Thread):
 
         if self.current_state is None:
             self._logger.debug("The execution of transition did not returned a state, for actor '{}'".format(self.name))
-            self.visit_log.append("  [+] Issue in last transition. Leaving the automaton.")
             return True
 
         if self.current_state is not None and self.target_state is not None and self.target_state.name == self.current_state.name:
@@ -3156,6 +3145,5 @@ def _test_callback_modify_symbol():
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+] Issue in last transition. Leaving the automaton.
 
     """
