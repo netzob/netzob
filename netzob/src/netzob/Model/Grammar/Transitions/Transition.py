@@ -577,31 +577,12 @@ class Transition(AbstractTransition):
 
         # Randomly select an output symbol
         outputSymbolsWithProbability = dict()
-        nbSymbolWithNoExplicitProbability = 0
-        totalProbability = 0
         for outputSymbol in self.outputSymbols:
             if outputSymbol not in list(self.outputSymbolsProbabilities.keys()):
-                probability = None
-                nbSymbolWithNoExplicitProbability += 1
+                probability = 10.0
             else:
                 probability = self.outputSymbolsProbabilities[outputSymbol]
-                totalProbability += probability
             outputSymbolsWithProbability[outputSymbol] = probability
-
-        if totalProbability > 100.0:
-            raise ValueError(
-                "The sum of output symbol's probability if above 100%")
-
-        remainProbability = 100.0 - totalProbability
-
-        # Share the remaining probability
-        probabilityPerSymbolWithNoExplicitProbability = remainProbability / nbSymbolWithNoExplicitProbability
-
-        # Update the probability
-        for outputSymbol in self.outputSymbols:
-            if outputSymbolsWithProbability[outputSymbol] is None:
-                outputSymbolsWithProbability[
-                    outputSymbol] = probabilityPerSymbolWithNoExplicitProbability
 
         # pick the good output symbol following the probability
         distribution = [
