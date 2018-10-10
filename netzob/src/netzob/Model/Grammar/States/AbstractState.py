@@ -126,17 +126,16 @@ class AbstractState(object, metaclass=abc.ABCMeta):
     @public_api
     def add_cbk_modify_transition(self, cbk_method):
         """Add a function called during state execution to help modify the
-        currently selected transition. The original transition may
-        therefore be replaced by a new transition. The transition
-        returned by the callback should have its
+        current transition. The current transition may therefore be
+        replaced by a new transition. The transition returned by the
+        callback should have its
         :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inverseInitiator`
-        attribute set to the same value as for the currently selected
-        transition.
+        attribute set to the same value as for the current transition.
 
-        Depending on the context of the original transition, the transition modification has a different impact:
+        Depending on the context of the current transition, the transition modification has a different impact:
 
-        * If the original transition has its context defined to be ``initiator``, the input symbol of the new transition is emitted and one of the output symbols of the new transition is expected. The exiting state corresponds to the ending state of the new transition.
-        * If the original transition has its context defined to be ``non initiator``, as the input symbol of the original transition has already been received when the callback is called, it only remains to emit one of the output symbols of the new transition. The exiting state corresponds to the ending state of the new transition.
+        * If the current transition has its context defined to be ``initiator``, the input symbol of the new transition is emitted and one of the output symbols of the new transition is expected. The exiting state corresponds to the ending state of the new transition.
+        * If the current transition has its context defined to be ``non initiator``, as the input symbol of the current transition has already been received when the callback is called, it only remains to emit one of the output symbols of the new transition. The exiting state corresponds to the ending state of the new transition.
 
         :param cbk_method: the callback function
         :type cbk_method: :class:`Callable <collections.abc.Callable>`, required
@@ -156,7 +155,7 @@ class AbstractState(object, metaclass=abc.ABCMeta):
                   Corresponds to the list of available transitions starting
                   from the current state.
            :param current_transition:
-                  Currently selected transition.
+                  Current transition in the automaton.
            :param current_state:
                   Current state in the automaton.
            :param last_sent_symbol:

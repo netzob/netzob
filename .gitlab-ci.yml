@@ -96,8 +96,8 @@ test:host:
     - cd netzob
     - find build -name '*.so' | while read f; do d=$(echo "$f" | cut -d/ -f3-); cp -v "$f" "src/$d"; done
     - coverage3 run setup.py test
-    - coverage3 report --include=src/netzob/*
-    - coverage3 html --include=src/netzob/*
+    - coverage3 report --include=src/netzob/* --omit='src/netzob/Inference/*,src/netzob/Import/*'
+    - coverage3 html --include=src/netzob/* --omit='src/netzob/Inference/*,src/netzob/Import/*'
   artifacts:
     expire_in: 1 week
     paths:

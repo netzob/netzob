@@ -95,11 +95,12 @@ class Transition(AbstractTransition):
     .. note::
        In a state, if several transitions are available, where some of them expect to receive the input symbol (non initator context) and the others expect to send the input symbol (initator context), it is recommended in the last case to not set any output symbols to be received. In such a situation, it is better to handle the receiving of the potential peer symbols in a second state.
 
-    Two transitions that start at the same state cannot have the same
-    input symbol, as this symbol is used to determine the
-    corresponding transition when receiving a new message. The only
-    exception is when the transitions that have the same input symbol
-    leverage the ``inputSymbolPreset`` attribute. In such case, the
+    Two transitions in the same context, initiator or non initator,
+    that start at the same state cannot have the same input symbol, as
+    this symbol is used to determine the corresponding transition when
+    receiving a new message. The only exception is when the
+    transitions that have the same input symbol leverage the
+    ``inputSymbolPreset`` attribute. In such case, the
     ``inputSymbolPreset`` attribute makes it possible to determine the
     corresponding transition based on field content from the same
     input symbol.
@@ -172,7 +173,7 @@ class Transition(AbstractTransition):
                                     each output symbol, the timeout
                                     value in seconds to wait for the
                                     output value (only used in an initiator context).
-    :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The value between ``0.0`` and ``100.0`` corresponds to the weight of the symbol in terms of selection probability.
+    :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The value between ``0.0`` and ``100.0`` corresponds to the weight of the symbol in terms of selection probability. The default value of each symbol as an output symbol is set to 10.0.
     :var inverseInitiator: Indicates to inverse the behavior of the actor ``initiator`` attribute.
     :var description: The description of the transition. If not explicitly set,
                       it is generated from the input and output symbol strings.
@@ -576,31 +577,12 @@ class Transition(AbstractTransition):
 
         # Randomly select an output symbol
         outputSymbolsWithProbability = dict()
-        nbSymbolWithNoExplicitProbability = 0
-        totalProbability = 0
         for outputSymbol in self.outputSymbols:
             if outputSymbol not in list(self.outputSymbolsProbabilities.keys()):
-                probability = None
-                nbSymbolWithNoExplicitProbability += 1
+                probability = 10.0
             else:
                 probability = self.outputSymbolsProbabilities[outputSymbol]
-                totalProbability += probability
             outputSymbolsWithProbability[outputSymbol] = probability
-
-        if totalProbability > 100.0:
-            raise ValueError(
-                "The sum of output symbol's probability if above 100%")
-
-        remainProbability = 100.0 - totalProbability
-
-        # Share the remaining probability
-        probabilityPerSymbolWithNoExplicitProbability = remainProbability / nbSymbolWithNoExplicitProbability
-
-        # Update the probability
-        for outputSymbol in self.outputSymbols:
-            if outputSymbolsWithProbability[outputSymbol] is None:
-                outputSymbolsWithProbability[
-                    outputSymbol] = probabilityPerSymbolWithNoExplicitProbability
 
         # pick the good output symbol following the probability
         distribution = [
