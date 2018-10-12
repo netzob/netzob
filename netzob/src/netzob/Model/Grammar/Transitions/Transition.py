@@ -62,9 +62,9 @@ class Transition(AbstractTransition):
     end state can be the same.
 
     A transition is either in an initiator or non initiator
-    context. In an initator context, the input symbol of the
+    context. In an initiator context, the input symbol of the
     transition is emitted and one of the output symbols of the
-    transition is expected. In non initator context, the input symbol
+    transition is expected. In non initiator context, the input symbol
     of the transition is expected and one of the output symbols of the
     transition is emitted.
 
@@ -83,7 +83,7 @@ class Transition(AbstractTransition):
     defined, a random choice is made amongst all these transitions by
     considering their probabilities. Two scenarios are possible:
 
-    * if the picked transition is in an ``initator`` context, this transition is executed;
+    * if the picked transition is in an ``initiator`` context, this transition is executed;
     * otherwise, the executed transition depends on the received symbol.
 
     It is possible to define probability on transition selection during
@@ -93,9 +93,9 @@ class Transition(AbstractTransition):
     variety of state machines.
 
     .. note::
-       In a state, if several transitions are available, where some of them expect to receive the input symbol (non initator context) and the others expect to send the input symbol (initator context), it is recommended in the last case to not set any output symbols to be received. In such a situation, it is better to handle the receiving of the potential peer symbols in a second state.
+       In a state, if several transitions are available, where some of them expect to receive the input symbol (non initiator context) and the others expect to send the input symbol (initiator context), it is recommended in the last case to not set any output symbols to be received. In such a situation, it is better to handle the receiving of the potential peer symbols in a second state.
 
-    Two transitions in the same context, initiator or non initator,
+    Two transitions in the same context, initiator or non initiator,
     that start at the same state cannot have the same input symbol, as
     this symbol is used to determine the corresponding transition when
     receiving a new message. The only exception is when the
