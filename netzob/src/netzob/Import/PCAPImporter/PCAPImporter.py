@@ -232,7 +232,7 @@ class PCAPImporter(object):
                 return
 
             # Build the L2NetworkMessage
-            l2Message = L2NetworkMessage(payload, epoch, l2Proto, l2SrcAddr,
+            l2Message = L2NetworkMessage(l2Payload, epoch, l2Proto, l2SrcAddr,
                                          l2DstAddr)
 
             self.messages.add(l2Message)
@@ -253,7 +253,7 @@ class PCAPImporter(object):
                 return
 
             # Build the L3NetworkMessage
-            l3Message = L3NetworkMessage(l2Payload, epoch, l2Proto, l2SrcAddr,
+            l3Message = L3NetworkMessage(l3Payload, epoch, l2Proto, l2SrcAddr,
                                          l2DstAddr, l3Proto, l3SrcAddr,
                                          l3DstAddr)
             self.messages.add(l3Message)
@@ -276,7 +276,7 @@ class PCAPImporter(object):
 
             # Build the L4NetworkMessage
             l4Message = L4NetworkMessage(
-                l3Payload, epoch, l2Proto, l2SrcAddr, l2DstAddr, l3Proto,
+                l4Payload, epoch, l2Proto, l2SrcAddr, l2DstAddr, l3Proto,
                 l3SrcAddr, l3DstAddr, l4Proto, l4SrcPort, l4DstPort)
 
             self.messages.add(l4Message)
