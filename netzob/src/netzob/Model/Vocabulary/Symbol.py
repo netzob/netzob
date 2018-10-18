@@ -123,7 +123,7 @@ class Symbol(AbstractField):
         return self.id
 
     def __hash__(self):
-        return hash(frozenset(self.name))
+        return hash(self.id)
 
     @typeCheck(Memory, object)
     def specialize(self, memory=None, generationStrategy=None, presets=None):
