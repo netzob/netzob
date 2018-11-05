@@ -2785,7 +2785,7 @@ def _test_context():
     >>> alice_symbolList = [alice_symbol_input]
     >>>
     >>> # Output symbol
-    >>> alice_var_integer = Data(uint32(), scope=Scope.MESSAGE, name='Alice integer')
+    >>> alice_var_integer = Data(uint32(default=1), scope=Scope.MESSAGE, name='Alice integer')
     >>> alice_f1_output = Field("hello", name="Alice Field f1")
     >>> alice_f2_output = Field(alice_var_integer, name="Alice Field f2")
     >>> alice_symbol_output = Symbol(name="Alice Output Symbol", fields=[alice_f1_output, alice_f2_output])
@@ -2805,16 +2805,10 @@ def _test_context():
     ...     if operation == Operation.SPECIALIZE:
     ...         var_integer_bytes = data_structure['Alice Field f2']
     ...         var_integer = int.from_bytes(var_integer_bytes, byteorder='big')
-    ...         print("[WRITE] Current state: {}".format(current_state))
-    ...         print("[WRITE] Current structure: {}".format(data_structure))
     ...         print("[WRITE] Current value for f2: {}".format(var_integer))
     ...         var_integer += 1
     ...         var_integer_bytes = var_integer.to_bytes(4, byteorder='big')
     ...         memory.memorize(alice_var_integer, var_integer_bytes)
-    ...     elif current_state.name != 'S0':
-    ...         var_integer_bits = data_structure
-    ...         print("[READ] Current state: {}".format(current_state))
-    ...         print("[READ] Current structure: {}".format(data_structure))
     >>>
     >>> alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name="Open")
     >>> alice_mainTransition = Transition(startState=alice_s1, endState=alice_s1,
@@ -2865,26 +2859,10 @@ def _test_context():
     ...     bob.start()
     ...     time.sleep(1)
     >>> print(stdout.getvalue(), end='')
-    [READ] Current state: S1
-    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xcf\x84\xb6\x83')])
-    [WRITE] Current state: S1
-    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x85J\x96W')])
-    [WRITE] Current value for f2: 2236257879
-    [READ] Current state: S1
-    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\xff\x1e[\xef')])
-    [WRITE] Current state: S1
-    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x85J\x96X')])
-    [WRITE] Current value for f2: 2236257880
-    [READ] Current state: S1
-    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x9aj\xb3)')])
-    [WRITE] Current state: S1
-    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x85J\x96Y')])
-    [WRITE] Current value for f2: 2236257881
-    [READ] Current state: S1
-    [READ] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b"C'y\xee")])
-    [WRITE] Current state: S1
-    [WRITE] Current structure: OrderedDict([('Alice Field f1', b'hello'), ('Alice Field f2', b'\x85J\x96Z')])
-    [WRITE] Current value for f2: 2236257882
+    [WRITE] Current value for f2: 1
+    [WRITE] Current value for f2: 2
+    [WRITE] Current value for f2: 3
+    [WRITE] Current value for f2: 4
     >>>
     >>> bob.stop()
     >>> alice.stop()
