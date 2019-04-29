@@ -658,5 +658,75 @@ def _test_specialize_abstract():
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A BitArray should have either its value or its nbBits set, but not both'
 
     >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
+    OrderedDict([('value', None), ('nbBits', None), ('default', None)])
+    EXCEPTION IN SPECIALIZATION: 'specialize() produced 4270 bits, which is not aligned on 8 bits. You should review the symbol model.'
+    OrderedDict([('value', None), ('nbBits', (2, 8)), ('default', None)])
+    EXCEPTION IN SPECIALIZATION: 'specialize() produced 6 bits, which is not aligned on 8 bits. You should review the symbol model.'
+
+    """
+
+
+def _test_symbol():
+    r"""
+
+    ## Be sure to produce data aligned on bytes (8 bits)
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> domain = BitArray(nbBits=(5, 7))
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> next(symbol.specialize())
+    Traceback (most recent call last):
+    ...
+    Exception: specialize() produced 7 bits, which is not aligned on 8 bits. You should review the symbol model.
+
+    >>> domain1 = BitArray(nbBits=3)
+    >>> domain2 = BitArray(nbBits=7)
+    >>> f1 = Field(domain=domain1, name="field1")
+    >>> f2 = Field(domain=domain2, name="field2")
+    >>> symbol = Symbol(fields=[f1, f2])
+    >>> next(symbol.specialize())
+    Traceback (most recent call last):
+    ...
+    Exception: specialize() produced 10 bits, which is not aligned on 8 bits. You should review the symbol model.
+
+    >>> domain1 = BitArray(nbBits=3)
+    >>> domain2 = BitArray(nbBits=5)
+    >>> f1 = Field(domain=domain1, name="field1")
+    >>> f2 = Field(domain=domain2, name="field2")
+    >>> symbol = Symbol(fields=[f1, f2])
+    >>> next(symbol.specialize())
+    b'\xed'
+
+    """
+
+
+def _test_field():
+    r"""
+
+    ## Be sure to produce data aligned on bytes (8 bits)
+
+    >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> domain = BitArray(nbBits=(2, 6))
+    >>> f = Field(domain=domain, name="field1")
+    >>> next(f.specialize())
+    Traceback (most recent call last):
+    ...
+    Exception: Cannot produce data not aligned on bytes. You should review the field model.
+
+    >>> domain = BitArray(nbBits=(8, 8))
+    >>> f = Field(domain=domain, name="field1")
+    >>> next(f.specialize())
+    b'\x99'
+
+    >>> domain1 = BitArray(nbBits=3)
+    >>> domain2 = BitArray(nbBits=5)
+    >>> f1 = Field(domain=domain1, name="field1")
+    >>> f2 = Field(domain=domain2, name="field2")
+    >>> f = Field(domain=[f1, f2])
+    >>> next(f.specialize())
+    b'\xbe'
 
     """

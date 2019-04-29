@@ -462,7 +462,10 @@ class Field(AbstractField):
 
     def _inner_specialize(self, specializing_paths):
         for specializing_path in specializing_paths:
-            yield specializing_path.getData(self.domain).tobytes()
+            data = specializing_path.getData(self.domain)
+            if len(data) % 8 != 0:
+                raise Exception("Cannot produce data not aligned on bytes. You should review the field model.")
+            yield data.tobytes()
 
     @public_api
     def count(self, preset=None):
