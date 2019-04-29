@@ -55,7 +55,7 @@ class SearchTask(object):
 
     >>> from netzob.all import *
     >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-    >>> data = TypeConverter.convert("netzob", String, BitArray)
+    >>> data = TypeConverter.convert(b"netzob", String, BitArray)
     >>> searchTask = SearchTask(data, "original version")
     >>> print(searchTask.description)
     original version

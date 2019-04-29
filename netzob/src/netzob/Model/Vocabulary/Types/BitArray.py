@@ -400,7 +400,7 @@ class BitArray(AbstractType):
 
         >>> from netzob.all import *
         >>> from netzob.Model.Vocabulary.Types.BitArray import BitArray
-        >>> d = String.decode("hello john")
+        >>> d = String.decode(b"hello john")
         >>> r = BitArray.encode(d)
         >>> r.to01()
         '01101000011001010110110001101100011011110010000001101010011011110110100001101110'

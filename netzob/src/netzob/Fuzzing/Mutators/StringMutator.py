@@ -115,20 +115,20 @@ class StringMutator(DomainMutator):
     Constant definitions:
     """
 
-    DEFAULT_END_CHAR = '\0'
-    PADDING_CHAR = ' '
+    DEFAULT_END_CHAR = b'\0'
+    PADDING_CHAR = b' '
     DATA_TYPE = String
 
     DEFAULT_NAUGHTY_STRINGS = [
-        'System("ls -al /")',
-        '`ls -al /`',
-        'Kernel.exec("ls -al /")',
-        'Kernel.exit(1)',
-        '%x("ls -al /")',
-        '<img \\x00src=x onerror="alert(1)">',
-        '$ENV{"HOME"}',
-        '%d',
-        '%s']
+        b'System("ls -al /")',
+        b'`ls -al /`',
+        b'Kernel.exec("ls -al /")',
+        b'Kernel.exit(1)',
+        b'%x("ls -al /")',
+        b'<img \\x00src=x onerror="alert(1)">',
+        b'$ENV{"HOME"}',
+        b'%d',
+        b'%s']
 
     def __init__(self,
                  domain,
@@ -249,12 +249,12 @@ class StringMutator(DomainMutator):
                 if length > len(value):
                     # Complete the string with padding characters to have the good
                     # length
-                    value = value + (" " * (length - len(value)))
+                    value = value + (b" " * (length - len(value)))
                 else:
                     # truncate the too long string value to length characters
                     value = value[:length - 1] + self.endChar
             else:
-                value = ""
+                value = b""
 
             valueBytes = String.decode(value,
                                        unitSize=self.domain.dataType.unitSize,
@@ -352,7 +352,7 @@ def _test_string_values():
     >>> from netzob.Fuzzing.Mutators.StringMutator import StringMutator
 
     >>> fieldString = Field(String(nbChars=(35, 60)))
-    >>> eos_symbol = '123456789'
+    >>> eos_symbol = b'123456789'
     >>> mutator = StringMutator(fieldString.domain, seed=10, lengthBitSize=UnitSize.SIZE_8, endChar=eos_symbol)
     >>> naughty_string = StringMutator.DEFAULT_NAUGHTY_STRINGS
 
@@ -361,11 +361,11 @@ def _test_string_values():
     >>> for _ in range(20):
     ...     a_str = mutator.generate()
     ...     for ns in naughty_string:
-    ...         if ns in a_str.decode():
+    ...         if ns in a_str:
     ...             has_naughty_str = True
-    ...     idx = a_str.find(eos_symbol.encode())
+    ...     idx = a_str.find(eos_symbol)
     ...     if idx != -1:
-    ...         if a_str[idx :].find(eos_symbol.encode()) != -1:
+    ...         if a_str[idx :].find(eos_symbol) != -1:
     ...             has_several_eos_symbol = True
 
     >>> has_naughty_str

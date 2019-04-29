@@ -270,7 +270,7 @@ class SearchEngine(object):
         ...    print(result)
         ...    print(repr(result.searchTask.properties["data"]))
         Found ascii-bits(bigEndian) at [(80, 144)] of bitarray('01010010011001010111011001100101011100100111001101101001011011100110011100100000011100000111001001101111011101000110111101100011011011110110110001110011001000000111011101101001011101000110100000100000010011100110010101110100011110100110111101100010')
-        protocol
+        b'protocol'
 
 
         :parameter data: the data to search after. Data must be provided with their netzob type.

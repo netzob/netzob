@@ -84,11 +84,11 @@ class MessageSpecializer(object):
 
     >>> ms = MessageSpecializer(memory=Memory())
     >>> m1 = TypeConverter.convert(next(ms.specializeSymbol(s1)).generatedContent, BitArray, String)
-    >>> m1.startswith("hello;")
+    >>> m1.startswith(b"hello;")
     True
 
     >>> m2 = TypeConverter.convert(next(ms.specializeSymbol(s2)).generatedContent, BitArray, String)
-    >>> m2.startswith("master>")
+    >>> m2.startswith(b"master>")
     True
 
     >>> m1[6:] == m2[7:]

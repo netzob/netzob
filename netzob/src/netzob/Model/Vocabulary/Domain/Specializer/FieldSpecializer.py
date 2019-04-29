@@ -78,14 +78,14 @@ class FieldSpecializer(object):
     >>> fs = FieldSpecializer(f)
     >>> val = set([TypeConverter.convert(next(fs.specialize()).getData(f.domain), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
-    ['john', 'kurt']
+    [b'john', b'kurt']
 
     >>> d = Agg([String("hello"), String(" "), Alt([String("john"), String("kurt")])])
     >>> f = Field(d)
     >>> fs = FieldSpecializer(f)
     >>> val = set([TypeConverter.convert(next(fs.specialize()).getData(f.domain), BitArray, String) for x in range(100)])
     >>> print(sorted(val))
-    ['hello john', 'hello kurt']
+    [b'hello john', b'hello kurt']
 
     >>> fpayload = Field()
     >>> f1 = Field(String("hello "), name="f1")
@@ -100,11 +100,11 @@ class FieldSpecializer(object):
     >>> fs = FieldSpecializer(fpayload)
     >>> result = next(fs.specialize())
     >>> TypeConverter.convert(result.getData(fpayload.domain), BitArray, String)
-    'hello kurt!'
+    b'hello kurt!'
     >>> TypeConverter.convert(result.getData(f1.domain), BitArray, String)
-    'hello '
+    b'hello '
     >>> TypeConverter.convert(result.getData(f2.domain), BitArray, String)
-    'kurt!'
+    b'kurt!'
 
     """
 
