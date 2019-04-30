@@ -37,7 +37,7 @@
 import random
 import string
 import collections
-import encodings
+import codecs
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -229,7 +229,7 @@ class String(AbstractType):
             # Check if value is correct, and normalize it in str object, and then in bitarray
             if isinstance(value, str):
                 try:
-                    value.encode(self.encoding)
+                    value = value.encode(self.encoding)
                 except Exception as e:
                     raise ValueError("Input value for the following string is incorrect: '{}'. Error: '{}'".format(value, e))
             else:
@@ -254,7 +254,7 @@ class String(AbstractType):
             # Check if value is correct, and normalize it in str object, and then in bitarray
             if isinstance(default, str):
                 try:
-                    default.encode(self.encoding)
+                    default = default.encode(self.encoding)
                 except Exception as e:
                     raise ValueError("Input default value for the following string is incorrect: '{}'. Error: '{}'".format(default, e))
             else:
@@ -407,7 +407,7 @@ class String(AbstractType):
         # Handle terminal character ('end of string')
         final_character = None
         if len(self.eos) > 0:
-            final_character = random.choice(self.eos)
+            final_character = random.choice(self.eos).decode(self.encoding)
 
         # Generate the sufficient amount of data
         if self.value is not None:
@@ -426,7 +426,7 @@ class String(AbstractType):
                     while True:
                         random_content_tmp = random_content
                         for elt in self.eos:
-                            random_content_tmp = random_content_tmp.replace(elt, "")
+                            random_content_tmp = random_content_tmp.replace(elt.decode(self.encoding), "")
                         if len(random_content_tmp) == len(random_content):
                             random_content = random_content_tmp
                             break
@@ -441,15 +441,17 @@ class String(AbstractType):
             else:
                 random_content += final_character
 
-        return TypeConverter.convert(random_content, String, BitArray)
+        b_random_content = bitarray(endian=self.endianness.value)
+        b_random_content.frombytes(random_content.encode())
+        return b_random_content
 
     def getFixedBitSize(self):
         self._logger.debug("Determine the deterministic size of the value of "
                            "the type")
         if self.value:
-            current_size = len(self.value)
+            current_size = len(self.value.tobytes().decode(self.encoding)) * 8
             if len(self.eos) > 0:
-                current_size += len(self.eos[0] * 8)
+                current_size += len(self.eos[0].decode(self.encoding)) * 8
             return current_size
         elif any(self.size) and self.size[0] == self.size[1]:
             return self.size[0]
@@ -516,6 +518,8 @@ class String(AbstractType):
 
         results = collections.OrderedDict()
         for mutationName, mutationValue in list(mutations.items()):
+            if type(mutationValue) == "bytes":
+                mutationValue = mutationValue.encode()
             ba = BitArray(
                 TypeConverter.convert(mutationValue, String, BitArray))
             results.update(ba.mutate(mutationName))
@@ -590,7 +594,7 @@ class String(AbstractType):
                     raise ValueError("Input data for the following string is incorrect: '{}'. Error: '{}'".format(data, e))
             elif isinstance(data, str):
                 try:
-                    data.encode(self.encoding)
+                    data = data.encode(self.encoding)
                 except Exception as e:
                     raise ValueError("Input data for the following string is incorrect: '{}'. Error: '{}'".format(data, e))
             else:
@@ -613,8 +617,8 @@ class String(AbstractType):
         if self.value is not None:
             if len(self.eos) > 0:
                 for permitted_element in self.eos:
-                    tmp_value_bytes = self.value.tobytes() + str.encode(permitted_element)
-                    if tmp_value_bytes == data.tobytes():
+                    tmp_value_bytes = self.value.tobytes() + permitted_element
+                    if tmp_value_bytes.decode(self.encoding) == data.tobytes().decode("utf_8"):
                         return True
                 else:
                     return False
@@ -648,7 +652,7 @@ class String(AbstractType):
         if len(self.eos) > 0:
             for permitted_element in self.eos:
                 last_element = rawData[-(len(permitted_element)):]
-                if last_element == str.encode(permitted_element):
+                if last_element == permitted_element:
                     break
             else:
                 return False
@@ -663,15 +667,13 @@ class String(AbstractType):
         """This method convert the specified data in python raw format.
 
         >>> from netzob.all import *
-        >>> String.decode("hello")
+        >>> String.decode(b"hello")
         b'hello'
-        >>> String.decode('\x4a\x6f\x68\x6e\x20\x69\x73\x20\x69\x6e\x20\x74\x68\x65\x20\x6b\x69\x74\x63\x68\x65\x6e\x21')
+        >>> String.decode(b'\x4a\x6f\x68\x6e\x20\x69\x73\x20\x69\x6e\x20\x74\x68\x65\x20\x6b\x69\x74\x63\x68\x65\x6e\x21')
         b'John is in the kitchen!'
-        >>> String.decode(1021)
-        b'1021'
 
-        :param data: the data encoded in String which will be decoded in raw
-        :type data: the current type
+        :param data: the data encoded in bytes (str)
+        :type data: :class:`str`
         :keyword unitSize: the unitsize to consider while encoding. Values must be one of UnitSize.SIZE_*
         :type unitSize: :class:`Enum`
         :keyword endianness: the endianness to consider while encoding. Values must be Endianness.BIG or Endianness.LITTLE
@@ -686,7 +688,11 @@ class String(AbstractType):
         if data is None:
             raise TypeError("data cannot be None")
 
-        return str(data).encode('utf-8')
+        # Verify that data is a bytes object
+        if not isinstance(data, bytes):
+            raise TypeError("Data '{}' should be a bytes object".format(data))
+
+        return data
 
     @staticmethod
     def encode(data,
@@ -696,9 +702,9 @@ class String(AbstractType):
         """This method convert the python raw data to the String.
 
         >>> from netzob.all import *
-        >>> raw = String.decode("hello john!")
+        >>> raw = String.decode(b"hello john!")
         >>> String.encode(raw)
-        'hello john!'
+        b'hello john!'
 
         :param data: the data encoded in python raw which will be encoded in current type
         :type data: python raw
@@ -723,7 +729,7 @@ class String(AbstractType):
             else:
                 res += "."
 
-        return res
+        return res.encode()
 
     @property
     def encoding(self):
@@ -740,7 +746,9 @@ class String(AbstractType):
     def encoding(self, encoding):
         if encoding is None:
             raise TypeError("Encoding cannot be None")
-        if encodings.normalize_encoding(encoding) not in encodings.aliases.aliases.values():
+        try:
+            codecs.lookup(encoding)
+        except LookupError:
             raise ValueError("Wrong encoding specified: '{}'".format(encoding))
         self.__encoding = encoding
 
@@ -764,6 +772,13 @@ class String(AbstractType):
         for elt in eos:
             # Check that each element is a string
             if isinstance(elt, str):
+
+                # Check if element is correct, and normalize it in str object, and then in bitarray
+                try:
+                    elt = elt.encode(self.encoding)
+                except Exception as e:
+                    raise ValueError("Input value for the following string is incorrect: '{}'. Error: '{}'".format(elt, e))
+
                 eos_list.append(elt)
             else:
                 raise Exception("'eos' parameter must be a string list")
@@ -946,6 +961,15 @@ def _test_eos():
     b'john\x00'
     >>> symbol.abstract(data)
     OrderedDict([('field-john', b'john\x00')])
+
+
+    >>> f = Field(String("john", eos=['!'], encoding="utf_16_be"), name='field-john')
+    >>> symbol = Symbol([f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'john!'
+    >>> symbol.abstract(data)
+    OrderedDict([('field-john', b'john!')])
 
     # Test exception triggered when using different sizes of eos elements
 
@@ -1164,6 +1188,148 @@ def _test_specialize_abstract():
     OrderedDict([('value', 'bb'), ('nbChars', (2, 8)), ('encoding', 'utf-8'), ('eos', ['aaa', 'bbb']), ('default', 'ff')])
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A String should have either its value or its nbChars set, but not both'
 
-    >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
+     >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
+
+     """
+
+
+def _test_unicode():
+    r"""
+
+    ## UTF32
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf_32")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\xff\xfe\x00\x00D\x00\x00\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\xff\xfe\x00\x00D\x00\x00\x00')])
+
+    ## UTF32_LE
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf_32le")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'D\x00\x00\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'D\x00\x00\x00')])
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf_32_le")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'D\x00\x00\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'D\x00\x00\x00')])
+
+    ## UTF32_BE
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf_32be")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x00\x00\x00D'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\x00\x00\x00D')])
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf_32_be")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x00\x00\x00D'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\x00\x00\x00D')])
+
+
+    ## UTF16
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf_16")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\xff\xfeD\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\xff\xfeD\x00')])
+
+    ## UTF16_LE
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf_16le")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'D\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'D\x00')])
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf_16_le")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'D\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'D\x00')])
+
+    ## UTF16_BE
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf_16be")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x00D'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\x00D')])
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf_16_be")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x00D'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\x00D')])
+
+
+    ## UTF8
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf8")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'D'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'D')])
+
+    >>> from netzob.all import *
+    >>> domain = String(value="D", encoding="utf_8")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'D'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'D')])
 
     """

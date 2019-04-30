@@ -321,7 +321,10 @@ class Symbol(AbstractField):
 
     def _inner_specialize(self, specializing_paths):
         for specializing_path in specializing_paths:
-            yield specializing_path.generatedContent.tobytes()
+            data = specializing_path.generatedContent
+            if len(data) % 8 != 0:
+                raise Exception("specialize() produced {} bits, which is not aligned on 8 bits. You should review the symbol model.".format(len(data)))
+            yield data.tobytes()
 
     @public_api
     def count(self, preset=None):

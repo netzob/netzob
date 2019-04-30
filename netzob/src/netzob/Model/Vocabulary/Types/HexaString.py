@@ -559,5 +559,9 @@ def _test_specialize_abstract():
     EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A HexaString should have either its value or its nbBytes set, but not both'
 
     >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
+    OrderedDict([('value', None), ('nbBytes', None), ('default', None)])
+    EXCEPTION IN SPECIALIZATION: 'specialize() produced 4270 bits, which is not aligned on 8 bits. You should review the symbol model.'
+    OrderedDict([('value', None), ('nbBytes', (2, 8)), ('default', None)])
+    EXCEPTION IN SPECIALIZATION: 'specialize() produced 54 bits, which is not aligned on 8 bits. You should review the symbol model.'
 
     """

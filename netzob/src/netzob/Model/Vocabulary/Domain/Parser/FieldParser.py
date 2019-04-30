@@ -59,7 +59,7 @@ class FieldParser():
     >>> print(f1.domain.scope)
     Scope.NONE
     
-    >>> content = TypeConverter.convert("toto", String, BitArray)
+    >>> content = TypeConverter.convert(b"toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignData(content, f1.domain)
@@ -71,7 +71,7 @@ class FieldParser():
     t
 
     >>> f1 = Field(name="f1", domain=Agg([String(nbChars=(1,4)), String(".txt")]))
-    >>> content = TypeConverter.convert("toto.txt", String, BitArray)
+    >>> content = TypeConverter.convert(b"toto.txt", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignData(content, f1.domain)
@@ -80,7 +80,7 @@ class FieldParser():
     toto.txt
 
     >>> f1 = Field(name="f1", domain=Agg([String("toto"), String(" "), String("tata")]))
-    >>> content = TypeConverter.convert("toto tata", String, BitArray)
+    >>> content = TypeConverter.convert(b"toto tata", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignData(content, f1.domain)
@@ -89,7 +89,7 @@ class FieldParser():
     toto tata
 
     >>> f1 = Field(name="f1", domain=Alt([String("toto"), ("tata")]))
-    >>> content = TypeConverter.convert("toto", String, BitArray)
+    >>> content = TypeConverter.convert(b"toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignData(content, f1.domain)
@@ -100,7 +100,7 @@ class FieldParser():
     # # Let's illustrate that our parser support multiple results
 
     >>> f1 = Field(name="f1", domain=Alt([String("toto"), ("to")]))
-    >>> content = TypeConverter.convert("toto", String, BitArray)
+    >>> content = TypeConverter.convert(b"toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignData(content, f1.domain)
@@ -112,7 +112,7 @@ class FieldParser():
     # Yes, the following example is (mostly) the reason for this last year's development :)
 
     >>> f1 = Field(name="f1", domain=Agg([Alt(["to", "toto"]), Alt(["to", "toto"])]))
-    >>> content = TypeConverter.convert("tototo", String, BitArray)
+    >>> content = TypeConverter.convert(b"tototo", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignData(content, f1.domain)
@@ -123,7 +123,7 @@ class FieldParser():
     tototo
 
     >>> f1 = Field(name="f1", domain=Agg([String(nbChars=(1,10)), String(".txt")]))
-    >>> content = TypeConverter.convert("helloword.txt", String, BitArray)
+    >>> content = TypeConverter.convert(b"helloword.txt", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignData(content, f1.domain)
@@ -132,7 +132,7 @@ class FieldParser():
     helloword.txt
 
     >>> f1 = Field(name="f1", domain=Agg([String(nbChars=(1,10)), String(".txt")]))
-    >>> content = TypeConverter.convert("helloword.tot", String, BitArray)
+    >>> content = TypeConverter.convert(b"helloword.tot", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
     >>> parsingPath.assignData(content, f1.domain)

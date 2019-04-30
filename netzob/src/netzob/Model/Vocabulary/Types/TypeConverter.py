@@ -79,10 +79,11 @@ class TypeConverter(object):
 
         >>> from netzob.all import *
 
-        >>> data = "hello"
+        >>> data = b"hello"
         >>> bin = TypeConverter.convert(data, String, BitArray)
         >>> print(bin)
         bitarray('0110100001100101011011000110110001101111')
+        >>>
         >>> data == TypeConverter.convert(bin, BitArray, String)
         True
 
@@ -93,15 +94,15 @@ class TypeConverter(object):
         >>> print(decData)
         35
         >>> print(TypeConverter.convert(decData, Integer, String))
-        #
+        b'#'
 
         You can also modify the unitSize to convert multiple String to a single high value integer:
 
-        >>> TypeConverter.convert("5", String, Integer)
+        >>> TypeConverter.convert(b"5", String, Integer)
         53
-        >>> print(TypeConverter.convert("kurt", String, Integer))
+        >>> print(TypeConverter.convert(b"kurt", String, Integer))
         1953658219
-        >>> print(TypeConverter.convert("kurt", String, Integer,
+        >>> print(TypeConverter.convert(b"kurt", String, Integer,
         ...                             dst_unitSize=UnitSize.SIZE_32))
         1802859124
 
