@@ -3,7 +3,7 @@
 # Flask
 Flask==1.0
 MarkupSafe==1.0
-Werkzeug==0.11.15
+Werkzeug==0.15.3
 Jinja2==2.9.5
 itsdangerous==0.24
 click>=5.0
