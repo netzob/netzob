@@ -13,7 +13,7 @@ stages:
   ssh-add <(echo "$GITHUB_SSH_PRIVATE_KEY")
   mkdir -p ~/.ssh
   echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-  python3 -m pip install numpy 'Cython<0.28' coverage
+  python3 -m pip install numpy==1.14.3 'Cython<0.28' coverage
 
 .setup_virtualenv_template: &setup_virtualenv_definition |
   python3 -m virtualenv -p $(type -p python3) .
