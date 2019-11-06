@@ -13,28 +13,28 @@ stages:
   ssh-add <(echo "$GITHUB_SSH_PRIVATE_KEY")
   mkdir -p ~/.ssh
   echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-  python3 -m pip install numpy 'Cython<0.28' coverage
+  python3.5 -m pip install numpy 'Cython<0.28' coverage
 
 .setup_virtualenv_template: &setup_virtualenv_definition |
-  python3 -m virtualenv -p $(type -p python3) .
+  python3.5 -m virtualenv -p $(type -p python3.5) .
 
 .use_virtualenv_template: &use_virtualenv_definition |
   . bin/activate
 
 .apt_sys_deps_template: &apt_sys_deps_definition |
   apt-get update -y
-  apt-get install --no-install-recommends -y python3{,-dev,-setuptools,-pip,-virtualenv} openssh-client git build-essential lib{pcap,ssl,ffi}-dev locales
+  apt-get install --no-install-recommends -y python3.5{,-dev,-setuptools,-pip,-virtualenv} openssh-client git build-essential lib{pcap,ssl,ffi}-dev locales
   echo 'fr_FR.UTF-8 UTF-8' >> /etc/locale.gen
   locale-gen
   export LANG=fr_FR.UTF-8
 
 .python_script_template: &python_script_definition |
   cd netzob
-  python3 -m pip install wheel
-  python3 -m pip install -r requirements.txt
-  python3 -m pip install .
-  python3 setup.py sdist
-  python3 setup.py bdist
+  python3.5 -m pip install wheel
+  python3.5 -m pip install -r requirements.txt
+  python3.5 -m pip install .
+  python3.5 setup.py sdist
+  python3.5 setup.py bdist
   [ "$SSH_AGENT_PID" -gt 0 ] && kill "$SSH_AGENT_PID"
 
 #################
@@ -92,7 +92,7 @@ test:host:
   script:
     - sudo apt-get install --no-install-recommends -y libgraph-easy-perl
     - *use_virtualenv_definition
-    - 'sudo setcap cap_net_raw=ep $(readlink -f $(type -p python3))'
+    - 'sudo setcap cap_net_raw=ep $(readlink -f $(type -p python3.5))'
     - cd netzob
     - find build -name '*.so' | while read f; do d=$(echo "$f" | cut -d/ -f3-); cp -v "$f" "src/$d"; done
     - coverage3 run setup.py test
@@ -112,8 +112,8 @@ deploy:
     - develop
   script:
     - cd netzob
-    - sudo -H python3 -m pip install -r requirements.txt
-    - sudo -H python3 -m pip install .
+    - sudo -H python3.5 -m pip install -r requirements.txt
+    - sudo -H python3.5 -m pip install .
   after_script:
     - 'sudo find -uid 0 -delete || true'
   dependencies:
