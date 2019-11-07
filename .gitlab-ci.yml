@@ -105,6 +105,28 @@ test:host:
   tags:
     - ubuntu
 
+# test:full:
+#   stage: test
+#   image: ubuntu:16.04
+#   script:
+#     - sed -i 's/main/main universe/' /etc/apt/sources.list
+#     - *apt_sys_deps_definition
+#     - apt-get install --no-install-recommends -y libgraph-easy-perl
+#     - *use_virtualenv_definition
+#     - *fetch_deps_definition
+#     - 'setcap cap_net_raw=ep $(readlink -f $(type -p python3))'
+#     - cd netzob
+#     - find build -name '*.so' | while read f; do d=$(echo "$f" | cut -d/ -f3-); cp -v "$f" "src/$d"; done
+#     - coverage3 run setup.py test
+#     - coverage3 report --include=src/netzob/* --omit='src/netzob/Inference/*,src/netzob/Import/*'
+#     - coverage3 html --include=src/netzob/* --omit='src/netzob/Inference/*,src/netzob/Import/*'
+#   artifacts:
+#     expire_in: 1 week
+#     paths:
+#       - netzob/htmlcov
+#   tags:
+#     - docker
+
 deploy:
   stage: deploy
   only:
