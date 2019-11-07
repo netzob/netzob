@@ -33,7 +33,7 @@ stages:
   sudo apt-get install --no-install-recommends -y python3{,-dev,-setuptools,-pip,-virtualenv} openssh-client git build-essential lib{pcap,ssl,ffi}-dev locales
   echo 'fr_FR.UTF-8 UTF-8' | sudo tee -a /etc/locale.gen
   sudo locale-gen
-  sudo export LANG=fr_FR.UTF-8
+  export LANG=fr_FR.UTF-8
 
 .python_script_template: &python_script_definition |
   cd netzob
