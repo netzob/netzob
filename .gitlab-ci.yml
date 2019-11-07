@@ -31,7 +31,7 @@ stages:
 .apt_sys_deps_template_nodocker: &apt_sys_deps_definition_nodocker |
   sudo apt-get update -y
   sudo apt-get install --no-install-recommends -y python3{,-dev,-setuptools,-pip,-virtualenv} openssh-client git build-essential lib{pcap,ssl,ffi}-dev locales
-  sudo echo 'fr_FR.UTF-8 UTF-8' >> /etc/locale.gen
+  echo 'fr_FR.UTF-8 UTF-8' | sudo tee -a /etc/locale.gen
   sudo locale-gen
   sudo export LANG=fr_FR.UTF-8
 
