@@ -133,6 +133,7 @@ deploy:
     - master
     - develop
   script:
+    - *apt_sys_deps_definition
     - cd netzob
     - cat requirements.txt | xargs -n 1 -L 1 python3 -m pip install
     - python3 -m pip install .
