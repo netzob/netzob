@@ -31,7 +31,7 @@ stages:
 .python_script_template: &python_script_definition |
   cd netzob
   python3 -m pip install wheel
-  python3 -m pip install -r requirements.txt
+  cat requirements.txt | xargs -n 1 -L 1 python3 -m pip install
   python3 -m pip install .
   python3 setup.py sdist
   python3 setup.py bdist
@@ -134,8 +134,9 @@ deploy:
     - develop
   script:
     - cd netzob
-    - sudo -H python3 -m pip install -r requirements.txt
-    - sudo -H python3 -m pip install .
+    - cat requirements.txt | xargs -n 1 -L 1 python3 -m pip install
+    - python3 -m pip install -r requirements.txt
+    - python3 -m pip install .
   after_script:
     - 'sudo find -uid 0 -delete || true'
   dependencies:
