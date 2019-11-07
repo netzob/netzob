@@ -2,10 +2,10 @@ arpreq==0.3.1
 bintrees==2.0.7
 bitarray==0.8.1
 colorama==0.3.3
+numpy==1.14.3
 Cython==0.27.3
 minepy==1.0.0
 netaddr==0.7.18
-numpy==1.14.3
 pcapy==0.10.10
 PyCRC==1.21
 randomstate==1.13.1
