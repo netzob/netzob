@@ -28,6 +28,13 @@ stages:
   locale-gen
   export LANG=fr_FR.UTF-8
 
+.apt_sys_deps_template_nodocker: &apt_sys_deps_definition_nodocker |
+  sudo apt-get update -y
+  sudo apt-get install --no-install-recommends -y python3{,-dev,-setuptools,-pip,-virtualenv} openssh-client git build-essential lib{pcap,ssl,ffi}-dev locales
+  sudo echo 'fr_FR.UTF-8 UTF-8' >> /etc/locale.gen
+  sudo locale-gen
+  sudo export LANG=fr_FR.UTF-8
+
 .python_script_template: &python_script_definition |
   cd netzob
   python3 -m pip install wheel
@@ -133,7 +140,7 @@ deploy:
     - master
     - develop
   script:
-    - *apt_sys_deps_definition
+    - *apt_sys_deps_definition_nodocker
     - cd netzob
     - cat requirements.txt | xargs -n 1 -L 1 python3 -m pip install
     - python3 -m pip install .
