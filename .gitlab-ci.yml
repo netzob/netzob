@@ -135,7 +135,6 @@ deploy:
   script:
     - cd netzob
     - cat requirements.txt | xargs -n 1 -L 1 python3 -m pip install
-    - python3 -m pip install -r requirements.txt
     - python3 -m pip install .
   after_script:
     - 'sudo find -uid 0 -delete || true'
