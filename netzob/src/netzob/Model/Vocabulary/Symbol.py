@@ -45,7 +45,7 @@ from typing import Dict, Union, Iterator, List  # noqa: F401
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api, NetzobLogger
-from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.AbstractField import AbstractField, GenerationException
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Field import Field
@@ -323,7 +323,7 @@ class Symbol(AbstractField):
         for specializing_path in specializing_paths:
             data = specializing_path.generatedContent
             if len(data) % 8 != 0:
-                raise Exception("specialize() produced {} bits, which is not aligned on 8 bits. You should review the symbol model.".format(len(data)))
+                raise GenerationException("specialize() produced {} bits, which is not aligned on 8 bits. You should review the symbol model.".format(len(data)))
             yield data.tobytes()
 
     @public_api
