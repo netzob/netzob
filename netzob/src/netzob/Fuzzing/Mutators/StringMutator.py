@@ -361,11 +361,11 @@ def _test_string_values():
     >>> for _ in range(20):
     ...     a_str = mutator.generate()
     ...     for ns in naughty_string:
-    ...         if ns in a_str:
+    ...         if ns in a_str.decode():
     ...             has_naughty_str = True
-    ...     idx = a_str.find(eos_symbol)
+    ...     idx = a_str.find(eos_symbol.encode())
     ...     if idx != -1:
-    ...         if a_str[idx :].find(eos_symbol) != -1:
+    ...         if a_str[idx :].find(eos_symbol.encode()) != -1:
     ...             has_several_eos_symbol = True
 
     >>> has_naughty_str
