@@ -1193,7 +1193,7 @@ def _test_specialize_abstract():
      """
 
 
-def _test_unicode():
+def _test_unicode_small_strings():
     r"""
 
     ## UTF32
@@ -1331,5 +1331,147 @@ def _test_unicode():
     b'D'
     >>> symbol.abstract(data)
     OrderedDict([('field1', b'D')])
+
+    """
+
+
+def _test_unicode_long_strings():
+    r"""
+
+    ## UTF32
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf_32")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\xff\xfe\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\xff\xfe\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00')])
+
+    ## UTF32_LE
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf_32le")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'1\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'1\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00')])
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf_32_le")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'1\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'1\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00')])
+
+    ## UTF32_BE
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf_32be")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x00\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00 \xac\x00\x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\x00\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00 \xac\x00\x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d')])
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf_32_be")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x00\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00 \xac\x00\x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\x00\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00 \xac\x00\x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d')])
+
+
+    ## UTF16
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf_16")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\xff\xfe1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\xff\xfe1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00')])
+
+    ## UTF16_LE
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf_16le")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00')])
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf_16_le")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00')])
+
+    ## UTF16_BE
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf_16be")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x001\x002\x003\x004\x00\xe9 \xac\x00a\x00b\x00c\x00d'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\x001\x002\x003\x004\x00\xe9 \xac\x00a\x00b\x00c\x00d')])
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf_16_be")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x001\x002\x003\x004\x00\xe9 \xac\x00a\x00b\x00c\x00d'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\x001\x002\x003\x004\x00\xe9 \xac\x00a\x00b\x00c\x00d')])
+
+
+    ## UTF8
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf8")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'1234\xc3\xa9\xe2\x82\xacabcd'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'1234\xc3\xa9\xe2\x82\xacabcd')])
+
+    >>> from netzob.all import *
+    >>> domain = String(value="1234é€abcd", encoding="utf_8")
+    >>> f = Field(domain=domain, name="field1")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'1234\xc3\xa9\xe2\x82\xacabcd'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'1234\xc3\xa9\xe2\x82\xacabcd')])
 
     """

@@ -45,7 +45,7 @@ from typing import Iterator  # noqa: F401
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, public_api
-from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.AbstractField import AbstractField, GenerationException
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
@@ -464,7 +464,7 @@ class Field(AbstractField):
         for specializing_path in specializing_paths:
             data = specializing_path.getData(self.domain)
             if len(data) % 8 != 0:
-                raise Exception("Cannot produce data not aligned on bytes. You should review the field model.")
+                raise GenerationException("specialize() produced {} bits, which is not aligned on 8 bits. You should review the field model.".format(len(data)))
             yield data.tobytes()
 
     @public_api

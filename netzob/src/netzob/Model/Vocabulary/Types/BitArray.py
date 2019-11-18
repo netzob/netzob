@@ -90,6 +90,45 @@ class BitArray(AbstractType):
     :vartype constants: a :class:`list` of :class:`str`
     :vartype default: :class:`bitarray`
 
+    .. warning::
+       **Important note about BitArray and 8-bit aligned data**
+
+       It is expected that BitArrays or successive BitArrays should
+       produce 8-bit aligned data. For example, if two successive
+       BitArrays are defined in a field, they should together produce
+       8-bit aligned data, as depicted below. In this example, an
+       :class:`Agg
+       <netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg.Agg>` is
+       used to concatenate two BitArrays in a :class:`Field
+       <netzob.Model.Vocabulary.Field.Field>`.
+
+       >>> from netzob.all import *
+       >>> domain1 = BitArray(nbBits=12)
+       >>> domain2 = BitArray(nbBits=4)
+       >>> f = Field(domain=Agg([domain1, domain2]))
+       >>> data = next(f.specialize())
+       >>> len(data)
+       2
+
+       If a field/symbol model contains BitArrays that does not
+       produce 8-bit aligned data, a :class:`GenerationException
+       <netzob.Model.Vocabulary.AbstractField.GenerationException>`
+       exception is raised during specialization.
+
+       >>> from netzob.all import *
+       >>> domain1 = BitArray(nbBits=12)
+       >>> domain2 = BitArray(nbBits=5)
+       >>> f = Field(domain=Agg([domain1, domain2]))
+       >>> data = next(f.specialize())
+       Traceback (most recent call last):
+       ...
+       netzob.Model.Vocabulary.AbstractField.GenerationException: specialize() produced 17 bits, which is not aligned on 8 bits. You should review the field model.
+
+
+       However, no exception would be raised during data abstraction
+       in field/symbol, as the input data bytes are already 8-bit
+       aligned.
+
 
     The creation of a BitArray type with no parameter will create a bytes
     object whose length ranges from 0 to 65535:
@@ -97,12 +136,12 @@ class BitArray(AbstractType):
     >>> from netzob.all import *
     >>> i = BitArray()
     >>> len(i.generate().tobytes())
-    534
+    4962
     >>> len(i.generate().tobytes())
-    6625
+    7992
     >>> len(i.generate().tobytes())
-    1458
-
+    4529
+    
     The following example shows how to define a BitArray
     containing a fixed constant.
 
@@ -679,7 +718,7 @@ def _test_symbol():
     >>> next(symbol.specialize())
     Traceback (most recent call last):
     ...
-    Exception: specialize() produced 7 bits, which is not aligned on 8 bits. You should review the symbol model.
+    netzob.Model.Vocabulary.AbstractField.GenerationException: specialize() produced 7 bits, which is not aligned on 8 bits. You should review the symbol model.
 
     >>> domain1 = BitArray(nbBits=3)
     >>> domain2 = BitArray(nbBits=7)
@@ -689,20 +728,23 @@ def _test_symbol():
     >>> next(symbol.specialize())
     Traceback (most recent call last):
     ...
-    Exception: specialize() produced 10 bits, which is not aligned on 8 bits. You should review the symbol model.
+    netzob.Model.Vocabulary.AbstractField.GenerationException: specialize() produced 10 bits, which is not aligned on 8 bits. You should review the symbol model.
 
     >>> domain1 = BitArray(nbBits=3)
     >>> domain2 = BitArray(nbBits=5)
     >>> f1 = Field(domain=domain1, name="field1")
     >>> f2 = Field(domain=domain2, name="field2")
     >>> symbol = Symbol(fields=[f1, f2])
-    >>> next(symbol.specialize())
+    >>> data = next(symbol.specialize())
+    >>> data
     b'\xed'
+    >>> symbol.abstract(data)
+    OrderedDict([('field1', b'\xe0'), ('field2', b'h')])
 
     """
 
 
-def _test_field():
+def _test_field_aligned_bitarrays():
     r"""
 
     ## Be sure to produce data aligned on bytes (8 bits)
@@ -714,7 +756,7 @@ def _test_field():
     >>> next(f.specialize())
     Traceback (most recent call last):
     ...
-    Exception: Cannot produce data not aligned on bytes. You should review the field model.
+    netzob.Model.Vocabulary.AbstractField.GenerationException: specialize() produced 6 bits, which is not aligned on 8 bits. You should review the field model.
 
     >>> domain = BitArray(nbBits=(8, 8))
     >>> f = Field(domain=domain, name="field1")
@@ -722,11 +764,34 @@ def _test_field():
     b'\x99'
 
     >>> domain1 = BitArray(nbBits=3)
-    >>> domain2 = BitArray(nbBits=5)
+    >>> domain2 = BitArray(nbBits=13)
     >>> f1 = Field(domain=domain1, name="field1")
     >>> f2 = Field(domain=domain2, name="field2")
     >>> f = Field(domain=[f1, f2])
-    >>> next(f.specialize())
-    b'\xbe'
+    >>> data = next(f.specialize())
+    >>> data
+    b'\xbe\xd6'
+    >>> f.abstract(data)
+    OrderedDict([('field1', b'\xa0'), ('field2', b'\xf6\xb0')])
+
+    >>> domain1 = BitArray(nbBits=3)
+    >>> domain2 = BitArray(nbBits=5)
+    >>> f = Field(domain=Agg([domain1, domain2]))
+    >>> data = next(f.specialize())
+    >>> data
+    b'\x17'
+    >>> f.abstract(data)
+    OrderedDict([('Field', b'\x17')])
+
+    >>> domain1 = BitArray(nbBits=27)
+    >>> domain2 = BitArray(nbBits=5)
+    >>> f = Field(domain=Agg([domain1, domain2]))
+    >>> data = next(f.specialize())
+    >>> len(data)
+    4
+    >>> data
+    b"H\xc6'\xa7"
+    >>> f.abstract(data)
+    OrderedDict([('Field', b"H\xc6'\xa7")])
 
     """
