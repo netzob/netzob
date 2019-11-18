@@ -255,8 +255,8 @@ class StringMutator(DomainMutator):
                     value = value[:length - 1] + self.endChar
             else:
                 value = ""
-
-            valueBytes = String.decode(value,
+            valueData = value.encode('utf-8')
+            valueBytes = String.decode(valueData,
                                        unitSize=self.domain.dataType.unitSize,
                                        endianness=self.domain.dataType.endianness,
                                        sign=self.domain.dataType.sign)
