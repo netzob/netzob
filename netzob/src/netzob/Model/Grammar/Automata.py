@@ -1095,9 +1095,8 @@ class Automata(object):
 
         >>> from netzob.all import *
         >>> import time
-        >>> sym1 = Symbol([Field(String(nbChars=3))], name='Sym1')
-        >>> sym2 = Symbol([Field(String(nbChars=5))], name='Sym2')
-        >>> symbols = [sym1, sym2]
+        >>> sym1 = Symbol([Field(uint16())], name='Sym1')
+        >>> symbols = [sym1]
         >>> s0 = State(name="s0")
         >>> s1 = State(name="s1")
         >>> s2 = State(name="s2")
@@ -1132,106 +1131,99 @@ class Automata(object):
         >>> t8 = Transition(startState=s6, endState=s6,
         ...                 inputSymbol=sym1, outputSymbols=[sym1],
         ...                 name="t8")
-        >>> t9 = Transition(startState=s6, endState=s6,
-        ...                 inputSymbol=sym2, outputSymbols=[sym1],
-        ...                 name="t9")
-        >>> t10 = CloseChannelTransition(startState=s6, endState=s7,
-        ...                             name="t10")
+        >>> t9 = CloseChannelTransition(startState=s6, endState=s7,
+        ...                             name="t9")
         >>>
         >>> automata = Automata(s0, symbols=symbols)
         >>> automata_ascii = automata.generateASCII()
         >>> print(automata_ascii)
-                                     #=========================#
-                                     H           s0            H
-                                     #=========================#
-                                       |
-                                       | OpenChannelTransition
-                                       v
-                                     +-------------------------+   t1 (Sym1;{Sym1})
-                                     |                         | -------------------+
-                                     |           s1            |                    |
-                                     |                         | <------------------+
-                                     +-------------------------+
-                                       |
-                                       | t2 (Sym1;{Sym1})
-                                       v
-        +----+  t4 (Sym1;{Sym1})     +-------------------------+
-        | s4 | <-------------------- |           s2            |
-        +----+                       +-------------------------+
-          |                            |
-          |                            | t3 (Sym1;{Sym1})
-          |                            v
-          |                          +-------------------------+
-          |                          |           s3            |
-          |                          +-------------------------+
-          |                            |
-          |                            | t6 (Sym1;{Sym1})
-          |                            v
-          |                          +-------------------------+
-          |                          |           s5            |
-          |                          +-------------------------+
-          |                            |
-          |                            | t7 (Sym1;{Sym1})
-          |                            v
-          |       t9 (Sym2;{Sym1})   +------------------------------------------------+   t8 (Sym1;{Sym1})
-          |     +------------------- |                                                | -------------------+
-          |     |                    |                       s6                       |                    |
-          |     +------------------> |                                                | <------------------+
-          |                          +------------------------------------------------+
-          |                            |                          ^
-          |                            | CloseChannelTransition   | t5 (Sym1;{Sym1})
-          |                            v                          |
-          |                          +-------------------------+  |
-          |                          |           s7            |  |
-          |                          +-------------------------+  |
-          |                                                       |
-          +-------------------------------------------------------+
+                                   #=========================#
+                                   H           s0            H
+                                   #=========================#
+                                     |
+                                     | OpenChannelTransition
+                                     v
+                                   +-------------------------+   t1 (Sym1;{Sym1})
+                                   |                         | -------------------+
+                                   |           s1            |                    |
+                                   |                         | <------------------+
+                                   +-------------------------+
+                                     |
+                                     | t2 (Sym1;{Sym1})
+                                     v
+        +----+  t4 (Sym1;{Sym1})   +-------------------------+
+        | s4 | <------------------ |           s2            |
+        +----+                     +-------------------------+
+          |                          |
+          |                          | t3 (Sym1;{Sym1})
+          |                          v
+          |                        +-------------------------+
+          |                        |           s3            |
+          |                        +-------------------------+
+          |                          |
+          |                          | t6 (Sym1;{Sym1})
+          |                          v
+          |                        +-------------------------+
+          |                        |           s5            |
+          |                        +-------------------------+
+          |                          |
+          |                          | t7 (Sym1;{Sym1})
+          |                          v
+          |                        +-------------------------+   t8 (Sym1;{Sym1})
+          |                        |                         | -------------------+
+          |    t5 (Sym1;{Sym1})    |           s6            |                    |
+          +----------------------> |                         | <------------------+
+                                   +-------------------------+
+                                     |
+                                     | CloseChannelTransition
+                                     v
+                                   +-------------------------+
+                                   |           s7            |
+                                   +-------------------------+
         <BLANKLINE>
         >>> # Creation of a mutated automaton
         >>> mutatedAutomata = automata.mutate(strategy=AutomataMutatorStrategy.TARGETED, target=s6.name, seed=42)
         >>> automata_ascii = mutatedAutomata.generateASCII()
         >>> print(automata_ascii)
-                                          #========================#
-                                          H           s0           H
-                                          #========================#
-                                            |
-                                            | OpenChannelTransition
-                                            v
-                                          +------------------------+
-                                          |           s1           |
-                                          +------------------------+
-                                            |
-                                            | t2 (Sym1;{Sym1})
-                                            v
-                                          +------------------------+
-                                          |           s2           |
-                                          +------------------------+
-                                            |
-                                            | t4 (Sym1;{Sym1})
-                                            v
-                                          +------------------------+
-                                          |           s4           |
-                                          +------------------------+
-                                            |
-                                            | t5 (Sym1;{Sym1})
-                                            v
-            t_random (Sym1;{Sym1,Sym2})   +------------------------+   t_random (Sym2;{Sym1,Sym2})
-          +------------------------------ |                        | ------------------------------+
-          |                               |           s6           |                               |
-          +-----------------------------> |                        | <-----------------------------+
-                                          +------------------------+
+        #========================#
+        H           s0           H
+        #========================#
+          |
+          | OpenChannelTransition
+          v
+        +------------------------+
+        |           s1           |
+        +------------------------+
+          |
+          | t2 (Sym1;{Sym1})
+          v
+        +------------------------+
+        |           s2           |
+        +------------------------+
+          |
+          | t4 (Sym1;{Sym1})
+          v
+        +------------------------+
+        |           s4           |
+        +------------------------+
+          |
+          | t5 (Sym1;{Sym1})
+          v
+        +------------------------+   t_random (Sym1;{Sym1})
+        |                        | -------------------------+
+        |           s6           |                          |
+        |                        | <------------------------+
+        +------------------------+
         <BLANKLINE>
         >>>
         >>> # Define fuzzing configuration
         >>> preset_symbol1 = Preset(sym1)
         >>> preset_symbol1.fuzz(sym1)
-        >>> preset_symbol2 = Preset(sym2)
-        >>> preset_symbol2.fuzz(sym2)
         >>>
         >>> # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol
         >>> bob_channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
         >>> bob_actor = Actor(automata=mutatedAutomata, channel=bob_channel, name='Fuzzer')
-        >>> bob_actor.fuzzing_presets = [preset_symbol1, preset_symbol2]
+        >>> bob_actor.fuzzing_presets = [preset_symbol1]
         >>> bob_actor.fuzzing_states = [s6.name]
         >>> bob_actor.nbMaxTransitions = 7
         >>>
@@ -1317,21 +1309,21 @@ class Automata(object):
           [+]   Picking transition 't_random' (initiator)
           [+]   During transition 't_random', sending input symbol ('Sym1')
           [+]   During transition 't_random', fuzzing activated
-          [+]   During transition 't_random', receiving expected output symbol ('Sym2')
+          [+]   During transition 't_random', receiving expected output symbol ('Sym1')
           [+]   Transition 't_random' lead to state 's6'
           [+] At state 's6'
           [+]   Randomly choosing a transition to execute or to wait for an input symbol
           [+]   Picking transition 't_random' (initiator)
-          [+]   During transition 't_random', sending input symbol ('Sym2')
+          [+]   During transition 't_random', sending input symbol ('Sym1')
           [+]   During transition 't_random', fuzzing activated
-          [+]   During transition 't_random', receiving expected output symbol ('Sym2')
+          [+]   During transition 't_random', receiving expected output symbol ('Sym1')
           [+]   Transition 't_random' lead to state 's6'
           [+] At state 's6'
           [+]   Randomly choosing a transition to execute or to wait for an input symbol
           [+]   Picking transition 't_random' (initiator)
-          [+]   During transition 't_random', sending input symbol ('Sym2')
+          [+]   During transition 't_random', sending input symbol ('Sym1')
           [+]   During transition 't_random', fuzzing activated
-          [+]   During transition 't_random', receiving expected output symbol ('Sym2')
+          [+]   During transition 't_random', receiving expected output symbol ('Sym1')
           [+]   Transition 't_random' lead to state 's6'
           [+] At state 's6', we reached the max number of transitions (7), so we stop
         >>> print(alice_actor.generateLog())
@@ -1365,24 +1357,24 @@ class Automata(object):
           [+] At state 's1'
           [+]   Randomly choosing a transition to execute or to wait for an input symbol
           [+]   Waiting for an input symbol to decide the transition (not initiator)
-          [+]   Input symbol 'Unknown message b'System("ls -al /")\x00 '' corresponds to transition 'None'
-          [+]   Changing transition to 'T2' (not initiator), through callback
-          [+]   During transition 'T2', choosing an output symbol ('Sym2')
-          [+]   Transition 'T2' lead to state 's1'
+          [+]   Input symbol 'Sym1' corresponds to transition 'T1'
+          [+]   Changing transition to 'T1' (not initiator), through callback
+          [+]   During transition 'T1', choosing an output symbol ('Sym1')
+          [+]   Transition 'T1' lead to state 's1'
           [+] At state 's1'
           [+]   Randomly choosing a transition to execute or to wait for an input symbol
           [+]   Waiting for an input symbol to decide the transition (not initiator)
-          [+]   Input symbol 'Unknown message b'System("ls -al /")\x00 '' corresponds to transition 'None'
-          [+]   Changing transition to 'T2' (not initiator), through callback
-          [+]   During transition 'T2', choosing an output symbol ('Sym2')
-          [+]   Transition 'T2' lead to state 's1'
+          [+]   Input symbol 'Sym1' corresponds to transition 'T1'
+          [+]   Changing transition to 'T1' (not initiator), through callback
+          [+]   During transition 'T1', choosing an output symbol ('Sym1')
+          [+]   Transition 'T1' lead to state 's1'
           [+] At state 's1'
           [+]   Randomly choosing a transition to execute or to wait for an input symbol
           [+]   Waiting for an input symbol to decide the transition (not initiator)
-          [+]   Input symbol 'Unknown message b'$ENV{"HOME"}\x00       '' corresponds to transition 'None'
-          [+]   Changing transition to 'T2' (not initiator), through callback
-          [+]   During transition 'T2', choosing an output symbol ('Sym2')
-          [+]   Transition 'T2' lead to state 's1'
+          [+]   Input symbol 'Sym1' corresponds to transition 'T1'
+          [+]   Changing transition to 'T1' (not initiator), through callback
+          [+]   During transition 'T1', choosing an output symbol ('Sym1')
+          [+]   Transition 'T1' lead to state 's1'
           [+] At state 's1'
           [+]   Randomly choosing a transition to execute or to wait for an input symbol
           [+]   Waiting for an input symbol to decide the transition (not initiator)

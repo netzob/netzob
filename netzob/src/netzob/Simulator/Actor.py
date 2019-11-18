@@ -586,7 +586,7 @@ class Actor(Thread):
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
-    >>> bob.nbMaxTransitions = 10
+    >>> bob.nbMaxTransitions = 3
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
@@ -620,11 +620,7 @@ class Actor(Thread):
       [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
       [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
       [+]   Transition 'main transition' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'main transition' (initiator)
-      [+]   During transition 'main transition', sending input symbol ('Symbol')
-      [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
+      [+] At state 'S1', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -1186,7 +1182,7 @@ class Actor(Thread):
     >>> # Create Bob actor (a server)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
-    >>> bob.nbMaxTransitions = 10
+    >>> bob.nbMaxTransitions = 3
     >>>
     >>> # Create Alice actor (a client)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
@@ -1219,10 +1215,7 @@ class Actor(Thread):
       [+]   During transition 'T1', sending input symbol ('Symbol')
       [+]   During transition 'T1', receiving expected output symbol ('Symbol')
       [+]   Transition 'T1' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'T1' (initiator)
-      [+]   During transition 'T1', sending input symbol ('Symbol')
+      [+] At state 'S1', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
@@ -2021,30 +2014,27 @@ class Actor(Thread):
     >>> bob_secondTransition = Transition(startState=bob_s2, endState=bob_s2,
     ...                                   inputSymbol=symbol2, outputSymbols=[symbol1, symbol2],
     ...                                   name="T2")
-    >>> bob_thirdTransition = Transition(startState=bob_s2, endState=bob_s2,
-    ...                                  inputSymbol=symbol1, outputSymbols=[symbol1, symbol2],
-    ...                                  name="T3")
     >>> bob_automata = Automata(bob_s0, symbolList)
     >>>
     >>> automata_ascii = bob_automata.generateASCII()
     >>> print(automata_ascii)
-                                            #====================================#
-                                            H                 S0                 H
-                                            #====================================#
-                                              |
-                                              | OpenChannelTransition
-                                              v
-                                            +------------------------------------+
-                                            |                 S1                 |
-                                            +------------------------------------+
-                                              |
-                                              | T1 (Symbol 1;{Symbol 1,Symbol 2})
-                                              v
-        T3 (Symbol 1;{Symbol 1,Symbol 2})   +------------------------------------+   T2 (Symbol 2;{Symbol 1,Symbol 2})
-      +------------------------------------ |                                    | ------------------------------------+
-      |                                     |                 S2                 |                                     |
-      +-----------------------------------> |                                    | <-----------------------------------+
-                                            +------------------------------------+
+    #====================================#
+    H                 S0                 H
+    #====================================#
+      |
+      | OpenChannelTransition
+      v
+    +------------------------------------+
+    |                 S1                 |
+    +------------------------------------+
+      |
+      | T1 (Symbol 1;{Symbol 1,Symbol 2})
+      v
+    +------------------------------------+   T2 (Symbol 2;{Symbol 1,Symbol 2})
+    |                                    | ------------------------------------+
+    |                 S2                 |                                     |
+    |                                    | <-----------------------------------+
+    +------------------------------------+
     <BLANKLINE>
     >>>
     >>> # Create Alice's automaton
@@ -3058,7 +3048,7 @@ def _test_callback_modify_symbol():
     >>> # Create Bob actor (a client)
     >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8887, timeout=1.)
     >>> bob = Actor(automata=bob_automata, channel=channel, name="Bob")
-    >>> bob.nbMaxTransitions = 10
+    >>> bob.nbMaxTransitions = 3
     >>>
     >>> # Create Alice actor (a server)
     >>> channel = UDPServer(localIP="127.0.0.1", localPort=8887, timeout=1.)
@@ -3092,11 +3082,7 @@ def _test_callback_modify_symbol():
       [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
       [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
       [+]   Transition 'main transition' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'main transition' (initiator)
-      [+]   During transition 'main transition', sending input symbol ('Symbol')
-      [+]   During transition 'main transition', modifying input symbol to 'Symbol', through callback
+      [+] At state 'S1', we reached the max number of transitions (3), so we stop
     >>> print(alice.generateLog())
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
