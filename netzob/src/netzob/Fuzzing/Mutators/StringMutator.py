@@ -249,12 +249,12 @@ class StringMutator(DomainMutator):
                 if length > len(value):
                     # Complete the string with padding characters to have the good
                     # length
-                    value = value + (b" " * (length - len(value)))
+                    value = value + (" " * (length - len(value)))
                 else:
                     # truncate the too long string value to length characters
                     value = value[:length - 1] + self.endChar
             else:
-                value = b""
+                value = ""
 
             valueBytes = String.decode(value,
                                        unitSize=self.domain.dataType.unitSize,
