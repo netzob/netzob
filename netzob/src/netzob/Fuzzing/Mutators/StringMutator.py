@@ -105,11 +105,11 @@ class StringMutator(DomainMutator):
     >>> fieldString = Field(String(nbChars=(5, 8)))
     >>> mutator = StringMutator(fieldString.domain, interval=(5, 12), seed=10)
     >>> mutator.generate()
-    'Syste\x00'
+    b'Syste\x00'
     >>> mutator.generate()
-    '$ENV{"\x00'
+    b'$ENV{"\x00'
     >>> mutator.generate()
-    '%x("\x00'
+    b'%x("\x00'
 
 
     Constant definitions:
@@ -393,11 +393,11 @@ def _test_fixed():
     >>> preset[f1] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    'A'
+    b'A'
     >>> next(messages_gen)
-    'A'
+    b'A'
     >>> next(messages_gen)
-    'A'
+    b'A'
 
 
     **Fixing the value of a sub-field**
@@ -412,11 +412,11 @@ def _test_fixed():
     >>> preset[f2_1] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    'SA,'
+    b'SA,'
     >>> next(messages_gen)
-    'SAq'
+    b'SAq'
     >>> next(messages_gen)
-    'SA!'
+    b'SA!'
 
 
     **Fixing the value of a field that contains sub-fields**
@@ -448,11 +448,11 @@ def _test_fixed():
     >>> preset[v1] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    'A@'
+    b'A@'
     >>> next(messages_gen)
-    'A4'
+    b'A4'
     >>> next(messages_gen)
-    'AF'
+    b'AF'
 
 
     **Fixing the value of a node variable**
@@ -467,11 +467,11 @@ def _test_fixed():
     >>> preset[v_agg] = '\x41\x42\x43'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    'ABC'
+    b'ABC'
     >>> next(messages_gen)
-    'ABC'
+    b'ABC'
     >>> next(messages_gen)
-    'ABC'
+    b'ABC'
 
 
     **Fixing the value of a field, by relying on a provided generator**
@@ -484,11 +484,11 @@ def _test_fixed():
     >>> preset[f1] = my_generator
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    'A'
+    b'A'
     >>> next(messages_gen)
-    'B'
+    b'B'
     >>> next(messages_gen)
-    'C'
+    b'C'
     >>> next(messages_gen)
     Traceback (most recent call last):
     ...
@@ -505,11 +505,11 @@ def _test_fixed():
     >>> preset[f1] = my_iter
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    'A'
+    b'A'
     >>> next(messages_gen)
-    'B'
+    b'B'
     >>> next(messages_gen)
-    'C'
+    b'C'
     >>> next(messages_gen)
     Traceback (most recent call last):
     ...
@@ -527,11 +527,11 @@ def _test_fixed():
     >>> preset[f1] = my_callable
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    'A'
+    b'A'
     >>> next(messages_gen)
-    'A'
+    b'A'
     >>> next(messages_gen)
-    'C'
+    b'C'
 
 
     **Fixing the value of a field through its name**
@@ -543,11 +543,11 @@ def _test_fixed():
     >>> preset['f1'] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    'A'
+    b'A'
     >>> next(messages_gen)
-    'A'
+    b'A'
     >>> next(messages_gen)
-    'A'
+    b'A'
 
 
     **Fixing the value of a variable leaf through its name**
@@ -562,11 +562,11 @@ def _test_fixed():
     >>> preset['v1'] = '\x41\x42\x43'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    'ABC5'
+    b'ABC5'
     >>> next(messages_gen)
-    'ABCh'
+    b'ABCh'
     >>> next(messages_gen)
-    'ABCM'
+    b'ABCM'
 
 
     **Fixing the value of a variable node through its name**
@@ -581,10 +581,10 @@ def _test_fixed():
     >>> preset['v_agg'] = '\x41\x42\x43'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    'ABC'
+    b'ABC'
     >>> next(messages_gen)
-    'ABC'
+    b'ABC'
     >>> next(messages_gen)
-    'ABC'
+    b'ABC'
 
     """
