@@ -105,30 +105,30 @@ class StringMutator(DomainMutator):
     >>> fieldString = Field(String(nbChars=(5, 8)))
     >>> mutator = StringMutator(fieldString.domain, interval=(5, 12), seed=10)
     >>> mutator.generate()
-    b'Syste\x00'
+    'Syste\x00'
     >>> mutator.generate()
-    b'$ENV{"\x00'
+    '$ENV{"\x00'
     >>> mutator.generate()
-    b'%x("\x00'
+    '%x("\x00'
 
 
     Constant definitions:
     """
 
-    DEFAULT_END_CHAR = b'\0'
-    PADDING_CHAR = b' '
+    DEFAULT_END_CHAR = '\0'
+    PADDING_CHAR = ' '
     DATA_TYPE = String
 
     DEFAULT_NAUGHTY_STRINGS = [
-        b'System("ls -al /")',
-        b'`ls -al /`',
-        b'Kernel.exec("ls -al /")',
-        b'Kernel.exit(1)',
-        b'%x("ls -al /")',
-        b'<img \\x00src=x onerror="alert(1)">',
-        b'$ENV{"HOME"}',
-        b'%d',
-        b'%s']
+        'System("ls -al /")',
+        '`ls -al /`',
+        'Kernel.exec("ls -al /")',
+        'Kernel.exit(1)',
+        '%x("ls -al /")',
+        '<img \\x00src=x onerror="alert(1)">',
+        '$ENV{"HOME"}',
+        '%d',
+        '%s']
 
     def __init__(self,
                  domain,
@@ -352,7 +352,7 @@ def _test_string_values():
     >>> from netzob.Fuzzing.Mutators.StringMutator import StringMutator
 
     >>> fieldString = Field(String(nbChars=(35, 60)))
-    >>> eos_symbol = b'123456789'
+    >>> eos_symbol = '123456789'
     >>> mutator = StringMutator(fieldString.domain, seed=10, lengthBitSize=UnitSize.SIZE_8, endChar=eos_symbol)
     >>> naughty_string = StringMutator.DEFAULT_NAUGHTY_STRINGS
 
@@ -390,14 +390,14 @@ def _test_fixed():
     >>> f1 = Field(String(nbChars=1))
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset[f1] = b'\x41'
+    >>> preset[f1] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'A'
+    'A'
     >>> next(messages_gen)
-    b'A'
+    'A'
     >>> next(messages_gen)
-    b'A'
+    'A'
 
 
     **Fixing the value of a sub-field**
@@ -409,14 +409,14 @@ def _test_fixed():
     >>> f2 = Field([f2_1, f2_2])
     >>> symbol = Symbol([f1, f2], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset[f2_1] = b'\x41'
+    >>> preset[f2_1] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'SA,'
+    'SA,'
     >>> next(messages_gen)
-    b'SAq'
+    'SAq'
     >>> next(messages_gen)
-    b'SA!'
+    'SA!'
 
 
     **Fixing the value of a field that contains sub-fields**
@@ -430,7 +430,7 @@ def _test_fixed():
     >>> f2 = Field([f2_1, f2_2])
     >>> symbol = Symbol([f1, f2], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset[f2] = b'\x41'
+    >>> preset[f2] = '\x41'
     Traceback (most recent call last):
     ...
     Exception: Cannot set a fixed value on a field that contains sub-fields
@@ -445,14 +445,14 @@ def _test_fixed():
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset[v1] = b'\x41'
+    >>> preset[v1] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'A@'
+    'A@'
     >>> next(messages_gen)
-    b'A4'
+    'A4'
     >>> next(messages_gen)
-    b'AF'
+    'AF'
 
 
     **Fixing the value of a node variable**
@@ -464,14 +464,14 @@ def _test_fixed():
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset[v_agg] = b'\x41\x42\x43'
+    >>> preset[v_agg] = '\x41\x42\x43'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'ABC'
+    'ABC'
     >>> next(messages_gen)
-    b'ABC'
+    'ABC'
     >>> next(messages_gen)
-    b'ABC'
+    'ABC'
 
 
     **Fixing the value of a field, by relying on a provided generator**
@@ -480,15 +480,15 @@ def _test_fixed():
     >>> f1 = Field(String(nbChars=1))
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
+    >>> my_generator = (x for x in ['\x41', '\x42', '\x43'])
     >>> preset[f1] = my_generator
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'A'
+    'A'
     >>> next(messages_gen)
-    b'B'
+    'B'
     >>> next(messages_gen)
-    b'C'
+    'C'
     >>> next(messages_gen)
     Traceback (most recent call last):
     ...
@@ -501,15 +501,15 @@ def _test_fixed():
     >>> f1 = Field(String(nbChars=1))
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
+    >>> my_iter = iter(['\x41', '\x42', '\x43'])
     >>> preset[f1] = my_iter
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'A'
+    'A'
     >>> next(messages_gen)
-    b'B'
+    'B'
     >>> next(messages_gen)
-    b'C'
+    'C'
     >>> next(messages_gen)
     Traceback (most recent call last):
     ...
@@ -523,15 +523,15 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> def my_callable():
-    ...     return random.choice([b'\x41', b'\x42', b'\x43'])
+    ...     return random.choice(['\x41', '\x42', '\x43'])
     >>> preset[f1] = my_callable
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'A'
+    'A'
     >>> next(messages_gen)
-    b'A'
+    'A'
     >>> next(messages_gen)
-    b'C'
+    'C'
 
 
     **Fixing the value of a field through its name**
@@ -540,14 +540,14 @@ def _test_fixed():
     >>> f1 = Field(String(nbChars=1), name='f1')
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset['f1'] = b'\x41'
+    >>> preset['f1'] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'A'
+    'A'
     >>> next(messages_gen)
-    b'A'
+    'A'
     >>> next(messages_gen)
-    b'A'
+    'A'
 
 
     **Fixing the value of a variable leaf through its name**
@@ -559,14 +559,14 @@ def _test_fixed():
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset['v1'] = b'\x41\x42\x43'
+    >>> preset['v1'] = '\x41\x42\x43'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'ABC5'
+    'ABC5'
     >>> next(messages_gen)
-    b'ABCh'
+    'ABCh'
     >>> next(messages_gen)
-    b'ABCM'
+    'ABCM'
 
 
     **Fixing the value of a variable node through its name**
@@ -578,13 +578,13 @@ def _test_fixed():
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset['v_agg'] = b'\x41\x42\x43'
+    >>> preset['v_agg'] = '\x41\x42\x43'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'ABC'
+    'ABC'
     >>> next(messages_gen)
-    b'ABC'
+    'ABC'
     >>> next(messages_gen)
-    b'ABC'
+    'ABC'
 
     """
