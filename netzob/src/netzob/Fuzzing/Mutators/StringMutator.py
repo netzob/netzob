@@ -412,11 +412,11 @@ def _test_fixed():
     >>> preset[f2_1] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'SA,'
+    b',Aq'
     >>> next(messages_gen)
-    b'SAq'
+    b',A!'
     >>> next(messages_gen)
-    b'SA!'
+    b',A@'
 
 
     **Fixing the value of a field that contains sub-fields**
@@ -448,11 +448,11 @@ def _test_fixed():
     >>> preset[v1] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'A@'
-    >>> next(messages_gen)
-    b'A4'
+    b'A%'
     >>> next(messages_gen)
     b'AF'
+    >>> next(messages_gen)
+    b'Av'
 
 
     **Fixing the value of a node variable**
@@ -464,7 +464,7 @@ def _test_fixed():
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset[v_agg] = '\x41\x42\x43'
+    >>> preset[v_agg] = b'\x41\x42\x43'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
@@ -480,7 +480,7 @@ def _test_fixed():
     >>> f1 = Field(String(nbChars=1))
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> my_generator = (x for x in ['\x41', '\x42', '\x43'])
+    >>> my_generator = (x for x in [b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_generator
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
@@ -501,7 +501,7 @@ def _test_fixed():
     >>> f1 = Field(String(nbChars=1))
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> my_iter = iter(['\x41', '\x42', '\x43'])
+    >>> my_iter = iter([b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_iter
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
@@ -523,15 +523,15 @@ def _test_fixed():
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
     >>> def my_callable():
-    ...     return random.choice(['\x41', '\x42', '\x43'])
+    ...     return random.choice([b'\x41', b'\x42', b'\x43'])
     >>> preset[f1] = my_callable
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'A'
-    >>> next(messages_gen)
-    b'A'
-    >>> next(messages_gen)
     b'C'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'A'
 
 
     **Fixing the value of a field through its name**
@@ -562,11 +562,11 @@ def _test_fixed():
     >>> preset['v1'] = '\x41\x42\x43'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'ABC5'
-    >>> next(messages_gen)
-    b'ABCh'
-    >>> next(messages_gen)
     b'ABCM'
+    >>> next(messages_gen)
+    b'ABCA'
+    >>> next(messages_gen)
+    b'ABCW'
 
 
     **Fixing the value of a variable node through its name**
@@ -578,7 +578,7 @@ def _test_fixed():
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset['v_agg'] = '\x41\x42\x43'
+    >>> preset['v_agg'] = b'\x41\x42\x43'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'ABC'
