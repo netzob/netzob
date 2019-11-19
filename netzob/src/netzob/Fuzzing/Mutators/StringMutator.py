@@ -115,20 +115,20 @@ class StringMutator(DomainMutator):
     Constant definitions:
     """
 
-    DEFAULT_END_CHAR = b'\0'
-    PADDING_CHAR = b' '
+    DEFAULT_END_CHAR = '\0'
+    PADDING_CHAR = ' '
     DATA_TYPE = String
 
     DEFAULT_NAUGHTY_STRINGS = [
-        b'System("ls -al /")',
-        b'`ls -al /`',
-        b'Kernel.exec("ls -al /")',
-        b'Kernel.exit(1)',
-        b'%x("ls -al /")',
-        b'<img \\x00src=x onerror="alert(1)">',
-        b'$ENV{"HOME"}',
-        b'%d',
-        b'%s']
+        'System("ls -al /")',
+        '`ls -al /`',
+        'Kernel.exec("ls -al /")',
+        'Kernel.exit(1)',
+        '%x("ls -al /")',
+        '<img \\x00src=x onerror="alert(1)">',
+        '$ENV{"HOME"}',
+        '%d',
+        '%s']
 
     def __init__(self,
                  domain,
@@ -249,14 +249,14 @@ class StringMutator(DomainMutator):
                 if length > len(value):
                     # Complete the string with padding characters to have the good
                     # length
-                    value = value + (b" " * (length - len(value)))
+                    value = value + (" " * (length - len(value)))
                 else:
                     # truncate the too long string value to length characters
                     value = value[:length - 1] + self.endChar
             else:
-                value = b""
-
-            valueBytes = String.decode(value,
+                value = ""
+            valueData = value.encode('utf-8')
+            valueBytes = String.decode(valueData,
                                        unitSize=self.domain.dataType.unitSize,
                                        endianness=self.domain.dataType.endianness,
                                        sign=self.domain.dataType.sign)
@@ -352,7 +352,7 @@ def _test_string_values():
     >>> from netzob.Fuzzing.Mutators.StringMutator import StringMutator
 
     >>> fieldString = Field(String(nbChars=(35, 60)))
-    >>> eos_symbol = b'123456789'
+    >>> eos_symbol = '123456789'
     >>> mutator = StringMutator(fieldString.domain, seed=10, lengthBitSize=UnitSize.SIZE_8, endChar=eos_symbol)
     >>> naughty_string = StringMutator.DEFAULT_NAUGHTY_STRINGS
 
@@ -361,11 +361,11 @@ def _test_string_values():
     >>> for _ in range(20):
     ...     a_str = mutator.generate()
     ...     for ns in naughty_string:
-    ...         if ns in a_str:
+    ...         if ns in a_str.decode():
     ...             has_naughty_str = True
-    ...     idx = a_str.find(eos_symbol)
+    ...     idx = a_str.find(eos_symbol.encode())
     ...     if idx != -1:
-    ...         if a_str[idx :].find(eos_symbol) != -1:
+    ...         if a_str[idx :].find(eos_symbol.encode()) != -1:
     ...             has_several_eos_symbol = True
 
     >>> has_naughty_str
@@ -390,7 +390,7 @@ def _test_fixed():
     >>> f1 = Field(String(nbChars=1))
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset[f1] = b'\x41'
+    >>> preset[f1] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
@@ -409,14 +409,14 @@ def _test_fixed():
     >>> f2 = Field([f2_1, f2_2])
     >>> symbol = Symbol([f1, f2], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset[f2_1] = b'\x41'
+    >>> preset[f2_1] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'SA,'
+    b',Aq'
     >>> next(messages_gen)
-    b'SAq'
+    b',A!'
     >>> next(messages_gen)
-    b'SA!'
+    b',A@'
 
 
     **Fixing the value of a field that contains sub-fields**
@@ -430,7 +430,7 @@ def _test_fixed():
     >>> f2 = Field([f2_1, f2_2])
     >>> symbol = Symbol([f1, f2], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset[f2] = b'\x41'
+    >>> preset[f2] = '\x41'
     Traceback (most recent call last):
     ...
     Exception: Cannot set a fixed value on a field that contains sub-fields
@@ -445,14 +445,14 @@ def _test_fixed():
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset[v1] = b'\x41'
+    >>> preset[v1] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'A@'
-    >>> next(messages_gen)
-    b'A4'
+    b'A%'
     >>> next(messages_gen)
     b'AF'
+    >>> next(messages_gen)
+    b'Av'
 
 
     **Fixing the value of a node variable**
@@ -527,11 +527,11 @@ def _test_fixed():
     >>> preset[f1] = my_callable
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'A'
-    >>> next(messages_gen)
-    b'A'
-    >>> next(messages_gen)
     b'C'
+    >>> next(messages_gen)
+    b'B'
+    >>> next(messages_gen)
+    b'A'
 
 
     **Fixing the value of a field through its name**
@@ -540,7 +540,7 @@ def _test_fixed():
     >>> f1 = Field(String(nbChars=1), name='f1')
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset['f1'] = b'\x41'
+    >>> preset['f1'] = '\x41'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
     b'A'
@@ -559,14 +559,14 @@ def _test_fixed():
     >>> f1 = Field(v_agg)
     >>> symbol = Symbol([f1], name="sym")
     >>> preset = Preset(symbol)
-    >>> preset['v1'] = b'\x41\x42\x43'
+    >>> preset['v1'] = '\x41\x42\x43'
     >>> messages_gen = symbol.specialize(preset)
     >>> next(messages_gen)
-    b'ABC5'
-    >>> next(messages_gen)
-    b'ABCh'
-    >>> next(messages_gen)
     b'ABCM'
+    >>> next(messages_gen)
+    b'ABCA'
+    >>> next(messages_gen)
+    b'ABCW'
 
 
     **Fixing the value of a variable node through its name**
