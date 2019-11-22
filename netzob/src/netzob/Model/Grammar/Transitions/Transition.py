@@ -37,7 +37,6 @@
 import time
 import random
 import socket
-from typing import Dict  # noqa: F401
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |

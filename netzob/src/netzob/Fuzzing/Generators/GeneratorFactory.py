@@ -37,7 +37,11 @@
 # +---------------------------------------------------------------------------+
 import randomstate
 import pkgutil
-import typing
+from typing import Iterable
+try:
+    import typing
+except ImportError:
+    pass
 from itertools import repeat, starmap
 
 # +---------------------------------------------------------------------------+
@@ -131,7 +135,7 @@ class GeneratorFactory(object):
                     return subclass(seed=seed, **kwargs)
 
         # Check if the generator is already an iterator
-        elif isinstance(generator, typing.Iterable):
+        elif isinstance(generator, Iterable):
             return WrapperGenerator(iter(generator), **kwargs)
 
         raise ValueError("Generator not supported: '{}'".format(generator))

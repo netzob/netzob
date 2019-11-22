@@ -35,7 +35,10 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-from typing import Dict, Union, Iterator, List  # noqa: F401
+try:
+    from typing import Dict, List  # noqa: F401
+except ImportError:
+    pass
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -147,7 +150,8 @@ class Symbol(AbstractField):
     """
 
     @public_api
-    def __init__(self, fields: List[Field] = None, messages: List[AbstractMessage] = None, name: str = "Symbol") -> None:
+    def __init__(self, fields=None, messages=None, name="Symbol"):
+        # type: (List[Field], List[AbstractMessage], str) -> None
         super(Symbol, self).__init__(name)
         self.__messages = TypedList(AbstractMessage)
         if messages is None:

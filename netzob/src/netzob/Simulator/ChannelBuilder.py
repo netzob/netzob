@@ -34,7 +34,10 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from typing import Mapping
+try:
+    from typing import Mapping
+except ImportError:
+    pass
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |

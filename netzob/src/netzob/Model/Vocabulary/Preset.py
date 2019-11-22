@@ -35,7 +35,10 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-from typing import Dict, Union  # noqa: F401
+try:
+    from typing import Dict, Union  # noqa: F401
+except ImportError:
+    pass
 import types
 import collections
 from itertools import repeat

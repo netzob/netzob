@@ -45,7 +45,10 @@ import sys
 import time
 from fcntl import ioctl
 from itertools import repeat
-from typing import Any, Callable, List, Type  # noqa: F401
+try:
+    from typing import Callable, List, Type  # noqa: F401
+except ImportError:
+    pass
 from threading import Thread, Event
 #from multiprocessing import Process, Event
 from queue import Queue, Empty
