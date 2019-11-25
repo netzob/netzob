@@ -35,7 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import abc
-from typing import Iterable
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |

@@ -36,7 +36,10 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 from enum import Enum
-from typing import Type  # noqa: F401
+try:
+    from typing import Type  # noqa: F401
+except ImportError:
+    pass
 import abc
 
 # +---------------------------------------------------------------------------+

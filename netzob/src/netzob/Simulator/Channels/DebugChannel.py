@@ -36,7 +36,10 @@
 #+---------------------------------------------------------------------------+
 import io
 import sys
-from typing import Callable, Union
+try:
+    from typing import Callable, Union
+except ImportError:
+    pass
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |

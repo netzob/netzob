@@ -35,7 +35,10 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-from typing import Tuple  # noqa: F401
+try:
+    from typing import Tuple  # noqa: F401
+except ImportError:
+    pass
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
