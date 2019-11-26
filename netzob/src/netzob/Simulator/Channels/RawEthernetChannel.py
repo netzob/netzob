@@ -45,7 +45,7 @@ import time
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
-from netzob.Simulator.AbstractChannel import AbstractChannel
+from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
@@ -190,6 +190,25 @@ class RawEthernetChannel(AbstractChannel):
         :type: :class:`str`
         """
         return self.__interface
+
+    @public_api
+    def set_rate(self, rate):
+        """This method set the the given transmission rate to the channel.
+        Used in testing network under high load
+
+        :parameter rate: This specifies the bandwidth in bytes per second to
+                         respect during traffic emission. Default value is
+                         ``None``, which means that the bandwidth is only
+                         limited by the underlying physical layer.
+        :type rate: :class:`int`, required
+        """
+        NetUtils.set_rate(self.interface, rate)
+
+    @public_api
+    def unset_rate(self):
+        """This method clears the transmission rate.
+        """
+        NetUtils.set_rate(self.interface, None)
 
 
 class RawEthernetChannelBuilder(ChannelBuilder):

@@ -38,6 +38,8 @@
 import abc
 import array
 import binascii
+import os
+import shlex
 import socket
 import struct
 import subprocess
@@ -199,6 +201,25 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         Provide the builder specific to an :class:`AbstractChannel`
         """
 
+    @public_api
+    @abc.abstractmethod
+    def set_rate(self, rate):
+        """This method set the the given transmission rate to the channel.
+        Used in testing network under high load
+
+        :parameter rate: This specifies the bandwidth in bytes per second to
+                         respect during traffic emission. Default value is
+                         ``None``, which means that the bandwidth is only
+                         limited by the underlying physical layer.
+        :type rate: :class:`int`, required
+        """
+
+    @public_api
+    @abc.abstractmethod
+    def unset_rate(self):
+        """This method clears the transmission rate.
+        """
+
     # Public API methods ##
 
     def register_abstraction_layer(self, abstraction_layer):
@@ -230,18 +251,16 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         self.__writeCounterMax = AbstractChannel.DEFAULT_WRITE_COUNTER_MAX
 
     @public_api
-    def write(self, data, rate=None, duration=None):
+    def write(self, data, duration=None):
         """Write to the communication channel the specified data, either once,
         or in a loop according to the `rate` and `duration`
         parameters.
 
         :param data: The data to write on the channel.
-        :param rate: This specifies the bandwidth in bytes per second to respect during
-                     traffic emission (should be used with :attr:`duration` parameter). Default value is ``None``, which means that the bandwidth is only limited by the underlying physical layer.
-        :param duration: This indicates for how many seconds the data is continuously
-                         written on the channel. Default value is ``None``, which means that the data is sent only once.
+        :param duration: This indicates for how many seconds the data is
+                         continuously written on the channel. Default value is
+                         ``None``, which means that the data is sent only once.
         :type data: bytes, required
-        :type rate: int, optional
         :type duration: int, optional
         :return: The amount of written data, in bytes.
         :rtype: int
@@ -253,21 +272,20 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
             self.queue_output.join()
             return len(data)
         else:
-            return self.write_map(repeat(data), rate=rate, duration=duration)
+            return self.write_map(repeat(data), duration=duration)
 
     @public_api
-    def write_map(self, data_iterator, rate=None, duration=None):
+    def write_map(self, data_iterator, duration=None):
         """Write to the communication channel the successive data values,
         either once, or in a loop according to the `rate` and `duration`
         parameters.
 
         :param data_iterator: data iterator used to write on the channel.
-        :param rate: This specifies the bandwidth in bytes per second to respect during
-                     traffic emission (should be used with :attr:`duration` parameter). Default value is ``None``, which means that the bandwidth is only limited by the underlying physical layer.
-        :param duration: This indicates for how many seconds the data is continuously
-                         written on the channel. Default value is ``None``, which means that the data is sent only once.
+        :param duration: This indicates for how many seconds the data is
+                         continuously written on the channel.
+                         Default value is ``None``, which means that the
+                         data is sent only once.
         :type data_iterator: ~typing.Iterator[bytes], required
-        :type rate: int, optional
         :type duration: int, optional
         :return: The amount of written data, count in bytes.
         :rtype: int
@@ -289,42 +307,33 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
                 len_data = self.writePacket(data)
         else:
             rate_text = "unlimited"
-            rate_unlimited = True
-            if type(rate) is int and rate > 0:
-                rate_text = "{:.2f} kBps".format(rate / 1024)
-                rate_unlimited = False
+            if type(self._rate) is int and self._rate > 0:
+                rate_text = "{:.2f} kBps".format(self._rate / 1024)
 
-            t_start = time.time()
-            t_elapsed = 0
-            t_delta = 0
+            t_initial = time.time()
+            t_start = t_initial
+            t_current = t_initial
             for data in data_iterator:
 
-                t_elapsed = time.time() - t_start
-                if t_elapsed > duration:
+                if t_current > t_initial + duration:
                     break
 
                 # Specialize the symbol and send it over the channel
                 len_data += self.writePacket(data)
-
-                while True:
-                    t_tmp = t_elapsed
-                    t_elapsed = time.time() - t_start
-                    t_delta += t_elapsed - t_tmp
-
-                    if not rate_unlimited and (len_data / t_elapsed) > rate:
-                        time.sleep(0.001)
-                    else:
-                        break
+                t_current = time.time()
 
                 # Show some log every seconds
-                if t_delta > 1:
-                    t_delta = 0
-                    self._logger.debug("Rate rule: {}, current rate: {:.2f} kBps, "
-                                       "sent data: {:.2f} kB, nb seconds elapsed: "
-                                       "{:.2f}".format(rate_text,
-                                                       len_data / t_elapsed / 1024,
-                                                       len_data / 1024,
-                                                       t_elapsed, 2))
+                if t_current > t_start + 1:
+                    t_elapsed = t_current - t_initial
+                    t_start = t_current
+                    self._logger.debug(
+                        "Rate rule: {}, current rate: {:.2f} kBps, "
+                        "sent data: {:.2f} kB, nb seconds elapsed: "
+                        "{:.2f}".format(
+                            rate_text,
+                            len_data / t_elapsed / 1024,
+                            len_data / 1024,
+                            t_elapsed, 2))
         return len_data
 
     @public_api
@@ -347,7 +356,6 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
                              .format(type(predicate).__name__))
         return predicate(self.read(), *args, **kwargs)
 
-
     @public_api
     def __init__(self, timeout=ChannelInterface.DEFAULT_TIMEOUT):
         """
@@ -362,6 +370,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
         self._socket = None
         self.timeout = timeout
         self._isOpened = False
+        self._rate = None
         self.header = None  # A Symbol corresponding to the protocol header
         self.header_preset = None  # A Preset object is expected to parameterize the header Symbol
         self.__writeCounter = 0
@@ -401,6 +410,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
                           context
         :type traceback: object, required
         """
+        self.unset_rate()
         self.close()
 
     def updateSocketTimeout(self):
@@ -853,3 +863,30 @@ class NetUtils(object):
         path = '{}/class/net/{}/operstate'.format(sysroot, localInterface)
         with open(path) as fd:
             return 'down' not in fd.read()
+
+    @staticmethod
+    def set_rate(localInterface, rate):
+        r"""
+        Set the transmission rate on the given interface.
+
+        :param localInterface: The local network interface
+        :type localInterface: :class:`str`
+
+        :param rate: This specifies the bandwidth in bytes per second to
+                     respect during traffic emission. Default value is
+                     ``None``, which means that the bandwidth is only
+                     limited by the underlying physical layer.
+        :type rate: :class:`int`
+
+        """
+        if rate is None:
+            cmd = "sudo tc qdisc del dev {} root netem".format(
+                localInterface)
+        else:
+            cmd = "sudo tc qdisc add dev {} root netem rate {}".format(
+                localInterface, rate * 8)  # in bits per second
+        env = os.environ
+        env['RUNAS'] = 'root'
+        cmd = "cottontail-privcap NULL {}".format(cmd)
+        cmd = shlex.split(cmd)
+        subprocess.Popen(cmd, env=env)

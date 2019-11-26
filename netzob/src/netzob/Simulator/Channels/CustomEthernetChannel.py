@@ -325,6 +325,25 @@ class CustomEthernetChannel(AbstractChannel):
         """
         return self.__interface
 
+    @public_api
+    def set_rate(self, rate):
+        """This method set the the given transmission rate to the channel.
+        Used in testing network under high load
+
+        :parameter rate: This specifies the bandwidth in bytes per second to
+                         respect during traffic emission. Default value is
+                         ``None``, which means that the bandwidth is only
+                         limited by the underlying physical layer.
+        :type rate: :class:`int`, required
+        """
+        NetUtils.set_rate(self.interface, rate)
+
+    @public_api
+    def unset_rate(self):
+        """This method clears the transmission rate.
+        """
+        NetUtils.set_rate(self.interface, None)
+
 
 class CustomEthernetChannelBuilder(ChannelBuilder):
     """
