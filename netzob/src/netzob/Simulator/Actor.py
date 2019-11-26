@@ -2229,47 +2229,6 @@ class Actor(Thread):
     ...     bob.wait()
     ...     alice.stop()
     >>> channel.stop()
-    >>> print(bob.generateLog())
-    Activity log for actor 'Bob' (initiator):
-      [+] At state 'S0'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'Open' (open channel)
-      [+]   Transition 'Open' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'hello' (initiator)
-      [+]   During transition 'hello', sending input symbol ('Bob-Hello')
-      [+]   During transition 'hello', receiving expected output symbol ('Alice-Hello')
-      [+]   Transition 'hello' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'hello' (initiator)
-      [+]   During transition 'hello', sending input symbol ('Bob-Hello')
-      [+]   During transition 'hello', receiving expected output symbol ('Alice-Hello')
-      [+]   Transition 'hello' lead to state 'S1'
-      [+] At state 'S1', we reached the max number of transitions (3), so we stop
-    >>> print(alice.generateLog())
-    Activity log for actor 'Alice' (not initiator):
-      [+] At state 'S0'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Picking transition 'Open' (open channel)
-      [+]   Going to execute transition 'Open'
-      [+]   Transition 'Open' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Waiting for an input symbol to decide the transition (not initiator)
-      [+]   Input symbol 'Bob-Hello' corresponds to transition 'hello'
-      [+]   During transition 'hello', choosing an output symbol ('Alice-Hello')
-      [+]   Transition 'hello' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Waiting for an input symbol to decide the transition (not initiator)
-      [+]   Input symbol 'Bob-Hello' corresponds to transition 'hello'
-      [+]   During transition 'hello', choosing an output symbol ('Alice-Hello')
-      [+]   Transition 'hello' lead to state 'S1'
-      [+] At state 'S1'
-      [+]   Randomly choosing a transition to execute or to wait for an input symbol
-      [+]   Waiting for an input symbol to decide the transition (not initiator)
 
     """
 
