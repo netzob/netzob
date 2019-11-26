@@ -45,7 +45,9 @@ import ssl
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
-from netzob.Simulator.AbstractChannel import AbstractChannel, ChannelDownException
+from netzob.Simulator.AbstractChannel import (AbstractChannel,
+                                              ChannelDownException,
+                                              NetUtils)
 from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
@@ -320,6 +322,27 @@ class SSLClient(AbstractChannel):
         super(SSLClient, self).updateSocketTimeout()
         if self._socket is not None:
             self.__ssl_socket.settimeout(self.timeout)
+
+    @public_api
+    def set_rate(self, rate):
+        """This method set the the given transmission rate to the channel.
+        Used in testing network under high load
+
+        :parameter rate: This specifies the bandwidth in bytes per second to
+                         respect during traffic emission. Default value is
+                         ``None``, which means that the bandwidth is only
+                         limited by the underlying physical layer.
+        :type rate: :class:`int`, required
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        NetUtils.set_rate(localInterface, rate)
+
+    @public_api
+    def unset_rate(self):
+        """This method clears the transmission rate.
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        NetUtils.set_rate(localInterface, None)
 
 
 class SSLClientBuilder(ChannelBuilder):
