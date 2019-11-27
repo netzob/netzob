@@ -35,6 +35,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import binascii
+import random
 import unittest
 from bitarray import bitarray
 
@@ -91,11 +92,11 @@ class HexaString(AbstractType):
     >>> from netzob.all import *
     >>> i = HexaString()
     >>> len(i.generate().tobytes())
-    534
+    533
     >>> len(i.generate().tobytes())
-    6625
+    7738
     >>> len(i.generate().tobytes())
-    1458
+    5505
 
     The following example shows how to define a hexastring object with
     a constant value, and the use of the generation method to produce
@@ -348,6 +349,57 @@ class HexaString(AbstractType):
 
         return True
 
+    def generate(self, generationStrategy=None):
+        """Generates a random HexaString that respects the requested size or the
+        predefined value.
+
+        >>> from netzob.all import *
+        >>> a = HexaString(nbBytes=(10))
+        >>> gen = a.generate()
+        >>> print(len(gen))
+        80
+
+        >>> a = HexaString(nbBytes=(10, 20))
+        >>> gen = a.generate()
+        >>> print(10<=len(gen) and 20<=len(gen))
+        True
+
+        >>> a = HexaString(b"aa")
+        >>> a.generate()
+        bitarray('10101010')
+
+        >>> a = HexaString(b"aabb")
+        >>> a.generate()
+        bitarray('1010101010111011')
+
+        >>> a = HexaString(b"aab")
+        Traceback (most recent call last):
+        ...
+        Exception: The data 'b'aab'' should be aligned on the octet
+
+        """
+
+        if self.value is not None:
+            return self.value
+
+        if self.default is not None:
+            return self.default
+
+        minSize, maxSize = self.size
+        if maxSize is None:
+            maxSize = AbstractType.MAXIMUM_GENERATED_DATA_SIZE
+        if minSize is None:
+            minSize = 0
+
+        generatedSize = random.randint(minSize, maxSize)
+
+        generatedValue = None
+        generatedValue = b''.join(random.randint(0, 255).to_bytes(length=1, byteorder='big') for i in range(int(generatedSize / 8)))
+
+        result = bitarray(endian='big')
+        result.frombytes(generatedValue)
+        return result
+
     @staticmethod
     @typeCheck(str)
     def decode(data,
@@ -481,87 +533,17 @@ def _test_specialize_abstract():
     >>> Conf.apply()
     >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
 
-    >>> possible_parameters = OrderedDict()
-    >>> possible_parameters["value"] = [None, '', b'', b'a', b'bb', "bb", 42]
-    >>> possible_parameters["nbBytes"] = [None, (), -4, 8, (0, 0), (2, 8), (8, 2), (-4, -2), (-4, 2), (2, -4), "test", ("test1", "test2"), (1, "test2")]
-    >>> possible_parameters["default"] = [None, '', b"", b"e", b"bb", "ff", 42]
-
     >>> data_type = HexaString
 
-    >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
-    OrderedDict([('value', None)])
-    OrderedDict([('value', '')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'HexaString value cannot have a length equal to 0'
-    OrderedDict([('value', b'')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'HexaString value cannot have a length equal to 0'
-    OrderedDict([('value', b'a')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'The data 'b'a'' should be aligned on the octet'
-    OrderedDict([('value', b'bb')])
-    OrderedDict([('value', 'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for value: 'bb', type is: '<class 'str'>', expected type is 'bitarray' or 'bytes''
-    OrderedDict([('value', 42)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'object of type 'int' has no len()'
-    OrderedDict([('nbBytes', None)])
-    OrderedDict([('nbBytes', ())])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'tuple index out of range'
-    OrderedDict([('nbBytes', -4)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'nbBytes should be > 0'
-    OrderedDict([('nbBytes', 8)])
-    OrderedDict([('nbBytes', (0, 0))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBytes should be an integer > 0'
-    OrderedDict([('nbBytes', (2, 8))])
-    OrderedDict([('nbBytes', (8, 2))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Size must be defined with a tuple of integers, where the second value is greater than the first value'
-    OrderedDict([('nbBytes', (-4, -2))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
-    OrderedDict([('nbBytes', (-4, 2))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
-    OrderedDict([('nbBytes', (2, -4))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBytes should be an integer > 0'
-    OrderedDict([('nbBytes', 'test')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
-    OrderedDict([('nbBytes', ('test1', 'test2'))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBytes should be an integer >= 0'
-    OrderedDict([('nbBytes', (1, 'test2'))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBytes should be an integer > 0'
-    OrderedDict([('default', None)])
-    OrderedDict([('default', '')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: '', type is: '<class 'str'>', expected type is 'bitarray' or 'bytes''
-    OrderedDict([('default', b'')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Cannot set a default Type value (here 'b''') that cannot be parsed (current type: HexaString(nbBytes=(0,8192)))'
-    OrderedDict([('default', b'e')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'The data 'b'e'' should be aligned on the octet'
-    OrderedDict([('default', b'bb')])
-    OrderedDict([('default', 'ff')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'ff', type is: '<class 'str'>', expected type is 'bitarray' or 'bytes''
-    OrderedDict([('default', 42)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: '42', type is: '<class 'int'>', expected type is 'bitarray' or 'bytes''
+    >>> possible_parameters = OrderedDict()
+    >>> possible_parameters["value"] = [None, b'bb', ]
+    >>> possible_parameters["nbBytes"] = [None, 1, (1, 8), (0, 42)]
+    >>> possible_parameters["default"] = [None, b"bb"]
 
-    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
-    OrderedDict([('value', None), ('nbBytes', None), ('default', None)])
-    OrderedDict([('value', None), ('nbBytes', None), ('default', b'bb')])
-    OrderedDict([('value', None), ('nbBytes', 8), ('default', None)])
-    OrderedDict([('value', None), ('nbBytes', 8), ('default', b'bb')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\xbb'') that cannot be parsed (current type: HexaString(nbBytes=8))'
-    OrderedDict([('value', None), ('nbBytes', (2, 8)), ('default', None)])
-    OrderedDict([('value', None), ('nbBytes', (2, 8)), ('default', b'bb')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\xbb'') that cannot be parsed (current type: HexaString(nbBytes=(2,8)))'
-    OrderedDict([('value', b'bb'), ('nbBytes', None), ('default', None)])
-    OrderedDict([('value', b'bb'), ('nbBytes', None), ('default', b'bb')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A HexaString should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', b'bb'), ('nbBytes', 8), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A HexaString should have either its value or its nbBytes set, but not both'
-    OrderedDict([('value', b'bb'), ('nbBytes', 8), ('default', b'bb')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A HexaString should have either its value or its nbBytes set, but not both'
-    OrderedDict([('value', b'bb'), ('nbBytes', (2, 8)), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A HexaString should have either its value or its nbBytes set, but not both'
-    OrderedDict([('value', b'bb'), ('nbBytes', (2, 8)), ('default', b'bb')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A HexaString should have either its value or its nbBytes set, but not both'
+    >>> test_type_one_parameter(data_type, possible_parameters)
+
+    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, possible_parameters)
 
     >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
-    OrderedDict([('value', None), ('nbBytes', None), ('default', None)])
-    EXCEPTION IN SPECIALIZATION: 'specialize() produced 4270 bits, which is not aligned on 8 bits. You should review the symbol model.'
-    OrderedDict([('value', None), ('nbBytes', (2, 8)), ('default', None)])
-    EXCEPTION IN SPECIALIZATION: 'specialize() produced 54 bits, which is not aligned on 8 bits. You should review the symbol model.'
 
     """
