@@ -136,7 +136,7 @@ class IPv4(AbstractType):
                  sign=AbstractType.defaultSign(),
                  default=None):
 
-        # Manage parameter mutual exclusions
+        # Manage mutualy exclusive parameters
         if value is not None and network is not None:
             raise ValueError("An IPv4 should have either its value or its network set, but not both")
 

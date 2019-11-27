@@ -1029,6 +1029,33 @@ def _test_24_bits_integers():
     """
 
 
+def _test_weird_size():
+    r"""
+
+    >>> from netzob.all import *
+
+    # This test should trigger an exception
+
+    >>> domain = Integer(value=bitarray('10001001000011001001101'), unitSize=UnitSize.SIZE_24, endianness=Endianness.LITTLE, sign=Sign.UNSIGNED)
+    >>> f       = Field(domain=domain, name="field")
+    >>> symbol  = Symbol(fields=[f])
+    >>> data    = next(symbol.specialize())
+    Traceback (most recent call last):
+    ...
+    netzob.Model.Vocabulary.AbstractField.GenerationException: specialize() produced 23 bits, which is not aligned on 8 bits. You should review the symbol model.
+
+
+    # This test should work
+
+    >>> domain = Integer(value=bitarray('010001001000011001001101'), unitSize=UnitSize.SIZE_24, endianness=Endianness.LITTLE, sign=Sign.UNSIGNED)
+    >>> f       = Field(domain=domain, name="field")
+    >>> symbol  = Symbol(fields=[f])
+    >>> data    = next(symbol.specialize())
+    >>> data
+    b'D\x86M'
+
+    """
+
 def _test_int_endianness():
     r"""
 

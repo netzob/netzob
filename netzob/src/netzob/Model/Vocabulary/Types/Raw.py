@@ -69,6 +69,9 @@ class Raw(AbstractType):
        :attr:`value` and :attr:`nbBytes` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
+       :attr:`value` and :attr:`alphabet` parameters are mutually exclusive.
+       Setting both values raises an :class:`Exception`.
+
        :attr:`value` and :attr:`default` parameters are mutually exclusive.
        Setting both values raises an :class:`Exception`.
 
