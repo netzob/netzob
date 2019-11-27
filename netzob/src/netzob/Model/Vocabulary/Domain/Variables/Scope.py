@@ -396,3 +396,29 @@ def _test():
     False
 
     """
+
+def _test_scope_none():
+    r"""
+
+    >>> from netzob.all import *
+
+    >>> t = IPv4(value="127.0.0.1", endianness=Endianness.LITTLE)
+    >>> f = Field(domain=t, name="field")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x7f\x00\x00\x01'
+    >>> symbol.abstract(data)
+    OrderedDict([('field', b'\x7f\x00\x00\x01')])
+
+    >>> t = IPv4(value="127.0.0.1", endianness=Endianness.LITTLE)
+    >>> domain = Data(dataType=t, name="IPv4", scope=Scope.NONE)
+    >>> f = Field(domain=domain, name="field")
+    >>> symbol = Symbol(fields=[f])
+    >>> data = next(symbol.specialize())
+    >>> data
+    b'\x7f\x00\x00\x01'
+    >>> symbol.abstract(data)
+    OrderedDict([('field', b'\x7f\x00\x00\x01')])
+
+    """

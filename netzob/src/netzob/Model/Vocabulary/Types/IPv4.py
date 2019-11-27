@@ -194,9 +194,9 @@ class IPv4(AbstractType):
             self.__class__.__name__,
             value,
             size,
-            unitSize=UnitSize.SIZE_32,
-            endianness=AbstractType.defaultEndianness(),
-            sign=AbstractType.defaultSign(),
+            unitSize=unitSize,
+            endianness=endianness,
+            sign=sign,
             default=default)
 
     def __str__(self):
@@ -288,7 +288,7 @@ class IPv4(AbstractType):
                 str(random.randrange(1, 256)), str(random.randrange(1, 256))
             ])
 
-            ip = IPv4.encode(strip)
+            ip = IPv4.encode(strip, unitSize=self.unitSize, endianness=self.endianness, sign=self.sign)
             return TypeConverter.convert(
                 ip.packed,
                 Raw,
@@ -367,7 +367,7 @@ class IPv4(AbstractType):
 
         try:
             ip = IPv4.encode(
-                data, unitSize=unitSize, endianness=endianness, sign=sign)
+                data, unitSize=self.unitSize, endianness=self.endianness, sign=self.sign)
             if ip is None or ip.version != 4:
                 return False
         except:
@@ -376,16 +376,19 @@ class IPv4(AbstractType):
             if self.value is not None:
                 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
                 from netzob.Model.Vocabulary.Types.BitArray import BitArray
-                return self.value == TypeConverter.convert(
+
+                res = TypeConverter.convert(
                     data,
                     IPv4,
                     BitArray,
-                    src_unitSize=unitSize,
-                    src_endianness=endianness,
-                    src_sign=sign,
+                    src_unitSize=self.unitSize,
+                    src_endianness=self.endianness,
+                    src_sign=self.sign,
                     dst_unitSize=self.unitSize,
                     dst_endianness=self.endianness,
                     dst_sign=self.sign)
+
+                return self.value == res
             elif self.network is not None:
                 return ip in self.network
         except:
@@ -444,11 +447,14 @@ class IPv4(AbstractType):
 
         if data is None:
             raise TypeError("Data cannot be None")
-        ip = IPv4()
-        if not ip.canParse(data):
-            raise TypeError("Data is not a valid IPv4, cannot decode it.")
-        ip = IPAddress(data)
-        return ip.packed
+        elif isinstance(data, bytes):
+            return data
+        else:
+            try:
+                ip = IPAddress(data)
+            except Exception as e:
+                raise TypeError("Data is not a valid IPv4, cannot decode it. Error: '{}'".format(e))
+            return ip.packed
 
     @staticmethod
     def encode(data,
@@ -461,7 +467,7 @@ class IPv4(AbstractType):
         :type data: str or raw bytes (BBBB)
         :return: the encoded IPAddress
         """
-        if isinstance(data, (str, bytes, int)):
+        if isinstance(data, (str, int)):
             try:
                 ip = IPAddress(data)
                 if ip is not None and ip.version == 4:
@@ -469,8 +475,7 @@ class IPv4(AbstractType):
             except:
                 pass
         try:
-
-            structFormat = ">"
+            structFormat = "<"
             if endianness == Endianness.BIG:
                 structFormat = ">"
 
@@ -478,10 +483,12 @@ class IPv4(AbstractType):
                 structFormat += "bbbb"
             else:
                 structFormat += "BBBB"
+
             quads = list(map(str, struct.unpack(structFormat, data)))
             strIP = '.'.join(quads)
 
             ip = IPAddress(strIP)
+
             if ip is not None and ip.version == 4:
                 return ip
         except Exception as e:

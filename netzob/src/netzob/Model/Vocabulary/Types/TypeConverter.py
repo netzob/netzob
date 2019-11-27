@@ -137,6 +137,7 @@ class TypeConverter(object):
             return func(data, src_unitSize, src_endianness, src_sign,
                         dst_unitSize, dst_endianness, dst_sign)
         else:
+
             # Convert from source to raw
             if sourceType is not Raw:
                 binData = sourceType.decode(
