@@ -275,7 +275,7 @@ class HexaString(AbstractType):
         >>> HexaString().canParse(b"aab")
         Traceback (most recent call last):
         ...
-        Exception: The data 'b'aab'' should be aligned on the octet
+        Exception: The data 'b'aab'' should be byte-aligned
 
         >>> HexaString(nbBytes=4).canParse(b"aabbccdd")
         True
@@ -375,7 +375,7 @@ class HexaString(AbstractType):
         >>> a = HexaString(b"aab")
         Traceback (most recent call last):
         ...
-        Exception: The data 'b'aab'' should be aligned on the octet
+        Exception: The data 'b'aab'' should be byte-aligned
 
         """
 
@@ -442,7 +442,7 @@ class HexaString(AbstractType):
             raise TypeError("data cannot be None")
 
         if len(data) % 2 != 0:
-            raise Exception("The data '{}' should be aligned on the octet".format(data))
+            raise Exception("The data '{}' should be byte-aligned".format(data))
 
         return binascii.unhexlify(data)
 
