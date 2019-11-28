@@ -204,7 +204,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
     @public_api
     @abc.abstractmethod
     def set_rate(self, rate):
-        """This method set the the given transmission rate to the channel.
+        """This method set the given transmission rate to the channel.
         Used in testing network under high load
 
         :parameter rate: This specifies the bandwidth in bytes per second to
