@@ -613,94 +613,16 @@ def _test_specialize_abstract():
     >>> Conf.apply()
     >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
 
-    >>> possible_parameters = OrderedDict()
-    >>> possible_parameters["value"] = [None, '', b'', b'a', b'bb', "bb", 42, "00001111", b"00001111"]
-    >>> possible_parameters["nbBits"] = [None, (), -4, 8, (0, 0), (2, 8), (8, 2), (-4, -2), (-4, 2), (2, -4), "test", ("test1", "test2"), (1, "test2")]
-    >>> possible_parameters["default"] = [None, '', b"", b"e", b"eeee", b"ff", "ff", "00001111", b"00001111"]
-
     >>> data_type = BitArray
 
-    >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
-    OrderedDict([('value', None)])
-    OrderedDict([('value', '')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'BitArray value cannot have a length equal to 0'
-    OrderedDict([('value', b'')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'BitArray value cannot have a length equal to 0'
-    OrderedDict([('value', b'a')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for value: 'b'a'', type: '<class 'bytes'>''
-    OrderedDict([('value', b'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for value: 'b'bb'', type: '<class 'bytes'>''
-    OrderedDict([('value', 'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input value for the following BitArray is incorrect: 'bb'. Error: 'character must be '0' or '1', found 'b'''
-    OrderedDict([('value', 42)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'object of type 'int' has no len()'
-    OrderedDict([('value', '00001111')])
-    OrderedDict([('value', b'00001111')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for value: 'b'00001111'', type: '<class 'bytes'>''
-    OrderedDict([('nbBits', None)])
-    OrderedDict([('nbBits', ())])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'tuple index out of range'
-    OrderedDict([('nbBits', -4)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'nbBits should be > 0'
-    OrderedDict([('nbBits', 8)])
-    OrderedDict([('nbBits', (0, 0))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBits should be an integer > 0'
-    OrderedDict([('nbBits', (2, 8))])
-    OrderedDict([('nbBits', (8, 2))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Size must be defined with a tuple of integers, where the second value is greater than the first value'
-    OrderedDict([('nbBits', (-4, -2))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBits should be an integer >= 0'
-    OrderedDict([('nbBits', (-4, 2))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBits should be an integer >= 0'
-    OrderedDict([('nbBits', (2, -4))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBits should be an integer > 0'
-    OrderedDict([('nbBits', 'test')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBits should be an integer >= 0'
-    OrderedDict([('nbBits', ('test1', 'test2'))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'first element of nbBits should be an integer >= 0'
-    OrderedDict([('nbBits', (1, 'test2'))])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'second element of nbBits should be an integer > 0'
-    OrderedDict([('default', None)])
-    OrderedDict([('default', '')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Cannot set a default Type value (here 'b''') that cannot be parsed (current type: BitArray(nbBits=(0,65536))'
-    OrderedDict([('default', b'')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'b''', type: '<class 'bytes'>''
-    OrderedDict([('default', b'e')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'b'e'', type: '<class 'bytes'>''
-    OrderedDict([('default', b'eeee')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'b'eeee'', type: '<class 'bytes'>''
-    OrderedDict([('default', b'ff')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'b'ff'', type: '<class 'bytes'>''
-    OrderedDict([('default', 'ff')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Input default value for the following BitArray is incorrect: 'ff'. Error: 'character must be '0' or '1', found 'f'''
-    OrderedDict([('default', '00001111')])
-    OrderedDict([('default', b'00001111')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Unsupported input format for default value: 'b'00001111'', type: '<class 'bytes'>''
+    >>> possible_parameters = OrderedDict()
+    >>> possible_parameters["value"] = [None, "00001111"]
+    >>> possible_parameters["nbBits"] = [None, 8, (2, 8)]
+    >>> possible_parameters["default"] = [None, "00001111"]
 
-    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
-    OrderedDict([('value', None), ('nbBits', None), ('default', None)])
-    OrderedDict([('value', None), ('nbBits', None), ('default', '00001111')])
-    OrderedDict([('value', None), ('nbBits', 8), ('default', None)])
-    OrderedDict([('value', None), ('nbBits', 8), ('default', '00001111')])
-    OrderedDict([('value', None), ('nbBits', (2, 8)), ('default', None)])
-    OrderedDict([('value', None), ('nbBits', (2, 8)), ('default', '00001111')])
-    OrderedDict([('value', '00001111'), ('nbBits', None), ('default', None)])
-    OrderedDict([('value', '00001111'), ('nbBits', None), ('default', '00001111')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A BitArray should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', '00001111'), ('nbBits', 8), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A BitArray should have either its value or its nbBits set, but not both'
-    OrderedDict([('value', '00001111'), ('nbBits', 8), ('default', '00001111')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A BitArray should have either its value or its nbBits set, but not both'
-    OrderedDict([('value', '00001111'), ('nbBits', (2, 8)), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A BitArray should have either its value or its nbBits set, but not both'
-    OrderedDict([('value', '00001111'), ('nbBits', (2, 8)), ('default', '00001111')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A BitArray should have either its value or its nbBits set, but not both'
+    >>> test_type_one_parameter(data_type, possible_parameters)
 
-    >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
-    OrderedDict([('value', None), ('nbBits', None), ('default', None)])
-    EXCEPTION IN SPECIALIZATION: 'specialize() produced 4270 bits, which is not aligned on 8 bits. You should review the symbol model.'
-    OrderedDict([('value', None), ('nbBits', (2, 8)), ('default', None)])
-    EXCEPTION IN SPECIALIZATION: 'specialize() produced 6 bits, which is not aligned on 8 bits. You should review the symbol model.'
+    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, possible_parameters)
 
     """
 

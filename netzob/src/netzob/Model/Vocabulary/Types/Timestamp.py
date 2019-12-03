@@ -127,11 +127,6 @@ class Timestamp(AbstractType):
 
                      The following unit sizes are available:
 
-                     * UnitSize.SIZE_1
-                     * UnitSize.SIZE_4
-                     * UnitSize.SIZE_8
-                     * UnitSize.SIZE_16
-                     * UnitSize.SIZE_24
                      * UnitSize.SIZE_32 (default unit size)
                      * UnitSize.SIZE_64
 
@@ -262,6 +257,21 @@ class Timestamp(AbstractType):
         if value is not None and default is not None:
             raise ValueError("A Timestamp should have either its constant value or its default value set, but not both")
 
+        # Validate epoch
+        specific_epochs = [Epoch.WINDOWS, Epoch.MUMPS, Epoch.VMS]
+        if epoch in specific_epochs and unitSize == UnitSize.SIZE_32:
+            raise ValueError("A Timestamp epoch in the following list ({}) should have its unitSize set to UnitSize.SIZE_64".format(specific_epochs))
+
+        # Validate unity
+        specific_unities = [Unity.DECISECOND, Unity.CENTISECOND, Unity.MILLISECOND, Unity.MICROSECOND, Unity.NANOSECOND]
+        if unity in specific_unities and unitSize == UnitSize.SIZE_32:
+            raise ValueError("A Timestamp unity in the following list ({}) should have its unitSize set to UnitSize.SIZE_64".format(specific_unities))
+
+        # Validate uniSize
+        valid_unitSizes = [UnitSize.SIZE_32, UnitSize.SIZE_64]
+        if unitSize not in valid_unitSizes:
+            raise ValueError("unitSize parameter should be one of '{}', but not '{}'".format(valid_unitSizes, str(unitSize)))
+
         if value is not None and not isinstance(value, bitarray):
             # converts the specified value in bitarray
             value = TypeConverter.convert(
@@ -339,6 +349,8 @@ class Timestamp(AbstractType):
         >>> time = Timestamp()
         >>> time.canParse(Integer(1444494130, unitSize=UnitSize.SIZE_32).value)
         True
+        >>> time.canParse(Integer(144449413000, unitSize=UnitSize.SIZE_64).value)
+        True
         >>> # A timestamp is nothing else than 32bits parsed as an unsigned long
         >>> time.canParse(String("test").value)
         True
@@ -370,8 +382,8 @@ class Timestamp(AbstractType):
                 data[:int(self.unitSize.value)],
                 BitArray,
                 Integer,
-                dst_unitSize=UnitSize.SIZE_32,
-                dst_sign=Sign.UNSIGNED)
+                dst_unitSize=self.unitSize,
+                dst_sign=self.sign)
 
             # convert the value in seconds
             value = value / self.unity.value
@@ -436,7 +448,7 @@ class Timestamp(AbstractType):
             BitArray,
             src_unitSize=self.unitSize,
             src_endianness=self.endianness,
-            src_sign=Sign.UNSIGNED,
+            src_sign=self.sign,
             dst_endianness=self.endianness)
 
         return final
@@ -507,6 +519,7 @@ def _test():
     r"""
 
     >>> from netzob.all import *
+    >>> Conf.apply()
     >>> t = Timestamp()
     >>> print(t)
     Timestamp()
@@ -519,6 +532,7 @@ def _test():
     >>> print(t)
     Timestamp(1444494130)
 
+
     # test abstraction of arbitrary values
 
     >>> domains = [
@@ -527,6 +541,236 @@ def _test():
     >>> symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])
     >>> data = b''.join(next(f.specialize()) for f in symbol.fields)
     >>> assert symbol.abstract(data)
+
+
+    # Test different sizes
+
+    >>> t = Timestamp()
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(unitSize = UnitSize.SIZE_32)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(unitSize = UnitSize.SIZE_64)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    8
+    >>> assert s.abstract(data)
+
+
+    # Test different signs
+
+    >>> t = Timestamp(sign=Sign.SIGNED)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(sign=Sign.UNSIGNED)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+
+    # Test different endiannesses
+
+    >>> t = Timestamp(1444737333, endianness=Endianness.LITTLE)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data_little = next(s.specialize())
+    >>> len(data_little)
+    4
+    >>> data_little
+    b'5\xf1\x1cV'
+    >>> assert s.abstract(data_little)
+
+    >>> t = Timestamp(1444737333, endianness=Endianness.BIG)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data_big = next(s.specialize())
+    >>> len(data_big)
+    4
+    >>> data_big
+    b'V\x1c\xf15'
+    >>> assert s.abstract(data_big)
+
+
+    # Test different epochs
+
+    >>> t = Timestamp(epoch=Epoch.WINDOWS)
+    Traceback (most recent call last):
+    ...
+    ValueError: A Timestamp epoch in the following list ([Epoch.WINDOWS, Epoch.MUMPS, Epoch.VMS]) should have its unitSize set to UnitSize.SIZE_64
+
+    >>> t = Timestamp(epoch=Epoch.WINDOWS, unitSize=UnitSize.SIZE_64)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    8
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(epoch=Epoch.MUMPS, unitSize=UnitSize.SIZE_64)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    8
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(epoch=Epoch.VMS, unitSize=UnitSize.SIZE_64)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    8
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(epoch=Epoch.EXCEL)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(epoch=Epoch.NTP)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(epoch=Epoch.MACOS_9)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(epoch=Epoch.PICKOS)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(epoch=Epoch.UNIX)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(epoch=Epoch.FAT)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(epoch=Epoch.GPS)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(epoch=Epoch.ZIGBEE)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(epoch=Epoch.COCOA)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+
+    # Test different unities
+
+    >>> t = Timestamp(unity=Unity.SECOND)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    4
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(unity=Unity.DECISECOND)
+    Traceback (most recent call last):
+    ...
+    ValueError: A Timestamp unity in the following list ([Unity.DECISECOND, Unity.CENTISECOND, Unity.MILLISECOND, Unity.MICROSECOND, Unity.NANOSECOND]) should have its unitSize set to UnitSize.SIZE_64
+
+    >>> t = Timestamp(unity=Unity.DECISECOND, unitSize=UnitSize.SIZE_64)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    8
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(unity=Unity.CENTISECOND, unitSize=UnitSize.SIZE_64)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    8
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(unity=Unity.MILLISECOND, unitSize=UnitSize.SIZE_64)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    8
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(unity=Unity.MICROSECOND, unitSize=UnitSize.SIZE_64)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    8
+    >>> assert s.abstract(data)
+
+    >>> t = Timestamp(unity=Unity.NANOSECOND, unitSize=UnitSize.SIZE_64)
+    >>> f = Field(t)
+    >>> s = Symbol([f])
+    >>> data = next(s.specialize())
+    >>> len(data)
+    8
+    >>> assert s.abstract(data)
+
 
     """
 
@@ -538,97 +782,20 @@ def _test_specialize_abstract():
     >>> Conf.apply()
     >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
 
-    >>> possible_parameters = OrderedDict()
-    >>> possible_parameters["value"] = [None, b'', b'a', b'bb', "bb", 1444737333]
-    >>> possible_parameters["epoch"] = [None, b'', b'a', b'bb', "bb", 42, Epoch.UNIX]
-    >>> possible_parameters["unity"] = [None, b'', b'a', b'bb', "bb", 42, Unity.SECOND]
-    >>> possible_parameters["unitSize"] = [None, UnitSize.SIZE_32]
-    >>> possible_parameters["endianness"] = [None, Endianness.LITTLE, Endianness.BIG]
-    >>> possible_parameters["sign"] = [None, Sign.SIGNED, Sign.UNSIGNED]
-    >>> possible_parameters["default"] = [None, b'', b'a', b'bb', "bb", 1444737333]
-
     >>> data_type = Timestamp
 
-    >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
-    OrderedDict([('value', None)])
-    OrderedDict([('value', b'')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'''
-    OrderedDict([('value', b'a')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'a''
-    OrderedDict([('value', b'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'bb''
-    OrderedDict([('value', 'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: 'bb''
-    OrderedDict([('value', 1444737333)])
-    OrderedDict([('epoch', None)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value cannot be None'
-    OrderedDict([('epoch', b'')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
-    OrderedDict([('epoch', b'a')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
-    OrderedDict([('epoch', b'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
-    OrderedDict([('epoch', 'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
-    OrderedDict([('epoch', 42)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'epoch value should a member of the Epoch enum'
-    OrderedDict([('epoch', Epoch.UNIX)])
-    OrderedDict([('unity', None)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value cannot be None'
-    OrderedDict([('unity', b'')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
-    OrderedDict([('unity', b'a')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
-    OrderedDict([('unity', b'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
-    OrderedDict([('unity', 'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
-    OrderedDict([('unity', 42)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unity value should a member of the Unity enum'
-    OrderedDict([('unity', Unity.SECOND)])
-    OrderedDict([('unitSize', None)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'unitSize cannot be None'
-    OrderedDict([('unitSize', UnitSize.SIZE_32)])
-    OrderedDict([('endianness', None)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'endianness cannot be None'
-    OrderedDict([('endianness', Endianness.LITTLE)])
-    OrderedDict([('endianness', Endianness.BIG)])
-    OrderedDict([('sign', None)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'sign cannot be None'
-    OrderedDict([('sign', Sign.SIGNED)])
-    OrderedDict([('sign', Sign.UNSIGNED)])
-    OrderedDict([('default', None)])
-    OrderedDict([('default', b'')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'''
-    OrderedDict([('default', b'a')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'a''
-    OrderedDict([('default', b'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: b'bb''
-    OrderedDict([('default', 'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'invalid literal for int() with base 10: 'bb''
-    OrderedDict([('default', 1444737333)])
+    >>> possible_parameters = OrderedDict()
+    >>> possible_parameters["value"] = [1444737333]
+    >>> possible_parameters["epoch"] = [Epoch.UNIX]
+    >>> possible_parameters["unity"] = [Unity.SECOND]
+    >>> possible_parameters["unitSize"] = [UnitSize.SIZE_32, UnitSize.SIZE_64]
+    >>> possible_parameters["endianness"] = [Endianness.LITTLE, Endianness.BIG]
+    >>> possible_parameters["sign"] = [Sign.SIGNED, Sign.UNSIGNED]
+    >>> possible_parameters["default"] = [None, 1444737333]
 
-    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
-    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
-    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 1444737333)])
-    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
-    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 1444737333)])
-    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
-    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 1444737333)])
-    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
-    OrderedDict([('value', None), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 1444737333)])
-    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', None)])
-    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.SIGNED), ('default', 1444737333)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', None)])
-    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.LITTLE), ('sign', Sign.UNSIGNED), ('default', 1444737333)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', None)])
-    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.SIGNED), ('default', 1444737333)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', None)])
-    OrderedDict([('value', 1444737333), ('epoch', Epoch.UNIX), ('unity', Unity.SECOND), ('unitSize', UnitSize.SIZE_32), ('endianness', Endianness.BIG), ('sign', Sign.UNSIGNED), ('default', 1444737333)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'A Timestamp should have either its constant value or its default value set, but not both'
+    >>> test_type_one_parameter(data_type, possible_parameters)
+
+    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, possible_parameters)
 
     >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
 

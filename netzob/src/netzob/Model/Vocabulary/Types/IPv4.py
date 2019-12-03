@@ -136,12 +136,28 @@ class IPv4(AbstractType):
                  sign=AbstractType.defaultSign(),
                  default=None):
 
+        # Manage mutualy exclusive parameters
         if value is not None and network is not None:
             raise ValueError("An IPv4 should have either its value or its network set, but not both")
 
         if value is not None and default is not None:
             raise ValueError("An IPv4 should have either its constant value or its default value set, but not both")
 
+        # Manage value parameter
+        if value is not None and isinstance(value, IPAddress):
+            value = str(value)
+
+        if value is not None and not (isinstance(value, str) or isinstance(value, bitarray)):
+            raise ValueError("An IPv4 value parameter should either be a str, a netaddr.IPAddress or a bitarray, but not a '{}'".format(type(value)))
+
+        # Manage default parameter
+        if default is not None and isinstance(default, IPAddress):
+            default = str(default)
+
+        if default is not None and not (isinstance(default, str) or isinstance(default, bitarray)):
+            raise ValueError("An IPv4 default parameter should either be a str, a netaddr.IPAddress or a bitarray, but not a '{}'".format(type(default)))
+
+        # Manage conversions
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
@@ -482,6 +498,9 @@ def _test():
     r"""
 
     >>> from netzob.all import *
+    >>> Conf.apply()
+    >>> import netaddr
+
     >>> t = IPv4()
     >>> print(t)
     IPv4()
@@ -490,13 +509,60 @@ def _test():
     >>> t.unitSize
     UnitSize.SIZE_32
 
+
+    # Test value parameter
+    >>> t = IPv4("192.168.1.1")
+    >>> print(t)
+    IPv4("192.168.1.1")
+
+    >>> t = IPv4(192)
+    Traceback (most recent call last):
+    ...
+    ValueError: An IPv4 value parameter should either be a str, a netaddr.IPAddress or a bitarray, but not a '<class 'int'>'
+
+    >>> t = IPv4(netaddr.IPAddress("127.0.0.1"))
+    >>> print(t)
+    IPv4("127.0.0.1")
+
+    
+    # Test default parameter
+
+    >>> t = IPv4(default="192.168.10.1")
+    >>> print(t)
+    IPv4()
+
+    >>> t = IPv4(default=netaddr.IPAddress("127.0.0.2"))
+    >>> print(t)
+    IPv4()
+    >>> data = t.generate().tobytes()
+    >>> data
+    b'\x7f\x00\x00\x02'
+    >>> t.canParse(data)
+    True
+
+    >>> t = IPv4(default=192)
+    Traceback (most recent call last):
+    ...
+    ValueError: An IPv4 default parameter should either be a str, a netaddr.IPAddress or a bitarray, but not a '<class 'int'>'
+
+
+    # Test network parameter
+
     >>> t = IPv4(network="192.168.0.0/24")
     >>> print(t)
     IPv4("192.168.0.0/24")
 
-    >>> t = IPv4("192.168.1.1")
+    >>> t = IPv4(network=192)
+    Traceback (most recent call last):
+    ...
+    TypeError: Specified network constraints is not valid IPv4 Network.
+
+    >>> t = IPv4(network=netaddr.IPNetwork("192.168.0.0/24"))
     >>> print(t)
-    IPv4("192.168.1.1")
+    IPv4("192.168.0.0/24")
+    >>> data = t.generate().tobytes()
+    >>> data
+    b'\xc0\xa8\x00\x10'
 
 
     # test abstraction arbitrary values
@@ -523,193 +589,21 @@ def _test_specialize_abstract():
     r"""
     >>> from netzob.all import *
     >>> from collections import OrderedDict
+    >>> import netaddr
     >>> Conf.apply()
     >>> from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract
 
-    >>> possible_parameters = OrderedDict()
-    >>> possible_parameters["value"] = [None, b'', b'a', b'bb', "bb", 42, "127.0.0.1", b"127.0.0.1"]
-    >>> possible_parameters["network"] = [None, (), 4, "127.0.0.1", "127.0.0.1/16", b"127.0.0.1"]
-    >>> possible_parameters["endianness"] = [None, Endianness.LITTLE, Endianness.BIG]
-    >>> possible_parameters["default"] = [None, b'', b'a', b'bb', "bb", 42, "127.0.0.1", b"127.0.0.1"]
-
     >>> data_type = IPv4
 
-    >>> functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)
-    OrderedDict([('value', None)])
-    OrderedDict([('value', b'')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
-    OrderedDict([('value', b'a')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
-    OrderedDict([('value', b'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
-    OrderedDict([('value', 'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
-    OrderedDict([('value', 42)])
-    OrderedDict([('value', '127.0.0.1')])
-    OrderedDict([('value', b'127.0.0.1')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
-    OrderedDict([('network', None)])
-    OrderedDict([('network', ())])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Specified network constraints is not valid IPv4 Network.'
-    OrderedDict([('network', 4)])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Specified network constraints is not valid IPv4 Network.'
-    OrderedDict([('network', '127.0.0.1')])
-    OrderedDict([('network', '127.0.0.1/16')])
-    OrderedDict([('network', b'127.0.0.1')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Specified network constraints is not valid IPv4 Network.'
-    OrderedDict([('endianness', None)])
-    OrderedDict([('endianness', Endianness.LITTLE)])
-    OrderedDict([('endianness', Endianness.BIG)])
-    OrderedDict([('default', None)])
-    OrderedDict([('default', b'')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
-    OrderedDict([('default', b'a')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
-    OrderedDict([('default', b'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
-    OrderedDict([('default', 'bb')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
-    OrderedDict([('default', 42)])
-    OrderedDict([('default', '127.0.0.1')])
-    OrderedDict([('default', b'127.0.0.1')])
-    EXCEPTION IN MODELING WITH ONE PARAMETER: 'Data is not a valid IPv4, cannot decode it.'
+    >>> possible_parameters = OrderedDict()
+    >>> possible_parameters["value"] = [None, "127.0.0.1", netaddr.IPAddress("127.0.0.2")]
+    >>> possible_parameters["network"] = [None, "127.0.0.1/16"]
+    >>> possible_parameters["endianness"] = [None, Endianness.LITTLE, Endianness.BIG]
+    >>> possible_parameters["default"] = [None, "127.0.0.1"]
 
-    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, functional_possible_parameters)
-    OrderedDict([('value', None), ('network', None), ('endianness', None), ('default', None)])
-    OrderedDict([('value', None), ('network', None), ('endianness', None), ('default', 42)])
-    OrderedDict([('value', None), ('network', None), ('endianness', None), ('default', '127.0.0.1')])
-    OrderedDict([('value', None), ('network', None), ('endianness', Endianness.LITTLE), ('default', None)])
-    OrderedDict([('value', None), ('network', None), ('endianness', Endianness.LITTLE), ('default', 42)])
-    OrderedDict([('value', None), ('network', None), ('endianness', Endianness.LITTLE), ('default', '127.0.0.1')])
-    OrderedDict([('value', None), ('network', None), ('endianness', Endianness.BIG), ('default', None)])
-    OrderedDict([('value', None), ('network', None), ('endianness', Endianness.BIG), ('default', 42)])
-    OrderedDict([('value', None), ('network', None), ('endianness', Endianness.BIG), ('default', '127.0.0.1')])
-    OrderedDict([('value', None), ('network', '127.0.0.1'), ('endianness', None), ('default', None)])
-    OrderedDict([('value', None), ('network', '127.0.0.1'), ('endianness', None), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/32"))'
-    OrderedDict([('value', None), ('network', '127.0.0.1'), ('endianness', None), ('default', '127.0.0.1')])
-    OrderedDict([('value', None), ('network', '127.0.0.1'), ('endianness', Endianness.LITTLE), ('default', None)])
-    OrderedDict([('value', None), ('network', '127.0.0.1'), ('endianness', Endianness.LITTLE), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/32"))'
-    OrderedDict([('value', None), ('network', '127.0.0.1'), ('endianness', Endianness.LITTLE), ('default', '127.0.0.1')])
-    OrderedDict([('value', None), ('network', '127.0.0.1'), ('endianness', Endianness.BIG), ('default', None)])
-    OrderedDict([('value', None), ('network', '127.0.0.1'), ('endianness', Endianness.BIG), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/32"))'
-    OrderedDict([('value', None), ('network', '127.0.0.1'), ('endianness', Endianness.BIG), ('default', '127.0.0.1')])
-    OrderedDict([('value', None), ('network', '127.0.0.1/16'), ('endianness', None), ('default', None)])
-    OrderedDict([('value', None), ('network', '127.0.0.1/16'), ('endianness', None), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/16"))'
-    OrderedDict([('value', None), ('network', '127.0.0.1/16'), ('endianness', None), ('default', '127.0.0.1')])
-    OrderedDict([('value', None), ('network', '127.0.0.1/16'), ('endianness', Endianness.LITTLE), ('default', None)])
-    OrderedDict([('value', None), ('network', '127.0.0.1/16'), ('endianness', Endianness.LITTLE), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/16"))'
-    OrderedDict([('value', None), ('network', '127.0.0.1/16'), ('endianness', Endianness.LITTLE), ('default', '127.0.0.1')])
-    OrderedDict([('value', None), ('network', '127.0.0.1/16'), ('endianness', Endianness.BIG), ('default', None)])
-    OrderedDict([('value', None), ('network', '127.0.0.1/16'), ('endianness', Endianness.BIG), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'Cannot set a default Type value (here 'b'\x00\x00\x00*'') that cannot be parsed (current type: IPv4("127.0.0.1/16"))'
-    OrderedDict([('value', None), ('network', '127.0.0.1/16'), ('endianness', Endianness.BIG), ('default', '127.0.0.1')])
-    OrderedDict([('value', 42), ('network', None), ('endianness', None), ('default', None)])
-    OrderedDict([('value', 42), ('network', None), ('endianness', None), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', 42), ('network', None), ('endianness', None), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', 42), ('network', None), ('endianness', Endianness.LITTLE), ('default', None)])
-    OrderedDict([('value', 42), ('network', None), ('endianness', Endianness.LITTLE), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', 42), ('network', None), ('endianness', Endianness.LITTLE), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', 42), ('network', None), ('endianness', Endianness.BIG), ('default', None)])
-    OrderedDict([('value', 42), ('network', None), ('endianness', Endianness.BIG), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', 42), ('network', None), ('endianness', Endianness.BIG), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1'), ('endianness', None), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1'), ('endianness', None), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1'), ('endianness', None), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1'), ('endianness', Endianness.LITTLE), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1'), ('endianness', Endianness.LITTLE), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1'), ('endianness', Endianness.LITTLE), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1'), ('endianness', Endianness.BIG), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1'), ('endianness', Endianness.BIG), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1'), ('endianness', Endianness.BIG), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1/16'), ('endianness', None), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1/16'), ('endianness', None), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1/16'), ('endianness', None), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1/16'), ('endianness', Endianness.LITTLE), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1/16'), ('endianness', Endianness.LITTLE), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1/16'), ('endianness', Endianness.LITTLE), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1/16'), ('endianness', Endianness.BIG), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1/16'), ('endianness', Endianness.BIG), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', 42), ('network', '127.0.0.1/16'), ('endianness', Endianness.BIG), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', None), ('endianness', None), ('default', None)])
-    OrderedDict([('value', '127.0.0.1'), ('network', None), ('endianness', None), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', None), ('endianness', None), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', None), ('endianness', Endianness.LITTLE), ('default', None)])
-    OrderedDict([('value', '127.0.0.1'), ('network', None), ('endianness', Endianness.LITTLE), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', None), ('endianness', Endianness.LITTLE), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', None), ('endianness', Endianness.BIG), ('default', None)])
-    OrderedDict([('value', '127.0.0.1'), ('network', None), ('endianness', Endianness.BIG), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', None), ('endianness', Endianness.BIG), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its constant value or its default value set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1'), ('endianness', None), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1'), ('endianness', None), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1'), ('endianness', None), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1'), ('endianness', Endianness.LITTLE), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1'), ('endianness', Endianness.LITTLE), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1'), ('endianness', Endianness.LITTLE), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1'), ('endianness', Endianness.BIG), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1'), ('endianness', Endianness.BIG), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1'), ('endianness', Endianness.BIG), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1/16'), ('endianness', None), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1/16'), ('endianness', None), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1/16'), ('endianness', None), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1/16'), ('endianness', Endianness.LITTLE), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1/16'), ('endianness', Endianness.LITTLE), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1/16'), ('endianness', Endianness.LITTLE), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1/16'), ('endianness', Endianness.BIG), ('default', None)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1/16'), ('endianness', Endianness.BIG), ('default', 42)])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
-    OrderedDict([('value', '127.0.0.1'), ('network', '127.0.0.1/16'), ('endianness', Endianness.BIG), ('default', '127.0.0.1')])
-    EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: 'An IPv4 should have either its value or its network set, but not both'
+    >>> test_type_one_parameter(data_type, possible_parameters)
+
+    >>> (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, possible_parameters)
 
     >>> test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)
 

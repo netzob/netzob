@@ -863,6 +863,11 @@ class AbstractType(object, metaclass=abc.ABCMeta):
 
 
 def test_type_one_parameter(data_type, possible_parameters):
+    """This test tries all possible parameters as input for this
+    datatype. This test should not trigger any exception as input
+    parameters are considered to be valid.
+
+    """
     functional_possible_parameters = OrderedDict()
     for parameter_name, parameter_contents in possible_parameters.items():
         functional_parameter_contents = []
@@ -870,40 +875,41 @@ def test_type_one_parameter(data_type, possible_parameters):
             parameters = OrderedDict()
             parameters[parameter_name] = parameter_content
             try:
-                print(parameters)
                 data_type(**parameters)
             except Exception as e:
-                print("EXCEPTION IN MODELING WITH ONE PARAMETER: '{}'".format(e))
-            else:
-                functional_parameter_contents.append(parameter_content)
+                print(parameters)
+                print("Exception when creating a datatype with one parameter: '{}'".format(e))
         functional_possible_parameters[parameter_name] = functional_parameter_contents
 
-    return functional_possible_parameters
 
+def test_type_multiple_parameters(data_type, possible_parameters):
+    """This test tries all possible parameters as multiple inputs for this
+    datatype. This test should not trigger any exception as input
+    parameters are considered to be valid.
 
-def test_type_multiple_parameters(data_type, functional_possible_parameters):
+    """
     import itertools
 
-    #print(functional_possible_parameters)
-    parameter_names = functional_possible_parameters.keys()
+    parameter_names = possible_parameters.keys()
     functional_combinations_possible_parameters = []
-    combinations_possible_parameters = list(itertools.product(*functional_possible_parameters.values()))
+    combinations_possible_parameters = list(itertools.product(*possible_parameters.values()))
     for current_combination in combinations_possible_parameters:
         parameters = OrderedDict()
         for idx, parameter_name in enumerate(parameter_names):
             parameters[parameter_name] = current_combination[idx]
         try:
-            print(parameters)
             data_type(**parameters)
         except Exception as e:
-            print("EXCEPTION IN MODELING WITH MULTIPLE PARAMETERS: '{}'".format(e))
+            if "should have either" not in str(e):  # Handle mutually exclusive parameter types
+                print(parameters)
+                print("Exception when creating a datatype with multiple parameters: '{}'".format(e))
         else:
             functional_combinations_possible_parameters.append(current_combination)
 
     return (parameter_names, functional_combinations_possible_parameters)
 
 
-def test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters):
+def test_type_specialize_abstract(data_type, parameter_names, combinations_possible_parameters):
     from netzob.all import Field, Symbol
 
     def specialize_abstract(parameters):
@@ -936,7 +942,7 @@ def test_type_specialize_abstract(data_type, parameter_names, functional_combina
             print(parameters)
             print("EXCEPTION IN COMPARING SPECIALIZATION AND ABSTRACTION RESULTS")
 
-    for current_combination in functional_combinations_possible_parameters:
+    for current_combination in combinations_possible_parameters:
         parameters = OrderedDict()
         for idx, parameter_name in enumerate(parameter_names):
             parameters[parameter_name] = current_combination[idx]
