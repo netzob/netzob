@@ -408,6 +408,8 @@ class Integer(AbstractType):
 
         if interval is None:
             interval = (None, None)
+        elif isinstance(interval, int):
+            interval = (interval, interval)
         else:
             if not (isinstance(interval, tuple) and len(interval) == 2):
                 raise ValueError("Input interval shoud be a tuple of two integers. Value received: '{}'".format(interval))
@@ -1087,7 +1089,7 @@ def _test_specialize_abstract():
 
     >>> possible_parameters = OrderedDict()
     >>> possible_parameters["value"] = [0, 42, -5, 24242]
-    >>> possible_parameters["interval"] = [None, (4, 10), (-10, 10), (20, 257)]
+    >>> possible_parameters["interval"] = [None, 3, (4, 10), (-10, 10), (20, 257)]
     >>> possible_parameters["unitSize"] = [UnitSize.SIZE_8, UnitSize.SIZE_16, UnitSize.SIZE_24, UnitSize.SIZE_32, UnitSize.SIZE_64]
     >>> possible_parameters["endianness"] = [Endianness.LITTLE, Endianness.BIG]
     >>> possible_parameters["sign"] = [Sign.SIGNED, Sign.UNSIGNED]
