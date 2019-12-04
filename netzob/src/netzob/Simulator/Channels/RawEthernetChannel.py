@@ -203,12 +203,18 @@ class RawEthernetChannel(AbstractChannel):
         :type rate: :class:`int`, required
         """
         NetUtils.set_rate(self.interface, rate)
+        if rate is not None:
+            self._logger.info("Network rate limited to {:.2f} kBps on {} interface".format(rate/1000, self.interface))
+        self._rate = rate
 
     @public_api
     def unset_rate(self):
         """This method clears the transmission rate.
         """
-        NetUtils.set_rate(self.interface, None)
+        if self._rate is not None:
+            NetUtils.set_rate(self.interface, None)
+            self._rate = None
+            self._logger.info("Network rate limitation removed on {} interface".format(self.interface))
 
 
 class RawEthernetChannelBuilder(ChannelBuilder):

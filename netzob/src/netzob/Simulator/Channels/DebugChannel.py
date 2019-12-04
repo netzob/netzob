@@ -176,11 +176,17 @@ class DebugChannel(AbstractChannel):
                          limited by the underlying physical layer.
         :type rate: :class:`int`, required
         """
+        if rate is not None:
+            self._logger.info("Network rate limited to {:.2f} kBps".format(rate/1000))
+        self._rate = rate
 
     @public_api
     def unset_rate(self):
         """This method clears the transmission rate.
         """
+        if self._rate is not None:
+            self._rate = None
+            self._logger.info("Network rate limitation removed")
 
 
 class DebugChannelBuilder(ChannelBuilder):
