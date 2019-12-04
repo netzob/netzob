@@ -880,13 +880,18 @@ class NetUtils(object):
 
         """
         if rate is None:
-            cmd = "sudo tc qdisc del dev {} root netem".format(
+            cmd = "tc qdisc del dev {} root".format(
                 localInterface)
         else:
-            cmd = "sudo tc qdisc add dev {} root netem rate {}".format(
+            cmd = "tc qdisc replace dev {} root netem rate {}".format(
                 localInterface, rate * 8)  # in bits per second
         env = os.environ
-        env['RUNAS'] = 'root'
-        cmd = "cottontail-privcap NULL {}".format(cmd)
+        cmd = "cottontail-privcap TC {}".format(cmd)
         cmd = shlex.split(cmd)
-        subprocess.Popen(cmd, env=env)
+        p = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (stdoutData, stderrData) = p.communicate()
+        if p.returncode != 0 and rate is not None:
+            # if rate is None no tc rule was previously defined on th interface,
+            # the error "No such file or directory" is returned with returncode=2 : ignore it.
+            errMsg = b"ERROR: " + stderrData
+            raise Exception("set_rate(localInterface='{}', rate={}) failed, code = {}: {})".format(localInterface, rate, p.returncode, errMsg))
