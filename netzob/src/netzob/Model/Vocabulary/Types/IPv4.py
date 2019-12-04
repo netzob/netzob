@@ -336,12 +336,12 @@ class IPv4(AbstractType):
         >>> ip.canParse("192.168.1.10")
         False
         >>> ip.canParse(3232235530)
-        True
+        False
         >>> ip = IPv4("167.20.14.20")
         >>> ip.canParse(3232235530)
         False
-        >>> ip.canParse(3232235530)
-        False
+        >>> ip.canParse("167.20.14.20")
+        True
 
 
         or with contraints over the expected network the ipv4 belongs to:
@@ -467,33 +467,36 @@ class IPv4(AbstractType):
         :type data: str or raw bytes (BBBB)
         :return: the encoded IPAddress
         """
-        if isinstance(data, (str, int)):
+        if isinstance(data, str):
             try:
                 ip = IPAddress(data)
                 if ip is not None and ip.version == 4:
                     return ip
             except:
                 pass
-        try:
-            structFormat = "<"
-            if endianness == Endianness.BIG:
-                structFormat = ">"
+        elif isinstance(data, bytes):
+            try:
+                structFormat = "<"
+                if endianness == Endianness.BIG:
+                    structFormat = ">"
 
-            if not sign == Sign.SIGNED:
-                structFormat += "bbbb"
-            else:
-                structFormat += "BBBB"
+                if not sign == Sign.SIGNED:
+                    structFormat += "bbbb"
+                else:
+                    structFormat += "BBBB"
 
-            quads = list(map(str, struct.unpack(structFormat, data)))
-            strIP = '.'.join(quads)
+                quads = list(map(str, struct.unpack(structFormat, data)))
+                strIP = '.'.join(quads)
 
-            ip = IPAddress(strIP)
+                ip = IPAddress(strIP)
 
-            if ip is not None and ip.version == 4:
-                return ip
-        except Exception as e:
-            raise TypeError("Impossible to encode {0} into an IPv4 data ({1})".
-                            format(data, e))
+                if ip is not None and ip.version == 4:
+                    return ip
+            except Exception as e:
+                raise TypeError("Impossible to encode {0} into an IPv4 data ({1})".
+                                format(data, e))
+        else:
+            raise TypeError("Wrong data type for encode(). Expected str or bytes, got '{}'".format(type(data)))
 
     def getFixedBitSize(self):
         self._logger.debug("Determine the deterministic size of the value of "
