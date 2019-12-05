@@ -576,8 +576,6 @@ class Preset(object):
 
                               * ``None`` (default value), which indicates to use the unit size set
                                 in the field domain.
-                              * ``UnitSize.SIZE_1``
-                              * ``UnitSize.SIZE_4``
                               * ``UnitSize.SIZE_8``
                               * ``UnitSize.SIZE_16``
                               * ``UnitSize.SIZE_24``

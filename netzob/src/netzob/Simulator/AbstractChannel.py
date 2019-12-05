@@ -252,8 +252,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
     @public_api
     def write(self, data, duration=None):
         """Write to the communication channel the specified data, either once,
-        or in a loop according to the `rate` and `duration`
-        parameters.
+        or in a loop according to the `duration` parameter.
 
         :param data: The data to write on the channel.
         :param duration: This indicates for how many seconds the data is
@@ -276,8 +275,7 @@ class AbstractChannel(ChannelInterface, Thread, metaclass=abc.ABCMeta):
     @public_api
     def write_map(self, data_iterator, duration=None):
         """Write to the communication channel the successive data values,
-        either once, or in a loop according to the `rate` and `duration`
-        parameters.
+        either once, or in a loop according to the `duration` parameter.
 
         :param data_iterator: data iterator used to write on the channel.
         :param duration: This indicates for how many seconds the data is
