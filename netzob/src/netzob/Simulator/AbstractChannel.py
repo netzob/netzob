@@ -38,7 +38,6 @@
 import abc
 import array
 import binascii
-import os
 import shlex
 import socket
 import struct
@@ -885,10 +884,8 @@ class NetUtils(object):
         else:
             cmd = "tc qdisc replace dev {} root netem rate {}".format(
                 localInterface, rate * 8)  # in bits per second
-        env = os.environ
-        cmd = "cottontail-privcap TC {}".format(cmd)
         cmd = shlex.split(cmd)
-        p = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (stdoutData, stderrData) = p.communicate()
         if p.returncode != 0 and rate is not None:
             # if rate is None no tc rule was previously defined on th interface,
