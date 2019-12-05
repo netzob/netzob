@@ -38,7 +38,6 @@
 import abc
 import array
 import binascii
-import os
 import shlex
 import socket
 import struct
