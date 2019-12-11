@@ -883,10 +883,42 @@ class NetUtils(object):
             cmd = "tc qdisc replace dev {} root netem rate {}".format(
                 localInterface, rate * 8)  # in bits per second
         cmd = shlex.split(cmd)
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (stdoutData, stderrData) = p.communicate()
+        p = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (_, stderrData) = p.communicate()
         if p.returncode != 0 and rate is not None:
-            # if rate is None no tc rule was previously defined on th interface,
+            # if rate is None no tc rule was previously defined on the interface,
             # the error "No such file or directory" is returned with returncode=2 : ignore it.
             errMsg = b"ERROR: " + stderrData
             raise Exception("set_rate(localInterface='{}', rate={}) failed, code = {}: {})".format(localInterface, rate, p.returncode, errMsg))
+
+    @staticmethod
+    def get_rate(localInterface):
+        r"""
+        Get the transmission rate status on the given interface.
+
+        :param localInterface: The local network interface
+        :type localInterface: :class:`str`
+
+        :return: A string containing the bandwidth set previously by
+                 a tc command. If no tc rate was set, returns
+                 "No tc rule set on the interface.".
+        :type rate: :class:`str`
+
+        """
+        cmd = "tc qdisc show dev {}".format(
+                localInterface)
+        cmd = shlex.split(cmd)
+        p = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (stdoutData, stderrData) = p.communicate()
+        if p.returncode != 0:
+            # if rate is None no tc rule was previously defined on th interface,
+            # the error "No such file or directory" is returned with returncode=2 : ignore it.
+            errMsg = b"ERROR: " + stderrData
+            raise Exception("get_rate(localInterface='{}', failed, code = {}: {})".format(localInterface, p.returncode, errMsg))
+        if type(stdoutData) == bytes:
+            stdoutData = stdoutData.decode("utf-8")
+        if "rate" not in stdoutData:
+            return "No tc rule set on the interface."
+        return stdoutData
