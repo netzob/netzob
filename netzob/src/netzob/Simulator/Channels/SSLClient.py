@@ -345,8 +345,8 @@ class SSLClient(AbstractChannel):
     def unset_rate(self):
         """This method clears the transmission rate.
         """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
         if self._rate is not None:
-            localInterface = NetUtils.getLocalInterface(self.localIP)
             NetUtils.set_rate(localInterface, None)
             self._rate = None
             self._logger.info("Network rate limitation removed on {} interface".format(localInterface))
