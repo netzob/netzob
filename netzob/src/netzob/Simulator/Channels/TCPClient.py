@@ -316,8 +316,9 @@ class TCPClient(AbstractChannel):
         localInterface = NetUtils.getLocalInterface(self.localIP)
         NetUtils.set_rate(localInterface, rate)
         if rate is not None:
-            self._logger.info("Network rate limited to {:.2f} kBps on {} interface".format(rate/1000, localInterface))
+            self._logger.info("Network rate limited to {:.2f} kBps ({} kbps) on {} interface".format(rate/1000, rate*8/1000, localInterface))
         self._rate = rate
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
 
     @public_api
     def unset_rate(self):
@@ -328,6 +329,7 @@ class TCPClient(AbstractChannel):
             NetUtils.set_rate(localInterface, None)
             self._rate = None
             self._logger.info("Network rate limitation removed on {} interface".format(localInterface))
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
 
 
 class TCPClientBuilder(ChannelBuilder):
