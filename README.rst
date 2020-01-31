@@ -45,6 +45,21 @@ General Information
 :Mailing list: Two lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register.
 :IRC: You can hang-out with us on Freenode's IRC channel #netzob @ freenode.org.
 :Twitter: Follow Netzob's official accounts (@Netzob)
+Examples usage of Netzob, Tutorials and Detaild Documentation
+----------------
+**Backup of www.netzob.org**
+
+* http://web.archive.org/web/2016*/www.netzob.org  
+
+**Detailed Netzob Documentation**
+
+* https://gdr-securite.irisa.fr/wp-content/uploads/sujet17-amossys.pdf  
+
+**Example usage of Netzob Library**
+
+* https://github.com/gbossert/http2.lol/blob/master/http2.py  
+* https://github.com/lnerit/Netzob-0.4.1/blob/master/protocolinferencetutorial.py  
+* https://github.com/elenambarbour/netzob/tree/master/Scripts (multiple tutorials and scripts)  
 
 Authors, Contributors and Sponsors
 ==================================
