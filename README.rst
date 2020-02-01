@@ -55,7 +55,7 @@ Examples usages of Netzob, Tutorials and Detailed Documentation
 
 * https://gdr-securite.irisa.fr/wp-content/uploads/sujet17-amossys.pdf  
 
-**Example usage of Netzob Library**
+**Examples usages of Netzob Library**
 
 * https://github.com/gbossert/http2.lol/blob/master/http2.py  
 * https://github.com/lnerit/Netzob-0.4.1/blob/master/protocolinferencetutorial.py  
