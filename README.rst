@@ -45,7 +45,7 @@ General Information
 :Mailing list: Two lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register.
 :IRC: You can hang-out with us on Freenode's IRC channel #netzob @ freenode.org.
 :Twitter: Follow Netzob's official accounts (@Netzob)
-Examples usage of Netzob, Tutorials and Detaild Documentation
+Examples usages of Netzob, Tutorials and Detailed Documentation
 ----------------
 **Backup of www.netzob.org**
 
@@ -78,4 +78,3 @@ Extra
 
    Zoby, the official mascot of Netzob.
 	  
-
