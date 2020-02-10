@@ -39,12 +39,29 @@ Netzob is a tool that can be used to **reverse engineer**, **model** and **fuzz*
 Source codes, documentations and resources are available for each component, please visit their dedicated directories.
 
 General Information
-----------------
+-------------------
 
 :Email: `contact@netzob.org <contact@netzob.org>`_
 :Mailing list: Two lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register.
 :IRC: You can hang-out with us on Freenode's IRC channel #netzob @ freenode.org.
 :Twitter: Follow Netzob's official accounts (@Netzob)
+	  
+Helpfull Resources
+------------------
+
+**Backup of www.netzob.org**
+
+* http://web.archive.org/web/2016*/www.netzob.org  
+
+**Detailed Netzob Documentation**
+
+* https://gdr-securite.irisa.fr/wp-content/uploads/sujet17-amossys.pdf  
+
+**Examples usages of Netzob Library**
+
+* https://github.com/gbossert/http2.lol/blob/master/http2.py  
+* https://github.com/lnerit/Netzob-0.4.1/blob/master/protocolinferencetutorial.py  
+* https://github.com/elenambarbour/netzob/tree/master/Scripts (multiple tutorials and scripts)  
 
 Authors, Contributors and Sponsors
 ==================================
@@ -63,4 +80,3 @@ Extra
 
    Zoby, the official mascot of Netzob.
 	  
-

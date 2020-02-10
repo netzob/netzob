@@ -28,7 +28,3 @@
 
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
-
-#from Serialization import *
-#from netzob.Common.Utils.Serializer import Serializer
-from netzob.Common.Utils.Cpicklizer import Cpicklizer

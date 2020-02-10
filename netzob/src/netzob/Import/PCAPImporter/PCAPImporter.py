@@ -53,6 +53,7 @@ from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
+from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Model.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
 from netzob.Model.Vocabulary.Messages.L3NetworkMessage import L3NetworkMessage
 from netzob.Model.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
@@ -60,7 +61,7 @@ from netzob.Model.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
 
 @NetzobLogger
 class PCAPImporter(object):
-    """PCAP importer to read pcaps and extract messages out of them.
+    r"""PCAP importer to read pcaps and extract messages out of them.
     We recommend to use static methods such as
     - PCAPImporter.readFiles(...)
     - PCAPimporter.readFile(...)
@@ -73,40 +74,54 @@ class PCAPImporter(object):
 
     >>> for m in messages:
     ...    print(repr(m.data))
-    b'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
-    b'RESidentify#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
-    b'CMDinfo#\\x00\\x00\\x00\\x00'
-    b'RESinfo#\\x00\\x00\\x00\\x00\\x04\\x00\\x00\\x00info'
-    b'CMDstats#\\x00\\x00\\x00\\x00'
-    b'RESstats#\\x00\\x00\\x00\\x00\\x05\\x00\\x00\\x00stats'
-    b'CMDauthentify#\\n\\x00\\x00\\x00aStrongPwd'
-    b'RESauthentify#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
-    b'CMDencrypt#\\x06\\x00\\x00\\x00abcdef'
-    b"RESencrypt#\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00$ !&'$"
-    b"CMDdecrypt#\\x06\\x00\\x00\\x00$ !&'$"
-    b'RESdecrypt#\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00abcdef'
-    b'CMDbye#\\x00\\x00\\x00\\x00'
-    b'RESbye#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
+    b'CMDidentify#\x07\x00\x00\x00Roberto'
+    b'RESidentify#\x00\x00\x00\x00\x00\x00\x00\x00'
+    b'CMDinfo#\x00\x00\x00\x00'
+    b'RESinfo#\x00\x00\x00\x00\x04\x00\x00\x00info'
+    b'CMDstats#\x00\x00\x00\x00'
+    b'RESstats#\x00\x00\x00\x00\x05\x00\x00\x00stats'
+    b'CMDauthentify#\n\x00\x00\x00aStrongPwd'
+    b'RESauthentify#\x00\x00\x00\x00\x00\x00\x00\x00'
+    b'CMDencrypt#\x06\x00\x00\x00abcdef'
+    b"RESencrypt#\x00\x00\x00\x00\x06\x00\x00\x00$ !&'$"
+    b"CMDdecrypt#\x06\x00\x00\x00$ !&'$"
+    b'RESdecrypt#\x00\x00\x00\x00\x06\x00\x00\x00abcdef'
+    b'CMDbye#\x00\x00\x00\x00'
+    b'RESbye#\x00\x00\x00\x00\x00\x00\x00\x00'
 
+    PCAP Files with unsupported Layers on OSI Layer 2 can be imported as RawMessages if the importLayer is 1
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/atm_capture1.pcap", importLayer=1).values()
+    >>> print(repr(messages[0].data[:-25]))
+    b'E\x00\x00T\x17\x82\x00\x00@\x01U\xd3\xc0\xa8F\x01\xc0\xa8F\x02\x08\x00\xfa`Of\x00\x009\xd9\x121\x00\x08w#\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e'
+
+    Raw frame (whole frame is "payload"):
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=1).values()
+    >>> print(repr(messages[0].data))
+    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00E\x00\x003\xdc\x11@\x00@\x11`\xa6\x7f\x00\x00\x01\x7f\x00\x00\x01\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
+
+    Layer 2, e. g. parse Ethernet frame (IP packet is payload)
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=2).values()
     >>> print(repr(messages[0].data))
-    b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x08\\x00E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'E\x00\x003\xdc\x11@\x00@\x11`\xa6\x7f\x00\x00\x01\x7f\x00\x00\x01\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
 
+    Layer 3, e. g. parse IP packet (UDP datagram is payload)
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=3).values()
     >>> print(repr(messages[0].data))
-    b'E\\x00\\x003\\xdc\\x11@\\x00@\\x11`\\xa6\\x7f\\x00\\x00\\x01\\x7f\\x00\\x00\\x01\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
 
+    Layer 4, e. g. parse UDP packet (application protocol is payload)
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=4).values()
     >>> print(repr(messages[0].data))
-    b'\\xe1\\xe7\\x10\\x92\\x00\\x1f\\xfe2CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'CMDidentify#\x07\x00\x00\x00Roberto'
 
+    Layer > 4, does decode like layer=4
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=5).values()
     >>> print(repr(messages[0].data))
-    b'CMDidentify#\\x07\\x00\\x00\\x00Roberto'
+    b'CMDidentify#\x07\x00\x00\x00Roberto'
 
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_http.pcap", importLayer=5, bpfFilter="tcp").values()
     >>> print(repr(messages[0].data))
-    b'GET / HTTP/1.1\\r\\nHost: www.free.fr\\r\\nUser-Agent: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\\r\\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\\r\\nAccept-Language: en-US,en;q=0.5\\r\\nAccept-Encoding: gzip, deflate\\r\\nConnection: keep-alive\\r\\n\\r\\n'
+    b'GET / HTTP/1.1\r\nHost: www.free.fr\r\nUser-Agent: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa(bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: en-US,en;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\n\r\n'
 
     Parameter `mergePacketsInFlow` can be use to merge consecutive messages that share the same source and destination (mimic a TCP flow). In practice, this parameter was introduced for L5 network messages to support TCP flows but it can be use for any level of network messages.
 
@@ -189,7 +204,9 @@ class PCAPImporter(object):
         if self.datalink not in list(PCAPImporter.SUPPORTED_DATALINKS.keys()):
             self._logger.debug("Unkown datalinks")
 
-        if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL and self.datalink != PCAPImporter.PROTOCOL201:
+        if self.importLayer > 1 and self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL \
+                and self.datalink != pcapy.DLT_RAW and self.datalink != PCAPImporter.PROTOCOL201:
+            self._logger.debug('Datalink: ' + str(self.datalink))
             errorMessage = _("This pcap cannot be imported since the " +
                              "layer 2 is not supported ({0})").format(
                                  str(self.datalink))
@@ -202,8 +219,16 @@ class PCAPImporter(object):
         """Internal callback executed on each packet when parsing the pcap"""
         (secs, usecs) = header.getts()
         epoch = secs + (usecs / 1000000.0)
+        self._logger.debug('ImportLayer = '+ str(self.importLayer))
+        if self.importLayer == 1:
+            if len(payload) == 0:
+                return
+            # Build the RawMessage
+            rawMessage = RawMessage(payload, epoch, source=None, destination=None)
 
-        if self.importLayer == 1 or self.importLayer == 2:
+            self.messages.add(rawMessage)
+
+        elif self.importLayer == 2:
             try:
                 (l2Proto, l2SrcAddr, l2DstAddr, l2Payload,
                  etherType) = self.__decodeLayer2(header, payload)
@@ -216,7 +241,7 @@ class PCAPImporter(object):
                 return
 
             # Build the L2NetworkMessage
-            l2Message = L2NetworkMessage(payload, epoch, l2Proto, l2SrcAddr,
+            l2Message = L2NetworkMessage(l2Payload, epoch, l2Proto, l2SrcAddr,
                                          l2DstAddr)
 
             self.messages.add(l2Message)
@@ -237,7 +262,7 @@ class PCAPImporter(object):
                 return
 
             # Build the L3NetworkMessage
-            l3Message = L3NetworkMessage(l2Payload, epoch, l2Proto, l2SrcAddr,
+            l3Message = L3NetworkMessage(l3Payload, epoch, l2Proto, l2SrcAddr,
                                          l2DstAddr, l3Proto, l3SrcAddr,
                                          l3DstAddr)
             self.messages.add(l3Message)
@@ -260,7 +285,7 @@ class PCAPImporter(object):
 
             # Build the L4NetworkMessage
             l4Message = L4NetworkMessage(
-                l3Payload, epoch, l2Proto, l2SrcAddr, l2DstAddr, l3Proto,
+                l4Payload, epoch, l2Proto, l2SrcAddr, l2DstAddr, l3Proto,
                 l3SrcAddr, l3DstAddr, l4Proto, l4SrcPort, l4DstPort)
 
             self.messages.add(l4Message)
@@ -321,6 +346,12 @@ class PCAPImporter(object):
             l2DstAddr = None
             l2Payload = payload[8:]
             etherType = payload[4:6]
+        elif self.datalink == pcapy.DLT_RAW:
+            l2Proto = None
+            l2SrcAddr = None
+            l2DstAddr = None
+            l2Payload = payload
+            etherType = 0x0800
 
         return (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType)
 

@@ -744,6 +744,10 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
             lines.append(f._str_debug(deepness + 1))
         return '\n'.join(lines)
 
+
+    def __hash__(self):
+        return hash(self.id)
+
     # PROPERTIES
 
     @property

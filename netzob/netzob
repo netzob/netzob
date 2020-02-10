@@ -38,6 +38,7 @@
 import sys
 import os
 
+
 if sys.version_info[0] < 3:
     print("This version of Netzob is only compatible with Python3.")
     sys.exit(42)

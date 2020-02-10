@@ -72,7 +72,7 @@ class Integer(AbstractType):
     >>> print(dec.size)
     (8, 8)
 
-    >>> dec = Integer(interval=(-120, 10))
+    >>> dec = Integer(interval=(-130, 10), sign=AbstractType.SIGN_SIGNED)
     >>> print(dec.size)
     (16, 16)
 
@@ -90,17 +90,33 @@ class Integer(AbstractType):
     TypeError: Data cannot be None
 
     """
-
     def __init__(self,
                  value=None,
                  interval=None,
-                 unitSize=AbstractType.defaultUnitSize(),
+                 unitSize=None,
                  endianness=AbstractType.defaultEndianness(),
                  sign=AbstractType.defaultSign()):
+
+        if unitSize is None:
+            if interval is None:  # value handling
+                if value is None:
+                    unitSize = AbstractType.defaultUnitSize()
+                else:
+                    unitSize = Integer.checkUnitSizeForValue(value, sign)
+            else:  # interval handling
+                if isinstance(interval, int):
+                    unitSize = Integer.checkUnitSizeForValue(interval, sign)
+                elif len(interval) == 2:
+                    unitSizeA = Integer.checkUnitSizeForValue(interval[0], sign)
+                    unitSizeB = Integer.checkUnitSizeForValue(interval[1], sign)
+                    unitSize = max(unitSizeA, unitSizeB)
+                else:  # shouldn't happen, since _checkUnitSizeForValue raises an exception before
+                    unitSize = AbstractType.defaultUnitSize()
+
         if value is not None and not isinstance(value, bitarray):
             from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
             from netzob.Model.Vocabulary.Types.BitArray import BitArray
-            interval = value
+
             value = TypeConverter.convert(
                 value,
                 Integer,
@@ -111,13 +127,9 @@ class Integer(AbstractType):
                 dst_unitSize=unitSize,
                 dst_endianness=endianness,
                 dst_sign=sign)
-        else:
-            value = None
 
         if interval is not None:
-            nbBits = int(
-                self._computeNbUnitSizeForInterval(interval, unitSize,
-                                                   sign)) * int(unitSize)
+            nbBits = int(self._computeNbUnitSizeForInterval(interval, unitSize, sign)) * int(unitSize)
         else:
             nbBits = int(unitSize)
 
@@ -147,12 +159,13 @@ class Integer(AbstractType):
         # the interval is a single value
         # bspec = ⌊log2(n)⌋ + 1 (+1 for signed)
         val = abs(val)
-        if sign == AbstractType.SIGN_UNSIGNED:
-            return math.floor(
-                (math.floor(math.log(val, 2)) + 1) / int(unitSize)) + 1
-        else:
-            return math.floor(
-                (math.floor(math.log(val, 2)) + 2) / int(unitSize)) + 1
+        if val != 0:
+            if sign == AbstractType.SIGN_UNSIGNED:
+                return math.floor(
+                    (math.floor(math.log(val, 2)) + 1) / int(unitSize)) + 1
+            else:
+                return math.floor(
+                    (math.floor(math.log(val, 2)) + 2) / int(unitSize)) + 1
 
     def canParse(self,
                  data,
@@ -204,7 +217,7 @@ class Integer(AbstractType):
         >>> print(Integer.decode(2000000000000000))
         Traceback (most recent call last):
         ...
-        struct.error: byte format requires -128 <= number <= 127
+        struct.error: ubyte format requires 0 <= number <= 255
 
         >>> print(Integer.decode(2000000000000000, unitSize=AbstractType.UNITSIZE_64))
         b'\\x00\\x07\\x1a\\xfdI\\x8d\\x00\\x00'
@@ -264,12 +277,14 @@ class Integer(AbstractType):
         >>> print(repr(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_LITTLE)))
         25
 
-        >>> print(Integer.encode(b'\\xcc\\xac\\x9c\\x0c\\x1c\\xacL\\x1c,\\xac', unitSize=AbstractType.UNITSIZE_8))
-        -395865088909314208584756
+        >>> print(Integer.encode(b'\\xcc\\xac\\x9c\\x0c\\x1c\\xacL\\x1c,\\xac', unitSize=AbstractType.UNITSIZE_8, sign=AbstractType.SIGN_SIGNED))
+        -247119785962690400474196
 
+        # raw is interpreted as b'\xcc\xac\x00\x9c' by encode and
+        # as big endian with unit size 16 as (0x009c << 16) + 0xccac = 10276012
         >>> raw = b'\\xcc\\xac\\x9c'
         >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_16, endianness=AbstractType.ENDIAN_BIG))
-        10210476
+        13413532
 
         >>> print(Integer.encode(raw, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG))
         13413532
@@ -298,47 +313,38 @@ class Integer(AbstractType):
         nbWords = int(len(data) * 8 / int(unitSize))
 
         # Check whether the input data matches unitSize. If not take 
-        # precautions to able to pad it with null bytes later.
+        # precautions to able to pad it with null bytes to statisfy the unitSize.
         padding_nullbytes = 0
         rest = (len(data) * 8) % int(unitSize)
         if rest != 0:
             nbWords += 1
             padding_nullbytes = (int(unitSize) - rest) / 8
+            if endianness == AbstractType.ENDIAN_BIG:
+                data = b'\x00' * int(padding_nullbytes) + data
+            elif endianness == AbstractType.ENDIAN_LITTLE:
+                data += b'\x00' * int(padding_nullbytes)
+            else:
+                raise ValueError(
+                    "Invalid endianness value: {0}".format(endianness))
 
         finalValue = 0
 
-        iWord = 0
         start = 0
         end = nbWords
-        inc = 1
-        if endianness == AbstractType.ENDIAN_BIG:
-            end = 0
-            start = nbWords
-            inc = -1
-
-        for i in range(start, end, inc):
+        for i in range(start, end):
             # Extract the portion that represents the current word
-            startPos = int(iWord * int(unitSize) / 8)
-            endPos = int(iWord * int(unitSize) / 8 + int(unitSize) / 8)
-
+            startPos = i * int(unitSize) // 8
+            endPos = startPos + int(unitSize) // 8
             wordData = data[startPos:endPos]
 
-            # Pad with null bytes to statisfy the unitSize.
-            if padding_nullbytes > 0 and i == (end - inc):
-                if endianness == AbstractType.ENDIAN_BIG:
-                    wordData = b'\x00' * int(padding_nullbytes) + wordData
-                elif endianness == AbstractType.ENDIAN_LITTLE:
-                    wordData += b'\x00' * int(padding_nullbytes)
-                else:
-                    raise ValueError(
-                        "Invalid endianness value: {0}".format(endianness))
-
             unpackedWord = struct.unpack(perWordFormat, wordData)[0]
-            unpackedWord = unpackedWord << int(unitSize) * iWord
+            if endianness == AbstractType.ENDIAN_LITTLE:
+                wordShift = i
+            else:
+                wordShift = nbWords - i - 1
+            unpackedWord = unpackedWord << (int(unitSize) * wordShift)
 
             finalValue = finalValue + unpackedWord
-
-            iWord += 1
 
         return finalValue
 
@@ -371,3 +377,59 @@ class Integer(AbstractType):
             unitFormat = unitFormat.upper()
 
         return endianFormat + unitFormat
+
+    @staticmethod
+    def checkUnitSizeForValue(value, sign):
+        """
+        >>> Integer.checkUnitSizeForValue(-1, AbstractType.SIGN_SIGNED) == AbstractType.UNITSIZE_8
+        True
+        >>> Integer.checkUnitSizeForValue(-1, AbstractType.SIGN_UNSIGNED)
+        Traceback (most recent call last):
+        ...
+        ValueError: Value is out of unsigned 64bit Integer range.
+        >>> Integer.checkUnitSizeForValue(-130, AbstractType.SIGN_SIGNED) == AbstractType.UNITSIZE_16
+        True
+        >>> Integer.checkUnitSizeForValue(260, AbstractType.SIGN_UNSIGNED) == AbstractType.UNITSIZE_16
+        True
+        >>> Integer.checkUnitSizeForValue(2147483647, AbstractType.SIGN_SIGNED) == AbstractType.UNITSIZE_32
+        True
+        >>> Integer.checkUnitSizeForValue(4294967295, AbstractType.SIGN_UNSIGNED) == AbstractType.UNITSIZE_32
+        True
+        >>> Integer.checkUnitSizeForValue(-9223372036854775808, AbstractType.SIGN_SIGNED) == AbstractType.UNITSIZE_64
+        True
+        >>> Integer.checkUnitSizeForValue(18446744073709551615, AbstractType.SIGN_UNSIGNED) == AbstractType.UNITSIZE_64
+        True
+        >>> Integer.checkUnitSizeForValue(18446744073709551615, AbstractType.SIGN_SIGNED)
+        Traceback (most recent call last):
+        ...
+        ValueError: Value is out of signed 64bit Integer range.
+
+
+        :param value: The value to get an unitSize for
+        :param sign: The desired sign for the value
+        :returns: The unitsize that can hold "value".
+        :raises ValueError: There is no unit size of Integer (max 64 bits) that can hold "value"
+        """
+
+        if sign is AbstractType.SIGN_SIGNED:
+            if -0x80 <= value <= 0x7f:
+                return AbstractType.UNITSIZE_8
+            elif -0x8000 <= value <= 0x7fff:
+                return AbstractType.UNITSIZE_16
+            elif -0x80000000 <= value <= 0x7fffffff:
+                return AbstractType.UNITSIZE_32
+            elif -0x8000000000000000 <= value <= 0x7fffffffffffffff:
+                return AbstractType.UNITSIZE_64
+            else:
+                raise ValueError("Value is out of signed 64bit Integer range.")
+        if sign is AbstractType.SIGN_UNSIGNED:
+            if 0x00 <= value <= 0xff:
+                return AbstractType.UNITSIZE_8
+            elif 0x00 <= value <= 0xffff:
+                return AbstractType.UNITSIZE_16
+            elif 0x00 <= value <= 0xffffffff:
+                return AbstractType.UNITSIZE_32
+            elif 0x00 <= value <= 0xffffffffffffffff:
+                return AbstractType.UNITSIZE_64
+            else:
+                raise ValueError("Value is out of unsigned 64bit Integer range.")

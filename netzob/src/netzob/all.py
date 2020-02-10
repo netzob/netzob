@@ -34,3 +34,4 @@ from . import release
 from netzob.Common.all import *
 from netzob.Inference.all import *
 from netzob.Import.all import *
+from netzob.Export.all import *

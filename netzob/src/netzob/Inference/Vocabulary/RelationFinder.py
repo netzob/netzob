@@ -319,7 +319,16 @@ class RelationFinder(object):
                 y = len(y)
         else:
             if len(y) > 0:
-                y = TypeConverter.convert(y[:8], Raw, Integer)
+                # Integer only may be 1, 2, 4, or 8 bytes long, so for conversion
+                # we need to add 0 padding at the front of the raw numbers
+                if len(y) == 3:
+                    padded_y = b'\x00' + y
+                elif len(y) in (5,6,7):
+                    padding_length = 8 - len(y)
+                    padded_y = padding_length *  b'\x00' + y
+                else:
+                    padded_y = y
+                y = TypeConverter.convert(padded_y[:8], Raw, Integer)
             else:
                 y = 0
 
