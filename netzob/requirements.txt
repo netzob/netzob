@@ -6,6 +6,6 @@ numpy
 colorama==0.3.3
 bintrees==2.0.0
 minepy==1.0.0
-arpreq==0.3.1
 pylstar==0.1.2
 impacket>=0.9.20
+getmac==0.8.2

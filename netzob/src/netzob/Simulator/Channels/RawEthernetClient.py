@@ -38,7 +38,7 @@ import socket
 from bitarray import bitarray
 import struct
 from fcntl import ioctl
-import arpreq
+from getmac import get_mac_address
 import subprocess
 import time
 import binascii
@@ -208,7 +208,7 @@ class RawEthernetClient(AbstractChannel):
         # Ethernet header
 
         # Retrieve remote MAC address
-        dstMacAddr = arpreq.arpreq(self.remoteIP)
+        dstMacAddr = get_mac_address(ip=self.remoteIP)
         if dstMacAddr is not None:
             dstMacAddr = dstMacAddr.replace(':', '')
             dstMacAddr = binascii.unhexlify(dstMacAddr)
@@ -218,7 +218,7 @@ class RawEthernetClient(AbstractChannel):
             p.wait()
             time.sleep(0.1)
 
-            dstMacAddr = arpreq.arpreq(self.remoteIP)
+            dstMacAddr = get_mac_address(ip=self.remoteIP)
             if dstMacAddr is not None:
                 dstMacAddr = dstMacAddr.replace(':', '')
                 dstMacAddr = binascii.unhexlify(dstMacAddr)
