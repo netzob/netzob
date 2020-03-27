@@ -264,7 +264,7 @@ char* alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message *
   }//End for diagloop
 
   // Compute score of the alignment (ratio regarding the max score these two payloads could have get if they were equals)
-  unsigned int lenSmallestPayload = message1->len > message2->len ? message1->len : message2->len;
+  unsigned int lenSmallestPayload = message2->len > message1->len ? message1->len : message2->len;
   float maxScore = lenSmallestPayload * MATCH;
   scoreAlignment = (100.0f / maxScore) * (float) maxScoreMatrix;
   if (scoreAlignment > 100.0f) {
