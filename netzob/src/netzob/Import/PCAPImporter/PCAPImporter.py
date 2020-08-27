@@ -36,12 +36,8 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 import pcapy
 
-## FIXME: Temporary deactivate this module as it is not currently supported in Python3
-# import impacket.ImpactDecoder as Decoders
-# import impacket.ImpactPacket as Packets
-## Instead, import local adapted files
-from netzob.Import.PCAPImporter import ImpactPacket as Packets
-from netzob.Import.PCAPImporter import ImpactDecoder as Decoders
+import impacket.ImpactDecoder as Decoders
+import impacket.ImpactPacket as Packets
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
