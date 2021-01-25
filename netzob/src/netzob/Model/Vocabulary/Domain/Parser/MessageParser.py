@@ -278,8 +278,15 @@ class MessageParser(object):
                     else:
                         generator = self._parseBitArrayWithField(
                             newParsingPath, fields, i_current_field + 1)
-                    for x in generator:
-                        yield x
+                    try:
+                        for x in generator:
+                            yield x
+                    except RuntimeError as e:
+                        print("Parsing path error. Current Field num :", i_current_field,
+                              "Field value:", value_after_parsing.tobytes().hex(),
+                              "Remaining value:", remainingValue.tobytes().hex(),
+                              )
+                        raise e
 
                 elif not must_consume_everything and len(remainingValue) >= 0:
                     yield newParsingPath
@@ -290,5 +297,5 @@ class MessageParser(object):
             except InvalidParsingPathException:
                 pass
 
-        raise StopIteration()
-        # InvalidParsingPathException("No parsing path returned while parsing '{}'".format(TypeConverter.convert(value_before_parsing, BitArray, Raw)))
+        return
+
