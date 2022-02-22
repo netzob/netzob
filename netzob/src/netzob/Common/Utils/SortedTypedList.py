@@ -122,6 +122,7 @@ class SortedTypedList(object):
         """remove all items from the list.
         It's a O(n) operation"""
         self.__treePriorities.clear()
+        self.__mapMessages.clear()
 
     def _extend(self, elements):
         """Add all the elements in the current list.
