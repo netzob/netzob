@@ -7,6 +7,6 @@ Cython==0.27.3
 minepy==1.0.0
 netaddr==0.7.18
 pcapy==0.10.10
-PyCRC==1.21
+pythoncrc==1.21
 randomstate==1.13.1
 -e git+https://git@github.com/euri10/impacket.git/@py3#egg=impacket
