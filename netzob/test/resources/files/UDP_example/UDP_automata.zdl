@@ -1,0 +1,24 @@
+# -*- coding: utf-8 -*-
+import os
+from netzob.all import (Automata, OpenChannelTransition,
+                        Protocol, State)
+
+# Load symbols from ZDL file
+path = os.path.dirname(os.path.realpath(__file__))
+format_zdl = os.path.join(path, "UDP_format.zdl")
+symbols = Protocol.load_format(format_zdl)
+
+# Specify the states
+s0 = State(name="Initial state")
+s1 = State(name="Channel opened")
+# s2 = State(name="Channel closed")
+
+# Specify the transitions
+openTransition = OpenChannelTransition(startState=s0, endState=s1, name="Open")
+
+# closeTransition = CloseChannelTransition(startState=s1,
+#                                          endState=s2,
+#                                          name="Closed")
+
+# Specify the main automaton structure
+automata = Automata(s0, list(symbols.values()))

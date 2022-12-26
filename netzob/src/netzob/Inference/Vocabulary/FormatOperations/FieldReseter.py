@@ -67,7 +67,7 @@ class FieldReseter(object):
     >>> f3 = Field(Raw(), name="f3")
     >>> symbol = Symbol([f1, f2, f3], messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     f1   | f21  | f22  | f3      
     ---- | ---- | ---- | --------
     '00' | 'ff' | '2f' | '000000'
@@ -77,7 +77,7 @@ class FieldReseter(object):
     >>> reseter = FieldReseter()
     >>> reseter.reset(symbol)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field         
     --------------
     '00ff2f000000'
@@ -93,7 +93,7 @@ class FieldReseter(object):
 
 
         :param field: the field we want to reset
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :raise Exception if something bad happens
         """
 
@@ -102,7 +102,7 @@ class FieldReseter(object):
                 "The field to reset must be specified and cannot be None")
 
         self._logger.debug("Reset the definition of field {0} ({1})".format(
-            field.name, field.id))
+            field.name, id(field)))
         field.clearFields()
 
         if isinstance(field, Symbol):

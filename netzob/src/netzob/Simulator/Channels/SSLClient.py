@@ -44,56 +44,128 @@ import ssl
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Simulator.Channels.AbstractChannel import AbstractChannel, ChannelDownException
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
+from netzob.Simulator.AbstractChannel import (AbstractChannel,
+                                              ChannelDownException,
+                                              NetUtils)
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 @NetzobLogger
 class SSLClient(AbstractChannel):
-    """An SSLClient is a communication channel that relies on SSL. It allows to create client connecting
-    to a specific IP:Port server over a TCP/SSL socket.
+    """An SSLClient is a communication channel that relies on SSL. It provides
+    the connection of a client to a specific IP:Port server over a TCP/SSL
+    socket.
 
-    When the actor execute an OpenChannelTransition, it calls the open
-    method on the ssl client which connects to the server.
+    The SSLClient constructor expects some parameters:
+
+    :param remoteIP: This parameter is the remote IP address to connect to.
+    :param remotePort: This parameter is the remote IP port.
+    :param localIP: The local IP address. Default value is the local
+                    IP address corresponding to the network interface that
+                    will be used to send the packet.
+    :param localPort: The local IP port. Default value in a random
+                     valid integer chosen by the kernel.
+    :param server_cert_file: The path to a single file in PEM format
+                             containing the certificate as well as any
+                             number of CA certificates needed to
+                             establish the certificate's
+                             authenticity. Default value is None,
+                             meaning that no verification is made on
+                             the certificate given by the peer.
+    :param alpn_protocols: Specify which protocols the socket should
+                           advertise during the SSL/TLS handshake. It
+                           should be a list of strings, like
+                           ['http/1.1', 'spdy/2'], ordered by
+                           preference. Default value is None.
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
+    :type remoteIP: :class:`str`, required
+    :type remotePort: :class:`int`, required
+    :type localIP: :class:`str`, optional
+    :type localPort: :class:`int`, optional
+    :type server_cert_file: :class:`str`, optional
+    :type alpn_protocols: :class:`list`, optional
+    :type timeout: :class:`float`, optional
+
+    Adding to AbstractChannel public variables, the SSLClient class provides the
+    following public variables:
+
+    :var remoteIP: The remote IP address to connect to.
+    :var remotePort: The remote IP port.
+    :var localIP: The local IP address.
+    :var localPort: The local IP port.
+    :var server_cert_file: The path to a single file in PEM format
+                             containing the certificate as well as any
+                             number of CA certificates needed to
+                             establish the certificate's
+                             authenticity.
+    :var alpn_protocols: Specify which protocols the socket should
+                         advertise during the SSL/TLS handshake. It
+                         should be a list of strings, like
+                         ['http/1.1', 'spdy/2'], ordered by
+                         preference.
+    :vartype remoteIP: :class:`str`
+    :vartype remotePort: :class:`int`
+    :vartype localIP: :class:`str`
+    :vartype localPort: :class:`int`
+    :vartype server_cert_file: :class:`str`
+    :vartype alpn_protocols: :class:`list`
+
+
+    The following code shows the creation of a SSLClient channel:
+
+    >>> from netzob.all import *
+    >>> server = SSLClient(remoteIP='127.0.0.1', remotePort=9999)
 
     """
 
+    ## Class attributes ##
+
+    FAMILIES = ["tcp"]
+
+    @public_api
     def __init__(self,
                  remoteIP,
                  remotePort,
                  localIP=None,
                  localPort=None,
-                 timeout=2,
                  server_cert_file=None,
-                 alpn_protocols=None):
-        super(SSLClient, self).__init__(isServer=False)
+                 alpn_protocols=None,
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        super(SSLClient, self).__init__(timeout=timeout)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
-        self.timeout = timeout
-        self.type = AbstractChannel.TYPE_SSLCLIENT
-        self.__socket = None
         self.__ssl_socket = None
         self.server_cert_file = server_cert_file
         self.alpn_protocols = alpn_protocols
 
-    def open(self, timeout=None):
-        """Open the communication channel. If the channel is a client, it starts to connect
-        to the specified server.
+    @staticmethod
+    def getBuilder():
+        return SSLClientBuilder
+
+    @public_api
+    def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        """Open the communication channel. If the channel is a client, it
+        starts to connect to the specified server.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is blocking (None).
+        :type timeout: :class:`float`, optional
+        :raise: RuntimeError if the channel is already opened
         """
 
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again")
+        super().open(timeout=timeout)
 
-        self.__socket = socket.socket()
+        self._socket = socket.socket()
         # Reuse the connection
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(self.timeout)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._socket.settimeout(timeout or self.timeout)
 
         if self.localIP is not None and self.localPort is not None:
-            self.__socket.bind((self.localIP, self.localPort))
+            self._socket.bind((self.localIP, self.localPort))
 
         # lets create the ssl context
         context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
@@ -109,27 +181,26 @@ class SSLClient(AbstractChannel):
             context.set_alpn_protocols(self.alpn_protocols)
 
         # lets wrap the socket to create the ssl tunnel
-        self.__ssl_socket = context.wrap_socket(self.__socket)
-        self.__ssl_socket.settimeout(self.timeout)
+        self.__ssl_socket = context.wrap_socket(self._socket)
+        self.__ssl_socket.settimeout(timeout or self.timeout)
 
         self._logger.debug("Connect to the SSL server to {0}:{1}".format(
             self.remoteIP, self.remotePort))
         self.__ssl_socket.connect((self.remoteIP, self.remotePort))
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
         if self.__ssl_socket is not None:
             self.__ssl_socket.close()
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
 
-    def read(self, timeout=None):
+    @public_api
+    def read(self):
         """Read the next message on the communication channel.
-
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
         """
         reading_seg_size = 1024
 
@@ -156,9 +227,9 @@ class SSLClient(AbstractChannel):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
-        :type data: binary object
+        :type data: :class:`bytes`
         """
-        if self.__socket is not None:
+        if self._socket is not None:
             try:
                 self.__ssl_socket.sendall(data)
                 return len(data)
@@ -168,11 +239,14 @@ class SSLClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
+    @public_api
     @typeCheck(bytes)
-    def sendReceive(self, data, timeout=None):
+    def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
+        :param data: the data to write on the channel
+        :type data: :class:`bytes`
         """
 
         raise NotImplementedError("Not yet implemented")
@@ -190,7 +264,7 @@ class SSLClient(AbstractChannel):
         """
         return self.__remoteIP
 
-    @remoteIP.setter
+    @remoteIP.setter  # type: ignore
     @typeCheck(str)
     def remoteIP(self, remoteIP):
         if remoteIP is None:
@@ -208,7 +282,7 @@ class SSLClient(AbstractChannel):
         """
         return self.__remotePort
 
-    @remotePort.setter
+    @remotePort.setter  # type: ignore
     @typeCheck(int)
     def remotePort(self, remotePort):
         if remotePort is None:
@@ -226,7 +300,7 @@ class SSLClient(AbstractChannel):
         """
         return self.__localIP
 
-    @localIP.setter
+    @localIP.setter  # type: ignore
     @typeCheck(str)
     def localIP(self, localIP):
         self.__localIP = localIP
@@ -240,15 +314,81 @@ class SSLClient(AbstractChannel):
         """
         return self.__localPort
 
-    @localPort.setter
+    @localPort.setter  # type: ignore
     @typeCheck(int)
     def localPort(self, localPort):
         self.__localPort = localPort
 
-    @property
-    def timeout(self):
-        return self.__timeout
+    def updateSocketTimeout(self):
+        """Update the timeout of the socket."""
+        super(SSLClient, self).updateSocketTimeout()
+        if self._socket is not None:
+            self.__ssl_socket.settimeout(self.timeout)
 
-    @timeout.setter
-    def timeout(self, timeout):
-        self.__timeout = timeout
+    @public_api
+    def set_rate(self, rate):
+        """This method set the the given transmission rate to the channel.
+        Used in testing network under high load
+
+        :parameter rate: This specifies the bandwidth in bytes per second to
+                         respect during traffic emission. Default value is
+                         ``None``, which means that the bandwidth is only
+                         limited by the underlying physical layer.
+        :type rate: :class:`int`, required
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        NetUtils.set_rate(localInterface, rate)
+        if rate is not None:
+            self._logger.info("Network rate limited to {:.2f} kBps ({} kbps) on {} interface".format(rate/1000, rate*8/1000, localInterface))
+        self._rate = rate
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
+
+    @public_api
+    def unset_rate(self):
+        """This method clears the transmission rate.
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        if self._rate is not None:
+            NetUtils.set_rate(localInterface, None)
+            self._rate = None
+            self._logger.info("Network rate limitation removed on {} interface".format(localInterface))
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
+
+
+class SSLClientBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channels.SSLClient.SSLClient` instance
+
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(dst_addr="1.2.3.4", dst_port=1024,
+    ...                   src_addr="4.3.2.1", src_port=32000)
+    >>> builder = SSLClientBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'netzob.Simulator.Channels.SSLClient.SSLClient'>
+    >>> chan.remotePort  # dst_port key has been mapped to remotePort attribute
+    1024
+    """
+
+    @public_api
+    def __init__(self):
+        super().__init__(SSLClient)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_dst_addr(self, value):
+        self.attrs['remoteIP'] = value
+
+    def set_src_port(self, value):
+        self.attrs['localPort'] = value
+
+    def set_dst_port(self, value):
+        self.attrs['remotePort'] = value
+
+    def set_server_cert_file(self, value):
+        self.attrs['server_cert_file'] = value
+
+    def set_alpn_protocls(self, value):
+        self.attrs['alpn_protocls'] = value

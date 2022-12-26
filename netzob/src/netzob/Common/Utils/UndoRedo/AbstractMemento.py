@@ -55,6 +55,6 @@ class AbstractMemento(object):
         """The instance from which the memento has been computed"""
         return self.originator
 
-    @originator.setter
+    @originator.setter  # type: ignore
     def originator(self, originator):
         self.__originator = originator

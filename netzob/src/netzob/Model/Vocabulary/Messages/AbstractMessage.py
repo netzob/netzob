@@ -44,7 +44,6 @@ from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 from netzob.Common.Utils.SortableObject import SortableObject
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.AbstractField import AbstractField
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Functions.FunctionApplicationTable import FunctionApplicationTable
@@ -69,7 +68,7 @@ class AbstractMessage(SortableObject):
         :parameter _id: the unique identifier of the message
         :type _id: :class:`uuid.UUID`
         :keyword session: the session in which the message was captures
-        :type session: :class:`netzob.Model.Vocabulary.Session.Session`
+        :type session: :class:`Session <netzob.Model.Vocabulary.Session.Session>`
         :parameter date: the timestamp of the message
         :type date: a :class:`int`
         :parameter source: the optional source address of the message
@@ -115,7 +114,7 @@ class AbstractMessage(SortableObject):
         False
 
         :parameter field: the current message will be parsed with this field
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :return: a boolean indicating if the current message can be parsed with the specified field
         :rtype: :class:`bool`
 
@@ -194,7 +193,7 @@ class AbstractMessage(SortableObject):
         return "{0} {1}".format(header, repr(visualized_payloads))
 
     def _strWithVisualizationFunctions(self):
-        """
+        r"""
         This internal method is used by the __str__ method.
         It returns the message payload on which visualization functions are applied.
 
@@ -203,9 +202,9 @@ class AbstractMessage(SortableObject):
         >>> from netzob.all import *
         >>> messages = PCAPImporter.readFile("./test/resources/pcaps/utf8-encoded-messages.pcap").values()
         >>> messages[0]._strWithVisualizationFunctions()
-        'welcome, plese login in firstly\\n'
+        'welcome, plese login in firstly\n'
         >>> print(repr(messages[1]._strWithVisualizationFunctions()))
-        'user\\x00\\x00\\x00\\x00h!/2¼\\x7f\\x00\\x00\\x04\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x12\\x0c@\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x10`\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x10`\\x00\\x00\\x00\\x00\\x00xa\\x1d\\x8dÿ\\x7f\\x00\\x00\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00½\\r@\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
+        'user\x00\x00\x00\x00h!/2¼\x7f\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x12\x0c@\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x10`\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10`\x00\x00\x00\x00\x00xa\x1d\x8dÿ\x7f\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00½\r@\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 
         """
 
@@ -232,7 +231,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__id
 
-    @id.setter
+    @id.setter  # type: ignore
     @typeCheck(uuid.UUID)
     def id(self, _id):
         if _id is None:
@@ -248,7 +247,7 @@ class AbstractMessage(SortableObject):
 
         return self.__data
 
-    @data.setter
+    @data.setter  # type: ignore
     def data(self, data):
         self.__data = data
 
@@ -262,7 +261,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__date
 
-    @date.setter
+    @date.setter  # type: ignore
     @typeCheck(float)
     def date(self, date):
         if date is None:
@@ -278,7 +277,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__source
 
-    @source.setter
+    @source.setter  # type: ignore
     @typeCheck(str)
     def source(self, source):
         self.__source = source
@@ -292,7 +291,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__destination
 
-    @destination.setter
+    @destination.setter  # type: ignore
     @typeCheck(str)
     def destination(self, destination):
         self.__destination = destination
@@ -305,7 +304,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__metadata
 
-    @metadata.setter
+    @metadata.setter  # type: ignore
     @typeCheck(dict)
     def metadata(self, metadata):
         if metadata is None:
@@ -317,7 +316,7 @@ class AbstractMessage(SortableObject):
     def visualizationFunctions(self):
         """Sorted list of visualization function to attach on message.
 
-        :type: a list of :class:`netzob.Model.Vocabulary.Functions.VisualizationFunction`
+        :type: a list of :class:`VisualizationFunction <netzob.Model.Vocabulary.Functions.VisualizationFunction>`
         :raises: :class:`TypeError`
 
         .. warning:: Setting this value with a list copies its members and not the list itself.
@@ -325,7 +324,7 @@ class AbstractMessage(SortableObject):
 
         return self.__visualizationFunctions
 
-    @visualizationFunctions.setter
+    @visualizationFunctions.setter  # type: ignore
     def visualizationFunctions(self, visualizationFunctions):
         self.clearVisualizationFunctions()
         self.visualizationFunctions.extend(visualizationFunctions)
@@ -339,7 +338,7 @@ class AbstractMessage(SortableObject):
 
         return self.__messageType
 
-    @messageType.setter
+    @messageType.setter  # type: ignore
     @typeCheck(str)
     def messageType(self, messageType):
         if messageType is None:
@@ -350,12 +349,12 @@ class AbstractMessage(SortableObject):
     def session(self):
         """The session from which message comes from.
 
-        :type: :class:`netzob.Model.Vocabulary.Session.Session`
+        :type: :class:`Session <netzob.Model.Vocabulary.Session.Session>`
         """
 
         return self.__session
 
-    @session.setter
+    @session.setter  # type: ignore
     def session(self, session):
         self.__session = session
         
@@ -391,7 +390,7 @@ class AbstractMessage(SortableObject):
         """
         return self.__semanticTags
 
-    @semanticTags.setter
+    @semanticTags.setter  # type: ignore
     @typeCheck(dict)
     def semanticTags(self, semanticTags):
         if semanticTags is None:

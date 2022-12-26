@@ -81,7 +81,7 @@ class L4NetworkMessage(L3NetworkMessage):
         """
         return self.__l4Protocol
 
-    @l4Protocol.setter
+    @l4Protocol.setter  # type: ignore
     @typeCheck(str)
     def l4Protocol(self, l4Protocol):
         self.__l4Protocol = l4Protocol
@@ -94,7 +94,7 @@ class L4NetworkMessage(L3NetworkMessage):
         """
         return self.__l4SourceAddress
 
-    @l4SourceAddress.setter
+    @l4SourceAddress.setter  # type: ignore
     @typeCheck(int)
     def l4SourceAddress(self, l4SourceAddress):
         self.__l4SourceAddress = l4SourceAddress
@@ -107,7 +107,7 @@ class L4NetworkMessage(L3NetworkMessage):
         """
         return self.__l4DestinationAddress
 
-    @l4DestinationAddress.setter
+    @l4DestinationAddress.setter  # type: ignore
     @typeCheck(int)
     def l4DestinationAddress(self, l4DestinationAddress):
         self.__l4DestinationAddress = l4DestinationAddress

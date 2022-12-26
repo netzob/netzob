@@ -52,15 +52,15 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 @NetzobLogger
 class ZLibEncodingFunction(EncodingFunction):
-    r"""This encoding function can be use to compress or decompress data in zlib.
+    r"""This encoding function can be used to compress or decompress data in zlib.
 
     >>> from netzob.all import *
-    >>> f0 = Field(name="f0", domain=ASCII("Helloworld"))
-    >>> f1 = Field(name="f1", domain=ASCII("Data"))
-    >>> f2 = Field(name="f2", domain=ASCII("Content"))
+    >>> f0 = Field(name="f0", domain=String("Helloworld"))
+    >>> f1 = Field(name="f1", domain=String("Data"))
+    >>> f2 = Field(name="f2", domain=String("Content"))
     >>> s = Symbol(fields=[f0, f1, f2])
-    >>> s.messages = [RawMessage(s.specialize())]*3
-    >>> print(s)
+    >>> s.messages = [RawMessage(next(s.specialize()))]*3
+    >>> print(s.str_data())
     f0           | f1     | f2       
     ------------ | ------ | ---------
     'Helloworld' | 'Data' | 'Content'
@@ -68,7 +68,7 @@ class ZLibEncodingFunction(EncodingFunction):
     'Helloworld' | 'Data' | 'Content'
     ------------ | ------ | ---------
     >>> f1.addEncodingFunction(ZLibEncodingFunction())
-    >>> print(s)
+    >>> print(s.str_data())
     f0           | f1                                | f2       
     ------------ | --------------------------------- | ---------
     'Helloworld' | b'x\x9csI,I\x04\x00\x03\x80\x01{' | 'Content'
@@ -76,20 +76,20 @@ class ZLibEncodingFunction(EncodingFunction):
     'Helloworld' | b'x\x9csI,I\x04\x00\x03\x80\x01{' | 'Content'
     ------------ | --------------------------------- | ---------
 
-    This function can also be use to display the uncompress version of a zlib field
+    This function can also be used to display the uncompress version of a zlib field
 
     >>> m1 = b"hello x\x9csI,I\xe4\x02\x00\x05\x05\x01\x85 !"
-    >>> f0 = Field(name="f0", domain=ASCII("hello "))
+    >>> f0 = Field(name="f0", domain=String("hello "))
     >>> f1 = Field(name="f1", domain=Raw(nbBytes=(0, 30)))
-    >>> f2 = Field(name="f2", domain=ASCII(" !"))
+    >>> f2 = Field(name="f2", domain=String(" !"))
     >>> s = Symbol(fields = [f0, f1, f2], messages = [RawMessage(m1)])
-    >>> print(s)
+    >>> print(s.str_data())
     f0       | f1                                       | f2  
     -------- | ---------------------------------------- | ----
     'hello ' | b'x\x9csI,I\xe4\x02\x00\x05\x05\x01\x85' | ' !'
     -------- | ---------------------------------------- | ----
     >>> f1.addEncodingFunction(ZLibEncodingFunction(compress_data = False))
-    >>> print(s)
+    >>> print(s.str_data())
     f0       | f1       | f2  
     -------- | -------- | ----
     'hello ' | 'Data\n' | ' !'
@@ -127,7 +127,7 @@ class ZLibEncodingFunction(EncodingFunction):
     def compress_data(self):
         return self.__compress_data
     
-    @compress_data.setter
+    @compress_data.setter  # type: ignore
     @typeCheck(bool)        
     def compress_data(self, _compress_data):
         self.__compress_data = _compress_data
@@ -136,7 +136,7 @@ class ZLibEncodingFunction(EncodingFunction):
     def compression_level(self):
         return self.__compression_level
     
-    @compression_level.setter
+    @compression_level.setter  # type: ignore
     @typeCheck(int)        
     def compression_level(self, _compression_level):
         if _compression_level < 0 or _compression_level > 9:

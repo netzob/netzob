@@ -34,6 +34,7 @@ import os
 import uuid
 
 from setuptools import setup, Extension, find_packages
+from Cython.Build import cythonize
 
 sys.path.insert(0, 'src/')
 from netzob import release
@@ -174,17 +175,33 @@ moduleLibRelation = Extension('netzob._libRelation',
                               include_dirs=includes,
                               libraries=["dl"])
 
+# Cython extensions
+cythonModules = cythonize([
+    "src/netzob/Fuzzing/Generators/xorshift.pyx"
+])
+
+
 # +----------------------------------------------------------------------------
 # | Definition of the dependencies
 # +----------------------------------------------------------------------------
-dependencies = []
-with open('requirements.txt', 'r') as fd_requirements:
-    for dependency in fd_requirements:
-        dependencies.append(dependency.strip())
+def get_dependencies():
+    return """
+    pcapy
+    netaddr
+    bitarray
+    numpy
+    colorama
+    bintrees
+    minepy
+    arpreq
+    PyCRC
+    randomstate
+    impacket
+    """.split()
 
 extra_dependencies = {
     'docs': ['Sphinx>=1.1.3'],
-    'network': ['pcapy>=0.10.8', 'impacket>=0.9.12'],
+    'network': ['pcapy>=0.10.8'],
     'correlation': ['numpy>=1.9.2', 'minepy>=1.0.0']
 }
 
@@ -220,10 +237,11 @@ setup(
     package_dir={
         "": "src",
     },
-    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRelation],
+    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation,
+                 moduleLibInterface, moduleLibRelation] + cythonModules,
     data_files=data_files,
     scripts=["netzob"],
-    install_requires=dependencies,
+    install_requires=get_dependencies(),
     extras_require=extra_dependencies,
     dependency_links=dependency_links,
     version=release.version,

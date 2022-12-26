@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -48,22 +47,19 @@ class ApplicativeData(object):
 
     An applicative data can be created out of any information.
     >>> from netzob.all import *
-    >>> app = ApplicativeData("Username", ASCII("toto"))
+    >>> app = ApplicativeData("Username", String("toto"))
     >>> print(app.name)
     Username
 
-    >>> app1 = ApplicativeData("Email", ASCII("contact@netzob.org"))
+    >>> app1 = ApplicativeData("Email", String("contact@netzob.org"))
     >>> print(app1.value)
-    ASCII=contact@netzob.org ((0, 144))
+    String('contact@netzob.org')
 
     """
 
-    def __init__(self, name, value, _id=None):
+    def __init__(self, name, value):
         self.name = name
         self.value = value
-        if _id is None:
-            _id = uuid.uuid4()
-        self.id = _id
 
     @property
     def name(self):
@@ -73,27 +69,12 @@ class ApplicativeData(object):
         """
         return self.__name
 
-    @name.setter
+    @name.setter  # type: ignore
     @typeCheck(str)
     def name(self, name):
         if name is None:
             raise TypeError("Name cannot be None")
         self.__name = name
-
-    @property
-    def id(self):
-        """The unique id of the applicative data.
-
-        :type: :class:`uuid.UUID`
-        """
-        return self.__id
-
-    @id.setter
-    @typeCheck(uuid.UUID)
-    def id(self, _id):
-        if _id is None:
-            raise TypeError("Id cannot be None")
-        self.__id = _id
 
     @property
     def value(self):
@@ -103,7 +84,7 @@ class ApplicativeData(object):
         """
         return self.__value
 
-    @value.setter
+    @value.setter  # type: ignore
     def value(self, value):
         if value is None:
             raise TypeError("Value cannot be None")

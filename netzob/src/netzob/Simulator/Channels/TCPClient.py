@@ -44,105 +44,153 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Simulator.Channels.AbstractChannel import AbstractChannel, ChannelDownException
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
+from netzob.Simulator.AbstractChannel import (AbstractChannel,
+                                              ChannelDownException,
+                                              NetUtils)
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 @NetzobLogger
 class TCPClient(AbstractChannel):
-    """A TCPClient is a communication channel. It allows to create client connecting
-    to a specific IP:Port server over a TCP socket.
+    """A TCPClient is a communication channel. It provides the connection of a
+    client to a specific IP:Port server over a TCP socket.
 
-    When the actor execute an OpenChannelTransition, it calls the open
-    method on the tcp client which connects to the server.
+    The TCPClient constructor expects some parameters:
+
+    :param remoteIP: This parameter is the remote IP address to connect to.
+    :param remotePort: This parameter is the remote IP port.
+    :param localIP: The local IP address. Default value is the local
+                    IP address corresponding to the network interface that
+                    will be used to send the packet.
+    :param localPort: The local IP port. Default value in a random
+                    valid integer chosen by the kernel.
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
+    :type remoteIP: :class:`str`, required
+    :type remotePort: :class:`int`, required
+    :type localIP: :class:`str`, optional
+    :type localPort: :class:`int`, optional
+    :type timeout: :class:`float`, optional
+
+
+    Adding to AbstractChannel variables, the TCPClient class provides the
+    following public variables:
+
+    :var remoteIP: The remote IP address to connect to.
+    :var remotePort: The remote IP port.
+    :var localIP: The local IP address.
+    :var localPort: The local IP port.
+    :vartype remoteIP: :class:`str`
+    :vartype remotePort: :class:`int`
+    :vartype localIP: :class:`str`
+    :vartype localPort: :class:`int`
+
+
+    The following code shows the creation of a TCPClient channel:
 
     >>> from netzob.all import *
-    >>> import time
-    >>> client = TCPClient(remoteIP='127.0.0.1', remotePort=9999)
+    >>> client = TCPClient(remoteIP='127.0.0.1', remotePort=9999, timeout=1.)
 
-    >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> s0 = State()
-    >>> s1 = State()
-    >>> s2 = State()
-    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
-    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
-    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
-    >>> automata = Automata(s0, [symbol])
 
-    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8885)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
+    .. ifconfig:: scope in ('netzob')
 
-    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+       Complete example with the use of an actor.
 
-    >>> server.start()
-    >>> client.start()
+       >>> from netzob.all import *
+       >>> import time
+       >>> symbol = Symbol([Field("Hello everyone!")])
+       >>> s0 = State()
+       >>> s1 = State()
+       >>> s2 = State()
+       >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
+       >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
+       >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
+       >>> automata = Automata(s0, [symbol])
 
-    >>> time.sleep(1)
-    >>> client.stop()
-    >>> server.stop()
+       >>> channel_server = TCPServer(localIP="127.0.0.1", localPort=8885, timeout=1.)
+       >>> server = Actor(automata = automata, channel=channel_server)
+       >>> server.initiator = False
+
+       >>> channel_client = TCPClient(remoteIP="127.0.0.1", remotePort=8885, timeout=1.)
+       >>> client = Actor(automata = automata, channel=channel_client)
+
+       >>> server.start()
+       >>> client.start()
+
+       >>> time.sleep(1)
+       >>> client.stop()
+       >>> server.stop()
+       >>> channel_client.close()
+       >>> channel_server.close()
 
     """
 
+    ## Class attributes ##
+
+    FAMILIES = ["tcp"]
+
+    @public_api
     def __init__(self,
                  remoteIP,
                  remotePort,
                  localIP=None,
                  localPort=None,
-                 timeout=5):
-        super(TCPClient, self).__init__(isServer=False)
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        super(TCPClient, self).__init__(timeout=timeout)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
-        self.timeout = timeout
-        self.type = AbstractChannel.TYPE_TCPCLIENT
-        self.__socket = None
 
-    def open(self, timeout=None):
-        """Open the communication channel. If the channel is a client, it starts to connect
-        to the specified server.
+    @staticmethod
+    def getBuilder():
+        return TCPClientBuilder
+
+    @public_api
+    def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        """Open the communication channel. If the channel is a client, it
+        starts to connect to the specified server.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is blocking (None).
+        :type timeout: :class:`float`, optional
+        :raise: RuntimeError if the channel is already opened
         """
 
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again")
+        super().open(timeout=timeout)
 
-        self.__socket = socket.socket()
+        self._socket = socket.socket()
         # Reuse the connection
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(self.timeout)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._socket.settimeout(timeout or self.timeout)
         if self.localIP is not None and self.localPort is not None:
-            self.__socket.bind((self.localIP, self.localPort))
+            self._socket.bind((self.localIP, self.localPort))
         self._logger.debug("Connect to the TCP server to {0}:{1}".format(
             self.remoteIP, self.remotePort))
-        self.__socket.connect((self.remoteIP, self.remotePort))
+        self._socket.connect((self.remoteIP, self.remotePort))
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
 
-    def read(self, timeout=None):
+    @public_api
+    def read(self):
         """Reads the next message on the communication channel.
         Continues to read while it receives something.
-
-
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
         """
         reading_seg_size = 1024
 
-        if self.__socket is not None:
+        if self._socket is not None:
             data = b""
             finish = False
             while not finish:
                 try:
-                    recv = self.__socket.recv(reading_seg_size)
+                    recv = self._socket.recv(reading_seg_size)
                 except socket.timeout:
                     # says we received nothing (timeout issue)
                     recv = b""
@@ -158,11 +206,11 @@ class TCPClient(AbstractChannel):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
-        :type data: binary object
+        :type data: :class:`bytes`
         """
-        if self.__socket is not None:
+        if self._socket is not None:
             try:
-                self.__socket.sendall(data)
+                self._socket.sendall(data)
                 return len(data)
             except socket.error:
                 raise ChannelDownException()
@@ -170,14 +218,22 @@ class TCPClient(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
+    @public_api
     @typeCheck(bytes)
-    def sendReceive(self, data, timeout=None):
+    def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
 
-        """
+        :param data: the data to write on the channel
+        :type data: :class:`bytes`
 
-        raise NotImplementedError("Not yet implemented")
+        """
+        if self._socket is not None:
+            self.write(data)
+            dataReceived = self.read()
+            return dataReceived
+        else:
+            raise Exception("socket is not available")
 
     # Management methods
 
@@ -191,7 +247,7 @@ class TCPClient(AbstractChannel):
         """
         return self.__remoteIP
 
-    @remoteIP.setter
+    @remoteIP.setter  # type: ignore
     @typeCheck(str)
     def remoteIP(self, remoteIP):
         if remoteIP is None:
@@ -209,7 +265,7 @@ class TCPClient(AbstractChannel):
         """
         return self.__remotePort
 
-    @remotePort.setter
+    @remotePort.setter  # type: ignore
     @typeCheck(int)
     def remotePort(self, remotePort):
         if remotePort is None:
@@ -227,7 +283,7 @@ class TCPClient(AbstractChannel):
         """
         return self.__localIP
 
-    @localIP.setter
+    @localIP.setter  # type: ignore
     @typeCheck(str)
     def localIP(self, localIP):
         self.__localIP = localIP
@@ -241,16 +297,164 @@ class TCPClient(AbstractChannel):
         """
         return self.__localPort
 
-    @localPort.setter
+    @localPort.setter  # type: ignore
     @typeCheck(int)
     def localPort(self, localPort):
         self.__localPort = localPort
 
-    @property
-    def timeout(self):
-        return self.__timeout
+    @public_api
+    def set_rate(self, rate):
+        """This method set the the given transmission rate to the channel.
+        Used in testing network under high load
 
-    @timeout.setter
-    @typeCheck(int)
-    def timeout(self, timeout):
-        self.__timeout = timeout
+        :parameter rate: This specifies the bandwidth in bytes per second to
+                         respect during traffic emission. Default value is
+                         ``None``, which means that the bandwidth is only
+                         limited by the underlying physical layer.
+        :type rate: :class:`int`, required
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        NetUtils.set_rate(localInterface, rate)
+        if rate is not None:
+            self._logger.info("Network rate limited to {:.2f} kBps ({} kbps) on {} interface".format(rate/1000, rate*8/1000, localInterface))
+        self._rate = rate
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
+
+    @public_api
+    def unset_rate(self):
+        """This method clears the transmission rate.
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        if self._rate is not None:
+            NetUtils.set_rate(localInterface, None)
+            self._rate = None
+            self._logger.info("Network rate limitation removed on {} interface".format(localInterface))
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
+
+
+class TCPClientBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channels.TCPClient.TCPClient` instance
+
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(dst_addr="1.2.3.4", dst_port=1024,
+    ...                   src_addr="4.3.2.1", src_port=32000)
+    >>> builder = TCPClientBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'netzob.Simulator.Channels.TCPClient.TCPClient'>
+    >>> chan.remotePort  # dst_port key has been mapped to remotePort attribute
+    1024
+    """
+
+    @public_api
+    def __init__(self):
+        super().__init__(TCPClient)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_dst_addr(self, value):
+        self.attrs['remoteIP'] = value
+
+    def set_src_port(self, value):
+        self.attrs['localPort'] = value
+
+    def set_dst_port(self, value):
+        self.attrs['remotePort'] = value
+
+
+def _test_tcp_write_read():
+    r"""
+
+    >>> from netzob.all import *
+    >>> import time
+    >>> import subprocess
+
+    >>> cmd = "echo 'hello' | nc -lp 8889 >/dev/null"
+    >>> process = subprocess.Popen(cmd, shell=True)
+
+    >>> symbol = Symbol([Field("hello\n")])
+    >>> s0 = State("s0")
+    >>> s1 = State("s1")
+    >>> s2 = State("s2")
+    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name='open channel')
+    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol], name='main transition')
+    >>> automata = Automata(s0, [symbol])
+
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8889, timeout=1.)
+    >>> client = Actor(automata = automata, channel=channel, name='Client')
+    >>> client.nbMaxTransitions = 2
+
+    >>> time.sleep(.2)
+    >>> client.start()
+    >>> time.sleep(1)
+    >>> client.wait()
+    >>> channel.close()
+
+    >>> result = process.wait()
+
+    >>> print(client.generateLog())
+    Activity log for actor 'Client' (initiator):
+      [+] At state 's0'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'open channel' (open channel)
+      [+]   Transition 'open channel' lead to state 's1'
+      [+] At state 's1'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'main transition' (initiator)
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
+      [+]   Transition 'main transition' lead to state 's1'
+      [+] At state 's1', we reached the max number of transitions (2), so we stop
+
+    """
+
+
+def _test_tcp_write_read_large_packet():
+    r"""
+
+    >>> from netzob.all import *
+    >>> import time
+    >>> import subprocess
+
+    >>> cmd = "echo {} | nc -lp 8885 >/dev/null".format("a" * 4096)
+    >>> process = subprocess.Popen(cmd, shell=True)
+
+    >>> symbol = Symbol([Field("a" * 4096 + "\n")])
+    >>> s0 = State("s0")
+    >>> s1 = State("s1")
+    >>> s2 = State("s2")
+    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name='open channel')
+    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol], name='main transition')
+    >>> automata = Automata(s0, [symbol])
+
+    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8885, timeout=1.)
+    >>> client = Actor(automata = automata, channel=channel, name='Client')
+    >>> client.nbMaxTransitions = 2
+
+    >>> time.sleep(.2)
+    >>> client.start()
+    >>> time.sleep(1)
+    >>> client.wait()
+    >>> channel.close()
+
+    >>> process.wait()  # doctest: +SKIP
+    0
+
+    >>> print(client.generateLog())
+    Activity log for actor 'Client' (initiator):
+      [+] At state 's0'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'open channel' (open channel)
+      [+]   Transition 'open channel' lead to state 's1'
+      [+] At state 's1'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'main transition' (initiator)
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
+      [+]   Transition 'main transition' lead to state 's1'
+      [+] At state 's1', we reached the max number of transitions (2), so we stop
+
+    """

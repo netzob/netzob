@@ -13,7 +13,7 @@ analyzer able to identify protocols and to highlight fields from the
 data stream. Its main drawback is that it is only usefull on
 documented/standard protocols. Within Netzob, which achieves
 semi-automatic reverse engineering of protocols, we have developed an
-exporter plugin that allows automatic generation of Wireshark dissectors
+exporter plugin that provides automatic generation of Wireshark dissectors
 from proprietary or undocumented protocols. Dissectors are built in
 `LUA <http://wiki.wireshark.org/Lua>`_ programming language.
 
@@ -24,7 +24,7 @@ the following information:
 -  Name (textual representation)
 -  Format
 -  Size
--  Endianess
+-  Endianness
 -  Signing
 
 All this information is gathered to generate a script including a
@@ -36,7 +36,7 @@ Language
 Wireshark can be statically extended with C modules similar to core
 dissectors. Optionally, Wireshark can be configured to embed a
 `Lua <http://www.lua.org/>`_ interpretor.
-For modularity purposes, the Lua engine has been choosed to extend
+For modularity purposes, the Lua engine has been chosen to extend
 Wireshark with Netzob generated dissectors.
 
 Prerequisite

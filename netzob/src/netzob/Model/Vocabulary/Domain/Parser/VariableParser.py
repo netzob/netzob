@@ -44,12 +44,12 @@
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath, ParsingException
 
 
 @NetzobLogger
 class VariableParser(object):
-    """This class can be use to parse some data against the specification of a domain
+    """This class can be used to parse some data against the specification of a domain
 
     """
 
@@ -64,21 +64,27 @@ class VariableParser(object):
         if self.variable is None:
             raise Exception("Variable cannot be None")
 
-        dataToParse = parsingPath.getDataAssignedToVariable(self.variable)
-        self._logger.debug("Parse '{0}' with variable '{1}' specifications".
-                           format(dataToParse, self.variable))
+        dataToParse = parsingPath.getData(self.variable)
+        self._logger.debug("Parse '{}' with variable '{}' specifications".
+                           format(dataToParse.tobytes(), self.variable))
 
-        return self.variable.parse(parsingPath, carnivorous=carnivorous)
+        try:
+            self._logger.debug("Parsing variable '{}' from field '{}'".format(self.variable.name, self.variable.field.name))
+            paths = self.variable.parse(parsingPath, carnivorous=carnivorous)
+        except ParsingException:
+            return iter(())
+        else:
+            return paths
 
     @property
     def variable(self):
-        """The variable that will be use to parse some content
+        """The variable that will be used to parse some content
 
-        :type: :class:`netzob.Model.Vocabulary.Domaoin.Variables.AbstractVariable.AbstractVariable`
+        :type: :class:`Variable <netzob.Model.Vocabulary.Domaoin.Variables.AbstractVariable.AbstractVariable>`
         """
         return self.__variable
 
-    @variable.setter
+    @variable.setter  # type: ignore
     @typeCheck(AbstractVariable)
     def variable(self, variable):
         if variable is None:

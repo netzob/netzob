@@ -46,40 +46,43 @@ from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 class SpecializingPath(GenericPath):
     def __init__(self,
                  memory,
-                 dataAssignedToField=None,
                  dataAssignedToVariable=None,
-                 fieldsCallbacks=None,
+                 variablesCallbacks=None,
                  ok=None):
         super(SpecializingPath, self).__init__(
             memory,
-            dataAssignedToField=dataAssignedToField,
             dataAssignedToVariable=dataAssignedToVariable,
-            fieldsCallbacks=fieldsCallbacks)
+            variablesCallbacks=variablesCallbacks)
 
         if ok is None:
             self.__ok = True
         else:
             self.__ok = ok
 
-    def duplicate(self):
-        dField = {}
-        for key, value in list(self._dataAssignedToField.items()):
-            dField[key] = value.copy()
-
+    def copy(self):
         dVariable = {}
         for key, value in list(self._dataAssignedToVariable.items()):
             dVariable[key] = value.copy()
 
-        fCall = [x for x in self._fieldsCallbacks]
+        fCall = [x for x in self._variablesCallbacks]
 
+        if self.memory is not None:
+            memory = self.memory
+        else:
+            memory = None
+            
         result = SpecializingPath(
-            memory=self.memory.duplicate(),
-            dataAssignedToField=dField,
+            memory=memory,
             dataAssignedToVariable=dVariable,
-            fieldsCallbacks=fCall,
-            ok=self.ok())
+            variablesCallbacks=fCall,
+            ok=self.ok)
 
         return result
 
+    @property
     def ok(self):
         return self.__ok
+
+    @ok.setter  # type: ignore
+    def ok(self, ok):
+        self.__ok = ok

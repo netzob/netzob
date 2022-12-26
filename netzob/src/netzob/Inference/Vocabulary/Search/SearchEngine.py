@@ -75,7 +75,7 @@ def _executeSearch(arg, **kwargs):
 @NetzobLogger
 class SearchEngine(object):
     """This search engine is the entry point for the API of all
-    the search processes. It allows to search for any type of data in messages using
+    the search processes. It provides search means for any type of data in messages using
     specific transformations to support the identification of hidden data.
 
 
@@ -107,14 +107,14 @@ class SearchEngine(object):
         it but also under various format.
 
         :parameter data: the data to search after. This data must be provided with its netzob type.
-        :type data: an :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
+        :type data: an :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`.
         :parameter message: the message in which the search will take place
-        :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :type message: :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
         :type addTags: :class:`bool`
         :return: a search results detailling where and how occurrences where found. Occurences are also
-        identified in the message through dedicated visualization functions automaticaly added to the message.
-        :rtype: :class:`netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults`
+        identified in the message through dedicated visualization functions automatically added to the message.
+        :rtype: :class:`SearchResults <netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults>`
 
         """
         if data is None:
@@ -153,10 +153,10 @@ class SearchEngine(object):
 
         >>> from netzob.all import *
         >>> stuff = ["protocols", "communication", "games", "tools", "crypto", "people :)"]
-        >>> tools = ["Netzob", "zoby", "toto", "your hand", "a knive"]
+        >>> tools = ["Netzob", "kurt", "toto", "your hand", "a knive"]
         >>> places = ["my office", "school", "your bedroom", "your car", "hell"]
         >>> msgs = [ RawMessage("Reversing {0} with {1} in {2} !".format(s, w, p).encode('utf-8')) for s in stuff for w in tools for p in places]
-        >>> sData = [ ASCII("protocol"), ASCII("Reversed"), Integer(10)]
+        >>> sData = [ String("protocol"), String("Reversed"), Integer(10)]
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessages(sData, msgs, inParallel=False)
         >>> print(results)
@@ -166,21 +166,21 @@ class SearchEngine(object):
 
         >>> from netzob.all import *
         >>> stuff = [b"protocols", b"communication", b"games", b"tools", b"crypto", b"people :)"]
-        >>> tools = [b"Netzob", b"zoby", b"toto", b"your hand", b"a knive"]
+        >>> tools = [b"Netzob", b"kurt", b"toto", b"your hand", b"a knive"]
         >>> places = [b"my office", b"school", b"your bedroom", b"your car", b"hell"]
         >>> msgs = [ RawMessage("Reversing {0} with {1} in {2}!".format(s, w, p)) for s in stuff for w in tools for p in places]
         >>> print(len(msgs))
         150
-        >>> sData = [ASCII("protocol"), ASCII("Reversed"), Integer(10)]
+        >>> sData = [String("protocol"), String("Reversed"), Integer(10)]
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessages(sData, msgs, inParallel=True)
         >>> print(results)
         25 occurence(s) found.
 
         :parameter data: a list of data to search after. Each data must be provided with its netzob type.
-        :type data: a list of :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
+        :type data: a list of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`.
         :parameter messages: the messages in which the search will take place
-        :type message: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :type message: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
         :type addTags: :class:`bool`
         :keyword inParallel: if set to True, the search will be executed in parallel.
@@ -189,8 +189,8 @@ class SearchEngine(object):
         :type dataLabels: dict
 
         :return: a list of search results detailling where and how occurrences where found. Occurences are also
-        identified in the message through dedicated visualization functions automaticaly added to the message.
-        :rtype: a list of :class:`netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults`
+        identified in the message through dedicated visualization functions automatically added to the message.
+        :rtype: a list of :class:`SearchResults <netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults>`
 
         """
 
@@ -261,7 +261,7 @@ class SearchEngine(object):
 
         >>> from netzob.all import *
         >>> message = RawMessage(b"Reversing protocols with Netzob")
-        >>> sData = [ASCII("protocol")]
+        >>> sData = [String("protocol")]
         >>> se = SearchEngine()
         >>> results = se.searchDataInMessage(sData, message)
         >>> print(results)
@@ -270,21 +270,21 @@ class SearchEngine(object):
         ...    print(result)
         ...    print(repr(result.searchTask.properties["data"]))
         Found ascii-bits(bigEndian) at [(80, 144)] of bitarray('01010010011001010111011001100101011100100111001101101001011011100110011100100000011100000111001001101111011101000110111101100011011011110110110001110011001000000111011101101001011101000110100000100000010011100110010101110100011110100110111101100010')
-        protocol
+        b'protocol'
 
 
         :parameter data: the data to search after. Data must be provided with their netzob type.
-        :type data: a list of :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
+        :type data: a list of :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`.
         :parameter message: the message in which the search will take place
-        :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :type message: :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         :keyword addTags: if set to True, visualization functions are added to the message to highlights found results.
         :type addTags: :class:`bool`
         :keyword dataLabels: an optionnal dict to attach to each data a label to simplify search results identification
         :type dataLabels: dict
 
         :return: a search results detailling where and how occurrences where found. Occurences are also
-        identified in the message through dedicated visualization functions automaticaly added to the message.
-        :rtype: :class:`netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults`
+        identified in the message through dedicated visualization functions automatically added to the message.
+        :rtype: :class:`SearchResults <netzob.Inference.Vocabulary.SearchEngine.SearchResults.SearchResults>`
 
         """
 
@@ -328,10 +328,10 @@ class SearchEngine(object):
         """Execute the different search cases and build
         search results that will be returned.
 
-        :parameter searchCases: an iterable of tupple (bitarray, :class:`netzob.Inference.Vocabulary.Search.SearchTask.SearchTask`)
+        :parameter searchCases: an iterable of tuple (bitarray, :class:`SearchTask <netzob.Inference.Vocabulary.Search.SearchTask.SearchTask>`)
         :type searchCases: a list
         :return: the obtained results
-        :rtype: a list of :class:`netzob.Inference.Vocabulary.Search.SearchResult.SearchResult`
+        :rtype: a list of :class:`SearchResult <netzob.Inference.Vocabulary.Search.SearchResult.SearchResult>`
 
         """
         if searchCases is None:
@@ -343,7 +343,7 @@ class SearchEngine(object):
                     target, bitarray) or searchTask is None or not isinstance(
                         searchTask, SearchTask):
                 raise TypeError(
-                    "Each search case must a tupple made of a bitarray and a SearchTask instance"
+                    "Each search case must a tuple made of a bitarray and a SearchTask instance"
                 )
 
             ranges = []
@@ -363,11 +363,11 @@ class SearchEngine(object):
         specified data.
 
         :parameter data: the data from wich it must create search tasks
-        :type data: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
+        :type data: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
         :keyword properties: a dict of properties {name, value} to attach to each built searchTask
         :type properties: a dict
         :return: a list of search tasks
-        :rtype: a :class:`list` of :class:`netzob.Inference.Vocabulary.SearchEngine.SearchTask.SearchTask`
+        :rtype: a :class:`list` of :class:`SearchTask <netzob.Inference.Vocabulary.SearchEngine.SearchTask.SearchTask>`
         """
         if data is None:
             raise TypeError("The data cannot be None")

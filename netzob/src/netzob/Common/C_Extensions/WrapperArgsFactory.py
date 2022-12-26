@@ -31,7 +31,7 @@
 from netzob.Common.C_Extensions.WrapperMessage import WrapperMessage
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Common.NetzobException import NetzobException
-from netzob import _libScoreComputation
+# from netzob import _libScoreComputation  # type: ignore
 
 
 class WrapperArgsFactory(object):
@@ -61,7 +61,7 @@ class WrapperArgsFactory(object):
     def computeSimilarityMatrix(self, symbols):
         self.args = []
         for s in symbols:
-            self.args.append(WrapperMessage(s.messages[0], str(s.id)))
+            self.args.append(WrapperMessage(s.messages[0], str(id(s))))
 
     def alignMessages(self, values):
         self.args = []

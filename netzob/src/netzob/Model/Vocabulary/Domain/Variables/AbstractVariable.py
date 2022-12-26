@@ -34,7 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import uuid
+import abc
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -45,90 +45,125 @@ from bitarray import bitarray
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck
-from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
+from netzob.Common.Utils.Decorators import public_api
 
 
 class AbstractVariable(object):
     """A variable participates in the definition domain of a field.
 
-    This class is abstract and so should not be instanciated directly.
+    The AbstractVariable class defines the API of a variable, which can be a leaf or a node variable.
     """
 
-    def __init__(self, varType, varId=None, name=None, svas=None):
+    @public_api
+    def __init__(self, varType, name=None, scope=None):
         """Constructor
 
-        :param varType: the type of the variable. we highly recommend to use the __class_.__name__
+        :param varType: the type of the variable. we highly recommend using the __class_.__name__
         :type varType: :class:`str`
-        :keywork varId: the id of the variable
-        :type varId: :class:`uuid.UUID`
-        :keyword name: the optional name of the variable, if not set its the varId
+        :keyword name: the optional name of the variable
         :raise: :class:`TypeError` if parameters type are not valid
 
         """
-        if varId is None:
-            self.id = uuid.uuid4()
-        else:
-            self.id = varId
-
         if name is not None:
             self.name = name
         else:
-            self.name = str(self.id)
+            self.name = str(varType)
 
         self.__varType = varType
-        if svas is None:
-            svas = SVAS.EPHEMERAL
-        self.svas = svas
-        # A list containing all variables which value is bind to the value of this variable.
-        self.__boundedVariables = []
-        # An integer list which contain the index of each segment this variable is responsible for (they have been created from its)
-        self.__tokenChoppedIndexes = []
-        # The variables just above the current variable in the tree representation.
-        self.__fathers = []
+        if scope is None:
+            scope = Scope.NONE
+        self.scope = scope
+
+        # Parent field
+        self.field = None
+
+        # Parent variable
+        self.parent = None
+
+    @public_api
+    @abc.abstractmethod
+    def copy(self, map_objects=None):
+        """Clone the current object as well as all its dependencies. This
+        method returns a new object of the same type.
+
+        """
+        raise NotImplementedError("Method clone() is not implemented")
+
+    @abc.abstractmethod
+    def specialize(self, originalSpecializingPath, preset=None):
+        """Specializes the current variable."""
+        raise NotImplementedError("Method specialize() is not implemented")
+
+    @abc.abstractmethod
+    def count(self, preset=None):
+        raise NotImplementedError("Method count() is not implemented")
+
+    @public_api
+    @abc.abstractmethod
+    def isnode(self):
+        """Tells if the current variable is a node variable, which means it as children.
+
+       :return: Return ``True`` if the current variable is a node variable.
+       :rtype: :class:`bool`
+
+        """
+        raise NotImplementedError("Method isnode() is not implemented")
+
+    def is_same_symbol(self, variable):
+        """Tells if the current variable and the variable in parameter are
+        part of the same symbol.
+
+        """
+        if self.field is None or self.field.getAncestor() is None:
+            return False
+        if variable.field is None or variable.field.getAncestor() is None:
+            return False
+        return self.field.getAncestor() == variable.field.getAncestor()
+
+    def getFixedBitSize(self):
+        """Provide the length of a theoretical value that would be generated.
+        It is not the length of an effective value but a prediction of its
+        length in case this latter is fixed.
+
+        :return: the theoretical length of a value generated from the underlying type
+        :rtype: int
+        :raise: ValueError in case the length is dynamic or could not be predicted
+        """
+        self._logger.debug("Determine the deterministic size of the value of "
+                           "the variable")
+        raise ValueError("Cannot determine a fixed size for variable '{}'"
+                         .format(self))
 
     #+---------------------------------------------------------------------------+
     #| Special Functions                                                         |
     #+---------------------------------------------------------------------------+
     def __key(self):
-        return (self.id)
+        return id(self)
 
     def __eq__(x, y):
         return x.__key() == y.__key()
 
     def __hash__(self):
-        return hash(self.__key())
+        return self.__key()
 
     def __str__(self):
         """The str method, mostly for debugging purpose."""
-        return "{0}".format(self.varType)
-
-    # @abc.abstractmethod
-    # def _str_debug(self, deepness=0):
-    #     """Returns a string which denotes
-    #     the current domain definition using a tree display"""
+        return "{0}".format(self.name)
 
     #+---------------------------------------------------------------------------+
     #| Properties                                                                |
     #+---------------------------------------------------------------------------+
     @property
-    def id(self):
-        return self.__id
-
-    @id.setter
-    @typeCheck(uuid.UUID)
-    def id(self, varId):
-        self.__id = varId
-
-    @property
     def varType(self):
         """The type of the variable (Read-only).
 
-        :type: `str`
+        :type: :class:`str`
         :raises: :class:`AttributeError` on write attempt
         """
         return self.__varType
 
-    @varType.setter
+    @varType.setter  # type: ignore
     def varType(self, varType):
         raise AttributeError("Not allowed to modify the variable type")
 
@@ -140,7 +175,7 @@ class AbstractVariable(object):
         """
         return self.__name
 
-    @name.setter
+    @name.setter  # type: ignore
     @typeCheck(str)
     def name(self, name):
         if name is None:
@@ -152,149 +187,31 @@ class AbstractVariable(object):
         self.__name = name
 
     @property
-    def svas(self):
-        """The svas of the variable.
+    def scope(self):
+        """The scope of the variable.
 
         :type: :class:`object`
         """
-        return self.__svas
+        return self.__scope
 
-    @svas.setter
-    def svas(self, svas):
-        if svas is None:
-            raise ValueError("svas cannot be None")
-        self.__svas = svas
+    @scope.setter  # type: ignore
+    def scope(self, scope):
+        if scope is None:
+            raise ValueError("scope cannot be None")
+        self.__scope = scope
 
-    # @property
-    # def learnable(self):
-    #     """tells if the variable can learned a value, initialized itself or not.
+    @property
+    def field(self):
+        return self.__field
 
-    #     >>> from netzob.all import *
-    #     >>> alt = Alt()
-    #     >>> alt.learnable
-    #     False
-    #     >>> alt.learnable = True
-    #     >>> alt.learnable
-    #     True
-    #     >>> alt.learnable = "dqsqdsq"
-    #     Traceback (most recent call last):
-    #     ...
-    #     TypeError: Invalid type for arguments, expecting: bool and received str
-    #     >>> alt.learnable = None
-    #     Traceback (most recent call last):
-    #     ...
-    #     TypeError: Learnable cannot be None
-    #     >>> alt.learnable
-    #     True
+    @field.setter  # type: ignore
+    def field(self, field):
+        self.__field = field
 
-    #     :type:bool
-    #     """
-    #     return self.__learnable
+    @property
+    def parent(self):
+        return self.__parent
 
-    # @learnable.setter
-    # @typeCheck(bool)
-    # def learnable(self, learnable):
-    #     if learnable is None:
-    #         raise TypeError("Learnable cannot be None")
-    #     self.__learnable = learnable
-
-    # @property
-    # def mutable(self):
-    #     """Tells if the variable can be modified or not.
-
-    #     >>> from netzob.all import *
-    #     >>> agg = Agg()
-    #     >>> agg.mutable
-    #     False
-    #     >>> agg.mutable = True
-    #     >>> agg.mutable
-    #     True
-    #     >>> agg.mutable = "dqsqdsq"
-    #     Traceback (most recent call last):
-    #     ...
-    #     TypeError: Invalid type for arguments, expecting: bool and received str
-    #     >>> agg.mutable = None
-    #     Traceback (most recent call last):
-    #     ...
-    #     TypeError: Mutable cannot be None
-    #     >>> agg.mutable
-    #     True
-
-    #     :type:bool
-    #     """
-    #     return self.__mutable
-
-    # @mutable.setter
-    # @typeCheck(bool)
-    # def mutable(self, mutable):
-    #     if mutable is None:
-    #         raise TypeError("Mutable cannot be None")
-    #     self.__mutable = mutable
-
-    # @property
-    # def boundedVariables(self):
-    #     """A list containing all variables which value is bind to the value of this variable.
-
-    #     >>> from netzob.all import *
-    #     >>> d1 = Data(ASCII())
-    #     >>> len(d1.boundedVariables)
-    #     0
-    #     >>> d2 = Data(Integer())
-    #     >>> len(d2.boundedVariables)
-    #     0
-    #     >>> d3 = Data(Raw())
-    #     >>> len(d3.boundedVariables)
-    #     0
-    #     >>> d1.boundedVariables.append(d2)
-    #     >>> d1.boundedVariables.append(d3)
-    #     >>> len(d1.boundedVariables)
-    #     2
-
-    #     :type: list of :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`
-    #     :raise: TypeError if parameter is not valid
-    #     """
-    #     return self.__boundedVariables
-
-    # @boundedVariables.setter
-    # def boundedVariables(self, boundedVariables):
-    #     for bound in boundedVariables:
-    #         if not isinstance(bound, AbstractVariable):
-    #             raise TypeError("BoundedVariables must be AbstractVariables")
-
-    #     self.__boundedVariables = []
-    #     for bound in boundedVariables:
-    #         self.__boundedVariables.append(bound)
-
-    # @property
-    # def tokenChoppedIndex(self):
-    #     """An integer list which contain the index of each segment
-    #     this variable is responsible for (they have been created from its)
-
-    #     .. warning:: use the method addTokenChoppedIndex() to add an index.
-
-    #     :type: list of int
-    #     """
-    #     return self.__tokenChoppedIndexes
-
-    # @tokenChoppedIndex.setter
-    # def tokenChoppedIndex(self, tokenChoppedIndex):
-    #     for index in tokenChoppedIndex:
-    #         if not isinstance(index, int):
-    #             raise TypeError("tokenChoppedIndex must be a list of int")
-    #     self.__tokenChoppedIndexes = []
-    #     for index in tokenChoppedIndex:
-    #         self.__tokenChoppedIndexes.append(index)
-
-    # @property
-    # def fathers(self):
-    #     """ The variables just above the current variable in the tree representation.
-
-    #     :type: list of :class:`netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariables
-    #     """
-    #     return self.__fathers
-
-    # @fathers.setter
-    # def fathers(self, fathers):
-    #     self.__fathers = []
-    #     for father in fathers:
-    #         self.__fathers.append(father)
+    @parent.setter  # type: ignore
+    def parent(self, parent):
+        self.__parent = parent

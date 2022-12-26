@@ -54,7 +54,7 @@ class ClusterByApplicativeData(object):
     """This operations cluster messages in symbols following
     their embedded applicative data.
 
-    The clustering by applicative data use the :class:`netzob.Inference.Search.SearchEngine.SearchEngine` to
+    The clustering by applicative data use the :class:`SearchEngine <netzob.Inference.Search.SearchEngine.SearchEngine>` to
     search applicative data in messages and cluster together message with the same applicative data.
     In the example below, we generate two types of messages. The first,
     contains the pseudo and the city of the user: two applicative datas. While the second
@@ -62,12 +62,14 @@ class ClusterByApplicativeData(object):
 
 
     >>> from netzob.all import *
-    >>> pseudos = ["zoby", "ditrich", "toto", "carlito"]
+    >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+
+    >>> pseudos = ["kurt", "ditrich", "toto", "carlito"]
     >>> cities = ["Paris", "Munich", "Barcelone", "Vienne"]
     >>> ips = ["192.168.0.10", "10.120.121.212", "78.167.23.10"]
     >>> # Build applicative data
-    >>> appPseudos = [ApplicativeData("Pseudo", ASCII(pseudo)) for pseudo in pseudos]
-    >>> appCities = [ApplicativeData("City", ASCII(city)) for city in cities]
+    >>> appPseudos = [ApplicativeData("Pseudo", String(pseudo)) for pseudo in pseudos]
+    >>> appCities = [ApplicativeData("City", String(city)) for city in cities]
     >>> appIps = [ApplicativeData("IPs", IPv4(ip)) for ip in ips]
     >>> appDatas = appPseudos + appCities + appIps
     >>> # Creating messages using application data

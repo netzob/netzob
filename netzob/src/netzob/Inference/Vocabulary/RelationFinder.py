@@ -36,7 +36,7 @@ import math
 #+----------------------------------------------
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, UnitSize
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.Integer import Integer
 from netzob.Model.Vocabulary.AbstractField import AbstractField
@@ -82,6 +82,17 @@ class RelationFinder(object):
      >>> results[0]['x_fields'][0].getValues()
      [b'Adrien', b'Zoby']
 
+    >>> samples = ["Kurt > my name is Kurt", "Nobody > my name is Nobody"]
+    >>> messages = [RawMessage(sample) for sample in samples]
+    >>> symbol = Symbol(messages=messages)
+    >>> Format.splitAligned(symbol)
+    >>> results = RelationFinder.findOnSymbol(symbol)
+    >>> len(results)
+    1
+    >>> print(results[0]['relation_type'])
+    DataRelation
+    >>> results[0]['x_fields'][0].getValues()
+    [b'Kurt', b'Nobody']
     """
 
     # Field's attributes
@@ -105,7 +116,7 @@ class RelationFinder(object):
         symbol/field.
 
         :param symbol: the symbol in which we are looking for relations
-        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
 
         rf = RelationFinder()
@@ -126,7 +137,7 @@ class RelationFinder(object):
     # def executeOnSymbol(self, symbol):
     #     """
     #     :param symbol: the symbol in which we are looking for relations
-    #     :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+    #     :type symbol: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
     #     """
 
     #     cells = [field.getValues(encoded=False, styled=False)
@@ -180,8 +191,8 @@ class RelationFinder(object):
                     (x_fields, x_attribute) = attributeValues_headers[i]
                     (y_fields, y_attribute) = attributeValues_headers[j]
                     # The relation should not apply on the same field
-                    if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[
-                            0].id == y_fields[0].id:
+                    if len(x_fields) == 1 and len(y_fields) == 1 and id(x_fields[
+                            0]) == id(y_fields[0]):
                         continue
                     relation_type = self._findRelationType(x_attribute,
                                                            y_attribute,x_fields,y_fields)
@@ -351,15 +362,15 @@ class RelationFinder(object):
                 # We generate the data
                 concatCellsData = self._generateConcatData(fieldsValues[i:j])
 
-                # We generate lines and header for fields values
+                # We generate lines and header for field values
                 line_header.append((fields[i:j], self.ATTR_VALUE))
                 lines_data.append(self._generateDataValues(concatCellsData))
 
-                # We generate lines and header for fields values
+                # We generate lines and header for field values
                 line_header.append((fields[i:j], self.ATTR_SIZE))
                 lines_data.append(self._generateSizeValues(concatCellsData))
 
-        # # # Now we generate values for fields sizes
+        # # # Now we generate values for field sizes
         # # (multipleSize_Header, multipleSize_lines) = self._generateSizeFieldFromBeginingOfField(symbol)
         # # line_header.extend(multipleSize_Header)
         # # for i_line in range(0, len(lines)):
@@ -409,14 +420,15 @@ class RelationFinder(object):
         for data in cellsData:
             if len(data) > 0:
                 data = data[:8]  # We take at most 8 bytes
-                unitSize = int(AbstractType.UNITSIZE_8) * len(data)
+                unitSize = UnitSize.SIZE_8.value * len(data)
                 unitSize = int(pow(2, math.ceil(math.log(
                     unitSize, 2))))  # Round to the nearest upper power of 2
+                unitSizeEnum = AbstractType.getUnitSizeEnum(unitSize)
                 result.append(
                     Integer.encode(
                         data,
-                        endianness=AbstractType.ENDIAN_BIG,
-                        unitSize=str(unitSize)))
+                        endianness=Endianness.BIG,
+                        unitSize=unitSizeEnum))
             else:
                 result.append(0)
         return result

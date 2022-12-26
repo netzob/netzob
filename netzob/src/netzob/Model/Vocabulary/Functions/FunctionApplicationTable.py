@@ -133,10 +133,10 @@ class FunctionApplicationTable(object):
                      function) in toApplyFunction:
                     (openTag, endTag) = function.getTags()
                     if openTag is not None:
-                        self.registerTag(i_col, function.id, i_local_start,
+                        self.registerTag(i_col, id(function), i_local_start,
                                          openTag)
                     if endTag is not None:
-                        self.registerTag(i_col, function.id, i_local_end,
+                        self.registerTag(i_col, id(function), i_local_end,
                                          endTag)
 
                 i_letter = 0

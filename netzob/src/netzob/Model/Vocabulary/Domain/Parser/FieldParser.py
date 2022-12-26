@@ -50,92 +50,92 @@ from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
 
 @NetzobLogger
 class FieldParser():
-    """Main entry point for the vocabulary parser.
-    This class can be use to parse some data against the specification of a field
+    r"""Main entry point for the vocabulary parser.
+    This class can be used to parse some data against the specification of a field
 
     >>> from netzob.all import *
-    >>> f1 = Field(name="f1", domain=ASCII(nbChars=(1,10)))
-    >>> print(f1.domain.svas)
-    Ephemeral SVAS
+    >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+    >>> f1 = Field(name="f1", domain=String(nbChars=(1,10)))
+    >>> print(f1.domain.scope)
+    Scope.NONE
     
-    >>> content = TypeConverter.convert("toto", ASCII, BitArray)
+    >>> content = TypeConverter.convert(b"toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto
     tot
     to
     t
 
-    >>> f1 = Field(name="f1", domain=Agg([ASCII(nbChars=(1,4)), ASCII(".txt")]))
-    >>> content = TypeConverter.convert("toto.txt", ASCII, BitArray)
+    >>> f1 = Field(name="f1", domain=Agg([String(nbChars=(1,4)), String(".txt")]))
+    >>> content = TypeConverter.convert(b"toto.txt", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto.txt
-    
-    >>> f1 = Field(name="f1", domain=Agg([ASCII("toto"), ASCII(" "), ASCII("tata")]))
-    >>> content = TypeConverter.convert("toto tata", ASCII, BitArray)
+
+    >>> f1 = Field(name="f1", domain=Agg([String("toto"), String(" "), String("tata")]))
+    >>> content = TypeConverter.convert(b"toto tata", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto tata
 
-    >>> f1 = Field(name="f1", domain=Alt([ASCII("toto"), ("tata")]))
-    >>> content = TypeConverter.convert("toto", ASCII, BitArray)
+    >>> f1 = Field(name="f1", domain=Alt([String("toto"), ("tata")]))
+    >>> content = TypeConverter.convert(b"toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto
 
     # # Let's illustrate that our parser support multiple results
 
-    >>> f1 = Field(name="f1", domain=Alt([ASCII("toto"), ("to")]))
-    >>> content = TypeConverter.convert("toto", ASCII, BitArray)
+    >>> f1 = Field(name="f1", domain=Alt([String("toto"), ("to")]))
+    >>> content = TypeConverter.convert(b"toto", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto
     to
 
     # Yes, the following example is (mostly) the reason for this last year's development :)
 
     >>> f1 = Field(name="f1", domain=Agg([Alt(["to", "toto"]), Alt(["to", "toto"])]))
-    >>> content = TypeConverter.convert("tototo", ASCII, BitArray)
+    >>> content = TypeConverter.convert(b"tototo", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     toto
     tototo
     tototo
 
-    >>> f1 = Field(name="f1", domain=Agg([ASCII(nbChars=(1,10)), ASCII(".txt")]))
-    >>> content = TypeConverter.convert("helloword.txt", ASCII, BitArray)
+    >>> f1 = Field(name="f1", domain=Agg([String(nbChars=(1,10)), String(".txt")]))
+    >>> content = TypeConverter.convert(b"helloword.txt", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
-    >>> print(b'\\n'.join([TypeConverter.convert(result.getDataAssignedToField(f1), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
+    >>> print(b'\n'.join([TypeConverter.convert(result.getData(f1.domain), BitArray, Raw) for result in parsingPaths]).decode("utf-8"))
     helloword.txt
 
-    >>> f1 = Field(name="f1", domain=Agg([ASCII(nbChars=(1,10)), ASCII(".txt")]))
-    >>> content = TypeConverter.convert("helloword.tot", ASCII, BitArray)
-    >>> parser = FieldParser(f1)
+    >>> f1 = Field(name="f1", domain=Agg([String(nbChars=(1,10)), String(".txt")]))
+    >>> content = TypeConverter.convert(b"helloword.tot", String, BitArray)
     >>> parser = FieldParser(f1)
     >>> parsingPath = ParsingPath(dataToParse=content, memory=Memory())
-    >>> parsingPath.assignDataToField(content, f1)
+    >>> parsingPath.assignData(content, f1.domain)
     >>> parsingPaths = parser.parse(parsingPath)
     >>> next(parsingPaths)
     Traceback (most recent call last):
@@ -146,32 +146,32 @@ class FieldParser():
     Below are few tests 
 
     >>> from netzob.all import *
-    >>> message = RawMessage(b"\\xaa\\x00\\xbb")
+    >>> message = RawMessage(b"\xaa\x00\xbb")
     >>> f1 = Field(Raw(nbBytes=(0,1)), name="f1")
-    >>> f2 = Field(b"\\x00", name="f2")
+    >>> f2 = Field(b"\x00", name="f2")
     >>> f3 = Field(Raw(nbBytes=(0, 2)), name="f3")
     >>> s = Symbol([f1, f2, f3], messages=[message])
-    >>> print(s)
+    >>> print(s.str_data())
     f1      | f2     | f3     
     ------- | ------ | -------
-    b'\\xaa' | '\\x00' | b'\\xbb'
+    b'\xaa' | '\x00' | b'\xbb'
     ------- | ------ | -------
 
 
-    >>> msg1 = b'\\n\\x00aStrongPwd'
-    >>> msg2 = b'\\t\\x00myPasswd!'
+    >>> msg1 = b'\n\x00aStrongPwd'
+    >>> msg2 = b'\t\x00myPasswd!'
     >>> messages = [RawMessage(data=sample) for sample in [msg1, msg2]]
     >>> f1 = Field(Raw(nbBytes=(0,1)), name="f1")
-    >>> f2 = Field(b"\\x00", name="f2")
+    >>> f2 = Field(b"\x00", name="f2")
     >>> f3 = Field(Raw(nbBytes=(0,11)), name="f3")
     >>> f4 = Field(b"wd", name="f4")
     >>> f5 = Field(Raw(nbBytes=(0,1)), name="f5")
     >>> s = Symbol([f1, f2, f3, f4, f5], messages = messages)
-    >>> print(s)
+    >>> print(s.str_data())
     f1   | f2     | f3         | f4   | f5 
     ---- | ------ | ---------- | ---- | ---
-    '\\n' | '\\x00' | 'aStrongP' | 'wd' | '' 
-    '\\t' | '\\x00' | 'myPass'   | 'wd' | '!'
+    '\n' | '\x00' | 'aStrongP' | 'wd' | '' 
+    '\t' | '\x00' | 'myPass'   | 'wd' | '!'
     ---- | ------ | ---------- | ---- | ---
 
     
@@ -199,40 +199,28 @@ class FieldParser():
                 format(self.field.name))
 
         # check we have something to parse
-        data = parsingPath.getDataAssignedToField(self.field)
+        data = parsingPath.getData(self.field.domain)
 
-        self._logger.debug("Parses '{0}' with field '{1}' specifications".
-                           format(data, self.field.name))
+        self._logger.debug("Parse '{}' with field '{}' specifications".
+                           format(data.tobytes(), self.field.name))
 
         # we assign this data to the field's variable
-        parsingPath.assignDataToVariable(data.copy(), self.field.domain)
+        parsingPath.assignData(data.copy(), self.field.domain)
 
         # we create a first VariableParser and uses it to parse the domain
         variableParser = VariableParser(domain)
 
-        for resultParsingPath in variableParser.parse(
-                parsingPath, carnivorous=self.lastField):
-            if resultParsingPath.isDataAvailableForVariable(self.field.domain):
-                try:
-                    resultParsingPath.addResultToField(
-                        self.field,
-                        resultParsingPath.getDataAssignedToVariable(
-                            self.field.domain))
-                    yield resultParsingPath
-                except Exception as e:
-                    self._logger.debug(
-                        "An error occurred while parsing variable : {}".format(
-                            e))
+        yield from variableParser.parse(parsingPath, carnivorous=self.lastField)
 
     @property
     def field(self):
-        """The field that will be use to parse some content
+        """The field that will be used to parse some content
 
-        :type: :class:`netzob.Model.Vocabulary.Field.Field`
+        :type: :class:`Field <netzob.Model.Vocabulary.Field.Field>`
         """
         return self.__field
 
-    @field.setter
+    @field.setter  # type: ignore
     @typeCheck(Field)
     def field(self, field):
         if field is None:

@@ -29,7 +29,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -43,13 +42,13 @@ from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Common.Utils.SortedTypedList import SortedTypedList
 from netzob.Common.Utils.TypedList import TypedList
 from netzob.Model.Vocabulary.ApplicativeData import ApplicativeData
-from netzob.Model.Vocabulary.AbstractField import AbstractField
+from netzob.Model.Vocabulary.AbstractField import AbstractionException
 
 
 @NetzobLogger
 class Session(object):
     """A session includes messages exchanged in the same session. Messages
-    are automaticaly sorted.
+    are automatically sorted.
     Applicative data can be attached to sessions.
 
 
@@ -71,15 +70,12 @@ class Session(object):
 
     def __init__(self,
                  messages=None,
-                 _id=None,
                  applicativeData=None,
                  name="Session"):
         """
         :parameter messages: the messages exchanged in the current session
-        :type data: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
-        :parameter _id: the unique identifier of the session
-        :type _id: :class:`uuid.UUID`
-        :keyword applicativeData: a list of :class:`netzob.Model.Vocabulary.ApplicaticeData.ApplicativeData`
+        :type data: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
+        :keyword applicativeData: a list of :class:`ApplicativeData <netzob.Model.Vocabulary.ApplicaticeData.ApplicativeData>`
         """
         self.__messages = SortedTypedList(AbstractMessage)
         self.__applicativeData = TypedList(ApplicativeData)
@@ -87,35 +83,17 @@ class Session(object):
         if messages is None:
             messages = []
         self.messages = messages
-        if _id is None:
-            _id = uuid.uuid4()
-        self.id = _id
         if applicativeData is None:
             applicativeData = []
         self.applicativeData = applicativeData
         self.name = name
 
     @property
-    def id(self):
-        """The unique identifier of the session.
-
-        :type: :class:`uuid.UUID`
-        """
-        return self.__id
-
-    @id.setter
-    @typeCheck(uuid.UUID)
-    def id(self, _id):
-        if _id is None:
-            raise TypeError("Id cannot be None")
-        self.__id = _id
-
-    @property
     def messages(self):
         """The messages exchanged in the current session.
         Messages are sorted.
 
-        :type: a :class:`netzob.Common.Utils.TypedList.TypedList` of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type: a :class:`TypedList <netzob.Common.Utils.TypedList.TypedList>` of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
         """
         return self.__messages
 
@@ -126,7 +104,7 @@ class Session(object):
 
         self.__messages.clear()
 
-    @messages.setter
+    @messages.setter  # type: ignore
     def messages(self, messages):
         if messages is None:
             messages = []
@@ -152,16 +130,16 @@ class Session(object):
         >>> session = Session(applicativeData=[appData])
         >>> print(len(session.applicativeData))
         1
-        >>> appData2 = ApplicativeData("test2", ASCII("helloworld"))
+        >>> appData2 = ApplicativeData("test2", String("helloworld"))
         >>> session.applicativeData.append(appData2)
         >>> print(len(session.applicativeData))
         2
         >>> print(session.applicativeData[0])
-        Applicative Data: test=Integer=20 ((8, 8)))
+        Applicative Data: test=Integer(20))
         >>> print(session.applicativeData[1])
-        Applicative Data: test2=ASCII=helloworld ((0, 80)))
+        Applicative Data: test2=String('helloworld'))
 
-        :type: a list of :class:`netzob.Model.Vocabulary.ApplicativeData.ApplicativeData`.
+        :type: a list of :class:`ApplicativeData <netzob.Model.Vocabulary.ApplicativeData.ApplicativeData>`.
         """
         return self.__applicativeData
 
@@ -169,7 +147,7 @@ class Session(object):
         while (len(self.__applicativeData) > 0):
             self.__applicativeData.pop()
 
-    @applicativeData.setter
+    @applicativeData.setter  # type: ignore
     def applicativeData(self, applicativeData):
         for app in applicativeData:
             if not isinstance(app, ApplicativeData):
@@ -184,7 +162,7 @@ class Session(object):
     def name(self):
         return self.__name
 
-    @name.setter
+    @name.setter  # type: ignore
     @typeCheck(str)
     def name(self, _name):
         if _name is None:
@@ -295,9 +273,9 @@ class Session(object):
         parameter.
 
         >>> from netzob.all import *
-        >>> symbolSYN = Symbol([Field(ASCII("SYN"))], name="Symbol_SYN")
-        >>> symbolSYNACK = Symbol([Field(ASCII("SYN/ACK"))], name="Symbol_SYNACK")
-        >>> symbolACK = Symbol([Field(ASCII("ACK"))], name="Symbol_ACK")
+        >>> symbolSYN = Symbol([Field(String("SYN"))], name="Symbol_SYN")
+        >>> symbolSYNACK = Symbol([Field(String("SYN/ACK"))], name="Symbol_SYNACK")
+        >>> symbolACK = Symbol([Field(String("ACK"))], name="Symbol_ACK")
         >>> symbolList = [symbolSYN, symbolSYNACK, symbolACK]
 
         >>> msg1 = RawMessage("SYN", source="A", destination="B")
@@ -324,6 +302,12 @@ class Session(object):
             )
             return abstractSession
         for message in list(self.messages.values()):
-            (symbol, structured_message) = AbstractField.abstract(message.data, symbolList)
-            abstractSession.append((message.source, message.destination, symbol))
+            for symbol in symbolList:
+                try:
+                    symbol.abstract(message.data)
+                except AbstractionException:
+                    continue
+                else:
+                    abstractSession.append((message.source, message.destination, symbol))
+                    break
         return abstractSession

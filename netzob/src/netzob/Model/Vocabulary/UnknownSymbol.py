@@ -42,7 +42,7 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
@@ -50,21 +50,39 @@ from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 
 @NetzobLogger
 class UnknownSymbol(Symbol):
-    """An unknown symbol is a special type of symbol that is returned to represent a message that cannot be abstracted
+    """An unknown symbol is a special type of symbol that is returned to
+    represent a message that cannot be abstracted.
+
+    The UnknownSymbol constructor expects some parameters:
+
+    :param message: The raw message that cannot be abstracted into a symbol.
+                    Default value is None.
+    :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`, optional
+
+
+    The UnknownSymbol class provides the following public variable:
+
+    :var message: The raw message that cannot be abstracted into a symbol.
+    :vartype message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+
 
     >>> from netzob.all import *
     >>> u = UnknownSymbol()
-    >>> print(u.name)
-    Unknown Symbol ''
+    >>> u.name
+    "Unknown message ''"
 
-    >>> from netzob.all import *
-    >>> msg = RawMessage("hello")
-    >>> u = UnknownSymbol(msg)
-    >>> print(u.name)
-    Unknown Symbol 'hello'
+
+    .. ifconfig:: scope in ('netzob')
+
+       >>> from netzob.all import *
+       >>> msg = RawMessage("hello")
+       >>> u = UnknownSymbol(msg)
+       >>> u.name
+       "Unknown message 'hello'"
 
     """
 
+    @public_api
     def __init__(self, message=None):
         self.message = message
         name_suffix = ""
@@ -74,7 +92,7 @@ class UnknownSymbol(Symbol):
 
         super(UnknownSymbol, self).__init__(
             fields=None,
-            name="Unknown Symbol {}".format(name_suffix),
+            name="Unknown message {}".format(name_suffix),
             messages=[self.message])
 
     def __repr__(self):
@@ -91,7 +109,7 @@ class UnknownSymbol(Symbol):
         """
         return self.__message
 
-    @message.setter
+    @message.setter  # type: ignore
     @typeCheck(AbstractMessage)
     def message(self, message):
         if message is None:

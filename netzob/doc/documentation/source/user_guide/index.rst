@@ -17,7 +17,7 @@ you how to use each of these modules.
 
 :ref:`Reversing a protocol<inference>`
   The vocabulary and grammar inference methods constitute the core of
-  Netzob. It allows both passive and active reverse engineering of
+  Netzob. It provides both passive and active reverse engineering of
   communication flows through automated and manuals mechanisms.
 
 :ref:`Generating traffic and simulting actors<simulation>`

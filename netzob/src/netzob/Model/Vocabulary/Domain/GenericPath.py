@@ -35,9 +35,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import uuid
-from bitarray import bitarray
-from random import shuffle
 
 # +---------------------------------------------------------------------------+
 # | related third party imports                                               |
@@ -48,257 +45,382 @@ from random import shuffle
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
-from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
-from netzob.Model.Vocabulary.Types.BitArray import BitArray
-from netzob.Model.Vocabulary.Types.Raw import Raw
 
 
 @NetzobLogger
 class GenericPath(object):
-    """This class is the parent class of both abstraction paths and
-    specialization paths"""
+    """This class allows access to variables data during both abstraction
+    and specialization.
+
+    """
 
     def __init__(self,
                  memory=None,
-                 dataAssignedToField=None,
                  dataAssignedToVariable=None,
-                 fieldsCallbacks=None):
-        self.name = str(uuid.uuid4())
+                 variablesCallbacks=None):
         self.memory = memory
 
-        if fieldsCallbacks is not None:
-            self._fieldsCallbacks = fieldsCallbacks
+        if variablesCallbacks is not None:
+            self._variablesCallbacks = variablesCallbacks
         else:
-            self._fieldsCallbacks = []
+            self._variablesCallbacks = []
 
-        if dataAssignedToField is None:
-            self._dataAssignedToField = {}
-        else:
-            self._dataAssignedToField = dataAssignedToField
+        self._variablesWithResult = []
 
         if dataAssignedToVariable is None:
             self._dataAssignedToVariable = {}
         else:
             self._dataAssignedToVariable = dataAssignedToVariable
 
-    def addResult(self, variable, result):
-        """This method can be use to register the bitarray obtained after having parsed a variable
+        self._current_callbacks_operation = []
+
+        # List of inaccessible variables during specialization, due to preseting a parent variable
+        # If a relationship targets one of those inaccessible variables, this should trigger an InaccessibleVariableException
+        self._inaccessibleVariables = []
+
+    def __str__(self):
+        return "Path({})".format(str(id(self)))
+
+    def addResult(self, variable, result, notify=True):
+        """
+        This method can be used to register the bitarray obtained after having parsed a variable.
+
+        :param notify: decide to look for other variable that could be evaluated using this result
+        :type notify: bool (default :const:`True`)
 
         >>> from netzob.all import *
         >>> path = GenericPath()
-        >>> var = Data(dataType=ASCII())
-        >>> print(path.isDataAvailableForVariable(var))
+        >>> var = Data(dataType=String())
+        >>> print(path.hasData(var))
         False
-        >>> path.addResult(var, TypeConverter.convert("test", ASCII, BitArray))
-        >>> print(path.isDataAvailableForVariable(var))
+        >>> path.addResult(var, String("test").value)[0]
         True
-        >>> print(path.getDataAssignedToVariable(var))
+        >>> print(path.hasData(var))
+        True
+        >>> print(path.getData(var))
         bitarray('01110100011001010111001101110100')
 
         """
 
-        self.assignDataToVariable(result, variable)
+        self.assignData(result, variable)
 
-    def addResultToField(self, field, result):
-        """This method can be use to register the bitarray obtained after having parsed a field (i.e. multiple variables)
+        if notify:
+            self._logger.debug("Testing variable callbacks after addResult()")
+            return self._triggerVariablesCallbacks(variable)
+        return (True, (self, ))
+
+    def hasResult(self, variable):
+        return variable in self._variablesWithResult
+
+    def getData(self, variable):
+        """Return the data that is assigned to the specified variable.
 
         >>> from netzob.all import *
         >>> path = GenericPath()
-        >>> field = Field(ASCII())
-        >>> print(path.isDataAvailableForField(field))
+        >>> v1 = Data(dataType=String(nbChars=(5, 10)), name="netzob")
+        >>> print(path.hasData(v1))
         False
-        >>> path.addResultToField(field, TypeConverter.convert("test", ASCII, BitArray))
-        >>> print(path.isDataAvailableForField(field))
-        True
-        >>> print(path.getDataAssignedToField(field))
-        bitarray('01110100011001010111001101110100')
+        >>> path.assignData(String("kurt").value, v1)
+        >>> print(path.getData(v1))
+        bitarray('01101011011101010111001001110100')
 
         """
-        self.assignDataToField(result, field)
 
-        if not self._triggerFieldCallbacks(field):
+        if variable is None:
+            raise Exception("Variable cannot be None")
+        if variable in self._dataAssignedToVariable:
+            return self._dataAssignedToVariable[variable]
+        else:
             raise Exception(
-                "Impossible to assign this result to the field (CB has failed)")
+                "In path '{}', no data assigned to variable '{}' (id={}), which is linked to field '{}'".format(self,
+                                                                                                                variable,
+                                                                                                                id(variable),
+                                                                                                                variable.field))
 
-    def getDataAssignedToField(self, field):
-        """Return the value assigned to the specified field
-
-        >>> from netzob.all import *
-        >>> path = GenericPath()
-        >>> f0 = Field(ASCII())
-        >>> print(path.isDataAvailableForField(f0))
-        False
-        >>> path.addResultToField(f0, TypeConverter.convert("test", ASCII, BitArray))
-        >>> print(path.getDataAssignedToField(f0))
-        bitarray('01110100011001010111001101110100')
+    def hasData(self, variable):
+        """Return True if a data has been assigned to the specified variable.
         """
 
-        if field is None:
-            raise Exception("Field cannot be None")
-
-        if field.id in self._dataAssignedToField:
-            return self._dataAssignedToField[field.id]
-        elif self.memory is not None and self.memory.hasValue(field.domain):
-            return self.memory.getValue(field.domain)
-
-        raise Exception("No data is assigned to field '{0}'".format(field.id))
-
-    def assignDataToField(self, data, field):
-        """Assign the specified data to the specified field.
-        This method is wrapped by the `getDataAssignedToField` method.
-
-        >>> from netzob.all import *
-        >>> path = GenericPath()
-        >>> f0 = Field(ASCII())
-        >>> print(path.isDataAvailableForField(f0))
-        False
-        >>> path.assignDataToField(TypeConverter.convert("test", ASCII, BitArray), f0)    
-        >>> print(path.getDataAssignedToField(f0))
-        bitarray('01110100011001010111001101110100')
-        """
-        if data is None:
-            raise Exception("Data cannot be None")
-        if field is None:
-            raise Exception("Field cannot be None")
-
-        self._dataAssignedToField[field.id] = data
-
-    def isDataAvailableForField(self, field):
-        if field is None:
-            raise Exception("Field cannot be None")
-        if field.id in self._dataAssignedToField:
+        if variable is None:
+            raise Exception("Variable cannot be None")
+        if variable in self._dataAssignedToVariable:
             return True
+        else:
+            return False
+
+    def getDataInMemory(self, variable):
+        """Return the data that is assigned to the specified variable in the memory.
+
+        >>> from netzob.all import *
+        >>> path = GenericPath(memory=Memory())
+        >>> v1 = Data(dataType=String(nbChars=(5, 10)), name="netzob")
+        >>> print(path.hasDataInMemory(v1))
+        False
+        >>> path.memory.memorize(v1, String("kurt").value)
+        >>> print(path.getDataInMemory(v1))
+        bitarray('01101011011101010111001001110100')
+
+        """
+
+        if variable is None:
+            raise Exception("Variable cannot be None")
+        if self.memory is not None and self.memory.hasValue(variable):
+            return self.memory.getValue(variable)
+        raise Exception(
+            "In path '{}', no data assigned to variable '{}' (id={}), which is linked to field '{}'".format(self,
+                                                                                                            variable,
+                                                                                                            id(variable),
+                                                                                                            variable.field))
+
+    def hasDataInMemory(self, variable):
+        """Return True if a data has been assigned to the specified variable in the memory.
+        """
+
+        if variable is None:
+            raise Exception("Variable cannot be None")
         if self.memory is not None:
-            return self.memory.hasValue(field.domain)
-        return False
+            return self.memory.hasValue(variable)
+        else:
+            return False
 
-    def removeAssignedDataToField(self, field):
-        """Remove predefined data assigned to the specified field
-
-        >>> from netzob.all import *
-        >>> path = GenericPath()
-        >>> f0 = Field(ASCII())
-        >>> print(path.isDataAvailableForField(f0))
-        False
-        >>> path.assignDataToField(TypeConverter.convert("netzob", ASCII, BitArray), f0)
-        >>> print(path.isDataAvailableForField(f0))
-        True
-        >>> path.removeAssignedDataToField(f0)
-        >>> print(path.isDataAvailableForField(f0))
-        False
-        """
-
-        if field is None:
-            raise Exception("Field cannot be None")
-        del self._dataAssignedToField[field.id]
-
-    @typeCheck(AbstractVariable)
-    def getDataAssignedToVariable(self, variable):
-        """Return the data that is assigned to the specified varibale
-
-        >>> from netzob.all import *
-        >>> path = GenericPath()
-        >>> v1 = Data(dataType=ASCII(nbChars=(5, 10)), name="netzob")          
-        >>> print(path.isDataAvailableForVariable(v1))
-        False
-        >>> path.assignDataToVariable(TypeConverter.convert("zoby", ASCII, BitArray), v1)
-        >>> print(path.getDataAssignedToVariable(v1))
-        bitarray('01111010011011110110001001111001')
+    def assignData(self, data, variable):
+        """Assign a data to the specified variable.
 
         """
 
-        if variable is None:
-            raise Exception("Variable cannot be None")
-        if variable.id not in self._dataAssignedToVariable:
-            raise Exception(
-                "No data is assigned to variable '{0}'".format(variable.name))
-
-        return self._dataAssignedToVariable[variable.id]
-
-    @typeCheck(AbstractVariable)
-    def isDataAvailableForVariable(self, variable):
-        if variable is None:
-            raise Exception("Variable cannot be None")
-        return variable.id in self._dataAssignedToVariable
-
-    @typeCheck(bitarray, AbstractVariable)
-    def assignDataToVariable(self, data, variable):
         if data is None:
             raise Exception("Data cannot be None")
         if variable is None:
             raise Exception("Variable cannot be None")
 
-        self._dataAssignedToVariable[variable.id] = data
+        # if variable in self._dataAssignedToVariable:
+        #     self._logger.debug("Replacing '{}' by '{}' for variable '{}'".format(self._dataAssignedToVariable[variable].tobytes(), data.tobytes(), variable))
 
-    @typeCheck(AbstractVariable)
-    def removeAssignedDataToVariable(self, variable):
+        self._dataAssignedToVariable[variable] = data
+
+    def removeData(self, variable):
+        self._logger.debug("Remove assigned data to variable: {}".format(variable))
         if variable is None:
             raise Exception("Variable cannot be None")
 
-        del self._dataAssignedToVariable[variable.id]
+        if variable in self._dataAssignedToVariable:
+            del self._dataAssignedToVariable[variable]
 
-    def registerFieldCallBack(self, fields, variable, parsingCB=True):
-        if fields is None:
-            raise Exception("Fields cannot be None")
+    def removeDataRecursively(self, variable):
+        from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import SELF
+
+        self._logger.debug("Remove assigned data to variable (and its children): {}".format(variable))
         if variable is None:
             raise Exception("Variable cannot be None")
 
-        if len(fields) == 0:
-            raise Exception(
-                "At least one field must be defined in the callback")
+        if variable in self._dataAssignedToVariable:
+            del self._dataAssignedToVariable[variable]
 
-        self._fieldsCallbacks.append((fields, variable, parsingCB))
+        if self.memory is not None and self.memory.hasValue(variable):
+            self.memory.forget(variable)
 
-    def _triggerFieldCallbacks(self, field):
-
-        moreCallBackFound = True
-
-        # Try n-times to trigger callbacks as there can have deadlocks
-        # between mutually linked domain definitions
-        for i in range(10):
-            if moreCallBackFound is False:
-                break
-
-            moreCallBackFound = False
-            callBackToExecute = None
-
-            # Mix the callbacks functions, as we want to call them
-            # randomly in order to eliminate potential deadlocks due
-            # to mutually linked domain definitions
-            shuffle(self._fieldsCallbacks)
-
-            for (fields, variable, parsingCB) in self._fieldsCallbacks:
-                fieldsHaveValue = True
-                for f in fields:
-                    if not self.isDataAvailableForField(f):
-                        fieldsHaveValue = False
-                if fieldsHaveValue:
-                    self._logger.debug(
-                        "Found a callback that must be able to trigger (all its fields are set)"
-                    )
-                    callBackToExecute = (fields, variable, parsingCB)
-                    break
-
-            if callBackToExecute is not None:
-                moreCallBackFound = True
-                (fields, variable, parsingCB) = callBackToExecute
-                if parsingCB:
-                    resultingPaths = variable.parse(self, acceptCallBack=False)
+        if hasattr(variable, 'children'):
+            for child in variable.children:
+                # We check if we reach the recursive pattern 'SELF' (in such case, no propagation is needed)
+                if type(child) == type and child == SELF:
+                    pass
                 else:
-                    resultingPaths = variable.specialize(self, acceptCallBack=True)
-                if len(resultingPaths) == 0:
-                    return False
+                    self.removeDataRecursively(child)
 
-                self._fieldsCallbacks.remove(callBackToExecute)
-        return True
+    def setInaccessibleVariableRecursively(self, variable):
+        from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import SELF
+
+        self._logger.debug("Set the variable (and its children) inaccessible: {}".format(variable))
+        if variable is None:
+            raise Exception("Variable cannot be None")
+
+        self._inaccessibleVariables.append(variable)
+
+        if hasattr(variable, 'children'):
+            for child in variable.children:
+                # We check if we reach the recursive pattern 'SELF' (in such case, no propagation is needed)
+                if type(child) == type and child == SELF:
+                    pass
+                else:
+                    self.setInaccessibleVariableRecursively(child)
+
+    def isVariableInaccessible(self, variable):
+        """Return True if a variable is inaccessible.
+        """
+
+        if variable is None:
+            raise Exception("Variable cannot be None")
+        if variable in self._inaccessibleVariables:
+            return True
+        else:
+            return False
+
+    def registerVariablesCallBack(self, targetVariables, currentVariable, parsingCB=True):
+        if targetVariables is None:
+            raise Exception("Target variables cannot be None")
+        if currentVariable is None:
+            raise Exception("Current variable cannot be None")
+
+        if len(targetVariables) == 0:
+            raise Exception(
+                "At least one target variable must be defined in the callback")
+
+        newCB = (targetVariables, currentVariable, parsingCB)
+        if newCB not in self._variablesCallbacks:
+            self._variablesCallbacks.append(newCB)
+        else:
+            self._logger.debug("Callback already registered")
+
+    def _triggerVariablesCallbacks(self, triggeringVariable):
+        """Returns a tuple, where the first element tell if the callback
+        computation has been successful, and where the second element is a
+        generator/list of the new computed parsingPaths.
+
+        """
+
+        from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+
+        callbacks_to_execute = []
+        potentialCallback = None
+        tested_callbacks = []
+        self._logger.debug("Number of callbacks to analyze: {}".format(len(self._variablesCallbacks)))
+
+        for potentialCallback in self._variablesCallbacks:
+            self._logger.debug("Testing a new callback")
+
+            if potentialCallback in tested_callbacks:
+                self._logger.debug("Potential callback already tested")
+                potentialCallback = None
+                continue
+
+            # Add current callback to a list of callbacks that have already been tested
+            tested_callbacks.append(potentialCallback)
+
+            if potentialCallback in self._current_callbacks_operation:
+                self._logger.debug("Potential callback is currently tested")
+                potentialCallback = None
+                continue
+
+            # Retrieve callback elements
+            (targetVariables, currentVariable, parsingCB) = potentialCallback
+
+            if triggeringVariable == currentVariable:
+                self._logger.debug("Potential callback triggered by the variable concerned by the resolution")
+                potentialCallback = None
+                continue
+
+            # Test if triggeringVariable may help in computing the
+            # callback (i.e. it is in the list of the targeted
+            # variables of the currentVariable)
+            found = False
+            for v in targetVariables:
+                if v == triggeringVariable:
+                    found = True
+                    break
+            if found:
+                self._logger.debug("Found a callback on '{}' that should be able to be computed due to triggering variable '{}' from field '{}'".format(currentVariable, triggeringVariable, triggeringVariable.field))
+                #break
+            else:
+
+                # Current callback is considered if there exists
+                # another callback for which we have common target
+                # variables (this means that the resolution of a
+                # common target variable may resolve two callbacks)
+                found = False
+                for inner_cbk in self._variablesCallbacks:
+                    (inner_targetVariables, inner_currentVariable, inner_parsingCB) = inner_cbk
+
+                    # We verify those three conditions to say that a callback should be analyzed:
+                    # - We don't consider Repeat variables here
+                    # - We don't consider parsing mode
+                    # - We verify that the set of common target variables is not empty
+                    common_target_variables = list(set(inner_targetVariables).intersection(targetVariables))
+                    if not inner_parsingCB and not isinstance(currentVariable, Repeat) and len(common_target_variables) > 0:
+                        found = True
+                        break
+                if found:
+                    if triggeringVariable.parent is not None and triggeringVariable.parent == currentVariable:
+                        potentialCallback = None
+                        continue
+                    else:
+                        self._logger.debug("Found a callback on '{}' that should be able to be computed due to indirect triggering variable '{}' from field '{}'".format(currentVariable, triggeringVariable, triggeringVariable.field))
+                else:
+                    self._logger.debug("Callback not concerned by the triggering variable")
+                    potentialCallback = None
+                    continue
+
+            if potentialCallback is not None:
+                callbacks_to_execute.append(potentialCallback)
+
+        last_callback_succeed = True
+        if len(callbacks_to_execute) > 0:
+            from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import RelationDependencyException
+            while len(callbacks_to_execute) > 0:
+                callback_to_execute = callbacks_to_execute.pop()
+                try:
+                    # Add current callback to a list of callbacks that are currently being executed (recursively).
+                    # This avoids computing a callback that is being already computing
+                    self._current_callbacks_operation.append(callback_to_execute)
+
+                    self._logger.debug("Executing a callback")
+                    results = self._processCallback(callback_to_execute)
+                    last_callback_succeed = True
+                except RelationDependencyException as e:
+                    last_callback_succeed = False
+                    self._logger.debug("Callback execution did not succeed")
+                    continue
+                else:
+                    self._logger.debug("Callback execution succeed")
+                    return results
+                finally:
+                    self._current_callbacks_operation.remove(callback_to_execute)
+
+        # If no callback execution succeed, or there were no callback at all
+        resultingPaths = (self, )
+        return (last_callback_succeed, resultingPaths)
+
+    def _processCallback(self, callBackToExecute):
+        from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
+        from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
+
+        # Retrieve callback elements
+        (targetVariables, currentVariable, parsingCB) = callBackToExecute
+
+        # Callback computation
+        from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import RelationDependencyException
+        try:
+            if parsingCB:
+                resultingPaths = currentVariable.parse(self, acceptCallBack=True, triggered=True)
+            else:
+                resultingPaths = currentVariable.specialize(self, acceptCallBack=False)
+        except RelationDependencyException as e:
+            raise
+
+        # Fails when not all paths are valid
+        if not any(path.ok for path in resultingPaths):
+            return (False, resultingPaths)
+        else:
+            self._variablesWithResult.append(currentVariable)
+
+        # If needed, remove the callback from the list of callbacks
+        remove_cb_cond = self.hasResult(currentVariable)
+        remove_cb_cond &= isinstance(currentVariable, (Data, Repeat))
+        if remove_cb_cond and callBackToExecute in self._variablesCallbacks:
+            self._variablesCallbacks.remove(callBackToExecute)
+
+        return (True, resultingPaths)
+
+    def show(self):
+        self._logger.debug("Variables registered for genericPath: '{}':".format(self))
+        for (var, val) in self._dataAssignedToVariable.items():
+            self._logger.debug("  [+] Variable: '{}' (id={}), with value: '{}', is linked to field '{}'".format(var, id(var), val.tobytes(), var.field))
 
     @property
     def name(self):
         """Returns the name of the path (mostly for debug purposes)"""
         return self.__name
 
-    @name.setter
+    @name.setter  # type: ignore
     @typeCheck(str)
     def name(self, name):
         if name is None:
@@ -309,7 +431,7 @@ class GenericPath(object):
     def memory(self):
         return self.__memory
 
-    @memory.setter
+    @memory.setter  # type: ignore
     @typeCheck(Memory)
     def memory(self, memory):
         self.__memory = memory

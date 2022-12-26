@@ -78,7 +78,7 @@ class ParallelDataAlignment(object):
     >>> # Compare the duration of their alignment with 1 and automatic threads computation
     >>> data = ['hello {0}, welcome to {1}'.format(''.join([str(random.randint(0,9)) for y in range(0, random.randint(5,10))]),''.join([str(random.randint(0,9)) for y in range(0, random.randint(10,20))])) for x in range(0, 1000)]
     >>> # Now we create a symbol with its field structure to represent this type of message
-    >>> fields = [Field('hello '), Field(ASCII(nbChars=(5,10))), Field(', welcome to '), Field(ASCII(nbChars=(10,20)))]
+    >>> fields = [Field('hello '), Field(String(nbChars=(5,10))), Field(', welcome to '), Field(String(nbChars=(10,20)))]
     >>> symbol = Symbol(fields=fields)
     >>> # apply the symbol on the data using the ParallelDataAligment (single thread)
     >>> pAlignment = ParallelDataAlignment(field=symbol, depth=None, nbThread=1)
@@ -86,14 +86,14 @@ class ParallelDataAlignment(object):
     >>> alignedData = pAlignment.execute(data)
     >>> end = time.time()
     >>> oneThreadDuration = end-start
-    >>> print(len(alignedData))
+    >>> len(alignedData)
     1000
     >>> pAlignment = ParallelDataAlignment(field=symbol, depth=None)
     >>> start = time.time()
     >>> alignedData = pAlignment.execute(data)
     >>> end = time.time()
     >>> autoThreadDuration = end-start
-    >>> print(len(alignedData))
+    >>> len(alignedData)
     1000
     >>> if ('NETZOB_TEST_NO_PERFORMANCE' not in os.environ.keys() or os.environ['NETZOB_TEST_NO_PERFORMANCE'] != "yes") and autoThreadDuration >= oneThreadDuration:
     ...     print("Error, multi-thread version slower ({}) than single threaded execution ({})".format(autoThreadDuration, oneThreadDuration))
@@ -114,7 +114,7 @@ class ParallelDataAlignment(object):
         """Constructor.
 
         :param field: the format definition that will be user
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :keyword depth: the limit in depth in the format (use None for not limit)
         :type depth: :class:`int`
         :keyword nbThread: the maximum number of thread that will be used.
@@ -161,7 +161,7 @@ class ParallelDataAlignment(object):
         :param data: the list of data that will be aligned
         :type data: a :class:`list` of data to align
         :return: a list of aligned data sorted in order to respect the provided order of data.
-        :rtype: a :class:`netzob.Common.Utils.MatrixList.MatrixList`
+        :rtype: a :class:`MatrixList <netzob.Common.Utils.MatrixList.MatrixList>`
         """
 
         # Create a list of data removed from duplicate entry
@@ -229,7 +229,7 @@ class ParallelDataAlignment(object):
         :param data: the data to align as a list of hexastring
         :type data: :class:`list`
         :param field : the field to consider when aligning
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :keyword depth: maximum field depth to consider (similar to layer depth)
         :type depth: :class:`int`.
         :keyword nbThread: the number of thread to use when parallelizing
@@ -240,7 +240,7 @@ class ParallelDataAlignment(object):
         :type styled: :class:`bool`
 
         :return: the aligned data
-        :rtype: :class:`netzob.Common.Utils.MatrixList.MatrixList`
+        :rtype: :class:`MatrixList <netzob.Common.Utils.MatrixList.MatrixList>`
         """
         pAlignment = ParallelDataAlignment(field, depth, nbThread, encoded,
                                            styled)
@@ -253,11 +253,11 @@ class ParallelDataAlignment(object):
         """The field that contains the definition domain used
         to align data
 
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
         return self.__field
 
-    @field.setter
+    @field.setter  # type: ignore
     @typeCheck(AbstractField)
     def field(self, field):
         if field is None:
@@ -266,7 +266,7 @@ class ParallelDataAlignment(object):
 
     @property
     def depth(self):
-        """The depth represents the maximum deepness in the fields definition
+        """The depth represents the maximum deepness in the field definition
         that will be considered when aligning messages.
 
         If set to None, its no limit.
@@ -275,7 +275,7 @@ class ParallelDataAlignment(object):
         """
         return self.__depth
 
-    @depth.setter
+    @depth.setter  # type: ignore
     @typeCheck(int)
     def depth(self, depth):
         if depth is not None and depth < 0:
@@ -289,14 +289,14 @@ class ParallelDataAlignment(object):
         """The nbThread represents the maximum number of trhead that will be started
         in the same time to compute the alignment.
 
-        If set to None, the number of thread will be automaticaly set to 2 times the number
+        If set to None, the number of thread will be automatically set to 2 times the number
         of available cpu.
 
         :type: :class:`int`
         """
         return self.__nbThread
 
-    @nbThread.setter
+    @nbThread.setter  # type: ignore
     @typeCheck(int)
     def nbThread(self, nbThread):
         if nbThread is None:
@@ -316,7 +316,7 @@ class ParallelDataAlignment(object):
         """
         return self.__encoded
 
-    @encoded.setter
+    @encoded.setter  # type: ignore
     @typeCheck(bool)
     def encoded(self, encoded):
         if encoded is None:
@@ -332,7 +332,7 @@ class ParallelDataAlignment(object):
         """
         return self.__styled
 
-    @styled.setter
+    @styled.setter  # type: ignore
     @typeCheck(bool)
     def styled(self, styled):
         if styled is None:

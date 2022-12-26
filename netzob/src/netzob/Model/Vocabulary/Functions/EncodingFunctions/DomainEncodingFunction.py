@@ -51,19 +51,19 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
 
 @NetzobLogger
 class DomainEncodingFunction(EncodingFunction):
-    """This encoding function applies the definition of the domain
+    r"""This encoding function applies the definition of the domain
     attached to each variable that has parsed the data to compute
     its encoding.
 
     Lets take a typical example of domain encoding, a field
-    which domains is based on the aggregation of two other variables.
+    whose domains is based on the aggregation of two other variables.
 
     >>> from netzob.all import *
-    >>> f = Field(name="f0", domain=Agg(["There are ", Integer(10), " solutions."]))
-    >>> m = RawMessage(b"There are " + TypeConverter.convert(10, Integer, Raw) + b" solutions.")
+    >>> f = Field(name="f0", domain=Agg(["There are ", uint8(10), " solutions."]))
+    >>> m = RawMessage(b"There are \x0a solutions.")
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
-    >>> s.addEncodingFunction(TypeEncodingFunction(ASCII))
-    >>> print(s)
+    >>> s.addEncodingFunction(TypeEncodingFunction(String))
+    >>> print(s.str_data())
     f0                      
     ------------------------
     'There are . solutions.'

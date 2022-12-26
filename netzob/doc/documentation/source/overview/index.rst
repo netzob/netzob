@@ -29,7 +29,7 @@ The following picture depicts the main modules of Netzob:
    Inter-Process Communication), or by using specific importers (such as
    PCAP files, structured files and OSpy files).
 -  **Protocol inference modules:** The vocabulary and grammar inference
-   methods constitute the core of Netzob. It allows both passive and
+   methods constitute the core of Netzob. It provides both passive and
    active reverse engineering of communication flows through automated
    and manuals mechanisms.
 -  **Simulation module:** Given vocabulary and grammar models previously
@@ -152,7 +152,7 @@ step consists in determining the characteristics of the fields.
 
 If the size of those fields is fixed, as in TCP and IP headers, it is
 preferable to apply a basic partitioning, also provided by Netzob. Such
-partitioning works by aligning each message by the left, and then
+partitioning works by aligning each message by the left, then
 separating successive fixed columns from successive dynamic columns.
 
 To regroup aligned messages by similarity, the Needleman-Wunsh algorithm
@@ -167,8 +167,8 @@ The field type identification partially derives from the partitioning
 inference step. For fields containing only invariants, the type merely
 corresponds to the invariant value. For other fields, the type is
 automatically materialized, in first approximation, with a regular
-expression, as shown on next figure. This form allows to easily validate
-the data conformity with a specific type. Moreover, Netzob offers the
+expression, as shown on next figure. This form enables easy validation of
+the data compliance with a specific type. Moreover, Netzob offers the
 possibility to visualize the definition domain of a field. This helps to
 manually refine the type associated with a field.
 
@@ -274,8 +274,8 @@ protocols for which no specifications are published, fuzzers do not
 provide optimal results.
 
 Netzob helps the security evaluator by simplifying the creation of a
-dedicated fuzzer for a proprietary or undocumented protocol. It allows
-the expert to execute a semi-automated inferring process to create a
+dedicated fuzzer for a proprietary or undocumented protocol. It provides
+to the expert means to execute a semi-automated inferring process to create a
 model of the targeted protocol. This model can afterward be refined by
 the evaluator. Finally, the created model is included in the fuzzing
 module of Netzob which considers the vocabulary and the grammar of the
@@ -289,8 +289,8 @@ The following export formats are currently provided by Netzob:
 
 -  XML format
 -  human readable (Wireshark like)
--  Peach fuzzer export: this allows to combine efficiency of Peach
-   Fuzzer on previously undocummented protocols.
+-  Peach fuzzer export: this enables efficiency combination of Peach
+   Fuzzer on previously undocumented protocols.
 
 Besides, you can write your own exporter to manipulate the inferred
 protocol model in your favorite tool.

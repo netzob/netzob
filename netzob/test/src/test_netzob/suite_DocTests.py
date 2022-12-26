@@ -29,6 +29,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports
 # +---------------------------------------------------------------------------+
+import importlib
 import unittest
 import doctest
 
@@ -62,18 +63,44 @@ from netzob.Inference.Vocabulary.FormatOperations import FieldOperations
 from netzob.Model.Vocabulary.Domain.GenericPath import GenericPath
 from netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer import FieldSpecializer
 from netzob.Model.Vocabulary.Domain.Specializer.VariableSpecializer import VariableSpecializer
-from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
 
 from netzob.Model.Vocabulary.Domain.Parser.MessageParser import MessageParser
 from netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer import MessageSpecializer
 from netzob.Model.Vocabulary.Domain.Parser.FlowParser import FlowParser
 
+from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
+from netzob.Model.Grammar.States.AbstractState import AbstractState
+
 from netzob.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Simulator.AbstractChannel import AbstractChannel
 
 from netzob.Inference.Vocabulary import EntropyMeasurement
 # from netzob.Inference.Grammar.Angluin import Angluin
 from netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory import ChainedStatesAutomataFactory
 from netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory import PTAAutomataFactory
+from netzob.Inference.Grammar.AutomataFactories.OneStateAutomataFactory import OneStateAutomataFactory
+
+from netzob.Fuzzing.Mutator import Mutator
+from netzob.Fuzzing.Mutators.DomainMutator import DomainMutator
+from netzob.Fuzzing.Mutators.AggMutator import AggMutator
+from netzob.Fuzzing.Mutators.AltMutator import AltMutator
+from netzob.Fuzzing.Mutators.AutomataMutator import AutomataMutator
+from netzob.Fuzzing.Mutators.BitArrayMutator import BitArrayMutator
+from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator
+from netzob.Fuzzing.Mutators.RawMutator import RawMutator
+from netzob.Fuzzing.Mutators.IPv4Mutator import IPv4Mutator
+from netzob.Fuzzing.Mutators.RepeatMutator import RepeatMutator
+from netzob.Fuzzing.Mutators.OptMutator import OptMutator
+from netzob.Fuzzing.Mutators.StringMutator import StringMutator
+from netzob.Fuzzing.Mutators.TimestampMutator import TimestampMutator
+
+from netzob.Fuzzing.Generator import Generator
+from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator
+from netzob.Fuzzing.Generators.XorShiftGenerator import XorShiftGenerator
+from netzob.Fuzzing.Generators.WrapperGenerator import WrapperGenerator
+from netzob.Fuzzing.Generators.GeneratorFactory import GeneratorFactory
+from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 
 from netzob.Inference.Grammar.ProcessWrappers import ProcessWrapper
 from netzob.Inference.Grammar.ProcessWrappers import NetworkProcessWrapper
@@ -84,7 +111,8 @@ def getSuite():
 
         # Modules related to common types and data structures
         # ---------------------------------------------------
-        ASCII.__module__,
+        AbstractType.__module__,
+        String.__module__,
         Integer.__module__,
         BitArray.__module__,
         Raw.__module__,
@@ -106,7 +134,8 @@ def getSuite():
         DomainFactory.__module__,
         Alt.__module__,
         Agg.__module__,
-        Repeat.__module__,        
+        Repeat.__module__,
+        Opt.__module__,
         Data.__module__,
         FieldSplitStatic.__module__,
         FieldSplitAligned,
@@ -140,36 +169,89 @@ def getSuite():
         ClusterByApplicativeData,
         ClusterByAlignment,
         ClusterBySize,
-        AbstractType.__module__,
         Memory.__module__,
         TypeConverter.__module__,
         AbstractVariable,
         Size.__module__,
-        Value.__module__,        
-        InternetChecksum.__module__,
+        Value.__module__,
+        Padding.__module__,        
         FieldParser.__module__,
         GenericPath.__module__,
         VariableSpecializer.__module__,
         FieldSpecializer.__module__,
-        SVAS.__module__,
+        Scope.__module__,
 
+        # Complex relationships
+        HMAC_MD5.__module__,
+        HMAC_SHA1.__module__,
+        HMAC_SHA1_96.__module__,
+        HMAC_SHA2_224.__module__,
+        HMAC_SHA2_256.__module__,
+        HMAC_SHA2_384.__module__,
+        HMAC_SHA2_512.__module__,
+        MD5.__module__,
+        SHA1.__module__,
+        SHA1_96.__module__,
+        SHA2_224.__module__,
+        SHA2_256.__module__,
+        SHA2_384.__module__,
+        SHA2_512.__module__,
+        CRC16.__module__,
+        CRC16DNP.__module__,
+        CRC16Kermit.__module__,
+        CRC16SICK.__module__,
+        CRC32.__module__,
+        CRCCCITT.__module__,
+        InternetChecksum.__module__,
+        
         MessageParser.__module__,
         MessageSpecializer.__module__,
 
         FlowParser.__module__,
         AbstractionLayer.__module__,
+        AbstractChannel.__module__,
         EntropyMeasurement,
 
         # Modules related to the grammatical inference
         # --------------------------------------------
         # Angluin.__module__,
+        AbstractState.__module__,
         State.__module__,
+        AbstractTransition.__module__,
         Transition.__module__,
+        OpenChannelTransition.__module__,
+        CloseChannelTransition.__module__,
         AbstractionLayer.__module__,
         Automata.__module__,
         ProcessWrapper,
         NetworkProcessWrapper,
         
+        OneStateAutomataFactory.__module__,
+        ChainedStatesAutomataFactory.__module__,
+        PTAAutomataFactory.__module__,
+
+        # Modules related to fuzzing
+        # --------------------------
+        Preset.__module__,
+        Mutator.__module__,
+        DomainMutator.__module__,
+        AltMutator.__module__,
+        AggMutator.__module__,
+        AutomataMutator.__module__,
+        RepeatMutator.__module__,
+        OptMutator.__module__,
+        Generator.__module__,
+        DeterministGenerator.__module__,
+        WrapperGenerator.__module__,
+        XorShiftGenerator.__module__,
+        GeneratorFactory.__module__,
+        IntegerMutator.__module__,
+        RawMutator.__module__,
+        BitArrayMutator.__module__,
+        StringMutator.__module__,
+        IPv4Mutator.__module__,
+        TimestampMutator.__module__,
+
         # Modules related to the protocol simulation
         # ------------------------------------------
         Actor.__module__,
@@ -178,7 +260,10 @@ def getSuite():
         UDPServer.__module__,
         UDPClient.__module__,
         SSLClient.__module__,
-        # RawIPClient.__module__,  ## Does not work on Travis CI as raw socket are not supported
+        # IPChannel.__module__,  ## Does not work on Travis CI as raw socket are not supported
+        # RawIPChannel.__module__,  ## Does not work on Travis CI as raw socket are not supported
+        # RawEthernetChannel.__module__,  ## Does not work on Travis CI as raw socket are not supported
+        DebugChannel.__module__,
 
         # Modules related to the import
         # -----------------------------
@@ -187,12 +272,18 @@ def getSuite():
 
         # Other
         # -----
-        # # JSONSerializator.__module__,
-        # # TCPServer.__module__,
+        # JSONSerializator.__module__,
+        # TCPServer.__module__,
 
     ]
 
+    def setUp_doctest(*args):
+        Conf.apply()
+
     suite = unittest.TestSuite()
     for mod in modules:
-        suite.addTest(doctest.DocTestSuite(mod))
+        suite.addTest(doctest.DocTestSuite(mod, setUp=setUp_doctest))
+        if isinstance(mod, str):
+            mod = importlib.import_module(mod)
+        suite.addTest(unittest.defaultTestLoader.loadTestsFromModule(mod))
     return suite

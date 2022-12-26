@@ -5,12 +5,12 @@
 *.so
 *.[ao]
 /MANIFEST
-/dist/*
+/netzob/dist/*
 /.settings/*
 /.project
 /.pydevproject
 /doc/netzob.1
-/build/*
+/netzob/build/*
 /netzob.bat
 *.egg-info
 /resources/static/netzob/locales/netzob.pot
@@ -30,3 +30,4 @@ lib/python*
 lib64
 *.log
 dist/
+.mypy_cache/

@@ -87,7 +87,7 @@ class CorrelationFinder(object):
         parse the results.
 
         :param symbol: the symbol in which we are looking for correlations
-        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :param minMic: the minimum correlation score 
         :type minMic: :class:`float`
         """
@@ -112,7 +112,7 @@ class CorrelationFinder(object):
     def execute(self, symbol):
         """
         :param symbol: the symbol in which we are looking for correlations
-        :type symbol: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type symbol: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
 
         (attributeValues_headers,
@@ -131,8 +131,8 @@ class CorrelationFinder(object):
                     (x_fields, x_attribute) = attributeValues_headers[i]
                     (y_fields, y_attribute) = attributeValues_headers[j]
                     # The relation should not apply on the same field
-                    if len(x_fields) == 1 and len(y_fields) == 1 and x_fields[
-                            0].id == y_fields[0].id:
+                    if len(x_fields) == 1 and len(y_fields) == 1 and id(x_fields[
+                            0]) == id(y_fields[0]):
                         continue
                     pearson = numpy.corrcoef(values_x, values_y)[0, 1]
                     if not numpy.isnan(pearson):
@@ -192,15 +192,15 @@ class CorrelationFinder(object):
                 # We generate the data
                 concatCellsData = self._generateConcatData(valuesTable[i:j])
 
-                # We generate lines and header for fields values
+                # We generate lines and header for field values
                 line_header.append((fields[i:j], self.ATTR_VALUE))
                 lines_data.append(self._generateDataValues(concatCellsData))
 
-                # We generate lines and header for fields values
+                # We generate lines and header for field values
                 line_header.append((fields[i:j], self.ATTR_SIZE))
                 lines_data.append(self._generateSizeValues(concatCellsData))
 
-        # # # Now we generate values for fields sizes
+        # # # Now we generate values for field sizes
         # # (multipleSize_Header, multipleSize_lines) = self._generateSizeFieldFromBeginingOfField(symbol)
         # # line_header.extend(multipleSize_Header)
         # # for i_line in range(0, len(lines)):

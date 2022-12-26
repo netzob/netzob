@@ -35,6 +35,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
+from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -44,6 +45,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingPath
+from netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf import AbstractRelationVariableLeaf
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
@@ -66,25 +68,25 @@ class MessageParser(object):
     
     >>> from netzob.all import *
     >>> msg = RawMessage("hello world !")
-    >>> msg1 = RawMessage("hello netzob !")
-    >>> f0 = Field(name="F0", domain=ASCII(nbChars=(4,5)))
-    >>> f1 = Field(name="F1", domain=ASCII(" "))
-    >>> f2 = Field(name="F2", domain=Alt([ASCII("world"), ASCII("netzob")]))
-    >>> f3 = Field(name="F3", domain=Agg([ASCII(" "), ASCII("!")]))
+    >>> msg1 = RawMessage("hello john !")
+    >>> f0 = Field(name="F0", domain=String(nbChars=(4,5)))
+    >>> f1 = Field(name="F1", domain=String(" "))
+    >>> f2 = Field(name="F2", domain=Alt([String("world"), String("john")]))
+    >>> f3 = Field(name="F3", domain=Agg([String(" "), String("!")]))
     >>> s = Symbol(name="S0", fields=[f0, f1, f2, f3])
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg, s))
     [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('0111011101101111011100100110110001100100'), bitarray('0010000000100001')]
     >>> print(mp.parseMessage(msg1, s))
-    [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000100001')]
+    [bitarray('0110100001100101011011000110110001101111'), bitarray('00100000'), bitarray('01101010011011110110100001101110'), bitarray('0010000000100001')]
 
 
     >>> from netzob.all import *
     >>> from bitarray import bitarray
     >>> data = bitarray("0000110001101110011001010111010001111010011011110110001000000000")
-    >>> msg = RawMessage(TypeConverter.convert(data, BitArray, Raw))
+    >>> msg = RawMessage(data.tobytes())
     >>> f1 = Field(name="F1", domain=BitArray(nbBits=8))
-    >>> f2 = Field(name="F2", domain=ASCII(nbChars=(3,9)))
+    >>> f2 = Field(name="F2", domain=String(nbChars=(3,9)))
     >>> f3 = Field(name="F3", domain=BitArray(nbBits=3))
     >>> f4 = Field(name="F4", domain=BitArray(nbBits=5))
     >>> s = Symbol(name="S0", fields=[f1, f2, f3, f4])
@@ -95,12 +97,12 @@ class MessageParser(object):
     >>> from netzob.all import *
     >>> from bitarray import bitarray
     >>> b = bitarray('01101110011001010111010001111010011011110110001000111011000001100110100001100101011011000110110001101111')
-    >>> r = TypeConverter.convert(b, BitArray, Raw)
+    >>> r = b.tobytes()
     >>> msg = RawMessage(r)
-    >>> f1 = Field(ASCII(nbChars=(6)), name="F1")
+    >>> f1 = Field(String(nbChars=(6)), name="F1")
     >>> f2 = Field(";", name="F2")
     >>> f3 = Field(Size(f1), name="F3")
-    >>> f4 = Field(ASCII("hello"), name="F4")
+    >>> f4 = Field(String("hello"), name="F4")
     >>> s = Symbol(fields=[f1, f2, f3, f4])
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg, s))
@@ -109,9 +111,9 @@ class MessageParser(object):
     >>> from netzob.all import *
     >>> from bitarray import bitarray
     >>> b = bitarray('0000011001101110011001010111010001111010011011110110001000111011')
-    >>> r = TypeConverter.convert(b, BitArray, Raw)
+    >>> r = b.tobytes()
     >>> msg = RawMessage(r)
-    >>> f2 = Field(ASCII(nbChars=(1,20)), name="F2")
+    >>> f2 = Field(String(nbChars=(1,20)), name="F2")
     >>> f3 = Field(";", name="F3")
     >>> f1 = Field(Size(f2), name="F1")
     >>> s = Symbol(fields=[f1, f2, f3])
@@ -122,43 +124,41 @@ class MessageParser(object):
     # Let's verify the abstraction of intra-relationships
 
     >>> from netzob.all import *
-    >>> b = "netzob > my name is netzob"
-    >>> r = TypeConverter.convert(b, ASCII, Raw)
-    >>> msg = RawMessage(r)
-    >>> f1 = Field(ASCII(nbChars=(1,20)), name="F1")
+    >>> msg = RawMessage(b"john > my name is john")
+    >>> f1 = Field(String(nbChars=(1,20)), name="F1")
     >>> f2 = Field(" > my name is ", name="F2")
     >>> f3 = Field(Value(f1), name="F3")
     >>> s = Symbol(fields=[f1, f2, f3])
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg, s))
-    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000111110001000000110110101111001001000000110111001100001011011010110010100100000011010010111001100100000'), bitarray('011011100110010101110100011110100110111101100010')]
+    [bitarray('01101010011011110110100001101110'), bitarray('0010000000111110001000000110110101111001001000000110111001100001011011010110010100100000011010010111001100100000'), bitarray('01101010011011110110100001101110')]
 
     # Let's test inter-symbol relationships
 
-    >>> msg1 = RawMessage("my pseudo is: netzob!")
-    >>> msg2 = RawMessage("welcome netzob")
-    >>> msg3 = RawMessage("netzob > hello")
+    >>> msg1 = RawMessage("my pseudo is: john!")
+    >>> msg2 = RawMessage("welcome john")
+    >>> msg3 = RawMessage("john > hello")
 
-    >>> f11 = Field(domain=ASCII("my pseudo is: "), name="F11")
-    >>> f12 = Field(domain=ASCII(nbChars=(3, 10)), name="F12")
-    >>> f13 = Field(domain=ASCII("!"), name="F13")
+    >>> f11 = Field(domain=String("my pseudo is: "), name="F11")
+    >>> f12 = Field(domain=String(nbChars=(3, 10)), name="F12")
+    >>> f13 = Field(domain=String("!"), name="F13")
     >>> s1 = Symbol(fields=[f11, f12, f13], name="PSEUDO")
 
-    >>> f21 = Field(domain=ASCII("welcome "), name="F21")
+    >>> f21 = Field(domain=String("welcome "), name="F21")
     >>> f22 = Field(domain=Value(f12), name="F22")
     >>> s2 = Symbol(fields=[f21, f22], name="WELCOME")
 
     >>> f31 = Field(domain=Value(f12), name="F31")
-    >>> f32 = Field(domain=ASCII(" > hello"), name="F32")
+    >>> f32 = Field(domain=String(" > hello"), name="F32")
     >>> s3 = Symbol(fields=[f31, f32], name="HELLO")
 
     >>> mp = MessageParser()
     >>> print(mp.parseMessage(msg1, s1))
-    [bitarray('0110110101111001001000000111000001110011011001010111010101100100011011110010000001101001011100110011101000100000'), bitarray('011011100110010101110100011110100110111101100010'), bitarray('00100001')]
+    [bitarray('0110110101111001001000000111000001110011011001010111010101100100011011110010000001101001011100110011101000100000'), bitarray('01101010011011110110100001101110'), bitarray('00100001')]
     >>> print(mp.parseMessage(msg2, s2))
-    [bitarray('0111011101100101011011000110001101101111011011010110010100100000'), bitarray('011011100110010101110100011110100110111101100010')]
+    [bitarray('0111011101100101011011000110001101101111011011010110010100100000'), bitarray('01101010011011110110100001101110')]
     >>> print(mp.parseMessage(msg3, s3))
-    [bitarray('011011100110010101110100011110100110111101100010'), bitarray('0010000000111110001000000110100001100101011011000110110001101111')]
+    [bitarray('01101010011011110110100001101110'), bitarray('0010000000111110001000000110100001100101011011000110110001101111')]
 
     """
 
@@ -177,11 +177,11 @@ class MessageParser(object):
         if message is None:
             raise Exception("Specified message is None")
 
-        # self._logger.debug("Parse message '{0}' according to symbol {1}".format(message.id, symbol.name))
         # we only consider the message data
         dataToParse = message.data
 
         fields = symbol.getLeafFields()
+
         return next(self.parseRaw(dataToParse, fields))
 
     @typeCheck(object)
@@ -209,13 +209,18 @@ class MessageParser(object):
         
         """
 
-        self._logger.debug(
-            "New parsing method executed on {}".format(bitArrayToParse))
+        self._logger.debug("New parsing method executed on '{}'".format(bitArrayToParse.tobytes()))
+
+        # We normalize the variables
+        for field in fields:
+            if field.domain is not None and isinstance(field.domain, AbstractRelationVariableLeaf):
+                self._logger.debug("Normalize field targets for field '{}'".format(field.name))
+                field.domain.normalize_targets()
 
         # building a new parsing path
         currentParsingPath = ParsingPath(bitArrayToParse.copy(),
-                                         self.memory.duplicate())
-        currentParsingPath.assignDataToField(bitArrayToParse.copy(), fields[0])
+                                         self.memory)
+        currentParsingPath.assignData(bitArrayToParse.copy(), fields[0].domain)
 
         # field iterator
         i_current_field = 0
@@ -226,18 +231,38 @@ class MessageParser(object):
             i_current_field,
             must_consume_everything=must_consume_everything)
 
+        has_result = False
         for parsingResult in parsingResults:
+            if parsingResult.ok is False:
+                self._logger.debug("Parsing status: {}".format(parsingResult.ok))
+                msg = "The parsed data do not match with the field '{}'".format(field.name)
+                self._logger.debug(msg)
+                continue
+
             result = []
+            field_data_missing = False
             for field in fields:
-                result.append(parsingResult.getDataAssignedToField(field))
+                if parsingResult.hasData(field.domain):
+                    field_data = parsingResult.getData(field.domain)
+                    result.append(field_data)
+                else:
+                    msg = "The parsed data do not match with the field '{}'".format(field.name)
+                    self._logger.debug(msg)
+                    field_data_missing = True
+                    break
+            if field_data_missing:
+                continue
 
-            self.memory = parsingResult.memory
+            # We update the internal memory
+            self.memory.memory = parsingResult.memory.memory
 
+            has_result = True
             yield result
 
-        raise InvalidParsingPathException(
-            "No parsing path returned while parsing '{}'".format(
-                TypeConverter.convert(bitArrayToParse, BitArray, Raw)))
+        if not has_result:
+            raise InvalidParsingPathException(
+                "No parsing path returned while parsing '{}'".format(
+                    TypeConverter.convert(bitArrayToParse, BitArray, Raw)))
 
     def _parseBitArrayWithField(self,
                                 parsingPath,
@@ -246,7 +271,7 @@ class MessageParser(object):
                                 must_consume_everything=True):
         self._logger.debug(
             "_parseBitArrayWithField executed for field {} with path : {}".
-            format(i_current_field, parsingPath))
+            format(fields[i_current_field], parsingPath))
         currentField = fields[i_current_field]
 
         carnivorous_parsing = (i_current_field == len(fields) - 1)
@@ -254,20 +279,26 @@ class MessageParser(object):
             carnivorous_parsing = False
 
         fp = FieldParser(currentField, carnivorous_parsing)
-        value_before_parsing = parsingPath.getDataAssignedToField(
-            currentField).copy()
+        value_before_parsing = parsingPath.getData(
+            currentField.domain).copy()
 
         for newParsingPath in fp.parse(parsingPath):
 
             try:
-                value_after_parsing = newParsingPath.getDataAssignedToField(
-                    currentField)
+                if newParsingPath.hasData(currentField.domain):
+                    value_after_parsing = newParsingPath.getData(currentField.domain)
+                else:
+                    msg = "The parsed data do not match with the field '{}'".format(currentField.name)
+                    self._logger.debug(msg)
+                    raise InvalidParsingPathException(msg)
+
                 remainingValue = value_before_parsing[len(
                     value_after_parsing):].copy()
 
+                # All the fields except the last one
                 if i_current_field < len(fields) - 1:
-                    newParsingPath.assignDataToField(
-                        remainingValue, fields[i_current_field + 1])
+                    newParsingPath.assignData(
+                        remainingValue, fields[i_current_field + 1].domain)
 
                     if must_consume_everything is False:
                         generator = self._parseBitArrayWithField(
@@ -278,24 +309,27 @@ class MessageParser(object):
                     else:
                         generator = self._parseBitArrayWithField(
                             newParsingPath, fields, i_current_field + 1)
-                    try:
-                        for x in generator:
-                            yield x
-                    except RuntimeError as e:
-                        print("Parsing path error. Current Field num :", i_current_field,
-                              "Field value:", value_after_parsing.tobytes().hex(),
-                              "Remaining value:", remainingValue.tobytes().hex(),
-                              )
-                        raise e
+                    yield from generator
 
+                # When we are at the last field
                 elif not must_consume_everything and len(remainingValue) >= 0:
                     yield newParsingPath
                 elif len(remainingValue) == 0:
-                    # valid parsing path must consume everything
-                    yield newParsingPath
+
+                    # Double check if everything has been parsed
+                    final_parsing = bitarray()
+                    for f in fields:
+                        final_parsing += newParsingPath.getData(f.domain)
+
+                    if parsingPath.originalDataToParse == final_parsing:
+                        self._logger.debug("The content has been entirely parsed")
+
+                        # valid parsing path must consume everything
+                        yield newParsingPath
+                    else:
+                        self._logger.debug("The content has not been entirely parsed")
+                        self._logger.debug("Content to parse: '{}'".format(parsingPath.originalDataToParse))
+                        self._logger.debug("Content parsed:   '{}'".format(final_parsing))
 
             except InvalidParsingPathException:
                 pass
-
-        return
-

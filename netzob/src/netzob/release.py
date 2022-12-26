@@ -42,13 +42,13 @@ appname = name
 #|    Development version has version number increased and is
 #|    postfixed by .dev0
 #+---------------------------------------------------------------------------+
-version = "1.0.2"
-versionName = "StompingFrilledShark"
+version = "1.1.26-cottontail"
+versionName = "FlyingRabbit"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
 #+---------------------------------------------------------------------------+
-copyright = "Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry"
+copyright = "Copyright (C) 2011-2020 Georges Bossert and Frédéric Guihéry"
 
 #+---------------------------------------------------------------------------+
 #| Description of the application

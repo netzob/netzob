@@ -223,6 +223,11 @@ man_pages = [
 ]
 
 
+# -- Options for Netzob documentation generation--------------------------------
+
+def setup(app):
+    app.add_config_value('scope', 'netzob', 'env')
+
 # -- Options for apidoc generation in rtfd.org----------------------------------
 
 from unittest.mock import MagicMock

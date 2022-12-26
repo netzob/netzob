@@ -52,15 +52,15 @@ from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 @NetzobLogger
 class Base64EncodingFunction(EncodingFunction):
-    r"""This encoding function can be use to encode or decode data in base64.
+    r"""This encoding function can be used to encode or decode data in base64.
 
     >>> from netzob.all import *
-    >>> f0 = Field(name="f0", domain=ASCII("Helloworld"))
-    >>> f1 = Field(name="f1", domain=ASCII("Data"))
-    >>> f2 = Field(name="f2", domain=ASCII("Content"))
+    >>> f0 = Field(name="f0", domain=String("Helloworld"))
+    >>> f1 = Field(name="f1", domain=String("Data"))
+    >>> f2 = Field(name="f2", domain=String("Content"))
     >>> s = Symbol(fields=[f0, f1, f2])
-    >>> s.messages = [RawMessage(s.specialize())]*3
-    >>> print(s)
+    >>> s.messages = [RawMessage(next(s.specialize()))]*3
+    >>> print(s.str_data())
     f0           | f1     | f2       
     ------------ | ------ | ---------
     'Helloworld' | 'Data' | 'Content'
@@ -68,7 +68,7 @@ class Base64EncodingFunction(EncodingFunction):
     'Helloworld' | 'Data' | 'Content'
     ------------ | ------ | ---------
     >>> f1.addEncodingFunction(Base64EncodingFunction())
-    >>> print(s)
+    >>> print(s.str_data())
     f0           | f1         | f2       
     ------------ | ---------- | ---------
     'Helloworld' | 'RGF0YQ==' | 'Content'
@@ -76,16 +76,16 @@ class Base64EncodingFunction(EncodingFunction):
     'Helloworld' | 'RGF0YQ==' | 'Content'
     ------------ | ---------- | ---------
 
-    This function can also be use to display the decoded version of a base64 field
+    This function can also be used to display the decoded version of a base64 field
 
     >>> m1 = "hello YWxs !"
     >>> m2 = "hello bXkgbG9yZA== !"    
     >>> m3 = "hello d29ybGQ= !"
-    >>> f0 = Field(name="f0", domain=ASCII("hello "))
-    >>> f1 = Field(name="f1", domain=ASCII(nbChars=(0, 20)))
-    >>> f2 = Field(name="f2", domain=ASCII(" !"))
+    >>> f0 = Field(name="f0", domain=String("hello "))
+    >>> f1 = Field(name="f1", domain=String(nbChars=(0, 20)))
+    >>> f2 = Field(name="f2", domain=String(" !"))
     >>> s = Symbol(fields = [f0, f1, f2], messages = [RawMessage(m1), RawMessage(m2), RawMessage(m3)])
-    >>> print(s)
+    >>> print(s.str_data())
     f0       | f1             | f2  
     -------- | -------------- | ----
     'hello ' | 'YWxs'         | ' !'
@@ -93,7 +93,7 @@ class Base64EncodingFunction(EncodingFunction):
     'hello ' | 'd29ybGQ='     | ' !'
     -------- | -------------- | ----
     >>> f1.addEncodingFunction(Base64EncodingFunction(encode_data = False))
-    >>> print(s)
+    >>> print(s.str_data())
     f0       | f1        | f2  
     -------- | --------- | ----
     'hello ' | 'all'     | ' !'
@@ -128,7 +128,7 @@ class Base64EncodingFunction(EncodingFunction):
     def encode_data(self):
         return self.__encode_data
     
-    @encode_data.setter
+    @encode_data.setter  # type: ignore
     @typeCheck(bool)        
     def encode_data(self, _encode_data):
         self.__encode_data = _encode_data

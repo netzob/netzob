@@ -34,7 +34,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -43,108 +42,148 @@ import uuid
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
+from netzob.Common.Utils.Decorators import public_api, NetzobLogger
 from netzob.Model.Grammar.Transitions.AbstractTransition import AbstractTransition
-from netzob.Simulator.AbstractionLayer import AbstractionLayer
 
 
 @NetzobLogger
 class OpenChannelTransition(AbstractTransition):
-    """Represents a transition which when executed request to open
-   the current channel
+    """This class represents a transition which, when executed, requests
+    to open the underlying communication channel that the actor uses
+    to exchange messages with the peer (i.e. a call
+    to the :meth:`open` method of the channel is made). The starting
+    state of this transition corresponds to the initial state of the
+    automaton.
+
+    The OpenChannelTransition expects some parameters:
+
+    :param startState: This parameter is the initial state of the transition. This also corresponds to the initial state of the
+                       automaton.
+    :param endState: This parameter is the end state of the transition.
+    :param name: The name of the transition. The default value is `OpenChannelTransition`.
+    :type startState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
+    :type endState: :class:`State <netzob.Model.Grammar.States.State.State>`, required
+    :type name: :class:`str`, optional
+
+
+    The OpenChannelTransition class provides the following public variables:
+
+    :var startState: The initial state of the transition.
+    :var endState: The end state of the transition.
+    :var name: The name of the transition.
+    :var description: description of the transition. If not explicitly set,
+                      its value is 'OpenChannelTransition'.
+    :vartype startState: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype endState: :class:`State <netzob.Model.Grammar.States.State.State>`
+    :vartype name: :class:`str`
+    :vartype description: :class:`str`
+
+
+    The following example shows the creation of an
+    OpenChannelTransition transition:
 
     >>> from netzob.all import *
     >>> s0 = State()
     >>> s1 = State()
-    >>> t = OpenChannelTransition(s0, s1)
+    >>> t = OpenChannelTransition(s0, s1, name="transition")
     >>> print(t.name)
-    None
-    >>> print(s0 == t.startState)
+    transition
+    >>> s0 == t.startState
     True
-    >>> print(s1 == t.endState)
+    >>> s1 == t.endState
     True
 
     """
 
     TYPE = "OpenChannelTransition"
 
-    def __init__(self, startState, endState, _id=uuid.uuid4(), name=None):
-        """Constructor of an OpenChannelTransition.
-
-        :param startState: initial state of the transition
-        :type startState: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
-        :param endState: end state of the transition
-        :type endState: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
-        :keyword _id: the unique identifier of the transition
-        :param _id: :class:`uuid.UUID`
-        :keyword name: the name of the transition
-        :param name: :class:`str`
-
-        """
+    @public_api
+    def __init__(self, startState, endState, name="OpenChannelTransition"):
         super(OpenChannelTransition, self).__init__(
             OpenChannelTransition.TYPE,
             startState,
             endState,
-            _id,
-            name,
-            priority=0)
+            name)
 
-    @typeCheck(AbstractionLayer)
-    def executeAsInitiator(self, abstractionLayer):
+        self.description = "OpenChannelTransition"
+        self.inputSymbolProbability = 100.0
+
+    @public_api
+    def copy(self):
+        r"""Copy the current transition.
+
+        This method copies the transition object but keeps references to the
+        original callbacks.
+
+        :return: A new object of the same type.
+        :rtype: :class:`OpenChannelTransition <netzob.Model.Grammar.Transitions.OpenChannelTransition.OpenChannelTransition>`
+
+        """
+        transition = OpenChannelTransition(startState=None,
+                                           endState=self.endState,
+                                           name=self.name)
+        transition._startState = self.startState
+        transition.description = self.description
+        transition.active = self.active
+        transition.inputSymbolProbability = self.inputSymbolProbability
+        transition.cbk_modify_symbol = list(self.cbk_modify_symbol)
+        transition.inverseInitiator = self.inverseInitiator
+        return transition
+
+    def executeAsInitiator(self, actor):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
-        :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: the end state of the transition if not exception is raised
-        :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-        return self.__execute(abstractionLayer)
+        return self.__execute(actor)
 
-    @typeCheck(AbstractionLayer)
-    def executeAsNotInitiator(self, abstractionLayer):
+    def executeAsNotInitiator(self, actor):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
-        :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: the end state of the transition if not exception is raised
-        :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-        return self.__execute(abstractionLayer)
+        return self.__execute(actor)
 
-    @typeCheck(AbstractionLayer)
-    def __execute(self, abstractionLayer):
+    def __execute(self, actor):
         """Execute the current transition and open the communication channel. Being an initiator or not
         changes nothing from the open channel transition point of view.
 
-        :param abstractionLayer: the abstraction layer which allows to access to the channel
-        :type abstractionLayer: :class:`netzob.Simulator.AbstractionLayer.AbstractionLayer`
         :return: the end state of the transition if not exception is raised
-        :rtype: :class:`netzob.Model.Grammar.States.AbstractState.AbstractState`
+        :rtype: :class:`AbstractState <netzob.Model.Grammar.States.AbstractState.AbstractState>`
         """
-
-        if abstractionLayer is None:
-            raise TypeError("The abstraction layer cannot be None")
 
         self.active = True
 
         # open the channel throught the abstraction layer
         try:
-            abstractionLayer.openChannel()
+            actor.abstractionLayer.openChannel()
         except Exception as e:
-            self._logger.warning(
-                "An error occured which prevented the good execution of the open channel transition"
+            self._logger.debug(
+                "[actor='{}'] An error occured which prevented the good execution of the open channel transition".format(actor.name)
             )
             self.active = False
             raise e
 
         self.active = False
+
+        actor.visit_log.append("  [+]   Transition '{}' lead to state '{}'".format(self.name, str(self.endState)))
         return self.endState
 
-    @property
-    def description(self):
-        if self._description is not None:
-            return self._description
-        else:
-            return "OpenChannelTransition"
+
+def _test():
+    r"""
+
+    # Test copy()
+
+    >>> from netzob.all import *
+    >>> s0 = State()
+    >>> s1 = State()
+    >>> t = OpenChannelTransition(s0, s1, name="transition")
+    >>> t.copy()
+    transition
+
+    """

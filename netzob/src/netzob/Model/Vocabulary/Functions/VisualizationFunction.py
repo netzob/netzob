@@ -35,7 +35,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import abc
-import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -54,7 +53,6 @@ class VisualizationFunction(object):
     def __init__(self, start, end):
         self.start = start
         self.end = end
-        self.id = uuid.uuid4()
 
     @abc.abstractmethod
     def getTags(self):

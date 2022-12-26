@@ -44,92 +44,129 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
+from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 @NetzobLogger
 class UDPServer(AbstractChannel):
-    """A UDPServer is a communication channel. It allows to create a
-    server that listen to a specific IP:Port over a UDP socket.
+    """A UDPServer is a communication channel. It provides a
+    server listening to a specific IP:Port over a UDP socket.
 
-    When the actor executes an OpenChannelTransition, it calls the
-    open method on the UDP server which makes it to listen for
-    incomming messages.
+    The UDPServer constructor expects some parameters:
+
+    :param localIP: This parameter is the local IP address.
+    :param localPort: This parameter is the local IP port.
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
+    :type localIP: :class:`str`, required
+    :type localPort: :class:`int`, required
+    :type timeout: :class:`float`, optional
+
+
+    Adding to AbstractChannel variables, the UDPServer class provides the
+    following public variables:
+
+    :var localIP: The local IP address.
+    :var localPort: The local IP port.
+    :vartype localIP: :class:`str`
+    :vartype localPort: :class:`int`
+
+
+    The following code shows the use of a UDPServer channel:
 
     >>> from netzob.all import *
-    >>> import time
-    >>> server = UDPServer(localIP='127.0.0.1', localPort=9999)
+    >>> server = UDPServer(localIP='127.0.0.1', localPort=9999, timeout=1.)
     >>> server.open()
     >>> server.close()
 
-    >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> s0 = State()
-    >>> s1 = State()
-    >>> s2 = State()
-    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
-    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
-    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
-    >>> automata = Automata(s0, [symbol])
 
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8884)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
+    .. ifconfig:: scope in ('netzob')
 
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8884)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+       The following code shows a complete example of a communication
+       between a client and a server in UDP:
 
-    >>> server.start()
-    >>> client.start()
-
-    >>> time.sleep(1)
-    >>> client.stop()
-    >>> server.stop()
+       >>> from netzob.all import *
+       >>> import time
+       >>> symbol = Symbol([Field("Hello everyone!")])
+       >>> s0 = State()
+       >>> s1 = State()
+       >>> s2 = State()
+       >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
+       >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
+       >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
+       >>> automata = Automata(s0, [symbol])
+       >>>
+       >>> channel = UDPServer(localIP="127.0.0.1", localPort=8884, timeout=1.)
+       >>> server = Actor(automata = automata, channel=channel)
+       >>> server.initiator = False
+       >>>
+       >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8884, timeout=1.)
+       >>> client = Actor(automata = automata, channel=channel)
+       >>>
+       >>> server.start()
+       >>> client.start()
+       >>>
+       >>> time.sleep(1)
+       >>> client.stop()
+       >>> server.stop()
 
     """
 
+    ## Class attributes ##
+
+    FAMILIES = ["udp"]
+
+    @public_api
     @typeCheck(str, int)
-    def __init__(self, localIP, localPort, timeout=5):
-        super(UDPServer, self).__init__(isServer=False)
+    def __init__(self,
+                 localIP,
+                 localPort,
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT
+                 ):
+        super(UDPServer, self).__init__(timeout=timeout)
         self.localIP = localIP
         self.localPort = localPort
-        self.timeout = timeout
-        self.type = AbstractChannel.TYPE_UDPSERVER
-        self.__socket = None
         self.__remoteAddr = None
 
-    def open(self, timeout=None):
+    @staticmethod
+    def getBuilder():
+        return UDPServerBuilder
+
+    @public_api
+    def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
         """Open the communication channel. This will open a UDP socket
-        that listen for incomming messages.
+        that listen for incoming messages.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is blocking (None).
+        :type timeout: :class:`float`, optional
+        :raise: RuntimeError if the channel is already opened
         """
 
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again.")
+        super().open(timeout=timeout)
 
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(self.timeout)
-        self.__socket.bind((self.localIP, self.localPort))
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._socket.settimeout(self.timeout)
+        self._socket.bind((self.localIP, self.localPort))
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
 
-    def read(self, timeout=None):
+    @public_api
+    def read(self):
         """Read the next message on the communication channel.
-
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
         """
-        # TODO: handle timeout
-        if self.__socket is not None:
-            (data, self.__remoteAddr) = self.__socket.recvfrom(1024)
+        if self._socket is not None:
+            (data, self.__remoteAddr) = self._socket.recvfrom(1024)
             return data
         else:
             raise Exception("socket is not available")
@@ -138,22 +175,21 @@ class UDPServer(AbstractChannel):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
-        :type data: binary object
+        :type data: :class:`bytes`
         """
-        if self.__socket is not None and self.__remoteAddr is not None:
-            len_data = self.__socket.sendto(data, self.__remoteAddr)
+        if self._socket is not None and self.__remoteAddr is not None:
+            len_data = self._socket.sendto(data, self.__remoteAddr)
             return len_data
         else:
             raise Exception(
                 "Socket is not available or remote address is not known.")
 
+    @public_api
     @typeCheck(bytes)
-    def sendReceive(self, data, timeout=None):
+    def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
-
         """
-
         raise NotImplementedError("Not yet implemented")
 
     # Management methods
@@ -168,7 +204,7 @@ class UDPServer(AbstractChannel):
         """
         return self.__localIP
 
-    @localIP.setter
+    @localIP.setter  # type: ignore
     @typeCheck(str)
     def localIP(self, localIP):
         if localIP is None:
@@ -186,7 +222,7 @@ class UDPServer(AbstractChannel):
         """
         return self.__localPort
 
-    @localPort.setter
+    @localPort.setter  # type: ignore
     @typeCheck(int)
     def localPort(self, localPort):
         if localPort is None:
@@ -196,11 +232,57 @@ class UDPServer(AbstractChannel):
 
         self.__localPort = localPort
 
-    @property
-    def timeout(self):
-        return self.__timeout
+    @public_api
+    def set_rate(self, rate):
+        """This method set the the given transmission rate to the channel.
+        Used in testing network under high load
 
-    @timeout.setter
-    @typeCheck(int)
-    def timeout(self, timeout):
-        self.__timeout = timeout
+        :parameter rate: This specifies the bandwidth in bytes per second to
+                         respect during traffic emission. Default value is
+                         ``None``, which means that the bandwidth is only
+                         limited by the underlying physical layer.
+        :type rate: :class:`int`, required
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        NetUtils.set_rate(localInterface, rate)
+        if rate is not None:
+            self._logger.info("Network rate limited to {:.2f} kBps ({} kbps) on {} interface".format(rate/1000, rate*8/1000, localInterface))
+        self._rate = rate
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
+
+    @public_api
+    def unset_rate(self):
+        """This method clears the transmission rate.
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        if self._rate is not None:
+            NetUtils.set_rate(localInterface, None)
+            self._rate = None
+            self._logger.info("Network rate limitation removed on {} interface".format(localInterface))
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
+
+
+class UDPServerBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channels.UDPServer.UDPServer` instance
+
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(src_addr="4.3.2.1", src_port=32000)
+    >>> builder = UDPServerBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'netzob.Simulator.Channels.UDPServer.UDPServer'>
+    >>> chan.localPort  # src_port key has been mapped to localPort attribute
+    32000
+    """
+
+    @public_api
+    def __init__(self):
+        super().__init__(UDPServer)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_src_port(self, value):
+        self.attrs['localPort'] = value

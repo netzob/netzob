@@ -62,7 +62,7 @@ class MatrixList(list):
         """A list of sorted strings. Each string will be displayed as a column header"""
         return self.__headers
 
-    @headers.setter
+    @headers.setter  # type: ignore
     def headers(self, headers):
         self.__headers = []
         for h in headers:

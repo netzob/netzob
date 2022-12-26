@@ -30,12 +30,15 @@
 # List subpackages to import with the current one
 # see docs.python.org/2/tutorial/modules.html
 
-from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
-from netzob.Simulator.Channels.TCPServer import TCPServer
-from netzob.Simulator.Channels.TCPClient import TCPClient
-from netzob.Simulator.Channels.UDPClient import UDPClient
-from netzob.Simulator.Channels.UDPServer import UDPServer
-from netzob.Simulator.Channels.SSLClient import SSLClient
-from netzob.Simulator.Channels.IPClient import IPClient
-from netzob.Simulator.Channels.RawIPClient import RawIPClient
-from netzob.Simulator.Channels.RawEthernetClient import RawEthernetClient
+from netzob.Simulator.Channels.TCPServer import TCPServer, TCPServerBuilder
+from netzob.Simulator.Channels.TCPClient import TCPClient, TCPClientBuilder
+from netzob.Simulator.Channels.UDPClient import UDPClient, UDPClientBuilder
+from netzob.Simulator.Channels.UDPServer import UDPServer, UDPServerBuilder
+from netzob.Simulator.Channels.SSLClient import SSLClient, SSLClientBuilder
+from netzob.Simulator.Channels.IPChannel import IPChannel, IPChannelBuilder
+from netzob.Simulator.Channels.CustomIPChannel import CustomIPChannel, CustomIPChannelBuilder
+from netzob.Simulator.Channels.RawEthernetChannel import RawEthernetChannel, RawEthernetChannelBuilder
+from netzob.Simulator.Channels.DebugChannel import DebugChannel, DebugChannelBuilder
+from netzob.Simulator.Channels.CustomEthernetChannel import CustomEthernetChannel, CustomEthernetChannelBuilder
+
+from netzob.Simulator.Channels.NetInfo import NetInfo

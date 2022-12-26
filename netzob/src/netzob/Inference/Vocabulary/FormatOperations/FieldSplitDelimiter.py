@@ -43,7 +43,8 @@ from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Domain.DomainFactory import DomainFactory
 from netzob.Model.Vocabulary.Field import Field
-from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
+#from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Opt import Opt
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.Raw import Raw
@@ -57,17 +58,18 @@ class FieldSplitDelimiter(object):
     @staticmethod
     @typeCheck(AbstractField, AbstractType)
     def split(field, delimiter):
-        """Split a field (or symbol) with a specific delimiter. The
-        delimiter can be passed either as an ASCII, a Raw, an
+        r"""Split a field (or symbol) with a specific delimiter. The
+        delimiter can be passed either as a String, a Raw, an
         HexaString, or any objects that inherit from AbstractType.
 
 
         >>> from netzob.all import *
+        >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
         >>> samples = [b"aaaaff000000ff10", b"bbff110010ff00000011", b"ccccccccfffe1f000000ff12"]
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages[:3])
-        >>> Format.splitDelimiter(symbol, ASCII("ff"))
-        >>> print(symbol)
+        >>> Format.splitDelimiter(symbol, String("ff"))
+        >>> print(symbol.str_data())
         Field-0    | Field-sep-6666 | Field-2      | Field-sep-6666 | Field-4   
         ---------- | -------------- | ------------ | -------------- | ----------
         'aaaa'     | 'ff'           | '000000'     | 'ff'           | '10'      
@@ -78,9 +80,9 @@ class FieldSplitDelimiter(object):
         >>> samples = [b"434d446964656e74696679230400000066726564", b"5245536964656e74696679230000000000000000", b"434d44696e666f2300000000", b"524553696e666f230000000004000000696e666f", b"434d4473746174732300000000", b"52455373746174732300000000050000007374617473", b"434d4461757468656e7469667923090000006d7950617373776421", b"52455361757468656e74696679230000000000000000", b"434d44656e6372797074230a00000031323334353674657374", b"524553656e637279707423000000000a00000073707176777436273136", b"434d4464656372797074230a00000073707176777436273136", b"5245536465637279707423000000000a00000031323334353674657374", b"434d446279652300000000", b"524553627965230000000000000000", b"434d446964656e746966792307000000526f626572746f", b"5245536964656e74696679230000000000000000", b"434d44696e666f2300000000", b"524553696e666f230000000004000000696e666f", b"434d4473746174732300000000", b"52455373746174732300000000050000007374617473", b"434d4461757468656e74696679230a000000615374726f6e67507764", b"52455361757468656e74696679230000000000000000", b"434d44656e63727970742306000000616263646566", b"524553656e6372797074230000000006000000232021262724", b"434d44646563727970742306000000232021262724", b"52455364656372797074230000000006000000616263646566", b"434d446279652300000000", b"524553627965230000000000000000"]
         >>> messages = [RawMessage(data=TypeConverter.convert(sample, HexaString, Raw)) for sample in samples]
         >>> symbol = Symbol(messages=messages)
-        >>> symbol.encodingFunctions.add(TypeEncodingFunction(ASCII))  # Change visualization to hexastring
-        >>> Format.splitDelimiter(symbol, ASCII("#"))
-        >>> print(symbol)
+        >>> symbol.encodingFunctions.add(TypeEncodingFunction(String))  # Change visualization to hexastring
+        >>> Format.splitDelimiter(symbol, String("#"))
+        >>> print(symbol.str_data())
         Field-0         | Field-sep-23 | Field-2              | Field-sep-23 | Field-4
         --------------- | ------------ | -------------------- | ------------ | -------
         'CMDidentify'   | '#'          | '....fred'           | ''           | ''     
@@ -112,45 +114,45 @@ class FieldSplitDelimiter(object):
         'CMDbye'        | '#'          | '....'               | ''           | ''     
         'RESbye'        | '#'          | '........'           | ''           | ''     
         --------------- | ------------ | -------------------- | ------------ | -------
-        >>> print(symbol.fields[0]._str_debug())
+        >>> print(symbol.fields[0].str_structure())
         Field-0
         |--   Alt
-              |--   Data (Raw=b'CMDidentify' ((0, 88)))
-              |--   Data (Raw=b'RESidentify' ((0, 88)))
-              |--   Data (Raw=b'CMDinfo' ((0, 56)))
-              |--   Data (Raw=b'RESinfo' ((0, 56)))
-              |--   Data (Raw=b'CMDstats' ((0, 64)))
-              |--   Data (Raw=b'RESstats' ((0, 64)))
-              |--   Data (Raw=b'CMDauthentify' ((0, 104)))
-              |--   Data (Raw=b'RESauthentify' ((0, 104)))
-              |--   Data (Raw=b'CMDencrypt' ((0, 80)))
-              |--   Data (Raw=b'RESencrypt' ((0, 80)))
-              |--   Data (Raw=b'CMDdecrypt' ((0, 80)))
-              |--   Data (Raw=b'RESdecrypt' ((0, 80)))
-              |--   Data (Raw=b'CMDbye' ((0, 48)))
-              |--   Data (Raw=b'RESbye' ((0, 48)))
+              |--   Data (Raw(b'CMDidentify'))
+              |--   Data (Raw(b'RESidentify'))
+              |--   Data (Raw(b'CMDinfo'))
+              |--   Data (Raw(b'RESinfo'))
+              |--   Data (Raw(b'CMDstats'))
+              |--   Data (Raw(b'RESstats'))
+              |--   Data (Raw(b'CMDauthentify'))
+              |--   Data (Raw(b'RESauthentify'))
+              |--   Data (Raw(b'CMDencrypt'))
+              |--   Data (Raw(b'RESencrypt'))
+              |--   Data (Raw(b'CMDdecrypt'))
+              |--   Data (Raw(b'RESdecrypt'))
+              |--   Data (Raw(b'CMDbye'))
+              |--   Data (Raw(b'RESbye'))
 
         Below is another example of the FieldSplitDelimiter usage: it splits fields based on a Raw string.
 
 
         >>> from netzob.all import *
-        >>> samples = [b"\\x01\\x02\\x03\\xff\\x04\\x05\\xff\\x06\\x07", b"\\x01\\x02\\xff\\x03\\x04\\x05\\x06\\xff\\x07", b"\\x01\\xff\\x02\\x03\\x04\\x05\\x06"]
+        >>> samples = [b"\x01\x02\x03\xff\x04\x05\xff\x06\x07", b"\x01\x02\xff\x03\x04\x05\x06\xff\x07", b"\x01\xff\x02\x03\x04\x05\x06"]
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> symbol = Symbol(messages=messages)
-        >>> Format.splitDelimiter(symbol, Raw(b"\\xff"))
-        >>> print(symbol)
+        >>> Format.splitDelimiter(symbol, Raw(b"\xff"))
+        >>> print(symbol.str_data())
         Field-0        | Field-sep-ff | Field-2                | Field-sep-ff | Field-4   
         -------------- | ------------ | ---------------------- | ------------ | ----------
-        '\\x01\\x02\\x03' | b'\\xff'      | '\\x04\\x05'             | b'\\xff'      | '\\x06\\x07'
-        '\\x01\\x02'     | b'\\xff'      | '\\x03\\x04\\x05\\x06'     | b'\\xff'      | '\\x07'    
-        '\\x01'         | b'\\xff'      | '\\x02\\x03\\x04\\x05\\x06' | ''           | ''        
+        '\x01\x02\x03' | b'\xff'      | '\x04\x05'             | b'\xff'      | '\x06\x07'
+        '\x01\x02'     | b'\xff'      | '\x03\x04\x05\x06'     | b'\xff'      | '\x07'    
+        '\x01'         | b'\xff'      | '\x02\x03\x04\x05\x06' | ''           | ''        
         -------------- | ------------ | ---------------------- | ------------ | ----------
 
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :param delimiter : the delimiter used to split messages of the field
-        :type: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
+        :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
         """
 
         if delimiter is None:
@@ -190,7 +192,7 @@ class FieldSplitDelimiter(object):
             observedValues = set()
             has_inserted_empty_value = False
 
-            isEmptyField = True  # To avoid adding an empty field            
+            isEmptyField = True  # To avoid adding an empty field
             for v in splittedMessages[i]:
                 if v != "" and v is not None:
                     isEmptyField = False
@@ -199,14 +201,17 @@ class FieldSplitDelimiter(object):
                         fieldDomain.append(Raw(v))
                         observedValues.add(v)
                 else:
-                    if not has_inserted_empty_value:
-                        fieldDomain.append(Raw(nbBytes=0))
-                        has_inserted_empty_value = True
+                    has_inserted_empty_value = True
 
             if not isEmptyField:
-                newField = Field(
-                    domain=DomainFactory.normalizeDomain(fieldDomain),
-                    name="Field-" + str(iField))
+                if has_inserted_empty_value:
+                    newField = Field(
+                        domain=DomainFactory.normalizeDomain(Opt(fieldDomain)),
+                        name="Field-" + str(iField))
+                else:
+                    newField = Field(
+                        domain=DomainFactory.normalizeDomain(fieldDomain),
+                        name="Field-" + str(iField))
                 newField.encodingFunctions = list(
                     field.encodingFunctions.values())
                 newFields.append(newField)
@@ -217,7 +222,7 @@ class FieldSplitDelimiter(object):
             fieldName = "Field-sep-{}".format(str_delimiter)
 
             newFields.append(
-                Field(domain=Alt([delimiter, Raw(nbBytes=0)]), name=fieldName))
+                Field(domain=Opt(delimiter), name=fieldName))
 
         newFields.pop()
 

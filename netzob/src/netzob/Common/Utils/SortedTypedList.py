@@ -49,8 +49,8 @@ from netzob.Common.Utils.SortableObject import SortableObject
 
 @NetzobLogger
 class SortedTypedList(object):
-    """This data structure allows to sort and maintain sorted
-    a list of objects inheriting from :class:`netzob.Common.Utils.SortableObject.SortableObject`.
+    """This data structure manages a sorted
+    list of objects inheriting from :class:`SortableObject <netzob.Common.Utils.SortableObject.SortableObject>`.
     It uses an AVLTree proposed by :mod:`bintrees` to represent elements in the list.
 
     :TODO: The inner object __tree stores the given element using an AVLTree. Thus
@@ -72,7 +72,7 @@ class SortedTypedList(object):
     >>> l.addAll([msg5, msg6])
     >>> print(list(l.values())[5])
     [0;32m[1745645548.0 [0;m[1;32mNone[1;m[0;32m->[0;m[1;32mNone[1;m[0;32m][0;m 'msg6'
-    >>> print(len(l))
+    >>> len(l)
     6
 
     """
@@ -87,7 +87,7 @@ class SortedTypedList(object):
     def add(self, element):
         """Insert in the proper place the specified element.
 
-        :type: any object that comply with the typed of the current list and inherits from :class:`netzob.Common.Utils.SortableObject.SortableObject`.
+        :type: any object that comply with the typed of the current list and inherits from :class:`SortableObject <netzob.Common.Utils.SortableObject.SortableObject>`.
         :raises: a TypeError if element is None or if its type doesn't comply with
                  the definition of the list.
         """
@@ -98,7 +98,7 @@ class SortedTypedList(object):
     def addAll(self, elements):
         """Insert in their proper place all the specified element.
 
-        :type: a list of any object that comply with the typed of the current list and inherits from :class:`netzob.Common.Utils.SortableObject.SortableObject`.
+        :type: a list of any object that comply with the typed of the current list and inherits from :class:`SortableObject <netzob.Common.Utils.SortableObject.SortableObject>`.
         :raises: a TypeError if element is None or if its type doesn't comply with
                  the definition of the list.
         """
@@ -127,7 +127,7 @@ class SortedTypedList(object):
     def _extend(self, elements):
         """Add all the elements in the current list.
 
-        :parameter elements: a list of :class:`netzob.Common.Utils.SortableObject.SortableObject` to insert.
+        :parameter elements: a list of :class:`SortableObject <netzob.Common.Utils.SortableObject.SortableObject>` to insert.
         :raises: TypeError if something is wrong with the given elements
         """
         for e in elements:

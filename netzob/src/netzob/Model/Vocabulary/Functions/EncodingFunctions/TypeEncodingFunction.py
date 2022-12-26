@@ -46,47 +46,47 @@ from netzob.Common.Utils.Decorators import NetzobLogger
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Functions.EncodingFunction import EncodingFunction
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, Sign, UnitSize
 
 
 @NetzobLogger
 class TypeEncodingFunction(EncodingFunction):
-    r"""This encoding function allows to specify the type and its attributes
+    r"""This encoding function enable the specification of the type and its attributes
     such as the endianness, the sign and the unitsize that will be used to encode
     the specified data.
 
     >>> from netzob.all import *
-    >>> f = Field(name="f0", domain=Agg(["There are ", Integer(10), " solutions."]))
-    >>> m = RawMessage(b"There are " + TypeConverter.convert(10, Integer, Raw) + b" solutions.")
+    >>> f = Field(name="f0", domain=Agg(["There are ", uint8(10), " solutions."]))
+    >>> m = RawMessage(b"There are \x0a solutions.")
     >>> s = Symbol(fields=[f], messages=[m], name="Symbol")
     >>> s.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print(s)
+    >>> print(s.str_data())
     f0                                            
     ----------------------------------------------
     '546865726520617265200a20736f6c7574696f6e732e'
     ----------------------------------------------
 
     >>> m=RawMessage(b'hello\x00\x00\x00\x01')
-    >>> f1=Field(ASCII("hello"))
-    >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
+    >>> f1=Field(String("hello"))
+    >>> f2=Field(Integer(unitSize=UnitSize.SIZE_32))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
-    >>> print(s)
+    >>> print(s.str_data())
     Field   | Field             
     ------- | ------------------
     'hello' | '\x00\x00\x00\x01'
     ------- | ------------------
 
-    >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_LITTLE))
-    >>> print(s)
+    >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE))
+    >>> print(s.str_data())
     Field   | Field   
     ------- | --------
     'hello' | 16777216
     ------- | --------
 
-    >>> f2=Field(Integer(unitSize=AbstractType.UNITSIZE_32))
-    >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=AbstractType.UNITSIZE_32, endianness=AbstractType.ENDIAN_BIG))
+    >>> f2=Field(Integer(unitSize=UnitSize.SIZE_32))
+    >>> f2.addEncodingFunction(TypeEncodingFunction(Integer, unitSize=UnitSize.SIZE_32, endianness=Endianness.BIG))
     >>> s = Symbol(fields=[f1,f2], messages=[m])
-    >>> print(s)
+    >>> print(s.str_data())
     Field   | Field
     ------- | -----
     'hello' | 1    
@@ -106,16 +106,16 @@ class TypeEncodingFunction(EncodingFunction):
     def __init__(self, _type, unitSize=None, endianness=None, sign=None):
         """Creates a new encoding function that will encode
         the data with the specified types and following its attributes. If an attribute
-        is not specified (or set to None), it takes its default value defined in :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`.
+        is not specified (or set to None), it takes its default value defined in :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`.
 
         :parameter _type: the type that will be used to encode
         :type _type: :class:`type`
-        :keyword unitSize: the unitsize of the expected result. Values must be one of AbstractType.UNITSIZE_*
-        :type unitSize: str
-        :keyword endianness: the endianness of the expected result. Values must be AbstractType.ENDIAN_BIG or AbstractType.ENDIAN_LITTLE
-        :type endianness: str
-        :keyword sign: the sign of the expected result. Values must be AbstractType.SIGN_SIGNED or AbstractType.SIGN_UNSIGNED
-        :type sign: str
+        :keyword unitSize: the unitsize of the expected result. Values must be one of UnitSize.SIZE_*
+        :type unitSize: :class:`Enum`
+        :keyword endianness: the endianness of the expected result. Values must be Endianness.BIG or Endianness.LITTLE
+        :type endianness: :class:`Enum`
+        :keyword sign: the sign of the expected result. Values must be Sign.SIGNED or Sign.UNSIGNED
+        :type sign: :class:`Enum`
         """
         self.type = _type
         if unitSize is None:
@@ -148,11 +148,11 @@ class TypeEncodingFunction(EncodingFunction):
     def type(self):
         return self.__type
 
-    @type.setter
+    @type.setter  # type: ignore
     def type(self, _type):
         if _type is None:
             raise TypeError("Type cannot be None")
-        if _type not in AbstractType.supportedTypes():
+        if not issubclass(_type, AbstractType):
             raise TypeError(
                 "The type is not supported, please refer to the list of supported type in AbstractType.supportedTypes()"
             )
@@ -162,7 +162,7 @@ class TypeEncodingFunction(EncodingFunction):
     def unitSize(self):
         return self.__unitSize
 
-    @unitSize.setter
+    @unitSize.setter  # type: ignore
     def unitSize(self, unitSize):
         if unitSize is None:
             raise TypeError("Unitsize cannot be None.")
@@ -176,7 +176,7 @@ class TypeEncodingFunction(EncodingFunction):
     def endianness(self):
         return self.__endianness
 
-    @endianness.setter
+    @endianness.setter  # type: ignore
     def endianness(self, endianness):
         if endianness is None:
             raise TypeError("Endianness cannot be None.")
@@ -190,7 +190,7 @@ class TypeEncodingFunction(EncodingFunction):
     def sign(self):
         return self.__sign
 
-    @sign.setter
+    @sign.setter  # type: ignore
     def sign(self, sign):
         if sign is None:
             raise TypeError("Sign cannot be None.")

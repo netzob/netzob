@@ -47,7 +47,6 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Symbol import Symbol
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
@@ -73,7 +72,7 @@ class ClusterBySize(object):
         >>> for sym in newSymbols:
         ...     print("[" + sym.name + "]")
         ...     sym.addEncodingFunction(TypeEncodingFunction(HexaString))
-        ...     print(sym)
+        ...     print(sym.str_data())
         [symbol_7]
         Field           
         ----------------
@@ -94,7 +93,7 @@ class ClusterBySize(object):
         --------------------
 
         :param messages: the messages to cluster.
-        :type messages: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type messages: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
         :raise Exception if something bad happens
         """
 

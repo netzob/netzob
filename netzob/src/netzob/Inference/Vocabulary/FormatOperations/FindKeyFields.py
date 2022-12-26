@@ -63,7 +63,7 @@ class FindKeyFields(object):
         >>> symbol = Symbol(messages=messages)
         >>> Format.splitStatic(symbol)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Field-0 | Field-1 | Field-2 | Field-3
         ------- | ------- | ------- | -------
         '00'    | 'ff2f'  | '0000'  | '11'   
@@ -84,7 +84,7 @@ class FindKeyFields(object):
         Field name: Field-3, number of clusters: 2, distribution: [1, 7]
 
         :param field: the field in which we want to identify key fields.
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :raise Exception if something bad happens
         """
 

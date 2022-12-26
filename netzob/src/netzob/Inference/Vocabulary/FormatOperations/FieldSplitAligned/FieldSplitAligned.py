@@ -43,14 +43,14 @@ from collections import OrderedDict
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Inference.Vocabulary.Search.SearchEngine import SearchEngine
-from netzob import _libNeedleman
+from netzob import _libNeedleman  # type: ignore
 
 
 @NetzobLogger
@@ -66,7 +66,7 @@ class FieldSplitAligned(object):
     >>> messages = [RawMessage(data=binascii.unhexlify(sample)) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field               
     --------------------
     '01ff00ff'          
@@ -79,21 +79,21 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
-    >>> print(symbol)
-    Field00 | Field01 | Field02      | Field03
-    ------- | ------- | ------------ | -------
-    '01'    | 'ff00'  | ''           | 'ff'   
-    '0222'  | 'ff00'  | '00'         | 'ff'   
-    '03'    | 'ff00'  | '0000'       | 'ff'   
-    '0444'  | 'ff00'  | '000000'     | 'ff'   
-    '05'    | 'ff00'  | '00000000'   | 'ff'   
-    '06'    | 'ff00'  | '0000000000' | 'ff'   
-    ------- | ------- | ------------ | -------
+    >>> print(symbol.str_data())
+    Field  | Field  | Field        | Field
+    ------ | ------ | ------------ | -----
+    '01'   | 'ff00' | ''           | 'ff' 
+    '0222' | 'ff00' | '00'         | 'ff' 
+    '03'   | 'ff00' | '0000'       | 'ff' 
+    '0444' | 'ff00' | '000000'     | 'ff' 
+    '05'   | 'ff00' | '00000000'   | 'ff' 
+    '06'   | 'ff00' | '0000000000' | 'ff' 
+    ------ | ------ | ------------ | -----
 
     >>> samples = [b"hello toto, what's up in France ?", b"hello netzob, what's up in UK ?", b"hello sygus, what's up in Germany ?"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field                                
     -------------------------------------
     "hello toto, what's up in France ?"  
@@ -103,20 +103,20 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic = False)
-    >>> print(symbol)
-    Field00  | Field01  | Field02           | Field03   | Field04
-    -------- | -------- | ----------------- | --------- | -------
-    'hello ' | 'toto'   | ", what's up in " | 'France'  | ' ?'   
-    'hello ' | 'netzob' | ", what's up in " | 'UK'      | ' ?'   
-    'hello ' | 'sygus'  | ", what's up in " | 'Germany' | ' ?'   
-    -------- | -------- | ----------------- | --------- | -------
+    >>> print(symbol.str_data())
+    Field    | Field    | Field             | Field     | Field
+    -------- | -------- | ----------------- | --------- | -----
+    'hello ' | 'toto'   | ", what's up in " | 'France'  | ' ?' 
+    'hello ' | 'netzob' | ", what's up in " | 'UK'      | ' ?' 
+    'hello ' | 'sygus'  | ", what's up in " | 'Germany' | ' ?' 
+    -------- | -------- | ----------------- | --------- | -----
 
     # Let's illustrate the use of semantic constrained sequence alignment with a simple example
 
     >>> samples = [b"John-0108030405--john.doe@gmail.com", b"Mathieu-0908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr", b"Olivia-0348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
-    >>> print(symbol)
+    >>> print(symbol.str_data())
     Field                                                                                      
     -------------------------------------------------------------------------------------------
     'John-0108030405--john.doe@gmail.com'                                                      
@@ -126,45 +126,45 @@ class FieldSplitAligned(object):
 
     >>> fs = FieldSplitAligned(doInternalSlick=True)
     >>> fs.execute(symbol, useSemantic = False)
-    >>> print(symbol)
-    Field00   | Field01 | Field02                                                                            
-    --------- | ------- | -----------------------------------------------------------------------------------
-    'John'    | '-0'    | '108030405--john.doe@gmail.com'                                                    
-    'Mathieu' | '-0'    | '908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr'                      
-    'Olivia'  | '-0'    | '348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr'
-    --------- | ------- | -----------------------------------------------------------------------------------
+    >>> print(symbol.str_data())
+    Field     | Field | Field                                                                              
+    --------- | ----- | -----------------------------------------------------------------------------------
+    'John'    | '-0'  | '108030405--john.doe@gmail.com'                                                    
+    'Mathieu' | '-0'  | '908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr'                      
+    'Olivia'  | '-0'  | '348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr'
+    --------- | ----- | -----------------------------------------------------------------------------------
     
     >>> applicativeDatas = []
-    >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("John")))
-    >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("Mathieu")))
-    >>> applicativeDatas.append(ApplicativeData("Firstname", ASCII("Olivia")))
-    >>> applicativeDatas.append(ApplicativeData("PhoneNumber", ASCII("0108030405")))
-    >>> applicativeDatas.append(ApplicativeData("PhoneNumber", ASCII("0348234556")))
-    >>> applicativeDatas.append(ApplicativeData("PhoneNumber", ASCII("0908070605")))
-    >>> applicativeDatas.append(ApplicativeData("StreetAddress", ASCII("31 rue de Paris")))
-    >>> applicativeDatas.append(ApplicativeData("StreetAddress", ASCII("7 allee des peupliers")))
-    >>> applicativeDatas.append(ApplicativeData("CityAddress", ASCII("Paris")))
-    >>> applicativeDatas.append(ApplicativeData("CityAddress", ASCII("marseille")))
-    >>> applicativeDatas.append(ApplicativeData("Email", ASCII("john.doe@gmail.com")))
-    >>> applicativeDatas.append(ApplicativeData("Email", ASCII("mat@yahoo.fr")))
-    >>> applicativeDatas.append(ApplicativeData("Email", ASCII("olivia.tortue@hotmail.fr")))
+    >>> applicativeDatas.append(ApplicativeData("Firstname", String("John")))
+    >>> applicativeDatas.append(ApplicativeData("Firstname", String("Mathieu")))
+    >>> applicativeDatas.append(ApplicativeData("Firstname", String("Olivia")))
+    >>> applicativeDatas.append(ApplicativeData("PhoneNumber", String("0108030405")))
+    >>> applicativeDatas.append(ApplicativeData("PhoneNumber", String("0348234556")))
+    >>> applicativeDatas.append(ApplicativeData("PhoneNumber", String("0908070605")))
+    >>> applicativeDatas.append(ApplicativeData("StreetAddress", String("31 rue de Paris")))
+    >>> applicativeDatas.append(ApplicativeData("StreetAddress", String("7 allee des peupliers")))
+    >>> applicativeDatas.append(ApplicativeData("CityAddress", String("Paris")))
+    >>> applicativeDatas.append(ApplicativeData("CityAddress", String("marseille")))
+    >>> applicativeDatas.append(ApplicativeData("Email", String("john.doe@gmail.com")))
+    >>> applicativeDatas.append(ApplicativeData("Email", String("mat@yahoo.fr")))
+    >>> applicativeDatas.append(ApplicativeData("Email", String("olivia.tortue@hotmail.fr")))
     >>> session = Session(messages, applicativeData=applicativeDatas)
     >>> symbol = Symbol(messages=messages)
 
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic=True)
-    >>> print(symbol)
-    Field00   | Field01 | Field02 | Field03 | Field04  | Field05 | Field06                                          | Field07 | Field08                   
-    --------- | ------- | ------- | ------- | -------- | ------- | ------------------------------------------------ | ------- | --------------------------
-    'John'    | '-0'    | '10'    | '8'     | '030405' | '-'     | ''                                               | '-'     | 'john.doe@gmail.com'      
-    'Mathieu' | '-0'    | '90'    | '8'     | '070605' | '-'     | '31 rue de Paris, 75000 Paris, France'           | '-'     | 'mat@yahoo.fr'            
-    'Olivia'  | '-0'    | '34'    | '8'     | '234556' | '-'     | '7 allee des peupliers, 13000 Marseille, France' | '-'     | 'olivia.tortue@hotmail.fr'
-    --------- | ------- | ------- | ------- | -------- | ------- | ------------------------------------------------ | ------- | --------------------------
+    >>> print(symbol.str_data())
+    Field     | Field | Field | Field | Field    | Field | Field                                            | Field | Field                     
+    --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
+    'John'    | '-0'  | '10'  | '8'   | '030405' | '-'   | ''                                               | '-'   | 'john.doe@gmail.com'      
+    'Mathieu' | '-0'  | '90'  | '8'   | '070605' | '-'   | '31 rue de Paris, 75000 Paris, France'           | '-'   | 'mat@yahoo.fr'            
+    'Olivia'  | '-0'  | '34'  | '8'   | '234556' | '-'   | '7 allee des peupliers, 13000 Marseille, France' | '-'   | 'olivia.tortue@hotmail.fr'
+    --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
 
 
     """
 
-    def __init__(self, unitSize=AbstractType.UNITSIZE_8,
+    def __init__(self, unitSize=UnitSize.SIZE_8,
                  doInternalSlick=False):
         """Constructor.
 
@@ -177,7 +177,7 @@ class FieldSplitAligned(object):
         """Execute the alignement on the specified field.
 
         :parameter field: the field that will be aligned
-        :type field: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type field: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
         if field is None:
             raise TypeError("Field cannot be None")
@@ -367,9 +367,9 @@ class FieldSplitAligned(object):
         :parameter values: values to align
         :type values: a list of hexastring.
         :keyword semanticTags: semantic tags to consider when aligning
-        :type semanticTags: a dict of :class:`netzob.Model.Vocabulary.SemanticTag.SemanticTag`
+        :type semanticTags: a dict of :class:`SemanticTag <netzob.Model.Vocabulary.SemanticTag.SemanticTag>`
         :return: the alignment, its score and the semantic tags
-        :rtype: a tupple (alignement, semanticTags, score)
+        :rtype: a tuple (alignement, semanticTags, score)
         """
         if values is None or len(values) == 0:
             raise TypeError("At least one value must be provided.")
@@ -377,7 +377,7 @@ class FieldSplitAligned(object):
         for val in values:
             if val is None or not isinstance(val, bytes):
                 raise TypeError(
-                    "At least one value is None or not an str which is not authorized."
+                    "At least one value is None or not a str which is not authorized."
                 )
 
         if semanticTags is None:
@@ -413,7 +413,7 @@ class FieldSplitAligned(object):
         of the applicative data identified.
 
         :parameter message: the message in which we search any applicative data
-        :type message: :class:`netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage`
+        :type message: :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage>`
         :return: a dict that describes the position of identified applicative data
         :rtype: :class:`dict`
         """
@@ -647,7 +647,7 @@ class FieldSplitAligned(object):
         info on the current status.
         """
 
-    def _deserializeSemanticTags(self, tags, unitSize=AbstractType.UNITSIZE_8):
+    def _deserializeSemanticTags(self, tags, unitSize=UnitSize.SIZE_8):
         """Deserialize the information returned from the C library
         and build the semantic tags definitions from it.
         """
@@ -660,7 +660,7 @@ class FieldSplitAligned(object):
             else:
                 result[j] = tag
 
-            if unitSize == AbstractType.UNITSIZE_8:
+            if unitSize == UnitSize.SIZE_8:
                 j = j + 1
                 result[j] = result[j - 1]
             else:
@@ -673,7 +673,7 @@ class FieldSplitAligned(object):
     def _deserializeAlignment(self,
                               regex,
                               mask,
-                              unitSize=AbstractType.UNITSIZE_8):
+                              unitSize=UnitSize.SIZE_8):
         """
         deserializeAlignment: Transforms the C extension results
         in a python readable way
@@ -682,8 +682,8 @@ class FieldSplitAligned(object):
         @param unitSize the unitSize
         @returns the python alignment
         """
-        if not (unitSize == AbstractType.UNITSIZE_8 or
-                unitSize == AbstractType.UNITSIZE_4):
+        if not (unitSize == UnitSize.SIZE_8 or
+                unitSize == UnitSize.SIZE_4):
             raise ValueError(
                 "Deserializing with unitSize {0} not yet implemented, only 4 and 8 supported.".
                 format(unitSize))
@@ -692,15 +692,15 @@ class FieldSplitAligned(object):
         for i, c in enumerate(mask):
             if c != 2:
                 if c == 1:
-                    if unitSize == AbstractType.UNITSIZE_8:
+                    if unitSize == UnitSize.SIZE_8:
                         align += b"--"
-                    elif unitSize == AbstractType.UNITSIZE_4:
+                    elif unitSize == UnitSize.SIZE_4:
                         align += b"-"
                 else:
-                    if unitSize == AbstractType.UNITSIZE_8:
+                    if unitSize == UnitSize.SIZE_8:
                         align += TypeConverter.convert(regex[i:i + 1], Raw,
                                                        HexaString)
-                    elif unitSize == AbstractType.UNITSIZE_4:
+                    elif unitSize == UnitSize.SIZE_4:
                         align += TypeConverter.convert(regex[i:i + 1], Raw,
                                                        HexaString)[1:]
         return align
@@ -709,7 +709,7 @@ class FieldSplitAligned(object):
     def doInternalSlick(self):
         return self.__doInternalSlick
 
-    @doInternalSlick.setter
+    @doInternalSlick.setter  # type: ignore
     @typeCheck(bool)
     def doInternalSlick(self, doInternalSlick):
         if doInternalSlick is None:
@@ -720,8 +720,8 @@ class FieldSplitAligned(object):
     def unitSize(self):
         return self.__unitSize
 
-    @unitSize.setter
-    @typeCheck(str)
+    @unitSize.setter  # type: ignore
+    @typeCheck(UnitSize)
     def unitSize(self, unitSize):
         if unitSize is None:
             raise TypeError("Unitsize cannot be None")

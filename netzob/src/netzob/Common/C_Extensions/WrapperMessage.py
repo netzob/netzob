@@ -46,7 +46,7 @@ class WrapperMessage(object):
         self.semanticTags = []
 
         for i in range(0, len(rawData)):
-            # SemanticTag can be "None" (that's why the str method)
+            # SemanticTag can be "None" (that is why the str method)
             if i * 2 in list(message.semanticTags.keys()):
                 semanticTag = str(message.semanticTags[i * 2])
             else:

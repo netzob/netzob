@@ -44,98 +44,145 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
+from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 @NetzobLogger
 class UDPClient(AbstractChannel):
-    """A UDPClient is a communication channel. It allows to create client connecting
-    to a specific IP:Port server over a UDP socket.
+    """A UDPClient is a communication channel. It provides the connection of a
+    client to a specific IP:Port server over a UDP socket.
 
-    When the actor executes an OpenChannelTransition, it calls the
-    open method on the UDP client which connects to the server.
+    The UDPClient constructor expects some parameters:
+
+    :param remoteIP: This parameter is the remote IP address to connect to.
+    :param remotePort: This parameter is the remote IP port.
+    :param localIP: The local IP address. Default value is the local
+                    IP address corresponding to the network interface that
+                    will be used to send the packet.
+    :param localPort: The local IP port. Default value in a random
+                      valid integer chosen by the kernel.
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
+    :type remoteIP: :class:`str`, required
+    :type remotePort: :class:`int`, required
+    :type localIP: :class:`str`, optional
+    :type localPort: :class:`int`, optional
+    :type timeout: :class:`float`, optional
+
+
+    Adding to AbstractChannel variables, the UDPClient class provides the
+    following public variables:
+
+    :var remoteIP: The remote IP address to connect to.
+    :var remotePort: The remote IP port.
+    :var localIP: The local IP address.
+    :var localPort: The local IP port.
+    :vartype remoteIP: :class:`str`
+    :vartype remotePort: :class:`int`
+    :vartype localIP: :class:`str`
+    :vartype localPort: :class:`int`
+
+
+    The following code shows the use of a UDPClient channel:
 
     >>> from netzob.all import *
-    >>> import time
-    >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999)
+    >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999, timeout=1.)
     >>> client.open()
+    >>> symbol = Symbol([Field("Hello everyone!")])
+    >>> client.write(next(symbol.specialize()))
+    15
     >>> client.close()
 
-    >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> s0 = State()
-    >>> s1 = State()
-    >>> s2 = State()
-    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
-    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
-    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
-    >>> automata = Automata(s0, [symbol])
 
-    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8883)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
+    .. ifconfig:: scope in ('netzob')
 
-    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8883)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+       Complete example with the use of an actor.
 
-    >>> server.start()
-    >>> client.start()
+       >>> from netzob.all import *
+       >>> import time
+       >>> symbol = Symbol([Field("Hello everyone!")])
+       >>> s0 = State()
+       >>> s1 = State()
+       >>> s2 = State()
+       >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
+       >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
+       >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
+       >>> automata = Automata(s0, [symbol])
 
-    >>> time.sleep(2)
-    >>> client.stop()
-    >>> server.stop()
+       >>> channel = UDPServer(localIP="127.0.0.1", localPort=8883, timeout=1.)
+       >>> server = Actor(automata = automata, channel=channel)
+       >>> server.initiator = False
+
+       >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8883, timeout=1.)
+       >>> client = Actor(automata = automata, channel=channel)
+
+       >>> server.start()
+       >>> client.start()
+
+       >>> time.sleep(2)
+       >>> client.stop()
+       >>> server.stop()
 
     """
 
+    ## Class attributes ##
+
+    FAMILIES = ["udp"]
+
+    @public_api
     @typeCheck(str, int)
     def __init__(self,
                  remoteIP,
                  remotePort,
                  localIP=None,
                  localPort=None,
-                 timeout=5):
-        super(UDPClient, self).__init__(isServer=False)
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        super(UDPClient, self).__init__(timeout=timeout)
         self.remoteIP = remoteIP
         self.remotePort = remotePort
         self.localIP = localIP
         self.localPort = localPort
-        self.timeout = timeout
-        self.type = AbstractChannel.TYPE_UDPCLIENT
-        self.__socket = None
 
-    def open(self, timeout=None):
-        """Open the communication channel. If the channel is a client, it starts to connect
-        to the specified server.
+    @staticmethod
+    def getBuilder():
+        return UDPClientBuilder
+
+    @public_api
+    def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        """Open the communication channel. If the channel is a client, it
+        starts to connect to the specified server.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is blocking (None).
+        :type timeout: :class:`float`, optional
+        :raise: RuntimeError if the channel is already opened
         """
 
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again")
+        super().open(timeout=timeout)
 
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # Reuse the connection
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(self.timeout)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._socket.settimeout(timeout or self.timeout)
         if self.localIP is not None and self.localPort is not None:
-            self.__socket.bind((self.localIP, self.localPort))
+            self._socket.bind((self.localIP, self.localPort))
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
 
-    def read(self, timeout=None):
+    @public_api
+    def read(self):
         """Read the next message on the communication channel.
-
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
         """
-        # TODO: handle timeout
-        if self.__socket is not None:
-            (data, remoteAddr) = self.__socket.recvfrom(1024)
+        if self._socket is not None:
+            (data, remoteAddr) = self._socket.recvfrom(1024)
             return data
         else:
             raise Exception("socket is not available")
@@ -144,19 +191,19 @@ class UDPClient(AbstractChannel):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
-        :type data: binary object
+        :type data: :class:`bytes`
         """
-        if self.__socket is not None:
-            len_data = self.__socket.sendto(data, (self.remoteIP, self.remotePort))
+        if self._socket is not None:
+            len_data = self._socket.sendto(data, (self.remoteIP, self.remotePort))
             return len_data
         else:
             raise Exception("socket is not available")
 
+    @public_api
     @typeCheck(bytes)
-    def sendReceive(self, data, timeout=None):
+    def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
-
         """
 
         raise NotImplementedError("Not yet implemented")
@@ -173,7 +220,7 @@ class UDPClient(AbstractChannel):
         """
         return self.__remoteIP
 
-    @remoteIP.setter
+    @remoteIP.setter  # type: ignore
     @typeCheck(str)
     def remoteIP(self, remoteIP):
         if remoteIP is None:
@@ -191,7 +238,7 @@ class UDPClient(AbstractChannel):
         """
         return self.__remotePort
 
-    @remotePort.setter
+    @remotePort.setter  # type: ignore
     @typeCheck(int)
     def remotePort(self, remotePort):
         if remotePort is None:
@@ -209,7 +256,7 @@ class UDPClient(AbstractChannel):
         """
         return self.__localIP
 
-    @localIP.setter
+    @localIP.setter  # type: ignore
     @typeCheck(str)
     def localIP(self, localIP):
         self.__localIP = localIP
@@ -223,16 +270,134 @@ class UDPClient(AbstractChannel):
         """
         return self.__localPort
 
-    @localPort.setter
+    @localPort.setter  # type: ignore
     @typeCheck(int)
     def localPort(self, localPort):
         self.__localPort = localPort
 
-    @property
-    def timeout(self):
-        return self.__timeout
+    @public_api
+    def set_rate(self, rate):
+        """This method set the the given transmission rate to the channel.
+        Used in testing network under high load
 
-    @timeout.setter
-    @typeCheck(int)
-    def timeout(self, timeout):
-        self.__timeout = timeout
+        :parameter rate: This specifies the bandwidth in bytes per second to
+                         respect during traffic emission. Default value is
+                         ``None``, which means that the bandwidth is only
+                         limited by the underlying physical layer.
+        :type rate: :class:`int`, required
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        NetUtils.set_rate(localInterface, rate)
+        if rate is not None:
+            self._logger.info("Network rate limited to {:.2f} kBps ({} kbps) on {} interface".format(rate/1000, rate*8/1000, localInterface))
+        self._rate = rate
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
+
+    @public_api
+    def unset_rate(self):
+        """This method clears the transmission rate.
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        if self._rate is not None:
+            NetUtils.set_rate(localInterface, None)
+            self._rate = None
+            self._logger.info("Network rate limitation removed on {} interface".format(localInterface))
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
+
+
+class UDPClientBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channels.UDPClient.UDPClient` instance
+
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(dst_addr="1.2.3.4", dst_port=1024,
+    ...                   src_addr="4.3.2.1", src_port=32000)
+    >>> builder = UDPClientBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'netzob.Simulator.Channels.UDPClient.UDPClient'>
+    >>> chan.localPort  # src_port key has been mapped to localPort attribute
+    32000
+    """
+
+    @public_api
+    def __init__(self):
+        super().__init__(UDPClient)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_dst_addr(self, value):
+        self.attrs['remoteIP'] = value
+
+    def set_src_port(self, value):
+        self.attrs['localPort'] = value
+
+    def set_dst_port(self, value):
+        self.attrs['remotePort'] = value
+
+
+def _test_udp():
+    r"""
+
+    >>> from netzob.all import *
+    >>> client = UDPClient(remoteIP='127.0.0.1', remotePort=9999, timeout=1.)
+    >>> client.open()
+    >>> symbol = Symbol([Field("Hello everyone!")])
+    >>> client.write(next(symbol.specialize()))
+    15
+    >>> client.close()
+
+    """
+
+
+def _test_udp_write_read():
+    r"""
+
+    >>> from netzob.all import *
+    >>> import time
+    >>> symbol = Symbol([Field("Hello everyone!")])
+    >>> s0 = State("s0")
+    >>> s1 = State("s1")
+    >>> s2 = State("s2")
+    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1, name='open channel')
+    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol], name='main transition')
+    >>> automata = Automata(s0, [symbol])
+
+    >>> channel = UDPServer(localIP="127.0.0.1", localPort=8883, timeout=1.)
+    >>> server = Actor(automata = automata, channel=channel)
+    >>> server.initiator = False
+
+    >>> channel = UDPClient(remoteIP="127.0.0.1", remotePort=8883, timeout=1.)
+    >>> client = Actor(automata = automata, channel=channel)
+    >>> client.nbMaxTransitions = 3
+
+    >>> server.start()
+    >>> time.sleep(0.2)
+    >>> client.start()
+
+    >>> time.sleep(1)
+    >>> client.stop()
+    >>> server.stop()
+    >>> print(client.generateLog())
+    Activity log for actor 'Actor' (initiator):
+      [+] At state 's0'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'open channel' (open channel)
+      [+]   Transition 'open channel' lead to state 's1'
+      [+] At state 's1'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'main transition' (initiator)
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
+      [+]   Transition 'main transition' lead to state 's1'
+      [+] At state 's1'
+      [+]   Randomly choosing a transition to execute or to wait for an input symbol
+      [+]   Picking transition 'main transition' (initiator)
+      [+]   During transition 'main transition', sending input symbol ('Symbol')
+      [+]   During transition 'main transition', receiving expected output symbol ('Symbol')
+      [+]   Transition 'main transition' lead to state 's1'
+      [+] At state 's1', we reached the max number of transitions (3), so we stop
+
+    """

@@ -31,4 +31,6 @@
 from netzob.Simulator.Channels.all import *
 
 from netzob.Simulator.Actor import Actor
-from netzob.Simulator.AbstractionLayer import AbstractionLayer
+from netzob.Simulator.AbstractionLayer import AbstractionLayer, Operation
+from netzob.Simulator.AbstractChannel import NetUtils
+from netzob.Simulator.ChannelBuilder import ChannelBuilder

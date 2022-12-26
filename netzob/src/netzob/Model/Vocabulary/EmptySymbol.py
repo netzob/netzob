@@ -42,27 +42,23 @@
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck
+from netzob.Common.Utils.Decorators import public_api
 from netzob.Model.Vocabulary.Symbol import Symbol
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 
 
 class EmptySymbol(Symbol):
-    """An empty symbol is a special type of symbol principaly used by the simulator.
-    It represents the fact of having nothing received or to have nothing to send.
-
-    >>> from netzob.all import *
-    >>> e = EmptySymbol()
+    """An empty symbol is a special type of symbol that represents the
+    fact of having received nothing or having nothing to send. An
+    EmptySymbol is only produced by the automaton, and thus should not
+    be instantiated.
 
     """
 
-    def __init__(self, receptionTimeout=None):
+    @public_api
+    def __init__(self):
         super(EmptySymbol, self).__init__(
             fields=None, name="Empty Symbol", messages=[RawMessage()])
-        if receptionTimeout is None:
-            receptionTimeout = EmptySymbol.defaultReceptionTimeout()
-
-        self.receptionTimeout = receptionTimeout
 
     def __eq__(self, other):
         if other is None:
@@ -81,33 +77,4 @@ class EmptySymbol(Symbol):
         return "Empty Symbol"
 
     def __hash__(self):
-        return hash(frozenset(self.name))    
-
-    @property
-    def receptionTimeout(self):
-        """This timeout represent how many milliseconds of no activity
-        represents the reception of an empty symbol
-
-        :type: class:`int`
-        """
-        return self.__receptionTimeout
-
-    @receptionTimeout.setter
-    @typeCheck(int)
-    def receptionTimeout(self, receptionTimeout):
-        if receptionTimeout is None:
-            raise TypeError("Reception timeout cannot be None")
-        if receptionTimeout < 0:
-            raise ValueError("Reception timeout must be positive")
-
-        self.__receptionTimeout = receptionTimeout
-
-    @staticmethod
-    def defaultReceptionTimeout():
-        """Returns the default reception timeout representing
-        an empty symbol
-
-        :return: the default reception timeout in milliseconds
-        :rtype: :class:`int`
-        """
-        return 5000
+        return id(self)

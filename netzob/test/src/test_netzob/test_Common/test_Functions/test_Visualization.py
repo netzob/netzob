@@ -26,7 +26,7 @@
 #+---------------------------------------------------------------------------+
 
 from netzob.Common.Functions.Encoding.FormatFunction import FormatFunction
-from netzob.Common.Type.Endianess import Endianess
+from netzob.Common.Type.Endianness import Endianness
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.TypeConvertor import TypeConvertor

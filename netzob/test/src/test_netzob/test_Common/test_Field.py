@@ -58,7 +58,7 @@ class test_Field(unittest.TestCase):
         self.assertEqual(f.name, "Default")
 
 
-    ## Encoding (format, unitsize, sign and endianess)
+    ## Encoding (format, unitsize, sign and endianness)
     def test_format(self):
         f = Field()
         f.encodingFunctions.add(TypeEncodingFunction(ASCII))
@@ -74,10 +74,10 @@ class test_Field(unittest.TestCase):
         f.setSign(Sign.SIGNED)
         self.assertEqual(f.getSign(), Sign.SIGNED)
 
-    def test_endianess(self):
+    def test_endianness(self):
         f = Field()
-        f.setEndianess(Endianess.LITTLE)
-        self.assertEqual(f.getEndianess(), Endianess.LITTLE)
+        f.setEndianness(Endianness.LITTLE)
+        self.assertEqual(f.getEndianness(), Endianness.LITTLE)
 
     ## Functions (visualization, encoding and transformation)
     def test_visualizationFunction(self):
@@ -96,14 +96,14 @@ class test_Field(unittest.TestCase):
 
     def test_encodingFunction(self):
         f = Field()
-        func = FormatFunction("My function", Format.STRING, UnitSize.BIT, Endianess.LITTLE, Sign.SIGNED)
+        func = FormatFunction("My function", Format.STRING, UnitSize.BIT, Endianness.LITTLE, Sign.SIGNED)
         f.addEncodingFunction(func)
         self.assertEqual(getEncodingFunctions(), [func])
 
         f.removeEncodingFunction(func)
         self.assertEqual(getEncodingFunctions(), [])
 
-        func2 = FormatFunction("My other function", Format.STRING, UnitSize.BIT, Endianess.LITTLE, Sign.SIGNED)
+        func2 = FormatFunction("My other function", Format.STRING, UnitSize.BIT, Endianness.LITTLE, Sign.SIGNED)
         f.addEncodingFunction(func2)
         f.cleanEncodingFunctions()
         self.assertEqual(getEncodingFunctions(), [])

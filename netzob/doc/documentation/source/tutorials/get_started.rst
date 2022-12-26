@@ -75,8 +75,8 @@ etc.).
 
 For this tutorial, you can import network messages with the provided
 PCAP file. But we recommand to use the provided implementation to
-generate samples of traffic and capture them with Netzob. You can to
-this with the Netwok Capturer plugin, which is accessible is the menu
+generate samples of traffic and capture them with Netzob. You can do
+this with the Netwok Capturer plugin, which is accessible in the menu
 ``File`` > ``Capture messages`` > ``Capture network traffic``.
 
 .. figure:: https://dev.netzob.org/attachments/113/tuto_capture-small.png
@@ -85,7 +85,7 @@ this with the Netwok Capturer plugin, which is accessible is the menu
    :alt: 
 
 
-As shown on the picture, you have to launch the capture at the Layer 4
+As shown in the picture, you have to launch the capture at the Layer 4
 on the localhost ``lo`` interface. As the targeted protocol works over
 UDP, you'll be able to capture only the UDP payloads. Then launch the
 server of the targeted protocol and then the client. This one will send
@@ -116,7 +116,7 @@ The main window shows each message in raw hexadecimal format. You can
 play with visualization attributes : right click on the symbol, then
 select Visualization and the attribute you want to change (hex, decimal
 or even string format, the unit size and potentially the sign and
-endianess).
+endianness).
 
 The following picture shows the rendering of the messages in hex format
 (on the left) and string format (on the right). You can then see that
@@ -157,10 +157,10 @@ Using the '``#``\ ' string delimiter, you'll have the following result:
    :target: https://dev.netzob.org/attachments/131/tuto_force_part_result.png 
    :alt: 
 
-You may also want to play with Sequence alignment. This partitionment
-allows to align messages according to their common patterns.
+You may also want to play with Sequence alignment. This partitioning
+enables message alignment according to their common patterns.
 
-After playing with the different partitionment available, you are able
+After playing with the different partitioning available, you are able
 to retrieve the different commands associated with the targeted
 protocol, as shown on the following picture.
 
@@ -177,7 +177,7 @@ format, which looks like:
 
     [command]#[dataToEncrypt][padding]
 
-Netzob allows you to indicate that a specific field has a mutable
+Netzob enables you to indicate that a specific field has a mutable
 content, which means its data is not fixed (such as the '#' delimiter)
 nor part of a set of fixed elements (such as the command string).To
 specify the structure of a field and its attributes, right click on a
@@ -222,12 +222,12 @@ we will simply show how to model it in Netzob.
 
 A basic state machine contains states and transitions. In Netzob, we use
 a complex structure to model the grammar of a protocol. This model
-allows to specify information such as the response time between an input
+enables information's specification such as the response time between an input
 symbol and an output symbol, or even the probability of the different
 output messages given an uniq input message. This model is called an
 SMMDT (Stochastic Mealy Machine with Deterministic Transitions).
 
-The grammar perspective interface of Netzob allows you to create:
+The grammar perspective interface of Netzob enables the creation of:
 
 -  states (initial or not);
 -  semi-stochastic transitions (i.e. "normal" transitions);
@@ -266,7 +266,7 @@ Generate traffic
 
 Let's go to the Simulator perspective of Netzob.
 
-The simulator allows you to create either a client, a server or both.
+The simulator provides either client creation, server or both.
 You can tell Netzob to talk with a real client or server implementation,
 or you can just launch a client and a server inside Netzob and let them
 talk together.
@@ -304,6 +304,6 @@ to `help you <http://www.netzob.org/community>`_ (see our mailing list
 channel #netzob on Freenode).
 
 If you want to go further and `start
-contributing <http://www.netzob.org/development>`_ to Netzob, that's
+contributing <http://www.netzob.org/development>`_ to Netzob, that is
 perfect. There are many simple or complex tasks everyone can do:
 translation, documentation, bug fix, feature proposal or implementation.

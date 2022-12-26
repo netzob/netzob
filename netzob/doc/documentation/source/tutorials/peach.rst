@@ -9,15 +9,15 @@ Principle
 ^^^^^^^^^
 
 `Peach <http://peachfuzzer.com>`_ is an open-source framework of
-fuzzing. It allows testers to create smart fuzzers adapted to their
+fuzzing. It provides API to create smart fuzzers adapted to the tester's
 needs through XML configuration files called `*Peach pit
 files* <http://peachfuzzer.com/PeachPit>`_.
 Making such files needs knowledge of the format message and state
 machine of the targeted protocol as well as the actor Peach has to fuzz.
 
-Fortunately, Netzob allows the user to reverse engineer undocumented and
+Fortunately, Netzob provides means for reverse engineering of undocumented and
 proprietary protocols from provided traces in a semi-automatic way.
-Netzob provides an exporter plugin for Peach that allows to transform
+Netzob provides an exporter plugin for Peach that can transform
 the inferred data model and state machine of a targeted protocol into a
 Peach pit file automatically.
 
@@ -57,7 +57,7 @@ kinds of fuzzer available:
    symbols of Netzob and at each step, the fuzzer changes of state for a
    randomly chosen one.
 -  "Randomized transitions stateful fuzzer": one state is created for
-   each symbols of Netzob and the transitions bewteen these states are
+   each symbols of Netzob and the transitions between these states are
    based on those Netzob allows, weight by their probability.
 -  "One-state fuzzer": one state is created corresponding to the chosen
    symbol.

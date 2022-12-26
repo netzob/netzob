@@ -47,7 +47,7 @@ from pylstar.Word import Word
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import NetzobLogger
-from netzob.Simulator.Channels.AbstractChannel import ChannelDownException
+from netzob.Simulator.AbstractChannel import ChannelDownException
 from netzob.Model.Vocabulary.EmptySymbol import EmptySymbol
 
 
@@ -59,9 +59,9 @@ class GenericMAT(ActiveKnowledgeBase):
     >>> from netzob.all import *
     >>> from pylstar.Letter import Letter
     >>> from pylstar.Word import Word
-    >>> server_channel = TCPServer(localIP="127.0.0.1", localPort=8888)
+    >>> server_channel = TCPServer(localIP="127.0.0.1", localPort=8888, timeout=1.)
     >>> id_thread = thread.start_new_thread(server_channel.open, ())
-    >>> client_channel = TCPClient(remoteIP="127.0.0.1", remotePort=8888)
+    >>> client_channel = TCPClient(remoteIP="127.0.0.1", remotePort=8888, timeout=1.)
     >>> aLayer = AbstractionLayer(client_channel, [])
     >>> mat = GenericMAT(aLayer)
     >>> mat.start_target()

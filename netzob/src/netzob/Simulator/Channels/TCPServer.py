@@ -44,95 +44,135 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Simulator.Channels.AbstractChannel import AbstractChannel
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger, public_api
+from netzob.Simulator.AbstractChannel import AbstractChannel, NetUtils
+from netzob.Simulator.ChannelBuilder import ChannelBuilder
 
 
 @NetzobLogger
 class TCPServer(AbstractChannel):
-    """A TCPServer is a communication channel. It allows to create
-    server listening on a specified IP:Port over a TCP socket.
+    """A TCPServer is a communication channel. It provides a server
+    listening to a specified IP:Port over a TCP socket.
 
-    When the actor execute an OpenChannelTransition, it calls the open
-    method on the tcp server which starts the server. The objective of
-    the server is to wait for the client to connect.
+    The TCPServer constructor expects some parameters:
+
+    :param localIP: This parameter is the local IP address.
+    :param localPort: This parameter is the local IP port.
+    :param timeout: The default timeout of the channel for global
+                    connection. Default value is blocking (None).
+    :type localIP: :class:`str`, required
+    :type localPort: :class:`int`, required
+    :type timeout: :class:`float`, optional
+
+
+    Adding to AbstractChannel variables, the TCPServer class provides the
+    following public variables:
+
+    :var localIP: The local IP address.
+    :var localPort: The local IP port.
+    :vartype localIP: :class:`str`
+    :vartype localPort: :class:`int`
+
+
+    The following code shows the creation of a TCPServer channel:
 
     >>> from netzob.all import *
-    >>> import time
-    >>> server = TCPServer(localIP='127.0.0.1', localPort=9999)
+    >>> server = TCPServer(localIP='127.0.0.1', localPort=9999, timeout=1.)
 
-    >>> symbol = Symbol([Field("Hello everyone!")])
-    >>> s0 = State()
-    >>> s1 = State()
-    >>> s2 = State()
-    >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
-    >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
-    >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
-    >>> automata = Automata(s0, [symbol])
 
-    >>> channel = TCPServer(localIP="127.0.0.1", localPort=8886)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> server = Actor(automata = automata, initiator = False, abstractionLayer=abstractionLayer)
+    .. ifconfig:: scope in ('netzob')
 
-    >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8886)
-    >>> abstractionLayer = AbstractionLayer(channel, [symbol])
-    >>> client = Actor(automata = automata, initiator = True, abstractionLayer=abstractionLayer)
+       The following code shows a complete example of a communication
+       between a client and a server in TCP:
 
-    >>> server.start()
-    >>> client.start()
+       >>> from netzob.all import *
+       >>> import time
+       >>> symbol = Symbol([Field("Hello everyone!")])
+       >>> s0 = State()
+       >>> s1 = State()
+       >>> s2 = State()
+       >>> openTransition = OpenChannelTransition(startState=s0, endState=s1)
+       >>> mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])
+       >>> closeTransition = CloseChannelTransition(startState=s1, endState=s2)
+       >>> automata = Automata(s0, [symbol])
 
-    >>> time.sleep(1)
-    >>> client.stop()
-    >>> server.stop()
+       >>> channel = TCPServer(localIP="127.0.0.1", localPort=8886, timeout=1.)
+       >>> server = Actor(automata = automata, channel=channel)
+       >>> server.initiator = False
+
+       >>> channel = TCPClient(remoteIP="127.0.0.1", remotePort=8886, timeout=1.)
+       >>> client = Actor(automata = automata, channel=channel)
+
+       >>> server.start()
+       >>> client.start()
+
+       >>> time.sleep(1)
+       >>> client.stop()
+       >>> server.stop()
 
     """
 
-    def __init__(self, localIP, localPort, timeout=5):
-        super(TCPServer, self).__init__(isServer=True)
+    ## Class attributes ##
+
+    FAMILIES = ["tcp"]
+
+    @public_api
+    def __init__(self,
+                 localIP,
+                 localPort,
+                 timeout=AbstractChannel.DEFAULT_TIMEOUT
+                 ):
+        super(TCPServer, self).__init__(timeout=timeout)
         self.localIP = localIP
         self.localPort = localPort
-        self.timeout = timeout
-        self.type = AbstractChannel.TYPE_TCPSERVER
-        self.__socket = None
         self.__clientSocket = None
 
-    def open(self, timeout=None):
-        """Open the communication channel. If the channel is a server, it starts to listen
-        and will create an instance for each different client"""
-        if self.isOpen:
-            raise RuntimeError(
-                "The channel is already open, cannot open it again")
+    @staticmethod
+    def getBuilder():
+        return TCPServerBuilder
 
-        self.__socket = socket.socket()
-        # Reuse the connection
-        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.settimeout(self.timeout)
+    @public_api
+    def open(self, timeout=AbstractChannel.DEFAULT_TIMEOUT):
+        """Open the communication channel. If the channel is a client, it
+        starts to connect to the specified server.
+        :param timeout: The default timeout of the channel for opening
+                        connection and waiting for a message. Default value
+                        is blocking (None).
+        :type timeout: :class:`float`, optional
+        :raise: RuntimeError if the channel is already opened
+        """
+
+        super().open(timeout=timeout)
+
+        self._socket = socket.socket()
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Reuse the connection
+        self._socket.settimeout(timeout or self.timeout)
         self._logger.debug("Bind the TCP server to {0}:{1}".format(
             self.localIP, self.localPort))
-        self.__socket.bind((self.localIP, self.localPort))
-        self.__socket.listen(1)
+        self._socket.bind((self.localIP, self.localPort))
+        self._socket.listen(1)
         self._logger.debug("Ready to accept new TCP connections...")
-        self.__clientSocket, addr = self.__socket.accept()
+        self.__clientSocket, addr = self._socket.accept()
         self._logger.debug("New TCP connection received.")
         self.isOpen = True
 
+    @public_api
     def close(self):
         """Close the communication channel."""
         if self.__clientSocket is not None:
             self.__clientSocket.close()
-        if self.__socket is not None:
-            self.__socket.close()
+        if self._socket is not None:
+            self._socket.close()
         self.isOpen = False
-        self._logger.info("TCPServer has closed its socket")
+        self._logger.debug("TCPServer has closed its socket")
 
-    def read(self, timeout=None):
+    @public_api
+    def read(self):
         """Read the next message on the communication channel.
-
-        @keyword timeout: the maximum time in millisecond to wait before a message can be reached
-        @type timeout: :class:`int`
         """
         reading_seg_size = 1024
 
+        # Read loop
         if self.__clientSocket is not None:
             data = b""
             finish = False
@@ -154,7 +194,7 @@ class TCPServer(AbstractChannel):
         """Write on the communication channel the specified data
 
         :parameter data: the data to write on the channel
-        :type data: binary object
+        :type data: :class:`bytes`
         """
         if self.__clientSocket is not None:
             self.__clientSocket.sendall(data)
@@ -162,11 +202,11 @@ class TCPServer(AbstractChannel):
         else:
             raise Exception("socket is not available")
 
+    @public_api
     @typeCheck(bytes)
-    def sendReceive(self, data, timeout=None):
+    def sendReceive(self, data):
         """Write on the communication channel the specified data and returns
         the corresponding response.
-
         """
 
         raise NotImplementedError("Not yet implemented")
@@ -183,7 +223,7 @@ class TCPServer(AbstractChannel):
         """
         return self.__localIP
 
-    @localIP.setter
+    @localIP.setter  # type: ignore
     @typeCheck(str)
     def localIP(self, localIP):
         if localIP is None:
@@ -201,7 +241,7 @@ class TCPServer(AbstractChannel):
         """
         return self.__localPort
 
-    @localPort.setter
+    @localPort.setter  # type: ignore
     @typeCheck(int)
     def localPort(self, localPort):
         if localPort is None:
@@ -211,11 +251,57 @@ class TCPServer(AbstractChannel):
 
         self.__localPort = localPort
 
-    @property
-    def timeout(self):
-        return self.__timeout
+    @public_api
+    def set_rate(self, rate):
+        """This method set the the given transmission rate to the channel.
+        Used in testing network under high load
 
-    @timeout.setter
-    @typeCheck(int)
-    def timeout(self, timeout):
-        self.__timeout = timeout
+        :parameter rate: This specifies the bandwidth in bytes per second to
+                         respect during traffic emission. Default value is
+                         ``None``, which means that the bandwidth is only
+                         limited by the underlying physical layer.
+        :type rate: :class:`int`, required
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        NetUtils.set_rate(localInterface, rate)
+        if rate is not None:
+            self._logger.info("Network rate limited to {:.2f} kBps ({} kbps) on {} interface".format(rate/1000, rate*8/1000, localInterface))
+        self._rate = rate
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
+
+    @public_api
+    def unset_rate(self):
+        """This method clears the transmission rate.
+        """
+        localInterface = NetUtils.getLocalInterface(self.localIP)
+        if self._rate is not None:
+            NetUtils.set_rate(localInterface, None)
+            self._rate = None
+            self._logger.info("Network rate limitation removed on {} interface".format(localInterface))
+        self._logger.info("tc status on {} interface: {}".format(localInterface, NetUtils.get_rate(localInterface)))
+
+
+class TCPServerBuilder(ChannelBuilder):
+    """
+    This builder is used to create an
+    :class:`~netzob.Simulator.Channels.TCPServer.TCPServer` instance
+
+    >>> from netzob.Simulator.Channels.NetInfo import NetInfo
+    >>> netinfo = NetInfo(src_addr="4.3.2.1", src_port=32000)
+    >>> builder = TCPServerBuilder().set_map(netinfo.getDict())
+    >>> chan = builder.build()
+    >>> type(chan)
+    <class 'netzob.Simulator.Channels.TCPServer.TCPServer'>
+    >>> chan.localIP  # src_addr key has been mapped to localIP attribute
+    '4.3.2.1'
+    """
+
+    @public_api
+    def __init__(self):
+        super().__init__(TCPServer)
+
+    def set_src_addr(self, value):
+        self.attrs['localIP'] = value
+
+    def set_src_port(self, value):
+        self.attrs['localPort'] = value

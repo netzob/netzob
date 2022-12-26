@@ -146,22 +146,24 @@ def NetzobLogger(klass):
 def typeCheck(*types):
     """Decorator which reduces the amount of code to type-check attributes.
 
-    Its allows to replace the following code:
+    Its enables the following code replace:
     ::
-        @id.setter
+        @id.setter  # type: ignore
         def id(self, id):
-            if not isinstance(id, uuid.UUID):
-               raise TypeError("Invalid types for argument id, must be an UUID")
+            if not isinstance(id, str):
+               raise TypeError("Invalid types for argument id, must be an str")
             self.__id = id
 
     with:
     ::
-        @id.setter
-        @typeCheck(uuid.UUID)
+        @id.setter  # type: ignore
+        @typeCheck(str)
         def id(self, id):
            self.__id = id
 
     .. note:: set type = "SELF" to check the type of the self parameter
+    .. note:: type checking can be bypassed by setting :val:`NETZOB_NO_TYPECHECK`
+              as environment variable
     .. warning:: if argument is None, the type checking is not executed on it.
 
     """
@@ -187,10 +189,12 @@ def typeCheck(*types):
                                               ]), argument.__class__.__name__))
             return func(*args, **kwargs)
 
-        if hasattr(func, '__annotations__'):
-            for arg, typ in zip(func.__code__.co_varnames[1:], types):
-                func.__annotations__.setdefault(arg, typ)
-
+        if 'NETZOB_NO_TYPECHECK' in os.environ:
+            return func
         return wraps(func)(wrapped_f)
 
     return _typeCheck_
+
+
+def public_api(func):
+    return func

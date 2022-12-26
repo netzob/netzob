@@ -46,7 +46,7 @@ from netzob.Model.Vocabulary.Functions.VisualizationFunction import Visualizatio
 
 
 class HighlightFunction(VisualizationFunction):
-    """Represents a function which applies to modify the visualiation attributes of a data"""
+    """Represents a function which applies to modify the visualization attributes of a data"""
 
     TYPE = "HighlightFunction"
     TAG_START = "\033[1;41m"

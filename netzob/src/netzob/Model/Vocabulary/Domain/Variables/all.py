@@ -31,4 +31,4 @@
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.all import *
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.all import *
 from netzob.Model.Vocabulary.Domain.Variables.Memory import Memory
-from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope

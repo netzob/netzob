@@ -36,8 +36,8 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 import pcapy
 
-import impacket.ImpactDecoder as Decoders
-import impacket.ImpactPacket as Packets
+from impacket import ImpactPacket as Packets
+from impacket import ImpactDecoder as Decoders
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -47,7 +47,6 @@ from netzob.Common.Utils.SortedTypedList import SortedTypedList
 from netzob.Common.NetzobException import NetzobImportException
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
-from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Messages.AbstractMessage import AbstractMessage
 from netzob.Model.Vocabulary.Messages.RawMessage import RawMessage
 from netzob.Model.Vocabulary.Messages.L2NetworkMessage import L2NetworkMessage
@@ -58,14 +57,17 @@ from netzob.Model.Vocabulary.Messages.L4NetworkMessage import L4NetworkMessage
 @NetzobLogger
 class PCAPImporter(object):
     r"""PCAP importer to read pcaps and extract messages out of them.
-    We recommend to use static methods such as
+
+    We recommend using static methods such as
+
     - PCAPImporter.readFiles(...)
     - PCAPimporter.readFile(...)
-    refer to their documentation to have an overview of the required parameters.
+
+    Refer to their documentation to have an overview of the required parameters.
 
     >>> from netzob.all import *
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap").values()
-    >>> print(len(messages))
+    >>> len(messages)
     14
 
     >>> for m in messages:
@@ -85,30 +87,20 @@ class PCAPImporter(object):
     b'CMDbye#\x00\x00\x00\x00'
     b'RESbye#\x00\x00\x00\x00\x00\x00\x00\x00'
 
-    PCAP Files with unsupported Layers on OSI Layer 2 can be imported as RawMessages if the importLayer is 1
-    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/atm_capture1.pcap", importLayer=1).values()
-    >>> print(repr(messages[0].data[:-25]))
-    b'E\x00\x00T\x17\x82\x00\x00@\x01U\xd3\xc0\xa8F\x01\xc0\xa8F\x02\x08\x00\xfa`Of\x00\x009\xd9\x121\x00\x08w#\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e'
-
-    Raw frame (whole frame is "payload"):
-    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=1).values()
-    >>> print(repr(messages[0].data))
-    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00E\x00\x003\xdc\x11@\x00@\x11`\xa6\x7f\x00\x00\x01\x7f\x00\x00\x01\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
-
     Layer 2, e. g. parse Ethernet frame (IP packet is payload)
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=2).values()
     >>> print(repr(messages[0].data))
-    b'E\x00\x003\xdc\x11@\x00@\x11`\xa6\x7f\x00\x00\x01\x7f\x00\x00\x01\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
+    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00E\x00\x003\xdc\x11@\x00@\x11`\xa6\x7f\x00\x00\x01\x7f\x00\x00\x01\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
 
     Layer 3, e. g. parse IP packet (UDP datagram is payload)
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=3).values()
     >>> print(repr(messages[0].data))
-    b'\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
+    b'E\x00\x003\xdc\x11@\x00@\x11`\xa6\x7f\x00\x00\x01\x7f\x00\x00\x01\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
 
     Layer 4, e. g. parse UDP packet (application protocol is payload)
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=4).values()
     >>> print(repr(messages[0].data))
-    b'CMDidentify#\x07\x00\x00\x00Roberto'
+    b'\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
 
     Layer > 4, does decode like layer=4
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=5).values()
@@ -123,14 +115,14 @@ class PCAPImporter(object):
 
     >>> from netzob.all import *
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_http_flow.pcap", mergePacketsInFlow=False).values()
-    >>> print(len(messages))
+    >>> len(messages)
     4
-    >>> print(len(messages[1].data))
+    >>> len(messages[1].data)
     1228
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_http_flow.pcap", mergePacketsInFlow=True).values()
-    >>> print(len(messages))
+    >>> len(messages)
     2
-    >>> print(len(messages[1].data))
+    >>> len(messages[1].data)
     3224
     """
 
@@ -368,11 +360,20 @@ class PCAPImporter(object):
                 l3Payload = l3Payload[:len(l3Payload) - paddingSize]
             ipProtocolNum = layer3.get_ip_p()
             return (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum)
+        if etherType == Packets.ARP.ethertype:
+            l3Proto = "ARP"
+            l3Decoder = Decoders.ARPDecoder()
+            layer3 = l3Decoder.decode(l2Payload)
+
+            l3SrcAddr = layer3.get_ar_spa()
+            l3DstAddr = layer3.get_ar_tpa()
+            l3Payload = l2Payload[:layer3.get_header_size()]
+            return (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, None)
         else:
             warnMessage = _("Cannot import one of the provided packets since "
                             + "its layer 3 is unsupported (Only IP is " +
                             "currently supported, packet ethernet " +
-                            "type = {0})").format(etherType)
+                            "type = {} -- {})").format(etherType, etherType.to_bytes(length=2, byteorder='big'))
             self._logger.warn(warnMessage)
             raise NetzobImportException("PCAP", warnMessage,
                                         self.INVALID_LAYER3)
@@ -434,7 +435,7 @@ class PCAPImporter(object):
         :param mergePacketsInFlow: if True, consecutive packets with same source and destination ar merged (i.e. to mimic a flow) 
         :type mergePacketsInFlow: :class:`bool`
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         """
 
         # Verify the existence of input files
@@ -505,7 +506,7 @@ class PCAPImporter(object):
         :param mergePacketsInFlow: if True, consecutive packets with same source and destination ar merged (i.e. to mimic a flow) 
         :type mergePacketsInFlow: :class:`bool`        
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         """
 
         importer = PCAPImporter()
@@ -534,7 +535,7 @@ class PCAPImporter(object):
         :param mergePacketsInFlow: if True, consecutive packets with same source and destination ar merged (i.e. to mimic a flow) 
         :type mergePacketsInFlow: :class:`bool`
         :return: a list of captured messages
-        :rtype: a list of :class:`netzob.Model.Vocabulary.Messages.AbstractMessage`
+        :rtype: a list of :class:`AbstractMessage <netzob.Model.Vocabulary.Messages.AbstractMessage>`
         """
 
         importer = PCAPImporter()
@@ -556,5 +557,4 @@ class PCAPImporter(object):
         """
 
         decoder = Decoders.EthDecoder()
-        return decoder.decode(
-            TypeConverter.convert(message.data, HexaString, Raw))
+        return decoder.decode(message.data.convert(Raw))

@@ -51,10 +51,10 @@ class VariableSpecializer():
     """Computes the specialization of a token-tree and returns a raw data
     """
 
-    def __init__(self, variable):
+    def __init__(self, variable, preset=None):
         self.variable = variable
+        self.preset = preset
 
-    @typeCheck(SpecializingPath)
     def specialize(self, specializingPath):
         """Execute the specialize operation"""
 
@@ -64,10 +64,4 @@ class VariableSpecializer():
             raise Exception("Variable cannot be None")
 
         # we create the initial parser path
-        variableSpecializingPaths = self.variable.specialize(specializingPath)
-
-        self._logger.debug(
-            "Specializing variable '{0}' generated '{1}' valid paths".format(
-                self.variable, len(variableSpecializingPaths)))
-
-        return variableSpecializingPaths
+        return self.variable.specialize(specializingPath, preset=self.preset)

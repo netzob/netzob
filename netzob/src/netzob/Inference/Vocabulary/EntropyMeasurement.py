@@ -64,7 +64,7 @@ class EntropyMeasurement(object):
     >>> f2 = Field(Raw(nbBytes=5))
     >>> f3 = Field(b", welcome !")
     >>> s = Symbol(fields=[f1, f2, f3])
-    >>> messages = [RawMessage(s.specialize()) for x in range(1000)]
+    >>> messages = [RawMessage(next(s.specialize())) for x in range(1000)]
     >>> bytes_entropy = [byte_entropy for byte_entropy in EntropyMeasurement.measure_entropy(messages)]
     >>> min(bytes_entropy[6:11]) > 7
     True
@@ -76,7 +76,7 @@ class EntropyMeasurement(object):
     >>> f2 = Field(Raw(nbBytes=(10, 20)))
     >>> f3 = Field(Raw(nbBytes=2))
     >>> s = Symbol(fields=[f1, f2, f3])
-    >>> s.messages = [RawMessage(s.specialize()) for x in range(1000)]
+    >>> s.messages = [RawMessage(next(s.specialize())) for x in range(1000)]
     >>> bytes_entropy = [byte_entropy for byte_entropy in EntropyMeasurement.measure_values_entropy(f2.getValues())]
     >>> print(min(bytes_entropy[:10]) > 7)
     True

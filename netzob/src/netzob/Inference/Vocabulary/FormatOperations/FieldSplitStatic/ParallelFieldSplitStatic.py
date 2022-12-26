@@ -40,7 +40,7 @@ import multiprocessing
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
-from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, UnitSize
 from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Common.Utils.DataAlignment.DataAlignment import DataAlignment
 
@@ -61,11 +61,11 @@ class ParallelFieldSplitStatic(object):
     its value variation over its messages.
     """
 
-    def __init__(self, field, unitSize=AbstractType.UNITSIZE_4, nbThread=None):
+    def __init__(self, field, unitSize=UnitSize.SIZE_4, nbThread=None):
         """Constructor.
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :keyword unitSize: the required size of static element to create a static field
         :type unitSize: :class:`int`.
         :keyword nbThread: the number of thread to use when spliting
@@ -129,7 +129,7 @@ class ParallelFieldSplitStatic(object):
         following the value variation every unitSize
 
         :param field : the field to consider when spliting
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :keyword unitSize: the required size of static element to create a static field
         :type unitSize: :class:`int`.
         :keyword nbThread: the number of thread to use when spliting
@@ -145,11 +145,11 @@ class ParallelFieldSplitStatic(object):
         """The field that contains the definition domain used
         to align data
 
-        :type: :class:`netzob.Model.Vocabulary.AbstractField.AbstractField`
+        :type: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         """
         return self.__field
 
-    @field.setter
+    @field.setter  # type: ignore
     @typeCheck(AbstractField)
     def field(self, field):
         if field is None:
@@ -161,14 +161,14 @@ class ParallelFieldSplitStatic(object):
         """The nbThread represents the maximum number of trhead that will be started
         in the same time to compute the alignment.
 
-        If set to None, the number of thread will be automaticaly set to 2 times the number
+        If set to None, the number of thread will be automatically set to 2 times the number
         of available cpu.
 
         :type: :class:`int`
         """
         return self.__nbThread
 
-    @nbThread.setter
+    @nbThread.setter  # type: ignore
     @typeCheck(int)
     def nbThread(self, nbThread):
         if nbThread is None:

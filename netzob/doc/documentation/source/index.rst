@@ -8,19 +8,19 @@ Netzob documentation
 generation and fuzzing of communication protocols. It can be used to infer
 the message format and the state machine of a protocol through passive
 and active processes. The model can afterward be used to simulate
-realistic and controllable trafic.
+realistic and controllable traffic.
 
 The main :ref:`features<overview>` of Netzob are:
 
 **Protocol Vocabulary Modeling and Inference**
-  Netzob includes a complete model to represents the message format of
+  Netzob includes a complete model to represent the message format of
   a protocol (aka its vocabulary). Using specific algorithms, it
-  allows to learn it from provided traces.
+  can learn it from provided traces.
 
 **Protocol Grammar Modeling and Inference**
   The state machine of a protocol (aka its grammar) defines the valid
-  sequences of exchanged messages. Netzob allows to learn it
-  semi-automaticaly using specific algorithms.
+  sequences of exchanged messages. Netzob can learn it
+  semi-automatically using specific algorithms.
 
 **Protocol Simulation**
   To support the inferring process, a dynamic analysis is perfomed

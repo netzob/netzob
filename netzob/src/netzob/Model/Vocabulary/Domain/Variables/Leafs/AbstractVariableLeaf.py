@@ -35,6 +35,7 @@
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
 import abc
+from bitarray import bitarray
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -43,9 +44,11 @@ import abc
 # +---------------------------------------------------------------------------+
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
-from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Domain.Variables.AbstractVariable import AbstractVariable
-from netzob.Model.Vocabulary.Domain.Variables.SVAS import SVAS
+from netzob.Model.Vocabulary.Domain.Variables.Scope import Scope
+from netzob.Model.Vocabulary.Domain.Parser.ParsingPath import ParsingException
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 
 
 @NetzobLogger
@@ -53,46 +56,64 @@ class AbstractVariableLeaf(AbstractVariable):
     """Represents a leaf in the variable definition of a field.
 
     A leaf is a variable with no children. Most of of leaf variables
-    are :class:`netzob.Model.Vocabulary.Domain.Variables.Leafs.Data.Data` variables and
-    :class:`netzob.Model.Vocabulary.Domain.Variables.Leafs.Relations.AbstractRelation.AbstractRelation`.
+    are :class:`Data <netzob.Model.Vocabulary.Domain.Variables.Leafs.Data.Data>` variables and
+    :class:`AbstractRelation <netzob.Model.Vocabulary.Domain.Variables.Leafs.Relations.AbstractRelation.AbstractRelation>`.
 
     """
 
-    def __init__(self, varType, name=None, svas=None):
+    def __init__(self, varType, name=None, dataType=None, scope=None):
         super(AbstractVariableLeaf, self).__init__(
-            varType, name=name, svas=svas)
+            varType, name=name, scope=scope)
 
-    def parse(self, parsingPath, acceptCallBack=True, carnivorous=False):
+        self.dataType = dataType
+
+    def isnode(self):
+        return False
+
+    def count(self, preset=None):
+        from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
+        if preset is not None and preset.get(self) is not None and preset.get(self).mode in [FuzzingMode.GENERATE, FuzzingMode.FIXED]:
+            # Retrieve the mutator
+            mutator = preset.get(self)
+            return mutator.count()
+        else:
+            return self.dataType.count()
+
+    def parse(self, parsingPath, acceptCallBack=True, carnivorous=False, triggered=False):
         """@toto TO BE DOCUMENTED"""
 
-        if self.svas is None:
+        if self.scope is None:
             raise Exception(
-                "Cannot parse if the variable has no assigned SVAS.")
+                "Cannot parse if the variable has no assigned Scope.")
 
-        if self.isDefined(parsingPath):
-            if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
-                return self.valueCMP(
-                    parsingPath, acceptCallBack, carnivorous=carnivorous)
-            elif self.svas == SVAS.EPHEMERAL:
-                return self.learn(
-                    parsingPath, acceptCallBack, carnivorous=carnivorous)
-            elif self.svas == SVAS.VOLATILE:
-                return self.domainCMP(
-                    parsingPath, acceptCallBack, carnivorous=carnivorous)
-        else:
-            if self.svas == SVAS.CONSTANT:
-                self._logger.debug(
-                    "Cannot parse '{0}' as svas is CONSTANT and no value is available.".
-                    format(self))
-                return []
-            elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
-                return self.learn(
-                    parsingPath, acceptCallBack, carnivorous=carnivorous)
-            elif self.svas == SVAS.VOLATILE:
-                return self.domainCMP(
-                    parsingPath, acceptCallBack, carnivorous=carnivorous)
+        try:
+            if self.isDefined(parsingPath):
+                if self.scope == Scope.CONSTANT or self.scope == Scope.SESSION:
+                    return self.valueCMP(
+                        parsingPath, acceptCallBack, carnivorous=carnivorous, triggered=triggered)
+                elif self.scope == Scope.MESSAGE:
+                    return self.learn(
+                        parsingPath, acceptCallBack, carnivorous=carnivorous, triggered=triggered)
+                elif self.scope == Scope.NONE:
+                    return self.domainCMP(
+                        parsingPath, acceptCallBack, carnivorous=carnivorous, triggered=triggered)
+            else:
+                if self.scope == Scope.CONSTANT:
+                    self._logger.debug(
+                        "Cannot parse '{0}' as scope is CONSTANT and no value is available.".
+                        format(self))
+                    return []
+                elif self.scope == Scope.MESSAGE or self.scope == Scope.SESSION:
+                    return self.learn(
+                        parsingPath, acceptCallBack, carnivorous=carnivorous, triggered=triggered)
+                elif self.scope == Scope.NONE:
+                    return self.domainCMP(
+                        parsingPath, acceptCallBack, carnivorous=carnivorous, triggered=triggered)
+        except ParsingException:
+            self._logger.info("Error in parsing of variable")
+            return []
 
-        raise Exception("Not yet implemented: {0}.".format(self.svas))
+        raise Exception("Not yet implemented: {0}.".format(self.scope))
 
     #
     # methods that must be defined to support the abstraction process
@@ -113,37 +134,138 @@ class AbstractVariableLeaf(AbstractVariable):
     def learn(self, parsingPath, acceptCallBack, carnivorous):
         raise NotImplementedError("method learn is not implemented")
 
-    def specialize(self, parsingPath, acceptCallBack=True):
-        """@toto TO BE DOCUMENTED"""
+    def getVariables(self):
+        return [self]
 
-        if self.svas is None:
+    def specialize(self, parsingPath, preset=None, acceptCallBack=True, triggered=False):
+        """Specializes a Leaf"""
+
+        from netzob.Fuzzing.Mutator import MaxFuzzingException
+        from netzob.Fuzzing.Mutators.DomainMutator import FuzzingMode
+        # Fuzzing has priority over generating a legitimate value
+        if preset is not None and preset.get(self) is not None and preset.get(self).mode in [FuzzingMode.GENERATE, FuzzingMode.FIXED]:
+
+            # Retrieve the mutator
+            mutator = preset.get(self)
+
+            def fuzzing_generate():
+                if preset.get(self).mode == FuzzingMode.FIXED:
+                    nb_iterations = AbstractType.MAXIMUM_POSSIBLE_VALUES
+                else:
+                    nb_iterations = self.count(preset=preset)
+
+                for _ in range(nb_iterations):
+
+                    try:
+                        # Mutate a value according to the current field attributes
+                        generated_value = mutator.generate()
+                    except MaxFuzzingException:
+                        self._logger.debug("Maximum mutation counter reached")
+                        break
+                    else:
+                        if isinstance(generated_value, bitarray):
+                            value = generated_value
+                        else:
+                            # Convert the return bytes into bitarray
+                            value = bitarray()
+                            value.frombytes(generated_value)
+
+                        # Associate the generated value to the current variable
+                        newParsingPath = parsingPath.copy()
+                        newParsingPath.addResult(self, value)
+                        yield newParsingPath
+
+            return fuzzing_generate()
+
+        if self.scope is None:
             raise Exception(
-                "Cannot specialize if the variable has no assigned SVAS.")
+                "Cannot specialize if the variable has no assigned Scope.")
+
         if self.isDefined(parsingPath):
-            if self.svas == SVAS.CONSTANT or self.svas == SVAS.PERSISTENT:
-                return self.use(parsingPath, acceptCallBack)
-            elif self.svas == SVAS.EPHEMERAL:
-                return self.regenerateAndMemorize(parsingPath, acceptCallBack)
-            elif self.svas == SVAS.VOLATILE:
-                return self.regenerate(parsingPath, acceptCallBack)
+            if self.scope == Scope.CONSTANT or self.scope == Scope.SESSION:
+                newParsingPaths = self.use(parsingPath, acceptCallBack, preset=preset, triggered=triggered)
+            elif self.scope == Scope.MESSAGE:
+                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack, preset=preset, triggered=triggered)
+            elif self.scope == Scope.NONE:
+                newParsingPaths = self.regenerate(parsingPath, acceptCallBack, preset=preset, triggered=triggered)
         else:
-            if self.svas == SVAS.CONSTANT:
+            if self.scope == Scope.CONSTANT:
                 self._logger.debug(
-                    "Cannot specialize '{0}' as svas is CONSTANT and no value is available.".
+                    "Cannot specialize '{0}' as scope is CONSTANT and no value is available.".
                     format(self))
-                return []
-            elif self.svas == SVAS.EPHEMERAL or self.svas == SVAS.PERSISTENT:
-                return self.regenerateAndMemorize(parsingPath, acceptCallBack)
-            elif self.svas == SVAS.VOLATILE:
-                return self.regenerate(parsingPath, acceptCallBack)
+                newParsingPaths = iter(())
+            elif self.scope == Scope.MESSAGE or self.scope == Scope.SESSION:
+                newParsingPaths = self.regenerateAndMemorize(parsingPath, acceptCallBack, preset=preset, triggered=triggered)
+            elif self.scope == Scope.NONE:
+                newParsingPaths = self.regenerate(parsingPath, acceptCallBack, preset=preset, triggered=triggered)
 
-        raise Exception("Not yet implemented.")
+        if preset is not None and preset.get(self) is not None and preset.get(self).mode == FuzzingMode.MUTATE:
 
-    def _str_debug(self, deepness=0):
+            def fuzzing_mutate():
+                for path in newParsingPaths:
+                    generatedData = path.getData(self)
+
+                    # Retrieve the mutator
+                    mutator = preset.get(self)
+
+                    while True:
+                        # Mutate a value according to the current field attributes
+                        mutator.mutate(generatedData)
+                        yield path
+
+            return fuzzing_mutate()
+        else:
+            return newParsingPaths
+
+    def str_structure(self, preset=None, deepness=0):
         """Returns a string which denotes
         the current field definition using a tree display"""
 
         tab = ["     " for x in range(deepness - 1)]
         tab.append("|--   ")
         tab.append("{0}".format(self))
+
+        # Add information regarding preset configuration
+        if preset is not None and preset.get(self) is not None:
+            tmp_data = " ["
+            tmp_data += str(preset.get(self).mode)
+            try:
+                tmp_data += " ({})".format(preset[self])
+            except Exception as e:
+                pass
+            tmp_data += "]"
+            tab.append(tmp_data)
+
         return ''.join(tab)
+
+    def getFixedBitSize(self):
+        self._logger.debug("Determine the deterministic size of the value of "
+                           "the leaf variable")
+
+        if not hasattr(self, 'dataType'):
+            return super().getFixedBitSize()
+
+        return self.dataType.getFixedBitSize()
+
+
+    ## Properties
+
+    @property
+    def dataType(self):
+        """The datatype used to encode the result of the computed relation field.
+
+        :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
+        """
+
+        return self.__dataType
+
+    @dataType.setter  # type: ignore
+    @typeCheck(AbstractType)
+    def dataType(self, dataType):
+        if dataType is None:
+            raise TypeError("Datatype cannot be None")
+        (minSize, maxSize) = dataType.size
+        if maxSize is None:
+            raise ValueError(
+                "The datatype of a relation field must declare its length")
+        self.__dataType = dataType

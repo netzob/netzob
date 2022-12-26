@@ -51,7 +51,7 @@ from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
 # +---------------------------------------------------------------------------+
 # | C Imports
 # +---------------------------------------------------------------------------+
-from netzob import _libScoreComputation
+from netzob import _libScoreComputation  # type: ignore
 
 
 @NetzobLogger
@@ -64,7 +64,7 @@ class ClusterByAlignment(object):
 
 
     >>> from netzob.all import *
-    >>> pseudos = ["zoby", "ditrich", "toto", "carlito"]
+    >>> pseudos = ["kurt", "ditrich", "toto", "carlito"]
     >>> cities = ["Paris", "Munich", "Barcelone", "Vienne"]
     >>> ips = ["192.168.0.10", "10.120.121.212", "78.167.23.10"]
     >>> # Creation of the different types of message
@@ -76,34 +76,34 @@ class ClusterByAlignment(object):
     >>> symbols = clustering.cluster(messages)
     >>> len(symbols)
     3
-    >>> print(symbols[0])
-    Field00             | Field01 | Field02 | Field03 | Field04 | Field05 | Field06 | Field07 | Field08 | Field09
-    ------------------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | -------
-    'My ip address is ' | '78'    | '.1'    | '67'    | '.'     | '23'    | '.'     | ''      | '1'     | '0'    
-    'My ip address is ' | '192'   | '.1'    | '68'    | '.'     | '0'     | '.'     | ''      | '1'     | '0'    
-    'My ip address is ' | '10'    | '.1'    | '20'    | '.'     | '121'   | '.'     | '2'     | '1'     | '2'    
-    ------------------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | -------
+    >>> print(symbols[0].str_data())
+    Field               | Field | Field | Field | Field | Field | Field | Field | Field | Field
+    ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
+    'My ip address is ' | '78'  | '.1'  | '67'  | '.'   | '23'  | '.'   | ''    | '1'   | '0'  
+    'My ip address is ' | '192' | '.1'  | '68'  | '.'   | '0'   | '.'   | ''    | '1'   | '0'  
+    'My ip address is ' | '10'  | '.1'  | '20'  | '.'   | '121' | '.'   | '2'   | '1'   | '2'  
+    ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
 
-    >>> print(symbols[2])
-    Field00  | Field01   | Field02           | Field03     | Field04
-    -------- | --------- | ----------------- | ----------- | -------
-    'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?'   
-    'hello ' | 'carlito' | ", what's up in " | 'Paris'     | ' ?'   
-    'hello ' | 'ditrich' | ", what's up in " | 'Munich'    | ' ?'   
-    'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?'   
-    'hello ' | 'carlito' | ", what's up in " | 'Vienne'    | ' ?'   
-    'hello ' | 'ditrich' | ", what's up in " | 'Vienne'    | ' ?'   
-    'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?'   
-    'hello ' | 'zoby'    | ", what's up in " | 'Paris'     | ' ?'   
-    'hello ' | 'toto'    | ", what's up in " | 'Munich'    | ' ?'   
-    'hello ' | 'zoby'    | ", what's up in " | 'Munich'    | ' ?'   
-    'hello ' | 'toto'    | ", what's up in " | 'Vienne'    | ' ?'   
-    'hello ' | 'zoby'    | ", what's up in " | 'Vienne'    | ' ?'   
-    'hello ' | 'carlito' | ", what's up in " | 'Barcelone' | ' ?'   
-    'hello ' | 'ditrich' | ", what's up in " | 'Barcelone' | ' ?'   
-    'hello ' | 'toto'    | ", what's up in " | 'Barcelone' | ' ?'   
-    'hello ' | 'zoby'    | ", what's up in " | 'Barcelone' | ' ?'   
-    -------- | --------- | ----------------- | ----------- | -------
+    >>> print(symbols[2].str_data())
+    Field    | Field     | Field             | Field       | Field
+    -------- | --------- | ----------------- | ----------- | -----
+    'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?' 
+    'hello ' | 'carlito' | ", what's up in " | 'Paris'     | ' ?' 
+    'hello ' | 'ditrich' | ", what's up in " | 'Munich'    | ' ?' 
+    'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?' 
+    'hello ' | 'carlito' | ", what's up in " | 'Vienne'    | ' ?' 
+    'hello ' | 'ditrich' | ", what's up in " | 'Vienne'    | ' ?' 
+    'hello ' | 'kurt'    | ", what's up in " | 'Munich'    | ' ?' 
+    'hello ' | 'kurt'    | ", what's up in " | 'Paris'     | ' ?' 
+    'hello ' | 'kurt'    | ", what's up in " | 'Vienne'    | ' ?' 
+    'hello ' | 'toto'    | ", what's up in " | 'Munich'    | ' ?' 
+    'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?' 
+    'hello ' | 'toto'    | ", what's up in " | 'Vienne'    | ' ?' 
+    'hello ' | 'carlito' | ", what's up in " | 'Barcelone' | ' ?' 
+    'hello ' | 'ditrich' | ", what's up in " | 'Barcelone' | ' ?' 
+    'hello ' | 'kurt'    | ", what's up in " | 'Barcelone' | ' ?' 
+    'hello ' | 'toto'    | ", what's up in " | 'Barcelone' | ' ?' 
+    -------- | --------- | ----------------- | ----------- | -----
 
     """
 
@@ -220,7 +220,7 @@ class ClusterByAlignment(object):
             maxScore = self.scores[max_i][max_j]
         while len(self.scores) > 1 and maxScore >= self.minEquivalence:
 
-            symbols_uid = [str(s.id)
+            symbols_uid = [str(id(s))
                            for s in symbols]  # List of the UID in of symbols
             (i_maximum, j_maximum) = (symbols_uid.index(max_i),
                                       symbols_uid.index(max_j))
@@ -264,7 +264,7 @@ class ClusterByAlignment(object):
         # Append th new symbol to the "symbols" structure
         symbols.append(newSymbol)
 
-        return str(newSymbol.id)
+        return str(id(newSymbol))
 
     def _updateScore(self,
                      symbols,
@@ -340,7 +340,7 @@ class ClusterByAlignment(object):
         """
         return self.__minEquivalence
 
-    @minEquivalence.setter
+    @minEquivalence.setter  # type: ignore
     @typeCheck(int)
     def minEquivalence(self, minEquivalence):
         if minEquivalence is None:
@@ -353,7 +353,7 @@ class ClusterByAlignment(object):
         if not active, only final alignment is slicked."""
         return self.__internalSlick
 
-    @internalSlick.setter
+    @internalSlick.setter  # type: ignore
     @typeCheck(bool)
     def internalSlick(self, internalSlick):
         if internalSlick is None:
@@ -364,6 +364,6 @@ class ClusterByAlignment(object):
     def recomputeMatrixThreshold(self):
         return self.__recomputeMatrixThreshold
 
-    @recomputeMatrixThreshold.setter
+    @recomputeMatrixThreshold.setter  # type: ignore
     def recomputeMatrixThreshold(self, recomputeMatrixThreshold):
         self.__recomputeMatrixThreshold = recomputeMatrixThreshold

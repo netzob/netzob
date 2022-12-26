@@ -54,7 +54,8 @@ class SearchTask(object):
 
 
     >>> from netzob.all import *
-    >>> data = TypeConverter.convert("netzob", ASCII, BitArray)
+    >>> from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
+    >>> data = TypeConverter.convert(b"netzob", String, BitArray)
     >>> searchTask = SearchTask(data, "original version")
     >>> print(searchTask.description)
     original version
@@ -83,12 +84,12 @@ class SearchTask(object):
     def data(self):
         """Data that will be searched.
 
-        :type: :class:`netzob.Model.Vocabulary.Types.AbstractType.AbstractType`
+        :type: :class:`AbstractType <netzob.Model.Vocabulary.Types.AbstractType.AbstractType>`
         """
 
         return self.__data
 
-    @data.setter
+    @data.setter  # type: ignore
     @typeCheck(bitarray)
     def data(self, data):
         if data is None:
@@ -104,7 +105,7 @@ class SearchTask(object):
         """
         return self.__description
 
-    @description.setter
+    @description.setter  # type: ignore
     @typeCheck(str)
     def description(self, description):
         if description is None:
@@ -119,7 +120,7 @@ class SearchTask(object):
         """
         return self.__properties
 
-    @properties.setter
+    @properties.setter  # type: ignore
     @typeCheck(dict)
     def properties(self, properties):
         if properties is not None:

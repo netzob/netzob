@@ -43,7 +43,7 @@
 # | Local application imports                                                 |
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt import Alt
-from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg, SELF
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat import Repeat
 from netzob.Model.Vocabulary.Domain.Variables.Leafs.Data import Data
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
@@ -52,7 +52,7 @@ from netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode import 
 
 
 class DomainFactory(object):
-    """This factory allows to manipulate a domain as for example to normalize it.
+    """This factory enables the manipulation of a domain, as for example to normalize it.
 
     For instance, you can normalize domains provided by users
 
@@ -61,28 +61,29 @@ class DomainFactory(object):
     >>> print(domain.varType)
     Alt
     >>> print(domain.children[0].dataType)
-    Raw=None ((0, None))
+    Raw(nbBytes=(0,8192))
     >>> print(domain.children[1].dataType)
-    Integer=10 ((8, 8))
+    Integer(10)
 
-    >>> domain = DomainFactory.normalizeDomain(Agg([Alt(["toto", 20]), ASCII("!")]))
+    >>> domain = DomainFactory.normalizeDomain(Agg([Alt(["toto", 20]), String("!")]))
     >>> print(domain.varType)
     Agg
     >>> print(domain.children[0].varType)
     Alt
     >>> print(domain.children[0].children[1].dataType)
-    Integer=20 ((8, 8))
+    Integer(20)
     >>> print(domain.children[1].dataType)
-    ASCII=! ((0, 8))
+    String('!')
 
-    >>> f = Field(domain=Agg([ASCII("hello"), ["netzob", "zoby"]]))
-    >>> print(f._str_debug())
+    >>> f = Field(domain=Agg([String("hello"), ["john", "kurt"]]))
+    >>> print(f.str_structure())
     Field
     |--   Agg
-          |--   Data (ASCII=hello ((0, 40)))
+          |--   Data (String('hello'))
           |--   Alt
-               |--   Data (ASCII=netzob ((0, 48)))
-               |--   Data (ASCII=zoby ((0, 32)))
+               |--   Data (String('john'))
+               |--   Data (String('kurt'))
+
     """
 
     @staticmethod
@@ -107,10 +108,13 @@ class DomainFactory(object):
 
     @staticmethod
     def __normalizeAlternateDomain(domain):
-        result = Alt()
         if isinstance(domain, list):
             if len(domain) == 1:
-                return DomainFactory.__normalizeLeafDomain(domain[0])
+                return DomainFactory.normalizeDomain(domain[0])
+        if isinstance(domain, Alt):
+            result = domain
+        else:
+            result = Alt()
         if isinstance(domain, (list, Alt)):
             # Eliminate duplicate elements
             tmpResult = []
@@ -132,11 +136,9 @@ class DomainFactory(object):
                             break
                     if found is False:
                         uniqResult.append(elt)
-            if len(uniqResult) == 1:
-                return uniqResult[0]
-            else:
-                for elt in uniqResult:
-                    result.children.append(elt)
+            result.children = []
+            for elt in uniqResult:
+                result.children.append(elt)
         else:
             raise TypeError(
                 "Impossible to normalize the provided domain as an alternate.")
@@ -144,15 +146,59 @@ class DomainFactory(object):
 
     @staticmethod
     def __normalizeAggregateDomain(domain):
-        result = Agg()
         if isinstance(domain, Agg):
+            normalized_children = []
             for child in domain.children:
-                result.children.append(DomainFactory.normalizeDomain(child))
+                if type(child) == type and child == SELF:
+                    normalized_children.append(child)
+                else:
+                    try:
+                        normalized_children.append(DomainFactory.normalizeDomain(child))
+                    except RecursionError as e:
+                        pass
+                domain.children = normalized_children
         else:
             raise TypeError(
                 "Impossible to normalize the provided domain as an aggregate.")
-        return result
+        return domain
 
     @staticmethod
     def __normalizeRepeatDomain(domain):
         return domain
+
+
+def _test():
+    r"""
+    Reference a *single-item* node field and make sure the parent variable is processed
+
+    >>> from netzob.all import *
+    >>> x = Field(Alt([uint8(1)]))
+    >>> y = Field(Padding([x], data=Raw(b'\0'), modulo=32))
+    >>> next(Symbol([x, y]).specialize())
+    b'\x01\x00\x00\x00'
+
+    Reference a *single-item* node variable and make sure the parent is processed
+
+    >>> from netzob.all import *
+    >>> x = Alt([uint8(1)])
+    >>> y = Padding([x], data=Raw(b'\0'), modulo=32)
+    >>> next(Symbol([Field(x), Field(y)]).specialize())
+    b'\x01\x00\x00\x00'
+
+    Reference a *multi-item* node field and make sure the parent variable is processed
+
+    >>> from netzob.all import *
+    >>> x = Field(Alt([uint8(1), uint8(2)]))
+    >>> y = Field(Padding([x], data=Raw(b'\0'), modulo=32))
+    >>> next(Symbol([x, y]).specialize())
+    b'\x02\x00\x00\x00'
+
+    Reference a *multi-item* node variable and make sure the parent is processed
+
+    >>> from netzob.all import *
+    >>> x = Alt([uint8(1), uint8(2)])
+    >>> y = Padding([x], data=Raw(b'\0'), modulo=32)
+    >>> next(Symbol([Field(x), Field(y)]).specialize())
+    b'\x01\x00\x00\x00'
+
+    """

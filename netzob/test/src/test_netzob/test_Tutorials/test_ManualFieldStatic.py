@@ -64,7 +64,7 @@ class test_ManualFieldStatic(NetzobTestCase):
         # 00ff0f000000
         # 00fe2f000000
 
-        Format.splitStatic(symbol, unitSize=AbstractType.UNITSIZE_8, mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
+        Format.splitStatic(symbol, unitSize=UnitSize.SIZE_8, mergeAdjacentStaticFields=False, mergeAdjacentDynamicFields=False)
         logging.info(symbol)
         # 00 | ff | 1f | 00 | 00 | 00
         # 00 | fe | 1f | 00 | 00 | 00

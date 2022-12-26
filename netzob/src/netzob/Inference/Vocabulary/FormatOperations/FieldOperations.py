@@ -67,7 +67,7 @@ class FieldOperations(object):
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
 
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         f1   | f2     | f3     | f4  
         ---- | ------ | ------ | ----
         '00' | 'ff2f' | '0000' | '00'
@@ -77,7 +77,7 @@ class FieldOperations(object):
         
         >>> fo = FieldOperations()
         >>> fo.mergeFields(f2, f3)
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         f1   | Merge      | f4  
         ---- | ---------- | ----
         '00' | 'ff2f0000' | '00'
@@ -86,7 +86,7 @@ class FieldOperations(object):
         ---- | ---------- | ----
 
         >>> fo.mergeFields(symbol.fields[0], symbol.fields[1])
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Merge        | f4  
         ------------ | ----
         '00ff2f0000' | '00'
@@ -95,7 +95,7 @@ class FieldOperations(object):
         ------------ | ----
         
         >>> fo.mergeFields(symbol.fields[0], symbol.fields[1])
-        >>> print(symbol)
+        >>> print(symbol.str_data())
         Merge         
         --------------
         '00ff2f000000'
@@ -104,9 +104,9 @@ class FieldOperations(object):
         --------------
         
         :param field1: the left field to merge
-        :type field1: :class:`Field`
+        :type field1: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
         :param field2: the right field to merge
-        :type field2: :class:`Field`
+        :type field2: :class:`AbstractField <netzob.Model.Vocabulary.AbstractField.AbstractField>`
 
         :raise Exception if something bad happens
         """
