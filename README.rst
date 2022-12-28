@@ -22,10 +22,6 @@ Netzob : Protocol Reverse Engineering, Modeling and Fuzzing
     :target: https://github.com/netzob/netzob
     :alt: Python3
 
-.. image:: https://img.shields.io/badge/freenode-%23netzob-yellowgreen.svg
-    :target: https://webchat.freenode.net/?channels=#netzob
-    :alt: IRC
-    
 About
 =====
 
@@ -38,8 +34,8 @@ Netzob is a tool that can be used to **reverse engineer**, **model** and **fuzz*
  
 Source codes, documentations and resources are available for each component, please visit their dedicated directories.
 
-General Information
--------------------
+Follow us
+---------
 
 :Twitter: Follow Netzob's official accounts (@Netzob)
 	  
