@@ -102,17 +102,17 @@ class ClusterBySize(object):
             raise TypeError("'messages' should not be None")
 
         # Cluster messages by size
-        messagesByLen = {}
+        messagesByLen = OrderedDict()
         for msg in messages:
             l = len(msg.data)
             if not l in list(messagesByLen.keys()):
                 messagesByLen[l] = []
             messagesByLen[l].append(msg)
 
-        # Create sorted list of symbols for each group of equivalend message size
+        # Create new symbols for each group of equivalend message size
         newSymbols = []
-        for l in sorted(messagesByLen.keys()):
-            s = Symbol(messages=messagesByLen[l], name="symbol_{0}".format(str(l)), meta=meta)
+        for (length, msgs) in list(messagesByLen.items()):
+            s = Symbol(messages=msgs, name="symbol_{0}".format(str(length)))
             newSymbols.append(s)
 
         return newSymbols
