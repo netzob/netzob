@@ -190,16 +190,18 @@ class Timestamp(AbstractType):
     >>> import datetime
     >>> from netzob.all import *
     >>> date = datetime.datetime(2015, 10, 10, 17, 54, 2)
-    >>> timestamp = time.mktime(date.timetuple())
-    >>> time = Timestamp(timestamp)
-    >>> time.size
+    >>> time_timestamp = time.mktime(date.timetuple())
+    >>> timestamp = Timestamp(time_timestamp)
+    >>> timestamp.size
     (0, 4294967296)
-    >>> time.value
-    bitarray('01010110000110010011010010011010')
-    >>> time.sign
+    >>> timestamp.value
+    bitarray('01010110000110010101000010111010')
+    >>> timestamp.sign
     Sign.UNSIGNED
-    >>> time.endianness
+    >>> timestamp.endianness
     Endianness.BIG
+    >>> timestamp
+    Sat Oct 10 17:54:02 2015
 
 
     This next example shows the usage of a default value:
