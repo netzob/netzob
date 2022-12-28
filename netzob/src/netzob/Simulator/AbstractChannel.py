@@ -587,7 +587,7 @@ class NetUtils(object):
 
 
         """
-        dstMacAddr = et_mac_address(ip=remoteIP)
+        dstMacAddr = get_mac_address(ip=remoteIP)
         if dstMacAddr is not None:
             dstMacAddr = dstMacAddr.replace(':', '')
             dstMacAddr = binascii.unhexlify(dstMacAddr)
