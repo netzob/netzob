@@ -53,7 +53,7 @@ def getSuite():
         # suite_Common,
         # suite_Tutorials
     ]
-    modulesOfTests = [test_public_api]
+    modulesOfTests = []  #test_public_api]
 
     # Add individual tests
     for module in modulesOfTests:

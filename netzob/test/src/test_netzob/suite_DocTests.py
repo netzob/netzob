@@ -120,23 +120,21 @@ def getSuite():
         IPv4.__module__,
         Timestamp.__module__,
 
-        # Modules related to the vocabulary inference
-        # -------------------------------------------
+        # Modules related to the vocabulary
+        # ---------------------------------
         Protocol.__module__,
         Field.__module__,
         DataAlignment, 
         ParallelDataAlignment,        
         AbstractField,
         Symbol.__module__,
-        EmptySymbol.__module__,
-        UnknownSymbol.__module__,
-        ChannelDownSymbol.__module__,
         DomainFactory.__module__,
         Alt.__module__,
         Agg.__module__,
         Repeat.__module__,
         Opt.__module__,
         Data.__module__,
+
         FieldSplitStatic.__module__,
         FieldSplitAligned,
         FieldSplitDelimiter,
@@ -145,7 +143,10 @@ def getSuite():
         FieldReseter,
         AbstractMessage,
         ClusterByKeyField,
-        
+        EmptySymbol.__module__,
+        UnknownSymbol.__module__,
+        ChannelDownSymbol.__module__,
+
         RawMessage.__module__,
         L2NetworkMessage.__module__,
         L3NetworkMessage.__module__,
@@ -212,8 +213,8 @@ def getSuite():
         AbstractChannel.__module__,
         EntropyMeasurement,
 
-        # Modules related to the grammatical inference
-        # --------------------------------------------
+        # Modules related to the grammar
+        # ------------------------------
         # Angluin.__module__,
         AbstractState.__module__,
         State.__module__,
