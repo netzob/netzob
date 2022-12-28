@@ -521,6 +521,7 @@ def _test():
 
 
     # Test value parameter
+
     >>> t = IPv4("192.168.1.1")
     >>> print(t)
     IPv4("192.168.1.1")

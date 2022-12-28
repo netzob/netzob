@@ -605,7 +605,7 @@ class Integer(AbstractType):
         >>> Integer.decode(2000000000000000)
         Traceback (most recent call last):
         ...
-        struct.error: ubyte format requires 0 <= number <= 255
+        struct.error: byte format requires -128 <= number <= 127
 
         >>> Integer.decode(2000000000000000, unitSize=UnitSize.SIZE_64)
         b'\x00\x07\x1a\xfdI\x8d\x00\x00'
@@ -717,6 +717,7 @@ class Integer(AbstractType):
 
         finalValue = 0
 
+        iWord = 0
         start = 0
         end = nbWords
         inc = 1
@@ -758,6 +759,8 @@ class Integer(AbstractType):
             unpackedWord = unpackedWord << int(unitSize.value) * iWord
 
             finalValue = finalValue + unpackedWord
+
+            iWord += 1
 
         return finalValue
 
