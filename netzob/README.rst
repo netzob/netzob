@@ -61,11 +61,7 @@ Netzob's source code is mostly made of Python (90%) with some specific extension
 More Information
 ----------------
 
-:Website: `http://www.netzob.org <http://www.netzob.org>`_
-:Email: `contact@netzob.org <contact@netzob.org>`_
-:Mailing list: Two lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register.
-:IRC: You can hang-out with us on Freenode's IRC channel #netzob @ freenode.org.
-:Wiki: Discuss strategy on `Netzob's wiki <https://dev.netzob.org/projects/netzob/wiki>`_
+:Website: https://github.com/netzob/netzob
 :Twitter: Follow Netzob's official accounts (@Netzob)
 
 Get Started with Netzob
@@ -75,37 +71,35 @@ Install it
 ----------
 
 First thing to do is to check the version of your python3 interpretor.
-Netzob requires python 3::
+Netzob requires python 3.8::
 
   $ python3 --version
-  Python 3.4.2
+  Python 3.8.10
 
-As a 'classic' python project, Netzob is provided with its
-``setup.py``. This file defines what and how to install the project on a
-python hosting OS.
+Netzob is provided with its ``setup.py``. This file defines what and
+how to install the project on a python hosting OS. This file depends
+on ``setuptools`` which like few other modules cannot be automatically
+installed.
 
-This file depends on ``setuptools`` which like few other modules cannot be
-automatically installed. The reason why, you have to manually install the
-following bunch of prerequisites before initiating Netzob's install process.
+You have to install the following system dependencies::
 
-* python3
-* python3-dev
-* python3-setuptools
-* build-essential
-* libpcap-dev
-* libgraph-easy-perl (if you want to generate ASCII graph of state machines)
+  $ apt-get install -y python3 python3-dev python3-setuptools build-essential libpcap-dev libgraph-easy-perl libffi-dev
 
-We also highly recommend to install the following additional dependencies:
+Then, create a virtualenv::
 
-* python-sphinx (for the documentation)
+  $ mkdir venv
+  $ virtualenv venv
+  $ ./venv/bin/activate
 
 Once the required dependencies are installed, you can build and install Netzob::
 
-  # python3 setup.py install
+  (venv) $ pip3 install Cython==0.29.32  # Should be manually installed because of setup.py dependency
+  (venv) $ pip3 install numpy==1.14.3    # Should be manually installed because of randomstate dependency
+  (venv) $ pip3 install -e .
 
-Or if you prefer a more developer-friendly install::
+We also highly recommend to install the following additional dependencies::
 
-  $ python3 setup.py develop --user
+  (venv) $ pip3 install python-sphinx (for the documentation)
 
   
 Docker container
@@ -122,7 +116,7 @@ Start it
 
 Once installed, running Netzob is as simple as executing the provided script::
 
-  $ ./netzob
+  (venv) $ netzob
 
 This script is in Python's path if you've installed Netzob, otherwise
 (in developer mode), it's located in the top distribution directory.
@@ -144,14 +138,6 @@ Configuration of Log Level
 Environment variable ```NETZOB_LOG_VERBOSITY``` can be use to set the logging level. The numeric values of logging levels are given in the Python Documentation of the `Logging Module <https://docs.python.org/3.5/library/logging.html#levels>`_. For example, the following command starts netzob in *DEBUG* mode::
 
   $ NETZOB_LOG_LEVEL=10 ./netzob
-
-Configuration requirements for Network and PCAP input
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Capturing data from network interfaces often requires admin privileges. 
-Before we provide a cleaner and secure way (see issue 425 on the bugtracker for updated information - https://dev.netzob.org/issues/425), a possible *HACK* is to provide additional capabilities to the python binary::
-
-$ sudo setcap cap_net_raw=ep /usr/bin/python3.XX
 
 Configuration requirements for IPC input on Ubuntu
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -190,13 +176,7 @@ Join the Development Team
 To participate in the development, you need to get the latest version,
 modify it and submit your changes.
 
-These operations are detailed on Netzob's wiki through the following
-pages:
-
-* `Accessing and using Git Repositories for Netzob development <https://dev.netzob.org/projects/netzob/wiki/Accessing_and_using_Git_Repositories_for_Netzob_development>`_
-* `First steps for a new developer <https://dev.netzob.org/projects/netzob/wiki/First_steps_for_a_new_developer>`_
-
-You're interested in joining, please contact-us !
+You're interested in joining, please contact us!
 
 Authors, Contributors and Sponsors
 ==================================
