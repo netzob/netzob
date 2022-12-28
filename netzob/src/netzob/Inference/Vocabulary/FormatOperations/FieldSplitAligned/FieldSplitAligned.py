@@ -80,15 +80,15 @@ class FieldSplitAligned(object):
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol)
     >>> print(symbol.str_data())
-    Field  | Field  | Field        | Field
-    ------ | ------ | ------------ | -----
-    '01'   | 'ff00' | ''           | 'ff' 
-    '0222' | 'ff00' | '00'         | 'ff' 
-    '03'   | 'ff00' | '0000'       | 'ff' 
-    '0444' | 'ff00' | '000000'     | 'ff' 
-    '05'   | 'ff00' | '00000000'   | 'ff' 
-    '06'   | 'ff00' | '0000000000' | 'ff' 
-    ------ | ------ | ------------ | -----
+    Field00 | Field01 | Field02      | Field03
+    ------- | ------- | ------------ | -------
+    '01'    | 'ff00'  | ''           | 'ff'   
+    '0222'  | 'ff00'  | '00'         | 'ff'   
+    '03'    | 'ff00'  | '0000'       | 'ff'   
+    '0444'  | 'ff00'  | '000000'     | 'ff'   
+    '05'    | 'ff00'  | '00000000'   | 'ff'   
+    '06'    | 'ff00'  | '0000000000' | 'ff'   
+    ------- | ------- | ------------ | -------
 
     >>> samples = [b"hello toto, what's up in France ?", b"hello netzob, what's up in UK ?", b"hello sygus, what's up in Germany ?"]
     >>> messages = [RawMessage(data=sample) for sample in samples]
@@ -104,12 +104,12 @@ class FieldSplitAligned(object):
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic = False)
     >>> print(symbol.str_data())
-    Field    | Field    | Field             | Field     | Field
-    -------- | -------- | ----------------- | --------- | -----
-    'hello ' | 'toto'   | ", what's up in " | 'France'  | ' ?' 
-    'hello ' | 'netzob' | ", what's up in " | 'UK'      | ' ?' 
-    'hello ' | 'sygus'  | ", what's up in " | 'Germany' | ' ?' 
-    -------- | -------- | ----------------- | --------- | -----
+    Field00  | Field01  | Field02           | Field03   | Field04
+    -------- | -------- | ----------------- | --------- | -------
+    'hello ' | 'toto'   | ", what's up in " | 'France'  | ' ?'   
+    'hello ' | 'netzob' | ", what's up in " | 'UK'      | ' ?'   
+    'hello ' | 'sygus'  | ", what's up in " | 'Germany' | ' ?'   
+    -------- | -------- | ----------------- | --------- | -------
 
     # Let's illustrate the use of semantic constrained sequence alignment with a simple example
 
@@ -127,12 +127,12 @@ class FieldSplitAligned(object):
     >>> fs = FieldSplitAligned(doInternalSlick=True)
     >>> fs.execute(symbol, useSemantic = False)
     >>> print(symbol.str_data())
-    Field     | Field | Field                                                                              
-    --------- | ----- | -----------------------------------------------------------------------------------
-    'John'    | '-0'  | '108030405--john.doe@gmail.com'                                                    
-    'Mathieu' | '-0'  | '908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr'                      
-    'Olivia'  | '-0'  | '348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr'
-    --------- | ----- | -----------------------------------------------------------------------------------
+    Field00   | Field01 | Field02                                                                            
+    --------- | ------- | -----------------------------------------------------------------------------------
+    'John'    | '-0'    | '108030405--john.doe@gmail.com'                                                    
+    'Mathieu' | '-0'    | '908070605-31 rue de Paris, 75000 Paris, France-mat@yahoo.fr'                      
+    'Olivia'  | '-0'    | '348234556-7 allee des peupliers, 13000 Marseille, France-olivia.tortue@hotmail.fr'
+    --------- | ------- | -----------------------------------------------------------------------------------
     
     >>> applicativeDatas = []
     >>> applicativeDatas.append(ApplicativeData("Firstname", String("John")))
@@ -154,12 +154,12 @@ class FieldSplitAligned(object):
     >>> fs = FieldSplitAligned()
     >>> fs.execute(symbol, useSemantic=True)
     >>> print(symbol.str_data())
-    Field     | Field | Field | Field | Field    | Field | Field                                            | Field | Field                     
-    --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
-    'John'    | '-0'  | '10'  | '8'   | '030405' | '-'   | ''                                               | '-'   | 'john.doe@gmail.com'      
-    'Mathieu' | '-0'  | '90'  | '8'   | '070605' | '-'   | '31 rue de Paris, 75000 Paris, France'           | '-'   | 'mat@yahoo.fr'            
-    'Olivia'  | '-0'  | '34'  | '8'   | '234556' | '-'   | '7 allee des peupliers, 13000 Marseille, France' | '-'   | 'olivia.tortue@hotmail.fr'
-    --------- | ----- | ----- | ----- | -------- | ----- | ------------------------------------------------ | ----- | --------------------------
+    Field00   | Field01 | Field02 | Field03 | Field04  | Field05 | Field06                                          | Field07 | Field08                   
+    --------- | ------- | ------- | ------- | -------- | ------- | ------------------------------------------------ | ------- | --------------------------
+    'John'    | '-0'    | '10'    | '8'     | '030405' | '-'     | ''                                               | '-'     | 'john.doe@gmail.com'      
+    'Mathieu' | '-0'    | '90'    | '8'     | '070605' | '-'     | '31 rue de Paris, 75000 Paris, France'           | '-'     | 'mat@yahoo.fr'            
+    'Olivia'  | '-0'    | '34'    | '8'     | '234556' | '-'     | '7 allee des peupliers, 13000 Marseille, France' | '-'     | 'olivia.tortue@hotmail.fr'
+    --------- | ------- | ------- | ------- | -------- | ------- | ------------------------------------------------ | ------- | --------------------------
 
 
     """

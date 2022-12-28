@@ -86,9 +86,22 @@ class RelationFinder(object):
     >>> messages = [RawMessage(sample) for sample in samples]
     >>> symbol = Symbol(messages=messages)
     >>> Format.splitAligned(symbol)
+    >>> print(symbol.str_data())
+    Field00  | Field01          | Field02 
+    -------- | ---------------- | --------
+    'Kurt'   | ' > my name is ' | 'Kurt'  
+    'Nobody' | ' > my name is ' | 'Nobody'
+    -------- | ---------------- | --------
+
     >>> results = RelationFinder.findOnSymbol(symbol)
+    >>> for relation in results:
+    ...     print(relation)  #doctest: +ELLIPSIS
+    {'id': '...', 'relation_type': 'DataRelation', 'x_fields': [Field00], 'x_attribute': 'value', 'y_fields': [Field02], 'y_attribute': 'value'}
+    {'id': '...', 'relation_type': 'EqualityRelation', 'x_fields': [Field00], 'x_attribute': 'size', 'y_fields': [Field02], 'y_attribute': 'size'}
+    {'id': '...', 'relation_type': 'EqualityRelation', 'x_fields': [Field00, Field01], 'x_attribute': 'size', 'y_fields': [Field01, Field02], 'y_attribute': 'size'}
+
     >>> len(results)
-    1
+    3
     >>> print(results[0]['relation_type'])
     DataRelation
     >>> results[0]['x_fields'][0].getValues()

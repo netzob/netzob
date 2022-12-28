@@ -77,33 +77,33 @@ class ClusterByAlignment(object):
     >>> len(symbols)
     3
     >>> print(symbols[0].str_data())
-    Field               | Field | Field | Field | Field | Field | Field | Field | Field | Field
-    ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
-    'My ip address is ' | '78'  | '.1'  | '67'  | '.'   | '23'  | '.'   | ''    | '1'   | '0'  
-    'My ip address is ' | '192' | '.1'  | '68'  | '.'   | '0'   | '.'   | ''    | '1'   | '0'  
-    'My ip address is ' | '10'  | '.1'  | '20'  | '.'   | '121' | '.'   | '2'   | '1'   | '2'  
-    ------------------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | -----
+    Field00             | Field01 | Field02 | Field03 | Field04 | Field05 | Field06 | Field07 | Field08 | Field09
+    ------------------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | -------
+    'My ip address is ' | '78'    | '.1'    | '67'    | '.'     | '23'    | '.'     | ''      | '1'     | '0'    
+    'My ip address is ' | '192'   | '.1'    | '68'    | '.'     | '0'     | '.'     | ''      | '1'     | '0'    
+    'My ip address is ' | '10'    | '.1'    | '20'    | '.'     | '121'   | '.'     | '2'     | '1'     | '2'    
+    ------------------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | -------
 
     >>> print(symbols[2].str_data())
-    Field    | Field     | Field             | Field       | Field
-    -------- | --------- | ----------------- | ----------- | -----
-    'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?' 
-    'hello ' | 'carlito' | ", what's up in " | 'Paris'     | ' ?' 
-    'hello ' | 'ditrich' | ", what's up in " | 'Munich'    | ' ?' 
-    'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?' 
-    'hello ' | 'carlito' | ", what's up in " | 'Vienne'    | ' ?' 
-    'hello ' | 'ditrich' | ", what's up in " | 'Vienne'    | ' ?' 
-    'hello ' | 'kurt'    | ", what's up in " | 'Munich'    | ' ?' 
-    'hello ' | 'kurt'    | ", what's up in " | 'Paris'     | ' ?' 
-    'hello ' | 'kurt'    | ", what's up in " | 'Vienne'    | ' ?' 
-    'hello ' | 'toto'    | ", what's up in " | 'Munich'    | ' ?' 
-    'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?' 
-    'hello ' | 'toto'    | ", what's up in " | 'Vienne'    | ' ?' 
-    'hello ' | 'carlito' | ", what's up in " | 'Barcelone' | ' ?' 
-    'hello ' | 'ditrich' | ", what's up in " | 'Barcelone' | ' ?' 
-    'hello ' | 'kurt'    | ", what's up in " | 'Barcelone' | ' ?' 
-    'hello ' | 'toto'    | ", what's up in " | 'Barcelone' | ' ?' 
-    -------- | --------- | ----------------- | ----------- | -----
+    Field00  | Field01   | Field02           | Field03     | Field04
+    -------- | --------- | ----------------- | ----------- | -------
+    'hello ' | 'carlito' | ", what's up in " | 'Munich'    | ' ?'   
+    'hello ' | 'carlito' | ", what's up in " | 'Paris'     | ' ?'   
+    'hello ' | 'ditrich' | ", what's up in " | 'Munich'    | ' ?'   
+    'hello ' | 'ditrich' | ", what's up in " | 'Paris'     | ' ?'   
+    'hello ' | 'kurt'    | ", what's up in " | 'Munich'    | ' ?'   
+    'hello ' | 'kurt'    | ", what's up in " | 'Paris'     | ' ?'   
+    'hello ' | 'carlito' | ", what's up in " | 'Vienne'    | ' ?'   
+    'hello ' | 'ditrich' | ", what's up in " | 'Vienne'    | ' ?'   
+    'hello ' | 'kurt'    | ", what's up in " | 'Vienne'    | ' ?'   
+    'hello ' | 'toto'    | ", what's up in " | 'Munich'    | ' ?'   
+    'hello ' | 'toto'    | ", what's up in " | 'Paris'     | ' ?'   
+    'hello ' | 'toto'    | ", what's up in " | 'Vienne'    | ' ?'   
+    'hello ' | 'carlito' | ", what's up in " | 'Barcelone' | ' ?'   
+    'hello ' | 'ditrich' | ", what's up in " | 'Barcelone' | ' ?'   
+    'hello ' | 'kurt'    | ", what's up in " | 'Barcelone' | ' ?'   
+    'hello ' | 'toto'    | ", what's up in " | 'Barcelone' | ' ?'   
+    -------- | --------- | ----------------- | ----------- | -------
 
     """
 

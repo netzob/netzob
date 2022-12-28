@@ -385,7 +385,7 @@ class Format(object):
         2
         >>> for symbol in sorted(symbols, key=operator.attrgetter("name")):
         ...     print("{}:".format(symbol.name))
-        ...     print(symbol)
+        ...     print(symbol.str_data())
         Symbol-master:
         Field         
         --------------
@@ -424,7 +424,7 @@ class Format(object):
         2
         >>> for symbol in sorted(symbols, key=operator.attrgetter("name")):
         ...     print("{}:".format(symbol.name))
-        ...     print(symbol)
+        ...     print(symbol.str_data())
         Symbol-master:
         Field         
         --------------
