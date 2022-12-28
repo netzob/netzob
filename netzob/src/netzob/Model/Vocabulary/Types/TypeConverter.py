@@ -28,7 +28,6 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import math
 
 # +---------------------------------------------------------------------------+
 # | Related third party imports                                               |
@@ -39,7 +38,6 @@ import math
 # +---------------------------------------------------------------------------+
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Endianness, UnitSize
 from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.Integer import Integer
 
 
 class TypeConverter(object):
@@ -142,9 +140,6 @@ class TypeConverter(object):
 
             # Convert from source to raw
             if sourceType is not Raw:
-                if sourceType is Integer and src_unitSize is None:
-                    src_unitSize = Integer.checkUnitSizeForValue(data,src_sign)
-
                 binData = sourceType.decode(
                     data,
                     unitSize=src_unitSize,
