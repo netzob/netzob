@@ -42,13 +42,13 @@ appname = name
 #|    Development version has version number increased and is
 #|    postfixed by .dev0
 #+---------------------------------------------------------------------------+
-version = "1.1.26-cottontail"
-versionName = "FlyingRabbit"
+version = "2.0.0.dev0"
+versionName = "ClimbingSquirrel"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
 #+---------------------------------------------------------------------------+
-copyright = "Copyright (C) 2011-2020 Georges Bossert and Frédéric Guihéry"
+copyright = "Copyright (C) 2011-2022 Georges Bossert and Frédéric Guihéry"
 
 #+---------------------------------------------------------------------------+
 #| Description of the application
@@ -92,7 +92,7 @@ author_email = "contact@netzob.org"
 #+---------------------------------------------------------------------------+
 #| Official website of the application
 #+---------------------------------------------------------------------------+
-url = "http://www.netzob.org"
+url = "https://github.com/netzob/netzob"
 
 #+---------------------------------------------------------------------------+
 #| Official url to download the application
