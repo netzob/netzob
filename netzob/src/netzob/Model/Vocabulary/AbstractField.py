@@ -86,7 +86,6 @@ class AbstractField(AbstractMementoCreator, metaclass=abc.ABCMeta):
 
     def __init__(self, name=None):
         self.name = name
-        self.meta = meta
         self.description = ""
 
         self.__fields = TypedList(AbstractField)

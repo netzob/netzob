@@ -60,7 +60,7 @@ class ClusterBySize(object):
     """
 
     @typeCheck(list)
-    def cluster(self, messages,meta=False):
+    def cluster(self, messages):
         """Create and return new symbols according to the messages size.
 
         >>> from netzob.all import *
