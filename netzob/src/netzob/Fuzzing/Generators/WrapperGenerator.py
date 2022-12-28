@@ -121,11 +121,11 @@ class WrapperGenerator(Generator):
         >>> it = iter(range(10))
         >>> gen = WrapperGenerator(it)
         >>> gen.get_state()  # doctest: +ELLIPSIS
-        b'\x80\x03cbuiltins\niter...\x00b.'
+        b'\x80\x04\x95;\x00\x00\x00\x00\x00\x00\x00\x8c\x08builtins\x94\x8c\x04iter\x94\x93\x94\x8c\x08builtins\x94\x8c\x05range\x94\x93\x94K\x00K\nK\x01\x87\x94R\x94\x85\x94R\x94K\x00b.'
         >>> next(gen)
         0
         >>> gen.get_state()  # doctest: +ELLIPSIS
-        b'\x80\x03cbuiltins\niter...\x01b.'
+        b'\x80\x04\x95;\x00\x00\x00\x00\x00\x00\x00\x8c\x08builtins\x94\x8c\x04iter\x94\x93\x94\x8c\x08builtins\x94\x8c\x05range\x94\x93\x94K\x00K\nK\x01\x87\x94R\x94\x85\x94R\x94K\x01b.'
         """
         return pickle.dumps(self._iterator)
 
