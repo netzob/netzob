@@ -87,22 +87,38 @@ class PCAPImporter(object):
     b'CMDbye#\x00\x00\x00\x00'
     b'RESbye#\x00\x00\x00\x00\x00\x00\x00\x00'
 
-    Layer 2, e. g. parse Ethernet frame (IP packet is payload)
-    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=2).values()
+    PCAP Files with unsupported Layers on OSI Layer 2 can be imported as RawMessages if the importLayer is 1
+
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/atm_capture1.pcap", importLayer=1).values()
+    >>> print(repr(messages[0].data[:-25]))
+    b'E\x00\x00T\x17\x82\x00\x00@\x01U\xd3\xc0\xa8F\x01\xc0\xa8F\x02\x08\x00\xfa`Of\x00\x009\xd9\x121\x00\x08w#\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e'
+
+    Raw frame (whole frame is "payload"):
+
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=1).values()
     >>> print(repr(messages[0].data))
     b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00E\x00\x003\xdc\x11@\x00@\x11`\xa6\x7f\x00\x00\x01\x7f\x00\x00\x01\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
 
-    Layer 3, e. g. parse IP packet (UDP datagram is payload)
-    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=3).values()
+    Layer 2, e. g. parse Ethernet frame (IP packet is payload)
+
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=2).values()
     >>> print(repr(messages[0].data))
     b'E\x00\x003\xdc\x11@\x00@\x11`\xa6\x7f\x00\x00\x01\x7f\x00\x00\x01\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
 
-    Layer 4, e. g. parse UDP packet (application protocol is payload)
-    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=4).values()
+    Layer 3, e. g. parse IP packet (UDP datagram is payload)
+
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=3).values()
     >>> print(repr(messages[0].data))
     b'\xe1\xe7\x10\x92\x00\x1f\xfe2CMDidentify#\x07\x00\x00\x00Roberto'
 
+    Layer 4, e. g. parse UDP packet (application protocol is payload)
+
+    >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=4).values()
+    >>> print(repr(messages[0].data))
+    b'CMDidentify#\x07\x00\x00\x00Roberto'
+
     Layer > 4, does decode like layer=4
+
     >>> messages = PCAPImporter.readFile("./test/resources/pcaps/test_import_udp.pcap", importLayer=5).values()
     >>> print(repr(messages[0].data))
     b'CMDidentify#\x07\x00\x00\x00Roberto'
