@@ -176,9 +176,8 @@ moduleLibRelation = Extension('netzob._libRelation',
                               libraries=["dl"])
 
 # Cython extensions
-cythonModules = cythonize([
-    "src/netzob/Fuzzing/Generators/xorshift.pyx"
-])
+cythonModules = cythonize(["src/netzob/Fuzzing/Generators/xorshift.pyx"],
+                          compiler_directives={'language_level': "3"})
 
 
 # +----------------------------------------------------------------------------
@@ -186,23 +185,21 @@ cythonModules = cythonize([
 # +----------------------------------------------------------------------------
 def get_dependencies():
     return """
-    pcapy
-    netaddr
-    bitarray
-    numpy
-    colorama
-    bintrees
-    minepy
-    arpreq
-    PyCRC
-    randomstate
-    impacket
+    getmac==0.8.3
+    bintrees==2.2.0
+    bitarray==0.8.1
+    colorama==0.4.6
+    minepy==1.0.0
+    pylstar==0.1.2
+    impacket==0.10.0
+    netaddr==0.8.0
+    pcapy==0.11.4
+    pythoncrc==1.21
+    randomstate==1.13.1
     """.split()
 
 extra_dependencies = {
-    'docs': ['Sphinx>=1.1.3'],
-    'network': ['pcapy>=0.10.8'],
-    'correlation': ['numpy>=1.9.2', 'minepy>=1.0.0']
+    'docs': ['Sphinx==5.3.0'],
 }
 
 dependency_links = []
