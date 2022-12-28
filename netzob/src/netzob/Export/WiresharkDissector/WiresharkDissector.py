@@ -51,7 +51,7 @@ from netzob.Model.Vocabulary.AbstractField import AbstractField
 from netzob.Model.Vocabulary.Types.AbstractType import AbstractType
 from netzob.Model.Vocabulary.Domain.Variables.Leafs import AbstractVariableLeaf
 from netzob.Model.Vocabulary.Types.Raw import Raw
-from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.String import String
 from netzob.Model.Vocabulary.Types.HexaString import HexaString
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
@@ -183,7 +183,7 @@ class WiresharkDissector(object):
         dataType_switcher = {
             'Raw': '',
             'BitArray': 'bytes()',
-            'ASCII': 'string()',
+            'String': 'string()',
             'Integer': 'int()',
             'HexaString': 'bytes()',
             'IPv4': 'ipv4()',
@@ -195,7 +195,7 @@ class WiresharkDissector(object):
             dataType = dataType_switcher.get(domain.dataType.typeName, '')
 
         # Different special cases to distinguish between.
-        if domain.dataType.typeName in ['Integer', 'ASCII']:
+        if domain.dataType.typeName in ['Integer', 'String']:
             sign = sign_switcher.get(domain.dataType.sign, '')
         else:
             sign = ''
@@ -518,7 +518,7 @@ class WiresharkDissector(object):
 
         for sym in symbols:
             for leaf in sym.getLeafFields():
-                if not isinstance(leaf.domain.dataType, ASCII):
+                if not isinstance(leaf.domain.dataType, String):
                     text_based = False
                     break
             if text_based:
