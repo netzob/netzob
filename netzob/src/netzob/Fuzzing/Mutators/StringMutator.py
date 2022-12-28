@@ -495,7 +495,7 @@ def _test_fixed():
     >>> next(messages_gen)
     Traceback (most recent call last):
     ...
-    StopIteration
+    RuntimeError: generator raised StopIteration
 
 
     **Fixing the value of a field, by relying on a provided iterator**
@@ -516,7 +516,7 @@ def _test_fixed():
     >>> next(messages_gen)
     Traceback (most recent call last):
     ...
-    StopIteration
+    RuntimeError: generator raised StopIteration
 
 
     **Fixing the value of a field, by relying on a provided function**

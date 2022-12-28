@@ -294,7 +294,7 @@ class Preset(object):
     >>> next(messages_gen)
     Traceback (most recent call last):
     ...
-    StopIteration
+    RuntimeError: generator raised StopIteration
 
 
     **Fixing the value of a field, by relying on a provided iterator**
@@ -315,7 +315,7 @@ class Preset(object):
     >>> next(messages_gen)
     Traceback (most recent call last):
     ...
-    StopIteration
+    RuntimeError: generator raised StopIteration
 
 
     **Fixing the value of a field, by relying on a provided function**

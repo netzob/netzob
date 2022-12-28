@@ -212,7 +212,8 @@ class IntegerMutator(DomainMutator):
     255
     >>> d = mutator.generate()
     Traceback (most recent call last):
-    StopIteration
+    ...
+    RuntimeError: generator raised StopIteration
 
     Note that it is simple to make an infinite number generator from a finite
     number of values by using the function :func:`itertools.cycle` of Python:
@@ -719,7 +720,7 @@ def _test_fixed():
     >>> next(messages_gen)
     Traceback (most recent call last):
     ...
-    StopIteration
+    RuntimeError: generator raised StopIteration
 
 
     **Fixing the value of a field, by relying on a provided iterator**
@@ -740,7 +741,7 @@ def _test_fixed():
     >>> next(messages_gen)
     Traceback (most recent call last):
     ...
-    StopIteration
+    RuntimeError: generator raised StopIteration
 
 
     **Fixing the value of a field, by relying on a provided function**
