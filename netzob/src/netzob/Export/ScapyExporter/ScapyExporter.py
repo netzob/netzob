@@ -37,6 +37,7 @@ from netzob.Common.all import *
 from netzob.Inference.all import *
 from netzob.Import.all import *
 from netzob.Common.Utils.Decorators import NetzobLogger
+from netzob.Model.Vocabulary.Types.AbstractType import AbstractType, Sign, UnitSize, Endianness
 
 # Related third party packages
 import rlcompleter
@@ -221,8 +222,8 @@ class ScapyExporter(object):
             :returns str
 
             >>> fields = [ \
-                   Field( Integer(180, unitSize=AbstractType.UNITSIZE_8, sign=AbstractType.SIGN_UNSIGNED), name="int8_unsigned"), \
-                   Field( Integer(-3, unitSize=AbstractType.UNITSIZE_8, sign=AbstractType.SIGN_SIGNED), name="int8_signed") \
+                   Field( Integer(180, unitSize=UnitSize.SIZE_8, sign=Sign.UNSIGNED), name="int8_unsigned"), \
+                   Field( Integer(-3, unitSize=UnitSize.SIZE_8, sign=Sign.SIGNED), name="int8_signed") \
                 ]
             >>> ScapyExporter._integer_unitSize_8(fields[0])
             '\\t\\t\\t ByteField("int8_unsigned",180),\\t#size:(16, 16)'
@@ -237,7 +238,7 @@ class ScapyExporter(object):
                        + "),"+ "\t#size:" +str(field.domain.dataType.size)
             else:
                 return "\t\t\t BitField(" + "\"" + field.name + "\"," \
-                       +  repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer,dst_unitSize=AbstractType.defaultUnitSize(), dst_sign=AbstractType.SIGN_SIGNED)
+                       +  repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer,dst_unitSize=AbstractType.defaultUnitSize(), dst_sign=Sign.SIGNED)
                                if (field.domain.currentValue) else None) \
                        + "," + repr(field.domain.dataType.size[1]) + ")," + "\t#size:" \
                        + str(field.domain.dataType.size)
@@ -251,10 +252,10 @@ class ScapyExporter(object):
                 :returns str
 
                 >>> fields = [ \
-                       Field( Integer(1800, unitSize=AbstractType.UNITSIZE_16, sign=AbstractType.SIGN_UNSIGNED), name="int16_u_be"), \
-                       Field( Integer(-300, unitSize=AbstractType.UNITSIZE_16, sign=AbstractType.SIGN_SIGNED), name="int16_s_be"), \
-                       Field( Integer(1800, unitSize=AbstractType.UNITSIZE_16, sign=AbstractType.SIGN_UNSIGNED, endianness=AbstractType.ENDIAN_LITTLE), name="int16_u_le"), \
-                       Field( Integer(-300, unitSize=AbstractType.UNITSIZE_16, sign=AbstractType.SIGN_SIGNED, endianness=AbstractType.ENDIAN_LITTLE), name="int16_s_le") \
+                       Field( Integer(1800, unitSize=UnitSize.SIZE_16, sign=Sign.UNSIGNED), name="int16_u_be"), \
+                       Field( Integer(-300, unitSize=UnitSize.SIZE_16, sign=Sign.SIGNED), name="int16_s_be"), \
+                       Field( Integer(1800, unitSize=UnitSize.SIZE_16, sign=Sign.UNSIGNED, endianness=Endianness.LITTLE), name="int16_u_le"), \
+                       Field( Integer(-300, unitSize=UnitSize.SIZE_16, sign=Sign.SIGNED, endianness=Endianness.LITTLE), name="int16_s_le") \
                     ]
                 >>> ScapyExporter._integer_unitSize_16(fields[0])
                 '\\t\\t\\t ShortField("int16_u_be",1800),\\t#size:(16, 16)'
@@ -268,12 +269,12 @@ class ScapyExporter(object):
                 """
                 if field.domain.dataType.sign == 'signed' and field.domain.dataType.endianness == 'big':
                     return "\t\t\t SignedShortField(" + "\"" + field.name + "\"," \
-                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_sign=AbstractType.SIGN_SIGNED)
+                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_sign=Sign.SIGNED)
                                    if (field.domain.currentValue) else None)\
                            + "),"+ "\t#size:" +str(field.domain.dataType.size) 
                 elif field.domain.dataType.sign == 'unsigned' and field.domain.dataType.endianness == 'little':
                     return "\t\t\t LEShortField(" + "\"" + field.name + "\"," \
-                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_endianness=AbstractType.ENDIAN_LITTLE)
+                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_endianness=Endianness.LITTLE)
                                    if (field.domain.currentValue) else None)\
                            + "),"+ "\t#size:" +str(field.domain.dataType.size) 
                 elif field.domain.dataType.sign == 'unsigned' and field.domain.dataType.endianness == 'big':
@@ -283,7 +284,7 @@ class ScapyExporter(object):
                            + "),"+ "\t#size:" +str(field.domain.dataType.size)
                 else:
                     return "\t\t\t BitField(" + "\"" + field.name + "\"," \
-                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_sign=AbstractType.SIGN_SIGNED, dst_endianness=AbstractType.ENDIAN_LITTLE)
+                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_sign=Sign.SIGNED, dst_endianness=Endianness.LITTLE)
                                    if (field.domain.currentValue) else None) \
                            + "," + repr(field.domain.dataType.size[1]) + ")," + "\t#size:" \
                            + str(field.domain.dataType.size)    
@@ -298,10 +299,10 @@ class ScapyExporter(object):
                 :returns str
 
                 >>> fields = [ \
-                       Field( Integer(180000, unitSize=AbstractType.UNITSIZE_32, sign=AbstractType.SIGN_UNSIGNED), name="int32_u_be"), \
-                       Field( Integer(-30000, unitSize=AbstractType.UNITSIZE_32, sign=AbstractType.SIGN_SIGNED), name="int32_s_be"), \
-                       Field( Integer(180000, unitSize=AbstractType.UNITSIZE_32, sign=AbstractType.SIGN_UNSIGNED, endianness=AbstractType.ENDIAN_LITTLE), name="int32_u_le"), \
-                       Field( Integer(-30000, unitSize=AbstractType.UNITSIZE_32, sign=AbstractType.SIGN_SIGNED, endianness=AbstractType.ENDIAN_LITTLE), name="int32_s_le") \
+                       Field( Integer(180000, unitSize=UnitSize.SIZE_32, sign=Sign.UNSIGNED), name="int32_u_be"), \
+                       Field( Integer(-30000, unitSize=UnitSize.SIZE_32, sign=Sign.SIGNED), name="int32_s_be"), \
+                       Field( Integer(180000, unitSize=UnitSize.SIZE_32, sign=Sign.UNSIGNED, endianness=Endianness.LITTLE), name="int32_u_le"), \
+                       Field( Integer(-30000, unitSize=UnitSize.SIZE_32, sign=Sign.SIGNED, endianness=Endianness.LITTLE), name="int32_s_le") \
                     ]
                 >>> ScapyExporter._integer_unitSize_32(fields[0])
                 '\\t\\t\\t IntField("int32_u_be",180000),\\t#size:(32, 32)'
@@ -315,17 +316,17 @@ class ScapyExporter(object):
                 """
                 if field.domain.dataType.sign == 'unsigned' and field.domain.dataType.endianness == 'little':
                     return "\t\t\t LEIntField(" + "\"" + field.name + "\"," \
-                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_endianness=AbstractType.ENDIAN_LITTLE)
+                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_endianness=Endianness.LITTLE)
                                    if (field.domain.currentValue) else None)\
                            + "),"+ "\t#size:" +str(field.domain.dataType.size) 
                 elif field.domain.dataType.sign == 'signed' and field.domain.dataType.endianness == 'little':
                     return "\t\t\t LESignedIntField(" + "\"" + field.name + "\"," \
-                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_sign=AbstractType.SIGN_SIGNED, dst_endianness=AbstractType.ENDIAN_LITTLE)
+                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_sign=Sign.SIGNED, dst_endianness=Endianness.LITTLE)
                                    if (field.domain.currentValue) else None)\
                            + "),"+ "\t#size:" +str(field.domain.dataType.size) 
                 elif field.domain.dataType.sign == 'signed' and field.domain.dataType.endianness == 'big':
                     return "\t\t\t SignedIntField(" + "\"" + field.name + "\"," \
-                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_sign=AbstractType.SIGN_SIGNED)
+                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_sign=Sign.SIGNED)
                                    if (field.domain.currentValue) else None)\
                            + "),"+ "\t#size:" +str(field.domain.dataType.size) 
                 elif field.domain.dataType.sign == 'unsigned' and field.domain.dataType.endianness == 'big':
@@ -343,10 +344,10 @@ class ScapyExporter(object):
                 :returns str
 
                 >>> fields = [ \
-                       Field( Integer(180000000000, unitSize=AbstractType.UNITSIZE_64, sign=AbstractType.SIGN_UNSIGNED), name="int64_u_be"), \
-                       Field( Integer(-30000000000, unitSize=AbstractType.UNITSIZE_64, sign=AbstractType.SIGN_SIGNED), name="int64_s_be"), \
-                       Field( Integer(180000000000, unitSize=AbstractType.UNITSIZE_64, sign=AbstractType.SIGN_UNSIGNED, endianness=AbstractType.ENDIAN_LITTLE), name="int64_u_le"), \
-                       Field( Integer(-30000000000, unitSize=AbstractType.UNITSIZE_64, sign=AbstractType.SIGN_SIGNED, endianness=AbstractType.ENDIAN_LITTLE), name="int64_s_le") \
+                       Field( Integer(180000000000, unitSize=UnitSize.SIZE_64, sign=Sign.UNSIGNED), name="int64_u_be"), \
+                       Field( Integer(-30000000000, unitSize=UnitSize.SIZE_64, sign=Sign.SIGNED), name="int64_s_be"), \
+                       Field( Integer(180000000000, unitSize=UnitSize.SIZE_64, sign=Sign.UNSIGNED, endianness=Endianness.LITTLE), name="int64_u_le"), \
+                       Field( Integer(-30000000000, unitSize=UnitSize.SIZE_64, sign=Sign.SIGNED, endianness=Endianness.LITTLE), name="int64_s_le") \
                     ]
                 >>> ScapyExporter._integer_unitSize_64(fields[0])
                 '\\t\\t\\t LongField("int64_u_be",180000000000),\\t#size:(64, 64)'
@@ -360,7 +361,7 @@ class ScapyExporter(object):
                 """
                 if field.domain.dataType.sign == 'unsigned' and field.domain.dataType.endianness == 'little':
                     return "\t\t\t LELongField(" + "\"" + field.name + "\"," \
-                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_endianness=AbstractType.ENDIAN_LITTLE)
+                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_endianness=Endianness.LITTLE)
                                    if (field.domain.currentValue) else None)\
                            + "),"+ "\t#size:" +str(field.domain.dataType.size) 
                 elif field.domain.dataType.sign == 'unsigned' and field.domain.dataType.endianness == 'big':
@@ -370,7 +371,7 @@ class ScapyExporter(object):
                            + "),"+ "\t#size:" +str(field.domain.dataType.size)
                 else:
                     return "\t\t\t BitField(" + "\"" + field.name + "\"," \
-                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_sign=AbstractType.SIGN_SIGNED, dst_endianness=field.domain.dataType.endianness)
+                           + repr(TypeConverter.convert(field.domain.currentValue,BitArray,Integer, dst_sign=Sign.SIGNED, dst_endianness=field.domain.dataType.endianness)
                                    if (field.domain.currentValue) else None) \
                            + "," + repr(field.domain.dataType.size[1]) + ")," + "\t#size:" \
                            + str(field.domain.dataType.size)  
@@ -442,7 +443,7 @@ class ScapyExporter(object):
                         field.name,
                         repr(TypeConverter.convert(field.domain.currentValue, BitArray, Integer,
                                                    dst_unitSize=AbstractType.defaultUnitSize(),
-                                                   dst_endianness=AbstractType.ENDIAN_BIG)
+                                                   dst_endianness=Endianness.BIG)
                              if (field.domain.currentValue) else None),
                         self.__reFieldLengths[field],
                         str(field.domain.dataType.size)

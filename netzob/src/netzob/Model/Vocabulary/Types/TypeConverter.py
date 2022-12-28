@@ -56,10 +56,10 @@ class TypeConverter(object):
     def convert(data,
                 sourceType,
                 destinationType,
-                src_unitSize=None,
+                src_unitSize=AbstractType.defaultUnitSize(),
                 src_endianness=AbstractType.defaultEndianness(),
                 src_sign=AbstractType.defaultSign(),
-                dst_unitSize=None,
+                dst_unitSize=AbstractType.defaultUnitSize(),
                 dst_endianness=AbstractType.defaultEndianness(),
                 dst_sign=AbstractType.defaultSign()):
         r"""This function encodes data from a sourceType to a destinationType.
@@ -155,18 +155,6 @@ class TypeConverter(object):
 
             # Convert from raw to Destination
             if destinationType is not Raw:
-                if destinationType is Integer and dst_unitSize is None:
-                    nbUnits = len(binData)
-                    if nbUnits == 8:
-                        dst_unitSize = AbstractType.UNITSIZE_64
-                    elif nbUnits == 4:
-                        dst_unitSize = AbstractType.UNITSIZE_32
-                    elif nbUnits == 2:
-                        dst_unitSize = AbstractType.UNITSIZE_16
-                    elif nbUnits == 1:
-                        dst_unitSize = AbstractType.UNITSIZE_8
-                    else:
-                        raise TypeError("Unsupported autodetected Integer target UnitSize. Valid UnitSizes are 8, 16, 32 and 64 bits.")
                 outputData = destinationType.encode(
                     binData,
                     unitSize=dst_unitSize,

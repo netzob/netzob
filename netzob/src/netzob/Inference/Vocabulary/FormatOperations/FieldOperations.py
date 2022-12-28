@@ -46,6 +46,7 @@ from netzob.Common.Utils.Decorators import typeCheck, NetzobLogger
 from netzob.Model.Vocabulary.Field import Field
 from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg import Agg
+from netzob.Model.Vocabulary.Types.AbstractType import UnitSize
 
 
 @NetzobLogger
@@ -63,7 +64,7 @@ class FieldOperations(object):
         >>> f1 = Field(Raw(nbBytes=1), name="f1")
         >>> f2 = Field(Raw(nbBytes=2), name="f2")
         >>> f3 = Field(Raw(nbBytes=2), name="f3")
-        >>> f4 = Field(Data(Integer(unitSize=AbstractType.UNITSIZE_8)), name="f4")
+        >>> f4 = Field(Data(Integer(unitSize=UnitSize.SIZE_8)), name="f4")
         >>> symbol = Symbol([f1, f2, f3, f4], messages=messages)
         >>> symbol.addEncodingFunction(TypeEncodingFunction(HexaString))
 
@@ -169,7 +170,7 @@ class FieldOperations(object):
         >>> from netzob.all import *
         >>> samples = [ b'\\x00\\xff/BPz', b'\\x00\\x00 CQ~', b'\\x00\\xff/Gf/' ]
         >>> messages = [RawMessage(data=sample) for sample in samples]
-        >>> f1 = Field(Data(Integer(unitSize=AbstractType.UNITSIZE_8)))
+        >>> f1 = Field(Data(Integer(unitSize=UnitSize.SIZE_8)))
         >>> f2 = Field(Raw(nbBytes=2))
         >>> f3 = Field(Raw(nbBytes=3))
         >>> symbol = Symbol([f1, f2, f3], messages=messages)

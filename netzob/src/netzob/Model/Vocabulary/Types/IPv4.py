@@ -460,7 +460,7 @@ class IPv4(AbstractType):
     def encode(data,
                unitSize=AbstractType.defaultUnitSize(),
                endianness=AbstractType.defaultEndianness(),
-               sign=AbstractType.SIGN_UNSIGNED):
+               sign=AbstractType.defaultSign()):
         """Encodes the specified data into an IPAddress object
 
         :param data: the data to encode into an IPAddress

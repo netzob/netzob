@@ -346,23 +346,23 @@ class Timestamp(AbstractType):
         predefined constraints.
 
         >>> from netzob.all import *
-        >>> time = Timestamp()
-        >>> time.canParse(Integer(1444494130, unitSize=UnitSize.SIZE_32).value)
+        >>> timestamp = Timestamp()
+        >>> timestamp.canParse(Integer(1444494130, unitSize=UnitSize.SIZE_32).value)
         True
-        >>> time.canParse(Integer(144449413000, unitSize=UnitSize.SIZE_64).value)
+        >>> timestamp.canParse(Integer(144449413000, unitSize=UnitSize.SIZE_64).value)
         True
         >>> # A timestamp is nothing else than 32bits parsed as an unsigned long
-        >>> time.canParse(String("test").value)
+        >>> timestamp.canParse(String("test").value)
         True
-        >>> time.canParse(String("te").value)
+        >>> timestamp.canParse(String("te").value)
         False
 
         However, some constrains over the definition of the Timestamp can be set to restrain the accepted values
 
         >>> from netzob.all import *
-        >>> time = Timestamp(epoch=Epoch.WINDOWS, unity=Unity.NANOSECOND, unitSize=UnitSize.SIZE_64)
+        >>> timestamp = Timestamp(epoch=Epoch.WINDOWS, unity=Unity.NANOSECOND, unitSize=UnitSize.SIZE_64)
         >>> # the returned year is < 1900
-        >>> time.canParse(String("test").value)
+        >>> timestamp.canParse(String("test").value)
         False
         """
 
