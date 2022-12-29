@@ -357,11 +357,11 @@ def _test():
     >>> type(d)
     <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
 
-    >>> d = IntegerMutator(domain, generator='mt19937')
+    >>> d = IntegerMutator(domain, generator='xorshift')
     >>> type(d)
     <class 'netzob.Fuzzing.Mutators.IntegerMutator.IntegerMutator'>
     >>> type(d.generator)
-    <class 'netzob.Fuzzing.Generators.WrapperGenerator.WrapperGenerator'>
+    <class 'netzob.Fuzzing.Generators.XorShiftGenerator.XorShiftGenerator'>
 
     >>> d = IntegerMutator(domain, seed=42)
     >>> type(d)

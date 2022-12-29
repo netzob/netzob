@@ -35,7 +35,6 @@ Then, create a virtualenv::
 Once the required dependencies are installed, you can build and install Netzob::
 
   (venv) $ pip3 install Cython==0.29.32  # Should be manually installed because of setup.py dependency
-  (venv) $ pip3 install numpy==1.14.3    # Should be manually installed because of randomstate dependency
   (venv) $ pip3 install -e .
 
 We also highly recommend to install the following additional dependencies::

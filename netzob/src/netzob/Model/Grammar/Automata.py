@@ -758,18 +758,6 @@ class Automata(object):
                           efficient to produce unique pseudo-random
                           numbers.
 
-                          Available generators from :class:`randomstate` module are:
-
-                          * ``'mt19937'``
-                          * ``'mlfg_1279_861'``
-                          * ``'mrg32k3a'``
-                          * ``'pcg32'``
-                          * ``'pcg64'``
-                          * ``'xorshift128'``
-                          * ``'xoroshiro128plus'``
-                          * ``'xorshift1024'``
-                          * ``'dsfmt'``
-
         :param seed: An integer used to initialize the underlying
                      generator.
 

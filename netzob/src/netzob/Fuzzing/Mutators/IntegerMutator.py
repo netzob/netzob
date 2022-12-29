@@ -440,7 +440,7 @@ def _test_pseudo_rand_interval():
 
     >>> v = int8()
     >>> f = Field(v)
-    >>> mutator = IntegerMutator(f.domain, generator='mt19937')
+    >>> mutator = IntegerMutator(f.domain, generator='xorshift')
     >>> generated_values = set()
     >>> generated_values_signed = set()
     >>> for _ in range(30):

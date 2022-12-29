@@ -391,7 +391,7 @@ def _test_alt_max_depth():
     >>> f_alt = Field(name="alt", domain=Alt([Integer(42)]))
     >>> symbol = Symbol(name="sym", fields=[f_alt])
     >>> preset = Preset(symbol)
-    >>> preset.fuzz(f_alt, maxDepth=3, generator='mt19937')
+    >>> preset.fuzz(f_alt, maxDepth=3, generator='xorshift')
     >>> tmp = next(symbol.specialize(preset))
     >>> tmp = next(symbol.specialize(preset))
     >>> tmp = next(symbol.specialize(preset))

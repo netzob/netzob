@@ -189,16 +189,18 @@ def get_dependencies():
     bintrees==2.2.0
     bitarray==0.8.1
     colorama==0.4.6
-    minepy==1.0.0
+    minepy==1.2.6
     pylstar==0.1.2
     impacket==0.10.0
     netaddr==0.8.0
     pcapy==0.11.4
     pythoncrc==1.21
-    randomstate==1.13.1
+    numpy==1.24.1
     sphinx==4.5.0
     sphinx_book_theme==0.3.3
     """.split()
+
+    # Temporary deactivate randomstate==1.13.1, which has dependency constraint with numpy==1.14.3
 
 extra_dependencies = {
     # 'docs': ['Sphinx==5.3.0'],

@@ -496,18 +496,6 @@ class Preset(object):
                           efficient to produce unique pseudo-random
                           numbers.
 
-                          Available generators from :class:`randomstate` module are:
-
-                          * ``'mt19937'``
-                          * ``'mlfg_1279_861'``
-                          * ``'mrg32k3a'``
-                          * ``'pcg32'``
-                          * ``'pcg64'``
-                          * ``'xorshift128'``
-                          * ``'xoroshiro128plus'``
-                          * ``'xorshift1024'``
-                          * ``'dsfmt'``
-
                           A deterministic is also available
                           (``generator='determinist'``), and
                           may be used in case where a domain has an

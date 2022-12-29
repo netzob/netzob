@@ -35,7 +35,7 @@
 # +---------------------------------------------------------------------------+
 # | Standard library imports                                                  |
 # +---------------------------------------------------------------------------+
-import randomstate
+#import randomstate
 import pkgutil
 from typing import Iterable
 try:
@@ -67,7 +67,7 @@ class GeneratorFactory(object):
     >>> next(g)
     173
 
-    >>> g = GeneratorFactory.buildGenerator('xorshift128', minValue=0, maxValue=1<<16, seed=1)
+    >>> g = GeneratorFactory.buildGenerator('xorshift', minValue=0, maxValue=1<<16, seed=1)
     >>> type(g)
     <class 'netzob.Fuzzing.Generators.WrapperGenerator.WrapperGenerator'>
     >>> next(g)
@@ -103,9 +103,18 @@ class GeneratorFactory(object):
 
     @staticmethod
     def buildGenerator(generator='xorshift', seed=1, **kwargs):
+        # """
+        # Provide a generator using either a name
+        # (compatible with :class:`randomstate.Randomstate`), an :class:`Iterable
+        # <typing.Iterable>` object or a :class:`Generator <typing.Generator>`
+        # function with no argument.
+
+        # :param generator: The generator we want to create.
+        # :type generator: str, callable or generator function
+        # """
+
         """
-        Provide a generator using either a name
-        (compatible with :class:`randomstate.Randomstate`), an :class:`Iterable
+        Provide a generator using an :class:`Iterable
         <typing.Iterable>` object or a :class:`Generator <typing.Generator>`
         function with no argument.
 
@@ -120,14 +129,14 @@ class GeneratorFactory(object):
         # Check if the generator is a string corresponding to a number generator name
         elif isinstance(generator, str):
 
-            # Check if we want a number generator from the randomstate.prng module
-            for importer, modname, ispkg in pkgutil.iter_modules(randomstate.prng.__path__):
-                if generator == modname:
-                    prng_module = __import__('randomstate.prng', globals(), locals(), [modname], 0)
-                    generator_module = prng_module.__dict__[modname]
-                    generator_class = generator_module.RandomState
-                    generator_instance = generator_class(seed=seed)
-                    return WrapperGenerator(repeatfunc(generator_instance.random_sample), **kwargs)
+            # # Check if we want a number generator from the randomstate.prng module
+            # for importer, modname, ispkg in pkgutil.iter_modules(randomstate.prng.__path__):
+            #     if generator == modname:
+            #         prng_module = __import__('randomstate.prng', globals(), locals(), [modname], 0)
+            #         generator_module = prng_module.__dict__[modname]
+            #         generator_class = generator_module.RandomState
+            #         generator_instance = generator_class(seed=seed)
+            #         return WrapperGenerator(repeatfunc(generator_instance.random_sample), **kwargs)
 
             # Else check if we want a sub-generator from this Generator package
             for subclass in Generator.__subclasses__():
