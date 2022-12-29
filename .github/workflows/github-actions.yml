@@ -38,4 +38,11 @@ jobs:
           cd netzob/
           source venv/bin/activate
           sphinx-build -b html doc/documentation/source/ doc/documentation/build/
-      - run: echo "This job's status is ${{ job.status }}."
+      - name: Deploy pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.event_name == 'push' }} # && github.ref == 'refs/heads/master' }}
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: netzob/doc/documentation/build/
+          force_orphan: true
