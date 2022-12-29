@@ -95,11 +95,6 @@ Once the required dependencies are installed, you can build and install Netzob::
 
   (venv) $ pip3 install Cython==0.29.32  # Should be manually installed because of setup.py dependency
   (venv) $ pip3 install -e .
-
-We also highly recommend to install the following additional dependencies::
-
-  (venv) $ pip3 install python-sphinx (for the documentation)
-
   
 Start Netzob CLI
 ----------------
@@ -134,7 +129,7 @@ The user manual can be generated based on RST sources located in folder
 ``doc/documentation/source`` with the following commands::
 
   $ sphinx-build -b html doc/documentation/source/ doc/documentation/build/
-  
+
 Contributing
 ============
 
