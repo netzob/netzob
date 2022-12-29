@@ -196,10 +196,12 @@ def get_dependencies():
     pcapy==0.11.4
     pythoncrc==1.21
     randomstate==1.13.1
+    sphinx==4.5.0
+    sphinx_book_theme==0.3.3
     """.split()
 
 extra_dependencies = {
-    'docs': ['Sphinx==5.3.0'],
+    # 'docs': ['Sphinx==5.3.0'],
 }
 
 dependency_links = []

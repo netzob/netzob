@@ -69,6 +69,7 @@ therefore possible sniffing point's Netzob aims at addressing.
    :alt: Multiple communication flows arround an application
 
    Multiple communication flows arround an application
+
 The current version (version 0.4) of Netzob deals with the following
 data sources :
 
@@ -146,6 +147,7 @@ following picture).
    :alt: Sequence alignment with Needleman-Wunsh algorithm
 
    Sequence alignment with Needleman-Wunsh algorithm
+
 When partitioning and clustering processes are done, we obtain a
 relevant first approximation of the overall message formats. The next
 step consists in determining the characteristics of the fields.
@@ -177,6 +179,7 @@ manually refine the type associated with a field.
    :alt: Characterization of field type
 
    Characterization of field type
+
 Some intra-symbol dependencies are automatically identified. The size
 field, present in many protocol formats, is an example of intra-symbol
 dependency. A search algorithm has been designed to look for potential
@@ -212,6 +215,7 @@ initial state :
    :alt: Schema of a simple grammar
 
    Schema of a simple grammar
+
 The learning process step is achieved by a set of active experiments
 that stimulate a real client or server implementation using successive
 sequences of input symbols and analyze its responses.

@@ -102,32 +102,12 @@ We also highly recommend to install the following additional dependencies::
   (venv) $ pip3 install python-sphinx (for the documentation)
 
   
-Docker container
-^^^^^^^^^^^^^^^^
+Start Netzob CLI
+----------------
 
-A docker build is offered from the docker registry repository. You can download 
-it from command line with the following command:: 
-
-  $ docker pull netzob/netzob
-
-
-Start it
---------
-
-Once installed, running Netzob is as simple as executing the provided script::
+Once installed, running Netzob CLI is as simple as executing the provided script::
 
   (venv) $ netzob
-
-This script is in Python's path if you've installed Netzob, otherwise
-(in developer mode), it's located in the top distribution directory.
-
-Docker container
-^^^^^^^^^^^^^^^^
-
-If you used the docker container, the following command will allow you to start 
-netzob with your current directory attached to ``/data`` into the container::
-
-  $ docker run --rm -it -v $(pwd):/data netzob/netzob
 
 Miscellaneous
 -------------
@@ -144,7 +124,7 @@ Configuration requirements for IPC input on Ubuntu
 
 The following command must be triggered before collecting IPC exchanges with Netzob on Ubuntu (see https://www.kernel.org/doc/Documentation/security/Yama.txt)::
 
-$ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
+  $ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
 
 Documentation
 =============
@@ -154,11 +134,7 @@ The folder ``doc/documentation`` contains all the documentation of Netzob.
 The user manual can be generated based on RST sources located in folder
 ``doc/documentation/source`` with the following commands::
 
-  $ sphinx-apidoc -T -e -f -o doc/documentation/source/developer_guide/API/ src/netzob/
-  $ find doc/documentation/source/developer_guide/API/ -type f -exec sed -i ':a;N;$!ba;s/Subpackages\n-----------\n\n.. toctree::\n/Subpackages\n-----------\n\n.. toctree::\n    :maxdepth: 1\n    /g' {} +
   $ sphinx-build -b html doc/documentation/source/ doc/documentation/build/
-
-An up-to-date version of the documentation is hosted on the `Read The Docs platform <https://netzob.readthedocs.org>`_.
   
 Contributing
 ============

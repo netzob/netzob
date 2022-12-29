@@ -2,103 +2,57 @@
 
 .. _installation_python:
 
-Installation documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Installation of Netzob
+======================
 
 This page presents how to install Netzob as a Python package.
 
-Dependency requirements
-^^^^^^^^^^^^^^^^^^^^^^^
+Install Netzob from sources
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-As a 'classic' python project, Netzob is provided with its *setup.py*.
-This file defines what and how to install the project on a Python
-hosting OS.
+First thing to do is to check the version of your python3 interpretor.
+Netzob requires python 3.8::
 
-This file depends on *setuptools* which like few other modules cannot be
-automatically installed. This is the reason why you have to manually
-install the following bunch of prerequisites before initiating Netzob's
-install process:
+  $ python3 --version
+  Python 3.8.10
 
--  python
--  python-dev
--  python-impacket
--  libxml2-dev
--  libxslt-dev
--  python-setuptools
--  gtk3
--  graphviz
+Netzob is provided with its ``setup.py``. This file defines what and
+how to install the project on a python hosting OS. This file depends
+on ``setuptools`` which like few other modules cannot be automatically
+installed.
 
-We also highly recommend to install the following additional
-dependencies:
+You have to install the following system dependencies::
 
--  python-babel (for the translations)
--  python-sphinx (for the documentation)
+  $ apt-get install -y python3 python3-dev python3-setuptools build-essential libpcap-dev libgraph-easy-perl libffi-dev
 
-Install Netzob with easy\_install
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Then, create a virtualenv::
 
-::
+  $ mkdir venv
+  $ virtualenv venv
+  $ ./venv/bin/activate
 
-      $ easy_install netzob
+Once the required dependencies are installed, you can build and install Netzob::
 
-Install Netzob from .tar.gz package
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  (venv) $ pip3 install Cython==0.29.32  # Should be manually installed because of setup.py dependency
+  (venv) $ pip3 install numpy==1.14.3    # Should be manually installed because of randomstate dependency
+  (venv) $ pip3 install -e .
 
-First retrieve the Netzob package:
+We also highly recommend to install the following additional dependencies::
 
-::
+  (venv) $ pip3 install python-sphinx (for the documentation)
 
-      $ wget http://www.netzob.org/repository/XXX/Netzob-XXX.tar.gz
-
-where XXX corresponds to the version you want to install (see
-`http://www.netzob.org/download <http://www.netzob.org/download>`_ for
-available versions).
-
-Then, you can either install a package locally (developer mode) or on
-the system.
-
-Install Netzob locally (developer
-mode)\ `¶ <#Install-Netzob-locally-developer-mode>`_
-
-Once the required dependencies are installed, you can install Netzob on
-its current directory:
-
-::
-
-      $ python setup.py build
-      $ python setup.py develop --user
-
-Install Netzob on the system\ `¶ <#Install-Netzob-on-the-system>`_
-
-You can also install Netzob as a Python system package:
-
-::
-
-      $ python setup.py build
-      $ python setup.py develop
-      $ python setup.py install
-
+  
 Start Netzob
 ^^^^^^^^^^^^
 
-Once installed, running Netzob is as simple as executing:
+Once installed, running Netzob CLI is as simple as executing::
 
-::
-
-      $ ./netzob
-
-Or if you've installed Netzob as a Python system package, just type:
-
-::
-
-      $ netzob
+   $ netzob
 
 Netzob help options
 ^^^^^^^^^^^^^^^^^^^
 
-Netzob handles some command line options:
-
-::
+Netzob handles some command line options::
 
     Options:
       --version             show program's version number and exit
@@ -115,15 +69,7 @@ Netzob handles some command line options:
 Miscellaneous
 ^^^^^^^^^^^^^
 
-Configuration requirements for Network and PCAP input:
-
-::
-
-      $ sudo setcap cap_net_raw=ep /usr/bin/python2.XX
-
 Configuration requirements for IPC input on Ubuntu::
-
-::
 
       $ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope" 
 
@@ -133,8 +79,6 @@ Building the documentation
 The folder *doc/documentation* contains all the documentation of Netzob.
 
 The user manual can be generated based on RST sources located in folder
-*doc/documentation/source* with the following command:
-
-::
+*doc/documentation/source* with the following command::
 
       $ sphinx-build -b html doc/documentation/source/ doc/documentation/build/

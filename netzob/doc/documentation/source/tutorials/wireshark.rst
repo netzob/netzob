@@ -34,10 +34,9 @@ Language
 ^^^^^^^^
 
 Wireshark can be statically extended with C modules similar to core
-dissectors. Optionally, Wireshark can be configured to embed a
-`Lua <http://www.lua.org/>`_ interpretor.
-For modularity purposes, the Lua engine has been chosen to extend
-Wireshark with Netzob generated dissectors.
+dissectors. Optionally, Wireshark can be configured to embed a LUA
+interpretor. For modularity purposes, the Lua engine has been chosen
+to extend Wireshark with Netzob generated dissectors.
 
 Prerequisite
 ^^^^^^^^^^^^
@@ -101,8 +100,8 @@ Usage
       This will automatically import the Lua script on start.
 
 #. Dissect data packets
-    Within the lower panel of Wireshark, you should get the dissected
-   packets:
+
+   Within the lower panel of Wireshark, you should get the dissected packets:
 
    .. figure:: https://dev.netzob.org/attachments/160/2012-10-25-182017_956x1041_scrot_small.png
       :align: center

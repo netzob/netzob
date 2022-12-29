@@ -4,43 +4,42 @@
 Netzob documentation
 ====================
 
-**Netzob** is an open source tool for reverse engineering, traffic
-generation and fuzzing of communication protocols. It can be used to infer
-the message format and the state machine of a protocol through passive
-and active processes. The model can afterward be used to simulate
-realistic and controllable traffic.
+**Netzob** is an open source tool for reverse engineering,
+modelization, traffic generation and fuzzing of communication
+protocols. It can be used to infer the message format and the state
+machine of a protocol through passive and active processes. The model
+can afterward be used to simulate realistic and controllable traffic.
 
-The main :ref:`features<overview>` of Netzob are:
+The main features of Netzob are:
 
-**Protocol Vocabulary Modeling and Inference**
-  Netzob includes a complete model to represent the message format of
-  a protocol (aka its vocabulary). Using specific algorithms, it
-  can learn it from provided traces.
-
-**Protocol Grammar Modeling and Inference**
-  The state machine of a protocol (aka its grammar) defines the valid
-  sequences of exchanged messages. Netzob can learn it
-  semi-automatically using specific algorithms.
-
-**Protocol Simulation**
-  To support the inferring process, a dynamic analysis is perfomed
-  based on simulated actors. These can initiate and take part in a
-  complex communication following the infered protocol.
-
-
-Contact information
-===================
-
-:Website: `http://www.netzob.org <http://www.netzob.org>`_
-:Email: `contact@netzob.org <contact@netzob.org>`_
-:Mailing list: Users, developers and announces lists are available, use the `SYMPA web interface <https://lists.netzob.org/wws>`_ to register.
-:IRC: You can hang-out with us on Freenode's IRC channel #netzob @ freenode.org.
-:Wiki: Discuss strategy on `Netzob's wiki <https://dev.netzob.org/projects/netzob/wiki>`_
-:Twitter: Follow Netzob's official accounts (@Netzob)
-
-
-Netzob Overview
-===============
+**Protocol Modelization**
+   Netzob includes a complete model to represent the message format (aka its vocabulary)
+   and the state machine of a protocol (aka its grammar).
+**Protocol Inference**
+   The vocabulary and grammar inference
+   methods constitute the core of Netzob. It provides both passive and
+   active reverse engineering of communication flows through automated
+   and manuals mechanisms.
+**Traffic Generation**
+   Given vocabulary and grammar models previously
+   inferred or modelized, Netzob can understand and generate communication traffic
+   with remote peers. It can thus act as either a client, a server or
+   both.
+**Protocol Fuzzing**
+   Netzob helps security evaluators by simplifying the creation of
+   fuzzers for proprietary or undocumented protocols. Netzob considers the format message and state machine of the
+   protocol to generate optimized and specific test cases. Both mutation and generation are available for fuzzing.
+**Import Communication Traces**
+   Data import is available in two ways: either by
+   leveraging the channel-specific captors (currently network and IPC --
+   Inter-Process Communication), or by using specific importers (such as
+   PCAP files, structured files and OSpy files).
+**Export Protocol Models**
+   This module permits to export an model of
+   a protocol in formats that are understandable by third party software
+   or by a human. Current work focuses on export format compatible with
+   main traffic dissectors (Wireshark and Scapy) and fuzzers (Peach and
+   Sulley).
 
 .. toctree::
    :hidden:
@@ -53,9 +52,86 @@ CIDre research team of Supélec to address the reverse engineering of
 communication protocols. A detailed overview of the project is
 :ref:`available here<overview>`.
 
+Follow us on Twitter: `@Netzob <https://twitter.com/netzob>`_.
+
+
+Installation of Netzob
+======================
+
+.. toctree::
+   :maxdepth: 2
+
+   installation/python
+
+..
+   installation/debian
+   installation/gentoo
+   installation/windows
+
+Protocol Modelization with Netzob
+=================================
+
+.. toctree::
+   :maxdepth: 2
+
+   language_specification/dataspec
+   language_specification/statemachinespec
+   language_specification/protospec
+
+Protocol Inference with Netzob
+==============================
+
+.. toctree::
+   :maxdepth: 2
+
+   user_guide/inference/index
+
+Traffic Generation with Netzob
+==============================
+
+.. toctree::
+   :maxdepth: 2
+
+   language_specification/trafficgeneration
+   language_specification/actor
+
+Protocol Fuzzing with Netzob
+============================
+
+.. toctree::
+   :maxdepth: 2
+
+   language_specification/fuzzing
+
+
+Import Communication Traces with Netzob
+=======================================
+.. toctree::
+   :maxdepth: 2
+
+   user_guide/import/index
+
+
+Export Protocol Models with Netzob
+==================================
+.. toctree::
+   :maxdepth: 2
+
+   user_guide/export/index
 
 Tutorials
 =========
+
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+
+   tutorials/discover_features
+   tutorials/get_started
+   tutorials/modeling_protocol
+   tutorials/peach
+   tutorials/wireshark
+
 
 .. :ref:`Get started with Netzob<tutorial_get_started>`
    The goal of this tutorial is to present the usage of each main
@@ -85,61 +161,6 @@ Tutorials
    in order to automatically generate Wireshark dissectors for
    proprietary or undocumented protocols.
 
-
-.. Installation Guides
-  ===================
-
-  .. toctree::
-     :hidden:
-     :maxdepth: 2
-
-     installation/index
-     installation/python
-     installation/debian
-     installation/gentoo
-     installation/windows
-
-  * :ref:`Python package installation<installation_python>`
-  * :ref:`Debian package installation<installation_debian>`
-  * :ref:`Gentoo package installation<installation_gentoo>`
-  * :ref:`Windows package installation<installation_windows>`
-
-
-.. User Guide
-   ==========
-   
-   Read the :ref:`Netzob User Guide<user_guide>`.
-   
-   .. toctree::
-   :maxdepth: 2
-
-      user_guide/import/index
-      user_guide/inference/index
-      user_guide/simulation/index
-      user_guide/export/index
-
-
-API Documentation
-=================
-
-.. toctree::
-   :maxdepth: 1
-
-   developer_guide/API/netzob
-
-
-Developer Guide
-===============
-
-See how you can :ref:`contribute to Netzob<contributing>`
-
-Indices and tables
-==================
-
-* :ref:`Table of content<main_toc>`
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
 Licences
 ========

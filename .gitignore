@@ -31,3 +31,6 @@ lib64
 *.log
 dist/
 .mypy_cache/
+netzob/src/netzob/Fuzzing/Generators/xorshift.c
+netzob/doc/documentation/build/
+.vagrant/

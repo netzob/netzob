@@ -31,8 +31,7 @@ workspace directory (as in Eclipe).
 
 .. figure:: https://dev.netzob.org/attachments/119/tuto_workspace.png
    :align: center
-   :alt: 
-
+   :alt:
     **Side note:** in Netzob, a workspace can be defined as a collection
     of projects and of configuration properties. The directory which
     host the workspace contains directories and files which includes
