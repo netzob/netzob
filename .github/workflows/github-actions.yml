@@ -27,6 +27,6 @@ jobs:
           virtualenv venv
           source venv/bin/activate
           pip3 install Cython==0.29.32
-          pip3 install numpy==1.14.3
           pip3 install -e .
+          python3 setup.py test
       - run: echo "This job's status is ${{ job.status }}."
