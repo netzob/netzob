@@ -69,9 +69,9 @@ class GeneratorFactory(object):
 
     >>> g = GeneratorFactory.buildGenerator('xorshift', minValue=0, maxValue=1<<16, seed=1)
     >>> type(g)
-    <class 'netzob.Fuzzing.Generators.WrapperGenerator.WrapperGenerator'>
+    <class 'netzob.Fuzzing.Generators.XorShiftGenerator.XorShiftGenerator'>
     >>> next(g)
-    39742
+    0
 
     >>> g = GeneratorFactory.buildGenerator('determinist', seed=0, minValue=10, maxValue=20, bitsize=8, signed=True)
     >>> type(g)
