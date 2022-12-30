@@ -2,7 +2,6 @@
 
 .. _inference:
 
-==================
 Protocol inference
 ==================
 
@@ -54,8 +53,6 @@ Modelization in Netzob
 ----------------------
 
 Netzob provides a framework for the semi-automated modelization (inference) of communication protocols, i.e. inferring its vocabular and grammar.
-
-[INCLURE GRAPH]
 
 * Vocabular inference
    * Message structure inference (based on sequence alignment)

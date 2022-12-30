@@ -17,7 +17,7 @@ The main features of Netzob are:
    and the state machine of a protocol (aka its grammar).
 **Protocol Inference**
    The vocabulary and grammar inference
-   methods constitute the core of Netzob. It provides both passive and
+   component provides both passive and
    active reverse engineering of communication flows through automated
    and manuals mechanisms.
 **Traffic Generation**
@@ -41,18 +41,63 @@ The main features of Netzob are:
    main traffic dissectors (Wireshark and Scapy) and fuzzers (Peach and
    Sulley).
 
-.. toctree::
-   :hidden:
-   :maxdepth: 2
-
-   overview/index
+A :ref:`dedicated tutorial<discover_features>` gives you an overview of the main features in practice.
 
 Netzob has been initiated by security auditors of AMOSSYS and the
 CIDre research team of Supélec to address the reverse engineering of
-communication protocols. A detailed overview of the project is
-:ref:`available here<overview>`.
+communication protocols.
 
 Follow us on Twitter: `@Netzob <https://twitter.com/netzob>`_.
+
+Example of Ethernet IEEE 802.2 Modelization
+===========================================
+
+This quick example illustrates format message modelization, with fixed-size
+fields and several relationship fields (CRC32, Size and Padding).
+
+.. code-block:: python
+
+    >>> from netzob.all import *
+    >>>
+    >>> eth_length = Field(bitarray('0000000000000000'), "eth.length")
+    >>> eth_llc = Field(Raw(nbBytes=3), "eth.llc")  # IEEE 802.2 header
+    >>> eth_payload = Field(Raw(), name="eth.payload")
+    >>> eth_padding = Field(Padding([eth_length,
+    ...                              eth_llc,
+    ...                              eth_payload],
+    ...                             data=Raw(nbBytes=1),
+    ...                             modulo=8*60),
+    ...                     "eth.padding")
+    >>>
+    >>> eth_crc_802_3 = Field(bitarray('00000000000000000000000000000000'), "eth.crc")
+    >>> eth_crc_802_3.domain = CRC32([eth_length,
+    ...                               eth_llc,
+    ...                               eth_payload,
+    ...                               eth_padding],
+    ...                              dataType=Raw(nbBytes=4,
+    ...                                           unitSize=UnitSize.SIZE_32))
+    >>>
+    >>> eth_length.domain = Size([eth_llc, eth_payload],
+    ...                          dataType=uint16(), factor=1./8)
+    >>>
+    >>> symbol = Symbol(name="ethernet_802_3",
+    ...                 fields=[eth_length,
+    ...                         eth_llc,
+    ...                         eth_payload,
+    ...                         eth_padding,
+    ...                         eth_crc_802_3])
+    >>> print(symbol.str_structure())
+    ethernet_802_3
+    |--  eth.length
+         |--   Size(['eth.llc', 'eth.payload']) - Type:Integer(0,65535)
+    |--  eth.llc
+         |--   Data (Raw(nbBytes=3))
+    |--  eth.payload
+         |--   Data (Raw(nbBytes=(0,8192)))
+    |--  eth.padding
+         |--   Padding(['eth.length', 'eth.llc', 'eth.payload']) - Type:Raw(nbBytes=1)
+    |--  eth.crc
+         |--   Relation(['eth.length', 'eth.llc', 'eth.payload', 'eth.padding']) - Type:Raw(nbBytes=4)
 
 
 Installation of Netzob
@@ -81,10 +126,13 @@ Protocol Modelization with Netzob
 Protocol Inference with Netzob
 ==============================
 
-.. toctree::
-   :maxdepth: 2
+*Note: this section should be completed*
 
-   user_guide/inference/index
+..
+   .. toctree::
+      :maxdepth: 2
+
+      user_guide/inference/index
 
 Traffic Generation with Netzob
 ==============================
@@ -95,43 +143,68 @@ Traffic Generation with Netzob
    language_specification/trafficgeneration
    language_specification/actor
 
+.. note::
+
+   Several examples of actor usages are provided below:
+
+   * :ref:`Common automaton for a client and a server<ActorExample1>`
+   * :ref:`Dedicated automaton for a client and a server<ActorExample2>`
+   * :ref:`Modification of the emitted symbol by a client through a callback<ActorExample3>`
+   * :ref:`Modification of the emitted symbol by a server through a callback<ActorExample4>`
+   * :ref:`Modification of the current transition by a client through a callback<ActorExample5>`
+   * :ref:`Modification of the current transition of a server through a callback<ActorExample6>`
+   * :ref:`Transition with no input symbol<ActorExample7>`
+   * :ref:`How to catch all read symbol timeout<ActorExample8>`
+   * :ref:`How to catch all receptions of unexpected symbols<ActorExample9>`
+   * :ref:`How to catch all receptions of unknown messages<ActorExample10>`
+   * :ref:`Several actors on the same communication channel<ActorExample13>`
+
 Protocol Fuzzing with Netzob
 ============================
+
+Fuzzing can be applied of format message, state machine or both at the
+same time. Fuzzing strategies may leverage either mutation of
+generation approaches.
 
 .. toctree::
    :maxdepth: 2
 
    language_specification/fuzzing
 
+.. note::
+
+   Thanks to the :class:`Actor <netzob.Simulator.Actor.Actor>`
+   componant, it is possible to fuzz specific messages at specific
+   states in an automaton. This allows to defined fine-tuned fuzzing
+   strategies. Several examples of actor usages in a fuzzing context
+   are provided below:
+
+   * :ref:`Message format fuzzing from an actor<ActorExample11>`
+   * :ref:`Message format fuzzing from an actor, at a specific state<ActorExample12>`
 
 Import Communication Traces with Netzob
 =======================================
-.. toctree::
-   :maxdepth: 2
 
-   user_guide/import/index
+Netzob supports import of communication traces from the following resources:
+
+* Raw messages
+* Raw files
+* PCAP files
 
 
 Export Protocol Models with Netzob
 ==================================
-.. toctree::
-   :maxdepth: 2
 
-   user_guide/export/index
+Netzob supports export of protocols in the following formats:
 
-Tutorials
-=========
+* XML meta representation
+* Scapy Dissector
+* :ref:`Wireshark Dissector<tutorial_wireshark>`
 
-.. toctree::
-   :hidden:
-   :maxdepth: 2
 
-   tutorials/discover_features
-   tutorials/get_started
-   tutorials/modeling_protocol
-   tutorials/peach
-   tutorials/wireshark
-
+..
+   Tutorials
+   =========
 
 .. :ref:`Get started with Netzob<tutorial_get_started>`
    The goal of this tutorial is to present the usage of each main
@@ -139,16 +212,18 @@ Tutorials
    the state machine and generation of traffic) through an undocumented
    protocol.
 
-:ref:`Discover features of Netzob<discover_features>`
-   The goal of this tutorial is to present the usage of each main
-   component of Netzob (inference of message format, construction of
-   the state machine, generation of traffic and fuzzing) through an undocumented
-   protocol.
+..
+   :ref:`Discover features of Netzob<discover_features>`
+      The goal of this tutorial is to present the usage of each main
+      component of Netzob (inference of message format, construction of
+      the state machine, generation of traffic and fuzzing) through an undocumented
+      protocol.
 
-:ref:`Modeling your Protocol with Netzob<tutorial_modeling_protocol>`
-   This tutorial details the main features of Netzob's protocol modeling
-   aspects. It shows how your protocol fields can be described with Netzob's
-   language.     
+..
+   :ref:`Modeling your Protocol with Netzob<tutorial_modeling_protocol>`
+      This tutorial details the main features of Netzob's protocol modeling
+      aspects. It shows how your protocol fields can be described with Netzob's
+      language.     
   
 .. :ref:`Auto-generation of Peach pit files/fuzzers<tutorial_peach>`
    This tutorial shows how to take advantage of the Peach exporter

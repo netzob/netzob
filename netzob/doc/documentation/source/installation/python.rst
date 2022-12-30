@@ -7,8 +7,8 @@ Installation of Netzob
 
 This page presents how to install Netzob as a Python package.
 
-Install Netzob from sources
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Installing Netzob from sources
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 First thing to do is to check the version of your python3 interpretor.
 Netzob requires python 3.8::
@@ -42,36 +42,9 @@ We also highly recommend to install the following additional dependencies::
   (venv) $ pip3 install python-sphinx (for the documentation)
 
   
-Start Netzob
-^^^^^^^^^^^^
-
 Once installed, running Netzob CLI is as simple as executing::
 
    $ netzob
-
-Netzob help options
-^^^^^^^^^^^^^^^^^^^
-
-Netzob handles some command line options::
-
-    Options:
-      --version             show program's version number and exit
-      -h, --help            show this help message and exit
-      -w WORKSPACE, --workspace=WORKSPACE
-                            Path to the workspace
-      -b, --bug-reporter    Activate the bug reporter
-      -d DEBUGLEVEL, --debugLevel=DEBUGLEVEL
-                            Activate debug information ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')
-
-      Manage Netzob's plugins:
-        --plugin-list       List the available plugins
-
-Miscellaneous
-^^^^^^^^^^^^^
-
-Configuration requirements for IPC input on Ubuntu::
-
-      $ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope" 
 
 Building the documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -81,4 +54,4 @@ The folder *doc/documentation* contains all the documentation of Netzob.
 The user manual can be generated based on RST sources located in folder
 *doc/documentation/source* with the following command::
 
-      $ sphinx-build -b html doc/documentation/source/ doc/documentation/build/
+   $ sphinx-build -b html doc/documentation/source/ doc/documentation/build/

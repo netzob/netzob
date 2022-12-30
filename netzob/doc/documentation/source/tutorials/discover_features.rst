@@ -5,6 +5,10 @@
 Discover features of Netzob
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning::
+
+   This tutorial for Netzob 1.x is currently slighlty obsolete, and should be updated to the Netzob API 2.x.
+
 This tutorial presents the main features of Netzob regarding the
 inference of message formats and grammar of a simple toy protocol. The
 described features cover the following capabilities:
