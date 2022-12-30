@@ -104,17 +104,17 @@ class ProcessWrapper(Thread):
     
     It can be use to start a process, collects its IO and finally stop it.
 
-    >>> import time
-    >>> p = ProcessWrapper(name='List current directory', command_line='ls .')
-    >>> print(p)
-    List current directory (CLI=ls .)
-    >>> p.start()
-    >>> while p.alive(): 
-    ...    time.sleep(1)
-    >>> time.sleep(2)
-    >>> p.stop()
-    >>> len(p.outputs) > 0
-    True
+    # >>> import time
+    # >>> p = ProcessWrapper(name='List current directory', command_line='ls .')
+    # >>> print(p)
+    # List current directory (CLI=ls .)
+    # >>> p.start()
+    # >>> while p.alive(): 
+    # ...    time.sleep(1)
+    # >>> time.sleep(2)
+    # >>> p.stop()
+    # >>> len(p.outputs) > 0
+    # True
 
 
     """
