@@ -34,29 +34,67 @@ About Netzob
 Functional Description
 -----------------------
 
-Netzob is an opensource tool for reverse engineering, traffic generation
-and fuzzing of communication protocols. This tool enables inference of the message format (vocabulary)
-and the state machine (grammar) of a protocol through passive and active processes.
-Its objective is to bring state of art academic researches to the operational field,
-by leveraging bio-informatic and grammatical inferring algorithms in a semi-automatic manner.
+**Netzob** is an open source tool for reverse engineering,
+modelization, traffic generation and fuzzing of communication
+protocols.
 
-Netzob is suitable for reversing network protocols, structured files and system and
-process flows (IPC and communication with drivers and devices).
-Once inferred, a protocol model can be used in our traffic generation engine, to allow simulation of realistic
-and controllable communication endpoints and flows.
+Netzob is suitable for reversing network protocols, structured files
+and system and process flows (IPC and communication with drivers and
+devices). Netzob handles different types of protocols: text protocols
+(like HTTP and IRC), delimiter-based protocols, fixed fields protocols
+(like IP and TCP) and variable-length fields protocols (like TLV-based
+protocols).
 
-Netzob handles different types of protocols: text protocols (like HTTP and IRC), delimiter-based protocols,
-fixed fields protocols (like IP and TCP) and variable-length fields protocols (like TLV-based protocols).
+Netzob can be used to infer the message format and the state machine
+of a protocol through passive and active processes. Its objective is
+to bring state of art academic researches to the operational field, by
+leveraging bio-informatic and grammatical inferring algorithms in a
+semi-automatic manner.
+
+Once modeled or inferred, a protocol model can be used in our traffic
+generation engine, to allow simulation of realistic and controllable
+communication endpoints and flows.
+
+Main features
+-------------
+
+The main features of Netzob are:
+
+**Protocol Modelization**
+   Netzob includes a complete model to represent the message format (aka its vocabulary)
+   and the state machine of a protocol (aka its grammar).
+**Protocol Inference**
+   The vocabulary and grammar inference
+   component provides both passive and
+   active reverse engineering of communication flows through automated
+   and manuals mechanisms.
+**Traffic Generation**
+   Given vocabulary and grammar models previously
+   inferred or modelized, Netzob can understand and generate communication traffic
+   with remote peers. It can thus act as either a client, a server or
+   both.
+**Protocol Fuzzing**
+   Netzob helps security evaluators by simplifying the creation of
+   fuzzers for proprietary or undocumented protocols. Netzob considers the format message and state machine of the
+   protocol to generate optimized and specific test cases. Both mutation and generation are available for fuzzing.
+**Import Communication Traces**
+   Data import is available in two ways: either by
+   leveraging the channel-specific captors (currently network and IPC --
+   Inter-Process Communication), or by using specific importers (such as
+   PCAP files, structured files and OSpy files).
+**Export Protocol Models**
+   This module permits to export an model of
+   a protocol in formats that are understandable by third party software
+   or by a human. Current work focuses on export format compatible with
+   main traffic dissectors (Wireshark and Scapy) and fuzzers (Peach and
+   Sulley).
+
 
 Technical Description
 ---------------------
 
 This version of Netzob must be used as a Python 3 library. It can either be imported in your scripts
 or in your favorite interactive shell (ipython?).
-
-Once installed, we recommend the following statement to import Netzob::
-
-  from netzob.all import *
 
 Netzob's source code is mostly made of Python (90%) with some specific extensions in C (6%). 
 
@@ -65,6 +103,19 @@ More Information
 
 :Website: https://github.com/netzob/netzob
 :Twitter: Follow Netzob's official accounts (@Netzob)
+
+Netzob has been initiated by security auditors of AMOSSYS and the
+CIDre research team of Supélec to address the reverse engineering and
+fuzzing of communication protocols.
+
+Documentation
+=============
+
+The documentation is available online at: https://netzob.github.io/netzob/
+
+If you want to build the documentation, run the following command::
+
+  $ sphinx-build -b html doc/documentation/source/ doc/documentation/build/
 
 Get Started with Netzob
 =======================
@@ -78,11 +129,6 @@ Netzob requires python 3.8::
   $ python3 --version
   Python 3.8.10
 
-Netzob is provided with its ``setup.py``. This file defines what and
-how to install the project on a python hosting OS. This file depends
-on ``setuptools`` which like few other modules cannot be automatically
-installed.
-
 You have to install the following system dependencies::
 
   $ apt-get install -y python3 python3-dev python3-setuptools build-essential libpcap-dev libgraph-easy-perl libffi-dev
@@ -93,44 +139,26 @@ Then, create a virtualenv::
   $ virtualenv venv
   $ ./venv/bin/activate
 
-Once the required dependencies are installed, you can build and install Netzob::
+You can install Netzob and its dependencies::
 
-  (venv) $ pip3 install Cython==0.29.32  # Should be manually installed because of setup.py dependency
+  (venv) $ pip3 install Cython==0.29.32  # Should be manually installed because of setup.py direct dependency
   (venv) $ pip3 install -e .
   
+
+API usage
+---------
+
+Once installed, we recommend to use the Netzob API inside scripts, with the following statement to import Netzob::
+
+  from netzob.all import *
+
+
 Start Netzob CLI
 ----------------
 
-Once installed, running Netzob CLI is as simple as executing the provided script::
+Netzob also provides its own CLI, in order to play interactively with it::
 
   (venv) $ netzob
-
-Miscellaneous
--------------
-
-Configuration of Log Level
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Environment variable ```NETZOB_LOG_VERBOSITY``` can be use to set the logging level. The numeric values of logging levels are given in the Python Documentation of the `Logging Module <https://docs.python.org/3.5/library/logging.html#levels>`_. For example, the following command starts netzob in *DEBUG* mode::
-
-  $ NETZOB_LOG_LEVEL=10 ./netzob
-
-Configuration requirements for IPC input on Ubuntu
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The following command must be triggered before collecting IPC exchanges with Netzob on Ubuntu (see https://www.kernel.org/doc/Documentation/security/Yama.txt)::
-
-  $ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
-
-Documentation
-=============
-
-The folder ``doc/documentation`` contains all the documentation of Netzob.
-
-The user manual can be generated based on RST sources located in folder
-``doc/documentation/source`` with the following commands::
-
-  $ sphinx-build -b html doc/documentation/source/ doc/documentation/build/
 
 Contributing
 ============

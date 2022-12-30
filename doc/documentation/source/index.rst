@@ -6,9 +6,24 @@ Netzob documentation
 
 **Netzob** is an open source tool for reverse engineering,
 modelization, traffic generation and fuzzing of communication
-protocols. It can be used to infer the message format and the state
-machine of a protocol through passive and active processes. The model
-can afterward be used to simulate realistic and controllable traffic.
+protocols.
+
+Netzob is suitable for reversing network protocols, structured files
+and system and process flows (IPC and communication with drivers and
+devices). Netzob handles different types of protocols: text protocols
+(like HTTP and IRC), delimiter-based protocols, fixed fields protocols
+(like IP and TCP) and variable-length fields protocols (like TLV-based
+protocols).
+
+Netzob can be used to infer the message format and the state machine
+of a protocol through passive and active processes. Its objective is
+to bring state of art academic researches to the operational field, by
+leveraging bio-informatic and grammatical inferring algorithms in a
+semi-automatic manner.
+
+Once modeled or inferred, a protocol model can be used in our traffic
+generation engine, to allow simulation of realistic and controllable
+communication endpoints and flows.
 
 The main features of Netzob are:
 
