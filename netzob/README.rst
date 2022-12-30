@@ -26,6 +26,8 @@ Netzob : Protocol Reverse Engineering, Modeling and Fuzzing
     :target: https://webchat.freenode.net/?channels=#netzob
     :alt: IRC
 
+See complete documentation here: https://netzob.github.io/netzob/
+
 About Netzob
 ============
 
