@@ -131,7 +131,7 @@ Netzob requires python 3.8::
 
 You have to install the following system dependencies::
 
-  $ apt-get install -y python3 python3-dev python3-setuptools build-essential libpcap-dev libgraph-easy-perl libffi-dev
+  $ apt-get install -y python3 python3-dev python3-setuptools virtualenv build-essential libpcap-dev libgraph-easy-perl libffi-dev
 
 Then, create a virtualenv::
 

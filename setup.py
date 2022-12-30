@@ -193,7 +193,7 @@ def get_dependencies():
     pylstar==0.1.2
     impacket==0.10.0
     netaddr==0.8.0
-    pcapy==0.11.4
+    pcapy-ng==1.0.9
     pythoncrc==1.21
     numpy==1.24.1
     sphinx==4.5.0
