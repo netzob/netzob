@@ -34,7 +34,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-import collections
+import collections.abc
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -45,8 +45,8 @@ import collections
 #+---------------------------------------------------------------------------+
 
 
-class TypedList(collections.MutableSequence):
-    """A strong typed list based on collections.MutableSequence.
+class TypedList(collections.abc.MutableSequence):
+    """A strong typed list based on collections.abc.MutableSequence.
 
     The idea is to verify members type when editing the list. By using this
     class instead of the typical list, we enforce members type.

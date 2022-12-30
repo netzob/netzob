@@ -40,7 +40,7 @@ try:
 except ImportError:
     pass
 import types
-import collections
+import collections.abc
 from itertools import repeat
 from bitarray import bitarray
 
@@ -1372,7 +1372,7 @@ class Preset(object):
         self.mappingTypesMutators.update(new_preset.mappingTypesMutators)
 
     @public_api
-    @typeCheck(collections.Iterable)
+    @typeCheck(collections.abc.Iterable)
     def bulk_set(self, items):
         r"""
         The :meth:`bulk_set` method inserts multiple items at once.
@@ -1397,7 +1397,7 @@ class Preset(object):
         >>> next(symbol.specialize(p1))
         b'*\xff'
         """
-        if isinstance(items, collections.Mapping):
+        if isinstance(items, collections.abc.Mapping):
             items = items.items()
         for k, v in items:
             self[k] = v
@@ -1738,7 +1738,7 @@ class Preset(object):
 
                         generator = repeat(fixed_value)
 
-                    elif isinstance(fixed_value, collections.Iterable):
+                    elif isinstance(fixed_value, collections.abc.Iterable):
                         generator = fixed_value
                     else:
                         generator = repeat(fixed_value)
