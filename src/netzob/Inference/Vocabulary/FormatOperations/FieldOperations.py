@@ -168,23 +168,23 @@ class FieldOperations(object):
         The returned new field still needs to be placed into the symbol.
 
         >>> from netzob.all import *
-        >>> samples = [ b'\\x00\\xff/BPz', b'\\x00\\x00 CQ~', b'\\x00\\xff/Gf/' ]
+        >>> samples = [ b'\\x00\\xff/BPz12', b'\\x00\\x00 CQ~34', b'\\x00\\xff/Gf/56' ]
         >>> messages = [RawMessage(data=sample) for sample in samples]
         >>> f1 = Field(Data(Integer(unitSize=UnitSize.SIZE_8)))
-        >>> f2 = Field(Raw(nbBytes=2))
-        >>> f3 = Field(Raw(nbBytes=3))
+        >>> f2 = Field(Raw(nbBytes=3))
+        >>> f3 = Field(Raw(nbBytes=4))
         >>> symbol = Symbol([f1, f2, f3], messages=messages)
         >>> print(f2.domain.dataType.size)
-        (16, 16)
-        >>> print(f3.domain.dataType.size)
         (24, 24)
+        >>> print(f3.domain.dataType.size)
+        (32, 32)
         >>> nf = FieldOperations._blendFields(f2,f3)
-        >>> print(nf.domain.currentValue)
+        >>> print(nf.domain.dataType.value)
         None
         >>> print(nf.domain.dataType.endianness)
-        big
+        Endianness.BIG
         >>> print(nf.domain.dataType.size)
-        (40, 40)
+        (56, 56)
         >>> nf2 = FieldOperations._blendFields(f1,f2)
         Traceback (most recent call last):
         ...
@@ -198,15 +198,11 @@ class FieldOperations(object):
         """
 
         for d in [field1.domain, field2.domain]:
-            if len(d._AbstractVariable__boundedVariables) > 0 \
-                    or len(d._AbstractVariable__fathers) > 0 \
-                    or len(d._AbstractVariable__tokenChoppedIndexes) > 0:
-                raise TypeError("Blending does not support __boundedVariables, __fathers, or __tokenChoppedIndexes.")
             if not isinstance(d.dataType, Raw):
                 raise NotImplementedError("The datatype {} is not yet supported.".format(d.dataType.typeName))
 
-        if not field1.domain.svas == field2.domain.svas:
-            raise TypeError("The SVAS-values of both fields to merge are not the same.")
+        if not field1.domain.scope == field2.domain.scope:
+            raise TypeError("The scope-values of both fields to merge are not the same.")
         if not field1.domain.dataType.endianness == field2.domain.dataType.endianness:
             raise TypeError("The endianness of both fields to merge are not the same.")
         if not field1.domain.dataType.sign == field2.domain.dataType.sign:
@@ -217,7 +213,7 @@ class FieldOperations(object):
         # '_ASCII__nbChars': (None, None)
 
         newDomain = field1.domain.__class__(field1.domain.dataType.__class__())
-        newDomain.svas = field1.domain.svas
+        newDomain.scope = field1.domain.scope
         newDomain.dataType.endianness = field1.domain.dataType.endianness
         newDomain.dataType.sign = field1.domain.dataType.sign
         newDomain.dataType.unitSize = field1.domain.dataType.unitSize
@@ -239,9 +235,9 @@ class FieldOperations(object):
         newField.encodingFunctions = list(field1.encodingFunctions.values())
 
         # Position the new field in correct positions with correct dataType size
-        if field1.domain.currentValue is None or field2.domain.currentValue is None:
-            newField.domain.currentValue = None
+        if field1.domain.dataType.value is None or field2.domain.dataType.value is None:
+            newField.domain.dataType.value = None
         else:
-            newField.domain.currentValue = (field1.domain.currentValue + field2.domain.currentValue)
+            newField.domain.dataType.Value = (field1.domain.dataType.value + field2.domain.dataType.value)
 
         return newField
