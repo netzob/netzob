@@ -5,12 +5,12 @@
 *.so
 *.[ao]
 /MANIFEST
-/netzob/dist/*
+/dist/*
 /.settings/*
 /.project
 /.pydevproject
 /doc/netzob.1
-/netzob/build/*
+/build/*
 /netzob.bat
 *.egg-info
 /resources/static/netzob/locales/netzob.pot
@@ -31,6 +31,6 @@ lib64
 *.log
 dist/
 .mypy_cache/
-netzob/src/netzob/Fuzzing/Generators/xorshift.c
-netzob/doc/documentation/build/
+src/netzob/Fuzzing/Generators/xorshift.c
+doc/documentation/build/
 .vagrant/

@@ -36,7 +36,6 @@ stages:
   export LANG=fr_FR.UTF-8
 
 .python_script_template: &python_script_definition |
-  cd netzob
   python3 -m pip install wheel
   cat requirements.txt | xargs -n 1 -L 1 python3 -m pip install
   python3 -m pip install .
@@ -100,7 +99,6 @@ test:host:
     - sudo apt-get install --no-install-recommends -y libgraph-easy-perl
     - *use_virtualenv_definition
     - 'sudo setcap cap_net_raw=ep $(readlink -f $(type -p python3))'
-    - cd netzob
     - find build -name '*.so' | while read f; do d=$(echo "$f" | cut -d/ -f3-); cp -v "$f" "src/$d"; done
     - coverage3 run setup.py test
     - coverage3 report --include=src/netzob/* --omit='src/netzob/Inference/*,src/netzob/Import/*'
@@ -122,7 +120,6 @@ test:host:
 #     - *use_virtualenv_definition
 #     - *fetch_deps_definition
 #     - 'setcap cap_net_raw=ep $(readlink -f $(type -p python3))'
-#     - cd netzob
 #     - find build -name '*.so' | while read f; do d=$(echo "$f" | cut -d/ -f3-); cp -v "$f" "src/$d"; done
 #     - coverage3 run setup.py test
 #     - coverage3 report --include=src/netzob/* --omit='src/netzob/Inference/*,src/netzob/Import/*'
@@ -141,7 +138,6 @@ deploy:
     - develop
   script:
     - *apt_sys_deps_definition_nodocker
-    - cd netzob
     - cat requirements.txt | xargs -n 1 -L 1 python3 -m pip install
     - python3 -m pip install .
   after_script:
@@ -157,22 +153,10 @@ deploy-htmlcov:
     - master
     - develop
   script:
-    - cd netzob
     - sudo rm -rf /var/www/html/netzob-coverage
     - sudo install -d /var/www/html/netzob-coverage
     - sudo cp -r htmlcov/* /var/www/html/netzob-coverage/
   dependencies:
     - test:host
-  tags:
-    - ubuntu
-
-trigger_build:
-  stage: deploy
-  only:
-    - master
-    - develop
-  script:
-    - "sudo apt-get install --no-install-recommends -y curl"
-    - "curl -X POST -F token=$COTTONTAIL_CI_TOKEN -F ref=develop https://gitlab.amossys.fr/api/v3/projects/37/trigger/builds"
   tags:
     - ubuntu
