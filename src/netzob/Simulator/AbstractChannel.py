@@ -745,7 +745,7 @@ class NetUtils(object):
                 max_possible *= 2
             else:
                 break
-        namestr = names.tostring()
+        namestr = names.tobytes()
         ifaces = []
         for i in range(0, outbytes, struct_size):
             iface_name = bytes.decode(namestr[i:i+16]).split('\0', 1)[0]
