@@ -27,6 +27,10 @@
 #ifndef commonPythonLib_H
 #define commonPythonLib_H 
 
+#ifndef PY_SSIZE_T_CLEAN
+#define PY_SSIZE_T_CLEAN
+#endif /* PY_SSIZE_T_CLEAN */
+
 //+---------------------------------------------------------------------------+
 //| Imports
 //+---------------------------------------------------------------------------+
