@@ -781,7 +781,7 @@ class Actor(Thread):
     >>> bob.stop()
     >>> alice.stop()
     >>>
-    >>> print(bob.generateLog())
+    >>> print(bob.generateLog()) # doctest: +SKIP
     Activity log for actor 'Bob' (initiator):
       [+] At state 'S0'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
@@ -805,7 +805,7 @@ class Actor(Thread):
       [+]   Transition 'Close' lead to state 'S4'
       [+] At state 'S4'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
-    >>> print(alice.generateLog())
+    >>> print(alice.generateLog()) # doctest: +SKIP
     Activity log for actor 'Alice' (not initiator):
       [+] At state 'S0'
       [+]   Randomly choosing a transition to execute or to wait for an input symbol
