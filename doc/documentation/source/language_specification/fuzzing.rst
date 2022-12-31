@@ -10,7 +10,7 @@
 Format Message Fuzzing
 ----------------------
 
-The Preset class can also be used to apply format message fuzzing. Fuzzing configuration is provided by the :meth:`fuzz` method.
+The Preset class can be used to apply format message fuzzing. Fuzzing configuration is provided by the :meth:`fuzz` method.
 
 .. automethod:: netzob.Model.Vocabulary.Preset.Preset.fuzz(key, mode=None, generator=None, seed=None, counterMax=None, kwargs=None)
 

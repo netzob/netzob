@@ -64,7 +64,7 @@ communication protocols.
 
 Follow us on Twitter: `@Netzob <https://twitter.com/netzob>`_.
 
-Example of Ethernet IEEE 802.2 Modelization
+Example of Ethernet IEEE 802.3 Modelization
 ===========================================
 
 This quick example illustrates format message modelization, with fixed-size
@@ -177,7 +177,7 @@ Traffic Generation with Netzob
 Protocol Fuzzing with Netzob
 ============================
 
-Fuzzing can be applied of format message, state machine or both at the
+Fuzzing can be applied on format message, state machine or both at the
 same time. Fuzzing strategies may leverage either mutation of
 generation approaches.
 

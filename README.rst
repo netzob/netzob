@@ -124,7 +124,7 @@ Install it
 ----------
 
 First thing to do is to check the version of your python3 interpretor.
-Netzob requires python 3.8::
+Netzob requires at least Python 3.8::
 
   $ python3 --version
   Python 3.8.10
