@@ -120,6 +120,7 @@ Installation of Netzob
 
 .. toctree::
    :maxdepth: 2
+   :caption: Installation
 
    installation/python
 
@@ -133,6 +134,7 @@ Protocol Modelization with Netzob
 
 .. toctree::
    :maxdepth: 2
+   :caption: Protocol Modelization
 
    language_specification/dataspec
    language_specification/statemachinespec
@@ -154,6 +156,7 @@ Traffic Generation with Netzob
 
 .. toctree::
    :maxdepth: 2
+   :caption: Traffic Generation
 
    language_specification/trafficgeneration
    language_specification/actor
@@ -183,6 +186,7 @@ generation approaches.
 
 .. toctree::
    :maxdepth: 2
+   :caption: Fuzzing
 
    language_specification/fuzzing
 
