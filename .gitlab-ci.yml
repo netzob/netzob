@@ -1,0 +1,162 @@
+stages:
+  - lint
+  - build
+  - test
+  - deploy
+
+
+#################
+### templates ###
+#################
+.fetch_deps_template: &fetch_deps_definition |
+  eval $(ssh-agent -s)
+  ssh-add <(echo "$GITHUB_SSH_PRIVATE_KEY")
+  mkdir -p ~/.ssh
+  echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  python3 -m pip install numpy==1.14.3 'Cython<0.28' coverage
+
+.setup_virtualenv_template: &setup_virtualenv_definition |
+  python3 -m virtualenv -p $(type -p python3) .
+
+.use_virtualenv_template: &use_virtualenv_definition |
+  . bin/activate
+
+.apt_sys_deps_template: &apt_sys_deps_definition |
+  apt-get update -y
+  apt-get install --no-install-recommends -y python3{,-dev,-setuptools,-pip,-virtualenv} openssh-client git build-essential lib{pcap,ssl,ffi}-dev locales
+  echo 'fr_FR.UTF-8 UTF-8' >> /etc/locale.gen
+  locale-gen
+  export LANG=fr_FR.UTF-8
+
+.apt_sys_deps_template_nodocker: &apt_sys_deps_definition_nodocker |
+  sudo apt-get update -y
+  sudo apt-get install --no-install-recommends -y python3{,-dev,-setuptools,-pip,-virtualenv} openssh-client git build-essential lib{pcap,ssl,ffi}-dev locales
+  echo 'fr_FR.UTF-8 UTF-8' | sudo tee -a /etc/locale.gen
+  sudo locale-gen
+  export LANG=fr_FR.UTF-8
+
+.python_script_template: &python_script_definition |
+  python3 -m pip install wheel
+  cat requirements.txt | xargs -n 1 -L 1 python3 -m pip install
+  python3 -m pip install .
+  python3 setup.py sdist
+  python3 setup.py bdist
+  [ "$SSH_AGENT_PID" -gt 0 ] && kill "$SSH_AGENT_PID"
+
+#################
+####  jobs  #####
+#################
+flake8:
+  image: hoto/flake8
+  stage: lint
+  allow_failure: true
+  script:
+    - flake8 --ignore=E3,E5,W2,W3 netzob/src/netzob/
+  tags:
+    - docker
+
+build:host:
+  stage: build
+  script:
+    - *setup_virtualenv_definition
+    - *use_virtualenv_definition
+    - *fetch_deps_definition
+    - *python_script_definition
+  after_script:
+    - 'pkill ssh-agent || true'
+  artifacts:
+    expire_in: 1 month
+    paths:
+      - netzob/build/
+      - netzob/dist/
+      - src/
+      - bin/
+      - include/
+      - lib/
+  tags:
+    - ubuntu
+
+build:full:
+  stage: build
+  image: ubuntu:16.04
+  only:
+    - master
+    - develop
+  script:
+    - *apt_sys_deps_definition
+    - *setup_virtualenv_definition
+    - *use_virtualenv_definition
+    - *fetch_deps_definition
+    - *python_script_definition
+  after_script:
+    - 'pkill ssh-agent || true'
+  tags:
+    - docker
+
+test:host:
+  stage: test
+  script:
+    - sudo apt-get install --no-install-recommends -y libgraph-easy-perl
+    - *use_virtualenv_definition
+    - 'sudo setcap cap_net_raw=ep $(readlink -f $(type -p python3))'
+    - find build -name '*.so' | while read f; do d=$(echo "$f" | cut -d/ -f3-); cp -v "$f" "src/$d"; done
+    - coverage3 run setup.py test
+    - coverage3 report --include=src/netzob/* --omit='src/netzob/Inference/*,src/netzob/Import/*'
+    - coverage3 html --include=src/netzob/* --omit='src/netzob/Inference/*,src/netzob/Import/*'
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - netzob/htmlcov
+  tags:
+    - ubuntu
+
+# test:full:
+#   stage: test
+#   image: ubuntu:16.04
+#   script:
+#     - sed -i 's/main/main universe/' /etc/apt/sources.list
+#     - *apt_sys_deps_definition
+#     - apt-get install --no-install-recommends -y libgraph-easy-perl
+#     - *use_virtualenv_definition
+#     - *fetch_deps_definition
+#     - 'setcap cap_net_raw=ep $(readlink -f $(type -p python3))'
+#     - find build -name '*.so' | while read f; do d=$(echo "$f" | cut -d/ -f3-); cp -v "$f" "src/$d"; done
+#     - coverage3 run setup.py test
+#     - coverage3 report --include=src/netzob/* --omit='src/netzob/Inference/*,src/netzob/Import/*'
+#     - coverage3 html --include=src/netzob/* --omit='src/netzob/Inference/*,src/netzob/Import/*'
+#   artifacts:
+#     expire_in: 1 week
+#     paths:
+#       - netzob/htmlcov
+#   tags:
+#     - docker
+
+deploy:
+  stage: deploy
+  only:
+    - master
+    - develop
+  script:
+    - *apt_sys_deps_definition_nodocker
+    - cat requirements.txt | xargs -n 1 -L 1 python3 -m pip install
+    - python3 -m pip install .
+  after_script:
+    - 'sudo find -uid 0 -delete || true'
+  dependencies:
+    - build:host
+  tags:
+    - ubuntu
+
+deploy-htmlcov:
+  stage: deploy
+  only:
+    - master
+    - develop
+  script:
+    - sudo rm -rf /var/www/html/netzob-coverage
+    - sudo install -d /var/www/html/netzob-coverage
+    - sudo cp -r htmlcov/* /var/www/html/netzob-coverage/
+  dependencies:
+    - test:host
+  tags:
+    - ubuntu

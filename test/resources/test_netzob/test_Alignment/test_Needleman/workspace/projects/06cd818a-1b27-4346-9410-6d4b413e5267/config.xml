@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<netzob:project xmlns:netzob="http://www.netzob.org/project" id="06cd818a-1b27-4346-9410-6d4b413e5267" path="projects/06cd818a-1b27-4346-9410-6d4b413e5267/" creation_date="2012-08-13T22:27:04" name="RandomTest">
+  <netzob:configuration>
+    <netzob:vocabulary_inference>
+      <netzob:equivalence_threshold>60</netzob:equivalence_threshold>
+      <netzob:orphan_reduction>false</netzob:orphan_reduction>
+      <netzob:nb_iteration>100</netzob:nb_iteration>
+      <netzob:do_internal_slick>true</netzob:do_internal_slick>
+      <netzob:display_messages>true</netzob:display_messages>
+      <netzob:display_symbol_structure>false</netzob:display_symbol_structure>
+      <netzob:display_console>false</netzob:display_console>
+      <netzob:display_search>false</netzob:display_search>
+      <netzob:display_properties>false</netzob:display_properties>
+      <netzob:global_format>hex</netzob:global_format>
+      <netzob:global_unitsize>none</netzob:global_unitsize>
+      <netzob:global_sign>unsigned</netzob:global_sign>
+      <netzob:global_endianness>big-endian</netzob:global_endianness>
+      <netzob:environmental_dependencies/>
+    </netzob:vocabulary_inference>
+  </netzob:configuration>
+  <netzob:vocabulary>
+    <netzob:messages>
+
+    </netzob:messages>
+    <netzob:symbols>
+
+    </netzob:symbols>
+    <netzob:sessions>
+
+    </netzob:sessions>
+  </netzob:vocabulary>
+  <netzob:grammar/>
+</netzob:project>
