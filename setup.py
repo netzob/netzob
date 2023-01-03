@@ -39,16 +39,17 @@ from Cython.Build import cythonize
 sys.path.insert(0, 'src/')
 from netzob import release
 
-from resources.sdist.pybuild_command import pybuild_command
-from resources.sdist.test_command import test_command
-from resources.sdist.utils import find_data_files, opj, getPluginPaths
+try:
+    # Handle case where Netzob is not already installed
+    from resources.sdist.test_command import test_command
+except Exception:
+    def dummy():
+        pass
+    test_command = dummy
 
-# +----------------------------------------------------------------------------
-# | Definition of variables
-# +----------------------------------------------------------------------------
-# Path to the resources
-staticResourcesPath = opj("resources", "static")
-netzobStaticResourcesPath = opj(staticResourcesPath, "netzob")
+def opj(*args):
+    path = os.path.join(*args)
+    return os.path.normpath(path)
 
 # +----------------------------------------------------------------------------
 # | Compute the compilation arguments given the current compilation profile
@@ -212,18 +213,10 @@ dependency_links = []
 # | Extensions in the build operations (create manpage, i18n, ...)
 # +----------------------------------------------------------------------------
 CMD_CLASS = {
-    'build_py': pybuild_command,
     'test': test_command
 }
 
 # +----------------------------------------------------------------------------
-
-root_data_files = find_data_files(opj("share", "netzob"), netzobStaticResourcesPath, 'logo.png', recursive=False)
-app_data_files = find_data_files(opj("share", "applications"), netzobStaticResourcesPath, 'netzob.desktop', recursive=False)
-icons_data_files = find_data_files(opj("share", "netzob", "icons"), opj(netzobStaticResourcesPath, "icons"), '*.png')
-default_data_files = find_data_files(opj("share", "netzob", "defaults"), opj(netzobStaticResourcesPath, "defaults"), '*.default', recursive=False)
-
-data_files = root_data_files + app_data_files + icons_data_files + default_data_files
 
 # Extract the long description from README.rst and NEWS.rst files
 README = open('README.rst', 'rt').read()
@@ -240,7 +233,7 @@ setup(
     },
     ext_modules=[moduleLibNeedleman, moduleLibScoreComputation,
                  moduleLibInterface, moduleLibRelation] + cythonModules,
-    data_files=data_files,
+    #data_files=data_files,
     scripts=["netzob"],
     install_requires=get_dependencies(),
     extras_require=extra_dependencies,
@@ -250,7 +243,6 @@ setup(
     description=release.description,
     platforms=release.platforms,
     author=release.author,
-    author_email=release.author_email,
     url=release.url,
     download_url=release.download_url,
     keywords=release.keywords,
@@ -259,14 +251,12 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: C",
         "Development Status :: 4 - Beta",
-        "Environment :: X11 Applications :: GTK",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Operating System :: OS Independent",
         "Natural Language :: English",
-        "Natural Language :: French",
         "Topic :: Security",
         "Topic :: System :: Networking"
     ],

@@ -10,4 +10,5 @@ recursive-exclude resources *.mo
 recursive-exclude doc/documentation/build *
 recursive-include resources *
 recursive-include lib *
+global-include *.pyx
 recursive-exclude * *~ *.orig *.bak *.tmp *.pyc *.log
