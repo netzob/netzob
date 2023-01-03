@@ -48,6 +48,7 @@ from netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath import Speciali
 from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter
 from netzob.Model.Vocabulary.Types.BitArray import BitArray
 from netzob.Model.Vocabulary.Types.ASCII import ASCII
+from netzob.Model.Vocabulary.Types.Raw import Raw
 from netzob.Model.Vocabulary.Field import Field
 
 
@@ -107,7 +108,25 @@ class MessageSpecializer(object):
 
     @typeCheck(Symbol)
     def specializeSymbol(self, symbol):
-        """This method generates a message based on the provided symbol definition."""
+        """This method generates a message based on the provided symbol definition.
+        It also leverages the specified presets to force the value of a field
+
+        >>> from netzob.all import *
+        >>> f0 = Field(name="Type", domain=Raw("\x01"))
+        >>> f2 = Field(name="Value", domain=Raw(nbBytes=10))
+        >>> f1 = Field(name="Length", domain = Size(f2, dataType = Raw(nbBytes=3, unitSize = AbstractType.UNITSIZE_32)))
+        >>> s = Symbol(fields = [f0, f1, f2])
+        >>> generated_data = TypeConverter.convert(MessageSpecializer().specializeSymbol(s).generatedContent, BitArray, Raw)
+        >>> len(generated_data) > 4
+        True
+
+        # we can use presets to arbitrary fix the value of one field
+        >>> presets = { "Value": "hello" }
+        >>> TypeConverter.convert(MessageSpecializer(presets = presets).specializeSymbol(s).generatedContent, BitArray, Raw)
+        b'\\x01\\x00\\x00\\x05hello'
+
+
+        """
         if symbol is None:
             raise Exception("Specified symbol is None")
 
@@ -231,6 +250,23 @@ class MessageSpecializer(object):
     def _update_presets(self, symbol):
         """Update the presets dict, according to the symbol definition.
 
+        >>> from netzob.all import *
+        >>> f0 = Field(name="test", domain = Raw(nbBytes=10))
+        >>> s = Symbol(fields= [ f0 ])
+        >>> mspe = MessageSpecializer(presets = { "test": "helloworld" })
+        >>> path = mspe.specializeSymbol(s)
+        >>> print(TypeConverter.convert(path.generatedContent, BitArray, Raw))
+        b'helloworld'
+
+        >>> from netzob.all import *
+        >>> f0 = Field(name="test", domain = Repeat(Raw(nbBytes=10), nbRepeat=(0, 10)))
+        >>> s = Symbol(fields= [ f0 ])
+        >>> mspe = MessageSpecializer(presets = { "test": "this value replace a repeat" })
+        >>> path = mspe.specializeSymbol(s)
+        >>> print(TypeConverter.convert(path.generatedContent, BitArray, Raw))
+        b'this value replace a repeat'
+
+
         """
 
         if self.presets is None:
@@ -253,7 +289,8 @@ class MessageSpecializer(object):
                                                             src_endianness=k.domain.dataType.endianness,
                                                             dst_endianness=k.domain.dataType.endianness)
                 else:
-                    raise Exception("Cannot find the default dataType for field '{}'".format(k))
+                    # we believe the provided value is a Raw
+                    self.presets[k] = TypeConverter.convert(v, Raw, BitArray)
 
             # Handle case where k is a string
             elif isinstance(k, str):
@@ -274,7 +311,9 @@ class MessageSpecializer(object):
                                                                 dst_endianness=f.domain.dataType.endianness)
                             old_keys.append(k)
                         else:
-                            raise Exception("Cannot find the default dataType for field '{}'".format(f.name))
+                            # we believe the provided value is a Raw
+                            new_keys[f] =  TypeConverter.convert(v, Raw, BitArray)
+                            old_keys.append(k)
                         break
             else:
                 raise Exception("Preset's keys must be of Field or string types")
