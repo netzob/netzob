@@ -2,37 +2,14 @@
 Netzob : Protocol Reverse Engineering, Modeling and Fuzzing
 ===========================================================
 
-.. image:: https://travis-ci.org/netzob/netzob.svg?branch=next
-    :target: https://travis-ci.org/netzob/netzob
-    :alt: Continuous integration
-
-.. image:: https://coveralls.io/repos/github/netzob/netzob/badge.svg?branch=next
-    :target: https://coveralls.io/github/netzob/netzob?branch=next
-    :alt: Code coverage
-
-.. image:: https://landscape.io/github/netzob/netzob/next/landscape.svg?style=flat
-    :target: https://landscape.io/github/netzob/netzob/next
-    :alt: Code health
-
-.. image:: https://readthedocs.org/projects/gef/badge/?version=latest
-    :target: https://netzob.readthedocs.org/en/latest/
-    :alt: Doc
-
 .. image:: https://img.shields.io/badge/Python-3-brightgreen.svg
     :target: https://github.com/netzob/netzob
     :alt: Python3
-
-.. image:: https://img.shields.io/badge/freenode-%23netzob-yellowgreen.svg
-    :target: https://webchat.freenode.net/?channels=#netzob
-    :alt: IRC
 
 See complete documentation here: https://netzob.github.io/netzob/
 
 About Netzob
 ============
-
-Functional Description
------------------------
 
 **Netzob** is an open source tool for reverse engineering,
 modelization, traffic generation and fuzzing of communication
@@ -55,8 +32,8 @@ Once modeled or inferred, a protocol model can be used in our traffic
 generation engine, to allow simulation of realistic and controllable
 communication endpoints and flows.
 
-Main features
--------------
+Main features of Netzob
+=======================
 
 The main features of Netzob are:
 
@@ -89,23 +66,17 @@ The main features of Netzob are:
    main traffic dissectors (Wireshark and Scapy) and fuzzers (Peach and
    Sulley).
 
-
-Technical Description
----------------------
-
-This version of Netzob must be used as a Python 3 library. It can either be imported in your scripts
+Netzob must be used as a Python 3 library. It can either be imported in your scripts
 or in your favorite interactive shell (ipython?).
 
-Netzob's source code is mostly made of Python (90%) with some specific extensions in C (6%). 
-
 More Information
-----------------
+================
 
 :Website: https://github.com/netzob/netzob
 :Twitter: Follow Netzob's official accounts (@Netzob)
 
 Netzob has been initiated by security auditors of AMOSSYS and the
-CIDre research team of Supélec to address the reverse engineering and
+CIDre research team of CentraleSupélec to address the reverse engineering and
 fuzzing of communication protocols.
 
 Documentation

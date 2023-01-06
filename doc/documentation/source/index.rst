@@ -189,6 +189,7 @@ generation approaches.
    :caption: Fuzzing
 
    language_specification/fuzzing
+   language_specification/fuzzing_automata
 
 .. note::
 
