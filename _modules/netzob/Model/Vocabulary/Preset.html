@@ -1,0 +1,2436 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Preset &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Preset</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># |          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># |               Netzob : Inferring communication protocols                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1"># | This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1"># | it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1"># | the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1"># | (at your option) any later version.                                       |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1"># | but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1"># | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1"># | GNU General Public License for more details.                              |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | You should have received a copy of the GNU General Public License         |</span>
+<span class="c1"># | along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | @url      : http://www.netzob.org                                         |</span>
+<span class="c1"># | @contact  : contact@netzob.org                                            |</span>
+<span class="c1"># | @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1"># |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1"># |             ANSSI,   https://www.ssi.gouv.fr                              |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | File contributors :                                                       |</span>
+<span class="c1"># |       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1"># |       - Rémy Delion &lt;remy.delion (a) amossys.fr&gt;                          |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Standard library imports                                                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># noqa: F401</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">collections.abc</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">repeat</span>
+<span class="kn">from</span> <span class="nn">bitarray</span> <span class="kn">import</span> <span class="n">bitarray</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Related third party imports                                               |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Local application imports                                                 |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.AbstractVariable</span> <span class="kn">import</span> <span class="n">AbstractVariable</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode</span> <span class="kn">import</span> <span class="n">AbstractVariableNode</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat</span> <span class="kn">import</span> <span class="n">Repeat</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt</span> <span class="kn">import</span> <span class="n">Alt</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg</span> <span class="kn">import</span> <span class="n">Agg</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.AbstractType</span> <span class="kn">import</span> <span class="n">AbstractType</span><span class="p">,</span> <span class="n">Sign</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.AbstractField</span> <span class="kn">import</span> <span class="n">AbstractField</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.Integer</span> <span class="kn">import</span> <span class="n">Integer</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.String</span> <span class="kn">import</span> <span class="n">String</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.Raw</span> <span class="kn">import</span> <span class="n">Raw</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.HexaString</span> <span class="kn">import</span> <span class="n">HexaString</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.IPv4</span> <span class="kn">import</span> <span class="n">IPv4</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.Timestamp</span> <span class="kn">import</span> <span class="n">Timestamp</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Generators.GeneratorFactory</span> <span class="kn">import</span> <span class="n">repeatfunc</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutator</span> <span class="kn">import</span> <span class="n">Mutator</span><span class="p">,</span> <span class="n">FuzzingMode</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.AltMutator</span> <span class="kn">import</span> <span class="n">AltMutator</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.AggMutator</span> <span class="kn">import</span> <span class="n">AggMutator</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.RepeatMutator</span> <span class="kn">import</span> <span class="n">RepeatMutator</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.DomainMutator</span> <span class="kn">import</span> <span class="n">DomainMutator</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.IntegerMutator</span> <span class="kn">import</span> <span class="n">IntegerMutator</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.StringMutator</span> <span class="kn">import</span> <span class="n">StringMutator</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.TimestampMutator</span> <span class="kn">import</span> <span class="n">TimestampMutator</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.IPv4Mutator</span> <span class="kn">import</span> <span class="n">IPv4Mutator</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.BitArrayMutator</span> <span class="kn">import</span> <span class="n">BitArrayMutator</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.RawMutator</span> <span class="kn">import</span> <span class="n">RawMutator</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.HexaStringMutator</span> <span class="kn">import</span> <span class="n">HexaStringMutator</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">NetzobLogger</span><span class="p">,</span> <span class="n">public_api</span><span class="p">,</span> <span class="n">typeCheck</span>
+
+
+<div class="viewcode-block" id="Preset"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Preset.Preset">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">Preset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Preset class is used to configure symbol specialization, by</span>
+<span class="sd">    fixing the expected value of a field or a variable. The Preset</span>
+<span class="sd">    component also works at the Field level, in the context of field</span>
+<span class="sd">    specialization. The Preset class is also the component responsible</span>
+<span class="sd">    for format message fuzzing (see below).</span>
+
+<span class="sd">    The Preset constructor expects some parameters:</span>
+
+<span class="sd">    :param symbol: A symbol (or field) on which to apply Preset configuration.</span>
+<span class="sd">    :param name: The name of the preset configuration. Default value is &#39;preset&#39;.</span>
+<span class="sd">    :type symbol: :class:`Symbol &lt;netzob.Model.Vocabulary.Symbol.Symbol&gt;` or :class:`Field &lt;netzob.Model.Vocabulary.Field.Field&gt;`, required</span>
+<span class="sd">    :type name: :class:`str`, optional</span>
+
+<span class="sd">    The Preset works like a Python :class:`dict` with a key:value principle:</span>
+
+<span class="sd">    :param key: The field or variable for which we want to set the value.</span>
+<span class="sd">    :param value: The configured value for the field or value.</span>
+<span class="sd">    :type key: :class:`Field</span>
+<span class="sd">                &lt;netzob.Model.Vocabulary.Field.Field&gt;`,</span>
+<span class="sd">                or :class:`Variable</span>
+<span class="sd">                &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`, required</span>
+<span class="sd">    :type value: :class:`bytes`, :class:`bitarray &lt;bitarray.bitarray&gt;` or the type associated with of the overridden field</span>
+<span class="sd">               variable, required</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       You can only set (e.g. ``preset[field] = b&#39;\xaa\xbb&#39;``) or unset (e.g. ``del preset[field]``) a Preset configuration on a field or variable. However, it is not allowed to access an item of the Preset configuration (e.g. ``new_var = preset[field]``).</span>
+
+
+<span class="sd">    **The different ways to specify a field to preset**</span>
+
+<span class="sd">    It is possible to parameterize fields during symbol (or field)</span>
+<span class="sd">    specialization. Values configured for fields will override any</span>
+<span class="sd">    field definition, constraints or relationship dependencies.</span>
+
+<span class="sd">    The Preset configuration accepts a sequence of keys and values,</span>
+<span class="sd">    where keys correspond to the fields or variables in the symbol that we want</span>
+<span class="sd">    to override, and values correspond to the overriding</span>
+<span class="sd">    content. Keys are either expressed as field/variable object or strings</span>
+<span class="sd">    containing field/variable accessors when names are used (such as</span>
+<span class="sd">    in ``f = Field(name=&quot;udp.dport&quot;)``). Values are either</span>
+<span class="sd">    expressed as :class:`bitarray &lt;bitarray.bitarray&gt;` (as it is</span>
+<span class="sd">    the internal type for variables in the Netzob library), as</span>
+<span class="sd">    :class:`bytes` or in the type associated with of the overridden field</span>
+<span class="sd">    variable.</span>
+
+<span class="sd">    The following code shows the definition of a simplified UDP</span>
+<span class="sd">    header that will be later used as base example. This UDP</span>
+<span class="sd">    header is made of one named field containing a destination</span>
+<span class="sd">    port, and a named field containing a payload:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f_dport = Field(name=&quot;udp.dport&quot;, domain=Integer(unitSize=UnitSize.SIZE_8))</span>
+<span class="sd">    &gt;&gt;&gt; f_payload = Field(name=&quot;udp.payload&quot;, domain=Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; symbol_udp = Symbol(name=&quot;udp&quot;, fields=[f_dport, f_payload])</span>
+
+<span class="sd">    The four following codes show the same way to express the</span>
+<span class="sd">    parameterized **values** during specialization of the</span>
+<span class="sd">    ``udp_dport`` and ``udp_payload`` fields:</span>
+
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol_udp)</span>
+<span class="sd">    &gt;&gt;&gt; preset[f_dport] = 11              # udp.dport expects an int or an Integer</span>
+<span class="sd">    &gt;&gt;&gt; preset[f_payload] = b&quot;\xaa\xbb&quot;   # udp.payload expects a bytes object or a Raw object</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol_udp.specialize(preset))</span>
+<span class="sd">    b&#39;\x00\x0b\xaa\xbb&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol_udp)</span>
+<span class="sd">    &gt;&gt;&gt; preset[&quot;udp.dport&quot;] = 11              # udp.dport expects an int or an Integer</span>
+<span class="sd">    &gt;&gt;&gt; preset[&quot;udp.payload&quot;] = b&quot;\xaa\xbb&quot;   # udp.payload expects a bytes object or a Raw object</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol_udp.specialize(preset))</span>
+<span class="sd">    b&#39;\x00\x0b\xaa\xbb&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol_udp)</span>
+<span class="sd">    &gt;&gt;&gt; preset[&quot;udp.dport&quot;] = uint16(11)          # udp.dport expects an int or an Integer</span>
+<span class="sd">    &gt;&gt;&gt; preset[&quot;udp.payload&quot;] = Raw(b&quot;\xaa\xbb&quot;)  # udp.payload expects a bytes object or a Raw object</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol_udp.specialize(preset))</span>
+<span class="sd">    b&#39;\x00\x0b\xaa\xbb&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol_udp)</span>
+<span class="sd">    &gt;&gt;&gt; preset[&quot;udp.dport&quot;] = bitarray(&#39;00001011&#39;, endian=&#39;big&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; preset[&quot;udp.payload&quot;] = bitarray(&#39;1010101010111011&#39;, endian=&#39;big&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol_udp.specialize(preset))</span>
+<span class="sd">    b&#39;\x0b\xaa\xbb&#39;</span>
+
+<span class="sd">    The previous example shows the use of BitArray as dict</span>
+<span class="sd">    values. BitArray are always permitted for any parameterized</span>
+<span class="sd">    field, as it is the internal type for variables in the Netzob</span>
+<span class="sd">    library.</span>
+
+
+<span class="sd">    A preset value bypasses all the constraint checks on the field definition.</span>
+<span class="sd">    In the following example, it is used to bypass a size field definition.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field()</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(domain=Raw(nbBytes=(10,15)))</span>
+<span class="sd">    &gt;&gt;&gt; f1.domain = Size(f2)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(fields=[f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(s)</span>
+<span class="sd">    &gt;&gt;&gt; preset[f1] = bitarray(&#39;11111111&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize(preset))</span>
+<span class="sd">    b&#39;\xff\x10\xdb\xf7\x07i\xec\xfb\x8eR\x11\xfa\xa7&amp;\x7f&#39;</span>
+
+
+<span class="sd">    **Fixing the value of a field**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[f1] = b&#39;\x41&#39;</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A&#39;</span>
+
+
+<span class="sd">    **Fixing the value of a sub-field**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; f2_1 = Field(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; f2_2 = Field(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field([f2_1, f2_2])</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1, f2], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[f2_1] = b&#39;\x41&#39;</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;\xb8A\x16&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;\xb8A\xd7&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;\xb8AG&#39;</span>
+
+
+<span class="sd">    **Fixing the value of a field that contains sub-fields**</span>
+
+<span class="sd">    This should trigger an exception as it is only possible to fix a value to leaf fields.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; f2_1 = Field(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; f2_2 = Field(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field([f2_1, f2_2])</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1, f2], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[f2] = b&#39;\x41&#39;</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    Exception: Cannot set a fixed value on a field that contains sub-fields</span>
+
+
+<span class="sd">    **Fixing the value of a leaf variable**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; v1 = Data(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Data(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; v_agg = Agg([v1, v2])</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_agg)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[v1] = b&#39;\x41&#39;</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A\xb5&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A\xc3&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A\xd7&#39;</span>
+
+
+<span class="sd">    **Fixing the value of a node variable**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; v1 = Data(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Data(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; v_agg = Agg([v1, v2])</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_agg)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[v_agg] = b&#39;\x41\x42\x43&#39;</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;ABC&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;ABC&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;ABC&#39;</span>
+
+
+<span class="sd">    **Fixing the value of a field, by relying on a provided generator**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; my_generator = (x for x in [b&#39;\x41&#39;, b&#39;\x42&#39;, b&#39;\x43&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; preset[f1] = my_generator</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;B&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;C&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    RuntimeError: generator raised StopIteration</span>
+
+
+<span class="sd">    **Fixing the value of a field, by relying on a provided iterator**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; my_iter = iter([b&#39;\x41&#39;, b&#39;\x42&#39;, b&#39;\x43&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; preset[f1] = my_iter</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;B&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;C&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    RuntimeError: generator raised StopIteration</span>
+
+
+<span class="sd">    **Fixing the value of a field, by relying on a provided function**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; def my_callable():</span>
+<span class="sd">    ...     return random.choice([b&#39;\x41&#39;, b&#39;\x42&#39;, b&#39;\x43&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; preset[f1] = my_callable</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;B&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;C&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;B&#39;</span>
+
+
+<span class="sd">    **Fixing the value of a field through its name**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8(), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[&#39;f1&#39;] = b&#39;\x41&#39;</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A&#39;</span>
+
+
+<span class="sd">    **Fixing the value of a variable leaf through its name**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; v1 = Data(uint8(), name=&#39;v1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Data(uint8(), name=&#39;v2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; v_agg = Agg([v1, v2], name=&#39;v_agg&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_agg)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[&#39;v1&#39;] = b&#39;\x41\x42\x43&#39;</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;ABC\xe9&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;ABCY&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;ABC\x9b&#39;</span>
+
+
+<span class="sd">    **Fixing the value of a variable node through its name**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; v1 = Data(uint8(), name=&#39;v1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Data(uint8(), name=&#39;v2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; v_agg = Agg([v1, v2], name=&#39;v_agg&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_agg)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[&#39;v_agg&#39;] = b&#39;\x41\x42\x43&#39;</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;ABC&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;ABC&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;ABC&#39;</span>
+
+
+<span class="sd">    **Unfixing the value of a field**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8(), name=&#39;field 1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[f1] = b&#39;\x41&#39;</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;A&#39;</span>
+<span class="sd">    &gt;&gt;&gt; del preset[f1]</span>
+<span class="sd">    &gt;&gt;&gt; messages_gen = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; next(messages_gen)</span>
+<span class="sd">    b&#39;\xb9&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">mappingTypesMutators</span> <span class="o">=</span> <span class="p">{}</span>   <span class="c1"># type: Dict[AbstractType, Union[DomainMutator, dict]]</span>
+    <span class="n">mappingFieldsMutators</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[Field, DomainMutator]</span>
+
+    <span class="c1"># Initialize mapping of types with their mutators</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_initializeTypeMappings</span><span class="p">():</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">Integer</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">IntegerMutator</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">StringMutator</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">HexaString</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">HexaStringMutator</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">Raw</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">RawMutator</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">BitArray</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">BitArrayMutator</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">IPv4</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">IPv4Mutator</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">TimestampMutator</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">Repeat</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">RepeatMutator</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">Alt</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">AltMutator</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">Agg</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">AggMutator</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;preset&quot;</span><span class="p">):</span>
+        <span class="c1"># Link a preset to its symbol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="n">symbol</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="c1"># Initialize counterMax</span>
+        <span class="n">DomainMutator</span><span class="o">.</span><span class="n">globalCounterMax</span> <span class="o">=</span> <span class="n">DomainMutator</span><span class="o">.</span><span class="n">COUNTER_MAX_DEFAULT</span>
+
+        <span class="c1"># Initialize mapping between Types and default Mutators with default</span>
+        <span class="c1"># configuration</span>
+        <span class="n">Preset</span><span class="o">.</span><span class="n">_initializeTypeMappings</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mappingTypesMutators</span> <span class="o">=</span> <span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span>
+
+        <span class="c1"># Initialize mapping between Field/Symbol and Mutators</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the name of the current preset object.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; s = Symbol()</span>
+<span class="sd">        &gt;&gt;&gt; p = Preset(s, name=&quot;test&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; print(p)</span>
+<span class="sd">        test</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+<div class="viewcode-block" id="Preset.fuzz"><a class="viewcode-back" href="../../../../language_specification/fuzzing.html#netzob.Model.Vocabulary.Preset.Preset.fuzz">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">fuzz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">key</span><span class="p">,</span>
+             <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">mode</span><span class="o">=</span><span class="n">FuzzingMode</span><span class="o">.</span><span class="n">GENERATE</span><span class="p">,</span>
+             <span class="n">generator</span><span class="o">=</span><span class="s1">&#39;xorshift&#39;</span><span class="p">,</span>
+             <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">counterMax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The :meth:`fuzz &lt;.Preset.fuzz&gt;` method specifies the fuzzing</span>
+<span class="sd">        strategy for a symbol, a field, a variable or a type.</span>
+
+<span class="sd">        Applying a fuzzing strategy on a object has the effect to</span>
+<span class="sd">        propagate the fuzzing strategy to the object descendants</span>
+<span class="sd">        (i.e. fuzzing a symbol will activate fuzzing on its fields,</span>
+<span class="sd">        which then triggers the fuzzing of the associated field</span>
+<span class="sd">        variables). It is possible to control the fuzzing propagation</span>
+<span class="sd">        on node variables (``Agg``, ``Alt``, ``Repeat`` and ``Opt``)</span>
+<span class="sd">        with the :attr:`mutateChild` parameter. Besides, it is</span>
+<span class="sd">        possible to specifically deactivate fuzzing on a object with</span>
+<span class="sd">        the :meth:`unset &lt;.Preset.unset&gt;` method.</span>
+
+<span class="sd">        The :meth:`fuzz &lt;.Preset.fuzz&gt;` method expects some parameters:</span>
+
+<span class="sd">        :param key: The targeted object (either a symbol, a field, a</span>
+<span class="sd">                    variable or a type).</span>
+<span class="sd">        :param mode: The fuzzing strategy, which can be either:</span>
+
+<span class="sd">                     * ``FuzzingMode.MUTATE``: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied to it.</span>
+<span class="sd">                     * ``FuzzingMode.GENERATE``: in this mode, the fuzzing component directly produces a random message.</span>
+
+<span class="sd">                     Default value is :attr:`FuzzingMode.GENERATE`.</span>
+
+<span class="sd">        :param generator: The underlying generator used to produce</span>
+<span class="sd">                          pseudo-random or deterministic</span>
+<span class="sd">                          values.</span>
+
+<span class="sd">                          Default generator is ``&#39;xorshift&#39;``, which is</span>
+<span class="sd">                          efficient to produce unique pseudo-random</span>
+<span class="sd">                          numbers.</span>
+
+<span class="sd">                          A deterministic is also available</span>
+<span class="sd">                          (``generator=&#39;determinist&#39;``), and</span>
+<span class="sd">                          may be used in case where a domain has an</span>
+<span class="sd">                          interval (see below).</span>
+
+<span class="sd">        :param seed: An integer used to initialize the underlying</span>
+<span class="sd">                     generator.</span>
+
+<span class="sd">                     If None, the default value will be set to :attr:`Mutator.SEED_DEFAULT`. The :attr:`Mutator.SEED_DEFAULT` constant is initialized from the configuration variable :attr:`Conf.seed` from the Netzob API :class:`Conf` class.</span>
+
+<span class="sd">        :param counterMax: An integer used to limit the number of</span>
+<span class="sd">                           mutations.</span>
+
+<span class="sd">                           If None, the default value will be set to :attr:`COUNTER_MAX_DEFAULT` = ``2**32``.</span>
+
+<span class="sd">        :param kwargs: Some context dependent parameters (see below)</span>
+<span class="sd">                       (optional).</span>
+<span class="sd">        :type key: :class:`Field</span>
+<span class="sd">                   &lt;netzob.Model.Vocabulary.Field.Field&gt;`,</span>
+<span class="sd">                   or :class:`Symbol</span>
+<span class="sd">                   &lt;netzob.Model.Vocabulary.Symbol.Symbol&gt;`,</span>
+<span class="sd">                   or :class:`Variable</span>
+<span class="sd">                   &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`,</span>
+<span class="sd">                   or :class:`AbstractType</span>
+<span class="sd">                   &lt;netzob.Model.Vocabulary.Types.AbstractType.AbstractType&gt;`, required</span>
+<span class="sd">        :type mode: :class:`Enum`, optional</span>
+<span class="sd">        :type generator: :class:`iter`, optional</span>
+<span class="sd">        :type seed: :class:`int`, optional</span>
+<span class="sd">        :type counterMax: :class:`int`, optional</span>
+<span class="sd">        :type kwargs: :class:`dict`, optional</span>
+
+<span class="sd">        The ``kwargs`` parameter is used to provide specific options</span>
+<span class="sd">        depending on the targeted object type. Available options are</span>
+<span class="sd">        described in the following tables:</span>
+
+<span class="sd">        .. raw:: latex</span>
+
+<span class="sd">           \newpage</span>
+
+<span class="sd">        Integer options:</span>
+
+<span class="sd">        .. tabularcolumns:: |p{3cm}|p{10cm}|</span>
+
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">               Option                           Description</span>
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">        interval              The scope of values to generate.</span>
+
+<span class="sd">                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be</span>
+<span class="sd">                                generated between the min and max values of the domain.</span>
+<span class="sd">                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be</span>
+<span class="sd">                                generated in [0, 2^N-1], where N is the bitsize (storage) of the field.</span>
+<span class="sd">                              * If it is a tuple of integers (min, max), the values will be generated</span>
+<span class="sd">                                between min and max.</span>
+
+<span class="sd">                              Default value is dependant on the chosen generator:</span>
+
+<span class="sd">                              * If the generator is `determinist`,</span>
+<span class="sd">                                default interval will be :attr:`FuzzingInterval.DEFAULT_INTERVAL`.</span>
+<span class="sd">                              * Else, default interval will be :attr:`FuzzingInterval.FULL_INTERVAL`.</span>
+
+<span class="sd">        lengthBitSize         The size in bits of the memory on which the generated values have to</span>
+<span class="sd">                              be encoded.</span>
+
+<span class="sd">                              The following sizes are available:</span>
+
+<span class="sd">                              * ``None`` (default value), which indicates to use the unit size set</span>
+<span class="sd">                                in the field domain.</span>
+<span class="sd">                              * ``UnitSize.SIZE_8``</span>
+<span class="sd">                              * ``UnitSize.SIZE_16``</span>
+<span class="sd">                              * ``UnitSize.SIZE_24``</span>
+<span class="sd">                              * ``UnitSize.SIZE_32``</span>
+<span class="sd">                              * ``UnitSize.SIZE_64``</span>
+<span class="sd">        ====================  =========================================================================</span>
+
+
+<span class="sd">        .. raw:: latex</span>
+
+<span class="sd">           \newpage</span>
+
+<span class="sd">        String options:</span>
+
+<span class="sd">        .. tabularcolumns:: |p{3cm}|p{10cm}|</span>
+
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">               Option                           Description</span>
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">        endChar               The :class:`str` character(s) which will end the string. This terminal</span>
+<span class="sd">                              symbol will be mutated by truncating its value if defined on several</span>
+<span class="sd">                              bytes.</span>
+
+<span class="sd">                              Default value is :attr:`DEFAULT_END_CHAR`. It is used to set the eos</span>
+<span class="sd">                              parameter of :class:`String &lt;netzob.Model.Vocabulary.Types.String&gt;`.</span>
+
+<span class="sd">        interval              The scope of values to generate.</span>
+
+<span class="sd">                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be</span>
+<span class="sd">                                randomly generated with a size between the min and max values of the</span>
+<span class="sd">                                domain.</span>
+<span class="sd">                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be</span>
+<span class="sd">                                randomly generated with a size of [0, 2^N-1], where N is the length in</span>
+<span class="sd">                                bits of the integer used to represent the String length.</span>
+<span class="sd">                              * If it is a tuple of integers (min, max), the values will be randomly</span>
+<span class="sd">                                generated with a size between min and max.</span>
+
+<span class="sd">                              Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.</span>
+
+<span class="sd">        lengthBitSize         The size in bits of the memory on which the generated length will be</span>
+<span class="sd">                              encoded. This parameter should be used in conjunction with</span>
+<span class="sd">                              :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order</span>
+<span class="sd">                              to generate String with a length bigger than the original full interval.</span>
+<span class="sd">                              This parameter will not have any effect when used with</span>
+<span class="sd">                              :attr:`FuzzingInterval.DEFAULT_INTERVAL`.</span>
+
+<span class="sd">                              The following sizes are available:</span>
+
+<span class="sd">                              * ``None`` (default value), which indicates to use the unit size set in</span>
+<span class="sd">                                the field domain.</span>
+<span class="sd">                              * ``UnitSize.SIZE_1``</span>
+<span class="sd">                              * ``UnitSize.SIZE_4``</span>
+<span class="sd">                              * ``UnitSize.SIZE_8``</span>
+<span class="sd">                              * ``UnitSize.SIZE_16``</span>
+<span class="sd">                              * ``UnitSize.SIZE_24``</span>
+<span class="sd">                              * ``UnitSize.SIZE_32``</span>
+<span class="sd">                              * ``UnitSize.SIZE_64``</span>
+<span class="sd">        naughtyStrings        The :class:`list` of potentially dangerous :class:`str` elements.</span>
+
+<span class="sd">                              Default value is :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS`.</span>
+
+<span class="sd">        ====================  =========================================================================</span>
+
+<span class="sd">        The :attr:`StringMutator.DEFAULT_NAUGHTY_STRINGS` default value is the following:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           DEFAULT_NAUGHTY_STRINGS = [</span>
+<span class="sd">                 &#39;System(&quot;ls -al /&quot;)&#39;,</span>
+<span class="sd">                 &#39;`ls -al /`&#39;,</span>
+<span class="sd">                 &#39;Kernel.exec(&quot;ls -al /&quot;)&#39;,</span>
+<span class="sd">                 &#39;Kernel.exit(1)&#39;,</span>
+<span class="sd">                 &#39;%x(&quot;ls -al /&quot;)&#39;,</span>
+<span class="sd">                 &#39;&lt;img \\x00src=x onerror=&quot;alert(1)&quot;&gt;&#39;,</span>
+<span class="sd">                 &#39;$ENV{&quot;HOME&quot;}&#39;,</span>
+<span class="sd">                 &#39;%d&#39;,</span>
+<span class="sd">                 &#39;%s&#39;]</span>
+
+
+<span class="sd">        .. raw:: latex</span>
+
+<span class="sd">           \newpage</span>
+
+<span class="sd">        Raw options:</span>
+
+<span class="sd">        .. tabularcolumns:: |p{3cm}|p{10cm}|</span>
+
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">               Option                           Description</span>
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">        interval              The scope of values to generate.</span>
+
+<span class="sd">                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be</span>
+<span class="sd">                                randomly generated with a size between the min and max values of the</span>
+<span class="sd">                                domain.</span>
+<span class="sd">                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be</span>
+<span class="sd">                                randomly generated with a size of [0, 2^N-1], where N is the length in</span>
+<span class="sd">                                bits of the integer used to represent the Raw data length.</span>
+<span class="sd">                              * If it is a tuple of integers (min, max), the values will be randomly</span>
+<span class="sd">                                generated with a size between min and max.</span>
+
+<span class="sd">                              Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.</span>
+
+<span class="sd">        lengthBitSize         The size in bits of the memory on which the generated length will be</span>
+<span class="sd">                              encoded. This parameter should be used in conjunction with</span>
+<span class="sd">                              :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order</span>
+<span class="sd">                              to generate Raw data with a length bigger than the original full</span>
+<span class="sd">                              interval. This parameter will not have any effect when used with</span>
+<span class="sd">                              :attr:`FuzzingInterval.DEFAULT_INTERVAL`.</span>
+
+<span class="sd">                              The following sizes are available:</span>
+
+<span class="sd">                              * ``None`` (default value), which indicates to use the unit size set in</span>
+<span class="sd">                                the field domain.</span>
+<span class="sd">                              * ``UnitSize.SIZE_1``</span>
+<span class="sd">                              * ``UnitSize.SIZE_4``</span>
+<span class="sd">                              * ``UnitSize.SIZE_8``</span>
+<span class="sd">                              * ``UnitSize.SIZE_16``</span>
+<span class="sd">                              * ``UnitSize.SIZE_24``</span>
+<span class="sd">                              * ``UnitSize.SIZE_32``</span>
+<span class="sd">                              * ``UnitSize.SIZE_64``</span>
+<span class="sd">        ====================  =========================================================================</span>
+
+
+<span class="sd">        .. raw:: latex</span>
+
+<span class="sd">           \newpage</span>
+
+<span class="sd">        HexaString options:</span>
+
+<span class="sd">        .. tabularcolumns:: |p{3cm}|p{10cm}|</span>
+
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">               Option                           Description</span>
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">        interval              The scope of values to generate.</span>
+
+<span class="sd">                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be</span>
+<span class="sd">                                randomly generated with a size between the min and max values of the</span>
+<span class="sd">                                domain.</span>
+<span class="sd">                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be</span>
+<span class="sd">                                randomly generated with a size of [0, 2^N-1], where N is the length in</span>
+<span class="sd">                                bits of the integer used to represent the HexaString length.</span>
+<span class="sd">                              * If it is a tuple of integers (min, max), the values will be randomly</span>
+<span class="sd">                                generated with a size between min and max.</span>
+
+<span class="sd">                              Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.</span>
+
+<span class="sd">        lengthBitSize         The size in bits of the memory on which the generated length will be</span>
+<span class="sd">                              encoded. This parameter should be used in conjunction with</span>
+<span class="sd">                              :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order</span>
+<span class="sd">                              to generate HexaStrings with a length bigger than the original full</span>
+<span class="sd">                              interval. This parameter will not have any effect when used with</span>
+<span class="sd">                              :attr:`FuzzingInterval.DEFAULT_INTERVAL`.</span>
+
+<span class="sd">                              The following sizes are available:</span>
+
+<span class="sd">                              * ``None`` (default value), which indicates to use the unit size set in</span>
+<span class="sd">                                the field domain.</span>
+<span class="sd">                              * ``UnitSize.SIZE_1``</span>
+<span class="sd">                              * ``UnitSize.SIZE_4``</span>
+<span class="sd">                              * ``UnitSize.SIZE_8``</span>
+<span class="sd">                              * ``UnitSize.SIZE_16``</span>
+<span class="sd">                              * ``UnitSize.SIZE_24``</span>
+<span class="sd">                              * ``UnitSize.SIZE_32``</span>
+<span class="sd">                              * ``UnitSize.SIZE_64``</span>
+<span class="sd">        ====================  =========================================================================</span>
+
+
+<span class="sd">        .. raw:: latex</span>
+
+<span class="sd">           \newpage</span>
+
+<span class="sd">        BitArray options:</span>
+
+<span class="sd">        .. tabularcolumns:: |p{3cm}|p{10cm}|</span>
+
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">               Option                           Description</span>
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">        interval              The scope of values to generate.</span>
+
+<span class="sd">                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be</span>
+<span class="sd">                                randomly generated with a size between the min and max values of the</span>
+<span class="sd">                                domain.</span>
+<span class="sd">                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be</span>
+<span class="sd">                                randomly generated with a size of [0, 2^N-1], where N is the length in</span>
+<span class="sd">                                bits of the integer used to represent the BitArray length.</span>
+<span class="sd">                              * If it is a tuple of integers (min, max), the values will be randomly</span>
+<span class="sd">                                generated with a size between min and max.</span>
+
+<span class="sd">                              Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.</span>
+
+<span class="sd">        lengthBitSize         The size in bits of the memory on which the generated length will be</span>
+<span class="sd">                              encoded. This parameter should be used in conjunction with</span>
+<span class="sd">                              :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order</span>
+<span class="sd">                              to generate BitArrays with a length bigger than the original full</span>
+<span class="sd">                              interval. This parameter will not have any effect when used with</span>
+<span class="sd">                              :attr:`FuzzingInterval.DEFAULT_INTERVAL`.</span>
+
+<span class="sd">                              The following sizes are available:</span>
+
+<span class="sd">                              * ``None`` (default value), which indicates to use the unit size set in</span>
+<span class="sd">                                the field domain.</span>
+<span class="sd">                              * ``UnitSize.SIZE_1``</span>
+<span class="sd">                              * ``UnitSize.SIZE_4``</span>
+<span class="sd">                              * ``UnitSize.SIZE_8``</span>
+<span class="sd">                              * ``UnitSize.SIZE_16``</span>
+<span class="sd">                              * ``UnitSize.SIZE_24``</span>
+<span class="sd">                              * ``UnitSize.SIZE_32``</span>
+<span class="sd">                              * ``UnitSize.SIZE_64``</span>
+<span class="sd">        ====================  =========================================================================</span>
+
+
+<span class="sd">        .. raw:: latex</span>
+
+<span class="sd">           \newpage</span>
+
+<span class="sd">        Timestamp options:</span>
+
+<span class="sd">        .. tabularcolumns:: |p{3cm}|p{10cm}|</span>
+
+<span class="sd">        ====================  =================================================</span>
+<span class="sd">               Option                           Description</span>
+<span class="sd">        ====================  =================================================</span>
+<span class="sd">        *No option*</span>
+<span class="sd">        ====================  =================================================</span>
+
+
+<span class="sd">        IPv4 options:</span>
+
+<span class="sd">        .. tabularcolumns:: |p{3cm}|p{10cm}|</span>
+
+<span class="sd">        ====================  =================================================</span>
+<span class="sd">               Option                           Description</span>
+<span class="sd">        ====================  =================================================</span>
+<span class="sd">        *No option*</span>
+<span class="sd">        ====================  =================================================</span>
+
+
+<span class="sd">        Alt options:</span>
+
+<span class="sd">        .. tabularcolumns:: |p{4cm}|p{10cm}|</span>
+
+<span class="sd">        ====================  =================================================</span>
+<span class="sd">               Option                           Description</span>
+<span class="sd">        ====================  =================================================</span>
+<span class="sd">        mutateChild           If :const:`True`, the children variables will</span>
+<span class="sd">                              also be fuzzed.</span>
+
+<span class="sd">                              Default value is :const:`True`.</span>
+
+<span class="sd">        mappingTypesMutators  A :class:`dict` used to override the global</span>
+<span class="sd">                              default mapping of types with their default</span>
+<span class="sd">                              mutators.</span>
+
+<span class="sd">                              Default value is ``{}``.</span>
+<span class="sd">        maxDepth              An :class:`int` used to limit the recursive calls</span>
+<span class="sd">                              to the mutator.</span>
+
+<span class="sd">                              Default value is</span>
+<span class="sd">                              ``AltMutator.DEFAULT_MAX_DEPTH = 20``</span>
+<span class="sd">        ====================  =================================================</span>
+
+
+<span class="sd">        Agg options:</span>
+
+<span class="sd">        .. tabularcolumns:: |p{4cm}|p{10cm}|</span>
+
+<span class="sd">        ====================  =================================================</span>
+<span class="sd">               Option                           Description</span>
+<span class="sd">        ====================  =================================================</span>
+<span class="sd">        mutateChild           If :const:`True`, the children variables will</span>
+<span class="sd">                              also be fuzzed.</span>
+
+<span class="sd">                              Default value is :const:`True`.</span>
+<span class="sd">        mappingTypesMutators  A :class:`dict` used to override the global</span>
+<span class="sd">                              default mapping of types with their default</span>
+<span class="sd">                              mutators.</span>
+
+<span class="sd">                              Default value is ``{}``.</span>
+<span class="sd">        ====================  =================================================</span>
+
+
+<span class="sd">        .. raw:: latex</span>
+
+<span class="sd">           \newpage</span>
+
+<span class="sd">        Repeat options:</span>
+
+<span class="sd">        .. tabularcolumns:: |p{4cm}|p{10cm}|</span>
+
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">               Option                           Description</span>
+<span class="sd">        ====================  =========================================================================</span>
+<span class="sd">        mutateChild           If :const:`True`, the children variables will also be fuzzed.</span>
+
+<span class="sd">                              Default value is :const:`True`.</span>
+
+<span class="sd">        mappingTypesMutators  A :class:`dict` used to override the global default mapping of types with</span>
+<span class="sd">                              their default mutators.</span>
+
+<span class="sd">                              Default value is ``{}``.</span>
+<span class="sd">        interval              The scope of values to generate.</span>
+
+<span class="sd">                              * If set to :attr:`FuzzingInterval.DEFAULT_INTERVAL`, the values will be</span>
+<span class="sd">                                randomly generated with a size between the min and max values of the</span>
+<span class="sd">                                domain.</span>
+<span class="sd">                              * If set to :attr:`FuzzingInterval.FULL_INTERVAL`, the values will be</span>
+<span class="sd">                                randomly generated with a size of [0, 2^N-1], where N is the length in</span>
+<span class="sd">                                bits of the integer used to represent the number of repetitions.</span>
+<span class="sd">                              * If it is a tuple of integers (min, max), the values will be randomly</span>
+<span class="sd">                                generated with a size between min and max.</span>
+
+<span class="sd">                              Default value is :attr:`FuzzingInterval.FULL_INTERVAL`.</span>
+
+<span class="sd">        lengthBitSize         The size in bits of the memory on which the generated length will be</span>
+<span class="sd">                              encoded. This parameter should be used in conjunction with</span>
+<span class="sd">                              :attr:`FuzzingInterval.FULL_INTERVAL` or with a tuple interval, in order</span>
+<span class="sd">                              to generate a Repeat with a length bigger than the original full</span>
+<span class="sd">                              interval. This parameter will not have any effect when used with</span>
+<span class="sd">                              :attr:`FuzzingInterval.DEFAULT_INTERVAL`.</span>
+
+<span class="sd">                              The following sizes are available:</span>
+
+<span class="sd">                              * ``None`` (default value), which indicates to use the unit size set in</span>
+<span class="sd">                                the field domain.</span>
+<span class="sd">                              * ``UnitSize.SIZE_1``</span>
+<span class="sd">                              * ``UnitSize.SIZE_4``</span>
+<span class="sd">                              * ``UnitSize.SIZE_8``</span>
+<span class="sd">                              * ``UnitSize.SIZE_16``</span>
+<span class="sd">                              * ``UnitSize.SIZE_24``</span>
+<span class="sd">                              * ``UnitSize.SIZE_32``</span>
+<span class="sd">                              * ``UnitSize.SIZE_64``</span>
+<span class="sd">        ====================  =========================================================================</span>
+
+
+<span class="sd">        .. raw:: latex</span>
+
+<span class="sd">           \newpage</span>
+
+<span class="sd">        Optional options:</span>
+
+<span class="sd">        .. tabularcolumns:: |p{4cm}|p{10cm}|</span>
+
+<span class="sd">        ====================  =================================================</span>
+<span class="sd">               Option                           Description</span>
+<span class="sd">        ====================  =================================================</span>
+<span class="sd">        mutateChild           If :const:`True`, the children variable will also</span>
+<span class="sd">                              be fuzzed.</span>
+
+<span class="sd">                              Default value is :const:`True`.</span>
+
+<span class="sd">        mappingTypesMutators  A :class:`dict` used to override the global</span>
+<span class="sd">                              default mapping of types with their default</span>
+<span class="sd">                              mutators.</span>
+
+<span class="sd">                              Default value is ``{}``.</span>
+<span class="sd">        ====================  =================================================</span>
+
+
+<span class="sd">        **Values produced by the determinist generator**</span>
+
+<span class="sd">        Considering a data field whose length allows to store an ``N``</span>
+<span class="sd">        bits integer (signed or unsigned) with an interval ranging</span>
+<span class="sd">        from ``P`` to ``Q`` inclusive, the determinist generator will produce</span>
+<span class="sd">        the following integer values:</span>
+
+<span class="sd">        * ``Q``</span>
+<span class="sd">        * ``P``</span>
+<span class="sd">        * ``P - 1``</span>
+<span class="sd">        * ``Q - 1``</span>
+<span class="sd">        * ``P + 1``</span>
+<span class="sd">        * ``Q + 1``</span>
+<span class="sd">        * ``0``</span>
+<span class="sd">        * ``-1``</span>
+<span class="sd">        * ``1``</span>
+<span class="sd">        * ``for k in [0..N-2]:``</span>
+
+<span class="sd">          * ``-2^k``</span>
+<span class="sd">          * ``-2^k - 1``</span>
+<span class="sd">          * ``-2^k + 1``</span>
+<span class="sd">          * ``2^k``</span>
+<span class="sd">          * ``2^k - 1``</span>
+<span class="sd">          * ``2^k + 1``</span>
+
+
+<span class="sd">        **Simple fuzzing example**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data = Field(domain=int8())</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(fields=[f_data])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_data)</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;\x00&#39;</span>
+
+
+<span class="sd">        **Fuzzing example of a field that contains an integer**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data = Field(name=&quot;data&quot;, domain=int16(interval=(1, 4)))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_data, interval=(20, 32000))</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;U*&#39;</span>
+
+
+<span class="sd">        **Fuzzing example of a field that contains a size relationship with another field**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data = Field(name=&quot;data&quot;, domain=int16(3))</span>
+<span class="sd">        &gt;&gt;&gt; f_size = Field(name=&quot;size&quot;, domain=Size([f_data], Integer(unitSize=UnitSize.SIZE_16)))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data, f_size])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_size, interval=(20, 32000))</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;\x00\x03U*&#39;</span>
+
+
+<span class="sd">        **Fuzzing example in mutation mode of a field that contains an integer**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data = Field(name=&quot;data&quot;, domain=int16(2))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_data, mode=FuzzingMode.MUTATE, interval=(20, 32000))</span>
+<span class="sd">        &gt;&gt;&gt; res = next(symbol.specialize(preset))</span>
+<span class="sd">        &gt;&gt;&gt; res != b&#39;\x00\x02&#39;</span>
+<span class="sd">        True</span>
+
+
+<span class="sd">        **Multiple fuzzing call on the same symbol**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data = Field(name=&quot;data&quot;, domain=int16(2))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_data, interval=(20, 30000))</span>
+<span class="sd">        &gt;&gt;&gt; nbFuzz = 1000</span>
+<span class="sd">        &gt;&gt;&gt; result = set()</span>
+<span class="sd">        &gt;&gt;&gt; for i in range(nbFuzz):</span>
+<span class="sd">        ...     result.add(next(symbol.specialize(preset)))</span>
+<span class="sd">        &gt;&gt;&gt; len(result) == 1000</span>
+<span class="sd">        True</span>
+
+
+<span class="sd">        **Fuzzing of a field that contains sub-fields**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data1 = Field(name=&quot;data1&quot;, domain=int8())</span>
+<span class="sd">        &gt;&gt;&gt; f_data2 = Field(name=&quot;data2&quot;, domain=int16())</span>
+<span class="sd">        &gt;&gt;&gt; f_parent = Field(name=&quot;parent&quot;, domain=[f_data1, f_data2])</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_parent])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_parent)</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;\x00\x00\x00&#39;</span>
+
+
+<span class="sd">        **Fuzzing of a whole symbol, and covering all field storage spaces with default fuzzing strategy per types**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data1 = Field(name=&quot;data1&quot;, domain=int8(interval=(2, 4)))</span>
+<span class="sd">        &gt;&gt;&gt; f_data2 = Field(name=&quot;data2&quot;, domain=int8(interval=(5, 8)))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data1, f_data2])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(symbol, interval=FuzzingInterval.FULL_INTERVAL)</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;\x00\x00&#39;</span>
+
+
+<span class="sd">        **Fuzzing and covering full storage space of a field**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data1 = Field(name=&quot;data1&quot;, domain=int8(2))</span>
+<span class="sd">        &gt;&gt;&gt; f_data2 = Field(name=&quot;data2&quot;, domain=int8(interval=(10, 20)))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data1, f_data2])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_data2, interval=FuzzingInterval.FULL_INTERVAL)</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;\x02\x00&#39;</span>
+
+
+<span class="sd">        **Fuzzing and covering full storage space of a field, after redefining its storage space from 8 to 16 bits**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data1 = Field(name=&quot;data1&quot;, domain=int8(2))</span>
+<span class="sd">        &gt;&gt;&gt; f_data2 = Field(name=&quot;data2&quot;, domain=int8(interval=(10, 20)))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data1, f_data2])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_data2, interval=FuzzingInterval.FULL_INTERVAL, lengthBitSize=UnitSize.SIZE_16)</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;\x02\x00\x00&#39;</span>
+
+
+<span class="sd">        **Fuzzing and changing the default fuzzing parameters for types**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data1 = Field(name=&quot;data1&quot;, domain=int8(2))</span>
+<span class="sd">        &gt;&gt;&gt; f_data2 = Field(name=&quot;data2&quot;, domain=int8(4))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data1, f_data2])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(Integer, interval=(10, 12))</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;\x0c\x0c&#39;</span>
+
+
+<span class="sd">        **Fuzzing of an aggregate of variables with non-default types/mutators mapping**</span>
+
+<span class="sd">        In this example, we use a determinist integer mutator instead</span>
+<span class="sd">        of the pseudo-random integer mutator used by default for integer fuzzing.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator</span>
+<span class="sd">        &gt;&gt;&gt; f_agg = Field(name=&quot;agg&quot;, domain=Agg([int16(interval=(1, 4)),</span>
+<span class="sd">        ...                                       int16(interval=(5, 8))]))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_agg])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; mapping = {}</span>
+<span class="sd">        &gt;&gt;&gt; mapping[Integer] = {&#39;generator&#39;:&#39;determinist&#39;}</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_agg, mappingTypesMutators=mapping)</span>
+<span class="sd">        &gt;&gt;&gt; res = next(symbol.specialize(preset))</span>
+<span class="sd">        &gt;&gt;&gt; res</span>
+<span class="sd">        b&#39; \x01 \x01&#39;</span>
+
+
+<span class="sd">        **Fuzzing of an alternate of variables with non-default types/mutators mapping**</span>
+
+<span class="sd">        In this example, we use a determinist integer mutator instead</span>
+<span class="sd">        of the pseudo-random integer mutator used by default for integer fuzzing.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.Fuzzing.Mutators.IntegerMutator import IntegerMutator</span>
+<span class="sd">        &gt;&gt;&gt; f_alt = Field(name=&quot;alt&quot;, domain=Alt([int16(interval=(1, 4)),</span>
+<span class="sd">        ...                                       int16(interval=(5, 8))]))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_alt])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; mapping = {}</span>
+<span class="sd">        &gt;&gt;&gt; mapping[Integer] = {&#39;generator&#39;:&#39;determinist&#39;}</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_alt, mappingTypesMutators=mapping)</span>
+<span class="sd">        &gt;&gt;&gt; res = next(symbol.specialize(preset))</span>
+<span class="sd">        &gt;&gt;&gt; res</span>
+<span class="sd">        b&#39; \x01&#39;</span>
+
+
+<span class="sd">        **Fuzzing of an aggregate of variables without fuzzing the children**</span>
+
+<span class="sd">        &gt;&gt;&gt; f_agg = Field(name=&quot;agg&quot;, domain=Agg([int8(interval=(1, 4)),</span>
+<span class="sd">        ...                                       int8(interval=(5, 8))]))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_agg])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_agg, mutateChild=False)</span>
+<span class="sd">        &gt;&gt;&gt; res = next(symbol.specialize(preset))</span>
+<span class="sd">        &gt;&gt;&gt; 1 &lt;= res[0] &lt;= 4</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; 5 &lt;= res[1] &lt;= 8</span>
+<span class="sd">        True</span>
+
+
+<span class="sd">        **Fuzzing configuration with a global maximum number of mutations**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_alt = Field(name=&quot;alt&quot;, domain=Alt([int8(interval=(1, 4)),</span>
+<span class="sd">        ...                                       int8(interval=(5, 8))]))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_alt])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.setFuzzingCounterMax(1)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f_alt)</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;\x00&#39;</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        StopIteration</span>
+
+
+<span class="sd">        **Fuzzing configuration with a maximum number of mutations, expressed with an absolute limit, on a symbol**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; field = Field(Agg([uint8(), uint8()]))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol([field], name=&quot;sym&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; symbol.count()</span>
+<span class="sd">        65536</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(symbol, counterMax=80)</span>
+<span class="sd">        &gt;&gt;&gt; idx = 0</span>
+<span class="sd">        &gt;&gt;&gt; for data in symbol.specialize(preset):</span>
+<span class="sd">        ...     # use data</span>
+<span class="sd">        ...     idx += 1</span>
+<span class="sd">        &gt;&gt;&gt; print(idx)</span>
+<span class="sd">        80</span>
+
+
+<span class="sd">        **Fuzzing configuration with a maximum number of mutations, expressed with a ratio, on a symbol**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; field = Field(Agg([uint8(), uint8()]))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol([field], name=&quot;sym&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; symbol.count()</span>
+<span class="sd">        65536</span>
+<span class="sd">        &gt;&gt;&gt; int(symbol.count() * 0.001)</span>
+<span class="sd">        65</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(symbol, counterMax=0.001)</span>
+<span class="sd">        &gt;&gt;&gt; idx = 0</span>
+<span class="sd">        &gt;&gt;&gt; for data in symbol.specialize(preset):</span>
+<span class="sd">        ...     # use data</span>
+<span class="sd">        ...     idx += 1</span>
+<span class="sd">        &gt;&gt;&gt; print(idx)</span>
+<span class="sd">        65</span>
+
+<span class="sd">        .. ifconfig:: scope in (&#39;netzob&#39;)</span>
+
+<span class="sd">           &gt;&gt;&gt; preset = Preset(symbol)  # This is needed to restore counterMax default value for unit test purpose</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">counterMax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">counterMax</span> <span class="o">=</span> <span class="n">DomainMutator</span><span class="o">.</span><span class="n">COUNTER_MAX_DEFAULT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span>
+                  <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                  <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+                  <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span>
+                  <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                  <span class="n">counterMax</span><span class="o">=</span><span class="n">counterMax</span><span class="p">,</span>
+                  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; from bitarray import bitarray</span>
+<span class="sd">        &gt;&gt;&gt; f_int = Field(int8())</span>
+<span class="sd">        &gt;&gt;&gt; f = Field(Raw())</span>
+<span class="sd">        &gt;&gt;&gt; s = Symbol([f])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(s)</span>
+<span class="sd">        &gt;&gt;&gt; preset[f_int] = 4</span>
+<span class="sd">        &gt;&gt;&gt; preset[f_int]</span>
+<span class="sd">        b&#39;\x04&#39;</span>
+<span class="sd">        &gt;&gt;&gt; preset[f] = bitarray(&#39;00000001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; preset[f]</span>
+<span class="sd">        bitarray(&#39;00000001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; preset[f] = b&#39;\xaa&#39;</span>
+<span class="sd">        &gt;&gt;&gt; preset[f]</span>
+<span class="sd">        b&#39;\xaa&#39;</span>
+<span class="sd">        &gt;&gt;&gt; new_var = preset[f]</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f)</span>
+<span class="sd">        &gt;&gt;&gt; new_var = preset[f]</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        Exception: It is not allowed to access an item of the Preset configuration if it is not a fixed value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Resolve the key if it is a string, to find the corresponding object (field or variable)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_name</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="c1"># Handle case where k is a Field -&gt; retrieve the associated variable</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Field</span> <span class="kn">import</span> <span class="n">Field</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">Field</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">domain</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">mutator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">mutator</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">FuzzingMode</span><span class="o">.</span><span class="n">FIXED</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mutator</span><span class="o">.</span><span class="n">generator</span><span class="p">,</span> <span class="n">repeat</span><span class="p">):</span>
+                <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">mutator</span><span class="o">.</span><span class="n">generator</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;It is not allowed to access an item of the Preset configuration if it is not a fixed value&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="c1"># Resolve the key if it is a string, to find the corresponding object (field or variable)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_name</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">unset</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">key</span><span class="p">,</span>
+             <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">mode</span><span class="o">=</span><span class="n">FuzzingMode</span><span class="o">.</span><span class="n">GENERATE</span><span class="p">,</span>
+             <span class="n">generator</span><span class="o">=</span><span class="s1">&#39;xorshift&#39;</span><span class="p">,</span>
+             <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">counterMax</span><span class="o">=</span><span class="n">DomainMutator</span><span class="o">.</span><span class="n">COUNTER_MAX_DEFAULT</span><span class="p">,</span>
+             <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="c1"># Handle seed value</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">Mutator</span><span class="o">.</span><span class="n">SEED_DEFAULT</span>
+
+        <span class="c1"># Update kwargs with the first 4 parameters. This kwargs will be passed to Mutator constructors</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="n">mode</span><span class="p">,</span> <span class="s1">&#39;generator&#39;</span><span class="p">:</span> <span class="n">generator</span><span class="p">,</span> <span class="s1">&#39;seed&#39;</span><span class="p">:</span> <span class="n">seed</span><span class="p">,</span> <span class="s1">&#39;counterMax&#39;</span><span class="p">:</span> <span class="n">counterMax</span><span class="p">})</span>
+
+        <span class="c1"># Case where target key is an AbstractField or AbstractVariable or a string</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">AbstractField</span><span class="p">,</span> <span class="n">AbstractVariable</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Add value to kwargs, so that it is accessible later</span>
+                <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+
+            <span class="c1"># Resolve the key if it is a string, to find the corresponding object (field or variable)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_name</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+            <span class="c1"># Update mapping</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+            <span class="c1"># Normalize fuzzing keys</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_normalizeKeys</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+            <span class="c1"># Normalize mapping</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalize_mappingFieldsMutators</span><span class="p">()</span>
+
+        <span class="c1"># Case where target key is an AbstractType</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+
+            <span class="c1"># Update default Mutator parameters for the associated type</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>  <span class="c1"># Use issubclass() to handle cases where partial() is used (e.g. on Integer types)</span>
+                    <span class="n">mutator</span><span class="p">,</span> <span class="n">mutator_default_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+                    <span class="n">mutator_default_parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">mutator</span><span class="p">,</span> <span class="n">mutator_default_parameters</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unsupported type for key: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unsupported type for key: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)))</span>
+
+<div class="viewcode-block" id="Preset.clear"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Preset.Preset.clear">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The :meth:`clear &lt;.Preset.clear&gt;` method clear the preset</span>
+<span class="sd">        and fuzzing configuration.</span>
+
+<span class="sd">        Example of clearing the Preset configuration:</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; import random</span>
+<span class="sd">        &gt;&gt;&gt; random.seed(0)  # This is necessary only for unit test purpose</span>
+<span class="sd">        &gt;&gt;&gt; f_data1 = Field(name=&quot;data1&quot;, domain=int8())</span>
+<span class="sd">        &gt;&gt;&gt; f_data2 = Field(name=&quot;data2&quot;, domain=int8())</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data1, f_data2])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset[f_data1] = b&#39;\x01&#39;</span>
+<span class="sd">        &gt;&gt;&gt; preset[f_data2] = b&#39;\x02&#39;</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;\x01\x02&#39;</span>
+<span class="sd">        &gt;&gt;&gt; preset.clear()</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;EW&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Clear types mapping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initializeTypeMappings</span><span class="p">()</span>
+
+        <span class="c1"># Clear fields mapping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+<div class="viewcode-block" id="Preset.update"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Preset.Preset.update">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_preset</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The :meth:`update &lt;.Preset.update&gt;` method updates the current</span>
+<span class="sd">        preset and fuzzing configuration with a preset configuration</span>
+<span class="sd">        given in parameter. Only the configuration of the current</span>
+<span class="sd">        preset is updated.</span>
+
+<span class="sd">        :param new_preset: The preset configuration from which we want to retrieve the information.</span>
+<span class="sd">        :type new_preset: :class:`Preset &lt;netzob.Model.Vocabulary.Preset.Preset&gt;`, required</span>
+
+<span class="sd">        Example of updating the Preset configuration:</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data1 = Field(name=&quot;data1&quot;, domain=int8())</span>
+<span class="sd">        &gt;&gt;&gt; f_data2 = Field(name=&quot;data2&quot;, domain=int8())</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data1, f_data2])</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Create main preset</span>
+<span class="sd">        &gt;&gt;&gt; main_preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; main_preset[f_data1] = b&#39;\x01&#39;</span>
+<span class="sd">        &gt;&gt;&gt; main_preset[f_data2] = b&#39;\x02&#39;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Create new preset</span>
+<span class="sd">        &gt;&gt;&gt; new_preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; new_preset[f_data1] = b&#39;\x03&#39;</span>
+<span class="sd">        &gt;&gt;&gt; new_preset[f_data2] = b&#39;\x04&#39;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Generate data according to the last defined preset (i.e. the &#39;new&#39; preset)</span>
+<span class="sd">        &gt;&gt;&gt; g = symbol.specialize(new_preset)</span>
+<span class="sd">        &gt;&gt;&gt; next(g)</span>
+<span class="sd">        b&#39;\x03\x04&#39;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Generate data according to the first defined preset (i.e. the &#39;main&#39; preset)</span>
+<span class="sd">        &gt;&gt;&gt; g = symbol.specialize(main_preset)</span>
+<span class="sd">        &gt;&gt;&gt; next(g)</span>
+<span class="sd">        b&#39;\x01\x02&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Update fields mapping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_preset</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="p">)</span>
+
+        <span class="c1"># Update types mapping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Preset.bulk_set"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Preset.Preset.bulk_set">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Iterable</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">bulk_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The :meth:`bulk_set` method inserts multiple items at once.</span>
+
+<span class="sd">        :param items: the mapping to merge into the current object</span>
+<span class="sd">        :type items: dict, required</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data1 = Field(name=&quot;data1&quot;, domain=int8())</span>
+<span class="sd">        &gt;&gt;&gt; f_data2 = Field(name=&quot;data2&quot;, domain=int8())</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data1, f_data2])</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; p1 = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; presets = {</span>
+<span class="sd">        ...     &quot;data1&quot;: 42,  # ASCII value for &#39;*&#39;</span>
+<span class="sd">        ...     &quot;data2&quot;: -1</span>
+<span class="sd">        ... }</span>
+<span class="sd">        &gt;&gt;&gt; p1.bulk_set(presets)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(p1))</span>
+<span class="sd">        b&#39;*\xff&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span></div>
+
+<div class="viewcode-block" id="Preset.copy"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Preset.Preset.copy">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The :meth:`copy &lt;.Preset.copy&gt;` method copies the current preset</span>
+<span class="sd">        configuration.</span>
+
+<span class="sd">        :return: A copy of the current preset configuration.</span>
+<span class="sd">        :rtype: :class:`Preset`</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">           This method will linked the Preset configuration of the associated symbol to the new created Preset instance.</span>
+
+
+<span class="sd">        Example of copying the Preset configuration:</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data1 = Field(name=&quot;data1&quot;, domain=int8())</span>
+<span class="sd">        &gt;&gt;&gt; f_data2 = Field(name=&quot;data2&quot;, domain=int8())</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data1, f_data2])</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset[f_data1] = b&#39;\x01&#39;</span>
+<span class="sd">        &gt;&gt;&gt; preset[f_data2] = b&#39;\x02&#39;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Copy the preset configuration</span>
+<span class="sd">        &gt;&gt;&gt; new_preset = preset.copy()</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Update new preset configuration</span>
+<span class="sd">        &gt;&gt;&gt; new_preset[f_data1] = b&#39;\x03&#39;</span>
+<span class="sd">        &gt;&gt;&gt; new_preset[f_data2] = b&#39;\x04&#39;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Generate data with the new preset configuration</span>
+<span class="sd">        &gt;&gt;&gt; g = symbol.specialize(new_preset)</span>
+<span class="sd">        &gt;&gt;&gt; next(g)</span>
+<span class="sd">        b&#39;\x03\x04&#39;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Generate data with the first preset configuration</span>
+<span class="sd">        &gt;&gt;&gt; g = symbol.specialize(preset)</span>
+<span class="sd">        &gt;&gt;&gt; next(g)</span>
+<span class="sd">        b&#39;\x01\x02&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">new_preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># Copy fields mapping</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">mutator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Copy each mutator</span>
+            <span class="n">new_preset</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">mutator</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Copy types mapping</span>
+        <span class="n">new_preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingTypesMutators</span>
+
+        <span class="k">return</span> <span class="n">new_preset</span></div>
+
+<div class="viewcode-block" id="Preset.unset"><a class="viewcode-back" href="../../../../language_specification/fuzzing.html#netzob.Model.Vocabulary.Preset.Preset.unset">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">unset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The :meth:`unset &lt;.Preset.unset&gt;` method deactivates the fixed</span>
+<span class="sd">        value or the fuzzing strategy for a symbol, a field or a</span>
+<span class="sd">        variable. It is not possible to unset the fuzzing on a type.</span>
+
+<span class="sd">        The :meth:`unset &lt;.Preset.unset&gt;` method expects some parameters:</span>
+
+<span class="sd">        :param key: The targeted object (either a symbol, a field or a</span>
+<span class="sd">                    variable).</span>
+<span class="sd">        :type key: :class:`Field</span>
+<span class="sd">                   &lt;netzob.Model.Vocabulary.Field.Field&gt;`,</span>
+<span class="sd">                   or :class:`Symbol</span>
+<span class="sd">                   &lt;netzob.Model.Vocabulary.Symbol.Symbol&gt;`,</span>
+<span class="sd">                   or :class:`Variable</span>
+<span class="sd">                   &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`, required</span>
+
+
+<span class="sd">        Example of fuzzing of a whole symbol except one field:</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f_data1 = Field(name=&quot;data1&quot;, domain=int8(2))</span>
+<span class="sd">        &gt;&gt;&gt; f_data2 = Field(name=&quot;data2&quot;, domain=int8(4))</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_data1, f_data2])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(symbol, interval=FuzzingInterval.FULL_INTERVAL)</span>
+<span class="sd">        &gt;&gt;&gt; preset.unset(f_data2)</span>
+<span class="sd">        &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">        b&#39;\x00\x04&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Symbol</span> <span class="kn">import</span> <span class="n">Symbol</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Field</span> <span class="kn">import</span> <span class="n">Field</span>
+
+        <span class="n">keys_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Handle case where k is a Variable -&gt; nothing to do</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AbstractVariable</span><span class="p">):</span>
+            <span class="n">keys_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="c1"># Handle case where k is a Field containing sub-Fields -&gt; we retrieve all its field variables</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">Field</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">subfields</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">fields</span>
+            <span class="n">keys_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">subfields</span><span class="p">:</span>
+                <span class="n">keys_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">domain</span><span class="p">)</span>
+
+        <span class="c1"># Handle case where k is a Field -&gt; retrieve the associated variable</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">Field</span><span class="p">):</span>
+            <span class="n">keys_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">domain</span><span class="p">)</span>
+
+        <span class="c1"># Handle case where k is a Symbol -&gt; we retrieve all its field variables</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+            <span class="n">subfields</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">getLeafFields</span><span class="p">(</span><span class="n">includePseudoFields</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">keys_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">subfields</span><span class="p">:</span>
+                <span class="n">keys_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">domain</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Key must be a Symbol, a Field or a Variable&quot;</span>
+                            <span class="s2">&quot;, but not a &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)))</span>
+
+        <span class="c1"># Update keys</span>
+        <span class="k">for</span> <span class="n">old_key</span> <span class="ow">in</span> <span class="n">keys_to_remove</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">old_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">old_key</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="c1"># We return the associated mutator class</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">AbstractField</span><span class="p">,</span> <span class="n">AbstractVariable</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># We return the associated mutator instance</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unsupported type for key: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_retrieveDefaultMutator</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instanciate and return the default mutator according to the</span>
+<span class="sd">        provided domain.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">mutator</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">mutator_default_parameters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">:</span>
+
+            <span class="c1"># Handle mutators for node variables (such as Repeat, Alt and Agg)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+                <span class="n">mutator</span><span class="p">,</span> <span class="n">mutator_default_parameters</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+                <span class="k">break</span>
+
+            <span class="c1"># Handle mutators for leaf variables</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Two type checks are made here, in order to handle cases where partial() is used (e.g. on Integer types)</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="s1">&#39;dataType&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="o">==</span> <span class="n">t</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="s1">&#39;dataType&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">t</span><span class="p">):</span>
+                    <span class="n">mutator</span><span class="p">,</span> <span class="n">mutator_default_parameters</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+                    <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot find a default Mutator for the domain &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">domain</span><span class="p">))</span>
+
+        <span class="c1"># Update default Mutator parameters with explicitly provided parameters</span>
+        <span class="n">mutator_default_parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Instanciate the mutator</span>
+        <span class="n">mutatorInstance</span> <span class="o">=</span> <span class="n">mutator</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="o">**</span><span class="n">mutator_default_parameters</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mutatorInstance</span>
+
+    <span class="k">def</span> <span class="nf">normalize_mappingFieldsMutators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize the fuzzing configuration.</span>
+
+<span class="sd">        Fields described with field name are converted into field</span>
+<span class="sd">        object, and then all key elements are converted into</span>
+<span class="sd">        variables.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Normalize fuzzing values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_normalizeValues</span><span class="p">()</span>
+
+        <span class="c1"># Second loop, to handle cases where domains are complex (Alt, Agg or Repeat)</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">keys</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">AbstractVariableNode</span><span class="p">):</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_propagateMutation</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+
+        <span class="c1"># Third loop to normalize fuzzing values, after handling complex domains (that may have added news keys:values)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_normalizeValues</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_normalizeKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize the keys of the dict containing he relationships between</span>
+<span class="sd">        domain and mutators.</span>
+
+<span class="sd">        This method expects the new_key (a symbol, a field or a</span>
+<span class="sd">        variable) that triggered the process of normalization, and</span>
+<span class="sd">        should return the impacted new keys issued form this</span>
+<span class="sd">        symbol/field/variable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Symbol</span> <span class="kn">import</span> <span class="n">Symbol</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Field</span> <span class="kn">import</span> <span class="n">Field</span>
+
+        <span class="c1"># Normalize fuzzing keys</span>
+        <span class="n">new_keys</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">keys_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="c1"># Handle case where k is a Variable -&gt; nothing to do</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">AbstractVariable</span><span class="p">):</span>
+                <span class="k">pass</span>
+
+            <span class="c1"># Handle case where k is a Field containing sub-Fields -&gt; we retrieve all its field variables</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">Field</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="s1">&#39;value&#39;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot set a fixed value on a field that contains sub-fields&quot;</span><span class="p">)</span>
+
+                <span class="n">subfields</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">fields</span>
+                <span class="n">keys_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">subfields</span><span class="p">:</span>
+
+                    <span class="c1"># We force the replacement of the new key</span>
+                    <span class="k">if</span> <span class="n">new_key</span> <span class="o">==</span> <span class="n">k</span><span class="p">:</span>
+                        <span class="n">new_keys</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">domain</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+                    <span class="c1"># We check if the variable is not already present in the variables to mutate</span>
+                    <span class="k">elif</span> <span class="n">f</span><span class="o">.</span><span class="n">domain</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">new_keys</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">domain</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+            <span class="c1"># Handle case where k is a Field -&gt; retrieve the associated variable</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">Field</span><span class="p">):</span>
+                <span class="n">keys_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">new_keys</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">domain</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+            <span class="c1"># Handle case where k is a Symbol -&gt; we retrieve all its field variables</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+                <span class="n">subfields</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">getLeafFields</span><span class="p">(</span><span class="n">includePseudoFields</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">keys_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">subfields</span><span class="p">:</span>
+
+                    <span class="c1"># We force the replacement of the new key</span>
+                    <span class="k">if</span> <span class="n">new_key</span> <span class="o">==</span> <span class="n">k</span><span class="p">:</span>
+                        <span class="n">new_keys</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">domain</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+                    <span class="c1"># We check if the variable is not already present in the variables to mutate</span>
+                    <span class="k">elif</span> <span class="n">f</span><span class="o">.</span><span class="n">domain</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">new_keys</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">domain</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Fuzzing keys must contain Symbol, Fields or Variables&quot;</span>
+                                <span class="s2">&quot;, but not a &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">k</span><span class="p">)))</span>
+
+        <span class="c1"># Update keys</span>
+        <span class="k">for</span> <span class="n">old_key</span> <span class="ow">in</span> <span class="n">keys_to_remove</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">old_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_keys</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_resolve_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the corresponding field or variable according to its name,</span>
+<span class="sd">        by looping over associated symbol.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Retrieve associated field or variable based on its string name</span>
+        <span class="n">var_found</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="o">.</span><span class="n">getLeafFields</span><span class="p">(</span><span class="n">includePseudoFields</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">var_found</span> <span class="o">=</span> <span class="n">f</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">variables</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">getVariables</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                        <span class="n">var_found</span> <span class="o">=</span> <span class="n">var</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="n">var_found</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">var_found</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The key string &#39;</span><span class="si">{}</span><span class="s2">&#39; has not been recognized in current symbol to preset&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">var_found</span>
+
+    <span class="k">def</span> <span class="nf">_normalizeValues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Normalize fuzzing values</span>
+        <span class="n">keys_to_update</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">keys_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutator</span> <span class="kn">import</span> <span class="n">Mutator</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="c1"># If k is a str, the value will be normalized after the key is transformed into a field or variable object</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The key string &#39;</span><span class="si">{}</span><span class="s2">&#39; has not been recognized in current symbol to preset&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+
+            <span class="c1"># If the value is already a Mutator instance -&gt; we do nothing</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Mutator</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="c1"># Else, we instanciate the default Mutator according to the type of the object</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># Handle fixed fuzzing mode (aka fixed preset)</span>
+                <span class="n">kwargs</span> <span class="o">=</span> <span class="n">v</span>
+                <span class="k">if</span> <span class="s1">&#39;value&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                    <span class="n">fixed_value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+                    <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+
+                    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FuzzingMode</span><span class="o">.</span><span class="n">FIXED</span>
+
+                    <span class="c1"># Adapt the value according to its type, in order to systematically provide a generator</span>
+                    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">):</span>
+                        <span class="n">generator</span> <span class="o">=</span> <span class="n">repeatfunc</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">GeneratorType</span><span class="p">):</span>
+                        <span class="n">generator</span> <span class="o">=</span> <span class="n">fixed_value</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">,</span> <span class="n">AbstractType</span><span class="p">):</span>
+                        <span class="n">fixed_value</span> <span class="o">=</span> <span class="n">fixed_value</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+                        <span class="n">generator</span> <span class="o">=</span> <span class="n">repeat</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">)):</span>
+
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                            <span class="k">pass</span>
+                        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+                            <span class="k">pass</span>
+                            <span class="c1">#fixed_value = fixed_value.tobytes()</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c1"># Retrieve the variable data type</span>
+                            <span class="n">datatype</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">dataType</span>
+                            <span class="n">fixed_value</span> <span class="o">=</span> <span class="n">datatype</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">)</span>
+
+                            <span class="c1"># Then produce a value from the datatype that respects the type constraints</span>
+                            <span class="n">fixed_value</span> <span class="o">=</span> <span class="n">fixed_value</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+
+                        <span class="n">generator</span> <span class="o">=</span> <span class="n">repeat</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">)</span>
+
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
+                        <span class="n">generator</span> <span class="o">=</span> <span class="n">fixed_value</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">generator</span> <span class="o">=</span> <span class="n">repeat</span><span class="p">(</span><span class="n">fixed_value</span><span class="p">)</span>
+
+                    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;generator&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">generator</span>
+
+                <span class="c1"># Instance the mutator</span>
+                <span class="n">mut_inst</span> <span class="o">=</span> <span class="n">Preset</span><span class="o">.</span><span class="n">_retrieveDefaultMutator</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">Preset</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">keys_to_update</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">mut_inst</span>
+
+        <span class="c1"># Update keys</span>
+        <span class="k">for</span> <span class="n">old_key</span> <span class="ow">in</span> <span class="n">keys_to_remove</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">old_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">keys_to_update</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_propagateMutation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">mutator</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method aims at propagating the fuzzing to the children of a</span>
+<span class="sd">        complex variable (such as Repeat, Alt or Agg). The propagation</span>
+<span class="sd">        strategy is included in the mutator associated to the parent</span>
+<span class="sd">        variable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">tmp_new_keys</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Do not propagate fuzzing in FIXED mode, as, in this mode, the fixed value is set to the parent variable</span>
+        <span class="k">if</span> <span class="n">mutator</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">FuzzingMode</span><span class="o">.</span><span class="n">FIXED</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tmp_new_keys</span>
+
+        <span class="c1"># Propagate also the mutator mode and the seed</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="n">mutator</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="s1">&#39;seed&#39;</span><span class="p">:</span> <span class="n">mutator</span><span class="o">.</span><span class="n">seed</span><span class="p">}</span>  <span class="c1"># , &#39;counterMax&#39; : mutator.counterMax}</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">Repeat</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mutator</span><span class="p">,</span> <span class="n">RepeatMutator</span><span class="p">)</span> <span class="ow">and</span> <span class="n">mutator</span><span class="o">.</span><span class="n">mutateChild</span><span class="p">:</span>
+
+            <span class="c1"># We check if the variable is not already present in the variables to mutate</span>
+            <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">mut_inst</span> <span class="o">=</span> <span class="n">Preset</span><span class="o">.</span><span class="n">_retrieveDefaultMutator</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">variable</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mapping</span><span class="o">=</span><span class="n">mutator</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">tmp_new_keys</span><span class="p">[</span><span class="n">variable</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mut_inst</span>
+
+                <span class="c1"># Propagate mutation to the child if it is a complex domain</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">AbstractVariableNode</span><span class="p">):</span>
+                    <span class="n">tmp_new_keys</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_propagateMutation</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mut_inst</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">Alt</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mutator</span><span class="p">,</span> <span class="n">AltMutator</span><span class="p">)</span> <span class="ow">and</span> <span class="n">mutator</span><span class="o">.</span><span class="n">mutateChild</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">variable</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="c1"># We check if the variable is not already present in the variables to mutate</span>
+                <span class="k">if</span> <span class="n">child</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">mut_inst</span> <span class="o">=</span> <span class="n">Preset</span><span class="o">.</span><span class="n">_retrieveDefaultMutator</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">child</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">mutator</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                    <span class="n">tmp_new_keys</span><span class="p">[</span><span class="n">child</span><span class="p">]</span> <span class="o">=</span> <span class="n">mut_inst</span>
+
+                    <span class="c1"># Propagate mutation to the child if it is a complex domain</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">AbstractVariableNode</span><span class="p">):</span>
+                        <span class="n">tmp_new_keys</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_propagateMutation</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">mut_inst</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">Agg</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mutator</span><span class="p">,</span> <span class="n">AggMutator</span><span class="p">)</span> <span class="ow">and</span> <span class="n">mutator</span><span class="o">.</span><span class="n">mutateChild</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">variable</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="c1"># We check if the variable is not already present in the variables to mutate</span>
+                <span class="k">if</span> <span class="n">child</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappingFieldsMutators</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">mut_inst</span> <span class="o">=</span> <span class="n">Preset</span><span class="o">.</span><span class="n">_retrieveDefaultMutator</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">child</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">mutator</span><span class="o">.</span><span class="n">mappingTypesMutators</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                    <span class="n">tmp_new_keys</span><span class="p">[</span><span class="n">child</span><span class="p">]</span> <span class="o">=</span> <span class="n">mut_inst</span>
+
+                    <span class="c1"># Propagate mutation to the child if it is a complex domain</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">AbstractVariableNode</span><span class="p">):</span>
+                        <span class="n">tmp_new_keys</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_propagateMutation</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">mut_inst</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">tmp_new_keys</span>
+
+<div class="viewcode-block" id="Preset.getFuzzingCounterMax"><a class="viewcode-back" href="../../../../language_specification/fuzzing.html#netzob.Model.Vocabulary.Preset.Preset.getFuzzingCounterMax">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">getFuzzingCounterMax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the default value for the maximum number of mutations to</span>
+<span class="sd">        produce in the context of the Preset instance. A :class:`int`</span>
+<span class="sd">        should be used to represent an absolute value, whereas a</span>
+<span class="sd">        :class:`float` should be used to represent a ratio in percent.</span>
+
+<span class="sd">        :return: the maximum number of mutations to produce.</span>
+<span class="sd">        :rtype: :class:`int` or :class:`float`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">DomainMutator</span><span class="o">.</span><span class="n">globalCounterMax</span></div>
+
+<div class="viewcode-block" id="Preset.setFuzzingCounterMax"><a class="viewcode-back" href="../../../../language_specification/fuzzing.html#netzob.Model.Vocabulary.Preset.Preset.setFuzzingCounterMax">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">setFuzzingCounterMax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">counterMax</span><span class="p">:</span> <span class="n">Integer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the default value for the maximum number of mutations to</span>
+<span class="sd">        produce in the context of the Preset instance. A :class:`int`</span>
+<span class="sd">        should be used to represent an absolute value, whereas a</span>
+<span class="sd">        :class:`float` should be used to represent a ratio in percent.</span>
+
+<span class="sd">        The default maximum value is :attr:`COUNTER_MAX_DEFAULT` = ``2**32``</span>
+
+<span class="sd">        :param counterMax: the maximum number of mutations to produce.</span>
+<span class="sd">        :type counterMax: :class:`int` or :class:`float`, required</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">DomainMutator</span><span class="o">.</span><span class="n">globalCounterMax</span> <span class="o">=</span> <span class="n">counterMax</span></div>
+
+    <span class="c1">## Properties ##</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The symbol or field on which to apply preset configuration..</span>
+
+<span class="sd">        :type : :class:`AbstractMessage &lt;netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__symbol</span>
+
+    <span class="nd">@symbol</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.AbstractField</span> <span class="kn">import</span> <span class="n">AbstractField</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">AbstractField</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;It is expected a symbol or field for the Preset configuration, not &#39;</span><span class="si">{}</span><span class="s2">&#39; of type &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">symbol</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__symbol</span> <span class="o">=</span> <span class="n">symbol</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    # Test to verify that the RNG covers all values in specific ranges, with negatives and positives number</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f_data = Field(domain=int8(interval=(10, 20)))</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f_data])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(f_data)</span>
+<span class="sd">    &gt;&gt;&gt; datas = set()</span>
+<span class="sd">    &gt;&gt;&gt; for _ in range(2000):</span>
+<span class="sd">    ...     datas.add(next(symbol.specialize(preset)))</span>
+<span class="sd">    &gt;&gt;&gt; len(datas)</span>
+<span class="sd">    256</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f_data = Field(domain=int8(interval=(-10, 20)))</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f_data])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(f_data)</span>
+<span class="sd">    &gt;&gt;&gt; datas = set()</span>
+<span class="sd">    &gt;&gt;&gt; for _ in range(2000):</span>
+<span class="sd">    ...     datas.add(next(symbol.specialize(preset)))</span>
+<span class="sd">    &gt;&gt;&gt; len(datas)</span>
+<span class="sd">    256</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f_data = Field(domain=int8(interval=(-20, -10)))</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f_data])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(f_data)</span>
+<span class="sd">    &gt;&gt;&gt; datas = set()</span>
+<span class="sd">    &gt;&gt;&gt; for _ in range(2000):</span>
+<span class="sd">    ...     datas.add(next(symbol.specialize(preset)))</span>
+<span class="sd">    &gt;&gt;&gt; len(datas)</span>
+<span class="sd">    256</span>
+
+
+<span class="sd">    # Test to verify that the RNG covers all values in specific ranges, with negatives and positives number, with a specific generator</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f_data = Field(domain=uint8())</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f_data])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(f_data, generator=(0., 0.5, 1.))</span>
+<span class="sd">    &gt;&gt;&gt; datas = set()</span>
+<span class="sd">    &gt;&gt;&gt; for _ in range(3):</span>
+<span class="sd">    ...     datas.add(next(symbol.specialize(preset)))</span>
+<span class="sd">    &gt;&gt;&gt; len(datas)</span>
+<span class="sd">    3</span>
+<span class="sd">    &gt;&gt;&gt; datas = sorted(datas)</span>
+<span class="sd">    &gt;&gt;&gt; for elt in datas:</span>
+<span class="sd">    ...     print(int.from_bytes(elt, byteorder=&#39;big&#39;))</span>
+<span class="sd">    0</span>
+<span class="sd">    128</span>
+<span class="sd">    255</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f_data = Field(domain=int8())</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f_data])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(f_data, generator=(0., 0.5, 1.))</span>
+<span class="sd">    &gt;&gt;&gt; datas = set()</span>
+<span class="sd">    &gt;&gt;&gt; for _ in range(3):</span>
+<span class="sd">    ...     datas.add(next(symbol.specialize(preset)))</span>
+<span class="sd">    &gt;&gt;&gt; len(datas)</span>
+<span class="sd">    3</span>
+<span class="sd">    &gt;&gt;&gt; datas = sorted(datas)</span>
+<span class="sd">    &gt;&gt;&gt; for elt in datas:</span>
+<span class="sd">    ...     print(int.from_bytes(elt, byteorder=&#39;big&#39;, signed=True))</span>
+<span class="sd">    0</span>
+<span class="sd">    127</span>
+<span class="sd">    -128</span>
+
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(uint8(interval=(0, 254)))</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(symbol, interval=FuzzingInterval.DEFAULT_INTERVAL)</span>
+<span class="sd">    &gt;&gt;&gt; g = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; a = []</span>
+<span class="sd">    &gt;&gt;&gt; for i in range(symbol.count()):</span>
+<span class="sd">    ...     data = next(g)</span>
+<span class="sd">    ...     a.append(data)</span>
+<span class="sd">    &gt;&gt;&gt; len(a)</span>
+<span class="sd">    65280</span>
+<span class="sd">    &gt;&gt;&gt; len(set(a))</span>
+<span class="sd">    65280</span>
+<span class="sd">    &gt;&gt;&gt; symbol.count()</span>
+<span class="sd">    65280</span>
+
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8(interval=(0, 3)))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size(f1))</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(Integer, interval=FuzzingInterval.DEFAULT_INTERVAL)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(f1)</span>
+<span class="sd">    &gt;&gt;&gt; g = symbol.specialize(preset)</span>
+<span class="sd">    &gt;&gt;&gt; a = []</span>
+<span class="sd">    &gt;&gt;&gt; for i in range(symbol.count()):</span>
+<span class="sd">    ...     a.append(next(g))</span>
+<span class="sd">    &gt;&gt;&gt; len(a)</span>
+<span class="sd">    4</span>
+<span class="sd">    &gt;&gt;&gt; a</span>
+<span class="sd">    [b&#39;\x00\x01&#39;, b&#39;\x03\x01&#39;, b&#39;\x01\x01&#39;, b&#39;\x02\x01&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; len(set(a))</span>
+<span class="sd">    4</span>
+<span class="sd">    &gt;&gt;&gt; symbol.count()</span>
+<span class="sd">    4</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_seed</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    This test verifies that the fuzzing seed ensures predictibility of generated values</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.Fuzzing.Mutator import Mutator</span>
+
+<span class="sd">    &gt;&gt;&gt; # Set seed for fuzzing generation</span>
+<span class="sd">    &gt;&gt;&gt; saved_seed = Mutator.SEED_DEFAULT</span>
+<span class="sd">    &gt;&gt;&gt; Mutator.SEED_DEFAULT = 42</span>
+
+<span class="sd">    &gt;&gt;&gt; # Fuzz an integer</span>
+<span class="sd">    &gt;&gt;&gt; f_data = Field(domain=uint8())</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f_data])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(f_data)</span>
+<span class="sd">    &gt;&gt;&gt; datas = []</span>
+<span class="sd">    &gt;&gt;&gt; for _ in range(20):</span>
+<span class="sd">    ...     datas.append(next(symbol.specialize(preset)))</span>
+<span class="sd">    &gt;&gt;&gt; datas</span>
+<span class="sd">    [b&#39;\x00&#39;, b&#39;s&#39;, b&#39;T&#39;, b&#39;\xe6&#39;, b&#39;\xe9&#39;, b&#39;:&#39;, b&#39;\xe3&#39;, b&#39;`&#39;, b&#39;{&#39;, b&#39;\x1c&#39;, b&#39;\xfc&#39;, b&#39;#&#39;, b&#39;\x96&#39;, b&#39;\x02&#39;, b&#39;\x12&#39;, b&#39;\x82&#39;, b&#39;\xb6&#39;, b&#39;+&#39;, b&#39;\xde&#39;, b&#39;\x18&#39;]</span>
+
+<span class="sd">    &gt;&gt;&gt; # Fuzz an integer</span>
+<span class="sd">    &gt;&gt;&gt; f_data = Field(domain=uint8())</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f_data])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(f_data)</span>
+<span class="sd">    &gt;&gt;&gt; datas = []</span>
+<span class="sd">    &gt;&gt;&gt; for _ in range(20):</span>
+<span class="sd">    ...     datas.append(next(symbol.specialize(preset)))</span>
+<span class="sd">    &gt;&gt;&gt; datas</span>
+<span class="sd">    [b&#39;\x00&#39;, b&#39;s&#39;, b&#39;T&#39;, b&#39;\xe6&#39;, b&#39;\xe9&#39;, b&#39;:&#39;, b&#39;\xe3&#39;, b&#39;`&#39;, b&#39;{&#39;, b&#39;\x1c&#39;, b&#39;\xfc&#39;, b&#39;#&#39;, b&#39;\x96&#39;, b&#39;\x02&#39;, b&#39;\x12&#39;, b&#39;\x82&#39;, b&#39;\xb6&#39;, b&#39;+&#39;, b&#39;\xde&#39;, b&#39;\x18&#39;]</span>
+
+<span class="sd">    &gt;&gt;&gt; # Restore original seed value</span>
+<span class="sd">    &gt;&gt;&gt; Mutator.SEED_DEFAULT = saved_seed</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_max_mutations</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    **Fuzzing configuration with a global maximum number of mutations**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f_alt = Field(name=&quot;alt&quot;, domain=Alt([int8(interval=(1, 4)),</span>
+<span class="sd">    ...                                       int8(interval=(5, 8))]))</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(name=&quot;sym&quot;, fields=[f_alt])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset.setFuzzingCounterMax(1)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(f_alt)</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">    b&#39;\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    StopIteration</span>
+
+
+<span class="sd">    **Fuzzing configuration with a maximum number of mutations, expressed with an absolute limit, on a symbol**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; field = Field(Agg([uint8(), uint8()]))</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([field], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; symbol.count()</span>
+<span class="sd">    65536</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(symbol, counterMax=80)</span>
+<span class="sd">    &gt;&gt;&gt; idx = 0</span>
+<span class="sd">    &gt;&gt;&gt; for data in symbol.specialize(preset):</span>
+<span class="sd">    ...     # use data</span>
+<span class="sd">    ...     idx += 1</span>
+<span class="sd">    &gt;&gt;&gt; print(idx)</span>
+<span class="sd">    80</span>
+
+
+<span class="sd">    **Fuzzing configuration with a maximum number of mutations, expressed with a ratio, on a symbol**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; field = Field(Agg([uint8(), uint8()]))</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([field], name=&quot;sym&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; symbol.count()</span>
+<span class="sd">    65536</span>
+<span class="sd">    &gt;&gt;&gt; int(symbol.count() * 0.001)</span>
+<span class="sd">    65</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(symbol, counterMax=0.001)</span>
+<span class="sd">    &gt;&gt;&gt; idx = 0</span>
+<span class="sd">    &gt;&gt;&gt; for data in symbol.specialize(preset):</span>
+<span class="sd">    ...     # use data</span>
+<span class="sd">    ...     idx += 1</span>
+<span class="sd">    &gt;&gt;&gt; print(idx)</span>
+<span class="sd">    65</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)  # This is needed to restore globalCounterMax default value for unit test purpose</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_preset_configuration</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Test preset of a field through its object and then through its</span>
+<span class="sd">    name, that verify that normalization works.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; field = Field(Raw(nbBytes=1), name=&quot;field 1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(name=&quot;symbol 1&quot;, fields=[field])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[field] = b&#39;\x42&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">    b&#39;B&#39;</span>
+<span class="sd">    &gt;&gt;&gt; preset[&quot;field 1&quot;] = b&#39;\x43&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">    b&#39;C&#39;</span>
+<span class="sd">    &gt;&gt;&gt; preset[&quot;field 1&quot;] = b&#39;\x44&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol.specialize(preset))</span>
+<span class="sd">    b&#39;D&#39;</span>
+<span class="sd">    &gt;&gt;&gt; len(preset.mappingFieldsMutators)</span>
+<span class="sd">    1</span>
+
+
+<span class="sd">    Test preset of a field through a wrong name, to verify that this</span>
+<span class="sd">    triggers an exception.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; field = Field(Raw(nbBytes=1), name=&quot;field 1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(name=&quot;symbol 1&quot;, fields=[field])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[&quot;field 2&quot;] = b&#39;\x42&#39;</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    Exception: The key string &#39;field 2&#39; has not been recognized in current symbol to preset</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_str_structure_with_preset</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Test the rendering of str_structure with preset configuration.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; field1 = Field(Raw(nbBytes=1), name=&quot;field 1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; field2 = Field(Raw(nbBytes=1), name=&quot;field 2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; field3 = Field(Raw(nbBytes=1), name=&quot;field 3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(name=&quot;symbol 1&quot;, fields=[field1, field2, field3])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[field1] = b&#39;\x42&#39;</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(field3)</span>
+<span class="sd">    &gt;&gt;&gt; print(symbol.str_structure(preset))</span>
+<span class="sd">    symbol 1</span>
+<span class="sd">    |--  field 1</span>
+<span class="sd">         |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED (b&#39;B&#39;)]</span>
+<span class="sd">    |--  field 2</span>
+<span class="sd">         |--   Data (Raw(nbBytes=1))</span>
+<span class="sd">    |--  field 3</span>
+<span class="sd">         |--   Data (Raw(nbBytes=1)) [FuzzingMode.GENERATE]</span>
+
+<span class="sd">    Test the rendering of str_structure with preset configuration, with variable nodes.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; field1 = Field(Raw(nbBytes=1), name=&quot;field 1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; v1 = Data(uint8(), name=&#39;v1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Data(uint8())</span>
+<span class="sd">    &gt;&gt;&gt; var_agg = Agg([v1, v2])</span>
+<span class="sd">    &gt;&gt;&gt; field2 = Field(var_agg, name=&quot;field 2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; field3 = Field(Raw(nbBytes=1), name=&quot;field 3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(name=&quot;symbol 1&quot;, fields=[field1, field2, field3])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[field1] = b&#39;\x42&#39;</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(&#39;v1&#39;, mode=FuzzingMode.MUTATE)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(field3)</span>
+<span class="sd">    &gt;&gt;&gt; print(symbol.str_structure(preset))</span>
+<span class="sd">    symbol 1</span>
+<span class="sd">    |--  field 1</span>
+<span class="sd">         |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED (b&#39;B&#39;)]</span>
+<span class="sd">    |--  field 2</span>
+<span class="sd">         |--   Agg</span>
+<span class="sd">               |--   Data (Integer(0,255)) [FuzzingMode.MUTATE]</span>
+<span class="sd">               |--   Data (Integer(0,255))</span>
+<span class="sd">    |--  field 3</span>
+<span class="sd">         |--   Data (Raw(nbBytes=1)) [FuzzingMode.GENERATE]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

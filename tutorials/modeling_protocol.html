@@ -1,0 +1,608 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Modeling your Protocol with Netzob &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/tutorials/modeling_protocol.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#initial-settings">
+   Initial Settings
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#modeling-the-protocol-vocabulary">
+   Modeling the Protocol Vocabulary
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Modeling your Protocol with Netzob</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#initial-settings">
+   Initial Settings
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#modeling-the-protocol-vocabulary">
+   Modeling the Protocol Vocabulary
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="modeling-your-protocol-with-netzob">
+<span id="tutorial-modeling-protocol"></span><h1>Modeling your Protocol with Netzob<a class="headerlink" href="#modeling-your-protocol-with-netzob" title="Permalink to this headline">#</a></h1>
+<p>This tutorial details the main features of Netzob’s protocol modeling
+aspects. It shows how your protocol fields can be described with Netzob’s
+language.</p>
+<p>The first thing to know is that a Netzob protocol model is entirely made of python code. Naturally, this code relies on Netzob’s classes and methods. Thus, following this tutorial requires an installed version of <code class="docutils literal notranslate"><span class="pre">Netzob</span> <span class="pre">(&gt;=1.0)</span></code> and your favorite python editor.</p>
+<section id="initial-settings">
+<h2>Initial Settings<a class="headerlink" href="#initial-settings" title="Permalink to this headline">#</a></h2>
+<p>First step will be to create a directory that will hold our python source file.
+For example, create the temporary <code class="docutils literal notranslate"><span class="pre">/tmp/netzob</span></code> directory and initiate the executable python file <code class="docutils literal notranslate"><span class="pre">/tmp/netzob/tutorial.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/$ mkdir /tmp/netzob
+/$ cd /tmp/netzob
+/tmp/netzob$ touch tutorial.py
+/tmp/netzob$ chmod +x tutorial.py
+</pre></div>
+</div>
+<p>Along with the traditional python shebang, imports the netzob library:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>Executing this file should return the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/tmp/netzob$ ./tutorial.py
+Warning: FastBinaryTree not available, using Python version BinaryTree.
+Warning: FastAVLTree not available, using Python version AVLTree.
+Warning: FastRBTree not available, using Python version RBTree.
+</pre></div>
+</div>
+<p>If an error related to the netzob import is returned, check the installation process you followed to install netzob.</p>
+</section>
+<section id="modeling-the-protocol-vocabulary">
+<h2>Modeling the Protocol Vocabulary<a class="headerlink" href="#modeling-the-protocol-vocabulary" title="Permalink to this headline">#</a></h2>
+<p>In Netzob, the vocabulary of a protocol consists in a list of symbols.</p>
+<p>A symbol represents all the messages that share a similar objectif from a protocol perspective. For example, the HTTP_GET symbol describes any HTTP request with the method GET being set.</p>
+<p>A symbol is made of a succession of fields and an optional name:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;MySymbol&quot;</span><span class="p">,</span> <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field1</span><span class="p">,</span> <span class="n">field2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>A symbol can be <strong>specialized</strong> into a context-valid message and a message can be <strong>abstracted</strong> into a symbol.</p>
+<p>A field describes a chunk of the symbol and is defined by a definition domain:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field1</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;MyField1&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domainOfField1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field2</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;MyField2&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domainOfField2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A definition domain describes the set of values its field accepts. To support complex domains, a definition domain is represented by a tree where each vertices is a variable. Thus it exists two kind of variables, <em>Leaf variables</em> that accept no children and <em>Node variables</em> that accept one or more children variables.</p>
+<p><strong>Leaf variables</strong> are the simplest variables. It exists four kinds of leaf variables.</p>
+<p>A <em>Data Variables</em> describes a data which value is of a given type. Various types are provided with Netzob:</p>
+<ul>
+<li><p><em>ASCII</em> : an ASCII string (see class <code class="xref py py-class docutils literal notranslate"><span class="pre">ASCII</span></code>)</p>
+<p>Example of a field that only accepts the “netzob” ASCII string:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ASCII</span><span class="p">(</span><span class="s2">&quot;netzob&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&quot;netzob&quot;</span>
+</pre></div>
+</div>
+<p>Example of a field that only accepts ASCII strings of five characters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ASCII</span><span class="p">(</span><span class="n">nbChars</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">zorjf</span>
+</pre></div>
+</div>
+<p>Exemple of a field that only accepts ASCII strings made of 5 to 10 characters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ASCII</span><span class="p">(</span><span class="n">nbChars</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">jfozkp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">nckrphjj</span>
+</pre></div>
+</div>
+</li>
+<li><p><em>Decimal</em> : a decimal number (see class <code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code>)</p>
+<p>Similarly to the ASCII type, a Decimal data can be constrained by a specific value:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\x14&#39;</span>
+</pre></div>
+</div>
+<p>A decimal variable also accepts a range of valid values:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\xda\x82&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\xd6\xca&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p><em>Raw</em> : a sequence of bytes (see class <code class="xref py py-class docutils literal notranslate"><span class="pre">Raw</span></code>)</p>
+<p>Example of a field that accepts a specific sequence of bytes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Raw</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x00\x01\x02\x03</span><span class="s1">&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">())</span>
+<span class="go">&quot;&#39;\\x00\\x01\\x02\\x03&#39;&quot;</span>
+</pre></div>
+</div>
+<p>Example of a field that accepts any sequence of ten bytes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;t)\x99\x8a\x02&gt;\xd1\x91y\x9b&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p><em>BitArray</em> : a sequence of bits (see class <code class="xref py py-class docutils literal notranslate"><span class="pre">BitArray</span></code>)</p>
+<p>Example of a field that accepts 3 to 10 bits:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">BitArray</span><span class="p">(</span><span class="n">nbBits</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\xbe@&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p><em>IPv4</em> : an IPv4 raw address (see class <code class="xref py py-class docutils literal notranslate"><span class="pre">IPv4</span></code>)</p>
+<p>Example of a field that only accepts an IPv4 address:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">IPv4</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\x86\x89\\\xac&#39;</span>
+</pre></div>
+</div>
+<p>Example of a field that only accepts an IPv4 address that belongs to the network 192.168.0.0/24:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">IPv4</span><span class="p">(</span><span class="n">network</span><span class="o">=</span><span class="s1">&#39;192.168.0.0/24&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\xc0\xa8\x00\x0b&#39;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Along with Data variables, the definition domain of a field can embed the definition of relationships. Two kinds of relationships are supported in Netzob; intra-symbol relationships and inter-symbol relationships. The former denotes a relationship between the size or the value of a variable, and another field in the same symbol. The latter one denotes a relationship with a field of another symbol. Currently, three kinds of relationships are supported.</p>
+<ul>
+<li><p>A <em>Size Relationship</em> that describes a data whose value is the size of another field.</p>
+<p>The size field can be declared before the targeted field in the same symbol:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">payloadField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sizeField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Size</span><span class="p">(</span><span class="n">payloadField</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">sizeField</span><span class="p">,</span> <span class="n">payloadField</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\x08\xac\xa4\xb8\x93\x8d\x83\x95%&#39; # size = 8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\x05\xff\xef\x93\x07\xd7&#39; # size = 5</span>
+</pre></div>
+</div>
+<p>The size field can also be declared after the targeted field in the same symbol:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">payloadField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sizeField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Size</span><span class="p">(</span><span class="n">payloadField</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">payloadField</span><span class="p">,</span> <span class="n">sizeField</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;n\\\x82\x84`\x00\x13\x9f\x08&#39; # size = 8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\xe7\xc4\xde\xbd\x18\x05&#39; &quot; size = 5</span>
+</pre></div>
+</div>
+<p>An optional “factor” and “offset” can be applied to the value of the computed size:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">payloadField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sizeField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Size</span><span class="p">(</span><span class="n">payloadField</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">sizeField</span><span class="p">,</span> <span class="n">payloadField</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\x07\xfb+K\xf4N\x99&#39; # size = 6 + 1 (offset)</span>
+</pre></div>
+</div>
+<p>More details and examples of Size relationships can be found in its API doc <code class="xref py py-class docutils literal notranslate"><span class="pre">Size</span></code>.</p>
+</li>
+<li><p>A <em>Value Relationship</em> is very similar to the size relationship except that the relationship applies on the value of the targeted field.</p>
+<p>For example, a symbol can be made of three fields, the former being a random sequence of 5 bytes, the second a simple ASCII delimitor (‘:’) while the latest shares the same value than the first field:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f1</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ASCII</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f3</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Value</span><span class="p">(</span><span class="n">f1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\x0f\x01ShS:\x0f\x01ShS&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;6H\xf9\x84\xc4:6H\xf9\x84\xc4&#39;</span>
+</pre></div>
+</div>
+<p>More details and examples of Value relationships can be found in its API doc <code class="xref py py-class docutils literal notranslate"><span class="pre">Size</span></code>.</p>
+</li>
+<li><p>A <em>Checksum Variable</em> describes a data whose value is the IP checksum of one or more other fields.</p>
+<p>The following example, illustrates the creation of an ICMP Echo request packet with a valid checksum represented on two bytes computed on-the-fly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">typeField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">x08&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">codeField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Code&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">x00&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chksumField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Checksum&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">x1d</span><span class="se">\\</span><span class="s1">x22&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">seqField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sequence Number&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">x00</span><span class="se">\\</span><span class="s1">x07&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timeField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">xa8</span><span class="se">\\</span><span class="s1">xf3</span><span class="se">\\</span><span class="s1">xf6</span><span class="se">\\</span><span class="s1">x53</span><span class="se">\\</span><span class="s1">x00</span><span class="se">\\</span><span class="s1">x00</span><span class="se">\\</span><span class="s1">x00</span><span class="se">\\</span><span class="s1">x00&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">headerField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;header&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">headerField</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">typeField</span><span class="p">,</span> <span class="n">codeField</span><span class="p">,</span> <span class="n">chksumField</span><span class="p">,</span> <span class="n">identField</span><span class="p">,</span> <span class="n">seqField</span><span class="p">,</span> <span class="n">timeField</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataField</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Payload&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chksumField</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">Checksum</span><span class="p">([</span><span class="n">headerField</span><span class="p">,</span> <span class="n">dataField</span><span class="p">],</span> <span class="s2">&quot;InternetChecksum&quot;</span><span class="p">,</span> <span class="n">dataType</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">headerField</span><span class="p">,</span> <span class="n">dataField</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+<span class="go">&#39;\\x08\\x00\x9d\xda\\x1d\\x22\\x00\\x07\\xa8\\xf3\\xf6\\x53\\x00\\x00\\x00\\x00\xec6\xf4\x98\xee&#39; # checksum = \\xda\\x1d</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><strong>Leaf Variables</strong> can be combined into a tree model to produce much more complex definition domains. To achieve this, <strong>Node Variables</strong> can be used to construct complex definition domains made of a succession of variables, an alternative of variables or a repetition of variables.</p>
+<ul>
+<li><p>The <em>Aggregation Node Variable</em> can be used to model a succession of variables.</p>
+<p>For example, a field that accepts an ASCII string of 10 characters followed by 2 bytes (see <code class="xref py py-class docutils literal notranslate"><span class="pre">Agg</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">domainOfField</span> <span class="o">=</span> <span class="n">Agg</span><span class="p">([</span> <span class="n">ASCII</span><span class="p">(</span><span class="n">nbChars</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span> <span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">domainOfField</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">())</span>
+<span class="go">&quot;&#39;VLAuxPd0A0\\x86M&#39;&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>The <em>Alternate Node Variable</em> can be used to model an alternative of multiple variables (OR).</p>
+<p>For example, in the following models a field either accepts the ASCII value “hello” or any ASCII string of 10 to 15 characters (see <code class="xref py py-class docutils literal notranslate"><span class="pre">Alt</span></code>)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Alt</span><span class="p">([</span> <span class="n">ASCII</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">),</span> <span class="n">ASCII</span><span class="p">(</span><span class="n">nbChars</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">))</span> <span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">())</span>
+<span class="go">&quot;&#39;hello&#39;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">())</span>
+<span class="go">&quot;&#39;Zm7D3Ade9K&#39;&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>The <em>Repeat Node Variable</em> can be used to model a repetition of a variable.</p>
+<p>For example, in the following models a field accepts between 1 and 4 repetitions of the ASCII string “netzob” (see <code class="xref py py-class docutils literal notranslate"><span class="pre">Repeat</span></code>) :::</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Repeat</span><span class="p">(</span><span class="n">ASCII</span><span class="p">(</span><span class="s2">&quot;netzob&quot;</span><span class="p">),</span> <span class="n">nbRepeat</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">())</span>
+<span class="go">&quot;&#39;netzob&#39;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">())</span>
+<span class="go">&quot;&#39;netzobnetzobnetzob&#39;&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Node variables can be combined to produce complex definition domains. For example, the following models a field that either accept an ASCII string that starts by the letter “n” or a random IPv4 address:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span> <span class="n">Alt</span><span class="p">([</span> <span class="n">Agg</span><span class="p">([</span><span class="n">ASCII</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">),</span> <span class="n">ASCII</span><span class="p">()]),</span> <span class="n">Agg</span><span class="p">([</span> <span class="n">IPv4</span><span class="p">()</span> <span class="p">])])</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">())</span>
+<span class="go">&quot;&#39;nlPj66&#39;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">specialize</span><span class="p">())</span>
+<span class="go">&quot;&#39;aI\\xe4\\xc5&#39;&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

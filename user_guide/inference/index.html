@@ -1,0 +1,464 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Protocol inference &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../_sources/user_guide/inference/index.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#definition-of-a-communication-protocol">
+   Definition of a communication protocol
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#modelization-in-netzob">
+   Modelization in Netzob
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Protocol inference</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#definition-of-a-communication-protocol">
+   Definition of a communication protocol
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#modelization-in-netzob">
+   Modelization in Netzob
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="protocol-inference">
+<span id="inference"></span><h1>Protocol inference<a class="headerlink" href="#protocol-inference" title="Permalink to this headline">#</a></h1>
+<section id="definition-of-a-communication-protocol">
+<h2>Definition of a communication protocol<a class="headerlink" href="#definition-of-a-communication-protocol" title="Permalink to this headline">#</a></h2>
+<p>A communication protocol is as language. A language is defined
+through~:</p>
+<ul class="simple">
+<li><p>its vocabulary (the set of valid words or, in our context, the set
+of valid messages) ;</p></li>
+<li><p>its grammar (the set of valid sentences which, in our context, can
+be represented as a protocol state machine, like the TCP state
+machine).</p></li>
+</ul>
+<p>A word of the vocabular is called a symbol. A symbol represents an
+abstract view of a set of similar messages. Similar messages refer to
+messages having the same semantic (for example, a TCP SYN message, a
+SMTP HELLO message, an ICMP ECHO REQUEST message, etc.).</p>
+<p>A symbol is structured following a format, which specifies a sequence
+of fields (like the IP format). A field can be splitted into
+sub-fields. For example, a payload is a field of a TCP
+message. Therefore, by defining a layer as a kind of payload (which is
+a specific field), we can retrieve the so-called Ethernet, IP, TCP and
+HTTP layers from a raw packet ; each layer having its own vocabular
+and grammar.</p>
+<p>Field’s size can be fixed or variable.
+Field’s content can be static of dynamic.
+Field’s content can be basic (a 32 bits integer) or complex (an array).
+A field has four attributes~:</p>
+<ul class="simple">
+<li><p>the type defines its definition domain or set of valid values (16 bits integer, string, etc.) ;</p></li>
+<li><p>the data description defines the structuration of the field (ASN.1, TSN.1, EBML, etc.) ;</p></li>
+<li><p>the data encoding defines … (ASCII, little endian, big endian, XML, EBML, DER, XER, PER, etc.) ;</p></li>
+<li><p>the semantic defines … (IP address, port number, URL, email, checksum, etc.).</p></li>
+</ul>
+<p>Field’s content can be~:</p>
+<ul class="simple">
+<li><p>static ;</p></li>
+<li><p>dependant of another field (or a set of fields) of the same message (intra-message dependency) ;</p></li>
+<li><p>dependant of a field (or a set of fields) of a previous message in the grammar (inter-message dependency) ;</p></li>
+<li><p>dependant of the environment ;</p></li>
+<li><p>dependant of the application behaviour (which could depend on the user behaviour) ;</p></li>
+<li><p>random (the initial value of the TCP sequence number for example).</p></li>
+</ul>
+</section>
+<section id="modelization-in-netzob">
+<h2>Modelization in Netzob<a class="headerlink" href="#modelization-in-netzob" title="Permalink to this headline">#</a></h2>
+<p>Netzob provides a framework for the semi-automated modelization (inference) of communication protocols, i.e. inferring its vocabular and grammar.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Vocabular inference</dt><dd><ul>
+<li><p>Message structure inference (based on sequence alignment)</p></li>
+<li><p>Regoupment of similar message structures</p></li>
+<li><p>Field type inference</p></li>
+<li><p>Field dependencies from the same message and from the environment</p></li>
+<li><p>Field semantic inference</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Grammar inference</dt><dd><ul>
+<li><p>Identification of the automata of the protocol</p></li>
+<li><p>Fields dependencies with messages of previous states</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>All the functionalities of the framework are detailled in this chapter.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vocabular.html">Vocabular inference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vocabular.html#structure-inference">Structure inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vocabular.html#regoupment-of-similar-structures">Regoupment of similar structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vocabular.html#field-type-inference">Field type inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vocabular.html#field-dependencies-from-the-same-message-and-from-the-environment">Field dependencies from the same message and from the environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vocabular.html#field-semantic-inference">Field semantic inference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="grammar.html">Grammar inference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="grammar.html#identification-of-the-automata-of-the-protocol">Identification of the automata of the protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grammar.html#fields-dependencies-with-messages-of-previous-states">Fields dependencies with messages of previous states</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

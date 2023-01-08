@@ -1,0 +1,701 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Auto generation of Peach pit files/fuzzers &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/tutorials/peach.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#principle">
+   Principle
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#prerequisite">
+   Prerequisite
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#export">
+   Export
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#launch-the-fuzzing">
+   Launch the fuzzing
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Auto generation of Peach pit files/fuzzers</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#principle">
+   Principle
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#prerequisite">
+   Prerequisite
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#export">
+   Export
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#launch-the-fuzzing">
+   Launch the fuzzing
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="auto-generation-of-peach-pit-files-fuzzers">
+<span id="tutorial-peach"></span><h1>Auto generation of Peach pit files/fuzzers<a class="headerlink" href="#auto-generation-of-peach-pit-files-fuzzers" title="Permalink to this headline">#</a></h1>
+<section id="principle">
+<h2>Principle<a class="headerlink" href="#principle" title="Permalink to this headline">#</a></h2>
+<p><a class="reference external" href="http://peachfuzzer.com">Peach</a> is an open-source framework of
+fuzzing. It provides API to create smart fuzzers adapted to the tester’s
+needs through XML configuration files called <a class="reference external" href="http://peachfuzzer.com/PeachPit">*Peach pit
+files*</a>.
+Making such files needs knowledge of the format message and state
+machine of the targeted protocol as well as the actor Peach has to fuzz.</p>
+<p>Fortunately, Netzob provides means for reverse engineering of undocumented and
+proprietary protocols from provided traces in a semi-automatic way.
+Netzob provides an exporter plugin for Peach that can transform
+the inferred data model and state machine of a targeted protocol into a
+Peach pit file automatically.</p>
+<p>This tutorial shows how to take advantage of the Peach exporter plugin
+provided in Netzob to automatically construct Peach pit configuration
+files.</p>
+</section>
+<section id="prerequisite">
+<h2>Prerequisite<a class="headerlink" href="#prerequisite" title="Permalink to this headline">#</a></h2>
+<p>You need Netzob in version 0.4.1 or above.</p>
+<p>This tutorial assumes that the user have previously followed the
+<a class="reference external" href="http://www.netzob.org/resources/tutorial_get_started">Getting started with
+Netzob</a> tutorial
+and have a complete Netzob project (or at least some format messages).
+The protocol implementation contains several vulnerabilities that should
+be detected during fuzzing.</p>
+<p>Moreover it assumes that the user has Peach 2.3.8 installed.</p>
+</section>
+<section id="export">
+<h2>Export<a class="headerlink" href="#export" title="Permalink to this headline">#</a></h2>
+<p>To export the project go in <code class="docutils literal notranslate"><span class="pre">File</span></code> &gt; <code class="docutils literal notranslate"><span class="pre">Export</span> <span class="pre">the</span> <span class="pre">project</span></code> &gt;
+<code class="docutils literal notranslate"><span class="pre">Peach</span> <span class="pre">pit</span> <span class="pre">file</span></code>. The window below should appears :</p>
+<figure class="align-center">
+<img alt="" src="https://dev.netzob.org/attachments/download/134" />
+</figure>
+<p>The window is composed of three panels. The left one lists all fuzzer
+available. They differ on the state representation. There are three
+kinds of fuzzer available:</p>
+<ul class="simple">
+<li><p>“Randomized state order fuzzer”: one state is created for each
+symbols of Netzob and at each step, the fuzzer changes of state for a
+randomly chosen one.</p></li>
+<li><p>“Randomized transitions stateful fuzzer”: one state is created for
+each symbols of Netzob and the transitions between these states are
+based on those Netzob allows, weight by their probability.</p></li>
+<li><p>“One-state fuzzer”: one state is created corresponding to the chosen
+symbol.</p></li>
+</ul>
+<p>When the fuzzer is on a particular state, it sends fuzzed data that
+corresponds to the associated symbol to the target. Choose one of them.</p>
+<p>The right panel shows the fuzzer. It gives the user a small idea of what
+he is doing and what changes between two configurations.</p>
+<p>The bottom panel has two options:</p>
+<ul class="simple">
+<li><p>The first options <code class="docutils literal notranslate"><span class="pre">Fuzzing</span> <span class="pre">based</span> <span class="pre">on</span></code> tells on which Netzob data
+model the fuzzing is based:</p>
+<ul>
+<li><p>“Variable”: use the Netzob variables to make Peach data models. It
+makes more fuzzy but less smart fuzzer.</p></li>
+<li><p>“Regex”: use the Netzob Regex (which are displayed on the top of
+the symbol visualization), it is the simplest solution.</p></li>
+</ul>
+</li>
+<li><p>The second options <code class="docutils literal notranslate"><span class="pre">Mutate</span> <span class="pre">static</span> <span class="pre">fields</span></code> tells if the static
+fields in the Netzob data model are fuzzed or not.</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">Export</span></code> button exports the fuzzer into a user defined file.</p>
+<p>Use this fuzzer into Peach<a class="reference external" href="#Use-this-fuzzer-into-Peach">¶</a></p>
+<p>Export this fuzzer directly through the <code class="docutils literal notranslate"><span class="pre">Export</span></code> button to a file
+named “test.xml” into the directory of Peach. It should create a
+PeachzobAddons.py file, which is essential for Peach to leverage Netzob
+capabilities as “fixup”.</p>
+<p>The “test.xml” file should look like this. Look closely to the few XML
+comments.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;Peach xmlns=&quot;http://phed.org/2008/Peach&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://phed.org/2008/Peach /peach/peach.xsd&quot;&gt;
+  &lt;Include ns=&quot;default&quot; src=&quot;file:defaults.xml&quot;/&gt;
+  &lt;Import import=&quot;PeachzobAddons&quot;/&gt;
+
+  &lt;DataModel name=&quot;dataModel 1&quot;&gt;
+    &lt;Blob name=&quot;Field 0_0&quot; valueType=&quot;hex&quot; value=&quot;6170695f&quot;/&gt;
+    &lt;Blob name=&quot;Field 1_0&quot; valueType=&quot;hex&quot;&gt;
+      &lt;Fixup class=&quot;PeachzobAddons.Or&quot;&gt;
+        &lt;Param name=&quot;values&quot; value=&quot;Blob,696e666f; Blob,7374617473&quot;/&gt;
+      &lt;/Fixup&gt;
+
+    &lt;/Blob&gt;
+    &lt;Blob name=&quot;Field 2_0&quot; valueType=&quot;hex&quot; value=&quot;2300000000000000000000000000000000000000000000&quot;/&gt;
+    &lt;Blob name=&quot;Field 3_0&quot; valueType=&quot;hex&quot; value=&quot;00&quot;/&gt;
+  &lt;/DataModel&gt;
+  &lt;DataModel name=&quot;dataModel 2&quot;&gt;
+    &lt;Blob name=&quot;Field 0_0&quot; valueType=&quot;hex&quot; value=&quot;6170695f62796523000000000000000000000000000000000000000000000000&quot;/&gt;
+
+  &lt;/DataModel&gt;
+  &lt;DataModel name=&quot;dataModel 3&quot;&gt;
+    &lt;Blob name=&quot;Field 0_0&quot; valueType=&quot;hex&quot; value=&quot;6170695f6964656e746966792366726564000000000000000000000000000000&quot;/&gt;
+  &lt;/DataModel&gt;
+  &lt;DataModel name=&quot;dataModel 4&quot;&gt;
+    &lt;Blob name=&quot;Field 0_0&quot; valueType=&quot;hex&quot; value=&quot;6170695f61757468656e74696679236d79506173737764210000000000000000&quot;/&gt;
+
+  &lt;/DataModel&gt;
+  &lt;DataModel name=&quot;dataModel 5&quot;&gt;
+    &lt;Blob name=&quot;Field 0_0&quot; valueType=&quot;hex&quot; value=&quot;6170695f656e6372797074233132333435367465737400000000000000000000&quot;/&gt;
+  &lt;/DataModel&gt;
+  &lt;DataModel name=&quot;dataModel 6&quot;&gt;
+    &lt;Blob name=&quot;Field 0_0&quot; valueType=&quot;hex&quot; value=&quot;6170695f64656372797074237370717677743627313600000000000000000000&quot;/&gt;
+
+  &lt;/DataModel&gt;
+  &lt;DataModel name=&quot;dataModel 7&quot;&gt;
+    &lt;Blob name=&quot;Default-1_0&quot; valueType=&quot;hex&quot; value=&quot;00000000&quot;/&gt;
+    &lt;Blob name=&quot;Default-2-1_0&quot; valueType=&quot;hex&quot; value=&quot;23&quot;/&gt;
+    &lt;Blob name=&quot;Default-2-2-1-1_0&quot; valueType=&quot;hex&quot;&gt;
+      &lt;Fixup class=&quot;PeachzobAddons.Or&quot;&gt;
+
+        &lt;Param name=&quot;values&quot; value=&quot;Blob,00000000000000; Blob,00000004000000; Blob,00000005000000; Blob,0000000a000000; Blob,64000000000000; Blob,8b04080a000000&quot;/&gt;
+      &lt;/Fixup&gt;
+    &lt;/Blob&gt;
+    &lt;Blob name=&quot;Default-2-2-1-2_0&quot; valueType=&quot;hex&quot;&gt;
+      &lt;Fixup class=&quot;PeachzobAddons.Or&quot;&gt;
+        &lt;Param name=&quot;values&quot; value=&quot;Blob,00000000000000000000; Blob,31323334353674657374; Blob,696e666f000000000000; Blob,73707176777436273136; Blob,73746174730000000000&quot;/&gt;
+
+      &lt;/Fixup&gt;
+    &lt;/Blob&gt;
+    &lt;Blob name=&quot;Default-2-2-2_0&quot; valueType=&quot;hex&quot; value=&quot;00000000000000000000&quot;/&gt;
+  &lt;/DataModel&gt;
+  &lt;DataModel name=&quot;dataModel 9&quot;&gt;
+    &lt;Blob name=&quot;Field 0&quot;&gt;
+
+      &lt;Fixup class=&quot;PeachzobAddons.RandomField&quot;&gt;
+        &lt;Param name=&quot;minlen&quot; value=&quot;0&quot;/&gt;
+        &lt;Param name=&quot;maxlen&quot; value=&quot;1024&quot;/&gt;
+        &lt;Param name=&quot;type&quot; value=&quot;Blob&quot;/&gt;
+      &lt;/Fixup&gt;
+    &lt;/Blob&gt;
+
+  &lt;/DataModel&gt;
+  &lt;StateModel initialState=&quot;state 0&quot; name=&quot;stateModel&quot;&gt;
+    &lt;State name=&quot;state 0&quot;&gt;
+      &lt;Action ref=&quot;state 1&quot; type=&quot;changeState&quot; when=&quot;random.randint(1,8)==1&quot;/&gt;
+      &lt;Action ref=&quot;state 2&quot; type=&quot;changeState&quot; when=&quot;random.randint(1,7)==1&quot;/&gt;
+      &lt;Action ref=&quot;state 3&quot; type=&quot;changeState&quot; when=&quot;random.randint(1,6)==1&quot;/&gt;
+
+      &lt;Action ref=&quot;state 4&quot; type=&quot;changeState&quot; when=&quot;random.randint(1,5)==1&quot;/&gt;
+      &lt;Action ref=&quot;state 5&quot; type=&quot;changeState&quot; when=&quot;random.randint(1,4)==1&quot;/&gt;
+      &lt;Action ref=&quot;state 6&quot; type=&quot;changeState&quot; when=&quot;random.randint(1,3)==1&quot;/&gt;
+      &lt;Action ref=&quot;state 7&quot; type=&quot;changeState&quot; when=&quot;random.randint(1,2)==1&quot;/&gt;
+      &lt;Action ref=&quot;state 9&quot; type=&quot;changeState&quot;/&gt;
+    &lt;/State&gt;
+
+    &lt;State name=&quot;state 1&quot;&gt;
+      &lt;Action type=&quot;output&quot;&gt;
+        &lt;DataModel ref=&quot;dataModel 1&quot;/&gt;
+        &lt;Data name=&quot;data&quot;/&gt;
+      &lt;/Action&gt;
+    &lt;/State&gt;
+
+    &lt;State name=&quot;state 2&quot;&gt;
+      &lt;Action type=&quot;output&quot;&gt;
+        &lt;DataModel ref=&quot;dataModel 2&quot;/&gt;
+        &lt;Data name=&quot;data&quot;/&gt;
+      &lt;/Action&gt;
+    &lt;/State&gt;
+
+    &lt;State name=&quot;state 3&quot;&gt;
+      &lt;Action type=&quot;output&quot;&gt;
+        &lt;DataModel ref=&quot;dataModel 3&quot;/&gt;
+        &lt;Data name=&quot;data&quot;/&gt;
+      &lt;/Action&gt;
+    &lt;/State&gt;
+
+    &lt;State name=&quot;state 4&quot;&gt;
+      &lt;Action type=&quot;output&quot;&gt;
+        &lt;DataModel ref=&quot;dataModel 4&quot;/&gt;
+        &lt;Data name=&quot;data&quot;/&gt;
+      &lt;/Action&gt;
+    &lt;/State&gt;
+
+    &lt;State name=&quot;state 5&quot;&gt;
+      &lt;Action type=&quot;output&quot;&gt;
+        &lt;DataModel ref=&quot;dataModel 5&quot;/&gt;
+        &lt;Data name=&quot;data&quot;/&gt;
+      &lt;/Action&gt;
+    &lt;/State&gt;
+
+    &lt;State name=&quot;state 6&quot;&gt;
+      &lt;Action type=&quot;output&quot;&gt;
+        &lt;DataModel ref=&quot;dataModel 6&quot;/&gt;
+        &lt;Data name=&quot;data&quot;/&gt;
+      &lt;/Action&gt;
+    &lt;/State&gt;
+
+    &lt;State name=&quot;state 7&quot;&gt;
+      &lt;Action type=&quot;output&quot;&gt;
+        &lt;DataModel ref=&quot;dataModel 7&quot;/&gt;
+        &lt;Data name=&quot;data&quot;/&gt;
+      &lt;/Action&gt;
+    &lt;/State&gt;
+
+    &lt;State name=&quot;state 9&quot;&gt;
+      &lt;Action type=&quot;output&quot;&gt;
+        &lt;DataModel ref=&quot;dataModel 9&quot;/&gt;
+        &lt;Data name=&quot;data&quot;/&gt;
+      &lt;/Action&gt;
+    &lt;/State&gt;
+
+  &lt;/StateModel&gt;
+  &lt;Agent name=&quot;DefaultAgent&quot;&gt;
+    &lt;!--Todo: Configure the Agents.--&gt;
+  &lt;/Agent&gt;
+  &lt;Test name=&quot;DefaultTest&quot;&gt;
+    &lt;!--Todo: Enable Agent &lt;Agent ref=&quot;TheAgent&quot;/&gt; --&gt;
+
+    &lt;StateModel ref=&quot;stateModel&quot;/&gt;
+    &lt;Publisher class=&quot;udp.Udp&quot;&gt;
+      &lt;Param name=&quot;host&quot; value=&quot;127.0.0.1&quot;/&gt;
+      &lt;Param name=&quot;port&quot; value=&quot;4242&quot;/&gt;
+    &lt;/Publisher&gt;
+    &lt;Publisher class=&quot;udp.Udp&quot;&gt;
+
+      &lt;Param name=&quot;host&quot; value=&quot;127.0.0.1&quot;/&gt;
+      &lt;Param name=&quot;port&quot; value=&quot;10000&quot;/&gt;
+    &lt;/Publisher&gt;
+    &lt;!--The Netzob project has several simulator actors, so this file have several publishers. Choose one of them and remove the others.--&gt;
+  &lt;/Test&gt;
+  &lt;Run name=&quot;DefaultRun&quot;&gt;
+
+    &lt;!--Todo: Configure the run.--&gt;
+    &lt;Logger class=&quot;logger.Filesystem&quot;&gt;
+      &lt;Param name=&quot;path&quot; value=&quot;logs&quot;/&gt;
+    &lt;/Logger&gt;
+    &lt;Test ref=&quot;DefaultTest&quot;/&gt;
+  &lt;/Run&gt;
+
+&lt;/Peach&gt;
+</pre></div>
+</div>
+<p>This tutorial will not talk about Peach agents but configuring one of
+them could be useful. In the Test block, there is as many publishers as
+the Netzob simulator has actors. One publisher is needed, remove the
+others. If there is no publishers, create one according to the model
+above. On this example, the tester remove the second publisher.</p>
+</section>
+<section id="launch-the-fuzzing">
+<h2>Launch the fuzzing<a class="headerlink" href="#launch-the-fuzzing" title="Permalink to this headline">#</a></h2>
+<p>You first have to start the targeted server:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">server</span>
+</pre></div>
+</div>
+<p>Assuming that the user exports the “test.xml” file into the Peach
+directory, you can now start the fuzzer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">peach</span><span class="o">.</span><span class="n">py</span> <span class="n">test</span><span class="o">.</span><span class="n">xml</span>
+</pre></div>
+</div>
+<p>After few seconds, you should trigger a segfault or a stack smashing
+detection.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-&gt;</span> <span class="n">Read</span><span class="p">:</span> <span class="n">api_identify</span><span class="c1">#fred</span>
+   <span class="n">Command</span><span class="p">:</span> <span class="n">api_identify</span>
+   <span class="n">Arg</span><span class="p">:</span> <span class="n">fred</span>
+<span class="o">&lt;-</span> <span class="n">Send</span><span class="p">:</span>
+   <span class="n">Return</span> <span class="n">value</span><span class="p">:</span> <span class="mi">0</span>
+   <span class="n">Size</span> <span class="n">of</span> <span class="n">data</span> <span class="n">buffer</span><span class="p">:</span> <span class="mi">13</span>
+   <span class="n">Data</span> <span class="n">buffer</span><span class="p">:</span>
+   <span class="n">DATA</span><span class="p">:</span> <span class="mi">72</span> <span class="mi">65</span> <span class="mi">73</span> <span class="mi">70</span> <span class="mi">5</span><span class="n">f</span> <span class="mi">69</span> <span class="mi">64</span> <span class="mi">65</span> <span class="mi">6</span><span class="n">e</span> <span class="mi">74</span> <span class="mi">69</span> <span class="mi">66</span> <span class="mi">79</span>              <span class="s2">&quot;resp_identify&quot;</span>
+
+<span class="o">-&gt;</span> <span class="n">Read</span><span class="p">:</span> <span class="n">api_identify</span><span class="c1">#f</span>
+
+   <span class="n">Command</span><span class="p">:</span> <span class="n">api_identify</span>
+   <span class="n">Arg</span><span class="p">:</span> <span class="n">f</span>
+
+<span class="o">***</span> <span class="n">stack</span> <span class="n">smashing</span> <span class="n">detected</span> <span class="o">***</span><span class="p">:</span> <span class="o">./</span><span class="n">server</span> <span class="n">terminated</span>
+<span class="o">=======</span> <span class="n">Backtrace</span><span class="p">:</span> <span class="o">=========</span>
+<span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libc</span><span class="o">.</span><span class="n">so</span><span class="mf">.6</span><span class="p">(</span><span class="n">__fortify_fail</span><span class="o">+</span><span class="mh">0x45</span><span class="p">)[</span><span class="mh">0xcec045</span><span class="p">]</span>
+<span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libc</span><span class="o">.</span><span class="n">so</span><span class="mf">.6</span><span class="p">(</span><span class="o">+</span><span class="mh">0x103ffa</span><span class="p">)[</span><span class="mh">0xcebffa</span><span class="p">]</span>
+<span class="o">./</span><span class="n">server</span><span class="p">[</span><span class="mh">0x8048a3c</span><span class="p">]</span>
+<span class="o">./</span><span class="n">server</span><span class="p">[</span><span class="mh">0x8048eb4</span><span class="p">]</span>
+<span class="o">./</span><span class="n">server</span><span class="p">[</span><span class="mh">0x8048985</span><span class="p">]</span>
+<span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libc</span><span class="o">.</span><span class="n">so</span><span class="mf">.6</span><span class="p">(</span><span class="n">__libc_start_main</span><span class="o">+</span><span class="mh">0xf3</span><span class="p">)[</span><span class="mh">0xc014d3</span><span class="p">]</span>
+<span class="o">./</span><span class="n">server</span><span class="p">[</span><span class="mh">0x8048831</span><span class="p">]</span>
+<span class="o">=======</span> <span class="n">Memory</span> <span class="nb">map</span><span class="p">:</span> <span class="o">========</span>
+<span class="mi">00289000</span><span class="o">-</span><span class="mi">0028</span><span class="n">a000</span> <span class="n">r</span><span class="o">-</span><span class="n">xp</span> <span class="mi">00000000</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="mi">0</span>          <span class="p">[</span><span class="n">vdso</span><span class="p">]</span>
+<span class="mi">002</span><span class="n">fb000</span><span class="o">-</span><span class="mi">00317000</span> <span class="n">r</span><span class="o">-</span><span class="n">xp</span> <span class="mi">00000000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">2605207</span>    <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libgcc_s</span><span class="o">.</span><span class="n">so</span><span class="mf">.1</span>
+<span class="mi">00317000</span><span class="o">-</span><span class="mi">00318000</span> <span class="n">r</span><span class="o">--</span><span class="n">p</span> <span class="mi">0001</span><span class="n">b000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">2605207</span>    <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libgcc_s</span><span class="o">.</span><span class="n">so</span><span class="mf">.1</span>
+<span class="mi">00318000</span><span class="o">-</span><span class="mi">00319000</span> <span class="n">rw</span><span class="o">-</span><span class="n">p</span> <span class="mi">0001</span><span class="n">c000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">2605207</span>    <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libgcc_s</span><span class="o">.</span><span class="n">so</span><span class="mf">.1</span>
+<span class="mi">00</span><span class="n">bb4000</span><span class="o">-</span><span class="mi">00</span><span class="n">bd4000</span> <span class="n">r</span><span class="o">-</span><span class="n">xp</span> <span class="mi">00000000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">673152</span>     <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">ld</span><span class="o">-</span><span class="mf">2.15</span><span class="o">.</span><span class="n">so</span>
+<span class="mi">00</span><span class="n">bd4000</span><span class="o">-</span><span class="mi">00</span><span class="n">bd5000</span> <span class="n">r</span><span class="o">--</span><span class="n">p</span> <span class="mi">0001</span><span class="n">f000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">673152</span>     <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">ld</span><span class="o">-</span><span class="mf">2.15</span><span class="o">.</span><span class="n">so</span>
+<span class="mi">00</span><span class="n">bd5000</span><span class="o">-</span><span class="mi">00</span><span class="n">bd6000</span> <span class="n">rw</span><span class="o">-</span><span class="n">p</span> <span class="mi">00020000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">673152</span>     <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">ld</span><span class="o">-</span><span class="mf">2.15</span><span class="o">.</span><span class="n">so</span>
+<span class="mi">00</span><span class="n">be8000</span><span class="o">-</span><span class="mi">00</span><span class="n">d8b000</span> <span class="n">r</span><span class="o">-</span><span class="n">xp</span> <span class="mi">00000000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">672879</span>     <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libc</span><span class="o">-</span><span class="mf">2.15</span><span class="o">.</span><span class="n">so</span>
+<span class="mi">00</span><span class="n">d8b000</span><span class="o">-</span><span class="mi">00</span><span class="n">d8c000</span> <span class="o">---</span><span class="n">p</span> <span class="mi">001</span><span class="n">a3000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">672879</span>     <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libc</span><span class="o">-</span><span class="mf">2.15</span><span class="o">.</span><span class="n">so</span>
+<span class="mi">00</span><span class="n">d8c000</span><span class="o">-</span><span class="mi">00</span><span class="n">d8e000</span> <span class="n">r</span><span class="o">--</span><span class="n">p</span> <span class="mi">001</span><span class="n">a3000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">672879</span>     <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libc</span><span class="o">-</span><span class="mf">2.15</span><span class="o">.</span><span class="n">so</span>
+<span class="mi">00</span><span class="n">d8e000</span><span class="o">-</span><span class="mi">00</span><span class="n">d8f000</span> <span class="n">rw</span><span class="o">-</span><span class="n">p</span> <span class="mi">001</span><span class="n">a5000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">672879</span>     <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">i386</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">gnu</span><span class="o">/</span><span class="n">libc</span><span class="o">-</span><span class="mf">2.15</span><span class="o">.</span><span class="n">so</span>
+<span class="mi">00</span><span class="n">d8f000</span><span class="o">-</span><span class="mi">00</span><span class="n">d92000</span> <span class="n">rw</span><span class="o">-</span><span class="n">p</span> <span class="mi">00000000</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="mi">0</span>
+<span class="mi">08048000</span><span class="o">-</span><span class="mi">0804</span><span class="n">a000</span> <span class="n">r</span><span class="o">-</span><span class="n">xp</span> <span class="mi">00000000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">6488874</span>    <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">sygus</span><span class="o">/</span><span class="n">travaux</span><span class="o">/</span><span class="n">netzob</span><span class="o">/</span><span class="n">target_protocol</span><span class="o">/</span><span class="n">server</span>
+<span class="mi">0804</span><span class="n">a000</span><span class="o">-</span><span class="mi">0804</span><span class="n">b000</span> <span class="n">r</span><span class="o">--</span><span class="n">p</span> <span class="mi">00001000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">6488874</span>    <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">sygus</span><span class="o">/</span><span class="n">travaux</span><span class="o">/</span><span class="n">netzob</span><span class="o">/</span><span class="n">target_protocol</span><span class="o">/</span><span class="n">server</span>
+<span class="mi">0804</span><span class="n">b000</span><span class="o">-</span><span class="mi">0804</span><span class="n">c000</span> <span class="n">rw</span><span class="o">-</span><span class="n">p</span> <span class="mi">00002000</span> <span class="mi">08</span><span class="p">:</span><span class="mi">03</span> <span class="mi">6488874</span>    <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">sygus</span><span class="o">/</span><span class="n">travaux</span><span class="o">/</span><span class="n">netzob</span><span class="o">/</span><span class="n">target_protocol</span><span class="o">/</span><span class="n">server</span>
+<span class="mf">09e0</span><span class="n">d000</span><span class="o">-</span><span class="mf">09e2</span><span class="n">e000</span> <span class="n">rw</span><span class="o">-</span><span class="n">p</span> <span class="mi">00000000</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="mi">0</span>          <span class="p">[</span><span class="n">heap</span><span class="p">]</span>
+<span class="n">b778b000</span><span class="o">-</span><span class="n">b778c000</span> <span class="n">rw</span><span class="o">-</span><span class="n">p</span> <span class="mi">00000000</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="mi">0</span>
+<span class="n">b77a8000</span><span class="o">-</span><span class="n">b77ac000</span> <span class="n">rw</span><span class="o">-</span><span class="n">p</span> <span class="mi">00000000</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="mi">0</span>
+<span class="n">bf90f000</span><span class="o">-</span><span class="n">bf930000</span> <span class="n">rw</span><span class="o">-</span><span class="n">p</span> <span class="mi">00000000</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="mi">0</span>          <span class="p">[</span><span class="n">stack</span><span class="p">]</span>
+<span class="n">Abandon</span> <span class="p">(</span><span class="n">core</span> <span class="n">dumped</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

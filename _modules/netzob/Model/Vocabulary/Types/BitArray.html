@@ -1,0 +1,1002 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Types.BitArray &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Types.BitArray</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># |          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># |               Netzob : Inferring communication protocols                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1"># | This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1"># | it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1"># | the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1"># | (at your option) any later version.                                       |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1"># | but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1"># | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1"># | GNU General Public License for more details.                              |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | You should have received a copy of the GNU General Public License         |</span>
+<span class="c1"># | along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | @url      : http://www.netzob.org                                         |</span>
+<span class="c1"># | @contact  : contact@netzob.org                                            |</span>
+<span class="c1"># | @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1"># |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | File contributors :                                                       |</span>
+<span class="c1"># |       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1"># |       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Standard library imports                                                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Related third party imports                                               |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">bitarray</span> <span class="kn">import</span> <span class="n">bitarray</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Local application imports                                                 |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">NetzobLogger</span><span class="p">,</span> <span class="n">public_api</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.AbstractType</span> <span class="kn">import</span> <span class="n">AbstractType</span>
+
+
+<div class="viewcode-block" id="BitArray"><a class="viewcode-back" href="../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Types.BitArray.BitArray">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">BitArray</span><span class="p">(</span><span class="n">AbstractType</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;This class defines a BitArray type.</span>
+
+<span class="sd">    The BitArray type describes an object that contains a</span>
+<span class="sd">    sequence of bits of arbitrary size.</span>
+
+<span class="sd">    The BitArray constructor expects some parameters:</span>
+
+<span class="sd">    :param value: This parameter is used to describe a domain that contains a fixed array of bits. If None, the constructed BitArray will accept a random sequence of bits, whose size may be specified (see :attr:`nbBits` parameter).</span>
+<span class="sd">    :param nbBits: This parameter is used to describe a domain that contains an amount of bits. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 65535.</span>
+<span class="sd">    :param default: This parameter is the default value used in specialization.</span>
+<span class="sd">    :type value: :class:`bitarray`, optional</span>
+<span class="sd">    :type nbBits: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional</span>
+<span class="sd">    :type default: :class:`bitarray`, optional</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       :attr:`value` and :attr:`nbBits` parameters are mutually exclusive.</span>
+<span class="sd">       Setting both values raises an :class:`Exception`.</span>
+
+<span class="sd">       :attr:`value` and :attr:`default` parameters are mutually exclusive.</span>
+<span class="sd">       Setting both values raises an :class:`Exception`.</span>
+
+
+<span class="sd">    The BitArray class provides the following public variables:</span>
+
+<span class="sd">    :var value: The current value of the instance. This value is represented</span>
+<span class="sd">                under the bitarray format.</span>
+<span class="sd">    :var size: The size in bits of the expected data type defined by a tuple (min, max).</span>
+<span class="sd">               Instead of a tuple, an integer can be used to represent both min and max values.</span>
+<span class="sd">    :var constants: A list of named constants used to access the</span>
+<span class="sd">                    bitarray internal elements. Those elements are</span>
+<span class="sd">                    automatically accessible by predefined named</span>
+<span class="sd">                    constants, whose names can be changed. Besides,</span>
+<span class="sd">                    elements can be accessed in read or write mode.</span>
+<span class="sd">    :var default: The default value used in specialization.</span>
+<span class="sd">    :vartype value: :class:`bitarray`</span>
+<span class="sd">    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`</span>
+<span class="sd">    :vartype constants: a :class:`list` of :class:`str`</span>
+<span class="sd">    :vartype default: :class:`bitarray`</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">       **Important note about BitArray and 8-bit aligned data**</span>
+
+<span class="sd">       It is expected that BitArrays or successive BitArrays should</span>
+<span class="sd">       produce 8-bit aligned data. For example, if two successive</span>
+<span class="sd">       BitArrays are defined in a field, they should together produce</span>
+<span class="sd">       8-bit aligned data, as depicted below. In this example, an</span>
+<span class="sd">       :class:`Agg</span>
+<span class="sd">       &lt;netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg.Agg&gt;` is</span>
+<span class="sd">       used to concatenate two BitArrays in a :class:`Field</span>
+<span class="sd">       &lt;netzob.Model.Vocabulary.Field.Field&gt;`.</span>
+
+<span class="sd">       &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">       &gt;&gt;&gt; domain1 = BitArray(nbBits=12)</span>
+<span class="sd">       &gt;&gt;&gt; domain2 = BitArray(nbBits=4)</span>
+<span class="sd">       &gt;&gt;&gt; f = Field(domain=Agg([domain1, domain2]))</span>
+<span class="sd">       &gt;&gt;&gt; data = next(f.specialize())</span>
+<span class="sd">       &gt;&gt;&gt; len(data)</span>
+<span class="sd">       2</span>
+
+<span class="sd">       If a field/symbol model contains BitArrays that does not</span>
+<span class="sd">       produce 8-bit aligned data, a :class:`GenerationException</span>
+<span class="sd">       &lt;netzob.Model.Vocabulary.AbstractField.GenerationException&gt;`</span>
+<span class="sd">       exception is raised during specialization.</span>
+
+<span class="sd">       &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">       &gt;&gt;&gt; domain1 = BitArray(nbBits=12)</span>
+<span class="sd">       &gt;&gt;&gt; domain2 = BitArray(nbBits=5)</span>
+<span class="sd">       &gt;&gt;&gt; f = Field(domain=Agg([domain1, domain2]))</span>
+<span class="sd">       &gt;&gt;&gt; data = next(f.specialize())</span>
+<span class="sd">       Traceback (most recent call last):</span>
+<span class="sd">       ...</span>
+<span class="sd">       netzob.Model.Vocabulary.AbstractField.GenerationException: specialize() produced 17 bits, which is not aligned on 8 bits. You should review the field model.</span>
+
+
+<span class="sd">       However, no exception would be raised during data abstraction</span>
+<span class="sd">       in field/symbol, as the input data bytes are already 8-bit</span>
+<span class="sd">       aligned.</span>
+
+
+<span class="sd">    The creation of a BitArray type with no parameter will create a bytes</span>
+<span class="sd">    object whose length ranges from 0 to 65535:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = BitArray()</span>
+<span class="sd">    &gt;&gt;&gt; len(i.generate().tobytes())</span>
+<span class="sd">    4962</span>
+<span class="sd">    &gt;&gt;&gt; len(i.generate().tobytes())</span>
+<span class="sd">    7992</span>
+<span class="sd">    &gt;&gt;&gt; len(i.generate().tobytes())</span>
+<span class="sd">    4529</span>
+<span class="sd">    </span>
+<span class="sd">    The following example shows how to define a BitArray</span>
+<span class="sd">    containing a fixed constant.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; b = BitArray(&#39;00001111&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; b.generate().tobytes()</span>
+<span class="sd">    b&#39;\x0f&#39;</span>
+
+
+<span class="sd">    **Bitarray of fixed and dynamic sizes**</span>
+
+<span class="sd">    The following example shows how to define a bitarray of 1 bit, 47</span>
+<span class="sd">    bits, 64 bits and then a bitarray with a variable size between 13</span>
+<span class="sd">    and 128 bits:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; b = BitArray(nbBits=1)</span>
+<span class="sd">    &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">    1</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; b = BitArray(nbBits=47)</span>
+<span class="sd">    &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">    47</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; b = BitArray(nbBits=64)</span>
+<span class="sd">    &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">    64</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; b = BitArray(nbBits=(13, 128))</span>
+<span class="sd">    &gt;&gt;&gt; 13 &lt;= len(b.generate()) &lt;= 128</span>
+<span class="sd">    True</span>
+
+
+<span class="sd">    **Accessing bitarray elements by named constant**</span>
+
+<span class="sd">    In the following example, we define a bitarray with two</span>
+<span class="sd">    elements. As this bitarray has a fixed length, elements are</span>
+<span class="sd">    automatically accessible by predefined named constants (&#39;item_0&#39;</span>
+<span class="sd">    and &#39;item_1&#39;):</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; b = BitArray(&#39;00&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; b.constants</span>
+<span class="sd">    [&#39;item_0&#39;, &#39;item_1&#39;]</span>
+
+<span class="sd">    Bitarray element names can be changed:</span>
+
+<span class="sd">    &gt;&gt;&gt; b.constants[0] = &#39;Urgent flag&#39;</span>
+<span class="sd">    &gt;&gt;&gt; b.constants[1] = &#39;Data flag&#39;</span>
+<span class="sd">    &gt;&gt;&gt; b.constants</span>
+<span class="sd">    [&#39;Urgent flag&#39;, &#39;Data flag&#39;]</span>
+
+<span class="sd">    Bitarray elements can be accessed in read or write mode:</span>
+
+<span class="sd">    &gt;&gt;&gt; b[&#39;Urgent flag&#39;]</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;Urgent flag&#39;] = True</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;Urgent flag&#39;]</span>
+<span class="sd">    True</span>
+
+<span class="sd">    Bitarray elements can be used with binary operators:</span>
+
+<span class="sd">    &gt;&gt;&gt; b[&#39;Urgent flag&#39;] |= b[&#39;Data flag&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;Urgent flag&#39;]</span>
+<span class="sd">    True</span>
+
+
+<span class="sd">    **Using a default value**</span>
+
+<span class="sd">    This next example shows the usage of a default value:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; t = BitArray(nbBits=16, default=&#39;1111111100000000&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; t.generate().tobytes()</span>
+<span class="sd">    b&#39;\xff\x00&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbBits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">nbBits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A BitArray should have either its value or its nbBits set, but not both&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A BitArray should have either its constant value or its default value set, but not both&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;BitArray value cannot have a length equal to 0&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Handle input value</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+
+            <span class="c1"># Check if value is correct, and normalize it in str object, and then in bitarray</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input value for the following BitArray is incorrect: &#39;</span><span class="si">{}</span><span class="s2">&#39;. Error: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported input format for value: &#39;</span><span class="si">{}</span><span class="s2">&#39;, type: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+        <span class="c1"># Handle input value</span>
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+
+            <span class="c1"># Check if default value is correct, and normalize it in str object, and then in bitarray</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">default</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input default value for the following BitArray is incorrect: &#39;</span><span class="si">{}</span><span class="s2">&#39;. Error: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported input format for default value: &#39;</span><span class="si">{}</span><span class="s2">&#39;, type: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">default</span><span class="p">)))</span>
+
+        <span class="c1"># Normalize nbBits</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nbBits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalizeNbBits</span><span class="p">(</span><span class="n">nbBits</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nbBits</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">BitArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">nbBits</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constants</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># A list of named constant used to access the bitarray elements</span>
+
+        <span class="c1"># When value is not None, we can access each element of the bitarray with named constants</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">constants</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;item_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">))]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">),)</span> <span class="o">*</span> <span class="mi">2</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot access internal bitarray value, as it does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constants</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Named constant access to bitarray elements is not possible, as bitarray is not of fixed length.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot access internal bitarray value, as it does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constants</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Named constant access to bitarray elements is not possible, as bitarray is not of fixed length.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_normalizeNbBits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbBits</span><span class="p">):</span>
+        <span class="n">nbMinBit</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">nbMaxBit</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_GENERATED_DATA_SIZE</span>
+        <span class="k">if</span> <span class="n">nbBits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nbBits</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">nbBits</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;nbBits should be &gt; 0&quot;</span><span class="p">)</span>
+                <span class="n">nbMinBit</span> <span class="o">=</span> <span class="n">nbBits</span>
+                <span class="n">nbMaxBit</span> <span class="o">=</span> <span class="n">nbBits</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">nbBits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nbBits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">nbBits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;first element of nbBits should be an integer &gt;= 0&quot;</span><span class="p">)</span>
+                    <span class="n">nbMinBit</span> <span class="o">=</span> <span class="n">nbBits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">nbBits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nbBits</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">nbBits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;second element of nbBits should be an integer &gt; 0&quot;</span><span class="p">)</span>
+                    <span class="n">nbMaxBit</span> <span class="o">=</span> <span class="n">nbBits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">nbMinBit</span><span class="p">,</span> <span class="n">nbMaxBit</span><span class="p">)</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; BitArray().count()</span>
+<span class="sd">        86400000000</span>
+
+<span class="sd">        &gt;&gt;&gt; BitArray(nbBits=4).count()</span>
+<span class="sd">        16</span>
+
+<span class="sd">        &gt;&gt;&gt; BitArray(nbBits=1).count()</span>
+<span class="sd">        2</span>
+
+<span class="sd">        &gt;&gt;&gt; BitArray(nbBits=(1, 3)).count()</span>
+<span class="sd">        14</span>
+
+<span class="sd">        &gt;&gt;&gt; BitArray(&quot;0101&quot;).count()</span>
+<span class="sd">        1</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">range_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">range_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">permitted_values</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">range_min</span><span class="p">,</span> <span class="n">range_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="n">permitted_values</span> <span class="o">**</span> <span class="n">i</span>
+                <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_POSSIBLE_VALUES</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_POSSIBLE_VALUES</span>
+            <span class="k">return</span> <span class="n">count</span>
+
+    <span class="k">def</span> <span class="nf">canParse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">data</span><span class="p">,</span>
+                 <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+                 <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+                 <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;For the moment its always true because we consider</span>
+<span class="sd">        the decimal type to be very similar to the raw type.</span>
+
+<span class="sd">        :param data: the data to check</span>
+<span class="sd">        :type data: python raw</span>
+<span class="sd">        :return: True if data can be parsed as a BitArray</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        :raise: TypeError if the data is None</span>
+
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; BitArray().canParse(String(&quot;hello john&quot;).value)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; BitArray(nbBits=8).canParse(bitarray(&#39;01010101&#39;))</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; BitArray(nbBits=8).canParse(bitarray(&#39;010101011&#39;))</span>
+<span class="sd">        False</span>
+
+<span class="sd">        &gt;&gt;&gt; BitArray(&#39;11110101&#39;).canParse(bitarray(&#39;11110101&#39;))</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;data cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Data should be a python raw (</span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Firtly, check if self.value matches the data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="c1"># Else, check if the data is comprised between the expected sizes</span>
+        <span class="p">(</span><span class="n">nbMinBits</span><span class="p">,</span> <span class="n">nbMaxBits</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="n">nbBitsData</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">nbMinBits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">nbMinBits</span> <span class="o">&gt;</span> <span class="n">nbBitsData</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">nbMaxBits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">nbMaxBits</span> <span class="o">&lt;</span> <span class="n">nbBitsData</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generationStrategy</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a random bitarray that respects the constraints.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+
+        <span class="n">minSize</span><span class="p">,</span> <span class="n">maxSize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">if</span> <span class="n">maxSize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">maxSize</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_GENERATED_DATA_SIZE</span>
+
+        <span class="n">generatedSize</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">minSize</span><span class="p">,</span> <span class="n">maxSize</span><span class="p">)</span>
+        <span class="n">randomContent</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">generatedSize</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">randomContent</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">bitarray</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+               <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+               <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+               <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method convert the specified data in python raw format.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.BitArray import BitArray</span>
+<span class="sd">        &gt;&gt;&gt; d = String.decode(b&quot;hello john&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; r = BitArray.encode(d)</span>
+<span class="sd">        &gt;&gt;&gt; r.to01()</span>
+<span class="sd">        &#39;01101000011001010110110001101100011011110010000001101010011011110110100001101110&#39;</span>
+<span class="sd">        &gt;&gt;&gt; t = BitArray.decode(r)</span>
+<span class="sd">        &gt;&gt;&gt; t</span>
+<span class="sd">        b&#39;hello john&#39;</span>
+
+
+<span class="sd">        :param data: the data encoded in BitArray which will be decoded in raw</span>
+<span class="sd">        :type data: bitarray</span>
+<span class="sd">        :keyword unitSize: the unit size of the specified data</span>
+<span class="sd">        :type unitSize: :class:`UnitSize &lt;netzob.Model.Vocabulary.Types.UnitSize.UnitSize&gt;`</span>
+<span class="sd">        :keyword endianness: the endianness of the specified data</span>
+<span class="sd">        :type endianness: :class:`Endianness &lt;netzob.Model.Vocabulary.Types.Endianness.Endianness&gt;`</span>
+<span class="sd">        :keyword sign: the sign of the specified data</span>
+<span class="sd">        :type sign: :class:`Sign &lt;netzob.Model.Vocabulary.Types.Sign.Sign&gt;`</span>
+
+<span class="sd">        :return: data encoded in python raw</span>
+<span class="sd">        :rtype: python raw</span>
+<span class="sd">        :raise: TypeError if parameters are not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;data cannot be None&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+               <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+               <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+               <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method convert the python raw data to the BitArray.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.BitArray import BitArray</span>
+<span class="sd">        &gt;&gt;&gt; BitArray.encode(Integer.decode(20))</span>
+<span class="sd">        bitarray(&#39;00010100&#39;)</span>
+
+<span class="sd">        :param data: the data encoded in python raw which will be encoded in current type</span>
+<span class="sd">        :type data: python raw</span>
+<span class="sd">        :keyword unitSize: the unitsize to consider while encoding. Values must be one of UnitSize.SIZE_*</span>
+<span class="sd">        :type unitSize: :class:`Enum`</span>
+<span class="sd">        :keyword endianness: the endianness to consider while encoding. Values must be Endianness.BIG or Endianness.LITTLE</span>
+<span class="sd">        :type endianness: :class:`Enum`</span>
+<span class="sd">        :keyword sign: the sign to consider while encoding Values must be Sign.SIGNED or Sign.UNSIGNED</span>
+<span class="sd">        :type sign: :class:`Enum`</span>
+
+<span class="sd">        :return: data encoded in BitArray</span>
+<span class="sd">        :rtype: :class:`BitArray &lt;netzob.Model.Vocabulary.Types.BitArray.BitArray&gt;`</span>
+<span class="sd">        :raise: TypeError if parameters are not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;data cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">norm_data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">norm_data</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Invalid type for: &#39;</span><span class="si">{}</span><span class="s2">&#39;. Expected bytes or str, and got &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+
+        <span class="n">b</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">()</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">norm_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">b</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; t = BitArray()</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    BitArray(nbBits=(0,65536)</span>
+<span class="sd">    &gt;&gt;&gt; t.size</span>
+<span class="sd">    (0, 65536)</span>
+<span class="sd">    &gt;&gt;&gt; t.unitSize</span>
+<span class="sd">    UnitSize.SIZE_16</span>
+
+<span class="sd">    &gt;&gt;&gt; t = BitArray(&#39;01010001&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    BitArray=bitarray(&#39;01010001&#39;)</span>
+
+
+<span class="sd">    # test abstraction arbitrary values</span>
+
+<span class="sd">    &gt;&gt;&gt; domains = [</span>
+<span class="sd">    ...     BitArray(nbBits=8),  # BitArray(bitarray(&quot;00001111&quot; &quot;1&quot;)), BitArray(nbBits=7),</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])</span>
+<span class="sd">    &gt;&gt;&gt; data = b&#39;&#39;.join(next(f.specialize()) for f in symbol.fields)</span>
+<span class="sd">    &gt;&gt;&gt; assert symbol.abstract(data)</span>
+
+
+<span class="sd">    # Verify that you cannot create a BitArray with a value AND an nbBits:</span>
+
+<span class="sd">    &gt;&gt;&gt; i = BitArray(b&#39;aabb&#39;, nbBits=(2, 10))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    ValueError: A BitArray should have either its value or its nbBits set, but not both</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">_test_bit_size</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    # small test to check BitArray size</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+
+<span class="sd">    &gt;&gt;&gt; len(BitArray(nbBits=1).generate())</span>
+<span class="sd">    1</span>
+<span class="sd">    &gt;&gt;&gt; len(BitArray(nbBits=10).generate())</span>
+<span class="sd">    10</span>
+<span class="sd">    &gt;&gt;&gt; len(BitArray(nbBits=32).generate())</span>
+<span class="sd">    32</span>
+<span class="sd">    &gt;&gt;&gt; len(BitArray(nbBits=64).generate())</span>
+<span class="sd">    64</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">_test_bit_named_const</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # test of named constant on BitArray</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+
+<span class="sd">    &gt;&gt;&gt; b = BitArray(&#39;00000000&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; b.constants[7] = &#39;first&#39;</span>
+<span class="sd">    &gt;&gt;&gt; b.constants[6] = &#39;second&#39;</span>
+<span class="sd">    &gt;&gt;&gt; b.constants[5] = &#39;third&#39;</span>
+<span class="sd">    &gt;&gt;&gt; b.constants[0] = &#39;last&#39;</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;first&#39;] = 1</span>
+<span class="sd">    &gt;&gt;&gt; b</span>
+<span class="sd">    bitarray(&#39;00000001&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;second&#39;] = True</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;third&#39;] = 1</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;last&#39;] = 1</span>
+<span class="sd">    &gt;&gt;&gt; b</span>
+<span class="sd">    bitarray(&#39;10000111&#39;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">_test_bit_operations</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # test capability to affect value to named bits, potentially with boolean operators</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; b = BitArray(&#39;00&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; b.constants</span>
+<span class="sd">    [&#39;item_0&#39;, &#39;item_1&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; b.constants[0] = &#39;Urgent flag&#39;</span>
+<span class="sd">    &gt;&gt;&gt; b.constants[1] = &#39;Data flag&#39;</span>
+<span class="sd">    &gt;&gt;&gt; b.constants</span>
+<span class="sd">    [&#39;Urgent flag&#39;, &#39;Data flag&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;Urgent flag&#39;] = True</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;Data flag&#39;] = True</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;Urgent flag&#39;] |= b[&#39;Data flag&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;Urgent flag&#39;]</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;Urgent flag&#39;] = False</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;Data flag&#39;] = True</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;Urgent flag&#39;] |= b[&#39;Data flag&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; b[&#39;Urgent flag&#39;]</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_specialize_abstract</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; from collections import OrderedDict</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract</span>
+
+<span class="sd">    &gt;&gt;&gt; data_type = BitArray</span>
+
+<span class="sd">    &gt;&gt;&gt; possible_parameters = OrderedDict()</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;value&quot;] = [None, &quot;00001111&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;nbBits&quot;] = [None, 8, (2, 8)]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;default&quot;] = [None, &quot;00001111&quot;]</span>
+
+<span class="sd">    &gt;&gt;&gt; test_type_one_parameter(data_type, possible_parameters)</span>
+
+<span class="sd">    &gt;&gt;&gt; (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, possible_parameters)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_symbol</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    ## Be sure to produce data aligned on bytes (8 bits)</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; domain = BitArray(nbBits=(5, 7))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol.specialize())</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.GenerationException: specialize() produced 7 bits, which is not aligned on 8 bits. You should review the symbol model.</span>
+
+<span class="sd">    &gt;&gt;&gt; domain1 = BitArray(nbBits=3)</span>
+<span class="sd">    &gt;&gt;&gt; domain2 = BitArray(nbBits=7)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(domain=domain1, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(domain=domain2, name=&quot;field2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol.specialize())</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.GenerationException: specialize() produced 10 bits, which is not aligned on 8 bits. You should review the symbol model.</span>
+
+<span class="sd">    &gt;&gt;&gt; domain1 = BitArray(nbBits=3)</span>
+<span class="sd">    &gt;&gt;&gt; domain2 = BitArray(nbBits=5)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(domain=domain1, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(domain=domain2, name=&quot;field2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\xed&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\xe0&#39;), (&#39;field2&#39;, b&#39;h&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_field_aligned_bitarrays</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    ## Be sure to produce data aligned on bytes (8 bits)</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; domain = BitArray(nbBits=(2, 6))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; next(f.specialize())</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.GenerationException: specialize() produced 6 bits, which is not aligned on 8 bits. You should review the field model.</span>
+
+<span class="sd">    &gt;&gt;&gt; domain = BitArray(nbBits=(8, 8))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; next(f.specialize())</span>
+<span class="sd">    b&#39;\x99&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; domain1 = BitArray(nbBits=3)</span>
+<span class="sd">    &gt;&gt;&gt; domain2 = BitArray(nbBits=13)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(domain=domain1, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(domain=domain2, name=&quot;field2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=[f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\xbe\xd6&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\xa0&#39;), (&#39;field2&#39;, b&#39;\xf6\xb0&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; domain1 = BitArray(nbBits=3)</span>
+<span class="sd">    &gt;&gt;&gt; domain2 = BitArray(nbBits=5)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=Agg([domain1, domain2]))</span>
+<span class="sd">    &gt;&gt;&gt; data = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x17&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;Field&#39;, b&#39;\x17&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; domain1 = BitArray(nbBits=27)</span>
+<span class="sd">    &gt;&gt;&gt; domain2 = BitArray(nbBits=5)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=Agg([domain1, domain2]))</span>
+<span class="sd">    &gt;&gt;&gt; data = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; len(data)</span>
+<span class="sd">    4</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&quot;H\xc6&#39;\xa7&quot;</span>
+<span class="sd">    &gt;&gt;&gt; f.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;Field&#39;, b&quot;H\xc6&#39;\xa7&quot;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

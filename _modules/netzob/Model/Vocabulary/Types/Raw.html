@@ -1,0 +1,807 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Types.Raw &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Types.Raw</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># |          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># |               Netzob : Inferring communication protocols                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1"># | This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1"># | it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1"># | the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1"># | (at your option) any later version.                                       |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1"># | but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1"># | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1"># | GNU General Public License for more details.                              |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | You should have received a copy of the GNU General Public License         |</span>
+<span class="c1"># | along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | @url      : http://www.netzob.org                                         |</span>
+<span class="c1"># | @contact  : contact@netzob.org                                            |</span>
+<span class="c1"># | @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1"># |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | File contributors :                                                       |</span>
+<span class="c1"># |       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1"># |       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Standard library imports                                                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">bitarray</span> <span class="kn">import</span> <span class="n">bitarray</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Related third party imports                                               |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Local application imports                                                 |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.AbstractType</span> <span class="kn">import</span> <span class="n">AbstractType</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">public_api</span>
+
+
+<div class="viewcode-block" id="Raw"><a class="viewcode-back" href="../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Types.Raw.Raw">[docs]</a><span class="k">class</span> <span class="nc">Raw</span><span class="p">(</span><span class="n">AbstractType</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;This class defines a Raw type.</span>
+
+<span class="sd">    The Raw type describes a sequence of bytes of arbitrary</span>
+<span class="sd">    size.</span>
+
+<span class="sd">    The Raw constructor expects some parameters:</span>
+
+<span class="sd">    :param value: This parameter is used to describe a domain that contains a fixed sequence of bytes. If None, the constructed Raw will accept a random sequence of bytes, whose size may be specified (see :attr:`nbBytes` parameter).</span>
+<span class="sd">    :param nbBytes: This parameter is used to describe a domain that contains an amount of bytes. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 8192.</span>
+<span class="sd">    :param alphabet: The alphabet can be used to limit the bytes that can participate in the domain value. The default value is None.</span>
+<span class="sd">    :param default: This parameter is the default value used in specialization.</span>
+<span class="sd">    :type value: :class:`bitarray` or :class:`bytes`, optional</span>
+<span class="sd">    :type nbBytes: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional</span>
+<span class="sd">    :type alphabet: a :class:`list` of :class:`bytes`, optional</span>
+<span class="sd">    :type default: :class:`bitarray` or :class:`bytes`, optional</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       :attr:`value` and :attr:`nbBytes` parameters are mutually exclusive.</span>
+<span class="sd">       Setting both values raises an :class:`Exception`.</span>
+
+<span class="sd">       :attr:`value` and :attr:`alphabet` parameters are mutually exclusive.</span>
+<span class="sd">       Setting both values raises an :class:`Exception`.</span>
+
+<span class="sd">       :attr:`value` and :attr:`default` parameters are mutually exclusive.</span>
+<span class="sd">       Setting both values raises an :class:`Exception`.</span>
+
+
+<span class="sd">    The Raw class provides the following public variables:</span>
+
+<span class="sd">    :var value: The current value of the instance. This value is represented</span>
+<span class="sd">                under the bitarray format.</span>
+<span class="sd">    :var size: The internal size (in bits) of the expected data type defined by a tuple (min, max).</span>
+<span class="sd">               Instead of a tuple, an integer can be used to represent both min and max values.</span>
+<span class="sd">    :var alphabet: The alphabet can be used to limit the bytes that can participate in the domain value.</span>
+<span class="sd">    :var default: The default value used in specialization.</span>
+<span class="sd">    :vartype value: :class:`bitarray`</span>
+<span class="sd">    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`</span>
+<span class="sd">    :vartype alphabet: a :class:`list` of :class:`bytes`</span>
+<span class="sd">    :vartype default: :class:`bitarray`</span>
+
+<span class="sd">    The creation of a Raw type with no parameter will create a bytes</span>
+<span class="sd">    object whose length ranges from 0 to 8192:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = Raw()</span>
+<span class="sd">    &gt;&gt;&gt; len(i.generate().tobytes())</span>
+<span class="sd">    533</span>
+<span class="sd">    &gt;&gt;&gt; len(i.generate().tobytes())</span>
+<span class="sd">    7738</span>
+<span class="sd">    &gt;&gt;&gt; len(i.generate().tobytes())</span>
+<span class="sd">    5505</span>
+
+<span class="sd">    The following example shows how to define a six-byte long raw</span>
+<span class="sd">    object, and the use of the generation method to produce a</span>
+<span class="sd">    value:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; r = Raw(nbBytes=6)</span>
+<span class="sd">    &gt;&gt;&gt; len(r.generate().tobytes())</span>
+<span class="sd">    6</span>
+
+<span class="sd">    It is possible to define a range regarding the valid size of the</span>
+<span class="sd">    raw object:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; r = Raw(nbBytes=(2, 20))</span>
+<span class="sd">    &gt;&gt;&gt; 2 &lt;= len(r.generate().tobytes()) &lt;= 20</span>
+<span class="sd">    True</span>
+
+<span class="sd">    The following example shows the specification of a raw constant:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; r = Raw(b&#39;\x01\x02\x03&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; print(r)</span>
+<span class="sd">    Raw(b&#39;\x01\x02\x03&#39;)</span>
+
+<span class="sd">    The alphabet optional argument can be used to limit the bytes that</span>
+<span class="sd">    can participate in the domain value:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; r = Raw(nbBytes=30, alphabet=[b&quot;t&quot;, b&quot;o&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; data = r.generate().tobytes()</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;otoottootottottooooooottttooot&#39;</span>
+<span class="sd">    &gt;&gt;&gt; for c in set(data):  # extract distinct characters</span>
+<span class="sd">    ...    print(chr(c))</span>
+<span class="sd">    t</span>
+<span class="sd">    o</span>
+
+<span class="sd">    This next example shows the usage of a default value:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; raw = Raw(nbBytes=2, default=b&#39;\x01\x02&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; raw.generate().tobytes()</span>
+<span class="sd">    b&#39;\x01\x02&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">nbBytes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">unitSize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+                 <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">(),</span>
+                 <span class="n">alphabet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">nbBytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A Raw should have either its value or its nbBytes set, but not both&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A Raw should have either its constant value or its default value set, but not both&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">alphabet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A Raw should have either its constant value or its alphabet value set, but not both&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Raw value cannot have a length equal to 0&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="n">tmp_value</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">endian</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">)</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">tmp_value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported input format for value: &#39;</span><span class="si">{}</span><span class="s2">&#39;, type is: &#39;</span><span class="si">{}</span><span class="s2">&#39;, expected type is &#39;bitarray&#39; or &#39;bytes&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="n">tmp_default</span> <span class="o">=</span> <span class="n">default</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">endian</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">)</span>
+                <span class="n">default</span><span class="o">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">tmp_default</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported input format for default value: &#39;</span><span class="si">{}</span><span class="s2">&#39;, type is: &#39;</span><span class="si">{}</span><span class="s2">&#39;, expected type is &#39;bitarray&#39; or &#39;bytes&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">default</span><span class="p">)))</span>
+
+        <span class="c1"># Handle raw data size if value is None</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nbBits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convertNbBytesinNbBits</span><span class="p">(</span><span class="n">nbBytes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nbBits</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span> <span class="o">=</span> <span class="n">alphabet</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Raw</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">value</span><span class="p">,</span>
+            <span class="n">nbBits</span><span class="p">,</span>
+            <span class="n">unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span>
+            <span class="n">endianness</span><span class="o">=</span><span class="n">endianness</span><span class="p">,</span>
+            <span class="n">sign</span><span class="o">=</span><span class="n">sign</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span>
+                                   <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(nbBytes=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(nbBytes=(</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">))&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f = Field(Raw(b&quot;\x01\x02\x03\x04&quot;))</span>
+<span class="sd">        &gt;&gt;&gt; s = Symbol(fields=[f])</span>
+<span class="sd">        &gt;&gt;&gt; messages = [RawMessage(next(s.specialize())) for x in range(5)]</span>
+<span class="sd">        &gt;&gt;&gt; s.messages = messages</span>
+<span class="sd">        &gt;&gt;&gt; print(s.str_data())</span>
+<span class="sd">        Field             </span>
+<span class="sd">        ------------------</span>
+<span class="sd">        &#39;\x01\x02\x03\x04&#39;</span>
+<span class="sd">        &#39;\x01\x02\x03\x04&#39;</span>
+<span class="sd">        &#39;\x01\x02\x03\x04&#39;</span>
+<span class="sd">        &#39;\x01\x02\x03\x04&#39;</span>
+<span class="sd">        &#39;\x01\x02\x03\x04&#39;</span>
+<span class="sd">        ------------------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convertNbBytesinNbBits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbBytes</span><span class="p">):</span>
+        <span class="n">nbMinBit</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">nbMaxBit</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_GENERATED_DATA_SIZE</span>
+        <span class="k">if</span> <span class="n">nbBytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nbBytes</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">nbBytes</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;nbBytes should be &gt; 0&quot;</span><span class="p">)</span>
+                <span class="n">nbMinBit</span> <span class="o">=</span> <span class="n">nbBytes</span> <span class="o">*</span> <span class="mi">8</span>
+                <span class="n">nbMaxBit</span> <span class="o">=</span> <span class="n">nbMinBit</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">nbBytes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nbBytes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">nbBytes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;first element of nbBytes should be an integer &gt;= 0&quot;</span><span class="p">)</span>
+                    <span class="n">nbMinBit</span> <span class="o">=</span> <span class="n">nbBytes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">8</span>
+                <span class="k">if</span> <span class="n">nbBytes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nbBytes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">nbBytes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;second element of nbBytes should be an integer &gt; 0&quot;</span><span class="p">)</span>
+                    <span class="n">nbMaxBit</span> <span class="o">=</span> <span class="n">nbBytes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">8</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">nbMinBit</span><span class="p">,</span> <span class="n">nbMaxBit</span><span class="p">)</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; Raw().count()</span>
+<span class="sd">        86400000000</span>
+
+<span class="sd">        &gt;&gt;&gt; Raw(nbBytes=4).count()</span>
+<span class="sd">        4294967296</span>
+
+<span class="sd">        &gt;&gt;&gt; Raw(nbBytes=1).count()</span>
+<span class="sd">        256</span>
+
+<span class="sd">        &gt;&gt;&gt; Raw(nbBytes=(1, 3)).count()</span>
+<span class="sd">        16843008</span>
+
+<span class="sd">        &gt;&gt;&gt; Raw(b&quot;abcd&quot;).count()</span>
+<span class="sd">        1</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">range_min</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="n">range_max</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="n">permitted_values</span> <span class="o">=</span> <span class="mi">256</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">range_min</span><span class="p">,</span> <span class="n">range_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="n">permitted_values</span> <span class="o">**</span> <span class="n">i</span>
+                <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_POSSIBLE_VALUES</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_POSSIBLE_VALUES</span>
+            <span class="k">return</span> <span class="n">count</span>
+
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generationStrategy</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a random Raw that respects the requested size or the</span>
+<span class="sd">        predefined value.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; a = Raw(nbBytes=(10))</span>
+<span class="sd">        &gt;&gt;&gt; gen = a.generate()</span>
+<span class="sd">        &gt;&gt;&gt; print(len(gen))</span>
+<span class="sd">        80</span>
+
+<span class="sd">        &gt;&gt;&gt; a = Raw(nbBytes=(10, 20))</span>
+<span class="sd">        &gt;&gt;&gt; gen = a.generate()</span>
+<span class="sd">        &gt;&gt;&gt; print(10&lt;=len(gen) and 20&lt;=len(gen))</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; a = Raw(b&quot;a&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; a.generate()</span>
+<span class="sd">        bitarray(&#39;01100001&#39;)</span>
+
+<span class="sd">        &gt;&gt;&gt; a = Raw(b&quot;\x01&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; a.generate()</span>
+<span class="sd">        bitarray(&#39;00000001&#39;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+
+        <span class="n">minSize</span><span class="p">,</span> <span class="n">maxSize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">if</span> <span class="n">maxSize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">maxSize</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_GENERATED_DATA_SIZE</span>
+        <span class="k">if</span> <span class="n">minSize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">minSize</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">generatedSize</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">minSize</span><span class="p">,</span> <span class="n">maxSize</span><span class="p">)</span>
+
+        <span class="n">generatedValue</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">generatedValue</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">generatedSize</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">generatedValue</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">generatedSize</span> <span class="o">/</span> <span class="mi">8</span><span class="p">))])</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">endian</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">generatedValue</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+               <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+               <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+               <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+               <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+               <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+               <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">canParse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span>
+                 <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+                 <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+                 <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes if specified data can be parsed as raw which is always the</span>
+<span class="sd">        case if the data is at least 1 length and aligned on a byte.</span>
+
+<span class="sd">        :param data: the data to check</span>
+<span class="sd">        :type data: python raw</span>
+<span class="sd">        :return: True if data can be parsed as a Raw which is always the case (if len(data)&gt;0)</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        :raise: TypeError if the data is None</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; b = bitarray(endian=&#39;big&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; b.frombytes(b&quot;hello john&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; Raw().canParse(b)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; Raw().canParse(b&quot;hello john&quot;)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; Raw(b&quot;hello&quot;).canParse(b&quot;hello&quot;)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; Raw(b&quot;hello&quot;).canParse(b&quot;hello!&quot;)</span>
+<span class="sd">        False</span>
+
+<span class="sd">        &gt;&gt;&gt; Raw(nbBytes=10).canParse(b&quot;1234567890&quot;)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; Raw(nbBytes=10).canParse(b&quot;123456789&quot;)</span>
+<span class="sd">        False</span>
+
+<span class="sd">        &gt;&gt;&gt; Raw(nbBytes=(10, 1234)).canParse(b&quot;123456789012345&quot;)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; Raw(nbBytes=(10, 1234)).canParse(b&quot;aaaa&quot;)</span>
+<span class="sd">        False</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;data cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Check if data is in bytes and normalize it in bitarray</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="n">tmp_data</span> <span class="o">=</span> <span class="n">data</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">endian</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">tmp_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported input format for data: &#39;</span><span class="si">{}</span><span class="s2">&#39;, type: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+
+        <span class="c1"># Compare with self.value if it is defined</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Else, compare with expected size</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">%</span> <span class="mi">8</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># At this time, data is a bitarray</span>
+        <span class="n">rawData</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+
+        <span class="p">(</span><span class="n">minBits</span><span class="p">,</span> <span class="n">maxBits</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">if</span> <span class="n">minBits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">minBits</span> <span class="o">/</span> <span class="mi">8</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">maxBits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">maxBits</span> <span class="o">/</span> <span class="mi">8</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">raw_data_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">raw_data_set</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">element</span><span class="p">])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">alphabet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__alphabet</span>
+
+    <span class="nd">@alphabet</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">alphabet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alphabet</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">alphabet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alphabet</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;alphabet&#39; parameter must be a list&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alphabet</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;alphabet&#39; parameter must be a non-empty list&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">alphabet</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elt</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;alphabet&#39; parameter must be a list of bytes&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elt</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;alphabet&#39; parameter must be a list of unique bytes&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__alphabet</span> <span class="o">=</span> <span class="n">alphabet</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; t = Raw()</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    Raw(nbBytes=(0,8192))</span>
+<span class="sd">    &gt;&gt;&gt; t.size</span>
+<span class="sd">    (0, 65536)</span>
+<span class="sd">    &gt;&gt;&gt; t.unitSize</span>
+<span class="sd">    UnitSize.SIZE_16</span>
+
+<span class="sd">    &gt;&gt;&gt; t = Raw(nbBytes=4)</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    Raw(nbBytes=4)</span>
+
+<span class="sd">    &gt;&gt;&gt; t = Raw(b&quot;abcd&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    Raw(b&#39;abcd&#39;)</span>
+
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import Field, Symbol</span>
+<span class="sd">    &gt;&gt;&gt; domains = [</span>
+<span class="sd">    ...     Raw(b&quot;xxxx&quot;), Raw(nbBytes=2),</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])</span>
+<span class="sd">    &gt;&gt;&gt; data = b&#39;&#39;.join(next(f.specialize()) for f in symbol.fields)</span>
+<span class="sd">    &gt;&gt;&gt; assert symbol.abstract(data)</span>
+
+
+<span class="sd">    # Verify that you cannot create a Raw with a value AND an nbBytes:</span>
+
+<span class="sd">    &gt;&gt;&gt; i = Raw(b&#39;test&#39;, nbBytes=(2, 10))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    ValueError: A Raw should have either its value or its nbBytes set, but not both</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_specialize_abstract</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; from collections import OrderedDict</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract</span>
+
+<span class="sd">    &gt;&gt;&gt; data_type = Raw</span>
+
+<span class="sd">    &gt;&gt;&gt; possible_parameters = OrderedDict()</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;value&quot;] = [None, b&quot;aa&quot;, b&quot;abcdef123456&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;nbBytes&quot;] = [None, 2, (2, 8), (0, 42)]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;alphabet&quot;] = [None, [b&quot;e&quot;], [b&quot;e&quot;, b&quot;e&quot;]]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;default&quot;] = [None, b&quot;ee&quot;]</span>
+
+<span class="sd">    &gt;&gt;&gt; functional_possible_parameters = test_type_one_parameter(data_type, possible_parameters)</span>
+
+<span class="sd">    &gt;&gt;&gt; (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, possible_parameters)</span>
+
+<span class="sd">    &gt;&gt;&gt; test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,1023 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../../../" id="documentation_options" src="../../../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../../../_static/jquery.js"></script>
+    <script src="../../../../../../../_static/underscore.js"></script>
+    <script src="../../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># |          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># |               Netzob : Inferring communication protocols                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1"># | This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1"># | it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1"># | the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1"># | (at your option) any later version.                                       |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1"># | but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1"># | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1"># | GNU General Public License for more details.                              |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | You should have received a copy of the GNU General Public License         |</span>
+<span class="c1"># | along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | @url      : http://www.netzob.org                                         |</span>
+<span class="c1"># | @contact  : contact@netzob.org                                            |</span>
+<span class="c1"># | @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1"># |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | File contributors :                                                       |</span>
+<span class="c1"># |       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1"># |       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Standard library imports                                                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">bitarray</span> <span class="kn">import</span> <span class="n">bitarray</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Related third party imports                                               |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Local application imports                                                 |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">NetzobLogger</span><span class="p">,</span> <span class="n">public_api</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode</span> <span class="kn">import</span> <span class="n">AbstractVariableNode</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Parser.ParsingPath</span> <span class="kn">import</span> <span class="n">ParsingPath</span><span class="p">,</span> <span class="n">ParsingException</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath</span> <span class="kn">import</span> <span class="n">SpecializingPath</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.DomainMutator</span> <span class="kn">import</span> <span class="n">FuzzingMode</span>
+
+
+<span class="c1"># Class used to denote current variable, in order to handle self recursivity</span>
+<span class="k">class</span> <span class="nc">SELF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="Agg"><a class="viewcode-back" href="../../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg.Agg">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">Agg</span><span class="p">(</span><span class="n">AbstractVariableNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Agg class is a node variable that represents a concatenation of variables.</span>
+
+<span class="sd">    An aggregate node concatenates the values that are accepted by</span>
+<span class="sd">    its children nodes. It can be used to specify a succession of</span>
+<span class="sd">    tokens.</span>
+
+<span class="sd">    The Agg constructor expects some parameters:</span>
+
+<span class="sd">    :param children: The sequence of variable elements contained in</span>
+<span class="sd">                     the aggregate. The default value is None.</span>
+<span class="sd">    :param last_optional: A flag indicating if the last element of the children is optional or not. The default value is False.</span>
+<span class="sd">    :param name: The name of the variable (if None, the name will</span>
+<span class="sd">                 be generated).</span>
+<span class="sd">    :type children: a :class:`list` of :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`, optional</span>
+<span class="sd">    :type last_optional: :class:`bool`, optional</span>
+<span class="sd">    :type name: :class:`str`, optional</span>
+
+
+<span class="sd">    The Agg class supports modeling of direct recursions on the</span>
+<span class="sd">    right. To do so, the flag ``SELF`` is available, and should only</span>
+<span class="sd">    be used in the last position of the aggregate (see example below).</span>
+
+<span class="sd">    The Agg class provides the following public variables:</span>
+
+<span class="sd">    :var children: The sorted typed list of children attached to the variable node.</span>
+<span class="sd">    :vartype children: a list of :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`</span>
+
+
+<span class="sd">    **Aggregate examples**</span>
+
+<span class="sd">    For example, the following code represents a field that</span>
+<span class="sd">    accepts values that are made of a String of 3 to 20 random</span>
+<span class="sd">    characters followed by a &quot;.txt&quot; extension:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; t1 = String(nbChars=(3,20))</span>
+<span class="sd">    &gt;&gt;&gt; t2 = String(&quot;.txt&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(Agg([t1, t2]))</span>
+
+<span class="sd">    The following example shows an aggregate between BitArray</span>
+<span class="sd">    variables:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(Agg([BitArray(&#39;01101001&#39;), BitArray(nbBits=3), BitArray(nbBits=5)]))</span>
+<span class="sd">    &gt;&gt;&gt; t = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; len(t)</span>
+<span class="sd">    2</span>
+
+
+<span class="sd">    **Examples of Agg internal attribute access**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = Agg([Raw(), String()])</span>
+<span class="sd">    &gt;&gt;&gt; print(domain.children[0].dataType)</span>
+<span class="sd">    Raw(nbBytes=(0,8192))</span>
+<span class="sd">    &gt;&gt;&gt; print(domain.children[1].dataType)</span>
+<span class="sd">    String(nbChars=(0,8192))</span>
+<span class="sd">    &gt;&gt;&gt; domain.children.append(Agg([10, 20, 30]))</span>
+<span class="sd">    &gt;&gt;&gt; len(domain.children)</span>
+<span class="sd">    3</span>
+<span class="sd">    &gt;&gt;&gt; domain.children.remove(domain.children[0])</span>
+<span class="sd">    &gt;&gt;&gt; len(domain.children)</span>
+<span class="sd">    2</span>
+
+
+<span class="sd">    **Abstraction of aggregate variables**</span>
+
+<span class="sd">    This example shows the abstraction process of an Aggregate</span>
+<span class="sd">    variable:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; v1 = String(nbChars=(1, 10))</span>
+<span class="sd">    &gt;&gt;&gt; v2 = String(&quot;.txt&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Agg([v1, v2]), name=&quot;f0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;!&quot;), name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1])</span>
+<span class="sd">    &gt;&gt;&gt; data = &quot;john.txt!&quot;</span>
+<span class="sd">    &gt;&gt;&gt; f.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;f0&#39;, b&#39;john.txt&#39;), (&#39;f1&#39;, b&#39;!&#39;)])</span>
+
+<span class="sd">    In the following example, an Aggregate variable is defined. A</span>
+<span class="sd">    message that does not correspond to the expected model is then</span>
+<span class="sd">    parsed, thus an exception is returned:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; v1 = String(nbChars=(1, 10))</span>
+<span class="sd">    &gt;&gt;&gt; v2 = String(&quot;.txt&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Agg([v1, v2]), name=&quot;f0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;!&quot;), name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1])</span>
+<span class="sd">    &gt;&gt;&gt; data = &quot;johntxt!&quot;</span>
+<span class="sd">    &gt;&gt;&gt; f.abstract(data)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;Field&#39;, cannot abstract the data: &#39;johntxt!&#39;. Error: &#39;No parsing path returned while parsing &#39;b&#39;johntxt!&#39;&#39;&#39;</span>
+
+
+<span class="sd">    **Specialization of aggregate variables**</span>
+
+<span class="sd">    This example shows the specialization process of an Aggregate</span>
+<span class="sd">    variable:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; d1 = String(&quot;hello&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; d2 = String(&quot; john&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(Agg([d1, d2]))</span>
+<span class="sd">    &gt;&gt;&gt; next(f.specialize())</span>
+<span class="sd">    b&#39;hello john&#39;</span>
+
+
+<span class="sd">    **Optional last variable**</span>
+
+<span class="sd">    This example shows the specialization and parsing of an aggregate</span>
+<span class="sd">    with an optional last variable:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; a = Agg([int8(2), int8(3)], last_optional=True)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(a)</span>
+<span class="sd">    &gt;&gt;&gt; res = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; res == b&#39;\x02&#39; or res == b&#39;\x02\x03&#39;</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; d = b&#39;\x02\x03&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;Field&#39;, b&#39;\x02\x03&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; d = b&#39;\x02&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;Field&#39;, b&#39;\x02&#39;)])</span>
+
+
+<span class="sd">    **Modeling indirect imbrication**</span>
+
+<span class="sd">    The following example shows how to specify a field with a</span>
+<span class="sd">    structure (``v2``) that can contain another structure (``v0``),</span>
+<span class="sd">    through a tierce structure (``v1``). The flag ``last_optional`` is</span>
+<span class="sd">    used to indicate that the specialization or parsing of the last</span>
+<span class="sd">    element of the aggregates ``v1`` and ``v2`` is optional.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; v0 = Agg([&quot;?&quot;, int8(4)])</span>
+<span class="sd">    &gt;&gt;&gt; v1 = Agg([&quot;!&quot;, int8(3), v0], last_optional=True)</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Agg([int8(2), v1], last_optional=True)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(v2)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Test specialization</span>
+<span class="sd">    &gt;&gt;&gt; res = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; res == b&#39;\x02&#39; or res == b&#39;\x02!\x03&#39; or res == b&#39;\x02!\x03?\x04&#39;</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Test parsing</span>
+<span class="sd">    &gt;&gt;&gt; f.abstract(res)</span>
+<span class="sd">    OrderedDict([(&#39;Field&#39;, b&#39;\x02&#39;)])</span>
+
+
+<span class="sd">    .. warning::</span>
+<span class="sd">       **Important note about recursion**</span>
+
+<span class="sd">       The library can handle both direct and indirect recursion. However,</span>
+<span class="sd">       there is a limitation requiring the use of a recursing variable on the</span>
+<span class="sd">       **right side of a statement**. Any other behavior could lead to</span>
+<span class="sd">       infinite recursion during the loading of the model.</span>
+<span class="sd">       To help understand what syntax should be preferred, here is a list of</span>
+<span class="sd">       annotated BNF syntaxes.</span>
+
+<span class="sd">       *invalid syntaxes:*</span>
+
+<span class="sd">       .. productionlist::</span>
+<span class="sd">          A: [A] integer</span>
+<span class="sd">           : &lt;recursion on the left side&gt;</span>
+<span class="sd">          B: ( &quot;(&quot; B ) | ( &quot;.&quot; &quot;)&quot; )</span>
+<span class="sd">           : &lt;recursion on the middle&gt;</span>
+
+<span class="sd">       *valid adaptations from above examples*:</span>
+
+<span class="sd">       .. productionlist::</span>
+<span class="sd">          A: integer+</span>
+<span class="sd">           : &lt;recursion is replaced by a repeat approach&gt;</span>
+<span class="sd">          B: B&#39; &quot;)&quot;</span>
+<span class="sd">           : &lt;split the statement ...&gt;</span>
+<span class="sd">          B&#39;: ( &quot;(&quot; B ) | &quot;.&quot;</span>
+<span class="sd">            : &lt;direct recursion converted in an indirect one</span>
+<span class="sd">            : on the right&gt;</span>
+
+<span class="sd">       *valid recursion examples*:</span>
+
+<span class="sd">       .. productionlist::</span>
+<span class="sd">          C: &quot;.&quot; C*</span>
+<span class="sd">           :  &lt;a string with one or more dot characters&gt;</span>
+<span class="sd">          D: ( D | &quot;.&quot; )*</span>
+<span class="sd">           :  &lt;a string with zero or more dot characters&gt;</span>
+
+<span class="sd">    **Modeling direct recursion, simple example**</span>
+
+<span class="sd">    The following example shows how to specify a field with a</span>
+<span class="sd">    structure (``v``) that can optionally contain itself. To model</span>
+<span class="sd">    such recursive structure, the ``SELF`` flag has to be used in the</span>
+<span class="sd">    last position of the aggregate.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; v = Agg([int8(interval=(1, 5)), SELF], last_optional=True)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(v)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Test specialization</span>
+<span class="sd">    &gt;&gt;&gt; res = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; res  # doctest: +SKIP</span>
+<span class="sd">    b&#39;\x02\x04\x01&#39;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Test parsing</span>
+<span class="sd">    &gt;&gt;&gt; res_data = f.abstract(res) # doctest: +SKIP</span>
+<span class="sd">    True</span>
+
+<span class="sd">    **Modeling direct recursion, more complex example**</span>
+
+<span class="sd">    This example introduces a recursion in the middle of an expression by</span>
+<span class="sd">    modeling a pair group of parentheses (``&#39;(&#39;`` and ``&#39;)&#39;``), around a</span>
+<span class="sd">    single character (``&#39;+&#39;``).</span>
+<span class="sd">    The BNF syntax of this model would be:</span>
+
+<span class="sd">    .. productionlist::</span>
+<span class="sd">       parentheses: ( &quot;(&quot; parentheses )  | ( &quot;+&quot;  &quot;)&quot; )</span>
+
+<span class="sd">    This syntax introduces a recursivity in the middle of the `left` statement,</span>
+<span class="sd">    which **is not supported**. Instead, this syntax could be adapted to move</span>
+<span class="sd">    the recursivity to the right.</span>
+
+<span class="sd">    .. productionlist::</span>
+<span class="sd">       parentheses: left right</span>
+<span class="sd">       left: ( &quot;(&quot; parentheses ) | &quot;+&quot;</span>
+<span class="sd">       right: &quot;)&quot;</span>
+
+<span class="sd">    The following models describe this issue and provide a workaround.</span>
+
+<span class="sd">    **BAD way**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; parentheses = Agg([&quot;(&quot;, Alt([SELF, &quot;+&quot;]), &quot;)&quot;])</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ValueError: SELF can only be set at the last position of an Agg</span>
+
+<span class="sd">    **GOOD way**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; parentheses = Agg([])</span>
+<span class="sd">    &gt;&gt;&gt; left = Agg([&quot;(&quot;, Alt([parentheses, &quot;+&quot;])])</span>
+<span class="sd">    &gt;&gt;&gt; right = &quot;)&quot;</span>
+<span class="sd">    &gt;&gt;&gt; parentheses.children += [left, right]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([Field(parentheses)])</span>
+<span class="sd">    &gt;&gt;&gt; next(symbol.specialize())</span>
+<span class="sd">    b&#39;((+))&#39;</span>
+
+
+<span class="sd">    **Modeling indirect recursion, simple example**</span>
+
+<span class="sd">    The following example shows how to specify a field with a</span>
+<span class="sd">    structure (``v2``) that contains another structure (``v1``), which</span>
+<span class="sd">    can itself contain the first structure (``v2``). The flag</span>
+<span class="sd">    ``last_optional`` is used to indicate that the specialization or</span>
+<span class="sd">    parsing of the last element of the aggregate ``v2`` is optional.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; v1 = Agg([])</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Agg([int8(interval=(1, 3)), v1], last_optional=True)</span>
+<span class="sd">    &gt;&gt;&gt; v1.children = [&quot;!&quot;, v2]</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(v2)</span>
+<span class="sd">    &gt;&gt;&gt; res = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; res  # doctest: +SKIP</span>
+<span class="sd">    b&#39;\x03!\x03!\x03!\x03&#39;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Test parsing</span>
+<span class="sd">    &gt;&gt;&gt; f.abstract(res)  # doctest: +SKIP</span>
+<span class="sd">    OrderedDict([(&#39;Field&#39;, b&#39;\x01!\x01&#39;)])</span>
+
+
+
+<span class="sd">    **Modeling indirect recursion, more complex example**</span>
+
+<span class="sd">    The following syntax provides a way to parse and specialize a subset of</span>
+<span class="sd">    mathematical expressions including pair group of parentheses, digits from 0</span>
+<span class="sd">    to 9 and two arithmetic operators (&#39;+&#39; and &#39;*&#39;).</span>
+
+<span class="sd">    .. productionlist::</span>
+<span class="sd">       num: &quot;0&quot; | &quot;1&quot; | &quot;2&quot; | &quot;3&quot; | &quot;4&quot; | &quot;5&quot; | &quot;6&quot; | &quot;7&quot; | &quot;8&quot; | &quot;9&quot;</span>
+<span class="sd">       operator: &quot;+&quot; | &quot;*&quot;</span>
+<span class="sd">       operation: left [right]</span>
+<span class="sd">       left: num | subop</span>
+<span class="sd">       right: operator operation</span>
+<span class="sd">       subop: &quot;(&quot; operation &quot;)&quot;</span>
+
+<span class="sd">    The following examples **should** be compatible with these expressions::</span>
+
+<span class="sd">        1 + 2</span>
+<span class="sd">        1 + 2 + 3</span>
+<span class="sd">        1 + (2 + 3)</span>
+<span class="sd">        (1 + 2) + 3</span>
+<span class="sd">        (1 + 2) + 3 + 4</span>
+<span class="sd">        1 + (2 * 3) + (4 * 5)</span>
+<span class="sd">        1 + (2 * (3 + 4)) + 5</span>
+<span class="sd">        1 + ((2 * 3) * 4) * 5</span>
+
+<span class="sd">    These last expressions **should not** be compatible with these expressions::</span>
+
+<span class="sd">        1</span>
+<span class="sd">        1 ** 2</span>
+<span class="sd">        1 * (2 * 3</span>
+<span class="sd">        1 *</span>
+
+<span class="sd">    This example of indirect recursion introduces a recursion of the</span>
+<span class="sd">    `operation` statement, called in the `subop` statement.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; num = Alt([&quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; operator = Alt([&quot; + &quot;, &quot; * &quot;])</span>
+<span class="sd">    &gt;&gt;&gt; operation = Agg([], last_optional=True)</span>
+<span class="sd">    &gt;&gt;&gt; subop = Agg([&quot;(&quot;, operation, &quot;)&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; left = Alt([num, subop])</span>
+<span class="sd">    &gt;&gt;&gt; right = Agg([operator, operation])</span>
+<span class="sd">    &gt;&gt;&gt; operation.children += [left, right]</span>
+<span class="sd">    &gt;&gt;&gt; sym = Symbol([Field(operation)])</span>
+<span class="sd">    &gt;&gt;&gt; next(sym.specialize())  # doctest: +SKIP</span>
+<span class="sd">    b&#39;((((4 * 8 * 4) + 5 + 9 + 0) * 7 * 0 + (4 + 9 + (3 * 4 + 2) * 0) * 9) + 4 * 7)&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">last_optional</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Agg</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="n">children</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_optional</span> <span class="o">=</span> <span class="n">last_optional</span>
+
+<div class="viewcode-block" id="Agg.copy"><a class="viewcode-back" href="../../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg.Agg.copy">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_objects</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the current object as well as all its dependencies.</span>
+
+<span class="sd">        :return: A new object of the same type.</span>
+<span class="sd">        :rtype: :class:`Agg &lt;netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg.Agg&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">map_objects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">map_objects</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+
+        <span class="n">new_agg</span> <span class="o">=</span> <span class="n">Agg</span><span class="p">([],</span> <span class="n">last_optional</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_optional</span><span class="p">)</span>
+        <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_agg</span>
+
+        <span class="n">new_children</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">new_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">map_objects</span><span class="p">[</span><span class="n">child</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_child</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">map_objects</span><span class="p">)</span>
+                <span class="n">new_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_child</span><span class="p">)</span>
+
+        <span class="n">new_agg</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="n">new_children</span>
+        <span class="k">return</span> <span class="n">new_agg</span></div>
+
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">ParsingPath</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">acceptCallBack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">carnivorous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">triggered</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the content with the definition domain of the aggregate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dataToParse</span> <span class="o">=</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parse &#39;</span><span class="si">{}</span><span class="s2">&#39; as </span><span class="si">{}</span><span class="s2"> with parser path &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataToParse</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="bp">self</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">))</span>
+
+        <span class="c1"># Clean parsed data associated to children (needed if we are in a iteration of a Repeat)</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+                <span class="n">parsingPath</span><span class="o">.</span><span class="n">removeData</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+        <span class="c1"># initialy, there is a unique path to test (the provided one)</span>
+        <span class="n">parsingPath</span><span class="o">.</span><span class="n">assignData</span><span class="p">(</span><span class="n">dataToParse</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_parse</span><span class="p">(</span><span class="n">parsingPath</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">carnivorous</span><span class="p">):</span>
+                <span class="n">parsedData</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+                        <span class="n">child_data</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="n">child</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">parsedData</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">parsedData</span> <span class="o">=</span> <span class="n">child_data</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">parsedData</span> <span class="o">+=</span> <span class="n">child_data</span>
+
+                <span class="k">if</span> <span class="n">parsedData</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Agg data successfuly parsed with </span><span class="si">{}</span><span class="s2">: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsedData</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()))</span>
+                    <span class="n">path</span><span class="o">.</span><span class="n">addResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsedData</span><span class="p">)</span>
+                    <span class="k">yield</span> <span class="n">path</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_inner_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">i_child</span><span class="p">,</span> <span class="n">all_parsed</span><span class="p">,</span> <span class="n">carnivorous</span><span class="p">):</span>
+        <span class="c1"># we parse all the children with the parserPaths produced by previous children</span>
+
+        <span class="c1"># Handle optional field situation, where all data may have already been parsed before the last field</span>
+        <span class="k">if</span> <span class="n">all_parsed</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">parsingPath</span>
+
+        <span class="n">current_child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">i_child</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">i_child</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">next_child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">i_child</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">next_child</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parse </span><span class="si">{}</span><span class="s2"> (child </span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">) with </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">current_child</span><span class="p">,</span> <span class="n">i_child</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">),</span> <span class="n">parsingPath</span><span class="p">))</span>
+        <span class="n">value_before_parsing</span> <span class="o">=</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="n">current_child</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">childParsingPaths</span> <span class="o">=</span> <span class="n">current_child</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">parsingPath</span><span class="p">,</span> <span class="n">carnivorous</span><span class="o">=</span><span class="n">carnivorous</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">childParsingPath</span> <span class="ow">in</span> <span class="n">childParsingPaths</span><span class="p">:</span>
+            <span class="n">value_after_parsing</span> <span class="o">=</span> <span class="n">childParsingPath</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="n">current_child</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">remainingValue</span> <span class="o">=</span> <span class="n">value_before_parsing</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">value_after_parsing</span><span class="p">):]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Children </span><span class="si">{}</span><span class="s2"> succesfuly applied with the parsingPath </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">current_child</span><span class="p">,</span> <span class="n">childParsingPath</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">next_child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="c1"># Handle optional field</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">remainingValue</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i_child</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_optional</span><span class="p">:</span>
+                    <span class="n">all_parsed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="c1"># Else send the remaining data to the last field</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">childParsingPath</span><span class="o">.</span><span class="n">assignData</span><span class="p">(</span><span class="n">remainingValue</span><span class="p">,</span> <span class="n">next_child</span><span class="p">)</span>
+
+                <span class="c1"># Recursive call to parse next child</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_parse</span><span class="p">(</span><span class="n">childParsingPath</span><span class="p">,</span> <span class="n">i_child</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">all_parsed</span><span class="p">,</span> <span class="n">carnivorous</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Final child has been parsed</span>
+                <span class="k">yield</span> <span class="n">childParsingPath</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ParsingException</span><span class="p">()</span>
+
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">SpecializingPath</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">specialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specializingPath</span><span class="p">,</span> <span class="n">acceptCallBack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">triggered</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Specializes an Agg&quot;&quot;&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutator</span> <span class="kn">import</span> <span class="n">MaxFuzzingException</span>
+
+        <span class="c1"># If we are in a fuzzing mode</span>
+        <span class="k">if</span> <span class="n">preset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">preset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="c1"># Retrieve the mutator</span>
+            <span class="n">mutator</span> <span class="o">=</span> <span class="n">preset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+            <span class="c1"># As the current node variable is preset, we set its children to be inaccessible when targeted by another field/variable</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="n">specializingPath</span><span class="o">.</span><span class="n">setInaccessibleVariableRecursively</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">mutator</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">FuzzingMode</span><span class="o">.</span><span class="n">FIXED</span><span class="p">:</span>
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">generated_value</span> <span class="o">=</span> <span class="n">mutator</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">generated_value</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">generated_value</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">endian</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">)</span>
+                        <span class="n">value</span><span class="o">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">generated_value</span><span class="p">)</span>
+
+                    <span class="n">specializingPath</span><span class="o">.</span><span class="n">addResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                    <span class="k">yield</span> <span class="n">specializingPath</span>
+
+            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_specialize</span><span class="p">(</span><span class="n">specializingPath</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">preset</span><span class="p">):</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># Just call the generate() method to increment the counter of mutation</span>
+                    <span class="n">mutator</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+                <span class="k">except</span> <span class="n">MaxFuzzingException</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Maximum mutation counter reached&quot;</span><span class="p">)</span>
+                    <span class="k">break</span>
+
+                <span class="k">yield</span> <span class="n">path</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_specialize</span><span class="p">(</span><span class="n">specializingPath</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">preset</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_inner_specialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specializingPath</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">preset</span><span class="p">):</span>
+
+        <span class="c1"># Select the child to specialize</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Specialize </span><span class="si">{0}</span><span class="s2"> child with </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">specializingPath</span><span class="p">))</span>
+
+        <span class="n">specialize_last_child</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">idx</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_optional</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Last child is optional&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Randomely select if we are going to specialize the last child</span>
+            <span class="n">specialize_last_child</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">specialize_last_child</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Last child is optional, and this option is taken&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Last child is optional, and this option is not taken&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_produce_data</span><span class="p">(</span><span class="n">specializingPath</span><span class="p">,</span> <span class="n">specialize_last_child</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">specializingPath</span>
+                <span class="k">return</span>
+
+        <span class="c1"># Handle self recursivity</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">child</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span> <span class="ow">and</span> <span class="n">child</span> <span class="o">==</span> <span class="n">SELF</span><span class="p">:</span>
+            <span class="c1"># Nothing to specialize in this case (the recursive specialization is done later)</span>
+            <span class="n">childSpecializingPaths</span> <span class="o">=</span> <span class="p">(</span><span class="n">specializingPath</span><span class="p">,</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">specializingPath</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+                <span class="n">childSpecializingPaths</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">specializingPath</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Not specializing the AGG.child as it has already a data&quot;</span><span class="p">)</span>
+                <span class="n">childSpecializingPaths</span> <span class="o">=</span> <span class="p">(</span><span class="n">specializingPath</span><span class="p">,</span> <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">childSpecializingPaths</span><span class="p">:</span>
+
+            <span class="c1"># Handle recursive mode</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">child</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span> <span class="ow">and</span> <span class="n">child</span> <span class="o">==</span> <span class="n">SELF</span> <span class="ow">and</span> <span class="n">specialize_last_child</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                    <span class="n">newResult</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">newResult</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">inner_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_specialize</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">preset</span><span class="p">):</span>
+
+                    <span class="k">if</span> <span class="n">inner_path</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                        <span class="n">current_value</span> <span class="o">=</span> <span class="n">inner_path</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                        <span class="n">newResult</span> <span class="o">=</span> <span class="n">newResult</span> <span class="o">+</span> <span class="n">current_value</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Cumulative generated value for </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newResult</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()))</span>
+
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_produce_data</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">specialize_last_child</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;End of specialization for AGG &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+                <span class="k">yield</span> <span class="n">path</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_specialize</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">preset</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_produce_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">specialize_last_child</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">child</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">idx</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">specialize_last_child</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">child</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span> <span class="ow">and</span> <span class="n">child</span> <span class="o">==</span> <span class="n">SELF</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">+=</span> <span class="n">path</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;At least one AGG child (&#39;</span><span class="si">{}</span><span class="s2">&#39;) has no content, therefore we don&#39;t produce content for the AGG&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Callback registered on ancestor node: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Callback registered due to absence of content in target: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
+                    <span class="n">path</span><span class="o">.</span><span class="n">registerVariablesCallBack</span><span class="p">(</span>
+                        <span class="p">[</span><span class="n">child</span><span class="p">],</span> <span class="bp">self</span><span class="p">,</span> <span class="n">parsingCB</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Generated value for </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()))</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">addResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test_agg</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+
+
+<span class="sd">    ## Size field on the right</span>
+
+<span class="sd">    Size field targeting a field containing a agg variable, with size field on the right:</span>
+
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Agg([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size(f1, dataType=uint8()), name=&#39;f2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f2, f1])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\x03ABC&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;\x03&#39;), (&#39;f1&#39;, b&#39;ABC&#39;)])</span>
+
+<span class="sd">    Size field targeting a agg variable, with size field on the right:</span>
+
+<span class="sd">    &gt;&gt;&gt; v1 = Agg([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Size(v1, dataType=uint8())</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([Field(v2, name=&#39;f1&#39;), Field(v1, name=&#39;f2&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\x03ABC&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;\x03&#39;), (&#39;f2&#39;, b&#39;ABC&#39;)])</span>
+
+
+<span class="sd">    ## Size field on the left</span>
+
+<span class="sd">    Size field targeting a field containing a agg variable, with size field on the left:</span>
+
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Agg([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size(f1, dataType=uint8()), name=&#39;f2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;ABC\x03&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;ABC&#39;), (&#39;f2&#39;, b&#39;\x03&#39;)])</span>
+
+<span class="sd">    Size field targeting a agg variable, with size field on the left:</span>
+
+<span class="sd">    &gt;&gt;&gt; v1 = Agg([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Size(v1, dataType=uint8())</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([Field(v1, name=&#39;f1&#39;), Field(v2, name=&#39;f2&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;ABC\x03&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;ABC&#39;), (&#39;f2&#39;, b&#39;\x03&#39;)])</span>
+
+
+<span class="sd">    ## Value field on the right</span>
+
+<span class="sd">    Value field targeting a field containing a agg variable, with value field on the right:</span>
+
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Agg([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Value(f1), name=&#39;f2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f2, f1])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;ABCABC&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;ABC&#39;), (&#39;f1&#39;, b&#39;ABC&#39;)])</span>
+
+<span class="sd">    Value field targeting a agg variable, with value field on the right:</span>
+
+<span class="sd">    &gt;&gt;&gt; v1 = Agg([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Value(v1)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([Field(v2, name=&#39;f2&#39;), Field(v1, name=&#39;f1&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;ABCABC&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;ABC&#39;), (&#39;f1&#39;, b&#39;ABC&#39;)])</span>
+
+
+<span class="sd">    ## Value field on the left</span>
+
+<span class="sd">    Value field targeting a field containing a agg variable, with value field on the left:</span>
+
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Agg([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Value(f1), name=&#39;f2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;ABCABC&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;ABC&#39;), (&#39;f2&#39;, b&#39;ABC&#39;)])</span>
+
+<span class="sd">    Value field targeting a agg variable, with value field on the left:</span>
+
+<span class="sd">    &gt;&gt;&gt; v1 = Agg([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Value(v1)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([Field(v1, name=&#39;f1&#39;), Field(v2, name=&#39;f2&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;ABCABC&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;ABC&#39;), (&#39;f2&#39;, b&#39;ABC&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_agg_complex</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    ## Create a complex structure that contains multiple Aggregates with a Checksum</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; v1 = Data(Raw(b&#39;1&#39;), name=&quot;V1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Data(Raw(b&#39;2&#39;), name=&quot;V2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; icmp_ext_checksum = InternetChecksum([], dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))</span>
+<span class="sd">    &gt;&gt;&gt; extension_header = Agg([v1, v2, icmp_ext_checksum], name=&#39;AGG extension_header&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; v4 = Data(Raw(b&#39;AAAA&#39;), name=&quot;V4&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; icmp_extension = Field(Agg([extension_header, v4], name=&#39;AGG icmp_extension&#39;), &quot;icmp.ext&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; icmp_ext_checksum.targets = [v1, v2, icmp_ext_checksum, v4]</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([icmp_extension])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;12LKAAAA&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;icmp.ext&#39;, b&#39;12LKAAAA&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

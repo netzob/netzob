@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Installation documentation on Debian &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/installation/debian.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#using-netzob-s-apt-repository">
+   Using Netzob’s APT Repository
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#using-the-provided-debian-package">
+   Using the provided Debian package
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Installation documentation on Debian</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#using-netzob-s-apt-repository">
+   Using Netzob’s APT Repository
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#using-the-provided-debian-package">
+   Using the provided Debian package
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="installation-documentation-on-debian">
+<span id="installation-debian"></span><h1>Installation documentation on Debian<a class="headerlink" href="#installation-documentation-on-debian" title="Permalink to this headline">#</a></h1>
+<section id="using-netzob-s-apt-repository">
+<h2>Using Netzob’s APT Repository<a class="headerlink" href="#using-netzob-s-apt-repository" title="Permalink to this headline">#</a></h2>
+<p>A dedicated APT repository (apt.netzob.org) is available for downloading
+and installing Netzob.</p>
+<p>Steps:</p>
+<ol class="arabic simple">
+<li><p>edit you <code class="docutils literal notranslate"><span class="pre">/etc/apt/sources.list</span></code> to add the netzob’s repository
+URL,</p></li>
+<li><p>import the GPG key used to sign the repository,</p></li>
+<li><p>install netzob threw <code class="docutils literal notranslate"><span class="pre">apt-get</span></code>.</p></li>
+</ol>
+<p>Edit <code class="docutils literal notranslate"><span class="pre">/etc/apt/sources.list</span></code></p>
+<p>You need to register the repository in your APT client by adding the
+following entry (stable or unstable) in your <code class="docutils literal notranslate"><span class="pre">/etc/apt/sources.list</span></code>
+or through a dedicated file in <code class="docutils literal notranslate"><span class="pre">/etc/apt/sources.list.d/</span></code>. Then you
+need to import the gpg public key used to sign the repository.</p>
+<p><strong>Unstable &amp; testing (“Wheezy”)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">deb</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">apt</span><span class="o">.</span><span class="n">netzob</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">debian</span><span class="o">/</span> <span class="n">unstable</span> <span class="n">main</span>
+<span class="n">deb</span><span class="o">-</span><span class="n">src</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">apt</span><span class="o">.</span><span class="n">netzob</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">debian</span><span class="o">/</span> <span class="n">unstable</span> <span class="n">main</span>
+</pre></div>
+</div>
+<p><strong>Stable (“Squeeze”)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">deb</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">apt</span><span class="o">.</span><span class="n">netzob</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">debian</span><span class="o">/</span> <span class="n">squeeze</span><span class="o">-</span><span class="n">backports</span> <span class="n">main</span>
+<span class="n">deb</span><span class="o">-</span><span class="n">src</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">apt</span><span class="o">.</span><span class="n">netzob</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">debian</span><span class="o">/</span> <span class="n">squeeze</span><span class="o">-</span><span class="n">backports</span> <span class="n">main</span>
+</pre></div>
+</div>
+<p>Import GPG key<a class="reference external" href="#Import-GPG-key">¶</a></p>
+<p>The repository is signed, so APT may complain until you register the
+archive key <code class="docutils literal notranslate"><span class="pre">0xE57AEA26</span></code> to your APT keyring. The fingerprint of the
+key is <code class="docutils literal notranslate"><span class="pre">D865</span> <span class="pre">DCF0</span> <span class="pre">9B9A</span> <span class="pre">195C</span> <span class="pre">49F0</span> <span class="pre">E3F3</span> <span class="pre">F750</span> <span class="pre">1A13</span> <span class="pre">E57A</span> <span class="pre">EA26</span></code> and has
+been signed by the followings:</p>
+<ul class="simple">
+<li><p>0xA255A6A3 : Georges Bossert
+&lt;<a class="reference external" href="mailto:georges&#46;bossert&#37;&#52;&#48;supelec&#46;fr">georges<span>&#46;</span>bossert<span>&#64;</span>supelec<span>&#46;</span>fr</a>&gt;</p></li>
+<li><p>0x561F7A47 : Frederic Guihery
+&lt;<a class="reference external" href="mailto:frederic&#46;guihery&#37;&#52;&#48;amossys&#46;fr">frederic<span>&#46;</span>guihery<span>&#64;</span>amossys<span>&#46;</span>fr</a>&gt;</p></li>
+<li><p>0x04B1A89C : Olivier Tetard
+&lt;<a class="reference external" href="mailto:olivier&#46;tetard&#37;&#52;&#48;amossys&#46;fr">olivier<span>&#46;</span>tetard<span>&#64;</span>amossys<span>&#46;</span>fr</a>&gt;</p></li>
+</ul>
+<p>To import the key of the APT repository you can execute the following
+commands :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># wget https://dev.netzob.org/misc/debian_archive.asc -O -| gpg --import</span>
+<span class="c1"># gpg --export -a 0xF7501A13E57AEA26 | sudo apt-key add -</span>
+</pre></div>
+</div>
+<p>Install netzob<a class="reference external" href="#Install-netzob">¶</a></p>
+<p>You can install it with the following commands :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># apt-get update</span>
+<span class="c1"># apt-get install netzob</span>
+</pre></div>
+</div>
+</section>
+<section id="using-the-provided-debian-package">
+<h2>Using the provided Debian package<a class="headerlink" href="#using-the-provided-debian-package" title="Permalink to this headline">#</a></h2>
+<p>Installing Netzob directly from the debian package (deb file) implies
+you manually install the necessary packages in order to handle the
+required dependencies. Therefore, the following commands can be executed
+to install them :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># apt-get install python python-ptrace python-hachoir-subfile python-matplotlib python-dpkt strace lsof python-pcapy python-bitarray python-dev libjs-sphinxdoc python-sphinx</span>
+</pre></div>
+</div>
+<p>Once the requirements are fullfilled you can download the debian file
+(i386 or amd64) and install it using the following command for an i386
+architecture (32 bits) :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># dpkg -i netzob_0.3.0-1_i386.deb</span>
+</pre></div>
+</div>
+<p>or for an AMD64 (64 bits) :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># dpkg -i netzob_0.3.0-1_amd64.deb</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

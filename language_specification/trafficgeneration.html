@@ -1,0 +1,1582 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Sending and Receiving Messages &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Visiting a State Machine with an Actor" href="actor.html" />
+    <link rel="prev" title="Protocol Modeling" href="protospec.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/language_specification/trafficgeneration.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#underlying-concepts">
+   Underlying Concepts
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#communication-channel-api">
+   Communication Channel API
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#available-communication-channels">
+   Available Communication Channels
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#rawethernetchannel-channel">
+     RawEthernetChannel channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#customethernetchannel-channel">
+     CustomEthernetChannel channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#customipchannel-channel">
+     CustomIPChannel channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ipchannel-channel">
+     IPChannel channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#udpclient-channel">
+     UDPClient channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#tcpclient-channel">
+     TCPClient channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#udpserver-channel">
+     UDPServer channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#tcpserver-channel">
+     TCPServer channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#sslclient-channel">
+     SSLClient channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#debugchannel-channel">
+     DebugChannel channel
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Sending and Receiving Messages</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#underlying-concepts">
+   Underlying Concepts
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#communication-channel-api">
+   Communication Channel API
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#available-communication-channels">
+   Available Communication Channels
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#rawethernetchannel-channel">
+     RawEthernetChannel channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#customethernetchannel-channel">
+     CustomEthernetChannel channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#customipchannel-channel">
+     CustomIPChannel channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ipchannel-channel">
+     IPChannel channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#udpclient-channel">
+     UDPClient channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#tcpclient-channel">
+     TCPClient channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#udpserver-channel">
+     UDPServer channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#tcpserver-channel">
+     TCPServer channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#sslclient-channel">
+     SSLClient channel
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#debugchannel-channel">
+     DebugChannel channel
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="sending-and-receiving-messages">
+<span id="trafficgeneration"></span><h1>Sending and Receiving Messages<a class="headerlink" href="#sending-and-receiving-messages" title="Permalink to this headline">#</a></h1>
+<section id="underlying-concepts">
+<h2>Underlying Concepts<a class="headerlink" href="#underlying-concepts" title="Permalink to this headline">#</a></h2>
+<p>In the Netzob library, a <strong>communication channel</strong> is an element allowing a connection to a remote device. Generally, if the device is connected with an Ethernet network, the channel includes a socket object and all the properties used to configure it. The channel also provides the connection status and send/receive APIs.</p>
+<p>Some specific channels make it possible to access and manipulate the underlying protocol header. These channels are prefixed with the term <code class="docutils literal notranslate"><span class="pre">Custom</span></code>. The underlying protocol header takes the form of a <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a> for which we can specify a <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Preset.Preset" title="netzob.Model.Vocabulary.Preset.Preset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Preset</span></code></a> configuration.</p>
+<p>These elements are described in this chapter.</p>
+</section>
+<section id="communication-channel-api">
+<span id="trafficgeneration-channel-list"></span><h2>Communication Channel API<a class="headerlink" href="#communication-channel-api" title="Permalink to this headline">#</a></h2>
+<p>Each communication channel provides the following API:</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AbstractChannel</span></span><a class="reference internal" href="../_modules/netzob/Simulator/AbstractChannel.html#AbstractChannel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel" title="Permalink to this definition">#</a></dt>
+<dd><p>A communication channel is an element allowing the establishment of a
+connection to or from a remote device.</p>
+<p>The AbstractChannel defines the API of a communication channel.</p>
+<p>A communication channel provides the following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>isOpen</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – The status of the communication channel.</p></li>
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The default timeout in seconds for opening a connection (only effective in the context of a client), as well as for
+waiting a message when calling the <a class="reference internal" href="#netzob.Simulator.AbstractChannel.AbstractChannel.read" title="netzob.Simulator.AbstractChannel.AbstractChannel.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a> method.</p></li>
+<li><p><strong>header</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – A Symbol that makes it possible to access the underlying protocol header for the channels prefixed with the term <strong>Custom</strong>.</p></li>
+<li><p><strong>header_preset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Preset</span></code>) – A Preset used to preset
+(parameterize) the fields of the underlying protocol header during symbol
+specialization. See <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol.specialize" title="netzob.Model.Vocabulary.Symbol.Symbol.specialize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Symbol.specialize()</span></code></a> for more information.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.__enter__">
+<span class="sig-name descname"><span class="pre">__enter__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/AbstractChannel.html#AbstractChannel.__enter__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.__enter__" title="Permalink to this definition">#</a></dt>
+<dd><p>Enter the runtime channel context by opening the channel.
+This methods is implied in the with statement.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.__exit__">
+<span class="sig-name descname"><span class="pre">__exit__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exc_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traceback</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/AbstractChannel.html#AbstractChannel.__exit__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.__exit__" title="Permalink to this definition">#</a></dt>
+<dd><p>Exit the runtime channel context by closing the channel.
+This methods is implied in the with statement.</p>
+<p>This method should not be called explicitly. However, the following
+arguments are accepted:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exc_type</strong> (<em>Exception</em><em>, </em><em>required</em>) – the potential exception type caught in context</p></li>
+<li><p><strong>exc_value</strong> (<em>object</em><em>, </em><em>required</em>) – the potential exception value caught in context</p></li>
+<li><p><strong>traceback</strong> (<em>object</em><em>, </em><em>required</em>) – the traceback of the potential exception caught in
+context</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.clearSendLimit">
+<span class="sig-name descname"><span class="pre">clearSendLimit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/AbstractChannel.html#AbstractChannel.clearSendLimit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.clearSendLimit" title="Permalink to this definition">#</a></dt>
+<dd><p>Reset the writing counters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.close">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.close" title="Permalink to this definition">#</a></dt>
+<dd><p>Close the communication channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.flush">
+<span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/AbstractChannel.html#AbstractChannel.flush"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.flush" title="Permalink to this definition">#</a></dt>
+<dd><p>Block until the channel output queue is empty.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.open">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.open" title="Permalink to this definition">#</a></dt>
+<dd><p>Open the communication channel. If the channel is a server, it
+starts to listen for incoming data. If the channel is a client, it connects to the remote peer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – The timeout of the channel for opening
+a connection with a remote peer. This parameter overrides the channel <code class="xref py py-attr docutils literal notranslate"><span class="pre">timeout</span></code> attribute and is only effective in the context of a client. Default value (None) corresponds to no timeout.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.read">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.read" title="Permalink to this definition">#</a></dt>
+<dd><p>Read the next message from the communication channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The received data.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.sendReceive">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sendReceive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.sendReceive" title="Permalink to this definition">#</a></dt>
+<dd><p>Write on the communication channel the specified data, wait for a
+response and return the received data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, required) – The data to write on the channel.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The received data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.setSendLimit">
+<span class="sig-name descname"><span class="pre">setSendLimit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxValue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/AbstractChannel.html#AbstractChannel.setSendLimit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.setSendLimit" title="Permalink to this definition">#</a></dt>
+<dd><p>Change the max number of writings.</p>
+<p>When it is reached, no more packets can be sent until
+<a class="reference internal" href="#netzob.Simulator.AbstractChannel.AbstractChannel.clearSendLimit" title="netzob.Simulator.AbstractChannel.AbstractChannel.clearSendLimit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clearSendLimit()</span></code></a> is called.</p>
+<p>If maxValue is -1, the sending limit is deactivated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>maxValue</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, required) – the new max value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.set_rate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/AbstractChannel.html#AbstractChannel.set_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.set_rate" title="Permalink to this definition">#</a></dt>
+<dd><p>This method set the given transmission rate to the channel.
+Used in testing network under high load</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, required) – This specifies the bandwidth in bytes per second to
+respect during traffic emission. Default value is
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, which means that the bandwidth is only
+limited by the underlying physical layer.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.unset_rate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unset_rate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/AbstractChannel.html#AbstractChannel.unset_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.unset_rate" title="Permalink to this definition">#</a></dt>
+<dd><p>This method clears the transmission rate.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/AbstractChannel.html#AbstractChannel.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.write" title="Permalink to this definition">#</a></dt>
+<dd><p>Write to the communication channel the specified data, either once,
+or in a loop according to the <cite>duration</cite> parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>bytes</em><em>, </em><em>required</em>) – The data to write on the channel.</p></li>
+<li><p><strong>duration</strong> (<em>int</em><em>, </em><em>optional</em>) – This indicates for how many seconds the data is
+continuously written on the channel. Default value is
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, which means that the data is sent only once.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The amount of written data, in bytes.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.AbstractChannel.AbstractChannel.write_map">
+<span class="sig-name descname"><span class="pre">write_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_iterator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/AbstractChannel.html#AbstractChannel.write_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.AbstractChannel.AbstractChannel.write_map" title="Permalink to this definition">#</a></dt>
+<dd><p>Write to the communication channel the successive data values,
+either once, or in a loop according to the <cite>duration</cite> parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_iterator</strong> (<em>Iterator</em><em>[</em><em>bytes</em><em>]</em><em>, </em><em>required</em>) – data iterator used to write on the channel.</p></li>
+<li><p><strong>duration</strong> (<em>int</em><em>, </em><em>optional</em>) – This indicates for how many seconds the data is
+continuously written on the channel.
+Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means that the
+data is sent only once.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The amount of written data, count in bytes.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are two ways to open and close a channel.
+<strong>Both methods provide the same behavior</strong>.</p>
+<ol class="arabic">
+<li><p>either by using the related methods:
+<a class="reference internal" href="#netzob.Simulator.AbstractChannel.AbstractChannel.open" title="netzob.Simulator.AbstractChannel.AbstractChannel.open"><code class="xref py py-meth docutils literal notranslate"><span class="pre">open()</span></code></a> and
+<a class="reference internal" href="#netzob.Simulator.AbstractChannel.AbstractChannel.close" title="netzob.Simulator.AbstractChannel.AbstractChannel.close"><code class="xref py py-meth docutils literal notranslate"><span class="pre">close()</span></code></a>.
+Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">channel</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">channel</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;abcd&#39;</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>or by using Python contexts capability provided by the <code class="docutils literal notranslate"><span class="pre">with</span></code> statement
+and following methods:
+<a class="reference internal" href="#netzob.Simulator.AbstractChannel.AbstractChannel.__enter__" title="netzob.Simulator.AbstractChannel.AbstractChannel.__enter__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__enter__()</span></code></a> and
+<a class="reference internal" href="#netzob.Simulator.AbstractChannel.AbstractChannel.__exit__" title="netzob.Simulator.AbstractChannel.AbstractChannel.__exit__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__exit__()</span></code></a>.
+Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">channel</span><span class="p">:</span>
+    <span class="n">channel</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;abcd&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<p>Builder classes (see <a class="reference external" href="https://en.wikipedia.org/wiki/Builder_pattern">Build pattern</a>)
+are also available for each communication channel. They could be used to create
+an instance of the channel class using generic keys.</p>
+<p>This API is available through the following class:</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.ChannelBuilder.ChannelBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ChannelBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/ChannelBuilder.html#ChannelBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.ChannelBuilder.ChannelBuilder" title="Permalink to this definition">#</a></dt>
+<dd><p>This builder pattern enables the creation of any kind of
+<a class="reference internal" href="#netzob.Simulator.AbstractChannel.AbstractChannel" title="netzob.Simulator.AbstractChannel.AbstractChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractChannel</span></code></a>.</p>
+<p>Initialize the builder context by providing the kind of object to build.</p>
+<p>Sub classes should use specific setter methods (i.e. <code class="docutils literal notranslate"><span class="pre">set_key</span></code> to set
+<code class="docutils literal notranslate"><span class="pre">key</span></code> attribute in final object) to handle the setting of attributes
+in a specific way. Otherwise, the named attribute of
+<a class="reference internal" href="#netzob.Simulator.ChannelBuilder.ChannelBuilder.set" title="netzob.Simulator.ChannelBuilder.ChannelBuilder.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> will be used.</p>
+<p>Two data-stores are available in a <code class="docutils literal notranslate"><span class="pre">ChannelBuilder</span></code> instance:</p>
+<ul class="simple">
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">attrs</span></code>:
+a map between argument name in __init__ method of the channel,</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">after_init_callbacks</span></code>:
+a list of callback to be called <strong>after</strong> __init__ method call.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kind</strong> (<em>an AbstractChannel class</em>) – the kind of object to build</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.ChannelBuilder.ChannelBuilder.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/ChannelBuilder.html#ChannelBuilder.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.ChannelBuilder.ChannelBuilder.build" title="Permalink to this definition">#</a></dt>
+<dd><p>Generate the final object instance using gathered information.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.ChannelBuilder.ChannelBuilder.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/ChannelBuilder.html#ChannelBuilder.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.ChannelBuilder.ChannelBuilder.set" title="Permalink to this definition">#</a></dt>
+<dd><p>Set a named parameter that will be passed to <a class="reference internal" href="#netzob.Simulator.ChannelBuilder.ChannelBuilder.build" title="netzob.Simulator.ChannelBuilder.ChannelBuilder.build"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em><em>, </em><em>required</em>) – a named parameter expected by <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.kind.__init__()</span></code></p></li>
+<li><p><strong>value</strong> (<em>object</em><em>, </em><em>required</em>) – any object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.ChannelBuilder.ChannelBuilder.set_map">
+<span class="sig-name descname"><span class="pre">set_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#netzob.Simulator.ChannelBuilder.ChannelBuilder" title="netzob.Simulator.ChannelBuilder.ChannelBuilder"><span class="pre">netzob.Simulator.ChannelBuilder.ChannelBuilder</span></a></span></span><a class="reference internal" href="../_modules/netzob/Simulator/ChannelBuilder.html#ChannelBuilder.set_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.ChannelBuilder.ChannelBuilder.set_map" title="Permalink to this definition">#</a></dt>
+<dd><p>Set a mapping of key-value named parameters.</p>
+<p>It is a shortcut method to address multiple key-value pairs successively.
+See <a class="reference internal" href="#netzob.Simulator.ChannelBuilder.ChannelBuilder.set" title="netzob.Simulator.ChannelBuilder.ChannelBuilder.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set()</span></code></a> for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>required</em>) – A key-value parameter mapping</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="available-communication-channels">
+<span id="channels"></span><h2>Available Communication Channels<a class="headerlink" href="#available-communication-channels" title="Permalink to this headline">#</a></h2>
+<p>The available communication channels are as follows:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#netzob.Simulator.Channels.RawEthernetChannel.RawEthernetChannel" title="netzob.Simulator.Channels.RawEthernetChannel.RawEthernetChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">RawEthernetChannel</span></code></a>: this channel sends/receives Raw Ethernet frames.</p></li>
+<li><p><a class="reference internal" href="#netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel" title="netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">CustomEthernetChannel</span></code></a>: this channel sends/receives Ethernet frames (with Ethernet header computed by this channel).</p></li>
+<li><p><a class="reference internal" href="#netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel" title="netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">CustomIPChannel</span></code></a>: this channel sends/receives IP payloads (with IP header computed by this channel).</p></li>
+<li><p><a class="reference internal" href="#netzob.Simulator.Channels.IPChannel.IPChannel" title="netzob.Simulator.Channels.IPChannel.IPChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">IPChannel</span></code></a>: this channel sends/receives IP payloads (with IP header computed by the OS kernel).</p></li>
+<li><p><a class="reference internal" href="#netzob.Simulator.Channels.UDPClient.UDPClient" title="netzob.Simulator.Channels.UDPClient.UDPClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">UDPClient</span></code></a>: this channel provides the connection of a client to a specific IP:Port server over a UDP socket.</p></li>
+<li><p><a class="reference internal" href="#netzob.Simulator.Channels.TCPClient.TCPClient" title="netzob.Simulator.Channels.TCPClient.TCPClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">TCPClient</span></code></a>: this channel provides the connection of a client to a specific IP:Port server over a TCP socket.</p></li>
+<li><p><a class="reference internal" href="#netzob.Simulator.Channels.UDPServer.UDPServer" title="netzob.Simulator.Channels.UDPServer.UDPServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">UDPServer</span></code></a>: this channel provides a server listening to a specific IP:Port over a UDP socket.</p></li>
+<li><p><a class="reference internal" href="#netzob.Simulator.Channels.TCPServer.TCPServer" title="netzob.Simulator.Channels.TCPServer.TCPServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">TCPServer</span></code></a>: this channel provides a server listening to a specific IP:Port over a TCP socket.</p></li>
+<li><p><a class="reference internal" href="#netzob.Simulator.Channels.SSLClient.SSLClient" title="netzob.Simulator.Channels.SSLClient.SSLClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSLClient</span></code></a>: this channel provides the connection of a client to a specific IP:Port server over a TCP/SSL socket.</p></li>
+<li><p><a class="reference internal" href="#netzob.Simulator.Channels.DebugChannel.DebugChannel" title="netzob.Simulator.Channels.DebugChannel.DebugChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">DebugChannel</span></code></a>: this channel provides a way to log I/Os into a specific stream.</p></li>
+</ul>
+<p id="trafficgeneration-channels">Each communication channel, with their associated builder class, is described
+in the following sub-chapters.</p>
+<section id="rawethernetchannel-channel">
+<h3>RawEthernetChannel channel<a class="headerlink" href="#rawethernetchannel-channel" title="Permalink to this headline">#</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.RawEthernetChannel.RawEthernetChannel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RawEthernetChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/RawEthernetChannel.html#RawEthernetChannel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.RawEthernetChannel.RawEthernetChannel" title="Permalink to this definition">#</a></dt>
+<dd><p>A RawEthernetChannel is a communication channel to send Raw Ethernet
+frames.</p>
+<p>The RawEthernetChannel constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interface</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, required) – The local network interface name (such as ‘eth0’, ‘lo’).</p></li>
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – The default timeout of the channel for global
+connection. Default value is blocking (None).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Adding to AbstractChannel variables, the RawEthernetChannel class provides
+the following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><p><strong>interface</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The network Interface name such as ‘eth0’, ‘lo’, determined
+with the local MAC address. Read only variable.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">hexlify</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">RawEthernetChannel</span><span class="p">(</span><span class="n">interface</span><span class="o">=</span><span class="s2">&quot;lo&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="n">Raw</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00</span><span class="s2">&quot;</span><span class="p">))])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">()))</span>
+<span class="go">14</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.RawEthernetChannel.RawEthernetChannelBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RawEthernetChannelBuilder</span></span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/RawEthernetChannel.html#RawEthernetChannelBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.RawEthernetChannel.RawEthernetChannelBuilder" title="Permalink to this definition">#</a></dt>
+<dd><p>This builder is used to create a
+<a class="reference internal" href="#netzob.Simulator.Channels.RawEthernetChannel.RawEthernetChannel" title="netzob.Simulator.Channels.RawEthernetChannel.RawEthernetChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">RawEthernetChannel</span></code></a>
+instance.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Simulator.Channels.NetInfo</span> <span class="kn">import</span> <span class="n">NetInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">netinfo</span> <span class="o">=</span> <span class="n">NetInfo</span><span class="p">(</span><span class="n">interface</span><span class="o">=</span><span class="s2">&quot;eth0&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">builder</span> <span class="o">=</span> <span class="n">RawEthernetChannelBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">set_map</span><span class="p">(</span><span class="n">netinfo</span><span class="o">.</span><span class="n">getDict</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+<span class="go">&lt;class &#39;netzob.Simulator.Channels.RawEthernetChannel.RawEthernetChannel&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span><span class="o">.</span><span class="n">interface</span>  <span class="c1"># interface key has been mapped to interface attribute</span>
+<span class="go">&#39;eth0&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="customethernetchannel-channel">
+<h3>CustomEthernetChannel channel<a class="headerlink" href="#customethernetchannel-channel" title="Permalink to this headline">#</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CustomEthernetChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remoteMac</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localMac</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/CustomEthernetChannel.html#CustomEthernetChannel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel" title="Permalink to this definition">#</a></dt>
+<dd><p>A CustomEthernetChannel is a communication channel to send Ethernet
+frames. This channel is responsible for building the Ethernet
+layer.</p>
+<p>The CustomEthernetChannel constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteMac</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">netaddr.EUI</span></code>, required) – This parameter is the remote MAC address to connect to.</p></li>
+<li><p><strong>localMac</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">netaddr.EUI</span></code>, required) – This parameter is the local MAC address.</p></li>
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – The default timeout of the channel for global
+connection. Default value is blocking (None).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Adding to AbstractChannel variables, the CustomEthernetChannel class provides
+the following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteMac</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The remote MAC address to connect to.</p></li>
+<li><p><strong>localMac</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The local MAC address.</p></li>
+<li><p><strong>interface</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The network Interface name such as ‘eth0’, ‘lo’, determined
+with the local MAC address. Read only variable.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following example shows how to instantiate a CustomEthernetChannel.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">hexlify</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">example_channel</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">client</span> <span class="o">=</span> <span class="n">CustomEthernetChannel</span><span class="p">(</span>
+<span class="gp">... </span>       <span class="n">remoteMac</span><span class="o">=</span><span class="s2">&quot;00:01:02:03:04:05&quot;</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="n">localMac</span><span class="o">=</span><span class="s2">&quot;00:06:07:08:09:10&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">client</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;ABC&quot;</span><span class="p">)])</span>
+<span class="gp">... </span>    <span class="n">client</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">()))</span>
+<span class="gp">... </span>    <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel.setProtocol">
+<span class="sig-name descname"><span class="pre">setProtocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upperProtocol</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/CustomEthernetChannel.html#CustomEthernetChannel.setProtocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel.setProtocol" title="Permalink to this definition">#</a></dt>
+<dd><p>Set the code of the upper protocol</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>upperProtocol</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – the upper protocol code</p>
+</dd>
+<dt class="field-even">Raise</dt>
+<dd class="field-even"><p>TypeError if the value is outside of the interval (0, 0xFFFF)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannelBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CustomEthernetChannelBuilder</span></span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/CustomEthernetChannel.html#CustomEthernetChannelBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannelBuilder" title="Permalink to this definition">#</a></dt>
+<dd><p>This builder is used to create an
+<a class="reference internal" href="#netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel" title="netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">CustomEthernetChannel</span></code></a> instance</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Simulator.Channels.NetInfo</span> <span class="kn">import</span> <span class="n">NetInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">netinfo</span> <span class="o">=</span> <span class="n">NetInfo</span><span class="p">(</span><span class="n">dst_addr</span><span class="o">=</span><span class="s2">&quot;00:00:00:00:00:00&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">src_addr</span><span class="o">=</span><span class="s2">&quot;00:00:00:00:00:00&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">protocol</span><span class="o">=</span><span class="mh">0x0800</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">interface</span><span class="o">=</span><span class="s2">&quot;lo&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">builder</span> <span class="o">=</span> <span class="n">CustomEthernetChannelBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">set_map</span><span class="p">(</span><span class="n">netinfo</span><span class="o">.</span><span class="n">getDict</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+<span class="go">&lt;class &#39;netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span><span class="o">.</span><span class="n">localMac</span>  <span class="c1"># src_addr key has been mapped to localMac attribute</span>
+<span class="go">&#39;00:00:00:00:00:00&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="customipchannel-channel">
+<h3>CustomIPChannel channel<a class="headerlink" href="#customipchannel-channel" title="Permalink to this headline">#</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CustomIPChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remoteIP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localIP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upperProtocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/CustomIPChannel.html#CustomIPChannel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel" title="Permalink to this definition">#</a></dt>
+<dd><p>A CustomIPChannel is a communication channel that is used to send IP
+payloads. This <strong>channel</strong> is responsible for building the IP header. It is
+similar to the <a class="reference internal" href="#netzob.Simulator.Channels.IPChannel.IPChannel" title="netzob.Simulator.Channels.IPChannel.IPChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">IPChannel</span></code></a>
+channel, except that with <code class="xref py py-class docutils literal notranslate"><span class="pre">IPChannel</span></code> the OS kernel builds the IP header.
+Therefore, with CustomIPChannel, we <strong>can</strong> modify or fuzz the IP header fields.</p>
+<p>The CustomIPChannel constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">netaddr.IPAddress</span></code>, required) – This parameter is the remote IP address to connect to.</p></li>
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">netaddr.IPAddress</span></code>, optional) – The local IP address. Default value is the local
+IP address corresponding to the network interface that
+will be used to send the packet.</p></li>
+<li><p><strong>upperProtocol</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, optional) – The protocol following IP in the stack.
+Default value is <code class="xref py py-attr docutils literal notranslate"><span class="pre">socket.IPPROTO_TCP</span></code> (6).</p></li>
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – The default timeout of the channel for global
+connection. Default value is blocking (None).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Adding to AbstractChannel variables, the CustomIPChannel class provides the
+following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The remote IP address to connect to.</p></li>
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The local IP address.</p></li>
+<li><p><strong>upperProtocol</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The protocol following the IP header.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following code shows the use of a <a class="reference internal" href="#netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel" title="netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">CustomIPChannel</span></code></a>
+channel:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">CustomIPChannel</span><span class="p">(</span><span class="n">remoteIP</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;Hello everyone!&quot;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">()))</span>
+<span class="go">35</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.CustomIPChannel.CustomIPChannelBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CustomIPChannelBuilder</span></span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/CustomIPChannel.html#CustomIPChannelBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.CustomIPChannel.CustomIPChannelBuilder" title="Permalink to this definition">#</a></dt>
+<dd><p>This builder is used to create an
+<a class="reference internal" href="#netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel" title="netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">CustomIPChannel</span></code></a> instance</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">socket</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Simulator.Channels.NetInfo</span> <span class="kn">import</span> <span class="n">NetInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">netinfo</span> <span class="o">=</span> <span class="n">NetInfo</span><span class="p">(</span><span class="n">dst_addr</span><span class="o">=</span><span class="s2">&quot;1.2.3.4&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">src_addr</span><span class="o">=</span><span class="s2">&quot;4.3.2.1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">protocol</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">IPPROTO_TCP</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">builder</span> <span class="o">=</span> <span class="n">CustomIPChannelBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">set_map</span><span class="p">(</span><span class="n">netinfo</span><span class="o">.</span><span class="n">getDict</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+<span class="go">&lt;class &#39;netzob.Simulator.Channels.CustomIPChannel.CustomIPChannel&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span><span class="o">.</span><span class="n">localIP</span>  <span class="c1"># src_addr key has been mapped to localIP attribute</span>
+<span class="go">&#39;4.3.2.1&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="ipchannel-channel">
+<h3>IPChannel channel<a class="headerlink" href="#ipchannel-channel" title="Permalink to this headline">#</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.IPChannel.IPChannel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IPChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remoteIP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localIP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upperProtocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/IPChannel.html#IPChannel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.IPChannel.IPChannel" title="Permalink to this definition">#</a></dt>
+<dd><p>An IPChannel is a communication channel that is used to send IP
+payloads. The <strong>kernel</strong> is responsible for building the IP header. It is
+similar to the CustomIPChannel channel, except that with CustomIPChannel the
+channel builds the IP header. Therefore, with <a class="reference internal" href="#netzob.Simulator.Channels.IPChannel.IPChannel" title="netzob.Simulator.Channels.IPChannel.IPChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">IPChannel</span></code></a>,
+we <strong>cannot</strong> modify or fuzz the IP header fields.</p>
+<p>The IPChannel constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, required) – This parameter is the remote IP address to connect to.</p></li>
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – The local IP address. Default value is the local
+IP address corresponding to the interface that
+will be used to send the packet.</p></li>
+<li><p><strong>upperProtocol</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, optional) – The protocol following the IP header.
+Default value is socket.IPPROTO_TCP.</p></li>
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – The default timeout of the channel for global
+connection. Default value is blocking (None).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Adding to AbstractChannel variables, the IPChannel class provides the
+following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The remote IP address to connect to.</p></li>
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The local IP address.</p></li>
+<li><p><strong>upperProtocol</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The protocol following the IP header.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following code shows the use of an IPChannel channel:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">IPChannel</span><span class="p">(</span><span class="n">remoteIP</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;Hello everyone!&quot;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">()))</span>
+<span class="go">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.IPChannel.IPChannelBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IPChannelBuilder</span></span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/IPChannel.html#IPChannelBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.IPChannel.IPChannelBuilder" title="Permalink to this definition">#</a></dt>
+<dd><p>This builder is used to create an
+<a class="reference internal" href="#netzob.Simulator.Channels.IPChannel.IPChannel" title="netzob.Simulator.Channels.IPChannel.IPChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">IPChannel</span></code></a> instance</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">socket</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Simulator.Channels.NetInfo</span> <span class="kn">import</span> <span class="n">NetInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">netinfo</span> <span class="o">=</span> <span class="n">NetInfo</span><span class="p">(</span><span class="n">dst_addr</span><span class="o">=</span><span class="s2">&quot;1.2.3.4&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">src_addr</span><span class="o">=</span><span class="s2">&quot;4.3.2.1&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">protocol</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">IPPROTO_TCP</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">builder</span> <span class="o">=</span> <span class="n">IPChannelBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">set_map</span><span class="p">(</span><span class="n">netinfo</span><span class="o">.</span><span class="n">getDict</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+<span class="go">&lt;class &#39;netzob.Simulator.Channels.IPChannel.IPChannel&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span><span class="o">.</span><span class="n">remoteIP</span>  <span class="c1"># dst_addr key has been mapped to remoteIP attribute</span>
+<span class="go">&#39;1.2.3.4&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="udpclient-channel">
+<h3>UDPClient channel<a class="headerlink" href="#udpclient-channel" title="Permalink to this headline">#</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.UDPClient.UDPClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UDPClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remoteIP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remotePort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localIP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localPort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/UDPClient.html#UDPClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.UDPClient.UDPClient" title="Permalink to this definition">#</a></dt>
+<dd><p>A UDPClient is a communication channel. It provides the connection of a
+client to a specific IP:Port server over a UDP socket.</p>
+<p>The UDPClient constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, required) – This parameter is the remote IP address to connect to.</p></li>
+<li><p><strong>remotePort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, required) – This parameter is the remote IP port.</p></li>
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – The local IP address. Default value is the local
+IP address corresponding to the network interface that
+will be used to send the packet.</p></li>
+<li><p><strong>localPort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, optional) – The local IP port. Default value in a random
+valid integer chosen by the kernel.</p></li>
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – The default timeout of the channel for global
+connection. Default value is blocking (None).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Adding to AbstractChannel variables, the UDPClient class provides the
+following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The remote IP address to connect to.</p></li>
+<li><p><strong>remotePort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The remote IP port.</p></li>
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The local IP address.</p></li>
+<li><p><strong>localPort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The local IP port.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following code shows the use of a UDPClient channel:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">UDPClient</span><span class="p">(</span><span class="n">remoteIP</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">remotePort</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;Hello everyone!&quot;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">()))</span>
+<span class="go">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Complete example with the use of an actor.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;Hello everyone!&quot;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s2</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">openTransition</span> <span class="o">=</span> <span class="n">OpenChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s0</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mainTransition</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">inputSymbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span> <span class="n">outputSymbols</span><span class="o">=</span><span class="p">[</span><span class="n">symbol</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">closeTransition</span> <span class="o">=</span> <span class="n">CloseChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">automata</span> <span class="o">=</span> <span class="n">Automata</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="p">[</span><span class="n">symbol</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">UDPServer</span><span class="p">(</span><span class="n">localIP</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">localPort</span><span class="o">=</span><span class="mi">8883</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span> <span class="o">=</span> <span class="n">Actor</span><span class="p">(</span><span class="n">automata</span> <span class="o">=</span> <span class="n">automata</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">initiator</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">UDPClient</span><span class="p">(</span><span class="n">remoteIP</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">remotePort</span><span class="o">=</span><span class="mi">8883</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">Actor</span><span class="p">(</span><span class="n">automata</span> <span class="o">=</span> <span class="n">automata</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.UDPClient.UDPClientBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UDPClientBuilder</span></span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/UDPClient.html#UDPClientBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.UDPClient.UDPClientBuilder" title="Permalink to this definition">#</a></dt>
+<dd><p>This builder is used to create an
+<a class="reference internal" href="#netzob.Simulator.Channels.UDPClient.UDPClient" title="netzob.Simulator.Channels.UDPClient.UDPClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">UDPClient</span></code></a> instance</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Simulator.Channels.NetInfo</span> <span class="kn">import</span> <span class="n">NetInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">netinfo</span> <span class="o">=</span> <span class="n">NetInfo</span><span class="p">(</span><span class="n">dst_addr</span><span class="o">=</span><span class="s2">&quot;1.2.3.4&quot;</span><span class="p">,</span> <span class="n">dst_port</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">src_addr</span><span class="o">=</span><span class="s2">&quot;4.3.2.1&quot;</span><span class="p">,</span> <span class="n">src_port</span><span class="o">=</span><span class="mi">32000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">builder</span> <span class="o">=</span> <span class="n">UDPClientBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">set_map</span><span class="p">(</span><span class="n">netinfo</span><span class="o">.</span><span class="n">getDict</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+<span class="go">&lt;class &#39;netzob.Simulator.Channels.UDPClient.UDPClient&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span><span class="o">.</span><span class="n">localPort</span>  <span class="c1"># src_port key has been mapped to localPort attribute</span>
+<span class="go">32000</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="tcpclient-channel">
+<h3>TCPClient channel<a class="headerlink" href="#tcpclient-channel" title="Permalink to this headline">#</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.TCPClient.TCPClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TCPClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remoteIP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remotePort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localIP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localPort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/TCPClient.html#TCPClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.TCPClient.TCPClient" title="Permalink to this definition">#</a></dt>
+<dd><p>A TCPClient is a communication channel. It provides the connection of a
+client to a specific IP:Port server over a TCP socket.</p>
+<p>The TCPClient constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, required) – This parameter is the remote IP address to connect to.</p></li>
+<li><p><strong>remotePort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, required) – This parameter is the remote IP port.</p></li>
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – The local IP address. Default value is the local
+IP address corresponding to the network interface that
+will be used to send the packet.</p></li>
+<li><p><strong>localPort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, optional) – The local IP port. Default value in a random
+valid integer chosen by the kernel.</p></li>
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – The default timeout of the channel for global
+connection. Default value is blocking (None).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Adding to AbstractChannel variables, the TCPClient class provides the
+following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The remote IP address to connect to.</p></li>
+<li><p><strong>remotePort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The remote IP port.</p></li>
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The local IP address.</p></li>
+<li><p><strong>localPort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The local IP port.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following code shows the creation of a TCPClient channel:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">TCPClient</span><span class="p">(</span><span class="n">remoteIP</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">remotePort</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Complete example with the use of an actor.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;Hello everyone!&quot;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s2</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">openTransition</span> <span class="o">=</span> <span class="n">OpenChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s0</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mainTransition</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">inputSymbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span> <span class="n">outputSymbols</span><span class="o">=</span><span class="p">[</span><span class="n">symbol</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">closeTransition</span> <span class="o">=</span> <span class="n">CloseChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">automata</span> <span class="o">=</span> <span class="n">Automata</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="p">[</span><span class="n">symbol</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel_server</span> <span class="o">=</span> <span class="n">TCPServer</span><span class="p">(</span><span class="n">localIP</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">localPort</span><span class="o">=</span><span class="mi">8885</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span> <span class="o">=</span> <span class="n">Actor</span><span class="p">(</span><span class="n">automata</span> <span class="o">=</span> <span class="n">automata</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">channel_server</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">initiator</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel_client</span> <span class="o">=</span> <span class="n">TCPClient</span><span class="p">(</span><span class="n">remoteIP</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">remotePort</span><span class="o">=</span><span class="mi">8885</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">Actor</span><span class="p">(</span><span class="n">automata</span> <span class="o">=</span> <span class="n">automata</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">channel_client</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel_client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel_server</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.TCPClient.TCPClientBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TCPClientBuilder</span></span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/TCPClient.html#TCPClientBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.TCPClient.TCPClientBuilder" title="Permalink to this definition">#</a></dt>
+<dd><p>This builder is used to create an
+<a class="reference internal" href="#netzob.Simulator.Channels.TCPClient.TCPClient" title="netzob.Simulator.Channels.TCPClient.TCPClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">TCPClient</span></code></a> instance</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Simulator.Channels.NetInfo</span> <span class="kn">import</span> <span class="n">NetInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">netinfo</span> <span class="o">=</span> <span class="n">NetInfo</span><span class="p">(</span><span class="n">dst_addr</span><span class="o">=</span><span class="s2">&quot;1.2.3.4&quot;</span><span class="p">,</span> <span class="n">dst_port</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">src_addr</span><span class="o">=</span><span class="s2">&quot;4.3.2.1&quot;</span><span class="p">,</span> <span class="n">src_port</span><span class="o">=</span><span class="mi">32000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">builder</span> <span class="o">=</span> <span class="n">TCPClientBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">set_map</span><span class="p">(</span><span class="n">netinfo</span><span class="o">.</span><span class="n">getDict</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+<span class="go">&lt;class &#39;netzob.Simulator.Channels.TCPClient.TCPClient&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span><span class="o">.</span><span class="n">remotePort</span>  <span class="c1"># dst_port key has been mapped to remotePort attribute</span>
+<span class="go">1024</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="udpserver-channel">
+<h3>UDPServer channel<a class="headerlink" href="#udpserver-channel" title="Permalink to this headline">#</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.UDPServer.UDPServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UDPServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">localIP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localPort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/UDPServer.html#UDPServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.UDPServer.UDPServer" title="Permalink to this definition">#</a></dt>
+<dd><p>A UDPServer is a communication channel. It provides a
+server listening to a specific IP:Port over a UDP socket.</p>
+<p>The UDPServer constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, required) – This parameter is the local IP address.</p></li>
+<li><p><strong>localPort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, required) – This parameter is the local IP port.</p></li>
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – The default timeout of the channel for global
+connection. Default value is blocking (None).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Adding to AbstractChannel variables, the UDPServer class provides the
+following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The local IP address.</p></li>
+<li><p><strong>localPort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The local IP port.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following code shows the use of a UDPServer channel:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span> <span class="o">=</span> <span class="n">UDPServer</span><span class="p">(</span><span class="n">localIP</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">localPort</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The following code shows a complete example of a communication
+between a client and a server in UDP:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;Hello everyone!&quot;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s2</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">openTransition</span> <span class="o">=</span> <span class="n">OpenChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s0</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mainTransition</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">inputSymbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span> <span class="n">outputSymbols</span><span class="o">=</span><span class="p">[</span><span class="n">symbol</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">closeTransition</span> <span class="o">=</span> <span class="n">CloseChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">automata</span> <span class="o">=</span> <span class="n">Automata</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="p">[</span><span class="n">symbol</span><span class="p">])</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">UDPServer</span><span class="p">(</span><span class="n">localIP</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">localPort</span><span class="o">=</span><span class="mi">8884</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span> <span class="o">=</span> <span class="n">Actor</span><span class="p">(</span><span class="n">automata</span> <span class="o">=</span> <span class="n">automata</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">initiator</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">UDPClient</span><span class="p">(</span><span class="n">remoteIP</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">remotePort</span><span class="o">=</span><span class="mi">8884</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">Actor</span><span class="p">(</span><span class="n">automata</span> <span class="o">=</span> <span class="n">automata</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.UDPServer.UDPServerBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UDPServerBuilder</span></span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/UDPServer.html#UDPServerBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.UDPServer.UDPServerBuilder" title="Permalink to this definition">#</a></dt>
+<dd><p>This builder is used to create an
+<a class="reference internal" href="#netzob.Simulator.Channels.UDPServer.UDPServer" title="netzob.Simulator.Channels.UDPServer.UDPServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">UDPServer</span></code></a> instance</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Simulator.Channels.NetInfo</span> <span class="kn">import</span> <span class="n">NetInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">netinfo</span> <span class="o">=</span> <span class="n">NetInfo</span><span class="p">(</span><span class="n">src_addr</span><span class="o">=</span><span class="s2">&quot;4.3.2.1&quot;</span><span class="p">,</span> <span class="n">src_port</span><span class="o">=</span><span class="mi">32000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">builder</span> <span class="o">=</span> <span class="n">UDPServerBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">set_map</span><span class="p">(</span><span class="n">netinfo</span><span class="o">.</span><span class="n">getDict</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+<span class="go">&lt;class &#39;netzob.Simulator.Channels.UDPServer.UDPServer&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span><span class="o">.</span><span class="n">localPort</span>  <span class="c1"># src_port key has been mapped to localPort attribute</span>
+<span class="go">32000</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="tcpserver-channel">
+<h3>TCPServer channel<a class="headerlink" href="#tcpserver-channel" title="Permalink to this headline">#</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.TCPServer.TCPServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TCPServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">localIP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localPort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/TCPServer.html#TCPServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.TCPServer.TCPServer" title="Permalink to this definition">#</a></dt>
+<dd><p>A TCPServer is a communication channel. It provides a server
+listening to a specified IP:Port over a TCP socket.</p>
+<p>The TCPServer constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, required) – This parameter is the local IP address.</p></li>
+<li><p><strong>localPort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, required) – This parameter is the local IP port.</p></li>
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – The default timeout of the channel for global
+connection. Default value is blocking (None).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Adding to AbstractChannel variables, the TCPServer class provides the
+following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The local IP address.</p></li>
+<li><p><strong>localPort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The local IP port.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following code shows the creation of a TCPServer channel:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span> <span class="o">=</span> <span class="n">TCPServer</span><span class="p">(</span><span class="n">localIP</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">localPort</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following code shows a complete example of a communication
+between a client and a server in TCP:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;Hello everyone!&quot;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s2</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">openTransition</span> <span class="o">=</span> <span class="n">OpenChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s0</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mainTransition</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">inputSymbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span> <span class="n">outputSymbols</span><span class="o">=</span><span class="p">[</span><span class="n">symbol</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">closeTransition</span> <span class="o">=</span> <span class="n">CloseChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">automata</span> <span class="o">=</span> <span class="n">Automata</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="p">[</span><span class="n">symbol</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">TCPServer</span><span class="p">(</span><span class="n">localIP</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">localPort</span><span class="o">=</span><span class="mi">8886</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span> <span class="o">=</span> <span class="n">Actor</span><span class="p">(</span><span class="n">automata</span> <span class="o">=</span> <span class="n">automata</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">initiator</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">TCPClient</span><span class="p">(</span><span class="n">remoteIP</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">remotePort</span><span class="o">=</span><span class="mi">8886</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">Actor</span><span class="p">(</span><span class="n">automata</span> <span class="o">=</span> <span class="n">automata</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.TCPServer.TCPServerBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TCPServerBuilder</span></span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/TCPServer.html#TCPServerBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.TCPServer.TCPServerBuilder" title="Permalink to this definition">#</a></dt>
+<dd><p>This builder is used to create an
+<a class="reference internal" href="#netzob.Simulator.Channels.TCPServer.TCPServer" title="netzob.Simulator.Channels.TCPServer.TCPServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">TCPServer</span></code></a> instance</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Simulator.Channels.NetInfo</span> <span class="kn">import</span> <span class="n">NetInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">netinfo</span> <span class="o">=</span> <span class="n">NetInfo</span><span class="p">(</span><span class="n">src_addr</span><span class="o">=</span><span class="s2">&quot;4.3.2.1&quot;</span><span class="p">,</span> <span class="n">src_port</span><span class="o">=</span><span class="mi">32000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">builder</span> <span class="o">=</span> <span class="n">TCPServerBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">set_map</span><span class="p">(</span><span class="n">netinfo</span><span class="o">.</span><span class="n">getDict</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+<span class="go">&lt;class &#39;netzob.Simulator.Channels.TCPServer.TCPServer&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span><span class="o">.</span><span class="n">localIP</span>  <span class="c1"># src_addr key has been mapped to localIP attribute</span>
+<span class="go">&#39;4.3.2.1&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="sslclient-channel">
+<h3>SSLClient channel<a class="headerlink" href="#sslclient-channel" title="Permalink to this headline">#</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.SSLClient.SSLClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SSLClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remoteIP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remotePort</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localIP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localPort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_cert_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpn_protocols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/SSLClient.html#SSLClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.SSLClient.SSLClient" title="Permalink to this definition">#</a></dt>
+<dd><p>An SSLClient is a communication channel that relies on SSL. It provides
+the connection of a client to a specific IP:Port server over a TCP/SSL
+socket.</p>
+<p>The SSLClient constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, required) – This parameter is the remote IP address to connect to.</p></li>
+<li><p><strong>remotePort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, required) – This parameter is the remote IP port.</p></li>
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – The local IP address. Default value is the local
+IP address corresponding to the network interface that
+will be used to send the packet.</p></li>
+<li><p><strong>localPort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, optional) – The local IP port. Default value in a random
+valid integer chosen by the kernel.</p></li>
+<li><p><strong>server_cert_file</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – The path to a single file in PEM format
+containing the certificate as well as any
+number of CA certificates needed to
+establish the certificate’s
+authenticity. Default value is None,
+meaning that no verification is made on
+the certificate given by the peer.</p></li>
+<li><p><strong>alpn_protocols</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, optional) – Specify which protocols the socket should
+advertise during the SSL/TLS handshake. It
+should be a list of strings, like
+[‘http/1.1’, ‘spdy/2’], ordered by
+preference. Default value is None.</p></li>
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – The default timeout of the channel for global
+connection. Default value is blocking (None).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Adding to AbstractChannel public variables, the SSLClient class provides the
+following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>remoteIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The remote IP address to connect to.</p></li>
+<li><p><strong>remotePort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The remote IP port.</p></li>
+<li><p><strong>localIP</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The local IP address.</p></li>
+<li><p><strong>localPort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The local IP port.</p></li>
+<li><p><strong>server_cert_file</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The path to a single file in PEM format
+containing the certificate as well as any
+number of CA certificates needed to
+establish the certificate’s
+authenticity.</p></li>
+<li><p><strong>alpn_protocols</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – Specify which protocols the socket should
+advertise during the SSL/TLS handshake. It
+should be a list of strings, like
+[‘http/1.1’, ‘spdy/2’], ordered by
+preference.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following code shows the creation of a SSLClient channel:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">server</span> <span class="o">=</span> <span class="n">SSLClient</span><span class="p">(</span><span class="n">remoteIP</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">remotePort</span><span class="o">=</span><span class="mi">9999</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.SSLClient.SSLClientBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SSLClientBuilder</span></span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/SSLClient.html#SSLClientBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.SSLClient.SSLClientBuilder" title="Permalink to this definition">#</a></dt>
+<dd><p>This builder is used to create an
+<a class="reference internal" href="#netzob.Simulator.Channels.SSLClient.SSLClient" title="netzob.Simulator.Channels.SSLClient.SSLClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSLClient</span></code></a> instance</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Simulator.Channels.NetInfo</span> <span class="kn">import</span> <span class="n">NetInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">netinfo</span> <span class="o">=</span> <span class="n">NetInfo</span><span class="p">(</span><span class="n">dst_addr</span><span class="o">=</span><span class="s2">&quot;1.2.3.4&quot;</span><span class="p">,</span> <span class="n">dst_port</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">src_addr</span><span class="o">=</span><span class="s2">&quot;4.3.2.1&quot;</span><span class="p">,</span> <span class="n">src_port</span><span class="o">=</span><span class="mi">32000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">builder</span> <span class="o">=</span> <span class="n">SSLClientBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">set_map</span><span class="p">(</span><span class="n">netinfo</span><span class="o">.</span><span class="n">getDict</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+<span class="go">&lt;class &#39;netzob.Simulator.Channels.SSLClient.SSLClient&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span><span class="o">.</span><span class="n">remotePort</span>  <span class="c1"># dst_port key has been mapped to remotePort attribute</span>
+<span class="go">1024</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="debugchannel-channel">
+<h3>DebugChannel channel<a class="headerlink" href="#debugchannel-channel" title="Permalink to this headline">#</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.DebugChannel.DebugChannel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DebugChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">io.IOBase</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/DebugChannel.html#DebugChannel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.DebugChannel.DebugChannel" title="Permalink to this definition">#</a></dt>
+<dd><p>A DebugChannel is a file-like channel that handles writing of output
+data.</p>
+<p>The DebugChannel constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stream</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> or a file-like object, required) – The output stream</p></li>
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – The default timeout of the channel for global
+connection. Default value is blocking (None).</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following code shows the use of a DebugChannel channel:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">DebugChannel</span><span class="p">(</span><span class="s2">&quot;/dev/null&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;Hello everyone!&quot;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">client</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">client</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">()))</span>
+<span class="go">18</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Simulator.Channels.DebugChannel.DebugChannelBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DebugChannelBuilder</span></span><a class="reference internal" href="../_modules/netzob/Simulator/Channels/DebugChannel.html#DebugChannelBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Simulator.Channels.DebugChannel.DebugChannelBuilder" title="Permalink to this definition">#</a></dt>
+<dd><p>This builder is used to create an
+<a class="reference internal" href="#netzob.Simulator.Channels.DebugChannel.DebugChannel" title="netzob.Simulator.Channels.DebugChannel.DebugChannel"><code class="xref py py-class docutils literal notranslate"><span class="pre">DebugChannel</span></code></a> instance</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Simulator.Channels.NetInfo</span> <span class="kn">import</span> <span class="n">NetInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">builder</span> <span class="o">=</span> <span class="n">DebugChannelBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;stream&quot;</span><span class="p">,</span> <span class="s2">&quot;stderr&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chan</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">chan</span><span class="p">)</span>
+<span class="go">&lt;class &#39;netzob.Simulator.Channels.DebugChannel.DebugChannel&#39;&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="protospec.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Protocol Modeling</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="actor.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Visiting a State Machine with an Actor</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,690 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Netzob documentation &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation of Netzob" href="installation/python.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="#">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1 current active">
+                <a class="reference internal" href="#">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/index.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#example-of-ethernet-ieee-802-3-modelization">
+   Example of Ethernet IEEE 802.3 Modelization
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#installation-of-netzob">
+   Installation of Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#protocol-modelization-with-netzob">
+   Protocol Modelization with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#protocol-inference-with-netzob">
+   Protocol Inference with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#traffic-generation-with-netzob">
+   Traffic Generation with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#protocol-fuzzing-with-netzob">
+   Protocol Fuzzing with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#import-communication-traces-with-netzob">
+   Import Communication Traces with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#export-protocol-models-with-netzob">
+   Export Protocol Models with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#licences">
+   Licences
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Netzob documentation</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#example-of-ethernet-ieee-802-3-modelization">
+   Example of Ethernet IEEE 802.3 Modelization
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#installation-of-netzob">
+   Installation of Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#protocol-modelization-with-netzob">
+   Protocol Modelization with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#protocol-inference-with-netzob">
+   Protocol Inference with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#traffic-generation-with-netzob">
+   Traffic Generation with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#protocol-fuzzing-with-netzob">
+   Protocol Fuzzing with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#import-communication-traces-with-netzob">
+   Import Communication Traces with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#export-protocol-models-with-netzob">
+   Export Protocol Models with Netzob
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#licences">
+   Licences
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="netzob-documentation">
+<h1>Netzob documentation<a class="headerlink" href="#netzob-documentation" title="Permalink to this headline">#</a></h1>
+<p><strong>Netzob</strong> is an open source tool for reverse engineering,
+modelization, traffic generation and fuzzing of communication
+protocols.</p>
+<p>Netzob is suitable for reversing network protocols, structured files
+and system and process flows (IPC and communication with drivers and
+devices). Netzob handles different types of protocols: text protocols
+(like HTTP and IRC), delimiter-based protocols, fixed fields protocols
+(like IP and TCP) and variable-length fields protocols (like TLV-based
+protocols).</p>
+<p>Netzob can be used to infer the message format and the state machine
+of a protocol through passive and active processes. Its objective is
+to bring state of art academic researches to the operational field, by
+leveraging bio-informatic and grammatical inferring algorithms in a
+semi-automatic manner.</p>
+<p>Once modeled or inferred, a protocol model can be used in our traffic
+generation engine, to allow simulation of realistic and controllable
+communication endpoints and flows.</p>
+<p>The main features of Netzob are:</p>
+<dl class="simple">
+<dt><strong>Protocol Modelization</strong></dt><dd><p>Netzob includes a complete model to represent the message format (aka its vocabulary)
+and the state machine of a protocol (aka its grammar).</p>
+</dd>
+<dt><strong>Protocol Inference</strong></dt><dd><p>The vocabulary and grammar inference
+component provides both passive and
+active reverse engineering of communication flows through automated
+and manuals mechanisms.</p>
+</dd>
+<dt><strong>Traffic Generation</strong></dt><dd><p>Given vocabulary and grammar models previously
+inferred or modelized, Netzob can understand and generate communication traffic
+with remote peers. It can thus act as either a client, a server or
+both.</p>
+</dd>
+<dt><strong>Protocol Fuzzing</strong></dt><dd><p>Netzob helps security evaluators by simplifying the creation of
+fuzzers for proprietary or undocumented protocols. Netzob considers the format message and state machine of the
+protocol to generate optimized and specific test cases. Both mutation and generation are available for fuzzing.</p>
+</dd>
+<dt><strong>Import Communication Traces</strong></dt><dd><p>Data import is available in two ways: either by
+leveraging the channel-specific captors (currently network and IPC –
+Inter-Process Communication), or by using specific importers (such as
+PCAP files, structured files and OSpy files).</p>
+</dd>
+<dt><strong>Export Protocol Models</strong></dt><dd><p>This module permits to export an model of
+a protocol in formats that are understandable by third party software
+or by a human. Current work focuses on export format compatible with
+main traffic dissectors (Wireshark and Scapy) and fuzzers (Peach and
+Sulley).</p>
+</dd>
+</dl>
+<p>A <a class="reference internal" href="tutorials/discover_features.html#discover-features"><span class="std std-ref">dedicated tutorial</span></a> gives you an overview of the main features in practice.</p>
+<p>Netzob has been initiated by security auditors of AMOSSYS and the
+CIDre research team of Supélec to address the reverse engineering of
+communication protocols.</p>
+<p>Follow us on Twitter: <a class="reference external" href="https://twitter.com/netzob">&#64;Netzob</a>.</p>
+<section id="example-of-ethernet-ieee-802-3-modelization">
+<h2>Example of Ethernet IEEE 802.3 Modelization<a class="headerlink" href="#example-of-ethernet-ieee-802-3-modelization" title="Permalink to this headline">#</a></h2>
+<p>This quick example illustrates format message modelization, with fixed-size
+fields and several relationship fields (CRC32, Size and Padding).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eth_length</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">bitarray</span><span class="p">(</span><span class="s1">&#39;0000000000000000&#39;</span><span class="p">),</span> <span class="s2">&quot;eth.length&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eth_llc</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span> <span class="s2">&quot;eth.llc&quot;</span><span class="p">)</span>  <span class="c1"># IEEE 802.2 header</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eth_payload</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Raw</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;eth.payload&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eth_padding</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Padding</span><span class="p">([</span><span class="n">eth_length</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="n">eth_llc</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="n">eth_payload</span><span class="p">],</span>
+<span class="gp">... </span>                            <span class="n">data</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>                            <span class="n">modulo</span><span class="o">=</span><span class="mi">8</span><span class="o">*</span><span class="mi">60</span><span class="p">),</span>
+<span class="gp">... </span>                    <span class="s2">&quot;eth.padding&quot;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eth_crc_802_3</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">bitarray</span><span class="p">(</span><span class="s1">&#39;00000000000000000000000000000000&#39;</span><span class="p">),</span> <span class="s2">&quot;eth.crc&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eth_crc_802_3</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">CRC32</span><span class="p">([</span><span class="n">eth_length</span><span class="p">,</span>
+<span class="gp">... </span>                              <span class="n">eth_llc</span><span class="p">,</span>
+<span class="gp">... </span>                              <span class="n">eth_payload</span><span class="p">,</span>
+<span class="gp">... </span>                              <span class="n">eth_padding</span><span class="p">],</span>
+<span class="gp">... </span>                             <span class="n">dataType</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="gp">... </span>                                          <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_32</span><span class="p">))</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eth_length</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">Size</span><span class="p">([</span><span class="n">eth_llc</span><span class="p">,</span> <span class="n">eth_payload</span><span class="p">],</span>
+<span class="gp">... </span>                         <span class="n">dataType</span><span class="o">=</span><span class="n">uint16</span><span class="p">(),</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ethernet_802_3&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">eth_length</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="n">eth_llc</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="n">eth_payload</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="n">eth_padding</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="n">eth_crc_802_3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">str_structure</span><span class="p">())</span>
+<span class="go">ethernet_802_3</span>
+<span class="go">|--  eth.length</span>
+<span class="go">     |--   Size([&#39;eth.llc&#39;, &#39;eth.payload&#39;]) - Type:Integer(0,65535)</span>
+<span class="go">|--  eth.llc</span>
+<span class="go">     |--   Data (Raw(nbBytes=3))</span>
+<span class="go">|--  eth.payload</span>
+<span class="go">     |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="go">|--  eth.padding</span>
+<span class="go">     |--   Padding([&#39;eth.length&#39;, &#39;eth.llc&#39;, &#39;eth.payload&#39;]) - Type:Raw(nbBytes=1)</span>
+<span class="go">|--  eth.crc</span>
+<span class="go">     |--   Relation([&#39;eth.length&#39;, &#39;eth.llc&#39;, &#39;eth.payload&#39;, &#39;eth.padding&#39;]) - Type:Raw(nbBytes=4)</span>
+</pre></div>
+</div>
+</section>
+<section id="installation-of-netzob">
+<h2>Installation of Netzob<a class="headerlink" href="#installation-of-netzob" title="Permalink to this headline">#</a></h2>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation/python.html">Installation of Netzob</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation/python.html#installing-netzob-system-dependencies">Installing Netzob system dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/python.html#installing-netzob-from-pypi">Installing Netzob from Pypi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/python.html#installing-netzob-from-sources">Installing Netzob from sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/python.html#building-the-documentation">Building the documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="protocol-modelization-with-netzob">
+<h2>Protocol Modelization with Netzob<a class="headerlink" href="#protocol-modelization-with-netzob" title="Permalink to this headline">#</a></h2>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Protocol Modelization</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="language_specification/dataspec.html">Format Message Modeling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/dataspec.html#format-message-modeling-concepts">Format Message Modeling Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/dataspec.html#modeling-data-types">Modeling Data Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/dataspec.html#modeling-fields">Modeling Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/dataspec.html#modeling-variables">Modeling Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/dataspec.html#modeling-data-variables">Modeling Data Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/dataspec.html#modeling-node-variables">Modeling Node Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/dataspec.html#modeling-fields-with-relationship-variables">Modeling Fields with Relationship Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/dataspec.html#modeling-symbols">Modeling Symbols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/dataspec.html#configuring-symbol-content">Configuring Symbol Content</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/dataspec.html#relationships-between-symbols-and-the-environment">Relationships between Symbols and the Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/dataspec.html#persistence-during-specialization-and-abstraction-of-symbols">Persistence during Specialization and Abstraction of Symbols</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="language_specification/statemachinespec.html">State Machine Modeling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/statemachinespec.html#state-machine-modeling-concepts">State Machine Modeling Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/statemachinespec.html#modeling-states">Modeling States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/statemachinespec.html#modeling-transitions">Modeling Transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/statemachinespec.html#taking-control-over-emitted-symbol-and-selected-transition">Taking Control over Emitted Symbol and Selected Transition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/statemachinespec.html#executing-actions-during-transitions">Executing Actions during Transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/statemachinespec.html#summary-of-states-and-transitions-processing">Summary of States and Transitions Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/statemachinespec.html#modeling-automata">Modeling Automata</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="language_specification/protospec.html">Protocol Modeling</a></li>
+</ul>
+</div>
+</section>
+<section id="protocol-inference-with-netzob">
+<h2>Protocol Inference with Netzob<a class="headerlink" href="#protocol-inference-with-netzob" title="Permalink to this headline">#</a></h2>
+<p><em>Note: this section should be completed</em></p>
+</section>
+<section id="traffic-generation-with-netzob">
+<h2>Traffic Generation with Netzob<a class="headerlink" href="#traffic-generation-with-netzob" title="Permalink to this headline">#</a></h2>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Traffic Generation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="language_specification/trafficgeneration.html">Sending and Receiving Messages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/trafficgeneration.html#underlying-concepts">Underlying Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/trafficgeneration.html#communication-channel-api">Communication Channel API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_specification/trafficgeneration.html#available-communication-channels">Available Communication Channels</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="language_specification/actor.html">Visiting a State Machine with an Actor</a></li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Several examples of actor usages are provided below:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample1"><span class="std std-ref">Common automaton for a client and a server</span></a></p></li>
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample2"><span class="std std-ref">Dedicated automaton for a client and a server</span></a></p></li>
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample3"><span class="std std-ref">Modification of the emitted symbol by a client through a callback</span></a></p></li>
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample4"><span class="std std-ref">Modification of the emitted symbol by a server through a callback</span></a></p></li>
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample5"><span class="std std-ref">Modification of the current transition by a client through a callback</span></a></p></li>
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample6"><span class="std std-ref">Modification of the current transition of a server through a callback</span></a></p></li>
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample7"><span class="std std-ref">Transition with no input symbol</span></a></p></li>
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample8"><span class="std std-ref">How to catch all read symbol timeout</span></a></p></li>
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample9"><span class="std std-ref">How to catch all receptions of unexpected symbols</span></a></p></li>
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample10"><span class="std std-ref">How to catch all receptions of unknown messages</span></a></p></li>
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample13"><span class="std std-ref">Several actors on the same communication channel</span></a></p></li>
+</ul>
+</div>
+</section>
+<section id="protocol-fuzzing-with-netzob">
+<h2>Protocol Fuzzing with Netzob<a class="headerlink" href="#protocol-fuzzing-with-netzob" title="Permalink to this headline">#</a></h2>
+<p>Fuzzing can be applied on format message, state machine or both at the
+same time. Fuzzing strategies may leverage either mutation of
+generation approaches.</p>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Fuzzing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="language_specification/fuzzing.html">Fuzzing Message Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="language_specification/fuzzing_automata.html">Fuzzing Automata</a></li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Thanks to the <a class="reference internal" href="language_specification/actor.html#netzob.Simulator.Actor.Actor" title="netzob.Simulator.Actor.Actor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Actor</span></code></a>
+componant, it is possible to fuzz specific messages at specific
+states in an automaton. This allows to defined fine-tuned fuzzing
+strategies. Several examples of actor usages in a fuzzing context
+are provided below:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample11"><span class="std std-ref">Message format fuzzing from an actor</span></a></p></li>
+<li><p><a class="reference internal" href="language_specification/actor.html#actorexample12"><span class="std std-ref">Message format fuzzing from an actor, at a specific state</span></a></p></li>
+</ul>
+</div>
+</section>
+<section id="import-communication-traces-with-netzob">
+<h2>Import Communication Traces with Netzob<a class="headerlink" href="#import-communication-traces-with-netzob" title="Permalink to this headline">#</a></h2>
+<p>Netzob supports import of communication traces from the following resources:</p>
+<ul class="simple">
+<li><p>Raw messages</p></li>
+<li><p>Raw files</p></li>
+<li><p>PCAP files</p></li>
+</ul>
+</section>
+<section id="export-protocol-models-with-netzob">
+<h2>Export Protocol Models with Netzob<a class="headerlink" href="#export-protocol-models-with-netzob" title="Permalink to this headline">#</a></h2>
+<p>Netzob supports export of protocols in the following formats:</p>
+<ul class="simple">
+<li><p>XML meta representation</p></li>
+<li><p>Scapy Dissector</p></li>
+<li><p><a class="reference internal" href="tutorials/wireshark.html#tutorial-wireshark"><span class="std std-ref">Wireshark Dissector</span></a></p></li>
+</ul>
+</section>
+<section id="licences">
+<h2>Licences<a class="headerlink" href="#licences" title="Permalink to this headline">#</a></h2>
+<p>Netzob code in provided under the GPLv3 licence.</p>
+<p>The documentation is under the CC-BY-SA licence.</p>
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='right-next' id="next-link" href="installation/python.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Installation of Netzob</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

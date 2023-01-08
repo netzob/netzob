@@ -1,0 +1,959 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Domain.Variables.Leafs.Size &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../../../" id="documentation_options" src="../../../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../../../_static/jquery.js"></script>
+    <script src="../../../../../../../_static/underscore.js"></script>
+    <script src="../../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Domain.Variables.Leafs.Size</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#|             ANSSI,   https://www.ssi.gouv.fr                              |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| File contributors :                                                       |</span>
+<span class="c1">#|       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1">#|       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">NetzobLogger</span><span class="p">,</span> <span class="n">public_api</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf</span> <span class="kn">import</span> <span class="n">AbstractVariableLeaf</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf</span> <span class="kn">import</span> <span class="n">AbstractRelationVariableLeaf</span><span class="p">,</span> <span class="n">RelationDependencyException</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode</span> <span class="kn">import</span> <span class="n">AbstractVariableNode</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg</span> <span class="kn">import</span> <span class="n">Agg</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.AbstractType</span> <span class="kn">import</span> <span class="n">AbstractType</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.Raw</span> <span class="kn">import</span> <span class="n">Raw</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.Integer</span> <span class="kn">import</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">uint8</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.GenericPath</span> <span class="kn">import</span> <span class="n">GenericPath</span>
+
+
+<div class="viewcode-block" id="Size"><a class="viewcode-back" href="../../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Leafs.Size.Size">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">Size</span><span class="p">(</span><span class="n">AbstractRelationVariableLeaf</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Size class is a variable whose content is the size of other field values.</span>
+
+<span class="sd">    It is possible to define a field so that its value is equal to the</span>
+<span class="sd">    size of another field, or group of fields (potentially including</span>
+<span class="sd">    itself).</span>
+
+<span class="sd">    By default, the computed size expresses an amount of bytes. It is</span>
+<span class="sd">    possible to change this behavior by using the ``factor``</span>
+<span class="sd">    and ``offset`` parameters.</span>
+
+<span class="sd">    The Size constructor expects some parameters:</span>
+
+<span class="sd">    :param targets: The targeted objects of the relationship. If a :class:`~netzob.Model.Vocabulary.Field.Field` is provided, it will be normalized by the associated :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`.</span>
+<span class="sd">    :param dataType: Specify that the produced value should be</span>
+<span class="sd">                     represented according to this dataType. If None, default</span>
+<span class="sd">                     value is Raw(nbBytes=1).</span>
+<span class="sd">    :param factor: Specify that the initial size value (always</span>
+<span class="sd">                   expressed in bits) should be multiplied by this</span>
+<span class="sd">                   factor. The default value is ``1.0/8``. For example, to</span>
+<span class="sd">                   express a size in bytes, the factor should be ``1.0/8``,</span>
+<span class="sd">                   whereas to express a size in bits, the factor should be</span>
+<span class="sd">                   ``1.0``.</span>
+<span class="sd">    :param offset: Specify that an offset value should be added to</span>
+<span class="sd">                   the final size value (after applying the factor</span>
+<span class="sd">                   parameter). The default value is 0.</span>
+<span class="sd">    :param name: The name of the variable. If None, the name</span>
+<span class="sd">                 will be generated.</span>
+<span class="sd">    :type targets: a :class:`~netzob.Model.Vocabulary.Field.Field` or a :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;` or a :class:`list` of :class:`~netzob.Model.Vocabulary.Field.Field` or :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`, required</span>
+<span class="sd">    :type dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, optional</span>
+<span class="sd">    :type factor: :class:`float`, optional</span>
+<span class="sd">    :type offset: :class:`int`, optional</span>
+<span class="sd">    :type name: :class:`str`, optional</span>
+
+
+<span class="sd">    The Size class provides the following public variables:</span>
+
+<span class="sd">    :var targets: The list of variables that are required before computing</span>
+<span class="sd">                   the value of this relation</span>
+<span class="sd">    :var dataType: The type of the data.</span>
+<span class="sd">    :var factor: Defines the multiplication factor to apply to the targeted</span>
+<span class="sd">                 length.</span>
+<span class="sd">    :var offset: Defines the offset to apply to the computed length.</span>
+<span class="sd">    :vartype targets: a list of</span>
+<span class="sd">                      :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`</span>
+<span class="sd">    :vartype dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`</span>
+<span class="sd">    :vartype factor: :class:`float`</span>
+<span class="sd">    :vartype offset: :class:`int`</span>
+
+
+<span class="sd">    The following example shows how to define a size field with a</span>
+<span class="sd">    Raw dataType:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(String(nbChars=10))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;;&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size([f0], dataType=Raw(nbBytes=1)))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data[-1] == 10</span>
+<span class="sd">    True</span>
+
+<span class="sd">    The following example shows how to define a size field with a</span>
+<span class="sd">    Raw dataType, along with specifying the ``factor`` and ``offset`` parameters.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(String(nbChars=(4,10)))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;;&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size([f0, f1], dataType=Raw(nbBytes=1), factor=1./8, offset=4))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data[-1] &gt; (4*8*1./8 + 4) # == 4 bytes minimum * 8 bits * a factor of 1./8 + an offset of 4</span>
+<span class="sd">    True</span>
+
+<span class="sd">    In this example, the *f2* field is a size field where its value is</span>
+<span class="sd">    equal to the size of the concatenated values of fields *f0* and</span>
+<span class="sd">    *f1*. The *dataType* parameter specifies that the produced value</span>
+<span class="sd">    should be represented as a ``Raw``. The *factor* parameter</span>
+<span class="sd">    specifies that the initial size value (always expressed in bits)</span>
+<span class="sd">    should be multiplied by ``1.0/8`` (in order to retrieve the amount of</span>
+<span class="sd">    bytes). The *offset* parameter specifies that the final size value</span>
+<span class="sd">    should be computed by adding 4 bytes.</span>
+
+<span class="sd">    The following example shows how to define a size field so that its</span>
+<span class="sd">    value depends on a list of non-consecutive fields:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;=&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(String(&quot;#&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f4 = Field(String(&quot;%&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f5 = Field(Raw(b&quot;_&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(Size([f1, f2, f4, f5]))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f1, f2, f3, f4, f5])</span>
+<span class="sd">    &gt;&gt;&gt; next(f.specialize())</span>
+<span class="sd">    b&#39;=#\x04%_&#39;</span>
+
+<span class="sd">    In the following example, a size field is declared after its</span>
+<span class="sd">    targeted field. This shows that the field order does not impact</span>
+<span class="sd">    the relationship computations.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(String(nbChars=(1,4)), name=&#39;f0&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;;&quot;), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size(f0), name=&#39;f2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; 3 &lt;= len(next(f.specialize())) &lt;= 6</span>
+<span class="sd">    True</span>
+
+
+<span class="sd">    In the following example, a size field is declared before the</span>
+<span class="sd">    targeted field:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(String(nbChars=(1,4)), name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;;&quot;), name=&quot;f1&quot;, )</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Size(f2), name=&quot;f0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; 3 &lt;= len(d) &lt;= 6</span>
+<span class="sd">    True</span>
+
+
+<span class="sd">    **Size field with fields and variables as target**</span>
+
+<span class="sd">    The following examples show the specialization process of a Size</span>
+<span class="sd">    field whose targets are both fields and variables:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; d = Data(String(nbChars=20))</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(domain=d)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;;&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size([d, f1]))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; res = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; b&#39;\x15&#39; in res</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; d = Data(String(nbChars=20))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(domain=d)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;;&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Size([f1, d]))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; res = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; b&#39;\x15&#39; in res</span>
+<span class="sd">    True</span>
+
+
+<span class="sd">    **Size field which targets itself**</span>
+
+<span class="sd">    The following example shows a Size field whose targets contain</span>
+<span class="sd">    itsef. In such case, the domain datatype (here, an ``uint16``) is</span>
+<span class="sd">    used to compute the size of the length field (here, the datatype</span>
+<span class="sd">    occupies 2 bytes).</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(uint8(0), name=&quot;f0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8(0), name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(name=&quot;len&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(uint32(0), name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f4 = Field(Raw(nbBytes=(0,28)), name=&quot;f4&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2.domain = Size([f0, f1, f2, f3, f4], dataType=uint16())</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f0, f1, f2, f3, f4])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x00\x00\x00\x15\x00\x00\x00\x00z\x12\x10\xfe\x9a$)L\xc4\xbfL91&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;f0&#39;, b&#39;\x00&#39;), (&#39;f1&#39;, b&#39;\x00&#39;), (&#39;len&#39;, b&#39;\x00\x15&#39;), (&#39;f3&#39;, b&#39;\x00\x00\x00\x00&#39;), (&#39;f4&#39;, b&#39;z\x12\x10\xfe\x9a$)L\xc4\xbfL91&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">targets</span><span class="p">,</span>
+                 <span class="n">dataType</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">factor</span><span class="o">=</span><span class="mf">1.</span> <span class="o">/</span> <span class="mi">8</span><span class="p">,</span>
+                 <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">dataType</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dataType</span> <span class="o">=</span> <span class="n">uint8</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataType</span><span class="p">,</span> <span class="n">Integer</span><span class="p">):</span>
+            <span class="n">max_buffer_size</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">dataType</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">unitsize</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">computeUnitSize</span><span class="p">(</span><span class="n">max_buffer_size</span><span class="p">)</span>
+            <span class="n">dataType</span><span class="o">.</span><span class="n">unitSize</span> <span class="o">=</span> <span class="n">unitsize</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Size</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">dataType</span><span class="o">=</span><span class="n">dataType</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
+
+<div class="viewcode-block" id="Size.copy"><a class="viewcode-back" href="../../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Leafs.Size.Size.copy">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_objects</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the current object as well as all its dependencies.</span>
+
+<span class="sd">        :return: A new object of the same type.</span>
+<span class="sd">        :rtype: :class:`Size &lt;netzob.Model.Vocabulary.Domain.Variables.Leafs.Size.Size&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">map_objects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">map_objects</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+
+        <span class="n">new_size</span> <span class="o">=</span> <span class="n">Size</span><span class="p">([],</span> <span class="n">dataType</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_size</span>
+
+        <span class="n">new_targets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">new_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">map_objects</span><span class="p">[</span><span class="n">target</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">map_objects</span><span class="p">)</span>
+                <span class="n">new_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_target</span><span class="p">)</span>
+
+        <span class="n">new_size</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">new_targets</span>
+        <span class="k">return</span> <span class="n">new_size</span></div>
+
+    <span class="k">def</span> <span class="nf">__computeExpectedValue_stage1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">remainingVariables</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the total size of targets</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.DomainMutator</span> <span class="kn">import</span> <span class="n">FuzzingMode</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">preset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">preset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">preset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">FuzzingMode</span><span class="o">.</span><span class="n">FIXED</span><span class="p">:</span>
+                <span class="n">remainingVariables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span> <span class="ow">or</span> <span class="n">variable</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="n">remainingVariables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+
+            <span class="c1"># variable is a leaf</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">AbstractVariableLeaf</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">size</span> <span class="o">+=</span> <span class="n">variable</span><span class="o">.</span><span class="n">getFixedBitSize</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">remainingVariables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+
+            <span class="c1"># variable is a node</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">AbstractVariableNode</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">Agg</span><span class="p">):</span>
+                    <span class="n">size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__computeExpectedValue_stage1</span><span class="p">(</span>
+                        <span class="n">variable</span><span class="o">.</span><span class="n">children</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">remainingVariables</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;The following variable has no value: &#39;</span><span class="si">{}</span><span class="s2">&#39; for field &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">variable</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">RelationDependencyException</span><span class="p">(</span><span class="n">error_message</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">remainingVariables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">size</span>
+
+    <span class="k">def</span> <span class="nf">__computeExpectedValue_stage2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">remainingVariables</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the size of remaining variables</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">remainingVariables</span><span class="p">:</span>
+
+            <span class="c1"># Retrieve variable value</span>
+            <span class="k">if</span> <span class="n">variable</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="n">variable</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;The following variable has no value: &#39;</span><span class="si">{}</span><span class="s2">&#39; for field &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">variable</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">RelationDependencyException</span><span class="p">(</span><span class="n">error_message</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="c1"># Retrieve length of variable value</span>
+            <span class="n">size</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">size</span>
+
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">GenericPath</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">computeExpectedValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Compute expected value for Size variable &#39;</span><span class="si">{}</span><span class="s2">&#39; from field &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">))</span>
+
+        <span class="c1"># first checks the pointed fields all have a value</span>
+        <span class="n">remainingVariables</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__computeExpectedValue_stage1</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">remainingVariables</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__computeExpectedValue_stage2</span><span class="p">(</span><span class="n">parsingPath</span><span class="p">,</span> <span class="n">remainingVariables</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
+
+        <span class="c1"># Check if we can encode the size in the Size field structure</span>
+        <span class="n">max_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="n">max_size</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;The computed size (which is &#39;</span><span class="si">{}</span><span class="s2">&#39;) cannot be encoded in the current Size field&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">error_message</span> <span class="o">=</span> <span class="n">error_message</span> <span class="o">+</span> <span class="s2">&quot; &#39;</span><span class="si">{}</span><span class="s2">&#39; (which can encode at most a value of &#39;</span><span class="si">{}</span><span class="s2">&#39;).&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">max_size</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">error_message</span> <span class="o">=</span> <span class="n">error_message</span> <span class="o">+</span> <span class="s2">&quot; (which can encode at most a value of &#39;</span><span class="si">{}</span><span class="s2">&#39;).&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_size</span><span class="p">)</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="n">error_message</span> <span class="o">+</span> <span class="s2">&quot; You should consider using a bigger dataType.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+        <span class="n">b</span> <span class="o">=</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">BitArray</span><span class="p">,</span>
+                                  <span class="n">src_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                                  <span class="n">dst_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                                  <span class="n">src_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span>
+                                  <span class="n">dst_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span>
+                                  <span class="n">src_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span>
+                                  <span class="n">dst_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">endianness</span><span class="p">)</span>
+
+        <span class="c1"># add heading &#39;0&#39;</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">b</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># in some cases (when unitSize and size are not equal), it may require to delete some &#39;0&#39; in front</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">b</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Computed value for </span><span class="si">{}</span><span class="s2">: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The str method.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;Size(</span><span class="si">{0}</span><span class="s2">) - Type:</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">([</span><span class="n">v</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dataType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property (getter.setter  # type: ignore).</span>
+<span class="sd">        The datatype used to encode the result of the computed size.</span>
+
+<span class="sd">        :type: :class:`AbstractType &lt;netzob.Model.Vocabulary.Types.AbstractType.AbstractType&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataType</span>
+
+    <span class="nd">@dataType</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">AbstractType</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">dataType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataType</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dataType</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Datatype cannot be None&quot;</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">dataType</span><span class="o">.</span><span class="n">unitSize</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The datatype of a Size field must declare its unitSize&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dataType</span> <span class="o">=</span> <span class="n">dataType</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property (getter.setter  # type: ignore).</span>
+<span class="sd">        Defines the multiplication factor to apply to the targeted length</span>
+<span class="sd">        (in bits).</span>
+
+<span class="sd">        :type: :class:`float`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__factor</span>
+
+    <span class="nd">@factor</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Factor cannot be None, use 1.0 for the identity.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__factor</span> <span class="o">=</span> <span class="n">factor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">offset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property (getter.setter  # type: ignore).</span>
+<span class="sd">        Defines the offset to apply to the computed length.</span>
+<span class="sd">        computed size = (factor*size(targetField)+offset)</span>
+
+<span class="sd">        :type: :class:`int`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__offset</span>
+
+    <span class="nd">@offset</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">((</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Offset cannot be None, use 0 if no offset should be applied.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__offset</span> <span class="o">=</span> <span class="n">offset</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test_size</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The following example shows a real example with an IP header with</span>
+<span class="sd">    two Size fields:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; # Fields</span>
+<span class="sd">    &gt;&gt;&gt; ip_ver      = Field(name=&#39;Version&#39;, domain=BitArray(value=bitarray(&#39;0100&#39;)))</span>
+<span class="sd">    &gt;&gt;&gt; ip_ihl      = Field(name=&#39;Header length&#39;, domain=bitarray(&#39;0000&#39;))</span>
+<span class="sd">    &gt;&gt;&gt; ip_tos      = Field(name=&#39;TOS&#39;, domain=Data(dataType=BitArray(&#39;00000000&#39;), scope=Scope.SESSION))</span>
+<span class="sd">    &gt;&gt;&gt; ip_tot_len  = Field(name=&#39;Total length&#39;, domain=bitarray(&#39;0000000000000000&#39;))</span>
+<span class="sd">    &gt;&gt;&gt; ip_id       = Field(name=&#39;Identification number&#39;, domain=BitArray(nbBits=16))</span>
+<span class="sd">    &gt;&gt;&gt; ip_flags    = Field(name=&#39;Flags&#39;, domain=Data(dataType=BitArray(&#39;000&#39;), scope=Scope.SESSION))</span>
+<span class="sd">    &gt;&gt;&gt; ip_frag_off = Field(name=&#39;Fragment offset&#39;,</span>
+<span class="sd">    ...                     domain=Data(dataType=BitArray(&#39;0000000000000&#39;), scope=Scope.SESSION))</span>
+<span class="sd">    &gt;&gt;&gt; ip_ttl      = Field(name=&#39;TTL&#39;, domain=Data(dataType=BitArray(&#39;10000000&#39;), scope=Scope.SESSION))</span>
+<span class="sd">    &gt;&gt;&gt; ip_proto    = Field(name=&#39;Protocol&#39;, domain=uint8be(6))</span>
+<span class="sd">    &gt;&gt;&gt; ip_checksum = Field(name=&#39;Checksum&#39;, domain=bitarray(&#39;0000000000000000&#39;))</span>
+<span class="sd">    &gt;&gt;&gt; ip_saddr    = Field(name=&#39;Source address&#39;, domain=IPv4(&quot;127.0.0.1&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; ip_daddr    = Field(name=&#39;Destination address&#39;, domain=IPv4(&quot;127.0.0.1&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; ip_payload  = Field(name=&#39;Payload&#39;, domain=bitarray(&#39;0000000000000000&#39;))</span>
+<span class="sd">    &gt;&gt;&gt; # Domains</span>
+<span class="sd">    &gt;&gt;&gt; ip_ihl.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags,</span>
+<span class="sd">    ...                       ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr],</span>
+<span class="sd">    ...                      dataType=BitArray(nbBits=4), factor=1./32)</span>
+<span class="sd">    &gt;&gt;&gt; ip_tot_len.domain = Size([ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags,</span>
+<span class="sd">    ...                           ip_frag_off, ip_ttl, ip_proto, ip_checksum, ip_saddr,</span>
+<span class="sd">    ...                           ip_daddr, ip_payload],</span>
+<span class="sd">    ...                          dataType=Raw(nbBytes=2), factor=1./8)</span>
+<span class="sd">    &gt;&gt;&gt; # Symbol</span>
+<span class="sd">    &gt;&gt;&gt; packet = Symbol(name=&#39;IP layer&#39;, fields=[</span>
+<span class="sd">    ...    ip_ver, ip_ihl, ip_tos, ip_tot_len, ip_id, ip_flags, ip_frag_off,</span>
+<span class="sd">    ...    ip_ttl, ip_proto, ip_checksum, ip_saddr, ip_daddr, ip_payload])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(packet.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; hex(data[0])</span>
+<span class="sd">    ... # This corresponds to the first byte of the IP layer. &#39;5&#39; means 5*32 bits,</span>
+<span class="sd">    ... # which is the size of the default IP header.</span>
+<span class="sd">    &#39;0x45&#39;</span>
+<span class="sd">    &gt;&gt;&gt; hex(data[3])</span>
+<span class="sd">    ... # This corresponds to the third byte of the IP layer. &#39;0x16&#39; means 22 octets,</span>
+<span class="sd">    ... # which is the size of the default IP header + 2 octets of payload.</span>
+<span class="sd">    &#39;0x16&#39;</span>
+
+
+<span class="sd">    The following examples show the specialization process of a Size</span>
+<span class="sd">    field:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(String(nbChars=20))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;;&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size(f0))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; res = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; b&#39;\x14&#39; in res</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(String(&quot;CMDauthentify&quot;), name=&quot;f0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&#39;#&#39;), name=&quot;sep&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(name=&quot;size field&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f4 = Field(Raw(b&quot;\x00\x00\x00\x00&quot;), name=&quot;f4&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f5 = Field(Raw(nbBytes=11))</span>
+<span class="sd">    &gt;&gt;&gt; f6 = Field(Raw(b&#39;wd&#39;), name=&quot;f6&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f7 = Field(Raw(nbBytes=(0, 1)))</span>
+<span class="sd">    &gt;&gt;&gt; f3.domain = Size([f4, f5, f6])</span>
+<span class="sd">    &gt;&gt;&gt; f2.fields = [f3, f4, f5, f6, f7]</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(fields=[f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; b&quot;CMDauthentify#\x11&quot; in next(s.specialize())</span>
+<span class="sd">    True</span>
+
+<span class="sd">    # We check that a Size datatype cannot be constant</span>
+
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8(0))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size([f1], dataType=uint16(0)))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    Exception: Relation dataType should not have a constant value: &#39;Integer(0)&#39;.</span>
+
+
+
+<span class="sd">    # Example with UDP inner relationships (2 Size fields with a CRC)</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; # UDP header fields</span>
+<span class="sd">    &gt;&gt;&gt; udp_sport = Field(uint16(), &quot;udp.sport&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; udp_dport = Field(uint16(), &quot;udp.dport&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; udp_length = Field(bitarray(&#39;0000000000000000&#39;), &quot;udp.length&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; udp_checksum = Field(bitarray(&#39;0000000000000000&#39;), &quot;udp.checksum&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; udp_payload = Field(Raw(), &quot;udp.payload&quot;)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; udp_header = [udp_sport, udp_dport, udp_length, udp_checksum, udp_payload]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Update UDP length field</span>
+<span class="sd">    &gt;&gt;&gt; udp_length.domain = Size(udp_header, dataType=uint16(), factor=1./8)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Pseudo IP header to compute the UDP checksum</span>
+<span class="sd">    &gt;&gt;&gt; pseudo_ip_src = Field(IPv4(), &quot;udp.pseudoIP.saddr&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; pseudo_ip_dst = Field(IPv4(), &quot;udp.pseudoIP.daddr&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; pseudo_ip_proto = Field(Raw(b&#39;\x00\x11&#39;), &quot;udp.pseudoIP.proto&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; pseudo_ip_length = Field(Size(udp_header, dataType=uint16(), factor=1./8), &quot;udp.pseudoIP.length&quot;)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; pseudo_ip_header = Field(name=&quot;udp.pseudoIP&quot;, isPseudoField=True)</span>
+<span class="sd">    &gt;&gt;&gt; pseudo_ip_header.fields = [pseudo_ip_src, pseudo_ip_dst, pseudo_ip_proto, pseudo_ip_length]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; udp_checksum.domain = InternetChecksum([pseudo_ip_header] + udp_header, dataType=Raw(nbBytes=2, unitSize=UnitSize.SIZE_16))</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # UDP symbol</span>
+<span class="sd">    &gt;&gt;&gt; symbol_udp = Symbol(name=&quot;udp&quot;, fields=(udp_header + [pseudo_ip_header]))</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; #</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol_udp)</span>
+<span class="sd">    &gt;&gt;&gt; preset[&quot;udp.payload&quot;] = b&quot;test AAAAAAAA&quot;</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol_udp.specialize(preset))</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; symbol_udp.abstract(data)  # doctest: +ELLIPSIS</span>
+<span class="sd">    OrderedDict([(&#39;udp.sport&#39;, b&#39;...&#39;), (&#39;udp.dport&#39;, b&#39;...&#39;), (&#39;udp.length&#39;, b&#39;\x00\x15&#39;), (&#39;udp.checksum&#39;, b&#39;...&#39;), (&#39;udp.payload&#39;, b&#39;test AAAAAAAA&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_abstraction</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    In the following example, a size field is declared after its</span>
+<span class="sd">    targeted field, and a message that does not correspond to the</span>
+<span class="sd">    expected model is then parsed. As the data does not match the</span>
+<span class="sd">    expected symbol, the returned symbol is unknown:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(String(nbChars=(1,10)), name=&#39;f0&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;;&quot;), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size(f0), name=&#39;f2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; s  = Symbol(fields=[f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; data = b&quot;john;\x03&quot;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(data)  # doctest: +IGNORE_EXCEPTION_DETAIL</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;Symbol&#39;, cannot abstract the data: &#39;b&#39;john;\x03&#39;&#39;. Error: &#39;No parsing path returned while parsing &#39;b&#39;john;\x03&#39;&#39;&#39;</span>
+
+
+<span class="sd">    In the following example, a size field is declared before its</span>
+<span class="sd">    targeted field, and a message that does not correspond to the</span>
+<span class="sd">    expected model is then parsed. As the data does not match the</span>
+<span class="sd">    expected symbol, the returned symbol is unknown:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(String(nbChars=(1,10)), name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;;&quot;), name=&quot;f1&quot;, )</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Size(f2), name=&quot;f0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s  = Symbol(fields=[f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; data = b&quot;\x03;john&quot;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(data)  # doctest: +IGNORE_EXCEPTION_DETAIL</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;Symbol&#39;, cannot abstract the data: &#39;b&#39;\x03;john&#39;&#39;. Error: &#39;No parsing path returned while parsing &#39;b&#39;\x03;john&#39;&#39;&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_size_contains_itself</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+
+<span class="sd">    # In big endian</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(uint8(0), name=&quot;f0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8(0), name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(name=&quot;len&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(uint32(0), name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f4 = Field(Raw(nbBytes=(0,28)), name=&quot;f4&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2.domain = Size([f0, f1, f2, f3, f4], dataType=uint16())</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f0, f1, f2, f3, f4])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x00\x00\x00\x17\x00\x00\x00\x00\x07i\xec\xfb\x8eR\x11\xfa\xa7&amp;\x7f\xb8\x16\xd7G&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;f0&#39;, b&#39;\x00&#39;), (&#39;f1&#39;, b&#39;\x00&#39;), (&#39;len&#39;, b&#39;\x00\x17&#39;), (&#39;f3&#39;, b&#39;\x00\x00\x00\x00&#39;), (&#39;f4&#39;, b&#39;\x07i\xec\xfb\x8eR\x11\xfa\xa7&amp;\x7f\xb8\x16\xd7G&#39;)])</span>
+
+
+<span class="sd">    # In little endian</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(uint8le(0), name=&quot;f0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(uint8le(0), name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(name=&quot;len&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(uint32le(0), name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f4 = Field(Raw(nbBytes=(0,28)), name=&quot;f4&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2.domain = Size([f0, f1, f2, f3, f4], dataType=uint16le())</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f0, f1, f2, f3, f4])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x00\x00\r\x00\x00\x00\x00\x00\x9b\xb9D\xe9z&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;f0&#39;, b&#39;\x00&#39;), (&#39;f1&#39;, b&#39;\x00&#39;), (&#39;len&#39;, b&#39;\r\x00&#39;), (&#39;f3&#39;, b&#39;\x00\x00\x00\x00&#39;), (&#39;f4&#39;, b&#39;\x9b\xb9D\xe9z&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_size_default_datatype_value</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Raw(nbBytes=1000), &quot;F1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size([f1]), &quot;F2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize()) # doctest: +ELLIPSIS</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    ValueError: The computed size (which is &#39;1000&#39;) cannot be encoded in the current Size field &#39;F2&#39; (which can encode at most a value of &#39;256&#39;). You should consider using a bigger dataType.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Raw(nbBytes=1000), &quot;F1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size([f1], dataType=uint8be()), &quot;F2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize()) # doctest: +ELLIPSIS</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    ValueError: The computed size (which is &#39;1000&#39;) cannot be encoded in the current Size field &#39;F2&#39; (which can encode at most a value of &#39;256&#39;). You should consider using a bigger dataType.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Raw(nbBytes=1000), &quot;F1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size([f1], dataType=uint8be(), factor=1./32), &quot;F2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; len(next(s.specialize()))</span>
+<span class="sd">    1001</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

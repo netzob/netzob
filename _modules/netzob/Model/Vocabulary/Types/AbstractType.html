@@ -1,0 +1,1232 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Types.AbstractType &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Types.AbstractType</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#|             ANSSI,   https://www.ssi.gouv.fr                              |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| File contributors :                                                       |</span>
+<span class="c1">#|       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1">#|       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">from</span> <span class="nn">bitarray</span> <span class="kn">import</span> <span class="n">bitarray</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">public_api</span><span class="p">,</span> <span class="n">NetzobLogger</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Scope</span> <span class="kn">import</span> <span class="n">Scope</span>
+
+
+<div class="viewcode-block" id="Endianness"><a class="viewcode-back" href="../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Types.AbstractType.Endianness">[docs]</a><span class="nd">@public_api</span>
+<span class="k">class</span> <span class="nc">Endianness</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum class used to specify the endianness of a type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BIG</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Endianness.BIG can be used to specify a BIG endianness of a type.&quot;&quot;&quot;</span>
+    <span class="n">LITTLE</span> <span class="o">=</span> <span class="s1">&#39;little&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Endianness.LITTLE can be used to specify a LITTLE endianness of a type.&quot;&quot;&quot;</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="n">Enum</span><span class="o">.</span><span class="fm">__str__</span></div>
+
+
+<div class="viewcode-block" id="Sign"><a class="viewcode-back" href="../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Types.AbstractType.Sign">[docs]</a><span class="nd">@public_api</span>
+<span class="k">class</span> <span class="nc">Sign</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum class used to specify the sign of a type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SIGNED</span> <span class="o">=</span> <span class="s1">&#39;signed&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sign.SIGNED can be used to specify a SIGNED sign of a type.&quot;&quot;&quot;</span>
+    <span class="n">UNSIGNED</span> <span class="o">=</span> <span class="s1">&#39;unsigned&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sign.UNSIGNED can be used to specify a UNSIGNED sign of a type.&quot;&quot;&quot;</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="n">Enum</span><span class="o">.</span><span class="fm">__str__</span></div>
+
+
+<div class="viewcode-block" id="UnitSize"><a class="viewcode-back" href="../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Types.AbstractType.UnitSize">[docs]</a><span class="nd">@public_api</span>
+<span class="k">class</span> <span class="nc">UnitSize</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum class used to specify the unit size of a type (i.e. the space in bits that a unitary element takes up).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SIZE_1</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;UnitSize.SIZE_1 can be used to specify a 1-bit unit size of a type.&quot;&quot;&quot;</span>
+    <span class="n">SIZE_4</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;UnitSize.SIZE_4 can be used to specify a 4-bit unit size of a type.&quot;&quot;&quot;</span>
+    <span class="n">SIZE_8</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;UnitSize.SIZE_8 can be used to specify a 8-bit unit size of a type.&quot;&quot;&quot;</span>
+    <span class="n">SIZE_16</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;UnitSize.SIZE_16 can be used to specify a 16-bit unit size of a type.&quot;&quot;&quot;</span>
+    <span class="n">SIZE_24</span> <span class="o">=</span> <span class="mi">24</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;UnitSize.SIZE_24 can be used to specify a 24-bit unit size of a type.&quot;&quot;&quot;</span>
+    <span class="n">SIZE_32</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;UnitSize.SIZE_32 can be used to specify a 32-bit unit size of a type.&quot;&quot;&quot;</span>
+    <span class="n">SIZE_64</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;UnitSize.SIZE_64 can be used to specify a 64-bit unit size of a type.&quot;&quot;&quot;</span>
+    <span class="fm">__repr__</span> <span class="o">=</span> <span class="n">Enum</span><span class="o">.</span><span class="fm">__str__</span></div>
+
+
+<div class="viewcode-block" id="AbstractType"><a class="viewcode-back" href="../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Types.AbstractType.AbstractType">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">AbstractType</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;AbstractType is the abstract class of all the classes that represent Netzob types.</span>
+
+<span class="sd">    A type defines a definition domain as a unique value or specified</span>
+<span class="sd">    with specific rules.  For instance, an integer under a specific</span>
+<span class="sd">    interval, a string with a number of chars and an IPv4 of a</span>
+<span class="sd">    specific netmask.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># This value will be used if generate() method is called</span>
+    <span class="c1"># without any upper size limit</span>
+    <span class="c1"># 65536 bits (which equals to 2^16 bits) is a completly arbitrary value used to limit data generation</span>
+    <span class="n">MAXIMUM_GENERATED_DATA_SIZE</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span>
+
+    <span class="c1"># This value fixes a limit to the possible values a type can</span>
+    <span class="c1"># generate. This limit corresponds to 1 day of data generation</span>
+    <span class="c1"># based on a generation bandwith of 1 millions per seconds. Therefore: max = 1.000.000 * 3600 * 24</span>
+    <span class="n">MAXIMUM_POSSIBLE_VALUES</span> <span class="o">=</span> <span class="mi">86400000000</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">supportedUnitSizes</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Official unit sizes&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_1</span><span class="p">,</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_4</span><span class="p">,</span>
+            <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_8</span><span class="p">,</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span><span class="p">,</span>
+            <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span><span class="p">,</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_32</span><span class="p">,</span>
+            <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_64</span>
+        <span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">getUnitSizeEnum</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the enum value corresponding to the given size.</span>
+<span class="sd">        If size is invalid, returns None.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_1</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_1</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_4</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_8</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">16</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_32</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">64</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_64</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">supportedEndianness</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Official endianness supported&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">,</span> <span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">supportedSign</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Official sign supported&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">,</span> <span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">defaultUnitSize</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the default unit size</span>
+
+<span class="sd">        :return: the default unit size</span>
+<span class="sd">        :rtype: :class:`Enum`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_8</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">defaultEndianness</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the default endianness</span>
+
+<span class="sd">        :return: the default endianness</span>
+<span class="sd">        :type endianness: :class:`Enum`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">defaultSign</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the default sign</span>
+
+<span class="sd">        :return: the default sign</span>
+<span class="sd">        :type sign: :class:`Enum`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">typeName</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">,</span>
+                 <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                 <span class="n">unitSize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">endianness</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">sign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typeName</span> <span class="o">=</span> <span class="n">typeName</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="c1"># Handle endianness and sign attributes</span>
+        <span class="k">if</span> <span class="n">endianness</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">endianness</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endianness</span> <span class="o">=</span> <span class="n">endianness</span>
+        <span class="k">if</span> <span class="n">sign</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sign</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sign</span> <span class="o">=</span> <span class="n">sign</span>
+
+        <span class="c1"># Handle size attribute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+
+        <span class="c1"># Compute unit size (i.e. the size used to store the length attribute of the current object)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">value_length</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">size_max</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">size_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">unitSize_tmp</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">computeUnitSize</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">value_length</span><span class="p">,</span> <span class="n">size_max</span><span class="p">))</span>  <span class="c1"># Compute unit size according to the maximum length</span>
+
+        <span class="c1"># Check consistency of provided unitSize value according to the computed one</span>
+        <span class="k">if</span> <span class="n">unitSize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span> <span class="o">=</span> <span class="n">unitSize_tmp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">unitSize</span><span class="o">.</span><span class="n">value</span> <span class="o">&lt;</span> <span class="n">unitSize_tmp</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Provided unitSize &#39;</span><span class="si">{}</span><span class="s2">&#39; is too small to encode the maximum length of the potential values to generate (unitSize should be: &#39;</span><span class="si">{}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unitSize</span><span class="p">,</span> <span class="n">unitSize_tmp</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span> <span class="o">=</span> <span class="n">unitSize</span>
+
+        <span class="c1"># Handle default attribute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span>
+                <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">BitArray</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(nbBits=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(nbBits=(</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">BitArray</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
+                                      <span class="n">dst_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                                      <span class="n">dst_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span>
+                                      <span class="n">dst_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Note: as bitarray objects cannot be hashed in Python3 (because bitarray objects are mutable), we cast a bitarray object in a tuple (which is immutable)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">__key</span><span class="p">()</span> <span class="o">==</span> <span class="n">y</span><span class="o">.</span><span class="n">__key</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__key</span><span class="p">())</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The :meth:`count` method computes the number of unique</span>
+<span class="sd">        elements the data type can produce.</span>
+
+<span class="sd">        :return: The number of unique elements the data type can produce.</span>
+<span class="sd">        :rtype: :class:`int`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method count() is not implemented&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AbstractType.convert"><a class="viewcode-back" href="../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Types.AbstractType.AbstractType.convert">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">typeClass</span><span class="p">,</span>
+                <span class="n">dst_unitSize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">dst_endianness</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">dst_sign</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the current data type in a destination type specified in</span>
+<span class="sd">        parameter.</span>
+
+<span class="sd">        :param typeClass: The Netzob type class to which the current data</span>
+<span class="sd">                          must be converted.</span>
+<span class="sd">        :type typeClass: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`, required</span>
+<span class="sd">        :return: The converted current value in the specified data type.</span>
+<span class="sd">        :rtype: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`</span>
+
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; i = uint8(42)</span>
+<span class="sd">        &gt;&gt;&gt; r = i.convert(Raw)</span>
+<span class="sd">        &gt;&gt;&gt; r</span>
+<span class="sd">        b&#39;*&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">typeClass</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;TypeClass cannot be None&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">typeClass</span><span class="p">,</span> <span class="n">AbstractType</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Requested typeClass (</span><span class="si">{0}</span><span class="s2">) is not supported.&quot;</span><span class="o">.</span>
+                            <span class="nb">format</span><span class="p">(</span><span class="n">typeClass</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">dst_endianness</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dst_endianness</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">dst_sign</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dst_sign</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">dst_endianness</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">supportedEndianness</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;dst_endianness is not supported.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dst_sign</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">supportedSign</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;sign is not supported.&quot;</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+        <span class="k">return</span> <span class="n">typeClass</span><span class="p">(</span>
+            <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">BitArray</span><span class="p">,</span>
+                <span class="n">typeClass</span><span class="p">,</span>
+                <span class="n">src_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">src_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">src_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span>
+                <span class="n">dst_unitSize</span><span class="o">=</span><span class="n">dst_unitSize</span><span class="p">,</span>
+                <span class="n">dst_endianness</span><span class="o">=</span><span class="n">dst_endianness</span><span class="p">,</span>
+                <span class="n">dst_sign</span><span class="o">=</span><span class="n">dst_sign</span><span class="p">),</span>
+            <span class="n">unitSize</span><span class="o">=</span><span class="n">dst_unitSize</span><span class="p">,</span>
+            <span class="n">endianness</span><span class="o">=</span><span class="n">dst_endianness</span><span class="p">,</span>
+            <span class="n">sign</span><span class="o">=</span><span class="n">dst_sign</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AbstractType.generate"><a class="viewcode-back" href="../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Types.AbstractType.AbstractType.generate">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method should generate data that respects the current data type.</span>
+
+<span class="sd">        :return: The data produced.</span>
+<span class="sd">        :rtype: :class:`bitarray &lt;bitarray.bitarray&gt;`</span>
+
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; a = String(nbChars=20)</span>
+<span class="sd">        &gt;&gt;&gt; l = a.generate()</span>
+<span class="sd">        &gt;&gt;&gt; len(l)</span>
+<span class="sd">        160</span>
+<span class="sd">        &gt;&gt;&gt; a = HexaString(nbBytes=20)</span>
+<span class="sd">        &gt;&gt;&gt; l = a.generate()</span>
+<span class="sd">        &gt;&gt;&gt; len(l)</span>
+<span class="sd">        160</span>
+<span class="sd">        &gt;&gt;&gt; a = HexaString(b&quot;aabbccdd&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; a.generate()</span>
+<span class="sd">        bitarray(&#39;10101010101110111100110011011101&#39;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Return the self.value in priority if it is defined</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+
+        <span class="c1"># Else, generate a data that respects the permitted min and max sizes</span>
+        <span class="n">minSize</span><span class="p">,</span> <span class="n">maxSize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">if</span> <span class="n">maxSize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">maxSize</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_GENERATED_DATA_SIZE</span>
+
+        <span class="n">generatedSize</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">minSize</span><span class="p">,</span> <span class="n">maxSize</span><span class="p">)</span>
+        <span class="n">randomContent</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">generatedSize</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">randomContent</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">computeUnitSize</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return a UnitSize that permits to encode the provided length.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.BitArray import BitArray</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.Raw import Raw</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.HexaString import HexaString</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.String import String</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.Integer import Integer</span>
+<span class="sd">        &gt;&gt;&gt; b = BitArray(&#39;0&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; b.unitSize</span>
+<span class="sd">        UnitSize.SIZE_4</span>
+<span class="sd">        &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">        1</span>
+
+<span class="sd">        &gt;&gt;&gt; b = Raw(b&#39;a&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; b.unitSize</span>
+<span class="sd">        UnitSize.SIZE_4</span>
+<span class="sd">        &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">        8</span>
+
+<span class="sd">        &gt;&gt;&gt; b = HexaString(b&#39;aa&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; b.unitSize</span>
+<span class="sd">        UnitSize.SIZE_4</span>
+<span class="sd">        &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">        8</span>
+
+<span class="sd">        &gt;&gt;&gt; b = String(&#39;a&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; b.unitSize</span>
+<span class="sd">        UnitSize.SIZE_4</span>
+<span class="sd">        &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">        8</span>
+
+<span class="sd">        &gt;&gt;&gt; b = Integer(1)</span>
+<span class="sd">        &gt;&gt;&gt; b.unitSize</span>
+<span class="sd">        UnitSize.SIZE_16</span>
+<span class="sd">        &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">        16</span>
+
+<span class="sd">        &gt;&gt;&gt; b = BitArray(&#39;00&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; b.unitSize</span>
+<span class="sd">        UnitSize.SIZE_4</span>
+<span class="sd">        &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">        2</span>
+
+<span class="sd">        &gt;&gt;&gt; b = BitArray(&#39;0000000000000000&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; b.unitSize</span>
+<span class="sd">        UnitSize.SIZE_4</span>
+<span class="sd">        &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">        16</span>
+
+<span class="sd">        &gt;&gt;&gt; b = BitArray(&#39;00000000000000000&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; b.unitSize</span>
+<span class="sd">        UnitSize.SIZE_8</span>
+<span class="sd">        &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">        17</span>
+
+<span class="sd">        &gt;&gt;&gt; b = BitArray(nbBits=17)</span>
+<span class="sd">        &gt;&gt;&gt; b.unitSize</span>
+<span class="sd">        UnitSize.SIZE_8</span>
+<span class="sd">        &gt;&gt;&gt; len(b.generate())</span>
+<span class="sd">        17</span>
+
+<span class="sd">        &gt;&gt;&gt; b = BitArray(nbBits=(1,17))</span>
+<span class="sd">        &gt;&gt;&gt; b.unitSize</span>
+<span class="sd">        UnitSize.SIZE_8</span>
+<span class="sd">        &gt;&gt;&gt; 1 &lt;= len(b.generate()) &lt;= 17</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_GENERATED_DATA_SIZE</span>
+
+        <span class="c1"># Deduce unit size according to max possible length</span>
+        <span class="k">if</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_64</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Maximum length for datatype is too large: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_32</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">unit_size</span> <span class="o">=</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_64</span>
+        <span class="k">elif</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">unit_size</span> <span class="o">=</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_32</span>
+        <span class="k">elif</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">unit_size</span> <span class="o">=</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span>
+        <span class="k">elif</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_8</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">unit_size</span> <span class="o">=</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span>
+        <span class="k">elif</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_4</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">unit_size</span> <span class="o">=</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_8</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">unit_size</span> <span class="o">=</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_4</span>
+
+        <span class="k">return</span> <span class="n">unit_size</span>
+
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">mutate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefixDescription</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate various mutations of the current types.</span>
+
+<span class="sd">        This specific method generates mutations on the bit level.</span>
+<span class="sd">        If any type accepts bit level mutations, it should call this method. This method</span>
+<span class="sd">        introduce the following mutations:</span>
+
+<span class="sd">        * Original Version in little endian</span>
+<span class="sd">        * Original Version in big endian</span>
+<span class="sd">        * Inversed bytes in little endian</span>
+<span class="sd">        * Inversed bytes in big endian</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; t = String(&quot;helloworld&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; print(t.mutate())</span>
+<span class="sd">        OrderedDict([(&#39;ascii-bits(bigEndian)&#39;, bitarray(&#39;01101000011001010110110001101100011011110111011101101111011100100110110001100100&#39;)), (&#39;ascii-bits(littleEndian)&#39;, bitarray(&#39;00010110101001100011011000110110111101101110111011110110010011100011011000100110&#39;)), (&#39;ascii(inversed)-bits(bigEndian)&#39;, bitarray(&#39;01100100011011000111001001101111011101110110111101101100011011000110010101101000&#39;)), (&#39;ascii(inversed)-bits(littleEndian)&#39;, bitarray(&#39;00100110001101100100111011110110111011101111011000110110001101101010011000010110&#39;)), (&#39;ascii(upper)-bits(bigEndian)&#39;, bitarray(&#39;01001000010001010100110001001100010011110101011101001111010100100100110001000100&#39;)), (&#39;ascii(upper)-bits(littleEndian)&#39;, bitarray(&#39;00010010101000100011001000110010111100101110101011110010010010100011001000100010&#39;)), (&#39;ascii(inversed-upper)-bits(bigEndian)&#39;, bitarray(&#39;01000100010011000101001001001111010101110100111101001100010011000100010101001000&#39;)), (&#39;ascii(inversed-upper)-bits(littleEndian)&#39;, bitarray(&#39;00100010001100100100101011110010111010101111001000110010001100101010001000010010&#39;))])</span>
+
+<span class="sd">        &gt;&gt;&gt; t = Integer(100)</span>
+<span class="sd">        &gt;&gt;&gt; print(t.mutate())</span>
+<span class="sd">        OrderedDict([(&#39;bits(bigEndian)&#39;, bitarray(&#39;0000000001100100&#39;)), (&#39;bits(littleEndian)&#39;, bitarray(&#39;0000000000100110&#39;))])</span>
+
+<span class="sd">        &gt;&gt;&gt; t = Integer()</span>
+<span class="sd">        &gt;&gt;&gt; mutations = t.mutate()</span>
+<span class="sd">        &gt;&gt;&gt; print(len(mutations[&#39;bits(littleEndian)&#39;]))</span>
+<span class="sd">        16</span>
+
+<span class="sd">        :keyword prefixDescription: prefix to attach to the description of the generated mutation.</span>
+<span class="sd">        :type prefixDescription: :class:`str`</span>
+<span class="sd">        :return: a dict of computed mutations having the same types than the initial one.</span>
+<span class="sd">        :rtype: :class:`dict`&lt;str&gt;=:class:`AbstractType &lt;netzob.Model.Vocabulary.Types.AbstractType.AbstractType&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">prefixDescription</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prefixDescription</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefixDescription</span> <span class="o">+=</span> <span class="s2">&quot;-&quot;</span>
+
+        <span class="n">mutations</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="c1"># If no value is known, we generate a new one</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">endianness</span> <span class="o">==</span> <span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">:</span>
+            <span class="n">mutations</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">bits(littleEndian)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixDescription</span><span class="p">)]</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="n">bigEndianValue</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">endian</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">mutations</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">bits(bigEndian)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">prefixDescription</span><span class="p">)]</span> <span class="o">=</span> <span class="n">bigEndianValue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mutations</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">bits(bigEndian)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixDescription</span><span class="p">)]</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="n">littleEndianValue</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span>
+                <span class="n">val</span><span class="p">,</span> <span class="n">endian</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">mutations</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">bits(littleEndian)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">prefixDescription</span><span class="p">)]</span> <span class="o">=</span> <span class="n">littleEndianValue</span>
+
+        <span class="k">return</span> <span class="n">mutations</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">unitSize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">endianness</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method convert the data from its current encoding to :class:`bytes`.</span>
+
+<span class="sd">        :param data: The data encoded in current type which will be decoded in :class:`bytes`.</span>
+<span class="sd">        :param unitSize: The unit size of the specified data.</span>
+<span class="sd">        :param endianness: The endianness of the specified data.</span>
+<span class="sd">        :param sign: The sign of the specified data.</span>
+<span class="sd">        :type data: the current type of the data, required</span>
+<span class="sd">        :type unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional</span>
+<span class="sd">        :type endianness: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Endianness`, optional</span>
+<span class="sd">        :type sign: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`, optional</span>
+
+<span class="sd">        :return: Data encoded in :class:`bytes`</span>
+<span class="sd">        :rtype: :class:`bytes`</span>
+<span class="sd">        :raise: :class:`TypeError` if parameters are not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;Internal Error: &#39;decode&#39; method not implemented&quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">unitSize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">endianness</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method convert data from :class:`bytes` to its type.</span>
+
+<span class="sd">        :param data: The data encoded in :class:`bytes` which will be encoded in its current type.</span>
+<span class="sd">        :param unitSize: The unit size of the specified data.</span>
+<span class="sd">        :param endianness: The endianness of the specified data.</span>
+<span class="sd">        :param sign: The sign of the specified data.</span>
+<span class="sd">        :type data: :class:`bytes`, required</span>
+<span class="sd">        :type unitSize: :class:`~netzob.Model.Vocabulary.Types.AbstractType.UnitSize`, optional</span>
+<span class="sd">        :type endianness: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Endianness`, optional</span>
+<span class="sd">        :type sign: :class:`~netzob.Model.Vocabulary.Types.AbstractType.Sign`, optional</span>
+<span class="sd">        :return: data encoded in python raw</span>
+<span class="sd">        :rtype: python raw</span>
+<span class="sd">        :raise: TypeError if parameters are not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;Internal Error: &#39;encode&#39; method not implemented&quot;</span><span class="p">)</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">canParse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method tells if the specified data can be parsed</span>
+<span class="sd">        with the current type and its constraints.</span>
+
+<span class="sd">        :param data: The data to parse.</span>
+<span class="sd">        :type data: :class:`bitarray &lt;bitarray.bitarray&gt;`, required</span>
+<span class="sd">        :return: ``True`` if the data can be parsed will the current type</span>
+<span class="sd">        :rtype: :class:`bool`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;Internal Error: &#39;canParse&#39; method not implemented&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The current value of the instance. This value is represented</span>
+<span class="sd">        under the bitarray format.</span>
+
+<span class="sd">        :type: :class:`bitarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__value</span>
+
+    <span class="nd">@value</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">bitarray</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__value</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The size of the expected Type defined</span>
+<span class="sd">         by a tuple (min, max).</span>
+<span class="sd">         Instead of a tuple, an int can be used to represent both min and max values.</span>
+
+<span class="sd">         The value &#39;None&#39; can be set for min and/or max to represent no limitations.</span>
+
+<span class="sd">         For instance, to create a String field of at least 10 chars:</span>
+
+<span class="sd">         &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">         &gt;&gt;&gt; f = Field(String(nbChars=(10,None)))</span>
+<span class="sd">         &gt;&gt;&gt; f.domain.dataType.size</span>
+<span class="sd">         (80, 65536)</span>
+
+<span class="sd">         while to create a Raw field which content has no specific limits:</span>
+
+<span class="sd">         &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">         &gt;&gt;&gt; f = Field(Raw())</span>
+
+<span class="sd">         :type: tuple (int, int)</span>
+<span class="sd">         :raises: :class:`TypeError` or :class:`ValueError` if parameters are not valid.</span>
+
+<span class="sd">         &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span>
+
+    <span class="nd">@size</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_GENERATED_DATA_SIZE</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">minSize</span><span class="p">,</span> <span class="n">maxSize</span> <span class="o">=</span> <span class="n">size</span>
+
+            <span class="k">if</span> <span class="n">minSize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">minSize</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">if</span> <span class="n">maxSize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">maxSize</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_GENERATED_DATA_SIZE</span>
+
+            <span class="k">if</span> <span class="n">minSize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">minSize</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Size must be defined with a tuple of integers&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">maxSize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">maxSize</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Size must be defined with a tuple of integers&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sign</span> <span class="o">==</span> <span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">minSize</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">maxSize</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Size must be defined with a tuple of positive integers&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">minSize</span> <span class="o">==</span> <span class="n">maxSize</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Size must be defined with a tuple of integers that cannot be both equal to zero&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">maxSize</span> <span class="o">&lt;</span> <span class="n">minSize</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Size must be defined with a tuple of integers, where the second value is greater than the first value&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="p">(</span><span class="n">minSize</span><span class="p">,</span> <span class="n">maxSize</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Size must be defined by a tuple an int or with None&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The default value of the type instance.</span>
+
+<span class="sd">        :type: :class:`bitarray`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__default</span>
+
+    <span class="nd">@default</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">bitarray</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">canParse</span><span class="p">(</span><span class="n">default</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot set a default Type value (here &#39;</span><span class="si">{}</span><span class="s2">&#39;) that cannot be parsed (current type: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">default</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="bp">self</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__default</span> <span class="o">=</span> <span class="n">default</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given the specified data, this static methods normalize its representation</span>
+<span class="sd">        using Netzob types.</span>
+
+<span class="sd">        :parameter data: the data to normalize</span>
+<span class="sd">        :type data: :class:`object`</span>
+<span class="sd">        :return: an abstractType which value is data</span>
+<span class="sd">        :rtype: :class:`AbstractType &lt;netzob.Model.Vocabulary.Types.AbstractType.AbstractType&gt;`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; normalizedData = AbstractType.normalize(&quot;john&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; normalizedData.__class__</span>
+<span class="sd">        &lt;class &#39;netzob.Model.Vocabulary.Types.String.String&#39;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; normalizedData.value</span>
+<span class="sd">        bitarray(&#39;01101010011011110110100001101110&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Cannot normalize None data&quot;</span><span class="p">)</span>
+
+        <span class="n">normalizedData</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">AbstractType</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.Integer</span> <span class="kn">import</span> <span class="n">Integer</span>
+            <span class="k">return</span> <span class="n">Integer</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.Raw</span> <span class="kn">import</span> <span class="n">Raw</span>
+            <span class="n">normalizedData</span> <span class="o">=</span> <span class="n">Raw</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.String</span> <span class="kn">import</span> <span class="n">String</span>
+            <span class="n">normalizedData</span> <span class="o">=</span> <span class="n">String</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+            <span class="n">normalizedData</span> <span class="o">=</span> <span class="n">BitArray</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">normalizedData</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Not a valid data (</span><span class="si">{0}</span><span class="s2">), impossible to normalize it.&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">normalizedData</span>
+
+    <span class="k">def</span> <span class="nf">buildDataRepresentation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;It creates a :class:`Data &lt;netzob.Model.Vocabulary.Domain.Variables.Leafs.Data.Data&gt;` following the specified type.</span>
+
+<span class="sd">        for instance, user can specify a domain with its type which is much more simple than creating a Data with the type</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; ascii = String(&quot;hello john !&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; ascii.typeName</span>
+<span class="sd">        &#39;String&#39;</span>
+<span class="sd">        &gt;&gt;&gt; data = ascii.buildDataRepresentation()</span>
+<span class="sd">        &gt;&gt;&gt; data.dataType.value.tobytes()</span>
+<span class="sd">        b&#39;hello john !&#39;</span>
+<span class="sd">        &gt;&gt;&gt; print(data.dataType)</span>
+<span class="sd">        String(&#39;hello john !&#39;)</span>
+
+<span class="sd">        :return: a Data of the current type</span>
+<span class="sd">        :rtype: :class:`Data &lt;netzob.Model.Vocabulary.Domain.Variables.Leads.Data.Data&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Leafs.Data</span> <span class="kn">import</span> <span class="n">Data</span>
+
+        <span class="n">scope</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scope</span> <span class="o">=</span> <span class="n">Scope</span><span class="o">.</span><span class="n">CONSTANT</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scope</span> <span class="o">=</span> <span class="n">Scope</span><span class="o">.</span><span class="n">NONE</span>
+
+        <span class="k">return</span> <span class="n">Data</span><span class="p">(</span><span class="n">dataType</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="n">scope</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getFixedBitSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Provide the length of a theoretical value that would be generated.</span>
+<span class="sd">        It is not the length of an effective value but a prediction of its</span>
+<span class="sd">        length in case this latter is fixed.</span>
+
+<span class="sd">        :return: the theoretical length of a value generated from this type</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        :raise: ValueError in case the length is dynamic or could not be predicted</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Determine the deterministic size of the value of &quot;</span>
+                           <span class="s2">&quot;the type&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot determine a fixed size for type &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">typeName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The name of the implemented type. We recommend</span>
+<span class="sd">        to set this value with the name of :  Type.__class__.__name__.</span>
+
+<span class="sd">        :type: `str`</span>
+<span class="sd">        :raises: :class: `TypeError` if typeName is not a string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__typeName</span>
+
+    <span class="nd">@typeName</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">typeName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typeName</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">typeName</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;typeName cannot be None&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__typeName</span> <span class="o">=</span> <span class="n">typeName</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">unitSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The unitSize of the current value.</span>
+
+<span class="sd">        :type: `str`</span>
+<span class="sd">        :raises: :class: `TypeError` if unitSize is not a string and not a supported value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__unitSize</span>
+
+    <span class="nd">@unitSize</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">UnitSize</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">unitSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unitSize</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">unitSize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;UnitSize cannot be None&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">unitSize</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">UnitSize</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Specified UnitSize is not supported, please refer to the UnitSize enum.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__unitSize</span> <span class="o">=</span> <span class="n">unitSize</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">endianness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The endianness of the current value.</span>
+<span class="sd">        The endianness definition is synchronized with the bitarray value.</span>
+
+<span class="sd">        :type: `str`</span>
+<span class="sd">        :raises: :class: `TypeError` if endianness is not a string and not a supported value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__endianness</span>
+
+    <span class="nd">@endianness</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">Endianness</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">endianness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endianness</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">endianness</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Endianness cannot be None&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">endianness</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Endianness</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Specified Endianness is not supported, please refer to the Endianness enum.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__endianness</span> <span class="o">=</span> <span class="n">endianness</span>
+
+        <span class="c1">## Note: this two lines are commented because bit-ordering is not supported</span>
+        <span class="c1"># if self.value is not None and self.value.endian() != self.__endianness:</span>
+        <span class="c1">#     self.value = bitarray(self.value, endian=self.__endianness.value)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The sign of the current value.</span>
+
+<span class="sd">        :type: `str`</span>
+<span class="sd">        :raises: :class: `TypeError` if sign is not a string and not a supported value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sign</span>
+
+    <span class="nd">@sign</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">Sign</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">sign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sign</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sign</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Sign cannot be None&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sign</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Sign</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Specified Sign is not supported, please refer to the Sign enum.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__sign</span> <span class="o">=</span> <span class="n">sign</span></div>
+
+
+<span class="k">def</span> <span class="nf">test_type_one_parameter</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">possible_parameters</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This test tries all possible parameters as input for this</span>
+<span class="sd">    datatype. This test should not trigger any exception as input</span>
+<span class="sd">    parameters are considered to be valid.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">functional_possible_parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_contents</span> <span class="ow">in</span> <span class="n">possible_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">functional_parameter_contents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">parameter_content</span> <span class="ow">in</span> <span class="n">parameter_contents</span><span class="p">:</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="n">parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter_content</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data_type</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception when creating a datatype with one parameter: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">functional_possible_parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">functional_parameter_contents</span>
+
+
+<span class="k">def</span> <span class="nf">test_type_multiple_parameters</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">possible_parameters</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This test tries all possible parameters as multiple inputs for this</span>
+<span class="sd">    datatype. This test should not trigger any exception as input</span>
+<span class="sd">    parameters are considered to be valid.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">itertools</span>
+
+    <span class="n">parameter_names</span> <span class="o">=</span> <span class="n">possible_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">functional_combinations_possible_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">combinations_possible_parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">possible_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="k">for</span> <span class="n">current_combination</span> <span class="ow">in</span> <span class="n">combinations_possible_parameters</span><span class="p">:</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameter_names</span><span class="p">):</span>
+            <span class="n">parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data_type</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;should have either&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>  <span class="c1"># Handle mutually exclusive parameter types</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception when creating a datatype with multiple parameters: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">functional_combinations_possible_parameters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_combination</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">parameter_names</span><span class="p">,</span> <span class="n">functional_combinations_possible_parameters</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">test_type_specialize_abstract</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">parameter_names</span><span class="p">,</span> <span class="n">combinations_possible_parameters</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Symbol</span>
+
+    <span class="k">def</span> <span class="nf">specialize_abstract</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">data_type</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">f</span><span class="p">])</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">specialize</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXCEPTION IN SPECIALIZATION: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXCEPTION IN GENERATING VALUE&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data_structure</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">abstract</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXCEPTION IN PARSING: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">data_structure</span><span class="p">[</span><span class="s1">&#39;Field&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">d</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXCEPTION IN COMPARING SPECIALIZATION AND ABSTRACTION RESULTS&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">current_combination</span> <span class="ow">in</span> <span class="n">combinations_possible_parameters</span><span class="p">:</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">parameter_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameter_names</span><span class="p">):</span>
+            <span class="n">parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">specialize_abstract</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

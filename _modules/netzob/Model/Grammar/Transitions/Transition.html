@@ -1,0 +1,1120 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Grammar.Transitions.Transition &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Grammar.Transitions.Transition</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| File contributors :                                                       |</span>
+<span class="c1">#|       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1">#|       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">public_api</span><span class="p">,</span> <span class="n">NetzobLogger</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Symbol</span> <span class="kn">import</span> <span class="n">Symbol</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Preset</span> <span class="kn">import</span> <span class="n">Preset</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.EmptySymbol</span> <span class="kn">import</span> <span class="n">EmptySymbol</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.UnknownSymbol</span> <span class="kn">import</span> <span class="n">UnknownSymbol</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Grammar.Transitions.AbstractTransition</span> <span class="kn">import</span> <span class="n">AbstractTransition</span>
+<span class="kn">from</span> <span class="nn">netzob.Simulator.AbstractionLayer</span> <span class="kn">import</span> <span class="n">Operation</span>
+
+
+<div class="viewcode-block" id="Transition"><a class="viewcode-back" href="../../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Transitions.Transition.Transition">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">Transition</span><span class="p">(</span><span class="n">AbstractTransition</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class represents a transition between two states (an initial</span>
+<span class="sd">    state and an end state) in an automaton. The initial state and the</span>
+<span class="sd">    end state can be the same.</span>
+
+<span class="sd">    A transition is either in an initiator or non initiator</span>
+<span class="sd">    context. In an initiator context, the input symbol of the</span>
+<span class="sd">    transition is emitted and one of the output symbols of the</span>
+<span class="sd">    transition is expected. In non initiator context, the input symbol</span>
+<span class="sd">    of the transition is expected and one of the output symbols of the</span>
+<span class="sd">    transition is emitted.</span>
+
+<span class="sd">    The context of the transition (either initiator or non initiator)</span>
+<span class="sd">    is defined from the actor type that visits the automaton and from the</span>
+<span class="sd">    value of the ``inverseInitiator`` attribute of the transition</span>
+<span class="sd">    (which is by default set to ``False``). The context is defined as</span>
+<span class="sd">    follows:</span>
+
+<span class="sd">    * if the actor has its ``initiator`` attribute set to ``True``, and if the ``inverseInitiator`` attribute is set to ``True``, the transition context is ``initiator``;</span>
+<span class="sd">    * if the actor has its ``initiator`` attribute set to ``True``, and if the ``inverseInitiator`` attribute is set to ``False``, the transition context is ``non initiator``;</span>
+<span class="sd">    * if the actor has its ``initiator`` attribute set to ``False``, and if the ``inverseInitiator`` attribute is set to ``True``, the transition context is ``initiator``;</span>
+<span class="sd">    * if the actor has its ``initiator`` attribute set to ``False``, and if the ``inverseInitiator`` attribute is set to ``False``, the transition context is ``non initiator``.</span>
+
+<span class="sd">    When an actor encounters a state where multiple transitions are</span>
+<span class="sd">    defined, a random choice is made amongst all these transitions by</span>
+<span class="sd">    considering their probabilities. Two scenarios are possible:</span>
+
+<span class="sd">    * if the picked transition is in an ``initiator`` context, this transition is executed;</span>
+<span class="sd">    * otherwise, the executed transition depends on the received symbol.</span>
+
+<span class="sd">    It is possible to define probability on transition selection during</span>
+<span class="sd">    state processing, through the</span>
+<span class="sd">    :attr:`~netzob.Model.Grammar.Transitions.Transition.Transition.inputSymbolProbability`</span>
+<span class="sd">    attribute. This functionality makes it possible to implement a</span>
+<span class="sd">    variety of state machines.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       In a state, if several transitions are available, where some of them expect to receive the input symbol (non initiator context) and the others expect to send the input symbol (initiator context), it is recommended in the last case to not set any output symbols to be received. In such a situation, it is better to handle the receiving of the potential peer symbols in a second state.</span>
+
+<span class="sd">    Two transitions in the same context, initiator or non initiator,</span>
+<span class="sd">    that start at the same state cannot have the same input symbol, as</span>
+<span class="sd">    this symbol is used to determine the corresponding transition when</span>
+<span class="sd">    receiving a new message. The only exception is when the</span>
+<span class="sd">    transitions that have the same input symbol leverage the</span>
+<span class="sd">    ``inputSymbolPreset`` attribute. In such case, the</span>
+<span class="sd">    ``inputSymbolPreset`` attribute makes it possible to determine the</span>
+<span class="sd">    corresponding transition based on field content from the same</span>
+<span class="sd">    input symbol.</span>
+
+<span class="sd">    The Transition constructor expects some parameters:</span>
+
+<span class="sd">    :param startState: This parameter is the initial state of the transition.</span>
+<span class="sd">    :param endState: This parameter is the end state of the transition.</span>
+<span class="sd">    :param inputSymbol: The input symbol which triggers the execution of the</span>
+<span class="sd">                        transition.</span>
+<span class="sd">                        The default value is ``None``, which means that no symbol</span>
+<span class="sd">                        is expected in a non initiator context, and no symbol is sent</span>
+<span class="sd">                        in an initiator context. Internally,</span>
+<span class="sd">                        `None` symbol will be replaced by an</span>
+<span class="sd">                        :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.</span>
+<span class="sd">    :param outputSymbols: A list of expected output symbols when</span>
+<span class="sd">                          the current transition is executed.</span>
+<span class="sd">                          The default value is ``None``, which means that no</span>
+<span class="sd">                          symbol will be sent in a non initiator context, and no</span>
+<span class="sd">                          symbol is expected in an initiator context.</span>
+<span class="sd">                          Internally, ``None`` symbol will be replaced by an</span>
+<span class="sd">                          :class:`~netzob.Model.Vocabulary.EmptySymbol.EmptySymbol`.</span>
+<span class="sd">    :param name: The name of the transition. The default value is `None`.</span>
+<span class="sd">    :type startState: :class:`~netzob.Model.Grammar.States.State.State`, required</span>
+<span class="sd">    :type endState: :class:`~netzob.Model.Grammar.States.State.State`, required</span>
+<span class="sd">    :type inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, optional</span>
+<span class="sd">    :type outputSymbols: a :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`, optional</span>
+<span class="sd">    :type name: :class:`str`, optional</span>
+
+
+<span class="sd">    The Transition class provides the following public variables:</span>
+
+<span class="sd">    :var startState: The initial state of the transition.</span>
+<span class="sd">    :var endState: The end state of the transition.</span>
+<span class="sd">    :var inputSymbolProbability: This value holds the probability of the current transition of being chosen when processing the state where it is attached. The value between ``0.0`` and ``100.0`` corresponds to the weight of the transition in terms of selection probability. The default value is set to 10.0.</span>
+<span class="sd">    :var inputSymbol: The input symbol is the symbol which triggers the</span>
+<span class="sd">                      execution of the transition.</span>
+<span class="sd">    :var outputSymbols: Output symbols that can be generated or expected when</span>
+<span class="sd">                        the current transition is executed.</span>
+<span class="sd">    :var inputSymbolPreset: A preset configuration</span>
+<span class="sd">                            used during specialization and abstraction</span>
+<span class="sd">                            of symbols emitted and received. During</span>
+<span class="sd">                            specialization, values in this</span>
+<span class="sd">                            configuration will override any field</span>
+<span class="sd">                            definition, constraints or relationship</span>
+<span class="sd">                            dependencies. During abstraction, this</span>
+<span class="sd">                            structure is used to validate the data of</span>
+<span class="sd">                            the received symbol. If the data does</span>
+<span class="sd">                            not match, we leave the automaton or execute the function set by the :meth:`set_cbk_read_unexepected_symbol` method. See :class:`Preset</span>
+<span class="sd">                            &lt;netzob.Model.Vocabulary.Preset.Preset&gt;`</span>
+<span class="sd">                            for a complete explanation of Preset</span>
+<span class="sd">                            usage.</span>
+<span class="sd">    :var outputSymbolsPreset: A :class:`dict` of preset configurations</span>
+<span class="sd">                              used during specialization and abstraction</span>
+<span class="sd">                              of symbols emitted and received. During</span>
+<span class="sd">                              specialization, values in this</span>
+<span class="sd">                              configuration will override any field</span>
+<span class="sd">                              definition, constraints or relationship</span>
+<span class="sd">                              dependencies. During abstraction, this</span>
+<span class="sd">                              structure is used to validate the data of</span>
+<span class="sd">                              the received symbol. If the data does</span>
+<span class="sd">                              not match, we leave the automaton or execute the function set by the :meth:`~netzob.Grammar.Automata.Automata.Automata.set_cbk_read_unexepected_symbol` method. See :class:`Preset</span>
+<span class="sd">                              &lt;netzob.Model.Vocabulary.Preset.Preset&gt;`</span>
+<span class="sd">                              for a complete explanation of Preset</span>
+<span class="sd">                              usage.</span>
+<span class="sd">    :var name: The name of the transition.</span>
+<span class="sd">    :var inputSymbolReactionTime: The timeout value in seconds to wait for the</span>
+<span class="sd">                                  input value (only used in a non initiator context).</span>
+<span class="sd">    :var outputSymbolsReactionTime: A :class:`dict` containing, for</span>
+<span class="sd">                                    each output symbol, the timeout</span>
+<span class="sd">                                    value in seconds to wait for the</span>
+<span class="sd">                                    output value (only used in an initiator context).</span>
+<span class="sd">    :var outputSymbolsProbabilities: A structure that holds the selection probability of each symbol as an output symbol. The value between ``0.0`` and ``100.0`` corresponds to the weight of the symbol in terms of selection probability. The default value of each symbol as an output symbol is set to 10.0.</span>
+<span class="sd">    :var inverseInitiator: Indicates to inverse the behavior of the actor ``initiator`` attribute.</span>
+<span class="sd">    :var description: The description of the transition. If not explicitly set,</span>
+<span class="sd">                      it is generated from the input and output symbol strings.</span>
+<span class="sd">    :vartype startState: :class:`~netzob.Model.Grammar.States.State.State`</span>
+<span class="sd">    :vartype endState: :class:`~netzob.Model.Grammar.States.State.State`</span>
+<span class="sd">    :vartype inputSymbolProbability: :class:`float`</span>
+<span class="sd">    :vartype inputSymbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`</span>
+<span class="sd">    :vartype outputSymbols: :class:`list` of :class:`~netzob.Model.Vocabulary.Symbol.Symbol`</span>
+<span class="sd">    :vartype inputSymbolPreset: :class:`Preset &lt;netzob.Model.Vocabulary.Preset.Preset&gt;`</span>
+<span class="sd">    :vartype outputSymbolsPreset: :class:`dict` of :class:`Preset &lt;netzob.Model.Vocabulary.Preset.Preset&gt;`</span>
+<span class="sd">    :vartype name: :class:`str`</span>
+<span class="sd">    :vartype inputSymbolReactionTime: :class:`float`</span>
+<span class="sd">    :vartype outputSymbolsReactionTime: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}</span>
+<span class="sd">    :vartype outputSymbolsProbabilities: :class:`dict` {:class:`~netzob.Model.Vocabulary.Symbol.Symbol`, :class:`float`}</span>
+<span class="sd">    :vartype inverseInitiator: :class:`bool`</span>
+<span class="sd">    :vartype description: :class:`str`</span>
+
+
+<span class="sd">    The following example shows the definition of a transition `t` between</span>
+<span class="sd">    two states, `s0` and `s1`:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s0 = State()</span>
+<span class="sd">    &gt;&gt;&gt; s1 = State()</span>
+<span class="sd">    &gt;&gt;&gt; t = Transition(s0, s1, name=&quot;transition&quot;)</span>
+
+<span class="sd">    The following code shows access to attributes of a Transition:</span>
+
+<span class="sd">    &gt;&gt;&gt; print(t.name)</span>
+<span class="sd">    transition</span>
+<span class="sd">    &gt;&gt;&gt; s0 == t.startState</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; s1 == t.endState</span>
+<span class="sd">    True</span>
+
+<span class="sd">    The following example shows the definition of a named Transition</span>
+<span class="sd">    that accepts a specific input symbol and produces an output</span>
+<span class="sd">    symbol from a list that contains one symbol element:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; t = Transition(State(), State(), name=&quot;testTransition&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; t.inputSymbol = Symbol()</span>
+<span class="sd">    &gt;&gt;&gt; t.outputSymbols = [Symbol()]</span>
+
+<span class="sd">    The following example shows the definition of a state with two</span>
+<span class="sd">    transitions that have a different probability. Here, the transition T2 is twice as likely to be chosen as T1.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s0 = State()</span>
+<span class="sd">    &gt;&gt;&gt; s1 = State()</span>
+<span class="sd">    &gt;&gt;&gt; s2 = State()</span>
+<span class="sd">    &gt;&gt;&gt; t1 = Transition(s0, s1, name=&quot;T1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; t1.inputSymbolProbability = 20.0</span>
+<span class="sd">    &gt;&gt;&gt; t2 = Transition(s0, s2, name=&quot;T2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; t2.inputSymbolProbability = 40.0</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">TYPE</span> <span class="o">=</span> <span class="s2">&quot;Transition&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">startState</span><span class="p">,</span>
+                 <span class="n">endState</span><span class="p">,</span>
+                 <span class="n">inputSymbol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">outputSymbols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="kc">None</span>
+                 <span class="p">):</span>
+        <span class="c1"># type: (...) -&gt; None</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Transition</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">Transition</span><span class="o">.</span><span class="n">TYPE</span><span class="p">,</span>
+                                         <span class="n">startState</span><span class="p">,</span>
+                                         <span class="n">endState</span><span class="p">,</span>
+                                         <span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># Initialize public variables from parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbol</span> <span class="o">=</span> <span class="n">inputSymbol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbols</span> <span class="o">=</span> <span class="n">outputSymbols</span>
+
+        <span class="c1"># Initialize other public variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbolPreset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsPreset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbolProbability</span> <span class="o">=</span> <span class="mf">10.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsProbabilities</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbolReactionTime</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsReactionTime</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Initialize internal variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbk_action</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="Transition.copy"><a class="viewcode-back" href="../../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Transitions.Transition.Transition.copy">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Copy the current transition.</span>
+
+<span class="sd">        This method copies the transition object but keeps references to the</span>
+<span class="sd">        original callbacks and symbols.</span>
+
+<span class="sd">        :return: A new object of the same type.</span>
+<span class="sd">        :rtype: :class:`Transition &lt;netzob.Model.Grammar.Transitions.Transition.Transition&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">transition</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">endState</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endState</span><span class="p">,</span>
+                                <span class="n">inputSymbol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inputSymbol</span><span class="p">,</span>
+                                <span class="n">outputSymbols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputSymbols</span><span class="p">,</span>
+                                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">transition</span><span class="o">.</span><span class="n">_startState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">startState</span>
+        <span class="n">transition</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span>
+        <span class="n">transition</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span>
+        <span class="n">transition</span><span class="o">.</span><span class="n">inputSymbolProbability</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbolProbability</span>
+        <span class="n">transition</span><span class="o">.</span><span class="n">cbk_modify_symbol</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbk_modify_symbol</span><span class="p">)</span>
+        <span class="n">transition</span><span class="o">.</span><span class="n">cbk_action</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbk_action</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbolPreset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">transition</span><span class="o">.</span><span class="n">inputSymbolPreset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbolPreset</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">transition</span><span class="o">.</span><span class="n">inputSymbolReactionTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbolReactionTime</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsPreset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">transition</span><span class="o">.</span><span class="n">outputSymbolsPreset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsPreset</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsReactionTime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">transition</span><span class="o">.</span><span class="n">outputSymbolsReactionTime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsReactionTime</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">transition</span><span class="o">.</span><span class="n">inverseInitiator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverseInitiator</span>
+
+        <span class="k">return</span> <span class="n">transition</span></div>
+
+    <span class="k">def</span> <span class="nf">executeAsInitiator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the current transition as an initiator.</span>
+
+<span class="sd">        :return: The end state of the transition if no exception is raised.</span>
+<span class="sd">        :rtype: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`</span>
+<span class="sd">        :raise: TypeError if parameter are not valid and Exception if an error</span>
+<span class="sd">                occurs while executing the transition.</span>
+
+<span class="sd">        Being an initiator means it will send the input symbol</span>
+<span class="sd">        attached to the transition and then wait for the reception of</span>
+<span class="sd">        one of the permitted output symbols.</span>
+
+<span class="sd">        If the received symbol is part of the expected symbols</span>
+<span class="sd">        (included in the list of output symbols) it returns the</span>
+<span class="sd">        endState State of the transition. On the contrary, if the</span>
+<span class="sd">        received symbol is not expected, it raises an exception.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Retrieve the symbol to send</span>
+        <span class="n">symbol_to_send</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbol</span>
+        <span class="n">symbol_preset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbolPreset</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbolPreset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, sending input symbol (&#39;</span><span class="si">{}</span><span class="s2">&#39;) with preset (&#39;</span><span class="si">{}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">symbol_to_send</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbolPreset</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, sending input symbol (&#39;</span><span class="si">{}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">symbol_to_send</span><span class="p">)))</span>
+
+        <span class="c1"># If a callback is defined, we can change or modify the selected symbol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] Test if a callback function is defined at transition &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">cbk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbk_modify_symbol</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] A callback function is defined at transition &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="p">(</span><span class="n">symbol_to_send</span><span class="p">,</span> <span class="n">symbol_preset</span><span class="p">)</span> <span class="o">=</span> <span class="n">cbk</span><span class="p">([</span><span class="n">symbol_to_send</span><span class="p">],</span>
+                                                   <span class="n">symbol_to_send</span><span class="p">,</span>
+                                                   <span class="n">symbol_preset</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">startState</span><span class="p">,</span>
+                                                   <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_sent_symbol</span><span class="p">,</span>
+                                                   <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_sent_message</span><span class="p">,</span>
+                                                   <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_sent_structure</span><span class="p">,</span>
+                                                   <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_received_symbol</span><span class="p">,</span>
+                                                   <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_received_message</span><span class="p">,</span>
+                                                   <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_received_structure</span><span class="p">,</span>
+                                                   <span class="n">actor</span><span class="o">.</span><span class="n">memory</span><span class="p">)</span>
+            <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, modifying input symbol to &#39;</span><span class="si">{}</span><span class="s2">&#39;, through callback&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">symbol_to_send</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] No callback function is defined at transition &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="c1"># Write a symbol on the channel</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symbol_to_send</span><span class="p">,</span> <span class="n">EmptySymbol</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] Nothing to write on abstraction layer (inputSymbol is an EmptySymbol)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Configure symbol preset</span>
+            <span class="n">tmp_preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol_to_send</span><span class="p">)</span>
+
+            <span class="c1"># Handle actor preset</span>
+            <span class="k">if</span> <span class="n">actor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">actor</span><span class="o">.</span><span class="n">presets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">tmp_actor_preset</span> <span class="ow">in</span> <span class="n">actor</span><span class="o">.</span><span class="n">presets</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">tmp_actor_preset</span><span class="o">.</span><span class="n">symbol</span> <span class="o">==</span> <span class="n">symbol_to_send</span><span class="p">:</span>
+                        <span class="n">tmp_preset</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmp_actor_preset</span><span class="p">)</span>
+                        <span class="k">break</span>
+
+            <span class="c1"># Handly symbol preset specified at current transition</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symbol_preset</span><span class="p">,</span> <span class="n">Preset</span><span class="p">):</span>
+                <span class="n">tmp_preset</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">symbol_preset</span><span class="p">)</span>
+
+            <span class="c1"># Handle fuzzing preset specified at actor level</span>
+            <span class="k">if</span> <span class="n">actor</span><span class="o">.</span><span class="n">fuzzing_presets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actor</span><span class="o">.</span><span class="n">fuzzing_states</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">startState</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">actor</span><span class="o">.</span><span class="n">fuzzing_states</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">tmp_fuzzing_preset</span> <span class="ow">in</span> <span class="n">actor</span><span class="o">.</span><span class="n">fuzzing_presets</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">tmp_fuzzing_preset</span><span class="o">.</span><span class="n">symbol</span> <span class="o">==</span> <span class="n">symbol_to_send</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] Fuzzing activated at transition&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">)))</span>
+                        <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, fuzzing activated&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                        <span class="n">tmp_preset</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmp_fuzzing_preset</span><span class="p">)</span>
+                        <span class="k">break</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data_len</span><span class="p">,</span> <span class="n">data_structure</span><span class="p">)</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">writeSymbol</span><span class="p">(</span><span class="n">symbol_to_send</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">tmp_preset</span><span class="p">,</span> <span class="n">cbk_action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cbk_action</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] In transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, timeout on abstractionLayer.writeSymbol()&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">raise</span>
+            <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] The underlying abstraction channel seems to be closed, so we stop the current actor&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">)))</span>
+                <span class="k">return</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">errorMessage</span> <span class="o">=</span> <span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] An error occured while executing the transition </span><span class="si">{}</span><span class="s2"> as an initiator: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">errorMessage</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">errorMessage</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputSymbols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputSymbols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputSymbols</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">EmptySymbol</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, receiving no symbol which was expected&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   Transition &#39;</span><span class="si">{}</span><span class="s2">&#39; lead to state &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endState</span><span class="p">)))</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">endState</span>
+
+        <span class="c1"># Waits for the reception of a symbol</span>
+        <span class="kn">from</span> <span class="nn">netzob.Simulator.Actor</span> <span class="kn">import</span> <span class="n">ActorStopException</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">received_symbol</span><span class="p">,</span> <span class="n">received_message</span><span class="p">,</span> <span class="n">received_structure</span><span class="p">)</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">readSymbol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsPreset</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ActorStopException</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] In transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, timeout on abstractionLayer.readSymbol()&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="n">actor</span><span class="o">.</span><span class="n">automata</span><span class="o">.</span><span class="n">cbk_read_symbol_timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">nextState</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">automata</span><span class="o">.</span><span class="n">cbk_read_symbol_timeout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startState</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+                <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, timeout in reception triggered a callback that lead to state &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">nextState</span><span class="p">)))</span>
+
+                <span class="k">return</span> <span class="n">nextState</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, timeout in reception of a symbol, leading to state &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startState</span><span class="p">)))</span>
+                <span class="c1"># Return the start state so that we accept a new message</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">startState</span>
+
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] The underlying abstraction channel seems to be closed, so we stop the current actor&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">)))</span>
+            <span class="k">return</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">errorMessage</span> <span class="o">=</span> <span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] An error occured while executing the transition </span><span class="si">{}</span><span class="s2"> as an initiator: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">errorMessage</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">errorMessage</span><span class="p">)</span>
+
+        <span class="c1"># Computes the next state following the received symbol</span>
+        <span class="k">if</span> <span class="n">received_symbol</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbols</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">received_symbol</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsPreset</span><span class="p">:</span>
+                <span class="n">output_preset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsPreset</span><span class="p">[</span><span class="n">received_symbol</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output_preset</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># Check symbol regarding its expected preset</span>
+            <span class="k">if</span> <span class="n">output_preset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   PAN&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">received_symbol</span><span class="o">.</span><span class="n">check_preset</span><span class="p">(</span><span class="n">received_structure</span><span class="p">,</span> <span class="n">output_preset</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Receive good symbol with good preset setting&quot;</span><span class="p">)</span>
+                    <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, receiving expected output symbol (&#39;</span><span class="si">{}</span><span class="s2">&#39;), with good preset settings (&#39;</span><span class="si">{}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">received_symbol</span><span class="p">),</span> <span class="n">output_preset</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Receive good symbol but with wrong preset setting&quot;</span><span class="p">)</span>
+                    <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, received expected symbol with wrong settings&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+                    <span class="c1"># We leave the automaton</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, receiving expected output symbol (&#39;</span><span class="si">{}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">received_symbol</span><span class="p">)))</span>
+
+            <span class="c1"># Set next state</span>
+            <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   Transition &#39;</span><span class="si">{}</span><span class="s2">&#39; lead to state &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endState</span><span class="p">)))</span>
+
+            <span class="k">for</span> <span class="n">cbk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbk_action</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] A callback function is defined at the end of transition &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                <span class="n">cbk</span><span class="p">(</span><span class="n">received_symbol</span><span class="p">,</span> <span class="n">received_message</span><span class="p">,</span> <span class="n">received_structure</span><span class="p">,</span> <span class="n">Operation</span><span class="o">.</span><span class="n">ABSTRACT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">startState</span><span class="p">,</span> <span class="n">actor</span><span class="o">.</span><span class="n">memory</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">endState</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] Received symbol &#39;</span><span class="si">{}</span><span class="s2">&#39; was unexpected.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">received_symbol</span><span class="p">)))</span>
+
+            <span class="c1"># Handle case where received symbol is unknown</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">received_symbol</span><span class="p">,</span> <span class="n">UnknownSymbol</span><span class="p">):</span>
+
+                <span class="k">if</span> <span class="n">actor</span><span class="o">.</span><span class="n">automata</span><span class="o">.</span><span class="n">cbk_read_unknown_symbol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">nextState</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">automata</span><span class="o">.</span><span class="n">cbk_read_unknown_symbol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startState</span><span class="p">,</span>
+                                                                       <span class="bp">self</span><span class="p">,</span>
+                                                                       <span class="n">received_message</span><span class="p">)</span>
+                    <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, receiving unknown symbol triggered a callback that lead to state &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">nextState</span><span class="p">)))</span>
+                    <span class="k">return</span> <span class="n">nextState</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, receiving unknown symbol, so we stay at state &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startState</span><span class="p">)))</span>
+
+                    <span class="c1"># We leave the automaton</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="c1"># Handle case where received symbol is known but unexpected</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">actor</span><span class="o">.</span><span class="n">automata</span><span class="o">.</span><span class="n">cbk_read_unexpected_symbol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">nextState</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">automata</span><span class="o">.</span><span class="n">cbk_read_unexpected_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                                                          <span class="bp">self</span><span class="p">,</span>
+                                                                          <span class="n">received_symbol</span><span class="p">,</span>
+                                                                          <span class="n">received_message</span><span class="p">,</span>
+                                                                          <span class="n">received_structure</span><span class="p">)</span>
+                    <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, receiving unexpected symbol triggered a callback that lead to state &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">nextState</span><span class="p">)))</span>
+                    <span class="k">return</span> <span class="n">nextState</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, receiving unexpected symbol &#39;</span><span class="si">{}</span><span class="s2">&#39;, so we stay at state &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">received_symbol</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startState</span><span class="p">)))</span>
+
+                    <span class="c1"># We leave the automaton</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">executeAsNotInitiator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the current transition as a not initiator.</span>
+
+<span class="sd">        :return: The end state of the transition if not exception is raised.</span>
+<span class="sd">        :rtype: :class:`~netzob.Model.Grammar.States.AbstractState.AbstractState`</span>
+
+<span class="sd">        Being not an initiator means the startState has already received the</span>
+<span class="sd">        input symbol which made it choose this transition.</span>
+<span class="sd">        We only have to pick an output symbol and emit it.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Pick the output symbol to emit</span>
+        <span class="p">(</span><span class="n">symbol_to_send</span><span class="p">,</span> <span class="n">symbol_preset</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pickOutputSymbol</span><span class="p">(</span><span class="n">actor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">symbol_to_send</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] No output symbol to send, we pick an EmptySymbol as output symbol&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">)))</span>
+            <span class="n">symbol_to_send</span> <span class="o">=</span> <span class="n">EmptySymbol</span><span class="p">()</span>
+
+        <span class="c1"># Sleep before emiting the symbol (if equired)</span>
+        <span class="k">if</span> <span class="n">symbol_to_send</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsReactionTime</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">delay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsReactionTime</span><span class="p">[</span><span class="n">symbol_to_send</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] Time to wait before sending the output symbol: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="n">delay</span><span class="p">))</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+
+        <span class="c1"># Configure symbol preset</span>
+        <span class="n">tmp_preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol_to_send</span><span class="p">)</span>
+
+        <span class="c1"># Handle actor preset</span>
+        <span class="k">if</span> <span class="n">actor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">actor</span><span class="o">.</span><span class="n">presets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">tmp_actor_preset</span> <span class="ow">in</span> <span class="n">actor</span><span class="o">.</span><span class="n">presets</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tmp_actor_preset</span><span class="o">.</span><span class="n">symbol</span> <span class="o">==</span> <span class="n">symbol_to_send</span><span class="p">:</span>
+                    <span class="n">tmp_preset</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmp_actor_preset</span><span class="p">)</span>
+                    <span class="k">break</span>
+
+        <span class="c1"># Handle symbol preset specified at current transition</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symbol_preset</span><span class="p">,</span> <span class="n">Preset</span><span class="p">):</span>
+            <span class="n">tmp_preset</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">symbol_preset</span><span class="p">)</span>
+
+        <span class="c1"># Handle fuzzing preset specified at actor level</span>
+        <span class="k">if</span> <span class="n">actor</span><span class="o">.</span><span class="n">fuzzing_presets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actor</span><span class="o">.</span><span class="n">fuzzing_states</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">startState</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">actor</span><span class="o">.</span><span class="n">fuzzing_states</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">tmp_fuzzing_preset</span> <span class="ow">in</span> <span class="n">actor</span><span class="o">.</span><span class="n">fuzzing_presets</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tmp_fuzzing_preset</span><span class="o">.</span><span class="n">symbol</span> <span class="o">==</span> <span class="n">symbol_to_send</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] Fuzzing activated at transition&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">)))</span>
+                    <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, fuzzing activated&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                    <span class="n">tmp_preset</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmp_fuzzing_preset</span><span class="p">)</span>
+                    <span class="k">break</span>
+
+        <span class="c1"># Emit the symbol</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data_len</span><span class="p">,</span> <span class="n">data_structure</span><span class="p">)</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">writeSymbol</span><span class="p">(</span><span class="n">symbol_to_send</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">tmp_preset</span><span class="p">,</span> <span class="n">cbk_action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cbk_action</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] In transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, timeout on abstractionLayer.writeSymbol()&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] The underlying abstraction channel seems to be closed, so we stop the current actor&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">)))</span>
+            <span class="k">return</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] An exception occured when sending a symbol from the abstraction layer: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="n">e</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># self._logger.debug(traceback.format_exc())</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+        <span class="c1"># Return the endState</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Update visit log</span>
+        <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   Transition &#39;</span><span class="si">{}</span><span class="s2">&#39; lead to state &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endState</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">endState</span>
+
+    <span class="k">def</span> <span class="nf">__pickOutputSymbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Picks the output symbol to emit following their probability.</span>
+
+<span class="sd">        It computes the probability of symbols which don&#39;t explicitly have one</span>
+<span class="sd">        by splitting the remaining available probability given by others.</span>
+
+<span class="sd">        :return: the output symbol following their probability.</span>
+<span class="sd">        :rtype: :class:`Symbol &lt;netzob.Model.Vocabulary.Symbol.Symbol&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Randomly select an output symbol</span>
+        <span class="n">outputSymbolsWithProbability</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">outputSymbol</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbols</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">outputSymbol</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsProbabilities</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">probability</span> <span class="o">=</span> <span class="mf">10.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">probability</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsProbabilities</span><span class="p">[</span><span class="n">outputSymbol</span><span class="p">]</span>
+            <span class="n">outputSymbolsWithProbability</span><span class="p">[</span><span class="n">outputSymbol</span><span class="p">]</span> <span class="o">=</span> <span class="n">probability</span>
+
+        <span class="c1"># pick the good output symbol following the probability</span>
+        <span class="n">distribution</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">outputSymbol</span>
+            <span class="k">for</span> <span class="n">inner</span> <span class="ow">in</span> <span class="p">[[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">outputSymbolsWithProbability</span><span class="o">.</span><span class="n">items</span><span class="p">())]</span>
+            <span class="k">for</span> <span class="n">outputSymbolsWithNoProbability</span> <span class="ow">in</span> <span class="n">inner</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Random selection of the symbol and its associated preset</span>
+        <span class="n">symbol_to_send</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsPreset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsPreset</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">symbol_to_send</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsPreset</span><span class="p">:</span>
+                <span class="n">symbol_preset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbolsPreset</span><span class="p">[</span><span class="n">symbol_to_send</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">symbol_preset</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">symbol_preset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, choosing an output symbol (&#39;</span><span class="si">{}</span><span class="s2">&#39;) with preset (&#39;</span><span class="si">{}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">symbol_to_send</span><span class="p">),</span> <span class="n">symbol_preset</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, choosing an output symbol (&#39;</span><span class="si">{}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">symbol_to_send</span><span class="p">)))</span>
+
+        <span class="c1"># Potentialy modify the selected symbol if a callback is defined</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] Test if a callback function is defined at transition &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">cbk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbk_modify_symbol</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] A callback function is executed at transition &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="p">(</span><span class="n">symbol_to_send</span><span class="p">,</span> <span class="n">symbol_preset</span><span class="p">)</span> <span class="o">=</span> <span class="n">cbk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputSymbols</span><span class="p">,</span>
+                                                  <span class="n">symbol_to_send</span><span class="p">,</span>
+                                                  <span class="n">symbol_preset</span><span class="p">,</span>
+                                                  <span class="bp">self</span><span class="o">.</span><span class="n">startState</span><span class="p">,</span>
+                                                  <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_sent_symbol</span><span class="p">,</span>
+                                                  <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_sent_message</span><span class="p">,</span>
+                                                  <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_sent_structure</span><span class="p">,</span>
+                                                  <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_received_symbol</span><span class="p">,</span>
+                                                  <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_received_message</span><span class="p">,</span>
+                                                  <span class="n">actor</span><span class="o">.</span><span class="n">abstractionLayer</span><span class="o">.</span><span class="n">last_received_structure</span><span class="p">,</span>
+                                                  <span class="n">actor</span><span class="o">.</span><span class="n">memory</span><span class="p">)</span>
+            <span class="n">actor</span><span class="o">.</span><span class="n">visit_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  [+]   During transition &#39;</span><span class="si">{}</span><span class="s2">&#39;, modifying output symbol to &#39;</span><span class="si">{}</span><span class="s2">&#39;, through callback&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">symbol_to_send</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[actor=&#39;</span><span class="si">{}</span><span class="s2">&#39;] No callback function is defined at transition &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">actor</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">symbol_to_send</span><span class="p">,</span> <span class="n">symbol_preset</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Transition.add_cbk_action"><a class="viewcode-back" href="../../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Transitions.Transition.Transition.add_cbk_action">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">add_cbk_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cbk_method</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function called after sending or receiving a symbol in the</span>
+<span class="sd">        transition. This function should be used to modify the memory context.</span>
+
+<span class="sd">        :param cbk_method: the callback function</span>
+<span class="sd">        :type cbk_method: :class:`Callable &lt;collections.abc.Callable&gt;`, required</span>
+<span class="sd">        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function</span>
+
+<span class="sd">        The callback function that can be used in the</span>
+<span class="sd">        :attr:`cbk_method` parameter has the following prototype:</span>
+
+<span class="sd">        .. function:: cbk_method(symbol, data, data_structure, operation, current_state, memory)</span>
+<span class="sd">           :noindex:</span>
+
+<span class="sd">           :param symbol:</span>
+<span class="sd">                  Corresponds to the last sent or received symbol.</span>
+<span class="sd">           :param data:</span>
+<span class="sd">                  Corresponds to the last sent or received data.</span>
+<span class="sd">           :param data_structure:</span>
+<span class="sd">                  Corresponds to the last sent or received data structure.</span>
+<span class="sd">           :param operation:</span>
+<span class="sd">                  Tells the way the symbol is manipulated: either</span>
+<span class="sd">                  :attr:`Operation.ABSTRACT` for symbols that are abstracted or</span>
+<span class="sd">                  :attr:`Operation.SPECIALIZE` for symbols that are specialized.</span>
+<span class="sd">           :param current_state:</span>
+<span class="sd">                  Current state in the automaton.</span>
+<span class="sd">           :param memory:</span>
+<span class="sd">                  Corresponds to the current memory context.</span>
+
+<span class="sd">           :type symbol: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`</span>
+<span class="sd">           :type data: :class:`bytes`</span>
+<span class="sd">           :type data_structure: :class:`OrderedDict`</span>
+<span class="sd">           :type operation: :class:`~netzob.Simulation.AbstractionLayer.Operation`</span>
+<span class="sd">           :type current_state: :class:`~netzob.Model.Grammar.States.State.State`</span>
+<span class="sd">           :type memory: :class:`Memory &lt;netzob.Model.Vocabulary.Domain.Variables.Memory.Memory&gt;`</span>
+
+<span class="sd">        The callback method is not expected to return something.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">cbk_method</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;cbk_method&#39; should be a callable function&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbk_action</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cbk_method</span><span class="p">)</span></div>
+
+    <span class="c1"># Properties</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inputSymbol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The input symbol is the symbol which triggers the execution</span>
+<span class="sd">        of the transition.</span>
+
+<span class="sd">        :type: :class:`Symbol &lt;netzob.Model.Vocabulary.Symbol.Symbol&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__inputSymbol</span>
+
+    <span class="nd">@inputSymbol</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">Symbol</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">inputSymbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputSymbol</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">inputSymbol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">inputSymbol</span> <span class="o">=</span> <span class="n">EmptySymbol</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__inputSymbol</span> <span class="o">=</span> <span class="n">inputSymbol</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inputSymbolPreset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__inputSymbolPreset</span>
+
+    <span class="nd">@inputSymbolPreset</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">inputSymbolPreset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputSymbolPreset</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__inputSymbolPreset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">inputSymbolPreset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputSymbol</span><span class="p">,</span> <span class="n">EmptySymbol</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__inputSymbolPreset</span> <span class="o">=</span> <span class="n">inputSymbolPreset</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">outputSymbols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output symbols that can be generated when</span>
+<span class="sd">        the current transition is executed.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; transition = Transition(State(), State())</span>
+<span class="sd">        &gt;&gt;&gt; transition.outputSymbols = None</span>
+<span class="sd">        &gt;&gt;&gt; len(transition.outputSymbols)</span>
+<span class="sd">        1</span>
+<span class="sd">        &gt;&gt;&gt; transition.outputSymbols.append(Symbol())</span>
+<span class="sd">        &gt;&gt;&gt; transition.outputSymbols.extend([Symbol(), Symbol()])</span>
+<span class="sd">        &gt;&gt;&gt; len(transition.outputSymbols)</span>
+<span class="sd">        4</span>
+<span class="sd">        &gt;&gt;&gt; transition.outputSymbols = []</span>
+<span class="sd">        &gt;&gt;&gt; len(transition.outputSymbols)</span>
+<span class="sd">        1</span>
+
+<span class="sd">        :type: list of :class:`Symbol &lt;netzob.Model.Vocabulary.Symbol.Symbol&gt;`</span>
+<span class="sd">        :raise: TypeError if not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbols</span>
+
+    <span class="nd">@outputSymbols</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">outputSymbols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputSymbols</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">outputSymbols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbols</span> <span class="o">=</span> <span class="p">[</span><span class="n">EmptySymbol</span><span class="p">()]</span>
+        <span class="k">elif</span> <span class="n">outputSymbols</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbols</span> <span class="o">=</span> <span class="p">[</span><span class="n">EmptySymbol</span><span class="p">()]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="n">outputSymbols</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;One of the output symbol is not a Symbol&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbols</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="n">outputSymbols</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">symbol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">outputSymbolsPreset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbolsPreset</span>
+
+    <span class="nd">@outputSymbolsPreset</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">outputSymbolsPreset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputSymbolsPreset</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbolsPreset</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">outputSymbolsPreset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">outputSymbol</span><span class="p">,</span> <span class="n">outputSymbolPreset</span> <span class="ow">in</span> <span class="n">outputSymbolsPreset</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputSymbol</span><span class="p">,</span> <span class="n">EmptySymbol</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbolsPreset</span><span class="p">[</span><span class="n">outputSymbol</span><span class="p">]</span> <span class="o">=</span> <span class="n">outputSymbolPreset</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inputSymbolReactionTime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__inputSymbolReactionTime</span>
+
+    <span class="nd">@inputSymbolReactionTime</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">inputSymbolReactionTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputSymbolReactionTime</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__inputSymbolReactionTime</span> <span class="o">=</span> <span class="n">inputSymbolReactionTime</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">outputSymbolsReactionTime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbolsReactionTime</span>
+
+    <span class="nd">@outputSymbolsReactionTime</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">outputSymbolsReactionTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputSymbolsReactionTime</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">outputSymbolsReactionTime</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">outputSymbolsReactionTime</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputSymbolsReactionTime</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;outputSymbolsReactionTime should be a dict of &quot;</span>
+                            <span class="s2">&quot;Symbol and float, not </span><span class="si">{}</span><span class="s2">&quot;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">outputSymbolsReactionTime</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbolsReactionTime</span> <span class="o">=</span> <span class="n">outputSymbolsReactionTime</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">outputSymbolsProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbolsProbabilities</span>
+
+    <span class="nd">@outputSymbolsProbabilities</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">outputSymbolsProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputSymbolsProbabilities</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">outputSymbolsProbabilities</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">outputSymbolsProbabilities</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputSymbolsProbabilities</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;outputSymbolsProbabilities should be a dict of &quot;</span>
+                            <span class="s2">&quot;Symbol and float, not </span><span class="si">{}</span><span class="s2">&quot;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">outputSymbolsProbabilities</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__outputSymbolsProbabilities</span> <span class="o">=</span> <span class="n">outputSymbolsProbabilities</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__description</span>
+
+    <span class="nd">@description</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__description</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">outputSymbol</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputSymbols</span><span class="p">:</span>
+                <span class="n">desc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">outputSymbol</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">inputSymbolName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputSymbol</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">inputSymbolName</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__description</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> (</span><span class="si">{}</span><span class="s2">;</span><span class="si">{}{}{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">inputSymbolName</span><span class="p">,</span> <span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">desc</span><span class="p">),</span> <span class="s2">&quot;}&quot;</span><span class="p">)</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inverseInitiator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__inverseInitiator</span>
+
+    <span class="nd">@inverseInitiator</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">inverseInitiator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inverseInitiator</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__inverseInitiator</span> <span class="o">=</span> <span class="n">inverseInitiator</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    # Test copy()</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s0 = State()</span>
+<span class="sd">    &gt;&gt;&gt; s1 = State()</span>
+<span class="sd">    &gt;&gt;&gt; t = Transition(s0, s1, name=&quot;transition&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; t.copy()</span>
+<span class="sd">    transition</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

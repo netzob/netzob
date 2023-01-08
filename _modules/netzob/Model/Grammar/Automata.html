@@ -1,0 +1,1696 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Grammar.Automata &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Grammar.Automata</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+----------------------------------------------</span>
+<span class="c1">#| Standard library imports</span>
+<span class="c1">#+----------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+
+<span class="c1">#+----------------------------------------------</span>
+<span class="c1">#| Related third party imports</span>
+<span class="c1">#+----------------------------------------------</span>
+
+<span class="c1">#+----------------------------------------------</span>
+<span class="c1">#| Local application imports</span>
+<span class="c1">#+----------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">public_api</span><span class="p">,</span> <span class="n">NetzobLogger</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Grammar.States.State</span> <span class="kn">import</span> <span class="n">State</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Grammar.Transitions.OpenChannelTransition</span> <span class="kn">import</span> <span class="n">OpenChannelTransition</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Grammar.Transitions.CloseChannelTransition</span> <span class="kn">import</span> <span class="n">CloseChannelTransition</span>
+<span class="kn">from</span> <span class="nn">netzob.Inference.Grammar.AutomataFactories.OneStateAutomataFactory</span> <span class="kn">import</span> <span class="n">OneStateAutomataFactory</span>
+<span class="kn">from</span> <span class="nn">netzob.Inference.Grammar.AutomataFactories.ChainedStatesAutomataFactory</span> <span class="kn">import</span> <span class="n">ChainedStatesAutomataFactory</span>
+<span class="kn">from</span> <span class="nn">netzob.Inference.Grammar.AutomataFactories.PTAAutomataFactory</span> <span class="kn">import</span> <span class="n">PTAAutomataFactory</span>
+
+
+<div class="viewcode-block" id="Automata"><a class="viewcode-back" href="../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Automata.Automata">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">Automata</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class which describes an automaton (i.e. state machine) of a</span>
+<span class="sd">    protocol. The underlying structure of the automaton is a Mealy</span>
+<span class="sd">    machine (cf. https://en.wikipedia.org/wiki/Mealy_machine).</span>
+
+<span class="sd">    The Automata constructor expects some parameters:</span>
+
+<span class="sd">    :param initialState: The initial state of the automaton.</span>
+<span class="sd">    :param symbols: The list of permitted symbols for every transition of the automaton.</span>
+<span class="sd">    :type initialState: :class:`State &lt;netzob.Model.Grammar.States.State.State&gt;`, required</span>
+<span class="sd">    :type symbols: a :class:`list` of :class:`Symbol &lt;netzob.Model.Vocabulary.Symbol.Symbol&gt;`, required</span>
+
+
+<span class="sd">    The Automata class provides the following public variables:</span>
+
+<span class="sd">    :var initialState: This parameter is the initial state of the automaton.</span>
+<span class="sd">    :var symbols: This parameter is the list of permitted symbols for every transition of the automaton.</span>
+<span class="sd">    :vartype initialState: :class:`State &lt;netzob.Model.Grammar.States.State.State&gt;`</span>
+<span class="sd">    :vartype symbols: a :class:`list` of :class:`Symbol &lt;netzob.Model.Vocabulary.Symbol.Symbol&gt;`</span>
+
+
+<span class="sd">    The following example shows the definition of an automaton with</span>
+<span class="sd">    three states `s0`, `s1`, `s2`, an opening transition between</span>
+<span class="sd">    states `s0` and `s1`, a standard transition within the same state</span>
+<span class="sd">    `s1` which accepts the input symbol `inputSymbol` and generate the</span>
+<span class="sd">    output symbol `outputSymbol`, and a closing transition between</span>
+<span class="sd">    states `s1` and `s2`.</span>
+
+<span class="sd">    &gt;&gt;&gt; # Creation of some states and transitions</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s0 = State(name=&quot;S0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s1 = State(name=&quot;S1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s2 = State(name=&quot;S2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; openTransition = OpenChannelTransition(startState=s0, endState=s1, name=&quot;Open&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; inputSymbol = Symbol()</span>
+<span class="sd">    &gt;&gt;&gt; outputSymbol = Symbol()</span>
+<span class="sd">    &gt;&gt;&gt; mainTransition = Transition(startState=s1, endState=s1, inputSymbol=inputSymbol, outputSymbols=[outputSymbol], name=&quot;hello&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; closeTransition = CloseChannelTransition(startState=s1, endState=s2, name=&quot;Close&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; # Creation of the automata</span>
+<span class="sd">    &gt;&gt;&gt; automata = Automata(s0, [inputSymbol, outputSymbol])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">State</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initialState</span><span class="p">,</span> <span class="n">symbols</span><span class="p">):</span>
+
+        <span class="c1"># Initialize public variables from parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialState</span> <span class="o">=</span> <span class="n">initialState</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbols</span> <span class="o">=</span> <span class="n">symbols</span>  <span class="c1"># A list of symbols accepted by the automaton</span>
+
+        <span class="c1"># Initialize local variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbk_read_symbol_timeout</span> <span class="o">=</span> <span class="kc">None</span>     <span class="c1"># list of callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbk_read_unexpected_symbol</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># list of callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbk_read_unknown_symbol</span> <span class="o">=</span> <span class="kc">None</span>     <span class="c1"># list of callbacks</span>
+
+<div class="viewcode-block" id="Automata.copy"><a class="viewcode-back" href="../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Automata.Automata.copy">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Copy the current automaton.</span>
+
+<span class="sd">        This method copies the states and transitions of the</span>
+<span class="sd">        automaton, but keeps references to the original callbacks and</span>
+<span class="sd">        symbols.</span>
+
+<span class="sd">        :return: A new object of the same type.</span>
+<span class="sd">        :rtype: :class:`Automata &lt;netzob.Model.Grammar.Automata.Automata&gt;`</span>
+
+<span class="sd">        &gt;&gt;&gt; # Creation of some states and transitions</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; s0 = State(name=&quot;S0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s1 = State(name=&quot;S1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s2 = State(name=&quot;S2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; openTransition = OpenChannelTransition(startState=s0, endState=s1, name=&quot;open transition&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; inputSymbol = Symbol()</span>
+<span class="sd">        &gt;&gt;&gt; outputSymbol = Symbol()</span>
+<span class="sd">        &gt;&gt;&gt; mainTransition = Transition(startState=s1, endState=s1, inputSymbol=inputSymbol, outputSymbols=[outputSymbol], name=&quot;main transition&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; closeTransition = CloseChannelTransition(startState=s1, endState=s2, name=&quot;close transition&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; # Creation of the automata</span>
+<span class="sd">        &gt;&gt;&gt; automata = Automata(s0, [inputSymbol, outputSymbol])</span>
+<span class="sd">        &gt;&gt;&gt; automata_bis = automata.copy()</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">map_new_states</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Store mapping [original state -&gt; cloned state]</span>
+
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">getStates</span><span class="p">():</span>
+            <span class="n">new_transitions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">transition</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">transitions</span><span class="p">:</span>
+
+                <span class="n">new_transition</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">new_transitions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_transition</span><span class="p">)</span>
+
+                <span class="c1"># Handle startState</span>
+                <span class="k">if</span> <span class="n">transition</span><span class="o">.</span><span class="n">startState</span> <span class="ow">in</span> <span class="n">map_new_states</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">new_transition</span><span class="o">.</span><span class="n">_startState</span> <span class="o">=</span> <span class="n">map_new_states</span><span class="p">[</span><span class="n">transition</span><span class="o">.</span><span class="n">startState</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_transition</span><span class="o">.</span><span class="n">_startState</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">startState</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    <span class="n">map_new_states</span><span class="p">[</span><span class="n">transition</span><span class="o">.</span><span class="n">startState</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_transition</span><span class="o">.</span><span class="n">startState</span>
+
+                <span class="c1"># Handle endState</span>
+                <span class="k">if</span> <span class="n">transition</span><span class="o">.</span><span class="n">endState</span> <span class="ow">in</span> <span class="n">map_new_states</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">new_transition</span><span class="o">.</span><span class="n">endState</span> <span class="o">=</span> <span class="n">map_new_states</span><span class="p">[</span><span class="n">transition</span><span class="o">.</span><span class="n">endState</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_transition</span><span class="o">.</span><span class="n">endState</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">endState</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    <span class="n">map_new_states</span><span class="p">[</span><span class="n">transition</span><span class="o">.</span><span class="n">endState</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_transition</span><span class="o">.</span><span class="n">endState</span>
+
+            <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">map_new_states</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">map_new_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">transitions</span> <span class="o">=</span> <span class="n">new_transitions</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">map_new_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">map_new_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">transitions</span> <span class="o">=</span> <span class="n">new_transitions</span>
+
+        <span class="n">automata</span> <span class="o">=</span> <span class="n">Automata</span><span class="p">(</span><span class="n">map_new_states</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">initialState</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbols</span><span class="p">)</span>
+        <span class="n">automata</span><span class="o">.</span><span class="n">cbk_read_symbol_timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbk_read_symbol_timeout</span>
+        <span class="n">automata</span><span class="o">.</span><span class="n">cbk_read_unexpected_symbol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbk_read_unexpected_symbol</span>
+        <span class="n">automata</span><span class="o">.</span><span class="n">cbk_read_unknown_symbol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbk_read_unknown_symbol</span>
+
+        <span class="k">return</span> <span class="n">automata</span></div>
+
+<div class="viewcode-block" id="Automata.generateASCII"><a class="viewcode-back" href="../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Automata.Automata.generateASCII">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">generateASCII</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the ASCII representation of the automaton.</span>
+
+<span class="sd">        :return: A string containing an ASCII representation of the automaton.</span>
+<span class="sd">        :rtype: :class:`str`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generateDotCode</span><span class="p">()))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">binary_path</span> <span class="o">=</span> <span class="s1">&#39;/usr/bin/graph-easy&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">binary_path</span><span class="p">):</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;Cannot generate ASCII graph as a dependency is missing: &#39;graph-easy&#39; (see libgraph-easy-perl package)&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">error_message</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">binary_path</span><span class="p">,</span> <span class="s1">&#39;--input&#39;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;--as_ascii&#39;</span><span class="p">]</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Automata.generateDotCode"><a class="viewcode-back" href="../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Automata.Automata.generateDotCode">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">generateDotCode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates the dot code representing the automaton.</span>
+
+<span class="sd">        :return: A string containing a dot code representation of the automaton.</span>
+<span class="sd">        :rtype: :class:`str`</span>
+
+<span class="sd">        &gt;&gt;&gt; # Create some states and transitions</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; s0 = State(name=&quot;S0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s1 = State(name=&quot;S1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s2 = State(name=&quot;S2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; openTransition = OpenChannelTransition(startState=s0, endState=s1, name=&quot;Open&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; inputSymbol = Symbol()</span>
+<span class="sd">        &gt;&gt;&gt; outputSymbol = Symbol()</span>
+<span class="sd">        &gt;&gt;&gt; mainTransition = Transition(startState=s1, endState=s1, inputSymbol=inputSymbol, outputSymbols=[outputSymbol], name=&quot;hello&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; closeTransition = CloseChannelTransition(startState=s1, endState=s2, name=&quot;Close&quot;)</span>
+
+<span class="sd">        &gt;&gt;&gt; # Create the automaton</span>
+<span class="sd">        &gt;&gt;&gt; automata = Automata(s0, [inputSymbol, outputSymbol])</span>
+<span class="sd">        &gt;&gt;&gt; print(automata.generateDotCode()) #doctest: +ELLIPSIS</span>
+<span class="sd">        digraph G {</span>
+<span class="sd">        &quot;S0&quot; [shape=doubleoctagon, label=&quot;S0&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;S1&quot; [shape=ellipse, label=&quot;S1&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;S2&quot; [shape=ellipse, label=&quot;S2&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;S0&quot; -&gt; &quot;S1&quot; [fontsize=5, label=&quot;OpenChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;S1&quot; -&gt; &quot;S1&quot; [fontsize=5, label=&quot;hello (Symbol;{Symbol})&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;S1&quot; -&gt; &quot;S2&quot; [fontsize=5, label=&quot;CloseChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        }</span>
+
+<span class="sd">        :return: a string containing the dot code of the automata.</span>
+<span class="sd">        :rtype: a :class:`list`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dotCode</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dotCode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;digraph G {&quot;</span><span class="p">)</span>
+
+        <span class="c1"># First we include all the states declared in the automata</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getStates</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span>
+
+            <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialState</span><span class="p">:</span>
+                <span class="n">shape</span> <span class="o">=</span> <span class="s2">&quot;doubleoctagon&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">shape</span> <span class="o">=</span> <span class="s2">&quot;ellipse&quot;</span>
+
+            <span class="n">descr</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="k">for</span> <span class="n">cbk</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">cbk_modify_transition</span><span class="p">:</span>
+                <span class="n">descr</span> <span class="o">+=</span> <span class="s2">&quot; [CBK modify transition] &quot;</span>
+
+            <span class="n">dotCode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="s1">&#39;&quot;</span><span class="si">{}</span><span class="s1">&quot; [shape=</span><span class="si">{}</span><span class="s1">, label=&quot;</span><span class="si">{}</span><span class="s1">&quot;, style=filled, fillcolor=</span><span class="si">{}</span><span class="s1">, URL=&quot;</span><span class="si">{}</span><span class="s1">&quot;];&#39;</span><span class="o">.</span>
+                <span class="nb">format</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">descr</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="n">state</span><span class="p">)))</span>
+
+        <span class="k">for</span> <span class="n">inputState</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">transition</span> <span class="ow">in</span> <span class="n">inputState</span><span class="o">.</span><span class="n">transitions</span><span class="p">:</span>
+                <span class="n">outputState</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">endState</span>
+
+                <span class="n">descr</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">description</span>
+
+                <span class="k">for</span> <span class="n">cbk</span> <span class="ow">in</span> <span class="n">transition</span><span class="o">.</span><span class="n">cbk_modify_symbol</span><span class="p">:</span>
+                    <span class="n">descr</span> <span class="o">+=</span> <span class="s2">&quot; [CBK modify symbol] &quot;</span>
+
+                <span class="n">dotCode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s1">&#39;&quot;</span><span class="si">{}</span><span class="s1">&quot; -&gt; &quot;</span><span class="si">{}</span><span class="s1">&quot; [fontsize=5, label=&quot;</span><span class="si">{}</span><span class="s1">&quot;, URL=&quot;</span><span class="si">{}</span><span class="s1">&quot;];&#39;</span><span class="o">.</span>
+
+                    <span class="nb">format</span><span class="p">(</span><span class="n">inputState</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">outputState</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                           <span class="n">descr</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="n">transition</span><span class="p">)))</span>
+
+        <span class="n">dotCode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dotCode</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Automata.getStates"><a class="viewcode-back" href="../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Automata.Automata.getStates">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">getStates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_states</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Visits the automata to discover all the available states.</span>
+
+<span class="sd">        :param main_states: Specify that all states except the initial state and the closing states are returned. Default value is ``False``, meaning that all states are returned.</span>
+<span class="sd">        :type main_states: :class:`bool`, optional</span>
+<span class="sd">        :return: A list containing all the automaton states.</span>
+<span class="sd">        :rtype: a :class:`list` of :class:`State &lt;netzob.Model.Grammar.States.State.State&gt;`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; # Create some states and transitions</span>
+<span class="sd">        &gt;&gt;&gt; s0 = State(name=&quot;State 0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s1 = State(name=&quot;State 1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s2 = State(name=&quot;State 2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; openTransition = OpenChannelTransition(startState=s0, endState=s1, name=&quot;Open&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; inputSymbol = Symbol()</span>
+<span class="sd">        &gt;&gt;&gt; outputSymbol = Symbol()</span>
+<span class="sd">        &gt;&gt;&gt; mainTransition = Transition(startState=s1, endState=s1, inputSymbol=inputSymbol, outputSymbols=[outputSymbol], name=&quot;hello&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; closeTransition = CloseChannelTransition(startState=s1, endState=s2, name=&quot;Close&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; # Create the automata</span>
+<span class="sd">        &gt;&gt;&gt; automata = Automata(s0, [inputSymbol, outputSymbol])</span>
+<span class="sd">        &gt;&gt;&gt; for state in automata.getStates():</span>
+<span class="sd">        ...    print(state)</span>
+<span class="sd">        State 0</span>
+<span class="sd">        State 1</span>
+<span class="sd">        State 2</span>
+
+<span class="sd">        &gt;&gt;&gt; for state in automata.getStates(main_states=True):</span>
+<span class="sd">        ...    print(state)</span>
+<span class="sd">        State 1</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">states</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">toAnalyze</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">toAnalyze</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initialState</span><span class="p">)</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">toAnalyze</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">currentState</span> <span class="o">=</span> <span class="n">toAnalyze</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">currentState</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">tmpState</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">tmpState</span><span class="p">)</span> <span class="o">==</span> <span class="nb">id</span><span class="p">(</span><span class="n">currentState</span><span class="p">):</span>
+                        <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">transition</span> <span class="ow">in</span> <span class="n">currentState</span><span class="o">.</span><span class="n">transitions</span><span class="p">:</span>
+                        <span class="n">outputState</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">endState</span>
+                        <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">for</span> <span class="n">tmpState</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">tmpState</span><span class="p">)</span> <span class="o">==</span> <span class="nb">id</span><span class="p">(</span><span class="n">outputState</span><span class="p">):</span>
+                                <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="k">break</span>
+                        <span class="k">for</span> <span class="n">tmpState</span> <span class="ow">in</span> <span class="n">toAnalyze</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">tmpState</span><span class="p">)</span> <span class="o">==</span> <span class="nb">id</span><span class="p">(</span><span class="n">outputState</span><span class="p">):</span>
+                                <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="k">break</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                            <span class="n">toAnalyze</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputState</span><span class="p">)</span>
+                    <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">currentState</span><span class="p">)</span>
+
+        <span class="n">states_to_drop</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">main_states</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">transitions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">transitions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">OpenChannelTransition</span><span class="p">):</span>
+                    <span class="n">states_to_drop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">transitions</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">CloseChannelTransition</span><span class="p">):</span>
+                            <span class="n">states_to_drop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">endState</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states_to_drop</span><span class="p">:</span>
+            <span class="n">states</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">states</span></div>
+
+<div class="viewcode-block" id="Automata.getState"><a class="viewcode-back" href="../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Automata.Automata.getState">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">getState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the State object of the given name.</span>
+
+<span class="sd">        :param name: The name of the State object</span>
+<span class="sd">        :type name: :class:`str`, required</span>
+<span class="sd">        :return: The State object with stateName as name.</span>
+<span class="sd">        :rtype: :class:`State &lt;netzob.Model.Grammar.States.State.State&gt;`</span>
+<span class="sd">        :raise: :class:`KeyError` if the name is not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getStates</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">state</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;State with name &#39;</span><span class="si">{}</span><span class="s2">&#39; does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Automata.getTransitions"><a class="viewcode-back" href="../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Automata.Automata.getTransitions">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">getTransitions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all the transitions of the automaton.</span>
+
+<span class="sd">        :return: A list containing all the automaton transitions.</span>
+<span class="sd">        :rtype: a :class:`list` of :class:`Transition &lt;netzob.Model.Grammar.States.AbstractTransition.AbstractTransition&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getStates</span><span class="p">()</span>
+        <span class="n">transitions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">transition</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">transitions</span><span class="p">:</span>
+                <span class="n">transitions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">transition</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">transitions</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Automata.getTransition"><a class="viewcode-back" href="../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Automata.Automata.getTransition">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">getTransition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Transition object of the given name.</span>
+
+<span class="sd">        :param name: The name of the Transition object</span>
+<span class="sd">        :type name: :class:`str`, required</span>
+<span class="sd">        :return: The Transition object.</span>
+<span class="sd">        :rtype: :class:`Transition &lt;netzob.Model.Grammar.Transitions.Transition.Transition&gt;`</span>
+<span class="sd">        :raise: :class:`KeyError` if the name is not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">transitions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getTransitions</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">transition</span> <span class="ow">in</span> <span class="n">transitions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">transition</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">transition</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Transition with name &#39;</span><span class="si">{}</span><span class="s2">&#39; does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">generateChainedStatesAutomata</span><span class="p">(</span><span class="n">abstractSession</span><span class="p">,</span> <span class="n">symbolList</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate an automata that contains as many states and</span>
+<span class="sd">        transitions as the number of request-response couples in the</span>
+<span class="sd">        abstract session. This automata has thus the shape of a uniq</span>
+<span class="sd">        chain.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; symbolSYN = Symbol([Field(String(&quot;SYN&quot;))], name=&quot;Symbol_SYN&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolSYNACK = Symbol([Field(String(&quot;SYN/ACK&quot;))], name=&quot;Symbol_SYNACK&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolACK = Symbol([Field(String(&quot;ACK&quot;))], name=&quot;Symbol_ACK&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolPUSH = Symbol([Field(String(&quot;PUSH&quot;))], name=&quot;Symbol_PUSH&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolList = [symbolSYN, symbolSYNACK, symbolACK, symbolPUSH]</span>
+
+<span class="sd">        &gt;&gt;&gt; msg1 = RawMessage(&quot;SYN&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg2 = RawMessage(&quot;SYN/ACK&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg3 = RawMessage(&quot;ACK&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg4 = RawMessage(&quot;PUSH&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; session = Session([msg1, msg2, msg3, msg4])</span>
+<span class="sd">        &gt;&gt;&gt; abstractSession = session.abstract(symbolList)</span>
+
+<span class="sd">        &gt;&gt;&gt; automata = Automata.generateChainedStatesAutomata(abstractSession, symbolList)</span>
+<span class="sd">        &gt;&gt;&gt; dotcode = automata.generateDotCode()</span>
+<span class="sd">        &gt;&gt;&gt; len(dotcode)</span>
+<span class="sd">        926</span>
+<span class="sd">        &gt;&gt;&gt; print(dotcode) #doctest: +ELLIPSIS</span>
+<span class="sd">        digraph G {</span>
+<span class="sd">        &quot;Start state&quot; [shape=doubleoctagon, label=&quot;Start state&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 1&quot; [shape=ellipse, label=&quot;State 1&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 2&quot; [shape=ellipse, label=&quot;State 2&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 3&quot; [shape=ellipse, label=&quot;State 3&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;End state&quot; [shape=ellipse, label=&quot;End state&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;Start state&quot; -&gt; &quot;State 1&quot; [fontsize=5, label=&quot;OpenChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 1&quot; -&gt; &quot;State 2&quot; [fontsize=5, label=&quot;Transition (Symbol_SYN;{Symbol_SYNACK})&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 2&quot; -&gt; &quot;State 3&quot; [fontsize=5, label=&quot;Transition (Symbol_ACK;{Symbol_PUSH})&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 3&quot; -&gt; &quot;End state&quot; [fontsize=5, label=&quot;CloseChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        }</span>
+
+<span class="sd">        :return: an automata with one sequence of chained states.</span>
+<span class="sd">        :rtype: a :class:`Automata &lt;netzob.Model.Grammar.Automata.Automata&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ChainedStatesAutomataFactory</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">abstractSession</span><span class="p">,</span>
+                                                     <span class="n">symbolList</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">generateOneStateAutomata</span><span class="p">(</span><span class="n">abstractSession</span><span class="p">,</span> <span class="n">symbolList</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate an automata that, according to an abstract</span>
+<span class="sd">        session, contains a main state where each request-response</span>
+<span class="sd">        couples are permitted.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; symbolSYN = Symbol([Field(String(&quot;SYN&quot;))], name=&quot;Symbol_SYN&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolSYNACK = Symbol([Field(String(&quot;SYN/ACK&quot;))], name=&quot;Symbol_SYNACK&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolACK = Symbol([Field(String(&quot;ACK&quot;))], name=&quot;Symbol_ACK&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolPUSH = Symbol([Field(String(&quot;PUSH&quot;))], name=&quot;Symbol_PUSH&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolList = [symbolSYN, symbolSYNACK, symbolACK, symbolPUSH]</span>
+
+<span class="sd">        &gt;&gt;&gt; msg1 = RawMessage(&quot;SYN&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg2 = RawMessage(&quot;SYN/ACK&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg3 = RawMessage(&quot;ACK&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg4 = RawMessage(&quot;PUSH&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; session = Session([msg1, msg2, msg3, msg4])</span>
+<span class="sd">        &gt;&gt;&gt; abstractSession = session.abstract(symbolList)</span>
+
+<span class="sd">        &gt;&gt;&gt; automata = Automata.generateOneStateAutomata(abstractSession, symbolList)</span>
+<span class="sd">        &gt;&gt;&gt; dotcode = automata.generateDotCode()</span>
+<span class="sd">        &gt;&gt;&gt; len(dotcode)</span>
+<span class="sd">        754</span>
+<span class="sd">        &gt;&gt;&gt; print(dotcode) #doctest: +ELLIPSIS</span>
+<span class="sd">        digraph G {</span>
+<span class="sd">        &quot;Start state&quot; [shape=doubleoctagon, label=&quot;Start state&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;Main state&quot; [shape=ellipse, label=&quot;Main state&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;End state&quot; [shape=ellipse, label=&quot;End state&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;Start state&quot; -&gt; &quot;Main state&quot; [fontsize=5, label=&quot;OpenChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;Main state&quot; -&gt; &quot;Main state&quot; [fontsize=5, label=&quot;Transition (Symbol_SYN;{Symbol_SYNACK})&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;Main state&quot; -&gt; &quot;Main state&quot; [fontsize=5, label=&quot;Transition (Symbol_ACK;{Symbol_PUSH})&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;Main state&quot; -&gt; &quot;End state&quot; [fontsize=5, label=&quot;CloseChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        }</span>
+
+<span class="sd">        :return: an automata with one main state.</span>
+<span class="sd">        :rtype: a :class:`Automata &lt;netzob.Model.Grammar.Automata.Automata&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OneStateAutomataFactory</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">abstractSession</span><span class="p">,</span> <span class="n">symbolList</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">generatePTAAutomata</span><span class="p">(</span><span class="n">abstractSessions</span><span class="p">,</span> <span class="n">symbolList</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate an automata according to the observed sequence of messages/symbols</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; symbolSYN = Symbol([Field(String(&quot;SYN&quot;))], name=&quot;Symbol_SYN&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolSYNACK = Symbol([Field(String(&quot;SYN/ACK&quot;))], name=&quot;Symbol_SYNACK&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolACK = Symbol([Field(String(&quot;ACK&quot;))], name=&quot;Symbol_ACK&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolPUSH = Symbol([Field(String(&quot;PUSH&quot;))], name=&quot;Symbol_PUSH&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbolList = [symbolSYN, symbolSYNACK, symbolACK, symbolPUSH]</span>
+
+<span class="sd">        &gt;&gt;&gt; msg1 = RawMessage(&quot;SYN&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg2 = RawMessage(&quot;SYN/ACK&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg3 = RawMessage(&quot;ACK&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg4 = RawMessage(&quot;PUSH&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; session = Session([msg1, msg2, msg3, msg4])</span>
+<span class="sd">        &gt;&gt;&gt; abstractSession1 = session.abstract(symbolList)</span>
+
+<span class="sd">        &gt;&gt;&gt; msg1 = RawMessage(&quot;SYN&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg2 = RawMessage(&quot;SYN/ACK&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg3 = RawMessage(&quot;SYN&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg4 = RawMessage(&quot;PUSH&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg5 = RawMessage(&quot;SYN&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg6 = RawMessage(&quot;PUSH&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; session = Session([msg1, msg2, msg3, msg4, msg5, msg6])</span>
+<span class="sd">        &gt;&gt;&gt; abstractSession2 = session.abstract(symbolList)</span>
+
+<span class="sd">        &gt;&gt;&gt; msg1 = RawMessage(&quot;SYN&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg2 = RawMessage(&quot;SYN/ACK&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg3 = RawMessage(&quot;ACK&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg4 = RawMessage(&quot;PUSH&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg5 = RawMessage(&quot;SYN&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg6 = RawMessage(&quot;PUSH&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg7 = RawMessage(&quot;SYN&quot;, source=&quot;A&quot;, destination=&quot;B&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; msg8 = RawMessage(&quot;PUSH&quot;, source=&quot;B&quot;, destination=&quot;A&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; session = Session([msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8])</span>
+<span class="sd">        &gt;&gt;&gt; abstractSession3 = session.abstract(symbolList)</span>
+
+<span class="sd">        &gt;&gt;&gt; abstractSessions = [abstractSession1, abstractSession2, abstractSession3]</span>
+
+<span class="sd">        &gt;&gt;&gt; automata = Automata.generatePTAAutomata(abstractSessions, symbolList)</span>
+<span class="sd">        &gt;&gt;&gt; dotcode = automata.generateDotCode()</span>
+<span class="sd">        &gt;&gt;&gt; print(dotcode) #doctest: +ELLIPSIS</span>
+<span class="sd">        digraph G {</span>
+<span class="sd">        &quot;Start state&quot; [shape=doubleoctagon, label=&quot;Start state&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 0&quot; [shape=ellipse, label=&quot;State 0&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 1&quot; [shape=ellipse, label=&quot;State 1&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 4&quot; [shape=ellipse, label=&quot;State 4&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 5&quot; [shape=ellipse, label=&quot;State 5&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;End state 6&quot; [shape=ellipse, label=&quot;End state 6&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 2&quot; [shape=ellipse, label=&quot;State 2&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 7&quot; [shape=ellipse, label=&quot;State 7&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 8&quot; [shape=ellipse, label=&quot;State 8&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;End state 9&quot; [shape=ellipse, label=&quot;End state 9&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;End state 3&quot; [shape=ellipse, label=&quot;End state 3&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;Start state&quot; -&gt; &quot;State 0&quot; [fontsize=5, label=&quot;OpenChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 0&quot; -&gt; &quot;State 1&quot; [fontsize=5, label=&quot;Transition (Symbol_SYN;{Symbol_SYNACK})&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 1&quot; -&gt; &quot;State 2&quot; [fontsize=5, label=&quot;Transition (Symbol_ACK;{Symbol_PUSH})&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 1&quot; -&gt; &quot;State 4&quot; [fontsize=5, label=&quot;Transition (Symbol_SYN;{Symbol_PUSH})&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 4&quot; -&gt; &quot;State 5&quot; [fontsize=5, label=&quot;Transition (Symbol_SYN;{Symbol_PUSH})&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 5&quot; -&gt; &quot;End state 6&quot; [fontsize=5, label=&quot;CloseChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 2&quot; -&gt; &quot;End state 3&quot; [fontsize=5, label=&quot;CloseChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 2&quot; -&gt; &quot;State 7&quot; [fontsize=5, label=&quot;Transition (Symbol_SYN;{Symbol_PUSH})&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 7&quot; -&gt; &quot;State 8&quot; [fontsize=5, label=&quot;Transition (Symbol_SYN;{Symbol_PUSH})&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        &quot;State 8&quot; -&gt; &quot;End state 9&quot; [fontsize=5, label=&quot;CloseChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="sd">        }</span>
+
+<span class="sd">        :return: an automata based on a PTA (Prefix Tree Acceptator).</span>
+<span class="sd">        :rtype: a :class:`Automata &lt;netzob.Model.Grammar.Automata.Automata&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">PTAAutomataFactory</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">abstractSessions</span><span class="p">,</span> <span class="n">symbolList</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Automata.set_cbk_read_symbol_timeout"><a class="viewcode-back" href="../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Automata.Automata.set_cbk_read_symbol_timeout">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">set_cbk_read_symbol_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cbk_method</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function called to handle cases where a timeout appears when</span>
+<span class="sd">        waiting for a symbol. In a non initiator context, this symbol would</span>
+<span class="sd">        correspond to the input symbol that should trigger a</span>
+<span class="sd">        transition. In an initiator context, this symbol would correspond to an</span>
+<span class="sd">        output symbol that is expected according to the current</span>
+<span class="sd">        transition.</span>
+
+<span class="sd">        :param cbk_method: A function used to handle the selection of the next</span>
+<span class="sd">                           state when no symbol is received after the timeout</span>
+<span class="sd">                           has expired.</span>
+<span class="sd">        :type cbk_method: :class:`Callable &lt;collections.abc.Callable&gt;`, required</span>
+
+<span class="sd">        :param states: A list of states on which the callback function should apply.</span>
+<span class="sd">                       If no states are specified, the callback function is</span>
+<span class="sd">                       applied on all states of the automaton.</span>
+<span class="sd">        :type states: ~typing.List[~netzob.Model.Grammar.States.State.State], optional</span>
+
+<span class="sd">        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function</span>
+
+<span class="sd">        The callback function that can be used in the</span>
+<span class="sd">        :attr:`cbk_method` parameter has the following prototype:</span>
+
+<span class="sd">        .. function:: cbk_method(current_state, current_transition)</span>
+<span class="sd">           :noindex:</span>
+
+<span class="sd">           :param current_state:</span>
+<span class="sd">             Corresponds to the current state in the automaton.</span>
+<span class="sd">             It is expected that the current state cannot be ``None``, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).</span>
+<span class="sd">           :type current_state: ~netzob.Model.Grammar.States.State.State</span>
+
+<span class="sd">           :param current_transition:</span>
+<span class="sd">             Corresponds to the current transition in the automaton.</span>
+<span class="sd">             It is expected that the current transition may be ``None``, especially</span>
+<span class="sd">             in a non initiator context, where no transition has been initiated.</span>
+<span class="sd">           :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition</span>
+
+<span class="sd">           :return: The callback function should return the next</span>
+<span class="sd">                    state.  For example, to stay at the same state,</span>
+<span class="sd">                    the callback function would have to return the</span>
+<span class="sd">                    :attr:`current_state` value.</span>
+<span class="sd">           :rtype: :class:`~netzob.Model.Grammar.States.State.State`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">cbk_method</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;cbk_method&#39; should be a callable function&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbk_read_symbol_timeout</span> <span class="o">=</span> <span class="n">cbk_method</span></div>
+
+<div class="viewcode-block" id="Automata.set_cbk_read_unexpected_symbol"><a class="viewcode-back" href="../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Automata.Automata.set_cbk_read_unexpected_symbol">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">set_cbk_read_unexpected_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cbk_method</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function called to handle cases where a symbol is received but not</span>
+<span class="sd">        expected. In a non initiator context, this symbol would not match the input</span>
+<span class="sd">        symbol of the available transitions. In an initiator context, this</span>
+<span class="sd">        symbol would not match the expected output symbols of the current</span>
+<span class="sd">        transition.</span>
+
+<span class="sd">        The method expects some parameters:</span>
+
+<span class="sd">        :param cbk_method: A function used to handle the selection of the next</span>
+<span class="sd">                           state when a unexpected symbol is received.</span>
+<span class="sd">        :type cbk_method: :class:`Callable &lt;collections.abc.Callable&gt;`, required</span>
+
+<span class="sd">        :param states: A list of states on which the callback function should apply.</span>
+<span class="sd">                       If no states are specified, the callback function is</span>
+<span class="sd">                       applied on all states of the automaton.</span>
+<span class="sd">        :type states: ~typing.List[~netzob.Model.Grammar.States.State.State], optional</span>
+
+<span class="sd">        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function</span>
+
+<span class="sd">        The callback function that can be used in the</span>
+<span class="sd">        :attr:`cbk_method` parameter has the following prototype:</span>
+
+<span class="sd">        .. function:: cbk_method(current_state, current_transition,\</span>
+<span class="sd">                                 received_symbol, received_message, received_structure)</span>
+<span class="sd">           :noindex:</span>
+
+<span class="sd">           :param current_state:</span>
+<span class="sd">             Corresponds to the current state in the automaton.</span>
+<span class="sd">             It is expected that the current state cannot be ``None``, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).</span>
+<span class="sd">           :type current_state: ~netzob.Model.Grammar.States.State.State</span>
+
+<span class="sd">           :param current_transition:</span>
+<span class="sd">             Corresponds to the current transition in the automaton.</span>
+<span class="sd">             It is expected that the current transition may be ``None``, especially</span>
+<span class="sd">             in a non initiator context, where no transition has been initiated.</span>
+<span class="sd">           :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition</span>
+
+<span class="sd">           :param received_symbol:</span>
+<span class="sd">             Corresponds to the received symbol.</span>
+<span class="sd">           :type received_symbol: ~netzob.Model.Vocabulary.Symbol.Symbol</span>
+
+<span class="sd">           :param received_message:</span>
+<span class="sd">             Corresponds to the received raw message.</span>
+<span class="sd">           :type received_message: :class:`bytes`</span>
+
+<span class="sd">           :param received_structure:</span>
+<span class="sd">             Corresponds to the received message structure.</span>
+<span class="sd">           :type received_structure: :class:`OrderedDict` where keys are :class:`~netzob.Model.Vocabulary.Field.Field` and values are :class:`bytes`</span>
+
+<span class="sd">           :return: The callback function should return the next</span>
+<span class="sd">                    state.  For example, to stay at the same state,</span>
+<span class="sd">                    the callback function would have to return the</span>
+<span class="sd">                    :attr:`current_state` value.</span>
+<span class="sd">           :rtype: :class:`~netzob.Model.Grammar.States.State.State`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">cbk_method</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;cbk_method&#39; should be a callable function&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbk_read_unexpected_symbol</span> <span class="o">=</span> <span class="n">cbk_method</span></div>
+
+<div class="viewcode-block" id="Automata.set_cbk_read_unknown_symbol"><a class="viewcode-back" href="../../../../language_specification/statemachinespec.html#netzob.Model.Grammar.Automata.Automata.set_cbk_read_unknown_symbol">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">set_cbk_read_unknown_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cbk_method</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function called to handle cases where a message is received but</span>
+<span class="sd">        does not correspond to a known symbol. In a non initiator context,</span>
+<span class="sd">        this message would not match the input symbol of the available</span>
+<span class="sd">        transitions. In an initiator context, this message would not match</span>
+<span class="sd">        the expected output symbols of the current transition.</span>
+
+<span class="sd">        The method expects some parameters:</span>
+
+<span class="sd">        :param cbk_method: A callable function used to handle the selection of</span>
+<span class="sd">                           the next state when an unknown symbol is received.</span>
+<span class="sd">        :type cbk_method: :class:`Callable &lt;collections.abc.Callable&gt;`, required</span>
+
+<span class="sd">        :param states: A list of states on which the callback function should apply.</span>
+<span class="sd">                       If no states are specified, the callback function is</span>
+<span class="sd">                       applied on all states of the automaton.</span>
+<span class="sd">        :type states: ~typing.List[~netzob.Model.Grammar.States.State.State], optional</span>
+
+<span class="sd">        :raise: :class:`TypeError` if :attr:`cbk_method` is not a callable function</span>
+
+<span class="sd">        The callback function that can be used in the</span>
+<span class="sd">        :attr:`cbk_method` parameter has the following prototype:</span>
+
+<span class="sd">        .. function:: cbk_method(current_state, current_transition,\</span>
+<span class="sd">                                 received_message)</span>
+<span class="sd">           :noindex:</span>
+
+<span class="sd">           :param current_state:</span>
+<span class="sd">             Corresponds to the current state in the automaton.</span>
+<span class="sd">             It is expected that the current state cannot be ``None``, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).</span>
+<span class="sd">           :type current_state: ~netzob.Model.Grammar.States.State.State</span>
+
+<span class="sd">           :param current_transition:</span>
+<span class="sd">             Corresponds to the current transition in the automaton.</span>
+<span class="sd">             It is expected that the current transition may be ``None``,</span>
+<span class="sd">             especially in a non initiator context, where no transition has been initiated.</span>
+<span class="sd">           :type current_transition: ~netzob.Model.Grammar.Transitions.Transition.Transition</span>
+
+<span class="sd">           :param received_message:</span>
+<span class="sd">             Corresponds to the received raw message.</span>
+<span class="sd">           :type received_message: :class:`bytes`</span>
+
+<span class="sd">           :return: The callback function should return the next</span>
+<span class="sd">                    state.  For example, to stay at the same state,</span>
+<span class="sd">                    the callback function would have to return the</span>
+<span class="sd">                    :attr:`current_state` value.</span>
+<span class="sd">           :rtype: :class:`~netzob.Model.Grammar.States.State.State`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">cbk_method</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;cbk_method&#39; should be a callable function&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbk_read_unknown_symbol</span> <span class="o">=</span> <span class="n">cbk_method</span></div>
+
+    <span class="c1">## Automata Fuzzing ##</span>
+
+<div class="viewcode-block" id="Automata.mutate"><a class="viewcode-back" href="../../../../language_specification/fuzzing_automata.html#netzob.Model.Grammar.Automata.Automata.mutate">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">mutate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;This is the mutation method of the automaton. This method returns</span>
+<span class="sd">        a new automaton that may be used for fuzzing purpose.</span>
+
+<span class="sd">        The mutate method expects some parameters:</span>
+
+<span class="sd">        :param strategy: The strategy used to build the new automaton.</span>
+
+<span class="sd">                         The following strategies are available:</span>
+
+<span class="sd">                         * :attr:`AutomataMutatorStrategy.RANDOM`: Randomly insert and remove transitions between states of the original automaton,</span>
+<span class="sd">                         * :attr:`AutomataMutatorStrategy.FULL`: At each state of the automaton, it is possible to reach any states,</span>
+<span class="sd">                         * :attr:`AutomataMutatorStrategy.ONESTATE`: Build an automaton with one main state that accepts every symbols.</span>
+<span class="sd">                         * :attr:`AutomataMutatorStrategy.TARGETED`: Build an automaton similar to the original one, where a targeted state, given in parameters, will accept every symbols.</span>
+
+<span class="sd">                         If set to None, the default strategy is :attr:`AutomataMutatorStrategy.RANDOM`.</span>
+<span class="sd">        :param target: The name of the state considered for targeted fuzzing (should be used with :attr:`AutomataMutatorStrategy.TARGETED`).</span>
+<span class="sd">        :param generator: The underlying generator used to produce</span>
+<span class="sd">                          pseudo-random or deterministic</span>
+<span class="sd">                          values.</span>
+
+<span class="sd">                          Default generator is ``&#39;xorshift&#39;``, which is</span>
+<span class="sd">                          efficient to produce unique pseudo-random</span>
+<span class="sd">                          numbers.</span>
+
+<span class="sd">        :param seed: An integer used to initialize the underlying</span>
+<span class="sd">                     generator.</span>
+
+<span class="sd">                     If None, the default value will be set to :attr:`Mutator.SEED_DEFAULT`. The :attr:`Mutator.SEED_DEFAULT` constant is initialized from the configuration variable :attr:`Conf.seed` from the Netzob API :class:`Conf` class.</span>
+
+<span class="sd">        :type strategy: :class:`AutomataMutatorStrategy`, optional</span>
+<span class="sd">        :type target: :class:`str`, optional</span>
+<span class="sd">        :type generator: :class:`iter`, optional</span>
+<span class="sd">        :type seed: :class:`int`, optional</span>
+<span class="sd">        :return: The mutated automata.</span>
+<span class="sd">        :rtype: :class:`Automata &lt;netzob.Model.Grammar.Automata.Automata&gt;`</span>
+
+
+<span class="sd">        **Catching abnormal responses from the remote target**</span>
+
+<span class="sd">        By default, the state machine is configured so that the</span>
+<span class="sd">        reception of abnormal messages from the remote peer will</span>
+<span class="sd">        terminate the visit loop of the automaton from the current</span>
+<span class="sd">        actor. When applying fuzzing, this behavior could be annoying</span>
+<span class="sd">        as it will quickly stop the fuzzing session as soon as a</span>
+<span class="sd">        non-legitimate response is received. In order to catch this</span>
+<span class="sd">        kind of responses and adapt the current actor behavior, it is</span>
+<span class="sd">        recommended to set the following callbacks on the automaton:</span>
+
+<span class="sd">        * :attr:`set_cbk_read_symbol_timeout &lt;netzob.Model.Grammar.Automata.Automata.set_cbk_read_symbol_timeout&gt;`</span>
+<span class="sd">        * :attr:`set_cbk_read_unexpected_symbol &lt;netzob.Model.Grammar.Automata.Automata.set_cbk_read_unexpected_symbol&gt;`</span>
+<span class="sd">        * :attr:`set_cbk_read_unknown_symbol &lt;netzob.Model.Grammar.Automata.Automata.set_cbk_read_unknown_symbol&gt;`</span>
+
+
+<span class="sd">        The following example shows how to specify a global behavior,</span>
+<span class="sd">        on all states and transitions, in order to catch reception of</span>
+<span class="sd">        unexpected symbols (i.e. symbols that are known but not</span>
+<span class="sd">        expected at this state/transition) and unknown messages</span>
+<span class="sd">        (i.e. messages that cannot be abstracted to a symbol).</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; import time</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # First we create the symbols</span>
+<span class="sd">        &gt;&gt;&gt; symbol1 = Symbol(name=&quot;Hello1&quot;, fields=[Field(&quot;hello1&quot;)])</span>
+<span class="sd">        &gt;&gt;&gt; symbol2 = Symbol(name=&quot;Hello2&quot;, fields=[Field(&quot;hello2&quot;)])</span>
+<span class="sd">        &gt;&gt;&gt; symbolList = [symbol1, symbol2]</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Create Bob&#39;s automaton</span>
+<span class="sd">        &gt;&gt;&gt; bob_s0 = State(name=&quot;S0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; bob_s1 = State(name=&quot;S1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; bob_s2 = State(name=&quot;S2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; bob_s3 = State(name=&quot;S3&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; bob_error_state = State(name=&quot;Error state&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; bob_openTransition = OpenChannelTransition(startState=bob_s0, endState=bob_s1, name=&quot;Open&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; bob_mainTransition = Transition(startState=bob_s1, endState=bob_s2,</span>
+<span class="sd">        ...                                 inputSymbol=symbol1, outputSymbols=[symbol2],</span>
+<span class="sd">        ...                                 name=&quot;T1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; bob_closeTransition1 = CloseChannelTransition(startState=bob_error_state, endState=bob_s3, name=&quot;Close&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; bob_closeTransition2 = CloseChannelTransition(startState=bob_s2, endState=bob_s3, name=&quot;Close&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; bob_automata = Automata(bob_s0, symbolList)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; def cbk_method(current_state, current_transition, received_symbol, received_message, received_structure):</span>
+<span class="sd">        ...     return bob_error_state</span>
+<span class="sd">        &gt;&gt;&gt; bob_automata.set_cbk_read_unexpected_symbol(cbk_method)</span>
+<span class="sd">        &gt;&gt;&gt; bob_automata.set_cbk_read_unknown_symbol(cbk_method)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; automata_ascii = bob_automata.generateASCII()</span>
+<span class="sd">        &gt;&gt;&gt; print(automata_ascii)</span>
+<span class="sd">        #=========================#</span>
+<span class="sd">        H           S0            H</span>
+<span class="sd">        #=========================#</span>
+<span class="sd">          |</span>
+<span class="sd">          | OpenChannelTransition</span>
+<span class="sd">          v</span>
+<span class="sd">        +-------------------------+</span>
+<span class="sd">        |           S1            |</span>
+<span class="sd">        +-------------------------+</span>
+<span class="sd">          |</span>
+<span class="sd">          | T1 (Hello1;{Hello2})</span>
+<span class="sd">          v</span>
+<span class="sd">        +-------------------------+</span>
+<span class="sd">        |           S2            |</span>
+<span class="sd">        +-------------------------+</span>
+<span class="sd">          |</span>
+<span class="sd">          | CloseChannelTransition</span>
+<span class="sd">          v</span>
+<span class="sd">        +-------------------------+</span>
+<span class="sd">        |           S3            |</span>
+<span class="sd">        +-------------------------+</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Create Alice&#39;s automaton</span>
+<span class="sd">        &gt;&gt;&gt; alice_s0 = State(name=&quot;S0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; alice_s1 = State(name=&quot;S1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; alice_s2 = State(name=&quot;S2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name=&quot;Open&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; alice_mainTransition = Transition(startState=alice_s1, endState=alice_s1,</span>
+<span class="sd">        ...                                   inputSymbol=symbol1, outputSymbols=[symbol1],</span>
+<span class="sd">        ...                                   name=&quot;T1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; alice_closeTransition = CloseChannelTransition(startState=alice_s1, endState=alice_s2, name=&quot;Close&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; alice_automata = Automata(alice_s0, symbolList)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; automata_ascii = alice_automata.generateASCII()</span>
+<span class="sd">        &gt;&gt;&gt; print(automata_ascii)</span>
+<span class="sd">        #=========================#</span>
+<span class="sd">        H           S0            H</span>
+<span class="sd">        #=========================#</span>
+<span class="sd">          |</span>
+<span class="sd">          | OpenChannelTransition</span>
+<span class="sd">          v</span>
+<span class="sd">        +-------------------------+   T1 (Hello1;{Hello1})</span>
+<span class="sd">        |                         | -----------------------+</span>
+<span class="sd">        |           S1            |                        |</span>
+<span class="sd">        |                         | &lt;----------------------+</span>
+<span class="sd">        +-------------------------+</span>
+<span class="sd">          |</span>
+<span class="sd">          | CloseChannelTransition</span>
+<span class="sd">          v</span>
+<span class="sd">        +-------------------------+</span>
+<span class="sd">        |           S2            |</span>
+<span class="sd">        +-------------------------+</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Create Bob actor (a client)</span>
+<span class="sd">        &gt;&gt;&gt; channel = UDPClient(remoteIP=&quot;127.0.0.1&quot;, remotePort=8887, timeout=1.)</span>
+<span class="sd">        &gt;&gt;&gt; bob = Actor(automata=bob_automata, channel=channel, name=&quot;Bob&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; bob.nbMaxTransitions = 10</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Create Alice actor (a server)</span>
+<span class="sd">        &gt;&gt;&gt; channel = UDPServer(localIP=&quot;127.0.0.1&quot;, localPort=8887, timeout=1.)</span>
+<span class="sd">        &gt;&gt;&gt; alice = Actor(automata=alice_automata, channel=channel, initiator=False, name=&quot;Alice&quot;)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; alice.start()</span>
+<span class="sd">        &gt;&gt;&gt; time.sleep(0.5)</span>
+<span class="sd">        &gt;&gt;&gt; bob.start()</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; time.sleep(1)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; bob.stop()</span>
+<span class="sd">        &gt;&gt;&gt; alice.stop()</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; print(bob.generateLog())</span>
+<span class="sd">        Activity log for actor &#39;Bob&#39; (initiator):</span>
+<span class="sd">          [+] At state &#39;S0&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;Open&#39; (open channel)</span>
+<span class="sd">          [+]   Transition &#39;Open&#39; lead to state &#39;S1&#39;</span>
+<span class="sd">          [+] At state &#39;S1&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;T1&#39; (initiator)</span>
+<span class="sd">          [+]   During transition &#39;T1&#39;, sending input symbol (&#39;Hello1&#39;)</span>
+<span class="sd">          [+]   During transition &#39;T1&#39;, receiving unexpected symbol triggered a callback that lead to state &#39;Error state&#39;</span>
+<span class="sd">          [+] At state &#39;Error state&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;Close&#39; (close channel)</span>
+<span class="sd">          [+]   Transition &#39;Close&#39; lead to state &#39;S3&#39;</span>
+<span class="sd">          [+] At state &#39;S3&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">        &gt;&gt;&gt; print(alice.generateLog())</span>
+<span class="sd">        Activity log for actor &#39;Alice&#39; (not initiator):</span>
+<span class="sd">          [+] At state &#39;S0&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;Open&#39; (open channel)</span>
+<span class="sd">          [+]   Going to execute transition &#39;Open&#39;</span>
+<span class="sd">          [+]   Transition &#39;Open&#39; lead to state &#39;S1&#39;</span>
+<span class="sd">          [+] At state &#39;S1&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Waiting for an input symbol to decide the transition (not initiator)</span>
+<span class="sd">          [+]   Input symbol &#39;Hello1&#39; corresponds to transition &#39;T1&#39;</span>
+<span class="sd">          [+]   During transition &#39;T1&#39;, choosing an output symbol (&#39;Hello1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;T1&#39; lead to state &#39;S1&#39;</span>
+<span class="sd">          [+] At state &#39;S1&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Waiting for an input symbol to decide the transition (not initiator)</span>
+
+
+<span class="sd">        **Basic example of automata fuzzing**</span>
+
+<span class="sd">        Mutators may be used in order to create fuzzed/mutated automaton.</span>
+
+<span class="sd">        The following code shows the creation of the new automaton with</span>
+<span class="sd">        random transitions between the existing states:</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; import time</span>
+<span class="sd">        &gt;&gt;&gt; sym1 = Symbol([Field(String(nbChars=3))], name=&#39;Sym1&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; sym2 = Symbol([Field(String(nbChars=5))], name=&#39;Sym2&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; symbols = [sym1, sym2]</span>
+<span class="sd">        &gt;&gt;&gt; s0 = State(name=&quot;s0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s1 = State(name=&quot;s1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s2 = State(name=&quot;s2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s3 = State(name=&quot;s3&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s4 = State(name=&quot;s4&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t0 = OpenChannelTransition(startState=s0, endState=s1,</span>
+<span class="sd">        ...                            name=&quot;t0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t1 = Transition(startState=s1, endState=s1,</span>
+<span class="sd">        ...                 inputSymbol=sym1, outputSymbols=[sym1],</span>
+<span class="sd">        ...                 name=&quot;t1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t2 = Transition(startState=s1, endState=s2,</span>
+<span class="sd">        ...                 inputSymbol=sym2, outputSymbols=[sym2],</span>
+<span class="sd">        ...                 name=&quot;t2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t3 = Transition(startState=s2, endState=s3,</span>
+<span class="sd">        ...                 inputSymbol=sym1, outputSymbols=[sym1],</span>
+<span class="sd">        ...                 name=&quot;t3&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t4 = CloseChannelTransition(startState=s2, endState=s4,</span>
+<span class="sd">        ...                             name=&quot;t4&quot;)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; automata = Automata(s0, symbols=symbols)</span>
+<span class="sd">        &gt;&gt;&gt; automata_ascii = automata.generateASCII()</span>
+<span class="sd">        &gt;&gt;&gt; print(automata_ascii)</span>
+<span class="sd">                                         #========================#</span>
+<span class="sd">                                         H           s0           H</span>
+<span class="sd">                                         #========================#</span>
+<span class="sd">                                           |</span>
+<span class="sd">                                           | OpenChannelTransition</span>
+<span class="sd">                                           v</span>
+<span class="sd">                                         +------------------------+   t1 (Sym1;{Sym1})</span>
+<span class="sd">                                         |                        | -------------------+</span>
+<span class="sd">                                         |           s1           |                    |</span>
+<span class="sd">                                         |                        | &lt;------------------+</span>
+<span class="sd">                                         +------------------------+</span>
+<span class="sd">                                           |</span>
+<span class="sd">                                           | t2 (Sym2;{Sym2})</span>
+<span class="sd">                                           v</span>
+<span class="sd">        +----+  CloseChannelTransition   +------------------------+</span>
+<span class="sd">        | s4 | &lt;------------------------ |           s2           |</span>
+<span class="sd">        +----+                           +------------------------+</span>
+<span class="sd">                                           |</span>
+<span class="sd">                                           | t3 (Sym1;{Sym1})</span>
+<span class="sd">                                           v</span>
+<span class="sd">                                         +------------------------+</span>
+<span class="sd">                                         |           s3           |</span>
+<span class="sd">                                         +------------------------+</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Generate a random automaton</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; mutatedAutomata = automata.mutate()</span>
+<span class="sd">        &gt;&gt;&gt; automata_ascii_2 = mutatedAutomata.generateASCII()</span>
+<span class="sd">        &gt;&gt;&gt; print(automata_ascii_2)</span>
+<span class="sd">        #========================#</span>
+<span class="sd">        H           s0           H</span>
+<span class="sd">        #========================#</span>
+<span class="sd">          |</span>
+<span class="sd">          | OpenChannelTransition</span>
+<span class="sd">          v</span>
+<span class="sd">        +----------------------------------------------------------------------------------------+   t1 (Sym1;{Sym1})</span>
+<span class="sd">        |                                                                                        | -------------------+</span>
+<span class="sd">        |                                           s1                                           |                    |</span>
+<span class="sd">        |                                                                                        | &lt;------------------+</span>
+<span class="sd">        +----------------------------------------------------------------------------------------+</span>
+<span class="sd">          |                         ^                               ^</span>
+<span class="sd">          | t2 (Sym2;{Sym2})        | t_random (Sym1;{Sym1,Sym2})   | t_random (Sym2;{Sym1,Sym2})</span>
+<span class="sd">          v                         |                               |</span>
+<span class="sd">        +----------------------------------------------------------------------------------------+</span>
+<span class="sd">        |                                           s2                                           |</span>
+<span class="sd">        +----------------------------------------------------------------------------------------+</span>
+<span class="sd">          |                                                         |</span>
+<span class="sd">          | t3 (Sym1;{Sym1})                                        | CloseChannelTransition</span>
+<span class="sd">          v                                                         v</span>
+<span class="sd">        +------------------------+                                +------------------------------+</span>
+<span class="sd">        |           s3           |                                |              s4              |</span>
+<span class="sd">        +------------------------+                                +------------------------------+</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Generate a full automaton</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; mutatedAutomata = automata.mutate(strategy=AutomataMutatorStrategy.FULL)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # The ASCII representation is not displayed as it is too big</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Generate an automaton with one main state</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; mutatedAutomata = automata.mutate(strategy=AutomataMutatorStrategy.ONESTATE)</span>
+<span class="sd">        &gt;&gt;&gt; automata_ascii_2 = mutatedAutomata.generateASCII()</span>
+<span class="sd">        &gt;&gt;&gt; print(automata_ascii_2)</span>
+<span class="sd">                                          #========================#</span>
+<span class="sd">                                          H     Initial state      H</span>
+<span class="sd">                                          #========================#</span>
+<span class="sd">                                            |</span>
+<span class="sd">                                            | OpenChannelTransition</span>
+<span class="sd">                                            v</span>
+<span class="sd">            t_random (Sym2;{Sym1,Sym2})   +------------------------+   t_random (Sym1;{Sym1,Sym2})</span>
+<span class="sd">          +------------------------------ |                        | ------------------------------+</span>
+<span class="sd">          |                               |       Main state       |                               |</span>
+<span class="sd">          +-----------------------------&gt; |                        | &lt;-----------------------------+</span>
+<span class="sd">                                          +------------------------+</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Generate an automaton with targeted fuzzing on one specific state</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; mutatedAutomata = automata.mutate(strategy=AutomataMutatorStrategy.TARGETED, target=s2.name)</span>
+<span class="sd">        &gt;&gt;&gt; automata_ascii_2 = mutatedAutomata.generateASCII()</span>
+<span class="sd">        &gt;&gt;&gt; print(automata_ascii_2)</span>
+<span class="sd">                                          #========================#</span>
+<span class="sd">                                          H           s0           H</span>
+<span class="sd">                                          #========================#</span>
+<span class="sd">                                            |</span>
+<span class="sd">                                            | OpenChannelTransition</span>
+<span class="sd">                                            v</span>
+<span class="sd">                                          +------------------------+</span>
+<span class="sd">                                          |           s1           |</span>
+<span class="sd">                                          +------------------------+</span>
+<span class="sd">                                            |</span>
+<span class="sd">                                            | t2 (Sym2;{Sym2})</span>
+<span class="sd">                                            v</span>
+<span class="sd">            t_random (Sym2;{Sym1,Sym2})   +------------------------+   t_random (Sym1;{Sym1,Sym2})</span>
+<span class="sd">          +------------------------------ |                        | ------------------------------+</span>
+<span class="sd">          |                               |           s2           |                               |</span>
+<span class="sd">          +-----------------------------&gt; |                        | &lt;-----------------------------+</span>
+<span class="sd">                                          +------------------------+</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+
+
+<span class="sd">        **Combining message formats and automata fuzzing**</span>
+
+<span class="sd">        By combining message formats and automata fuzzing, it is possible</span>
+<span class="sd">        to fuzz specific message formats at specific states in the</span>
+<span class="sd">        automaton.</span>
+
+<span class="sd">        The following code shows the creation of a mutated automaton</span>
+<span class="sd">        with targeted automaton mutations at state &#39;s6&#39;, and with a</span>
+<span class="sd">        precision concerning the state at which fuzzing of message</span>
+<span class="sd">        formats will be performed. Here, the message format fuzzing</span>
+<span class="sd">        only applies at state &#39;s6&#39;. An actor is also created to</span>
+<span class="sd">        simulate a target.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; import time</span>
+<span class="sd">        &gt;&gt;&gt; sym1 = Symbol([Field(uint16())], name=&#39;Sym1&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; symbols = [sym1]</span>
+<span class="sd">        &gt;&gt;&gt; s0 = State(name=&quot;s0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s1 = State(name=&quot;s1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s2 = State(name=&quot;s2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s3 = State(name=&quot;s3&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s4 = State(name=&quot;s4&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s5 = State(name=&quot;s5&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s6 = State(name=&quot;s6&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s7 = State(name=&quot;s7&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t0 = OpenChannelTransition(startState=s0, endState=s1,</span>
+<span class="sd">        ...                            name=&quot;t0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t1 = Transition(startState=s1, endState=s1,</span>
+<span class="sd">        ...                 inputSymbol=sym1, outputSymbols=[sym1],</span>
+<span class="sd">        ...                 name=&quot;t1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t2 = Transition(startState=s1, endState=s2,</span>
+<span class="sd">        ...                 inputSymbol=sym1, outputSymbols=[sym1],</span>
+<span class="sd">        ...                 name=&quot;t2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t3 = Transition(startState=s2, endState=s3,</span>
+<span class="sd">        ...                 inputSymbol=sym1, outputSymbols=[sym1],</span>
+<span class="sd">        ...                 name=&quot;t3&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t4 = Transition(startState=s2, endState=s4,</span>
+<span class="sd">        ...                 inputSymbol=sym1, outputSymbols=[sym1],</span>
+<span class="sd">        ...                 name=&quot;t4&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t5 = Transition(startState=s4, endState=s6,</span>
+<span class="sd">        ...                 inputSymbol=sym1, outputSymbols=[sym1],</span>
+<span class="sd">        ...                 name=&quot;t5&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t6 = Transition(startState=s3, endState=s5,</span>
+<span class="sd">        ...                 inputSymbol=sym1, outputSymbols=[sym1],</span>
+<span class="sd">        ...                 name=&quot;t6&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t7 = Transition(startState=s5, endState=s6,</span>
+<span class="sd">        ...                 inputSymbol=sym1, outputSymbols=[sym1],</span>
+<span class="sd">        ...                 name=&quot;t7&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t8 = Transition(startState=s6, endState=s6,</span>
+<span class="sd">        ...                 inputSymbol=sym1, outputSymbols=[sym1],</span>
+<span class="sd">        ...                 name=&quot;t8&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; t9 = CloseChannelTransition(startState=s6, endState=s7,</span>
+<span class="sd">        ...                             name=&quot;t9&quot;)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; automata = Automata(s0, symbols=symbols)</span>
+<span class="sd">        &gt;&gt;&gt; automata_ascii = automata.generateASCII()</span>
+<span class="sd">        &gt;&gt;&gt; print(automata_ascii)</span>
+<span class="sd">                                   #=========================#</span>
+<span class="sd">                                   H           s0            H</span>
+<span class="sd">                                   #=========================#</span>
+<span class="sd">                                     |</span>
+<span class="sd">                                     | OpenChannelTransition</span>
+<span class="sd">                                     v</span>
+<span class="sd">                                   +-------------------------+   t1 (Sym1;{Sym1})</span>
+<span class="sd">                                   |                         | -------------------+</span>
+<span class="sd">                                   |           s1            |                    |</span>
+<span class="sd">                                   |                         | &lt;------------------+</span>
+<span class="sd">                                   +-------------------------+</span>
+<span class="sd">                                     |</span>
+<span class="sd">                                     | t2 (Sym1;{Sym1})</span>
+<span class="sd">                                     v</span>
+<span class="sd">        +----+  t4 (Sym1;{Sym1})   +-------------------------+</span>
+<span class="sd">        | s4 | &lt;------------------ |           s2            |</span>
+<span class="sd">        +----+                     +-------------------------+</span>
+<span class="sd">          |                          |</span>
+<span class="sd">          |                          | t3 (Sym1;{Sym1})</span>
+<span class="sd">          |                          v</span>
+<span class="sd">          |                        +-------------------------+</span>
+<span class="sd">          |                        |           s3            |</span>
+<span class="sd">          |                        +-------------------------+</span>
+<span class="sd">          |                          |</span>
+<span class="sd">          |                          | t6 (Sym1;{Sym1})</span>
+<span class="sd">          |                          v</span>
+<span class="sd">          |                        +-------------------------+</span>
+<span class="sd">          |                        |           s5            |</span>
+<span class="sd">          |                        +-------------------------+</span>
+<span class="sd">          |                          |</span>
+<span class="sd">          |                          | t7 (Sym1;{Sym1})</span>
+<span class="sd">          |                          v</span>
+<span class="sd">          |                        +-------------------------+   t8 (Sym1;{Sym1})</span>
+<span class="sd">          |                        |                         | -------------------+</span>
+<span class="sd">          |    t5 (Sym1;{Sym1})    |           s6            |                    |</span>
+<span class="sd">          +----------------------&gt; |                         | &lt;------------------+</span>
+<span class="sd">                                   +-------------------------+</span>
+<span class="sd">                                     |</span>
+<span class="sd">                                     | CloseChannelTransition</span>
+<span class="sd">                                     v</span>
+<span class="sd">                                   +-------------------------+</span>
+<span class="sd">                                   |           s7            |</span>
+<span class="sd">                                   +-------------------------+</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Creation of a mutated automaton</span>
+<span class="sd">        &gt;&gt;&gt; mutatedAutomata = automata.mutate(strategy=AutomataMutatorStrategy.TARGETED, target=s6.name, seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; automata_ascii = mutatedAutomata.generateASCII()</span>
+<span class="sd">        &gt;&gt;&gt; print(automata_ascii)</span>
+<span class="sd">        #========================#</span>
+<span class="sd">        H           s0           H</span>
+<span class="sd">        #========================#</span>
+<span class="sd">          |</span>
+<span class="sd">          | OpenChannelTransition</span>
+<span class="sd">          v</span>
+<span class="sd">        +------------------------+</span>
+<span class="sd">        |           s1           |</span>
+<span class="sd">        +------------------------+</span>
+<span class="sd">          |</span>
+<span class="sd">          | t2 (Sym1;{Sym1})</span>
+<span class="sd">          v</span>
+<span class="sd">        +------------------------+</span>
+<span class="sd">        |           s2           |</span>
+<span class="sd">        +------------------------+</span>
+<span class="sd">          |</span>
+<span class="sd">          | t4 (Sym1;{Sym1})</span>
+<span class="sd">          v</span>
+<span class="sd">        +------------------------+</span>
+<span class="sd">        |           s4           |</span>
+<span class="sd">        +------------------------+</span>
+<span class="sd">          |</span>
+<span class="sd">          | t5 (Sym1;{Sym1})</span>
+<span class="sd">          v</span>
+<span class="sd">        +------------------------+   t_random (Sym1;{Sym1})</span>
+<span class="sd">        |                        | -------------------------+</span>
+<span class="sd">        |           s6           |                          |</span>
+<span class="sd">        |                        | &lt;------------------------+</span>
+<span class="sd">        +------------------------+</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Define fuzzing configuration</span>
+<span class="sd">        &gt;&gt;&gt; preset_symbol1 = Preset(sym1)</span>
+<span class="sd">        &gt;&gt;&gt; preset_symbol1.fuzz(sym1)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Creation of an automaton visitor/actor and a channel on which to emit the fuzzed symbol</span>
+<span class="sd">        &gt;&gt;&gt; bob_channel = UDPClient(remoteIP=&quot;127.0.0.1&quot;, remotePort=8887, timeout=1.)</span>
+<span class="sd">        &gt;&gt;&gt; bob_actor = Actor(automata=mutatedAutomata, channel=bob_channel, name=&#39;Fuzzer&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; bob_actor.fuzzing_presets = [preset_symbol1]</span>
+<span class="sd">        &gt;&gt;&gt; bob_actor.fuzzing_states = [s6.name]</span>
+<span class="sd">        &gt;&gt;&gt; bob_actor.nbMaxTransitions = 7</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Create Alice&#39;s automaton</span>
+<span class="sd">        &gt;&gt;&gt; alice_s0 = State(name=&quot;s0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; alice_s1 = State(name=&quot;s1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; alice_openTransition = OpenChannelTransition(startState=alice_s0, endState=alice_s1, name=&quot;Open&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; alice_transition1 = Transition(startState=alice_s1, endState=alice_s1,</span>
+<span class="sd">        ...                                inputSymbol=sym1, outputSymbols=[sym1],</span>
+<span class="sd">        ...                                name=&quot;T1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; alice_transition2 = Transition(startState=alice_s1, endState=alice_s1,</span>
+<span class="sd">        ...                                inputSymbol=sym2, outputSymbols=[sym2],</span>
+<span class="sd">        ...                                name=&quot;T2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; alice_automata = Automata(alice_s0, symbols)</span>
+<span class="sd">        &gt;&gt;&gt; automata_ascii = alice_automata.generateASCII()</span>
+<span class="sd">        &gt;&gt;&gt; print(automata_ascii)</span>
+<span class="sd">                               #========================#</span>
+<span class="sd">                               H           s0           H</span>
+<span class="sd">                               #========================#</span>
+<span class="sd">                                 |</span>
+<span class="sd">                                 | OpenChannelTransition</span>
+<span class="sd">                                 v</span>
+<span class="sd">            T2 (Sym2;{Sym2})   +------------------------+   T1 (Sym1;{Sym1})</span>
+<span class="sd">          +------------------- |                        | -------------------+</span>
+<span class="sd">          |                    |           s1           |                    |</span>
+<span class="sd">          +------------------&gt; |                        | &lt;------------------+</span>
+<span class="sd">                               +------------------------+</span>
+<span class="sd">        &lt;BLANKLINE&gt;</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Creation of an automaton visitor/actor and a channel on which to receive the fuzzing traffic</span>
+<span class="sd">        &gt;&gt;&gt; alice_channel = UDPServer(localIP=&quot;127.0.0.1&quot;, localPort=8887, timeout=1.)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Creation of a callback function that returns a new transition</span>
+<span class="sd">        &gt;&gt;&gt; def cbk_modifyTransition(availableTransitions, nextTransition, current_state,</span>
+<span class="sd">        ...                          last_sent_symbol, last_sent_message, last_sent_structure,</span>
+<span class="sd">        ...                          last_received_symbol, last_received_message, last_received_structure, memory):</span>
+<span class="sd">        ...     if nextTransition is None:</span>
+<span class="sd">        ...         return alice_transition2</span>
+<span class="sd">        ...     else:</span>
+<span class="sd">        ...         return nextTransition</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; alice_automata.getState(&#39;s1&#39;).add_cbk_modify_transition(cbk_modifyTransition)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; alice_actor = Actor(automata=alice_automata, channel=alice_channel, initiator=False, name=&#39;Target&#39;)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # We start the targeted actor</span>
+<span class="sd">        &gt;&gt;&gt; alice_actor.start()</span>
+<span class="sd">        &gt;&gt;&gt; time.sleep(0.5)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # We start the visitor, thus the fuzzing of message formats will be applied when specific states are reached</span>
+<span class="sd">        &gt;&gt;&gt; bob_actor.start()</span>
+<span class="sd">        &gt;&gt;&gt; time.sleep(1)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; bob_actor.stop()</span>
+<span class="sd">        &gt;&gt;&gt; alice_actor.stop()</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; print(bob_actor.generateLog())</span>
+<span class="sd">        Activity log for actor &#39;Fuzzer&#39; (initiator):</span>
+<span class="sd">          [+] At state &#39;s0&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;t0&#39; (open channel)</span>
+<span class="sd">          [+]   Transition &#39;t0&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">          [+] At state &#39;s1&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;t2&#39; (initiator)</span>
+<span class="sd">          [+]   During transition &#39;t2&#39;, sending input symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   During transition &#39;t2&#39;, receiving expected output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;t2&#39; lead to state &#39;s2&#39;</span>
+<span class="sd">          [+] At state &#39;s2&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;t4&#39; (initiator)</span>
+<span class="sd">          [+]   During transition &#39;t4&#39;, sending input symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   During transition &#39;t4&#39;, receiving expected output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;t4&#39; lead to state &#39;s4&#39;</span>
+<span class="sd">          [+] At state &#39;s4&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;t5&#39; (initiator)</span>
+<span class="sd">          [+]   During transition &#39;t5&#39;, sending input symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   During transition &#39;t5&#39;, receiving expected output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;t5&#39; lead to state &#39;s6&#39;</span>
+<span class="sd">          [+] At state &#39;s6&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;t_random&#39; (initiator)</span>
+<span class="sd">          [+]   During transition &#39;t_random&#39;, sending input symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   During transition &#39;t_random&#39;, fuzzing activated</span>
+<span class="sd">          [+]   During transition &#39;t_random&#39;, receiving expected output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;t_random&#39; lead to state &#39;s6&#39;</span>
+<span class="sd">          [+] At state &#39;s6&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;t_random&#39; (initiator)</span>
+<span class="sd">          [+]   During transition &#39;t_random&#39;, sending input symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   During transition &#39;t_random&#39;, fuzzing activated</span>
+<span class="sd">          [+]   During transition &#39;t_random&#39;, receiving expected output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;t_random&#39; lead to state &#39;s6&#39;</span>
+<span class="sd">          [+] At state &#39;s6&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;t_random&#39; (initiator)</span>
+<span class="sd">          [+]   During transition &#39;t_random&#39;, sending input symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   During transition &#39;t_random&#39;, fuzzing activated</span>
+<span class="sd">          [+]   During transition &#39;t_random&#39;, receiving expected output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;t_random&#39; lead to state &#39;s6&#39;</span>
+<span class="sd">          [+] At state &#39;s6&#39;, we reached the max number of transitions (7), so we stop</span>
+<span class="sd">        &gt;&gt;&gt; print(alice_actor.generateLog())</span>
+<span class="sd">        Activity log for actor &#39;Target&#39; (not initiator):</span>
+<span class="sd">          [+] At state &#39;s0&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Picking transition &#39;Open&#39; (open channel)</span>
+<span class="sd">          [+]   Going to execute transition &#39;Open&#39;</span>
+<span class="sd">          [+]   Transition &#39;Open&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">          [+] At state &#39;s1&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Waiting for an input symbol to decide the transition (not initiator)</span>
+<span class="sd">          [+]   Input symbol &#39;Sym1&#39; corresponds to transition &#39;T1&#39;</span>
+<span class="sd">          [+]   Changing transition to &#39;T1&#39; (not initiator), through callback</span>
+<span class="sd">          [+]   During transition &#39;T1&#39;, choosing an output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;T1&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">          [+] At state &#39;s1&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Waiting for an input symbol to decide the transition (not initiator)</span>
+<span class="sd">          [+]   Input symbol &#39;Sym1&#39; corresponds to transition &#39;T1&#39;</span>
+<span class="sd">          [+]   Changing transition to &#39;T1&#39; (not initiator), through callback</span>
+<span class="sd">          [+]   During transition &#39;T1&#39;, choosing an output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;T1&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">          [+] At state &#39;s1&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Waiting for an input symbol to decide the transition (not initiator)</span>
+<span class="sd">          [+]   Input symbol &#39;Sym1&#39; corresponds to transition &#39;T1&#39;</span>
+<span class="sd">          [+]   Changing transition to &#39;T1&#39; (not initiator), through callback</span>
+<span class="sd">          [+]   During transition &#39;T1&#39;, choosing an output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;T1&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">          [+] At state &#39;s1&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Waiting for an input symbol to decide the transition (not initiator)</span>
+<span class="sd">          [+]   Input symbol &#39;Sym1&#39; corresponds to transition &#39;T1&#39;</span>
+<span class="sd">          [+]   Changing transition to &#39;T1&#39; (not initiator), through callback</span>
+<span class="sd">          [+]   During transition &#39;T1&#39;, choosing an output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;T1&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">          [+] At state &#39;s1&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Waiting for an input symbol to decide the transition (not initiator)</span>
+<span class="sd">          [+]   Input symbol &#39;Sym1&#39; corresponds to transition &#39;T1&#39;</span>
+<span class="sd">          [+]   Changing transition to &#39;T1&#39; (not initiator), through callback</span>
+<span class="sd">          [+]   During transition &#39;T1&#39;, choosing an output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;T1&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">          [+] At state &#39;s1&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Waiting for an input symbol to decide the transition (not initiator)</span>
+<span class="sd">          [+]   Input symbol &#39;Sym1&#39; corresponds to transition &#39;T1&#39;</span>
+<span class="sd">          [+]   Changing transition to &#39;T1&#39; (not initiator), through callback</span>
+<span class="sd">          [+]   During transition &#39;T1&#39;, choosing an output symbol (&#39;Sym1&#39;)</span>
+<span class="sd">          [+]   Transition &#39;T1&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">          [+] At state &#39;s1&#39;</span>
+<span class="sd">          [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">          [+]   Waiting for an input symbol to decide the transition (not initiator)</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.AutomataMutator</span> <span class="kn">import</span> <span class="n">AutomataMutator</span><span class="p">,</span> <span class="n">AutomataMutatorStrategy</span>
+        <span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutator</span> <span class="kn">import</span> <span class="n">Mutator</span>
+
+        <span class="k">if</span> <span class="n">generator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">generator</span> <span class="o">=</span> <span class="s1">&#39;xorshift&#39;</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">Mutator</span><span class="o">.</span><span class="n">SEED_DEFAULT</span>
+        <span class="k">if</span> <span class="n">strategy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">strategy</span> <span class="o">=</span> <span class="n">AutomataMutatorStrategy</span><span class="o">.</span><span class="n">RANDOM</span>
+
+        <span class="c1"># Create mutator</span>
+        <span class="n">mutator</span> <span class="o">=</span> <span class="n">AutomataMutator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="c1"># Mutat automata</span>
+        <span class="n">mutatedAutomata</span> <span class="o">=</span> <span class="n">mutator</span><span class="o">.</span><span class="n">mutate</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mutatedAutomata</span></div>
+
+    <span class="c1">## Public properties ##</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">initialState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__initialState</span>
+
+    <span class="nd">@initialState</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">State</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">initialState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initialState</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">initialState</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;AbstractionLayer cannot be None&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__initialState</span> <span class="o">=</span> <span class="n">initialState</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">symbols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__symbols</span>
+
+    <span class="nd">@symbols</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">symbols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbols</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__symbols</span> <span class="o">=</span> <span class="n">symbols</span></div>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

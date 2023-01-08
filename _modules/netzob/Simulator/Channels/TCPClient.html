@@ -1,0 +1,743 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Simulator.Channels.TCPClient &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Simulator.Channels.TCPClient</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#|             ANSSI,   https://www.ssi.gouv.fr                              |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| File contributors :                                                       |</span>
+<span class="c1">#|       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1">#|       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">NetzobLogger</span><span class="p">,</span> <span class="n">public_api</span>
+<span class="kn">from</span> <span class="nn">netzob.Simulator.AbstractChannel</span> <span class="kn">import</span> <span class="p">(</span><span class="n">AbstractChannel</span><span class="p">,</span>
+                                              <span class="n">ChannelDownException</span><span class="p">,</span>
+                                              <span class="n">NetUtils</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">netzob.Simulator.ChannelBuilder</span> <span class="kn">import</span> <span class="n">ChannelBuilder</span>
+
+
+<div class="viewcode-block" id="TCPClient"><a class="viewcode-back" href="../../../../language_specification/trafficgeneration.html#netzob.Simulator.Channels.TCPClient.TCPClient">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">TCPClient</span><span class="p">(</span><span class="n">AbstractChannel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A TCPClient is a communication channel. It provides the connection of a</span>
+<span class="sd">    client to a specific IP:Port server over a TCP socket.</span>
+
+<span class="sd">    The TCPClient constructor expects some parameters:</span>
+
+<span class="sd">    :param remoteIP: This parameter is the remote IP address to connect to.</span>
+<span class="sd">    :param remotePort: This parameter is the remote IP port.</span>
+<span class="sd">    :param localIP: The local IP address. Default value is the local</span>
+<span class="sd">                    IP address corresponding to the network interface that</span>
+<span class="sd">                    will be used to send the packet.</span>
+<span class="sd">    :param localPort: The local IP port. Default value in a random</span>
+<span class="sd">                    valid integer chosen by the kernel.</span>
+<span class="sd">    :param timeout: The default timeout of the channel for global</span>
+<span class="sd">                    connection. Default value is blocking (None).</span>
+<span class="sd">    :type remoteIP: :class:`str`, required</span>
+<span class="sd">    :type remotePort: :class:`int`, required</span>
+<span class="sd">    :type localIP: :class:`str`, optional</span>
+<span class="sd">    :type localPort: :class:`int`, optional</span>
+<span class="sd">    :type timeout: :class:`float`, optional</span>
+
+
+<span class="sd">    Adding to AbstractChannel variables, the TCPClient class provides the</span>
+<span class="sd">    following public variables:</span>
+
+<span class="sd">    :var remoteIP: The remote IP address to connect to.</span>
+<span class="sd">    :var remotePort: The remote IP port.</span>
+<span class="sd">    :var localIP: The local IP address.</span>
+<span class="sd">    :var localPort: The local IP port.</span>
+<span class="sd">    :vartype remoteIP: :class:`str`</span>
+<span class="sd">    :vartype remotePort: :class:`int`</span>
+<span class="sd">    :vartype localIP: :class:`str`</span>
+<span class="sd">    :vartype localPort: :class:`int`</span>
+
+
+<span class="sd">    The following code shows the creation of a TCPClient channel:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; client = TCPClient(remoteIP=&#39;127.0.0.1&#39;, remotePort=9999, timeout=1.)</span>
+
+
+<span class="sd">    .. ifconfig:: scope in (&#39;netzob&#39;)</span>
+
+<span class="sd">       Complete example with the use of an actor.</span>
+
+<span class="sd">       &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">       &gt;&gt;&gt; import time</span>
+<span class="sd">       &gt;&gt;&gt; symbol = Symbol([Field(&quot;Hello everyone!&quot;)])</span>
+<span class="sd">       &gt;&gt;&gt; s0 = State()</span>
+<span class="sd">       &gt;&gt;&gt; s1 = State()</span>
+<span class="sd">       &gt;&gt;&gt; s2 = State()</span>
+<span class="sd">       &gt;&gt;&gt; openTransition = OpenChannelTransition(startState=s0, endState=s1)</span>
+<span class="sd">       &gt;&gt;&gt; mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol])</span>
+<span class="sd">       &gt;&gt;&gt; closeTransition = CloseChannelTransition(startState=s1, endState=s2)</span>
+<span class="sd">       &gt;&gt;&gt; automata = Automata(s0, [symbol])</span>
+
+<span class="sd">       &gt;&gt;&gt; channel_server = TCPServer(localIP=&quot;127.0.0.1&quot;, localPort=8885, timeout=1.)</span>
+<span class="sd">       &gt;&gt;&gt; server = Actor(automata = automata, channel=channel_server)</span>
+<span class="sd">       &gt;&gt;&gt; server.initiator = False</span>
+
+<span class="sd">       &gt;&gt;&gt; channel_client = TCPClient(remoteIP=&quot;127.0.0.1&quot;, remotePort=8885, timeout=1.)</span>
+<span class="sd">       &gt;&gt;&gt; client = Actor(automata = automata, channel=channel_client)</span>
+
+<span class="sd">       &gt;&gt;&gt; server.start()</span>
+<span class="sd">       &gt;&gt;&gt; client.start()</span>
+
+<span class="sd">       &gt;&gt;&gt; time.sleep(1)</span>
+<span class="sd">       &gt;&gt;&gt; client.stop()</span>
+<span class="sd">       &gt;&gt;&gt; server.stop()</span>
+<span class="sd">       &gt;&gt;&gt; channel_client.close()</span>
+<span class="sd">       &gt;&gt;&gt; channel_server.close()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">## Class attributes ##</span>
+
+    <span class="n">FAMILIES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tcp&quot;</span><span class="p">]</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">remoteIP</span><span class="p">,</span>
+                 <span class="n">remotePort</span><span class="p">,</span>
+                 <span class="n">localIP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">localPort</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">timeout</span><span class="o">=</span><span class="n">AbstractChannel</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TCPClient</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remoteIP</span> <span class="o">=</span> <span class="n">remoteIP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remotePort</span> <span class="o">=</span> <span class="n">remotePort</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">localIP</span> <span class="o">=</span> <span class="n">localIP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">localPort</span> <span class="o">=</span> <span class="n">localPort</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">getBuilder</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">TCPClientBuilder</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">AbstractChannel</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open the communication channel. If the channel is a client, it</span>
+<span class="sd">        starts to connect to the specified server.</span>
+<span class="sd">        :param timeout: The default timeout of the channel for opening</span>
+<span class="sd">                        connection and waiting for a message. Default value</span>
+<span class="sd">                        is blocking (None).</span>
+<span class="sd">        :type timeout: :class:`float`, optional</span>
+<span class="sd">        :raise: RuntimeError if the channel is already opened</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">()</span>
+        <span class="c1"># Reuse the connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="n">timeout</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">localIP</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">localPort</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">localIP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">localPort</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Connect to the TCP server to </span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remoteIP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">remotePort</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">remoteIP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">remotePort</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isOpen</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the communication channel.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isOpen</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads the next message on the communication channel.</span>
+<span class="sd">        Continues to read while it receives something.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">reading_seg_size</span> <span class="o">=</span> <span class="mi">1024</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
+            <span class="n">finish</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">finish</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">recv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">reading_seg_size</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+                    <span class="c1"># says we received nothing (timeout issue)</span>
+                    <span class="n">recv</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">recv</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">recv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">finish</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">+=</span> <span class="n">recv</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;socket is not available&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">writePacket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write on the communication channel the specified data</span>
+
+<span class="sd">        :parameter data: the data to write on the channel</span>
+<span class="sd">        :type data: :class:`bytes`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">sendall</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ChannelDownException</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;socket is not available&quot;</span><span class="p">)</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">sendReceive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write on the communication channel the specified data and returns</span>
+<span class="sd">        the corresponding response.</span>
+
+<span class="sd">        :param data: the data to write on the channel</span>
+<span class="sd">        :type data: :class:`bytes`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">dataReceived</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">dataReceived</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;socket is not available&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Management methods</span>
+
+    <span class="c1"># Properties</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">remoteIP</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;IP on which the server will listen.</span>
+
+<span class="sd">        :type: :class:`str`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remoteIP</span>
+
+    <span class="nd">@remoteIP</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">remoteIP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remoteIP</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">remoteIP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;RemoteIP cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__remoteIP</span> <span class="o">=</span> <span class="n">remoteIP</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">remotePort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TCP Port on which the server will listen.</span>
+<span class="sd">        Its value must be above 0 and under 65535.</span>
+
+
+<span class="sd">        :type: :class:`int`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remotePort</span>
+
+    <span class="nd">@remotePort</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">remotePort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remotePort</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">remotePort</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;RemotePort cannot be None&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">remotePort</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">remotePort</span> <span class="o">&gt;</span> <span class="mi">65535</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;RemotePort must be &gt; 0 and &lt;= 65535&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__remotePort</span> <span class="o">=</span> <span class="n">remotePort</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">localIP</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;IP on which the server will listen.</span>
+
+<span class="sd">        :type: :class:`str`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__localIP</span>
+
+    <span class="nd">@localIP</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">localIP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">localIP</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__localIP</span> <span class="o">=</span> <span class="n">localIP</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">localPort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TCP Port on which the server will listen.</span>
+<span class="sd">        Its value must be above 0 and under 65535.</span>
+
+<span class="sd">        :type: :class:`int`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__localPort</span>
+
+    <span class="nd">@localPort</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">localPort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">localPort</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__localPort</span> <span class="o">=</span> <span class="n">localPort</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">set_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method set the the given transmission rate to the channel.</span>
+<span class="sd">        Used in testing network under high load</span>
+
+<span class="sd">        :parameter rate: This specifies the bandwidth in bytes per second to</span>
+<span class="sd">                         respect during traffic emission. Default value is</span>
+<span class="sd">                         ``None``, which means that the bandwidth is only</span>
+<span class="sd">                         limited by the underlying physical layer.</span>
+<span class="sd">        :type rate: :class:`int`, required</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">localInterface</span> <span class="o">=</span> <span class="n">NetUtils</span><span class="o">.</span><span class="n">getLocalInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localIP</span><span class="p">)</span>
+        <span class="n">NetUtils</span><span class="o">.</span><span class="n">set_rate</span><span class="p">(</span><span class="n">localInterface</span><span class="p">,</span> <span class="n">rate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Network rate limited to </span><span class="si">{:.2f}</span><span class="s2"> kBps (</span><span class="si">{}</span><span class="s2"> kbps) on </span><span class="si">{}</span><span class="s2"> interface&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rate</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rate</span><span class="o">*</span><span class="mi">8</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">localInterface</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="o">=</span> <span class="n">rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tc status on </span><span class="si">{}</span><span class="s2"> interface: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">localInterface</span><span class="p">,</span> <span class="n">NetUtils</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="n">localInterface</span><span class="p">)))</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">unset_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method clears the transmission rate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">localInterface</span> <span class="o">=</span> <span class="n">NetUtils</span><span class="o">.</span><span class="n">getLocalInterface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localIP</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">NetUtils</span><span class="o">.</span><span class="n">set_rate</span><span class="p">(</span><span class="n">localInterface</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Network rate limitation removed on </span><span class="si">{}</span><span class="s2"> interface&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">localInterface</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tc status on </span><span class="si">{}</span><span class="s2"> interface: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">localInterface</span><span class="p">,</span> <span class="n">NetUtils</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="n">localInterface</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="TCPClientBuilder"><a class="viewcode-back" href="../../../../language_specification/trafficgeneration.html#netzob.Simulator.Channels.TCPClient.TCPClientBuilder">[docs]</a><span class="k">class</span> <span class="nc">TCPClientBuilder</span><span class="p">(</span><span class="n">ChannelBuilder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This builder is used to create an</span>
+<span class="sd">    :class:`~netzob.Simulator.Channels.TCPClient.TCPClient` instance</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.Simulator.Channels.NetInfo import NetInfo</span>
+<span class="sd">    &gt;&gt;&gt; netinfo = NetInfo(dst_addr=&quot;1.2.3.4&quot;, dst_port=1024,</span>
+<span class="sd">    ...                   src_addr=&quot;4.3.2.1&quot;, src_port=32000)</span>
+<span class="sd">    &gt;&gt;&gt; builder = TCPClientBuilder().set_map(netinfo.getDict())</span>
+<span class="sd">    &gt;&gt;&gt; chan = builder.build()</span>
+<span class="sd">    &gt;&gt;&gt; type(chan)</span>
+<span class="sd">    &lt;class &#39;netzob.Simulator.Channels.TCPClient.TCPClient&#39;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; chan.remotePort  # dst_port key has been mapped to remotePort attribute</span>
+<span class="sd">    1024</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">TCPClient</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_src_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;localIP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">set_dst_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;remoteIP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">set_src_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;localPort&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">set_dst_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;remotePort&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test_tcp_write_read</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; import time</span>
+<span class="sd">    &gt;&gt;&gt; import subprocess</span>
+
+<span class="sd">    &gt;&gt;&gt; cmd = &quot;echo &#39;hello&#39; | nc -lp 8889 &gt;/dev/null&quot;</span>
+<span class="sd">    &gt;&gt;&gt; process = subprocess.Popen(cmd, shell=True)</span>
+
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([Field(&quot;hello\n&quot;)])</span>
+<span class="sd">    &gt;&gt;&gt; s0 = State(&quot;s0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s1 = State(&quot;s1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s2 = State(&quot;s2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; openTransition = OpenChannelTransition(startState=s0, endState=s1, name=&#39;open channel&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol], name=&#39;main transition&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; automata = Automata(s0, [symbol])</span>
+
+<span class="sd">    &gt;&gt;&gt; channel = TCPClient(remoteIP=&quot;127.0.0.1&quot;, remotePort=8889, timeout=1.)</span>
+<span class="sd">    &gt;&gt;&gt; client = Actor(automata = automata, channel=channel, name=&#39;Client&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; client.nbMaxTransitions = 2</span>
+
+<span class="sd">    &gt;&gt;&gt; time.sleep(.2)</span>
+<span class="sd">    &gt;&gt;&gt; client.start()</span>
+<span class="sd">    &gt;&gt;&gt; time.sleep(1)</span>
+<span class="sd">    &gt;&gt;&gt; client.wait()</span>
+<span class="sd">    &gt;&gt;&gt; channel.close()</span>
+
+<span class="sd">    &gt;&gt;&gt; result = process.wait()</span>
+
+<span class="sd">    &gt;&gt;&gt; print(client.generateLog())</span>
+<span class="sd">    Activity log for actor &#39;Client&#39; (initiator):</span>
+<span class="sd">      [+] At state &#39;s0&#39;</span>
+<span class="sd">      [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">      [+]   Picking transition &#39;open channel&#39; (open channel)</span>
+<span class="sd">      [+]   Transition &#39;open channel&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">      [+] At state &#39;s1&#39;</span>
+<span class="sd">      [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">      [+]   Picking transition &#39;main transition&#39; (initiator)</span>
+<span class="sd">      [+]   During transition &#39;main transition&#39;, sending input symbol (&#39;Symbol&#39;)</span>
+<span class="sd">      [+]   During transition &#39;main transition&#39;, receiving expected output symbol (&#39;Symbol&#39;)</span>
+<span class="sd">      [+]   Transition &#39;main transition&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">      [+] At state &#39;s1&#39;, we reached the max number of transitions (2), so we stop</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_tcp_write_read_large_packet</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; import time</span>
+<span class="sd">    &gt;&gt;&gt; import subprocess</span>
+
+<span class="sd">    &gt;&gt;&gt; cmd = &quot;echo {} | nc -lp 8885 &gt;/dev/null&quot;.format(&quot;a&quot; * 4096)</span>
+<span class="sd">    &gt;&gt;&gt; process = subprocess.Popen(cmd, shell=True)</span>
+
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([Field(&quot;a&quot; * 4096 + &quot;\n&quot;)])</span>
+<span class="sd">    &gt;&gt;&gt; s0 = State(&quot;s0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s1 = State(&quot;s1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s2 = State(&quot;s2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; openTransition = OpenChannelTransition(startState=s0, endState=s1, name=&#39;open channel&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; mainTransition = Transition(startState=s1, endState=s1, inputSymbol=symbol, outputSymbols=[symbol], name=&#39;main transition&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; automata = Automata(s0, [symbol])</span>
+
+<span class="sd">    &gt;&gt;&gt; channel = TCPClient(remoteIP=&quot;127.0.0.1&quot;, remotePort=8885, timeout=1.)</span>
+<span class="sd">    &gt;&gt;&gt; client = Actor(automata = automata, channel=channel, name=&#39;Client&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; client.nbMaxTransitions = 2</span>
+
+<span class="sd">    &gt;&gt;&gt; time.sleep(.2)</span>
+<span class="sd">    &gt;&gt;&gt; client.start()</span>
+<span class="sd">    &gt;&gt;&gt; time.sleep(1)</span>
+<span class="sd">    &gt;&gt;&gt; client.wait()</span>
+<span class="sd">    &gt;&gt;&gt; channel.close()</span>
+
+<span class="sd">    &gt;&gt;&gt; process.wait()  # doctest: +SKIP</span>
+<span class="sd">    0</span>
+
+<span class="sd">    &gt;&gt;&gt; print(client.generateLog())</span>
+<span class="sd">    Activity log for actor &#39;Client&#39; (initiator):</span>
+<span class="sd">      [+] At state &#39;s0&#39;</span>
+<span class="sd">      [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">      [+]   Picking transition &#39;open channel&#39; (open channel)</span>
+<span class="sd">      [+]   Transition &#39;open channel&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">      [+] At state &#39;s1&#39;</span>
+<span class="sd">      [+]   Randomly choosing a transition to execute or to wait for an input symbol</span>
+<span class="sd">      [+]   Picking transition &#39;main transition&#39; (initiator)</span>
+<span class="sd">      [+]   During transition &#39;main transition&#39;, sending input symbol (&#39;Symbol&#39;)</span>
+<span class="sd">      [+]   During transition &#39;main transition&#39;, receiving expected output symbol (&#39;Symbol&#39;)</span>
+<span class="sd">      [+]   Transition &#39;main transition&#39; lead to state &#39;s1&#39;</span>
+<span class="sd">      [+] At state &#39;s1&#39;, we reached the max number of transitions (2), so we stop</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

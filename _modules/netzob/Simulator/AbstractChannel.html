@@ -1,0 +1,1205 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Simulator.AbstractChannel &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Simulator.AbstractChannel</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#|             ANSSI,   https://www.ssi.gouv.fr                              |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| File contributors :                                                       |</span>
+<span class="c1">#|       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1">#|       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">array</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">import</span> <span class="nn">shlex</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">fcntl</span> <span class="kn">import</span> <span class="n">ioctl</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">repeat</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span>  <span class="c1"># noqa: F401</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Event</span>
+<span class="c1">#from multiprocessing import Process, Event</span>
+<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span><span class="p">,</span> <span class="n">Empty</span>
+<span class="c1">#from multiprocessing import Queue</span>
+<span class="kn">from</span> <span class="nn">getmac</span> <span class="kn">import</span> <span class="n">get_mac_address</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">public_api</span><span class="p">,</span> <span class="n">NetzobLogger</span>
+<span class="kn">from</span> <span class="nn">netzob.Simulator.ChannelBuilder</span> <span class="kn">import</span> <span class="n">ChannelBuilder</span>  <span class="c1"># noqa: F401</span>
+
+
+<span class="k">class</span> <span class="nc">ChannelDownException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">ChannelInterface</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ChannelInterface class specifies the methods to implement in</span>
+<span class="sd">    order to create a new communication channel.</span>
+
+<span class="sd">    The following methods have to be implemented:</span>
+
+<span class="sd">    * :meth:`~.open`</span>
+<span class="sd">    * :meth:`~.close`</span>
+<span class="sd">    * :meth:`~.read`</span>
+<span class="sd">    * :meth:`~.writePacket`</span>
+<span class="sd">    * :meth:`~.sendReceive`</span>
+
+<span class="sd">    To associate a channel into a group a *similar* channels, class should</span>
+<span class="sd">    declare a list of compatible families. An empty list of families means that</span>
+<span class="sd">    the channel is *similar* to all possible families.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Class attributes ##</span>
+
+    <span class="n">FAMILIES</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: List[str]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **Class attribute**.</span>
+
+<span class="sd">    :class:`~typing.List` of families.</span>
+<span class="sd">    This attribute should be superseded in child classes.</span>
+<span class="sd">    An empty list means that the channel is *similar* to all possible families.</span>
+
+<span class="sd">    :type: :class:`List[str]`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Class internal attributes #</span>
+
+    <span class="n">DEFAULT_WRITE_COUNTER_MAX</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">DEFAULT_TIMEOUT</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Interface methods ##</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">DEFAULT_TIMEOUT</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open the communication channel. If the channel is a server, it</span>
+<span class="sd">        starts to listen for incoming data. If the channel is a client, it connects to the remote peer.</span>
+
+<span class="sd">        :param timeout: The timeout of the channel for opening</span>
+<span class="sd">                        a connection with a remote peer. This parameter overrides the channel :attr:`timeout` attribute and is only effective in the context of a client. Default value (None) corresponds to no timeout.</span>
+<span class="sd">        :type timeout: :class:`float`, optional</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isOpen</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;The channel is already open, cannot open it again&quot;</span><span class="p">)</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the communication channel.&quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the next message from the communication channel.</span>
+
+<span class="sd">        :return: The received data.</span>
+<span class="sd">        :rtype: :class:`bytes`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">writePacket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write on the communication channel the specified data.</span>
+
+<span class="sd">        :param data: The data to write on the channel.</span>
+<span class="sd">        :type data: :class:`bytes`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">sendReceive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write on the communication channel the specified data, wait for a</span>
+<span class="sd">        response and return the received data.</span>
+
+<span class="sd">        :param data: The data to write on the channel.</span>
+<span class="sd">        :type data: :class:`bytes`, required</span>
+<span class="sd">        :return: The received data.</span>
+<span class="sd">        :rtype: :class:`bytes`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="AbstractChannel"><a class="viewcode-back" href="../../../language_specification/trafficgeneration.html#netzob.Simulator.AbstractChannel.AbstractChannel">[docs]</a><span class="nd">@public_api</span>
+<span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">AbstractChannel</span><span class="p">(</span><span class="n">ChannelInterface</span><span class="p">,</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A communication channel is an element allowing the establishment of a</span>
+<span class="sd">    connection to or from a remote device.</span>
+
+<span class="sd">    The AbstractChannel defines the API of a communication channel.</span>
+
+<span class="sd">    A communication channel provides the following public variables:</span>
+
+<span class="sd">    :var isOpen: The status of the communication channel.</span>
+<span class="sd">    :var timeout: The default timeout in seconds for opening a connection (only effective in the context of a client), as well as for</span>
+<span class="sd">                  waiting a message when calling the :meth:`read` method.</span>
+<span class="sd">    :var header: A Symbol that makes it possible to access the underlying protocol header for the channels prefixed with the term **Custom**.</span>
+<span class="sd">    :var header_preset: A Preset used to preset</span>
+<span class="sd">                        (parameterize) the fields of the underlying protocol header during symbol</span>
+<span class="sd">                        specialization. See :meth:`Symbol.specialize() &lt;netzob.Model.Vocabulary.Symbol.Symbol.specialize&gt;` for more information.</span>
+<span class="sd">    :vartype isOpen: :class:`bool`</span>
+<span class="sd">    :vartype timeout: :class:`int`</span>
+<span class="sd">    :vartype header: :class:`~netzob.Model.Vocabulary.Symbol.Symbol`</span>
+<span class="sd">    :vartype header_preset: :class:`~netzob.Model.Vocabulary.Preset`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Abstract methods ##</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractstaticmethod</span>
+    <span class="k">def</span> <span class="nf">getBuilder</span><span class="p">():</span>
+        <span class="c1"># type: () -&gt; Type[ChannelBuilder]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provide the builder specific to an :class:`AbstractChannel`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AbstractChannel.set_rate"><a class="viewcode-back" href="../../../language_specification/trafficgeneration.html#netzob.Simulator.AbstractChannel.AbstractChannel.set_rate">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">set_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method set the given transmission rate to the channel.</span>
+<span class="sd">        Used in testing network under high load</span>
+
+<span class="sd">        :parameter rate: This specifies the bandwidth in bytes per second to</span>
+<span class="sd">                         respect during traffic emission. Default value is</span>
+<span class="sd">                         ``None``, which means that the bandwidth is only</span>
+<span class="sd">                         limited by the underlying physical layer.</span>
+<span class="sd">        :type rate: :class:`int`, required</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AbstractChannel.unset_rate"><a class="viewcode-back" href="../../../language_specification/trafficgeneration.html#netzob.Simulator.AbstractChannel.AbstractChannel.unset_rate">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">unset_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method clears the transmission rate.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+    <span class="c1"># Public API methods ##</span>
+
+    <span class="k">def</span> <span class="nf">register_abstraction_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abstraction_layer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registered_abstraction_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">abstraction_layer</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">unregister_abstraction_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abstraction_layer</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">abstraction_layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_abstraction_layers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">registered_abstraction_layers</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">abstraction_layer</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AbstractChannel.setSendLimit"><a class="viewcode-back" href="../../../language_specification/trafficgeneration.html#netzob.Simulator.AbstractChannel.AbstractChannel.setSendLimit">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">setSendLimit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxValue</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Change the max number of writings.</span>
+
+<span class="sd">        When it is reached, no more packets can be sent until</span>
+<span class="sd">        :meth:`clearSendLimit` is called.</span>
+
+<span class="sd">        If maxValue is -1, the sending limit is deactivated.</span>
+
+<span class="sd">        :param maxValue: the new max value</span>
+<span class="sd">        :type maxValue: :class:`int`, required</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writeCounterMax</span> <span class="o">=</span> <span class="n">maxValue</span></div>
+
+<div class="viewcode-block" id="AbstractChannel.clearSendLimit"><a class="viewcode-back" href="../../../language_specification/trafficgeneration.html#netzob.Simulator.AbstractChannel.AbstractChannel.clearSendLimit">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">clearSendLimit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the writing counters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writeCounter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writeCounterMax</span> <span class="o">=</span> <span class="n">AbstractChannel</span><span class="o">.</span><span class="n">DEFAULT_WRITE_COUNTER_MAX</span></div>
+
+<div class="viewcode-block" id="AbstractChannel.write"><a class="viewcode-back" href="../../../language_specification/trafficgeneration.html#netzob.Simulator.AbstractChannel.AbstractChannel.write">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write to the communication channel the specified data, either once,</span>
+<span class="sd">        or in a loop according to the `duration` parameter.</span>
+
+<span class="sd">        :param data: The data to write on the channel.</span>
+<span class="sd">        :param duration: This indicates for how many seconds the data is</span>
+<span class="sd">                         continuously written on the channel. Default value is</span>
+<span class="sd">                         ``None``, which means that the data is sent only once.</span>
+<span class="sd">        :type data: bytes, required</span>
+<span class="sd">        :type duration: int, optional</span>
+<span class="sd">        :return: The amount of written data, in bytes.</span>
+<span class="sd">        :rtype: int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">threaded_mode</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue_output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue_output</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_map</span><span class="p">(</span><span class="n">repeat</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AbstractChannel.write_map"><a class="viewcode-back" href="../../../language_specification/trafficgeneration.html#netzob.Simulator.AbstractChannel.AbstractChannel.write_map">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">write_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_iterator</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write to the communication channel the successive data values,</span>
+<span class="sd">        either once, or in a loop according to the `duration` parameter.</span>
+
+<span class="sd">        :param data_iterator: data iterator used to write on the channel.</span>
+<span class="sd">        :param duration: This indicates for how many seconds the data is</span>
+<span class="sd">                         continuously written on the channel.</span>
+<span class="sd">                         Default value is ``None``, which means that the</span>
+<span class="sd">                         data is sent only once.</span>
+<span class="sd">        :type data_iterator: ~typing.Iterator[bytes], required</span>
+<span class="sd">        :type duration: int, optional</span>
+<span class="sd">        :return: The amount of written data, count in bytes.</span>
+<span class="sd">        :rtype: int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">__writeCounterMax</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span>
+           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__writeCounter</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">__writeCounterMax</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Max write counter reached (</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__writeCounterMax</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writeCounter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">len_data</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">data_iterator</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                <span class="n">len_data</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">len_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">writePacket</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rate_text</span> <span class="o">=</span> <span class="s2">&quot;unlimited&quot;</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">rate_text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2"> kBps&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="o">/</span> <span class="mi">1024</span><span class="p">)</span>
+
+            <span class="n">t_initial</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">t_start</span> <span class="o">=</span> <span class="n">t_initial</span>
+            <span class="n">t_current</span> <span class="o">=</span> <span class="n">t_initial</span>
+            <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_iterator</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">t_current</span> <span class="o">&gt;</span> <span class="n">t_initial</span> <span class="o">+</span> <span class="n">duration</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+                <span class="c1"># Specialize the symbol and send it over the channel</span>
+                <span class="n">len_data</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">writePacket</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="n">t_current</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+                <span class="c1"># Show some log every seconds</span>
+                <span class="k">if</span> <span class="n">t_current</span> <span class="o">&gt;</span> <span class="n">t_start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">t_elapsed</span> <span class="o">=</span> <span class="n">t_current</span> <span class="o">-</span> <span class="n">t_initial</span>
+                    <span class="n">t_start</span> <span class="o">=</span> <span class="n">t_current</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="s2">&quot;Rate rule: </span><span class="si">{}</span><span class="s2">, current rate: </span><span class="si">{:.2f}</span><span class="s2"> kBps, &quot;</span>
+                        <span class="s2">&quot;sent data: </span><span class="si">{:.2f}</span><span class="s2"> kB, nb seconds elapsed: &quot;</span>
+                        <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">rate_text</span><span class="p">,</span>
+                            <span class="n">len_data</span> <span class="o">/</span> <span class="n">t_elapsed</span> <span class="o">/</span> <span class="mi">1024</span><span class="p">,</span>
+                            <span class="n">len_data</span> <span class="o">/</span> <span class="mi">1024</span><span class="p">,</span>
+                            <span class="n">t_elapsed</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">len_data</span></div>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">checkReceived</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                      <span class="n">predicate</span><span class="p">,</span>  <span class="c1"># type: Callable[..., bool]</span>
+                      <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (...) -&gt; bool</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method used to delegate the validation of the received data into</span>
+<span class="sd">        a callback</span>
+
+<span class="sd">        :param predicate: the function used to validate the received data</span>
+<span class="sd">        :param args: positional arguments passed to ``predicate``</span>
+<span class="sd">        :param kwargs: named arguments passed to ``predicate``</span>
+<span class="sd">        :type predicate: ~typing.Callable[[bytes], bool], required</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">predicate</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The predicate attribute must be a callable &quot;</span>
+                             <span class="s2">&quot;expecting a single bytes attribute, not &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">predicate</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">predicate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">ChannelInterface</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param timeout: The default timeout of the channel for global</span>
+<span class="sd">                        connection. Default value is blocking (None).</span>
+<span class="sd">        :type timeout: :class:`float`, optional</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">ChannelInterface</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_isOpened</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># A Symbol corresponding to the protocol header</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_preset</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># A Preset object is expected to parameterize the header Symbol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writeCounter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__writeCounterMax</span> <span class="o">=</span> <span class="n">AbstractChannel</span><span class="o">.</span><span class="n">DEFAULT_WRITE_COUNTER_MAX</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">registered_abstraction_layers</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Threading management</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threaded_mode</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stopEvent</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__queue_output</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+
+
+    <span class="c1">## Internal methods ##</span>
+
+<div class="viewcode-block" id="AbstractChannel.__enter__"><a class="viewcode-back" href="../../../language_specification/trafficgeneration.html#netzob.Simulator.AbstractChannel.AbstractChannel.__enter__">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enter the runtime channel context by opening the channel.</span>
+<span class="sd">        This methods is implied in the with statement.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="AbstractChannel.__exit__"><a class="viewcode-back" href="../../../language_specification/trafficgeneration.html#netzob.Simulator.AbstractChannel.AbstractChannel.__exit__">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Exit the runtime channel context by closing the channel.</span>
+<span class="sd">        This methods is implied in the with statement.</span>
+
+<span class="sd">        This method should not be called explicitly. However, the following</span>
+<span class="sd">        arguments are accepted:</span>
+
+<span class="sd">        :param exc_type: the potential exception type caught in context</span>
+<span class="sd">        :type exc_type: Exception, required</span>
+<span class="sd">        :param exc_value: the potential exception value caught in context</span>
+<span class="sd">        :type exc_value: object, required</span>
+<span class="sd">        :param traceback: the traceback of the potential exception caught in</span>
+<span class="sd">                          context</span>
+<span class="sd">        :type traceback: object, required</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unset_rate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">updateSocketTimeout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the timeout of the socket.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+
+    <span class="c1">## Thread management ##</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting channel thread&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threaded_mode</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__stopEvent</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__stopEvent</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_data_to_send</span><span class="p">()</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_incoming_data</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process_incoming_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Exiting channel thread&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_data_to_send</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue_output</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>  <span class="c1"># Test if the queue is not empty</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Process data to send&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue_output</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">Empty</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Queue error&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">writePacket</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">PermissionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Error on socket writing: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue_output</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Data sent&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">check_incoming_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Received : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isActive</span><span class="p">():</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Exception on read(): &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">raise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">process_incoming_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="c1">#self._logger.debug(&quot;Processing read data&quot;)</span>
+
+        <span class="k">for</span> <span class="n">abstraction_layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_abstraction_layers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">abstraction_layer</span><span class="o">.</span><span class="n">is_data_interesting</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Adding received message to input queue of abstraction layer &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">abstraction_layer</span><span class="p">)))</span>
+                <span class="n">abstraction_layer</span><span class="o">.</span><span class="n">queue_input</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Abstraction layer </span><span class="si">{}</span><span class="s2"> is not interesed by the received data&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">abstraction_layer</span><span class="p">)))</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the current thread.</span>
+
+<span class="sd">        This operation is not immediate because we try to stop the</span>
+<span class="sd">        thread as cleanly as possible.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Stop channel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Stopping the current channel&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stopEvent</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait for the current thread to finish processing.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">isActive</span><span class="p">():</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">isActive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Indicate if the current thread is active.</span>
+
+<span class="sd">        :return: True if the thread execution has not finished.</span>
+<span class="sd">        :rtype: :class:`bool`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__stopEvent</span><span class="o">.</span><span class="n">is_set</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AbstractChannel.flush"><a class="viewcode-back" href="../../../language_specification/trafficgeneration.html#netzob.Simulator.AbstractChannel.AbstractChannel.flush">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Block until the channel output queue is empty.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue_output</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
+
+    <span class="c1">## Properties ##</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">isOpen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property (getter.setter  # type: ignore).</span>
+<span class="sd">        Returns ``True`` if the communication channel is open.</span>
+
+<span class="sd">        :return: The status of the communication channel.</span>
+<span class="sd">        :type: :class:`bool`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isOpened</span>
+
+    <span class="nd">@isOpen</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">isOpen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">isOpen</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_isOpened</span> <span class="o">=</span> <span class="n">isOpen</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">queue_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__queue_output</span>
+
+    <span class="nd">@queue_output</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">queue_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue_output</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__queue_output</span> <span class="o">=</span> <span class="n">queue_output</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The default timeout of the channel for opening connection and</span>
+<span class="sd">        waiting for a message. Default value is DEFAULT_TIMEOUT seconds</span>
+<span class="sd">        (float). To specify no timeout, None value is expected.</span>
+
+<span class="sd">        :rtype: :class:`float` or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span>
+
+    <span class="nd">@timeout</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">((</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :type timeout: :class:`float`, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateSocketTimeout</span><span class="p">()</span></div>
+
+
+<span class="c1"># Utilitary methods ##</span>
+
+<span class="k">class</span> <span class="nc">NetUtils</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A utilitary class that provides static methods to handle network</span>
+<span class="sd">    address and interface resolutions.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">getRemoteMacAddress</span><span class="p">(</span><span class="n">remoteIP</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve remote MAC address from the remote IP address</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.getRemoteMacAddress(&quot;127.0.0.1&quot;)</span>
+<span class="sd">        b&#39;\x00\x00\x00\x00\x00\x00&#39;</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.getRemoteMacAddress(&quot;192.168.249.247&quot;)</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        Exception: Cannot resolve IP address to a MAC address for IP: &#39;192.168.249.247&#39;</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dstMacAddr</span> <span class="o">=</span> <span class="n">get_mac_address</span><span class="p">(</span><span class="n">ip</span><span class="o">=</span><span class="n">remoteIP</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dstMacAddr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dstMacAddr</span> <span class="o">=</span> <span class="n">dstMacAddr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">dstMacAddr</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">dstMacAddr</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Force ARP resolution</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s2">&quot;/bin/ping&quot;</span><span class="p">,</span> <span class="s2">&quot;-c1&quot;</span><span class="p">,</span> <span class="s2">&quot;-W1&quot;</span><span class="p">,</span> <span class="s2">&quot;-q&quot;</span><span class="p">,</span> <span class="n">remoteIP</span><span class="p">])</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+            <span class="n">dstMacAddr</span> <span class="o">=</span> <span class="n">get_mac_address</span><span class="p">(</span><span class="n">ip</span><span class="o">=</span><span class="n">remoteIP</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dstMacAddr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">dstMacAddr</span> <span class="o">=</span> <span class="n">dstMacAddr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="n">dstMacAddr</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">dstMacAddr</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot resolve IP address to a MAC address for IP: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remoteIP</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">dstMacAddr</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">getLocalMacAddress</span><span class="p">(</span><span class="n">interface</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve local MAC address from the network interface.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.getLocalMacAddress(&quot;lo&quot;)</span>
+<span class="sd">        b&#39;\x00\x00\x00\x00\x00\x00&#39;</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.getLocalMacAddress(&quot;eth42&quot;)</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        Exception: Cannot retrieve local mac address from interface: &#39;eth42&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">get_interface_addr</span><span class="p">(</span><span class="n">ifname</span><span class="p">):</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">()</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">ioctl</span><span class="p">(</span><span class="n">s</span><span class="p">,</span>
+                             <span class="mh">0x8927</span><span class="p">,</span>  <span class="c1"># SIOCGIFADDR</span>
+                             <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;16s16x&quot;</span><span class="p">,</span> <span class="n">ifname</span><span class="p">))</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;16xh6s8x&quot;</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">srcMacAddr</span> <span class="o">=</span> <span class="n">get_interface_addr</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">interface</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot retrieve local mac address from interface: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">interface</span><span class="p">))</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">srcMacAddr</span>
+
+    <span class="c1"># Static methods used to retrieve local network interface</span>
+    <span class="c1"># and local IP according to a remote IP</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">getIPFromInterface</span><span class="p">(</span><span class="n">ifname</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve the local IP corresponding to the given local network</span>
+<span class="sd">        interface.</span>
+
+<span class="sd">        :param ifname: The network interface name.</span>
+<span class="sd">        :type ifname: :class:`str`</span>
+<span class="sd">        :return: The local IP address.</span>
+<span class="sd">        :type: :class:`str`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.getIPFromInterface(&quot;lo&quot;)</span>
+<span class="sd">        &#39;127.0.0.1&#39;</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.getIPFromInterface(&quot;eth42&quot;)</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        Exception: Cannot retrieve IP address from interface: &#39;eth42&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_DGRAM</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">socket</span><span class="o">.</span><span class="n">inet_ntoa</span><span class="p">(</span><span class="n">ioctl</span><span class="p">(</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span>
+                <span class="mh">0x8915</span><span class="p">,</span>  <span class="c1"># SIOCGIFADDR</span>
+                <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;256s&#39;</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">ifname</span><span class="p">[:</span><span class="mi">15</span><span class="p">],</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+            <span class="p">)[</span><span class="mi">20</span><span class="p">:</span><span class="mi">24</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot retrieve IP address from interface: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ifname</span><span class="p">))</span> <span class="kn">from</span> <span class="bp">None</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">getLocalInterface</span><span class="p">(</span><span class="n">localIP</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve the network interface from the local IP address.</span>
+
+<span class="sd">        :param localIP: The local IP address</span>
+<span class="sd">        :type localIP: :class:`str`</span>
+<span class="sd">        :return: The network interface name.</span>
+<span class="sd">        :type: :class:`str`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.getLocalInterface(&quot;127.0.0.1&quot;)</span>
+<span class="sd">        &#39;lo&#39;</span>
+<span class="sd">        &gt;&gt;&gt; res = NetUtils.getLocalInterface(&quot;192.168.247.249&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; print(res)</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">networkInterface</span><span class="p">,</span> <span class="n">ip</span><span class="p">)</span> <span class="ow">in</span> <span class="n">NetUtils</span><span class="o">.</span><span class="n">getLocalInterfaces</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">localIP</span> <span class="o">==</span> <span class="n">ip</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">networkInterface</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">getLocalIP</span><span class="p">(</span><span class="n">remoteIP</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Retrieve the source IP address which will be used to connect to the</span>
+<span class="sd">        destination IP address.</span>
+
+<span class="sd">        :param remoteIP: the remote IP address</span>
+<span class="sd">        :type localIP: :class:`str`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.getLocalIP(&quot;127.0.0.1&quot;)</span>
+<span class="sd">        &#39;127.0.0.1&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_DGRAM</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">remoteIP</span><span class="p">,</span> <span class="mi">53</span><span class="p">))</span>
+        <span class="n">localIPAddress</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">getsockname</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">localIPAddress</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">getLocalInterfaces</span><span class="p">():</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot; Retrieve the list of all network interfaces and their associated IP.</span>
+
+<span class="sd">        :return: The list of (interface name, IP) tuples.</span>
+<span class="sd">        :type: :class:`list` of :class:`tuple` (:class:`str`, :class:`str`)</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; res = NetUtils.getLocalInterfaces()</span>
+<span class="sd">        &gt;&gt;&gt; (&#39;lo&#39;, &#39;127.0.0.1&#39;) in res</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># source : http://code.activestate.com/recipes/439093-get-names-of-all-up-network-interfaces-linux-only/</span>
+        <span class="n">is_64bits</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span>
+        <span class="n">struct_size</span> <span class="o">=</span> <span class="mi">40</span> <span class="k">if</span> <span class="n">is_64bits</span> <span class="k">else</span> <span class="mi">32</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_DGRAM</span><span class="p">)</span>
+        <span class="n">max_possible</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># initial value</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">_bytes</span> <span class="o">=</span> <span class="n">max_possible</span> <span class="o">*</span> <span class="n">struct_size</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">):</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">outbytes</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;iL&#39;</span><span class="p">,</span> <span class="n">ioctl</span><span class="p">(</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span>
+                <span class="mh">0x8912</span><span class="p">,</span>  <span class="c1"># SIOCGIFCONF</span>
+                <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;iL&#39;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">names</span><span class="o">.</span><span class="n">buffer_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">outbytes</span> <span class="o">==</span> <span class="n">_bytes</span><span class="p">:</span>
+                <span class="n">max_possible</span> <span class="o">*=</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="n">namestr</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+        <span class="n">ifaces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">outbytes</span><span class="p">,</span> <span class="n">struct_size</span><span class="p">):</span>
+            <span class="n">iface_name</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">namestr</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">16</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">iface_addr</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">inet_ntoa</span><span class="p">(</span><span class="n">namestr</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">20</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">24</span><span class="p">])</span>
+            <span class="n">ifaces</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">iface_name</span><span class="p">,</span> <span class="n">iface_addr</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">ifaces</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">getLocalInterfaceFromMac</span><span class="p">(</span><span class="n">localMac</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve the network interface from the local MAC address.</span>
+
+<span class="sd">        :param localMac: The local MAC address</span>
+<span class="sd">        :type localMac: :class:`str`</span>
+<span class="sd">        :return: The network interface name.</span>
+<span class="sd">        :type: :class:`str`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.getLocalInterfaceFromMac(&quot;000000000000&quot;)</span>
+<span class="sd">        &#39;lo&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">MacInBytes</span> <span class="o">=</span> <span class="n">localMac</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">MacInBytes</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">MacInBytes</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">networkInterface</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">NetUtils</span><span class="o">.</span><span class="n">getLocalInterfaces</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">NetUtils</span><span class="o">.</span><span class="n">getLocalMacAddress</span><span class="p">(</span><span class="n">networkInterface</span><span class="p">)</span> <span class="o">==</span> <span class="n">MacInBytes</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">networkInterface</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">getMtu</span><span class="p">(</span><span class="n">localInterface</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve the MTU of the given network interface.</span>
+
+<span class="sd">        :param localInterface: The local network interface</span>
+<span class="sd">        :type localInterface: :class:`str`</span>
+<span class="sd">        :return: The MTU value.</span>
+<span class="sd">        :type: :class:`int`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.getMtu(&#39;lo&#39;)</span>
+<span class="sd">        0</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.getMtu(&#39;eth42&#39;)</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        Exception: Cannot get MTU from interface: &#39;eth42&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ifname</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">localInterface</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">SOCK_DGRAM</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">ioctl</span><span class="p">(</span><span class="n">s</span><span class="p">,</span>
+                             <span class="mh">0x8921</span><span class="p">,</span>  <span class="c1"># SIOCGIFMTU</span>
+                             <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;16s16x&quot;</span><span class="p">,</span> <span class="n">ifname</span><span class="p">))</span>
+            <span class="n">mtu</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;16xH14x&quot;</span><span class="p">,</span> <span class="n">response</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">mtu</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot get MTU from interface: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">localInterface</span><span class="p">))</span> <span class="kn">from</span> <span class="bp">None</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">setMtu</span><span class="p">(</span><span class="n">localInterface</span><span class="p">,</span> <span class="n">mtu</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the MTU of the given network interface.</span>
+
+<span class="sd">        :param localInterface: The local network interface</span>
+<span class="sd">        :type localInterface: :class:`str`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">ifname</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">localInterface</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">SOCK_DGRAM</span><span class="p">)</span>
+        <span class="n">ioctl</span><span class="p">(</span><span class="n">s</span><span class="p">,</span>
+              <span class="mh">0x8922</span><span class="p">,</span>  <span class="c1"># SIOCSIFMTU</span>
+              <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;16sH14x&quot;</span><span class="p">,</span> <span class="n">ifname</span><span class="p">,</span> <span class="n">mtu</span><span class="p">))</span>
+
+        <span class="c1"># changing MTU set the interface down</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># give some time to see the status change</span>
+        <span class="n">isUp</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">):</span>  <span class="c1"># 30s to let the interface to be up</span>
+            <span class="k">if</span> <span class="n">NetUtils</span><span class="o">.</span><span class="n">isUp</span><span class="p">(</span><span class="n">localInterface</span><span class="p">):</span>
+                <span class="n">isUp</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">isUp</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">isUp</span><span class="p">(</span><span class="n">localInterface</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the given network interface is up.</span>
+
+<span class="sd">        :param localInterface: The local network interface</span>
+<span class="sd">        :type localInterface: :class:`str`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; NetUtils.isUp(&#39;lo&#39;)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/proc/mounts&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;sysfs&#39;</span> <span class="ow">in</span> <span class="n">_</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="n">sysroot</span> <span class="o">=</span> <span class="s1">&#39;/sys&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sysroot</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/class/net/</span><span class="si">{}</span><span class="s1">/operstate&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sysroot</span><span class="p">,</span> <span class="n">localInterface</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;down&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fd</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">set_rate</span><span class="p">(</span><span class="n">localInterface</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the transmission rate on the given interface.</span>
+
+<span class="sd">        :param localInterface: The local network interface</span>
+<span class="sd">        :type localInterface: :class:`str`</span>
+
+<span class="sd">        :param rate: This specifies the bandwidth in bytes per second to</span>
+<span class="sd">                     respect during traffic emission. Default value is</span>
+<span class="sd">                     ``None``, which means that the bandwidth is only</span>
+<span class="sd">                     limited by the underlying physical layer.</span>
+<span class="sd">        :type rate: :class:`int`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">rate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;tc qdisc del dev </span><span class="si">{}</span><span class="s2"> root&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">localInterface</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;tc qdisc replace dev </span><span class="si">{}</span><span class="s2"> root netem rate </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">localInterface</span><span class="p">,</span> <span class="n">rate</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span>  <span class="c1"># in bits per second</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">stderrData</span><span class="p">)</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># if rate is None no tc rule was previously defined on the interface,</span>
+            <span class="c1"># the error &quot;No such file or directory&quot; is returned with returncode=2 : ignore it.</span>
+            <span class="n">errMsg</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;ERROR: &quot;</span> <span class="o">+</span> <span class="n">stderrData</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;set_rate(localInterface=&#39;</span><span class="si">{}</span><span class="s2">&#39;, rate=</span><span class="si">{}</span><span class="s2">) failed, code = </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">localInterface</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">errMsg</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_rate</span><span class="p">(</span><span class="n">localInterface</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the transmission rate status on the given interface.</span>
+
+<span class="sd">        :param localInterface: The local network interface</span>
+<span class="sd">        :type localInterface: :class:`str`</span>
+
+<span class="sd">        :return: A string containing the bandwidth set previously by</span>
+<span class="sd">                 a tc command. If no tc rate was set, returns</span>
+<span class="sd">                 &quot;No tc rule set on the interface.&quot;.</span>
+<span class="sd">        :type rate: :class:`str`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;tc qdisc show dev </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">localInterface</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">stdoutData</span><span class="p">,</span> <span class="n">stderrData</span><span class="p">)</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># if rate is None no tc rule was previously defined on th interface,</span>
+            <span class="c1"># the error &quot;No such file or directory&quot; is returned with returncode=2 : ignore it.</span>
+            <span class="n">errMsg</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;ERROR: &quot;</span> <span class="o">+</span> <span class="n">stderrData</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;get_rate(localInterface=&#39;</span><span class="si">{}</span><span class="s2">&#39;, failed, code = </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">localInterface</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">errMsg</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">stdoutData</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bytes</span><span class="p">:</span>
+            <span class="n">stdoutData</span> <span class="o">=</span> <span class="n">stdoutData</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;rate&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stdoutData</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;No tc rule set on the interface.&quot;</span>
+        <span class="k">return</span> <span class="n">stdoutData</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

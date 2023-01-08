@@ -1,0 +1,599 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Domain.Variables.Memory &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../../_static/jquery.js"></script>
+    <script src="../../../../../../_static/underscore.js"></script>
+    <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Domain.Variables.Memory</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">bitarray</span> <span class="kn">import</span> <span class="n">bitarray</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">public_api</span><span class="p">,</span> <span class="n">NetzobLogger</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.AbstractVariable</span> <span class="kn">import</span> <span class="n">AbstractVariable</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.Raw</span> <span class="kn">import</span> <span class="n">Raw</span>
+
+
+<div class="viewcode-block" id="Memory"><a class="viewcode-back" href="../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Memory.Memory">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">Memory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class provides a memory, used to store variable values (in bitarray) in a persisting and independent way.</span>
+
+<span class="sd">    To compute or verify the constraints and relationships that</span>
+<span class="sd">    participate to the definition of the fields, the Netzob library</span>
+<span class="sd">    relies on a memory. This memory stores the values of previously</span>
+<span class="sd">    captured or emitted fields. More precisely, the Memory contains</span>
+<span class="sd">    all the field variables that are needed according to the field</span>
+<span class="sd">    definition during the abstraction and specialization processes.</span>
+
+
+<span class="sd">    .. ifconfig:: scope in (&#39;netzob&#39;)</span>
+
+<span class="sd">       **Relationships between fields of successive messages**</span>
+
+<span class="sd">       The following example shows how to define a relationship</span>
+<span class="sd">       between a received message and the next message to send. A</span>
+<span class="sd">       memory is used to store the value of each variable. During the</span>
+<span class="sd">       first call to :meth:`specialize` on the ``s1`` symbol, the</span>
+<span class="sd">       value associated to the field ``f3`` is notably stored in</span>
+<span class="sd">       memory, so that it can be retrieved when calling</span>
+<span class="sd">       :meth:`specialize` on the ``s2`` symbol. In order to create</span>
+<span class="sd">       persistence for the ``f3`` field, it is mandatory to use the</span>
+<span class="sd">       ``scope`` parameter.</span>
+
+<span class="sd">       &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">       &gt;&gt;&gt; f1 = Field(domain=String(&quot;hello&quot;), name=&quot;F1&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; f2 = Field(domain=String(&quot;;&quot;), name=&quot;F2&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; f3 = Field(domain=Data(String(nbChars=(5,10)), scope=Scope.MESSAGE), name=&quot;F3&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; s1 = Symbol(fields=[f1, f2, f3], name=&quot;S1&quot;)</span>
+<span class="sd">       &gt;&gt;&gt;</span>
+<span class="sd">       &gt;&gt;&gt; f4 = Field(domain=String(&quot;master&quot;), name=&quot;F4&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; f5 = Field(domain=String(&quot;&gt;&quot;), name=&quot;F5&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; f6 = Field(domain=Value(f3), name=&quot;F6&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; s2 = Symbol(fields=[f4, f5, f6], name=&quot;S2&quot;)</span>
+<span class="sd">       &gt;&gt;&gt;</span>
+<span class="sd">       &gt;&gt;&gt; memory = Memory()</span>
+<span class="sd">       &gt;&gt;&gt; m1 = next(s1.specialize(memory=memory))</span>
+<span class="sd">       &gt;&gt;&gt; m2 = next(s2.specialize(memory=memory))</span>
+<span class="sd">       &gt;&gt;&gt;</span>
+<span class="sd">       &gt;&gt;&gt; m1[6:] == m2[7:]</span>
+<span class="sd">       True</span>
+
+
+<span class="sd">       **Relationships between a message field and the environment**</span>
+
+<span class="sd">       The following example shows how to define a relationship</span>
+<span class="sd">       between a message to send and an environment variable. The</span>
+<span class="sd">       symbol is first defined, and then an environment variable is</span>
+<span class="sd">       created. The first step consists in overloading the definition</span>
+<span class="sd">       domain of the ``f9`` field to link the environment variable.</span>
+
+<span class="sd">       &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">       &gt;&gt;&gt;</span>
+<span class="sd">       &gt;&gt;&gt; # Symbol definition</span>
+<span class="sd">       &gt;&gt;&gt; f7 = Field(domain=String(&quot;master&quot;), name=&quot;F7&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; f8 = Field(domain=String(&quot;&gt;&quot;), name=&quot;F8&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; f9 = Field(domain=String(), name=&quot;F9&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; s3 = Symbol(fields=[f7, f8, f9])</span>
+<span class="sd">       &gt;&gt;&gt;</span>
+<span class="sd">       &gt;&gt;&gt; # Environment variables definition</span>
+<span class="sd">       &gt;&gt;&gt; memory = Memory()</span>
+<span class="sd">       &gt;&gt;&gt; env1 = Data(String(), name=&quot;env1&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; memory.memorize(env1, String(&quot;John&quot;).value)</span>
+<span class="sd">       &gt;&gt;&gt;</span>
+<span class="sd">       &gt;&gt;&gt; # Overloading f9 field definition to link the environment variable</span>
+<span class="sd">       &gt;&gt;&gt; f9.domain = Value(env1)</span>
+<span class="sd">       &gt;&gt;&gt;</span>
+<span class="sd">       &gt;&gt;&gt; # Symbol specialization</span>
+<span class="sd">       &gt;&gt;&gt; next(s3.specialize(memory=memory))</span>
+<span class="sd">       b&#39;master&gt;John&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor of Memory&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__memoryAccessCB</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Memory.memorize"><a class="viewcode-back" href="../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Memory.Memory.memorize">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">AbstractVariable</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">memorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Memorizes the provided variable value.</span>
+
+<span class="sd">        :param variable: The variable for which we want to memorize a value.</span>
+<span class="sd">        :param value: The value to memorize.</span>
+<span class="sd">        :type variable: :class:`Variable &lt;netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable&gt;`, required</span>
+<span class="sd">        :type value: :class:`bitarray &lt;bitarray&gt;` or :class:`bytes`, required</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; variable = Data(String(), name=&quot;var1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; memory = Memory()</span>
+<span class="sd">        &gt;&gt;&gt; memory.memorize(variable, String(&quot;hello&quot;).value)</span>
+<span class="sd">        &gt;&gt;&gt; print(memory)</span>
+<span class="sd">        Data (String(nbChars=(0,8192))) from field &#39;None&#39;: b&#39;hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; memory.memorize(variable, b&quot;test&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; print(memory)</span>
+<span class="sd">        Data (String(nbChars=(0,8192))) from field &#39;None&#39;: b&#39;test&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">b_value</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">()</span>
+            <span class="n">b_value</span><span class="o">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="n">b_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;value parameter of memorize() method should a bitarray or a bytes, not a &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="Memory.hasValue"><a class="viewcode-back" href="../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Memory.Memory.hasValue">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">AbstractVariable</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">hasValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns true if the memory contains a value for the provided variable.</span>
+
+<span class="sd">        :param variable: The variable to look for in the memory.</span>
+<span class="sd">        :type variable: :class:`Variable &lt;netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable&gt;`, required</span>
+<span class="sd">        :return: ``True`` if the memory contains a value for the variable.</span>
+<span class="sd">        :rtype: :class:`bool`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; variable = Data(String(), name=&quot;var1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; memory = Memory()</span>
+<span class="sd">        &gt;&gt;&gt; memory.memorize(variable, String(&quot;hello&quot;).value)</span>
+<span class="sd">        &gt;&gt;&gt; memory.hasValue(variable)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; variable2 = Data(String(), name=&quot;var2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; memory.hasValue(variable2)</span>
+<span class="sd">        False</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">variable</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Memory.getValue"><a class="viewcode-back" href="../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Memory.Memory.getValue">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">AbstractVariable</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the value memorized for the provided variable.</span>
+
+<span class="sd">        :param variable: The variable for which we want to retrieve the value in memory.</span>
+<span class="sd">        :type variable: :class:`Variable &lt;netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable&gt;`, required</span>
+<span class="sd">        :return: The value in memory.</span>
+<span class="sd">        :rtype: :class:`bitarray &lt;bitarray&gt;`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; variable = Data(String(), name=&quot;var1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; memory = Memory()</span>
+<span class="sd">        &gt;&gt;&gt; memory.memorize(variable, String(&quot;hello&quot;).value)</span>
+<span class="sd">        &gt;&gt;&gt; memory.getValue(variable).tobytes()</span>
+<span class="sd">        b&#39;hello&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span></div>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">getVariable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the variable memorized which has the provided name.</span>
+
+<span class="sd">        :param name: The name for which we want to retrieve the variable in memory.</span>
+<span class="sd">        :type name: :class:`str`, required</span>
+<span class="sd">        :return: The variable in memory.</span>
+<span class="sd">        :rtype: :class:`Variable &lt;netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable&gt;`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; variable = Data(String(), name=&quot;var1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; memory = Memory()</span>
+<span class="sd">        &gt;&gt;&gt; memory.memorize(variable, String(&quot;hello&quot;).value)</span>
+<span class="sd">        &gt;&gt;&gt; print(memory.getVariable(&quot;var1&quot;))</span>
+<span class="sd">        Data (String(nbChars=(0,8192)))</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">variable</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Memory.forget"><a class="viewcode-back" href="../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Memory.Memory.forget">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">AbstractVariable</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">forget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forgets any memorized value of the provided variable</span>
+
+<span class="sd">        :param variable: The variable for which we want to forget the value in memory.</span>
+<span class="sd">        :type variable: :class:`Variable &lt;netzob.Model.Vocabulary.Domaine.Variables.AbstractVariable.AbstractVariable&gt;`, required</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; variable = Data(String(), name=&quot;var1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; memory = Memory()</span>
+<span class="sd">        &gt;&gt;&gt; memory.memorize(variable, String(&quot;hello&quot;).value)</span>
+<span class="sd">        &gt;&gt;&gt; memory.hasValue(variable)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; memory.forget(variable)</span>
+<span class="sd">        &gt;&gt;&gt; memory.hasValue(variable)</span>
+<span class="sd">        False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">variable</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Memory.copy"><a class="viewcode-back" href="../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Memory.Memory.copy">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the current memory in a new memory.</span>
+
+<span class="sd">        :return: A new memory containing the same entries as the current memory.</span>
+<span class="sd">        :rtype: :class:`Memory &lt;netzob.Model.Vocabulary.Domain.Variables.Memory.Memory&gt;`</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; d1 = Data(uint8())</span>
+<span class="sd">        &gt;&gt;&gt; d2 = Data(String())</span>
+<span class="sd">        &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">        &gt;&gt;&gt; m.memorize(d1, uint8(100).value)</span>
+<span class="sd">        &gt;&gt;&gt; m.memorize(d2, String(&quot;hello&quot;).value)</span>
+<span class="sd">        &gt;&gt;&gt; m.getValue(d1)</span>
+<span class="sd">        bitarray(&#39;01100100&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; m2 = m.copy()</span>
+<span class="sd">        &gt;&gt;&gt; m2.getValue(d1)</span>
+<span class="sd">        bitarray(&#39;01100100&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; m.getValue(d1).bytereverse()</span>
+<span class="sd">        &gt;&gt;&gt; m.getValue(d1)</span>
+<span class="sd">        bitarray(&#39;00100110&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; m2.getValue(d1)</span>
+<span class="sd">        bitarray(&#39;01100100&#39;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">clonedMemory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">clonedMemory</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">clonedMemory</span></div>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the current memory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the current memory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memory</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the current memory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="n">memory</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> from field &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">var</span><span class="p">,</span> <span class="n">var</span><span class="o">.</span><span class="n">field</span><span class="p">,</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BitArray</span><span class="p">,</span> <span class="n">Raw</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The content of the memory is stored in this :class:`dict` object.</span>
+
+<span class="sd">        :type: :class:`dict`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__memory</span>
+
+    <span class="nd">@memory</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memory</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__memory</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">memory</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__memory</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span></div>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

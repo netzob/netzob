@@ -1,0 +1,1574 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Types.String &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Types.String</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># |          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># |               Netzob : Inferring communication protocols                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1"># | This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1"># | it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1"># | the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1"># | (at your option) any later version.                                       |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1"># | but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1"># | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1"># | GNU General Public License for more details.                              |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | You should have received a copy of the GNU General Public License         |</span>
+<span class="c1"># | along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | @url      : http://www.netzob.org                                         |</span>
+<span class="c1"># | @contact  : contact@netzob.org                                            |</span>
+<span class="c1"># | @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1"># |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | File contributors :                                                       |</span>
+<span class="c1"># |       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1"># |       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Standard library imports                                                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">codecs</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Related third party imports                                               |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">bitarray</span> <span class="kn">import</span> <span class="n">bitarray</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Local application imports                                                 |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Leafs.Data</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Scope</span> <span class="kn">import</span> <span class="n">Scope</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.AbstractType</span> <span class="kn">import</span> <span class="n">AbstractType</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">NetzobLogger</span><span class="p">,</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">public_api</span>
+
+
+<div class="viewcode-block" id="String"><a class="viewcode-back" href="../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Types.String.String">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">String</span><span class="p">(</span><span class="n">AbstractType</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;This class defines a String type, which is used to represent String</span>
+<span class="sd">    or Unicode characters.</span>
+
+<span class="sd">    The String type is a wrapper for the Python :class:`str` object</span>
+<span class="sd">    with the capability to express more constraints on the permitted</span>
+<span class="sd">    string values.</span>
+
+<span class="sd">    The String constructor expects some parameters:</span>
+
+<span class="sd">    :param value: This parameter is used to describe a domain that contains a fixed string. If None, the constructed string will accept a random sequence of character, whose size may be specified (see :attr:`nbChars` parameter).</span>
+<span class="sd">    :param nbChars: This parameter is used to describe a domain that contains an amount of characters. This amount can be fixed or represented with an interval. If None, the accepted sizes will range from 0 to 8192.</span>
+<span class="sd">    :param encoding: The encoding of the string, such as &#39;ascii&#39; or</span>
+<span class="sd">                    &#39;utf-8&#39;. Default value is &#39;utf-8&#39;. Supported encodings are available on the Python reference documentation: `Python Standard Encodings &lt;https://docs.python.org/3.4/library/codecs.html#standard-encodings&gt;`_.</span>
+<span class="sd">    :param eos: A list defining the potential terminal characters for</span>
+<span class="sd">                the string. Default value is an empty list, meaning there</span>
+<span class="sd">                is no terminal character.</span>
+<span class="sd">    :param default: This parameter is the default value used in specialization.</span>
+<span class="sd">    :type value: :class:`bitarray` or :class:`str`, optional</span>
+<span class="sd">    :type nbChars: an :class:`int` or a tuple with the min and the max sizes specified as :class:`int`, optional</span>
+<span class="sd">    :type encoding: :class:`str`, optional</span>
+<span class="sd">    :type eos: a :class:`list` of :class:`str`, optional</span>
+<span class="sd">    :type default: :class:`bitarray` or :class:`str`, optional</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       :attr:`value` and :attr:`nbChars` parameters are mutually exclusive.</span>
+<span class="sd">       Setting both values raises an :class:`Exception`.</span>
+
+<span class="sd">       :attr:`value` and :attr:`default` parameters are mutually exclusive.</span>
+<span class="sd">       Setting both values raises an :class:`Exception`.</span>
+
+
+<span class="sd">    The String class provides the following public variables:</span>
+
+<span class="sd">    :var value: The current value of the instance. This value is represented</span>
+<span class="sd">                under the bitarray format.</span>
+<span class="sd">    :var size: The size in bits of the expected data type defined by a tuple (min, max).</span>
+<span class="sd">               Instead of a tuple, an integer can be used to represent both min and max values.</span>
+<span class="sd">    :var encoding: The encoding of the current value, such as &#39;ascii&#39; or &#39;utf-8&#39;.</span>
+<span class="sd">    :var eos: A list defining the potential terminal characters for</span>
+<span class="sd">              the string.</span>
+<span class="sd">    :var default: The default value used in specialization.</span>
+<span class="sd">    :vartype value: :class:`bitarray`</span>
+<span class="sd">    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`</span>
+<span class="sd">    :vartype encoding: :class:`str`</span>
+<span class="sd">    :vartype eos: a :class:`list` of :class:`str`</span>
+<span class="sd">    :vartype default: :class:`bitarray`</span>
+
+<span class="sd">    Strings can be either static, dynamic with fixed sizes or even</span>
+<span class="sd">    dynamic with variable sizes.</span>
+
+
+<span class="sd">    The creation of a String type with no parameter will create a string</span>
+<span class="sd">    object whose length ranges from 0 to 8192:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = String()</span>
+<span class="sd">    &gt;&gt;&gt; len(i.generate().tobytes())</span>
+<span class="sd">    533</span>
+<span class="sd">    &gt;&gt;&gt; len(i.generate().tobytes())</span>
+<span class="sd">    2053</span>
+<span class="sd">    &gt;&gt;&gt; len(i.generate().tobytes())</span>
+<span class="sd">    6908</span>
+
+<span class="sd">    The following examples show how to define a static string in UTF-8:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s = String(&quot;Paris&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s.generate().tobytes()</span>
+<span class="sd">    b&#39;Paris&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s = String(&quot;Paris in Euro: €&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s.generate().tobytes()</span>
+<span class="sd">    b&#39;Paris in Euro: \xe2\x82\xac&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s = String(&quot;Paris in Euro: €&quot;, encoding=&#39;utf-8&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; s.generate().tobytes()</span>
+<span class="sd">    b&#39;Paris in Euro: \xe2\x82\xac&#39;</span>
+
+<span class="sd">    The following example shows the raising of an exception if input</span>
+<span class="sd">    value is not valid, with the definition of a string where</span>
+<span class="sd">    the associated value contains a non-String element:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s = String(&quot;Paris in €&quot;, encoding=&#39;ascii&#39;) # doctest: +IGNORE_EXCEPTION_DETAIL</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    ValueError: Input value for the following string is incorrect: &#39;Paris in €&#39;...</span>
+
+<span class="sd">    The following example shows how to define a string with a</span>
+<span class="sd">    fixed size and a dynamic content:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s = String(nbChars=10)</span>
+<span class="sd">    &gt;&gt;&gt; len(s.generate().tobytes())</span>
+<span class="sd">    10</span>
+
+<span class="sd">    The following example shows how to define a string with a</span>
+<span class="sd">    variable size and a dynamic content:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s = String(nbChars=(10, 32))</span>
+<span class="sd">    &gt;&gt;&gt; 10 &lt;= len(s.generate().tobytes()) &lt;= 32</span>
+<span class="sd">    True</span>
+
+
+<span class="sd">    **String with terminal character**</span>
+
+<span class="sd">    Strings with a terminal delimiter are supported. The following</span>
+<span class="sd">    example shows the usage of a delimiter.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s = String(nbChars=10, eos=[&#39;\n&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; data = s.generate().tobytes()</span>
+<span class="sd">    &gt;&gt;&gt; len(data) == 10</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; data[-1:] == b&#39;\n&#39;</span>
+<span class="sd">    True</span>
+
+<span class="sd">    Strings with a constant value and a terminal character are also supported.</span>
+<span class="sd">    The following example show the usage of this case.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s = String(&quot;abcdef&quot;, eos=[&quot;123&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; s.generate().tobytes()</span>
+<span class="sd">    b&#39;abcdef123&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(Field(s).specialize())</span>
+<span class="sd">    b&#39;abcdef123&#39;</span>
+
+
+<span class="sd">    The ``eos`` attribute specifies a list of values that are used as</span>
+<span class="sd">    potential terminal characters. Terminal characters shall be</span>
+<span class="sd">    constant (such as ``&#39;\n&#39;`` in the previous example).</span>
+
+
+<span class="sd">    **Using a default value**</span>
+
+<span class="sd">    This next example shows the usage of a default value:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; t = String(nbChars=(1, 4), default=&quot;A&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; t.generate().tobytes()</span>
+<span class="sd">    b&#39;A&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">nbChars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span>
+                 <span class="n">eos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">unitSize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+                 <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">(),</span>
+                 <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span>
+        <span class="k">if</span> <span class="n">eos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">eos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eos</span> <span class="o">=</span> <span class="n">eos</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">nbChars</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A String should have either its value or its nbChars set, but not both&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A String should have either its constant value or its default value set, but not both&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;String value cannot have a length equal to 0&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Convert value to bitarray</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+
+            <span class="c1"># Check if value is correct, and normalize it in str object, and then in bitarray</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input value for the following string is incorrect: &#39;</span><span class="si">{}</span><span class="s2">&#39;. Error: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported input format for value: &#39;</span><span class="si">{}</span><span class="s2">&#39;, type: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+                <span class="n">value</span><span class="p">,</span>
+                <span class="n">String</span><span class="p">,</span>
+                <span class="n">BitArray</span><span class="p">,</span>
+                <span class="n">src_unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">src_endianness</span><span class="o">=</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">src_sign</span><span class="o">=</span><span class="n">sign</span><span class="p">,</span>
+                <span class="n">dst_unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">dst_endianness</span><span class="o">=</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">dst_sign</span><span class="o">=</span><span class="n">sign</span><span class="p">)</span>
+
+        <span class="c1"># Convert default value to bitarray</span>
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+
+            <span class="c1"># Check if value is correct, and normalize it in str object, and then in bitarray</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">default</span> <span class="o">=</span> <span class="n">default</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input default value for the following string is incorrect: &#39;</span><span class="si">{}</span><span class="s2">&#39;. Error: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported input format for default value: &#39;</span><span class="si">{}</span><span class="s2">&#39;, type: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">default</span><span class="p">)))</span>
+
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+                <span class="n">default</span><span class="p">,</span>
+                <span class="n">String</span><span class="p">,</span>
+                <span class="n">BitArray</span><span class="p">,</span>
+                <span class="n">src_unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">src_endianness</span><span class="o">=</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">src_sign</span><span class="o">=</span><span class="n">sign</span><span class="p">,</span>
+                <span class="n">dst_unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">dst_endianness</span><span class="o">=</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">dst_sign</span><span class="o">=</span><span class="n">sign</span><span class="p">)</span>
+
+        <span class="c1"># Handle string size if value is None</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nbBits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalizeNbChars</span><span class="p">(</span><span class="n">nbChars</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nbBits</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">value</span><span class="p">,</span>
+            <span class="n">nbBits</span><span class="p">,</span>
+            <span class="n">unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span>
+            <span class="n">endianness</span><span class="o">=</span><span class="n">endianness</span><span class="p">,</span>
+            <span class="n">sign</span><span class="o">=</span><span class="n">sign</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(&#39;</span><span class="si">{}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(nbChars=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(nbChars=(</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">))&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_normalizeNbChars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbChars</span><span class="p">):</span>
+        <span class="n">nbMinBits</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">nbMaxBits</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">nbChars</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nbChars</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">nbChars</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;nbChars should be &gt; 0&quot;</span><span class="p">)</span>
+                <span class="n">nbMinBits</span> <span class="o">=</span> <span class="n">nbChars</span> <span class="o">*</span> <span class="mi">8</span>
+                <span class="n">nbMaxBits</span> <span class="o">=</span> <span class="n">nbChars</span> <span class="o">*</span> <span class="mi">8</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">nbChars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nbChars</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">nbChars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;first element of nbChars should be an integer &gt;= 0&quot;</span><span class="p">)</span>
+                    <span class="n">nbMinBits</span> <span class="o">=</span> <span class="n">nbChars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">8</span>
+                <span class="k">if</span> <span class="n">nbChars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nbChars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">nbChars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;second element of nbChars should be an integer &gt; 0&quot;</span><span class="p">)</span>
+                    <span class="n">nbMaxBits</span> <span class="o">=</span> <span class="n">nbChars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">8</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">nbMinBits</span><span class="p">,</span> <span class="n">nbMaxBits</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">buildDataRepresentation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;It creates a :class:`~netzob.Model.Vocabulary.Domain.Variables.Leafs.Data.Data` following the specified type.</span>
+
+<span class="sd">        for instance, user can specify a domain with its type which is much more simple than creating a Data with the type</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; ascii = String(&quot;hello john !&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; ascii.typeName</span>
+<span class="sd">        &#39;String&#39;</span>
+<span class="sd">        &gt;&gt;&gt; data = ascii.buildDataRepresentation()</span>
+<span class="sd">        &gt;&gt;&gt; data.dataType.value.tobytes()</span>
+<span class="sd">        b&#39;hello john !&#39;</span>
+<span class="sd">        &gt;&gt;&gt; print(data.dataType)</span>
+<span class="sd">        String(&#39;hello john !&#39;)</span>
+
+<span class="sd">        :return: a Data of the current type</span>
+<span class="sd">        :rtype: :class:`Data &lt;netzob.Model.Vocabulary.Domain.Variables.Leads.Data.Data&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scope</span> <span class="o">=</span> <span class="n">Scope</span><span class="o">.</span><span class="n">NONE</span>
+
+        <span class="c1"># Do not use constant when some EOS values has been set</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">:</span>
+            <span class="n">scope</span> <span class="o">=</span> <span class="n">Scope</span><span class="o">.</span><span class="n">CONSTANT</span>
+
+        <span class="k">return</span> <span class="n">Data</span><span class="p">(</span><span class="n">dataType</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="n">scope</span><span class="p">)</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; String().count()</span>
+<span class="sd">        86400000000</span>
+
+<span class="sd">        &gt;&gt;&gt; String(nbChars=4).count()</span>
+<span class="sd">        100000000</span>
+
+<span class="sd">        &gt;&gt;&gt; String(nbChars=(1, 2)).count()</span>
+<span class="sd">        10100</span>
+
+<span class="sd">        &gt;&gt;&gt; String(&quot;hello&quot;).count()</span>
+<span class="sd">        1</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">range_min</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="n">range_max</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="n">permitted_values</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">printable</span><span class="p">)</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">range_min</span><span class="p">,</span> <span class="n">range_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="n">permitted_values</span> <span class="o">**</span> <span class="n">i</span>
+                <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_POSSIBLE_VALUES</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_POSSIBLE_VALUES</span>
+            <span class="k">return</span> <span class="n">count</span>
+
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generationStrategy</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a random String that respects the requested size.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; a = String(nbChars=10)</span>
+<span class="sd">        &gt;&gt;&gt; gen = a.generate()</span>
+<span class="sd">        &gt;&gt;&gt; len(gen)/8</span>
+<span class="sd">        10.0</span>
+
+<span class="sd">        &gt;&gt;&gt; b = String(&quot;john&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; b.generate().tobytes() == b&quot;john&quot;</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+
+        <span class="n">minSize</span><span class="p">,</span> <span class="n">maxSize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">if</span> <span class="n">maxSize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">maxSize</span> <span class="o">=</span> <span class="n">AbstractType</span><span class="o">.</span><span class="n">MAXIMUM_GENERATED_DATA_SIZE</span>
+        <span class="k">if</span> <span class="n">minSize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">minSize</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">generatedSize</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">minSize</span> <span class="o">/</span> <span class="mi">8</span><span class="p">,</span> <span class="n">maxSize</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
+
+        <span class="n">permitted_characters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">printable</span><span class="p">)</span>
+
+        <span class="c1"># Handle terminal character (&#39;end of string&#39;)</span>
+        <span class="n">final_character</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">final_character</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+
+        <span class="c1"># Generate the sufficient amount of data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">random_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">random_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">random_content</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="c1"># Compare the length of the *unicode* value against the targeted size</span>
+            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">random_content</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">generatedSize</span><span class="p">:</span>
+                <span class="n">random_content</span> <span class="o">+=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">permitted_characters</span><span class="p">)</span>
+
+                <span class="c1"># Be sure that the potential terminal characters are not present in the first part of the generated string</span>
+                <span class="k">if</span> <span class="n">final_character</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                        <span class="n">random_content_tmp</span> <span class="o">=</span> <span class="n">random_content</span>
+                        <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">:</span>
+                            <span class="n">random_content_tmp</span> <span class="o">=</span> <span class="n">random_content_tmp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">elt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">random_content_tmp</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">random_content</span><span class="p">):</span>
+                            <span class="n">random_content</span> <span class="o">=</span> <span class="n">random_content_tmp</span>
+                            <span class="k">break</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">random_content</span> <span class="o">=</span> <span class="n">random_content_tmp</span>
+
+        <span class="c1"># Handle terminal character (&#39;end of string&#39;)</span>
+        <span class="k">if</span> <span class="n">final_character</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Remove the size of the added terminal character to the original random_content, and add the final character</span>
+                <span class="n">random_content</span> <span class="o">=</span> <span class="n">random_content</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">random_content</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">final_character</span><span class="p">)]</span> <span class="o">+</span> <span class="n">final_character</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">random_content</span> <span class="o">+=</span> <span class="n">final_character</span>
+
+        <span class="n">b_random_content</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">endian</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">b_random_content</span><span class="o">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">random_content</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">b_random_content</span>
+
+    <span class="k">def</span> <span class="nf">getFixedBitSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Determine the deterministic size of the value of &quot;</span>
+                           <span class="s2">&quot;the type&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">current_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">))</span> <span class="o">*</span> <span class="mi">8</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">current_size</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">))</span> <span class="o">*</span> <span class="mi">8</span>
+            <span class="k">return</span> <span class="n">current_size</span>
+        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot determine a fixed size for type &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">mutate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefixDescription</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate various mutations of the current String value.</span>
+
+<span class="sd">        Mutations are first applied to the String value than, each obtained mutations generates</span>
+<span class="sd">        new bitarray mutations.</span>
+<span class="sd">        String mutations are:</span>
+
+<span class="sd">        * Original Version</span>
+<span class="sd">        * Original Version in Upper case</span>
+<span class="sd">        * Original Version in Lower case</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; t = String(&quot;helloworld&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; values = t.mutate()</span>
+<span class="sd">        &gt;&gt;&gt; values[&#39;ascii(upper)-bits(littleEndian)&#39;]</span>
+<span class="sd">        bitarray(&#39;00010010101000100011001000110010111100101110101011110010010010100011001000100010&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; values[&#39;ascii(inversed)-bits(bigEndian)&#39;]</span>
+<span class="sd">        bitarray(&#39;01100100011011000111001001101111011101110110111101101100011011000110010101101000&#39;)</span>
+
+
+<span class="sd">        :keyword prefixDescription: prefix to attach to the description of the generated mutation.</span>
+<span class="sd">        :type prefixDescription: :class:`str`</span>
+<span class="sd">        :return: a dict of computed mutations having the same types than the initial one.</span>
+<span class="sd">        :rtype: :class:`dict`&lt;str&gt;=:class:`AbstractType &lt;netzob.Model.Vocabulary.Types.AbstractType.AbstractType&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">prefixDescription</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prefixDescription</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefixDescription</span> <span class="o">+=</span> <span class="s2">&quot;-&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="n">strValue</span> <span class="o">=</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">BitArray</span><span class="p">,</span> <span class="n">String</span><span class="p">)</span>
+
+        <span class="n">mutations</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="n">mutations</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">ascii&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixDescription</span><span class="p">)]</span> <span class="o">=</span> <span class="n">strValue</span>
+        <span class="n">mutations</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">ascii(inversed)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">prefixDescription</span><span class="p">)]</span> <span class="o">=</span> <span class="n">strValue</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">strValue</span> <span class="o">!=</span> <span class="n">strValue</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span>
+            <span class="n">mutations</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">ascii(upper)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">prefixDescription</span><span class="p">)]</span> <span class="o">=</span> <span class="n">strValue</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="n">mutations</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">ascii(inversed-upper)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">prefixDescription</span><span class="p">)]</span> <span class="o">=</span> <span class="n">strValue</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">strValue</span> <span class="o">!=</span> <span class="n">strValue</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">mutations</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">ascii(lower)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">prefixDescription</span><span class="p">)]</span> <span class="o">=</span> <span class="n">strValue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">mutations</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">ascii(inversed-lower)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">prefixDescription</span><span class="p">)]</span> <span class="o">=</span> <span class="n">strValue</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">mutationName</span><span class="p">,</span> <span class="n">mutationValue</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">mutations</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">mutationValue</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;bytes&quot;</span><span class="p">:</span>
+                <span class="n">mutationValue</span> <span class="o">=</span> <span class="n">mutationValue</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+            <span class="n">ba</span> <span class="o">=</span> <span class="n">BitArray</span><span class="p">(</span>
+                <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">mutationValue</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">BitArray</span><span class="p">))</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ba</span><span class="o">.</span><span class="n">mutate</span><span class="p">(</span><span class="n">mutationName</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span> <span class="nf">canParse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">data</span><span class="p">,</span>
+                 <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+                 <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+                 <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method returns True if data is a String (utf-8)</span>
+
+<span class="sd">        **Some examples with bitarray as input**</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; b = bitarray(endian=&#39;big&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; b.frombytes(b&quot;hello netzob&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; String().canParse(b)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        The ascii table is defined from 0 to 127:</span>
+<span class="sd">        &gt;&gt;&gt; String(encoding=&#39;ascii&#39;).canParse(Integer(128, sign=Sign.UNSIGNED).value)</span>
+<span class="sd">        False</span>
+
+<span class="sd">        &gt;&gt;&gt; a = String(nbChars=10)</span>
+<span class="sd">        &gt;&gt;&gt; a.canParse(String(&quot;hellohello&quot;).value)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; a.canParse(String(&quot;hello hello&quot;).value)</span>
+<span class="sd">        False</span>
+
+<span class="sd">        &gt;&gt;&gt; a = String(nbChars=(2,20))</span>
+<span class="sd">        &gt;&gt;&gt; a.canParse(String(&quot;John&quot;).value)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; a.canParse(String(&quot;Hello john, what&#39;s up ?&quot;).value)</span>
+<span class="sd">        False</span>
+
+<span class="sd">        &gt;&gt;&gt; String(&quot;hello&quot;).canParse(String(&quot;hello&quot;).value)</span>
+<span class="sd">        True</span>
+
+
+<span class="sd">        **Some examples with string (ascii, unicode, ...) as input**</span>
+
+<span class="sd">        &gt;&gt;&gt; String(&quot;hello&quot;).canParse(&quot;hello&quot;)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; String(&quot;hello&quot;).canParse(&quot;helloo&quot;)</span>
+<span class="sd">        False</span>
+
+<span class="sd">        &gt;&gt;&gt; String().canParse(&quot;helloo&quot;)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        :param data: the data to check</span>
+<span class="sd">        :type data: python raw</span>
+<span class="sd">        :return: True if data can be parsed as a String</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        :raise: TypeError if the data is None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;data cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Check if data is correct, and normalize it in str object, and then in bitarray</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input data for the following string is incorrect: &#39;</span><span class="si">{}</span><span class="s2">&#39;. Error: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input data for the following string is incorrect: &#39;</span><span class="si">{}</span><span class="s2">&#39;. Error: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported input format for data: &#39;</span><span class="si">{}</span><span class="s2">&#39;, type: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">String</span><span class="p">,</span>
+                <span class="n">BitArray</span><span class="p">,</span>
+                <span class="n">src_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">src_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">src_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span>
+                <span class="n">dst_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">dst_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">dst_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">)</span>
+
+        <span class="c1"># Compare with self.value if it is defined</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">permitted_element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">:</span>
+                    <span class="n">tmp_value_bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span> <span class="o">+</span> <span class="n">permitted_element</span>
+                    <span class="k">if</span> <span class="n">tmp_value_bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span> <span class="o">==</span> <span class="n">data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf_8&quot;</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Else, compare with expected size</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">%</span> <span class="mi">8</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Ascii must be 8 bits modulo length</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># At this time, data is a bitarray</span>
+        <span class="n">rawData</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rawData</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="p">(</span><span class="n">minChar</span><span class="p">,</span> <span class="n">maxChar</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">if</span> <span class="n">minChar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">minChar</span> <span class="o">/</span> <span class="mi">8</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">maxChar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rawData</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">maxChar</span> <span class="o">/</span> <span class="mi">8</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Verify the terminal character</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">permitted_element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">eos</span><span class="p">:</span>
+                <span class="n">last_element</span> <span class="o">=</span> <span class="n">rawData</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">permitted_element</span><span class="p">)):]</span>
+                <span class="k">if</span> <span class="n">last_element</span> <span class="o">==</span> <span class="n">permitted_element</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+               <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+               <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+               <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method convert the specified data in python raw format.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; String.decode(b&quot;hello&quot;)</span>
+<span class="sd">        b&#39;hello&#39;</span>
+<span class="sd">        &gt;&gt;&gt; String.decode(b&#39;\x4a\x6f\x68\x6e\x20\x69\x73\x20\x69\x6e\x20\x74\x68\x65\x20\x6b\x69\x74\x63\x68\x65\x6e\x21&#39;)</span>
+<span class="sd">        b&#39;John is in the kitchen!&#39;</span>
+
+<span class="sd">        :param data: the data encoded in bytes (str)</span>
+<span class="sd">        :type data: :class:`str`</span>
+<span class="sd">        :keyword unitSize: the unitsize to consider while encoding. Values must be one of UnitSize.SIZE_*</span>
+<span class="sd">        :type unitSize: :class:`Enum`</span>
+<span class="sd">        :keyword endianness: the endianness to consider while encoding. Values must be Endianness.BIG or Endianness.LITTLE</span>
+<span class="sd">        :type endianness: :class:`Enum`</span>
+<span class="sd">        :keyword sign: the sign to consider while encoding Values must be Sign.SIGNED or Sign.UNSIGNED</span>
+<span class="sd">        :type sign: :class:`Enum`</span>
+
+<span class="sd">        :return: data encoded in python raw</span>
+<span class="sd">        :rtype: python raw</span>
+<span class="sd">        :raise: TypeError if parameters are not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;data cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Verify that data is a bytes object</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Data &#39;</span><span class="si">{}</span><span class="s2">&#39; should be a bytes object&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+               <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+               <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+               <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method convert the python raw data to the String.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; raw = String.decode(b&quot;hello john!&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; String.encode(raw)</span>
+<span class="sd">        b&#39;hello john!&#39;</span>
+
+<span class="sd">        :param data: the data encoded in python raw which will be encoded in current type</span>
+<span class="sd">        :type data: python raw</span>
+<span class="sd">        :keyword unitSize: the unitsize to consider while encoding. Values must be one of UnitSize.SIZE_*</span>
+<span class="sd">        :type unitSize: :class:`Enum`</span>
+<span class="sd">        :keyword endianness: the endianness to consider while encoding. Values must be Endianness.BIG or Endianness.LITTLE</span>
+<span class="sd">        :type endianness: :class:`Enum`</span>
+<span class="sd">        :keyword sign: the sign to consider while encoding Values must be Sign.SIGNED or Sign.UNSIGNED</span>
+<span class="sd">        :type sign: :class:`Enum`</span>
+
+<span class="sd">        :return: data encoded in python raw</span>
+<span class="sd">        :rtype: python raw</span>
+<span class="sd">        :raise: TypeError if parameters are not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;data cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">ordElt</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ordElt</span> <span class="o">&gt;=</span> <span class="mh">0x20</span> <span class="ow">and</span> <span class="n">ordElt</span> <span class="o">&lt;=</span> <span class="mh">0x7e</span><span class="p">:</span>  <span class="c1"># means between &#39; &#39; and &#39;~&#39;</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">ordElt</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="s2">&quot;.&quot;</span>
+
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">encoding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The encoding of the current value, such as &#39;ascii&#39; or &#39;utf-8&#39;.</span>
+
+<span class="sd">        :type: `str`</span>
+<span class="sd">        :raises: :class: `TypeError` if encoding is not a str object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__encoding</span>
+
+    <span class="nd">@encoding</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">encoding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">encoding</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Encoding cannot be None&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">codecs</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">LookupError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong encoding specified: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">encoding</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__encoding</span> <span class="o">=</span> <span class="n">encoding</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">eos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A :class:`list` of :class:`str` defining the potential terminal</span>
+<span class="sd">        characters for the string.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eos</span>
+
+    <span class="nd">@eos</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">eos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eos</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">eos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;&#39;eos&#39; parameter cannot be None&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eos</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;&#39;eos&#39; parameter must be a list&quot;</span><span class="p">)</span>
+        <span class="n">eos_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">size_elt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">eos</span><span class="p">:</span>
+            <span class="c1"># Check that each element is a string</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elt</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+
+                <span class="c1"># Check if element is correct, and normalize it in str object, and then in bitarray</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">elt</span> <span class="o">=</span> <span class="n">elt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input value for the following string is incorrect: &#39;</span><span class="si">{}</span><span class="s2">&#39;. Error: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">elt</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+                <span class="n">eos_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elt</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;&#39;eos&#39; parameter must be a string list&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Check that each string element have the same size</span>
+            <span class="k">if</span> <span class="n">size_elt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">size_elt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">elt</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">size_elt</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">elt</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;&#39;eos&#39; parameter must be a string list of the same size&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__eos</span> <span class="o">=</span> <span class="n">eos_list</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; t = String()</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    String(nbChars=(0,8192))</span>
+<span class="sd">    &gt;&gt;&gt; t.size</span>
+<span class="sd">    (0, 65536)</span>
+<span class="sd">    &gt;&gt;&gt; t.unitSize</span>
+<span class="sd">    UnitSize.SIZE_16</span>
+
+<span class="sd">    &gt;&gt;&gt; t = String(nbChars=4)</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    String(nbChars=4)</span>
+<span class="sd">    &gt;&gt;&gt; t.size</span>
+<span class="sd">    (32, 32)</span>
+
+<span class="sd">    &gt;&gt;&gt; t = String(&quot;abcd&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    String(&#39;abcd&#39;)</span>
+
+<span class="sd">    Examples of string internal attributes access:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; cAscii = String(&quot;hello&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; print(cAscii)</span>
+<span class="sd">    String(&#39;hello&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; cAscii.typeName</span>
+<span class="sd">    &#39;String&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cAscii.value</span>
+<span class="sd">    bitarray(&#39;0110100001100101011011000110110001101111&#39;)</span>
+
+<span class="sd">    The following example shows how to convert the</span>
+<span class="sd">    current type to any other Netzob types:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; cAscii = String(&quot;hello&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; raw = cAscii.convert(Raw)</span>
+<span class="sd">    &gt;&gt;&gt; print(repr(raw))</span>
+<span class="sd">    b&#39;hello&#39;</span>
+<span class="sd">    &gt;&gt;&gt; ip = cAscii.convert(IPv4)  # doctest: +ELLIPSIS</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    TypeError: Impossible to encode b&#39;hello&#39; into an IPv4 data...</span>
+
+<span class="sd">    The type can be used to specify constraints over the domain:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; a = String(nbChars=10)</span>
+<span class="sd">    &gt;&gt;&gt; print(a.value)</span>
+<span class="sd">    None</span>
+
+<span class="sd">    It is not possible to convert if the object has not value:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; a = String(nbChars=10)</span>
+<span class="sd">    &gt;&gt;&gt; a.convert(Raw)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    TypeError: Data cannot be None</span>
+
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import Field, Symbol</span>
+<span class="sd">    &gt;&gt;&gt; domains = [</span>
+<span class="sd">    ...    String(&quot;abcd&quot;), String(nbChars=(4, 5)),</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])</span>
+<span class="sd">    &gt;&gt;&gt; data = b&#39;&#39;.join(next(f.specialize()) for f in symbol.fields)</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)  #doctest: +ELLIPSIS</span>
+<span class="sd">    OrderedDict([(&#39;0&#39;, b&#39;abcd&#39;), (&#39;1&#39;, ...)])</span>
+
+
+<span class="sd">    ## String with terminal character as a constant (specialization and abstraction)</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s = String(nbChars=10, eos=[&#39;A&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; data = s.generate().tobytes()</span>
+<span class="sd">    &gt;&gt;&gt; len(data) == 10</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; data[-1:] == b&#39;A&#39;</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([Field(s)])</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)  #doctest: +ELLIPSIS</span>
+<span class="sd">    OrderedDict([(&#39;Field&#39;, b&#39;...A&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; data = data[:-1] + b&#39;\t&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)  #doctest: +ELLIPSIS</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;Symbol&#39;, cannot abstract the data: &#39;b&#39;...\t&#39;&#39;. Error: &#39;No parsing path returned while parsing &#39;b&#39;...\t&#39;&#39;&#39;</span>
+
+
+
+<span class="sd">    ## String with terminal character as a list of constants (specialization and abstraction)</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s = String(nbChars=10, eos=[&#39;A&#39;, &#39;B&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; data = s.generate().tobytes()</span>
+<span class="sd">    &gt;&gt;&gt; len(data) == 10</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; data[-1:] == b&#39;A&#39; or data[-1:] == b&#39;B&#39;</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; data = s.generate().tobytes()</span>
+<span class="sd">    &gt;&gt;&gt; len(data) == 10</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; data[-1:] == b&#39;A&#39; or data[-1:] == b&#39;B&#39;</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; data = s.generate().tobytes()</span>
+<span class="sd">    &gt;&gt;&gt; len(data) == 10</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; data[-1:] == b&#39;A&#39; or data[-1:] == b&#39;B&#39;</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([Field(s)])</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)  #doctest: +ELLIPSIS</span>
+<span class="sd">    OrderedDict([(&#39;Field&#39;, ...)])</span>
+<span class="sd">    &gt;&gt;&gt; data = data[:-1] + b&#39;\t&#39;</span>
+<span class="sd">    &gt;&gt;&gt; structured_data = symbol.abstract(data)  #doctest: +ELLIPSIS</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;Symbol&#39;, cannot abstract the data: .... Error: &#39;No parsing path returned while parsing ...&#39;</span>
+
+
+
+<span class="sd">    ## String with terminal character as a mulitple characters constant (specialization and abstraction)</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; s = String(nbChars=10, eos=[&#39;\r\n&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; data = s.generate().tobytes()</span>
+<span class="sd">    &gt;&gt;&gt; len(data) == 10</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; data[-2:] == b&#39;\r\n&#39;</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([Field(s)])</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)  #doctest: +ELLIPSIS</span>
+<span class="sd">    OrderedDict([(&#39;Field&#39;, b&#39;...\r\n&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; data = data[:-2] + b&#39;\r\t&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)  #doctest: +ELLIPSIS</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;Symbol&#39;, cannot abstract the data: &#39;b&#39;...\r\t&#39;&#39;. Error: &#39;No parsing path returned while parsing &#39;b&#39;...\r\t&#39;&#39;&#39;</span>
+
+
+<span class="sd">    # Verify that you cannot create a String with a value AND an nbChars:</span>
+
+<span class="sd">    &gt;&gt;&gt; i = String(&#39;test&#39;, nbChars=(2, 10))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    ValueError: A String should have either its value or its nbChars set, but not both</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_eos</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    # Test specialization and then abstraction</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(String(&quot;john&quot;, eos=[&#39;\0&#39;]), name=&#39;field-john&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;john\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field-john&#39;, b&#39;john\x00&#39;)])</span>
+
+
+<span class="sd">    &gt;&gt;&gt; f = Field(String(&quot;john&quot;, eos=[&#39;!&#39;], encoding=&quot;utf_16_be&quot;), name=&#39;field-john&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol([f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;john!&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field-john&#39;, b&#39;john!&#39;)])</span>
+
+<span class="sd">    # Test exception triggered when using different sizes of eos elements</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(String(&quot;john&quot;, eos=[&quot;A&quot;, &quot;B&quot;]), name=&#39;field-john&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(String(&quot;john&quot;, eos=[&quot;A&quot;, &quot;B&quot;, &quot;CC&quot;]), name=&#39;field-john&#39;)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    Exception: &#39;eos&#39; parameter must be a string list of the same size</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_specialize_abstract</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; from collections import OrderedDict</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract</span>
+
+<span class="sd">    &gt;&gt;&gt; data_type = String</span>
+
+<span class="sd">    &gt;&gt;&gt; possible_parameters = OrderedDict()</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;value&quot;] = [None, &#39;a&#39;, &quot;bb&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;nbChars&quot;] = [None, 8, (2, 8)]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;encoding&quot;] = [&quot;utf-8&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;eos&quot;] = [None, [&quot;aa&quot;], [&quot;aa&quot;, &quot;ab&quot;]]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;default&quot;] = [None, &quot;123456aa&quot;]</span>
+
+<span class="sd">    &gt;&gt;&gt; test_type_one_parameter(data_type, possible_parameters)</span>
+
+<span class="sd">    &gt;&gt;&gt; (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, possible_parameters)</span>
+
+<span class="sd">    &gt;&gt;&gt; test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)</span>
+
+<span class="sd">     &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_unicode_small_strings</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    ## UTF32</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf_32&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\xff\xfe\x00\x00D\x00\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\xff\xfe\x00\x00D\x00\x00\x00&#39;)])</span>
+
+<span class="sd">    ## UTF32_LE</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf_32le&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;D\x00\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;D\x00\x00\x00&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf_32_le&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;D\x00\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;D\x00\x00\x00&#39;)])</span>
+
+<span class="sd">    ## UTF32_BE</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf_32be&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x00\x00\x00D&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\x00\x00\x00D&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf_32_be&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x00\x00\x00D&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\x00\x00\x00D&#39;)])</span>
+
+
+<span class="sd">    ## UTF16</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf_16&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\xff\xfeD\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\xff\xfeD\x00&#39;)])</span>
+
+<span class="sd">    ## UTF16_LE</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf_16le&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;D\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;D\x00&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf_16_le&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;D\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;D\x00&#39;)])</span>
+
+<span class="sd">    ## UTF16_BE</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf_16be&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x00D&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\x00D&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf_16_be&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x00D&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\x00D&#39;)])</span>
+
+
+<span class="sd">    ## UTF8</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf8&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;D&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;D&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;D&quot;, encoding=&quot;utf_8&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;D&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;D&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_unicode_long_strings</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    ## UTF32</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf_32&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\xff\xfe\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\xff\xfe\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00&#39;)])</span>
+
+<span class="sd">    ## UTF32_LE</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf_32le&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;1\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;1\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf_32_le&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;1\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;1\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00\x00\xac \x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d\x00\x00\x00&#39;)])</span>
+
+<span class="sd">    ## UTF32_BE</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf_32be&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x00\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00 \xac\x00\x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\x00\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00 \xac\x00\x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf_32_be&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x00\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00 \xac\x00\x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\x00\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x004\x00\x00\x00\xe9\x00\x00 \xac\x00\x00\x00a\x00\x00\x00b\x00\x00\x00c\x00\x00\x00d&#39;)])</span>
+
+
+<span class="sd">    ## UTF16</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf_16&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\xff\xfe1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\xff\xfe1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00&#39;)])</span>
+
+<span class="sd">    ## UTF16_LE</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf_16le&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf_16_le&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;1\x002\x003\x004\x00\xe9\x00\xac a\x00b\x00c\x00d\x00&#39;)])</span>
+
+<span class="sd">    ## UTF16_BE</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf_16be&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x001\x002\x003\x004\x00\xe9 \xac\x00a\x00b\x00c\x00d&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\x001\x002\x003\x004\x00\xe9 \xac\x00a\x00b\x00c\x00d&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf_16_be&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x001\x002\x003\x004\x00\xe9 \xac\x00a\x00b\x00c\x00d&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;\x001\x002\x003\x004\x00\xe9 \xac\x00a\x00b\x00c\x00d&#39;)])</span>
+
+
+<span class="sd">    ## UTF8</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf8&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;1234\xc3\xa9\xe2\x82\xacabcd&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;1234\xc3\xa9\xe2\x82\xacabcd&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = String(value=&quot;1234é€abcd&quot;, encoding=&quot;utf_8&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;1234\xc3\xa9\xe2\x82\xacabcd&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field1&#39;, b&#39;1234\xc3\xa9\xe2\x82\xacabcd&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

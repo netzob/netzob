@@ -1,0 +1,883 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Symbol &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Symbol</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># |          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># |               Netzob : Inferring communication protocols                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1"># | This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1"># | it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1"># | the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1"># | (at your option) any later version.                                       |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1"># | but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1"># | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1"># | GNU General Public License for more details.                              |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | You should have received a copy of the GNU General Public License         |</span>
+<span class="c1"># | along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | @url      : http://www.netzob.org                                         |</span>
+<span class="c1"># | @contact  : contact@netzob.org                                            |</span>
+<span class="c1"># | @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1"># |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1"># |             ANSSI,   https://www.ssi.gouv.fr                              |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | File contributors :                                                       |</span>
+<span class="c1"># |       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1"># |       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Standard library imports                                                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># noqa: F401</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Related third party imports                                               |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Local application imports                                                 |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">public_api</span><span class="p">,</span> <span class="n">NetzobLogger</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.AbstractField</span> <span class="kn">import</span> <span class="n">AbstractField</span><span class="p">,</span> <span class="n">GenerationException</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.TypedList</span> <span class="kn">import</span> <span class="n">TypedList</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Messages.AbstractMessage</span> <span class="kn">import</span> <span class="n">AbstractMessage</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Field</span> <span class="kn">import</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Memory</span> <span class="kn">import</span> <span class="n">Memory</span>
+
+
+<div class="viewcode-block" id="Symbol"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">Symbol</span><span class="p">(</span><span class="n">AbstractField</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Symbol class is a main component of the Netzob protocol model.</span>
+
+<span class="sd">    A symbol represents an abstraction of all messages of the same</span>
+<span class="sd">    type from a protocol perspective. A symbol structure is made of</span>
+<span class="sd">    fields.</span>
+
+<span class="sd">    The Symbol constructor expects some parameters:</span>
+
+<span class="sd">    :param fields: The fields that participate in the symbol</span>
+<span class="sd">                   definition, in the wire order. May be ``None`` (thus, a generic :class:`Field &lt;netzob.Model.Vocabulary.Field.Field&gt;`</span>
+<span class="sd">                   instance would be defined), especially when using Symbols</span>
+<span class="sd">                   for reverse engineering (i.e. fields identification).</span>
+<span class="sd">    :param messages: The messages that are associated with the</span>
+<span class="sd">                     symbol. May be ``None`` (thus, an empty :class:`list`</span>
+<span class="sd">                     would be defined), especially when</span>
+<span class="sd">                     modeling a protocol from scratch (i.e. the</span>
+<span class="sd">                     fields are already known).</span>
+<span class="sd">    :param name: The name of the symbol. If not specified, the</span>
+<span class="sd">                 default name will be &quot;Symbol&quot;.</span>
+<span class="sd">    :type fields: a :class:`list` of :class:`Field &lt;netzob.Model.Vocabulary.Field.Field&gt;`, optional</span>
+<span class="sd">    :type messages: a :class:`list` of :class:`AbstractMessage &lt;netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage&gt;`, optional</span>
+<span class="sd">    :type name: :class:`str`, optional</span>
+
+
+<span class="sd">    The Symbol class provides the following public variables:</span>
+
+<span class="sd">    :var fields: The sorted list of sub-fields.</span>
+<span class="sd">    :var name: The name of the symbol.</span>
+<span class="sd">    :var description: The description of the symbol.</span>
+<span class="sd">    :vartype fields: a :class:`list` of :class:`Field &lt;netzob.Model.Vocabulary.Field.Field&gt;`</span>
+<span class="sd">    :vartype name: :class:`str`</span>
+<span class="sd">    :vartype description: :class:`str`</span>
+
+
+<span class="sd">    **Usage of Symbol for protocol modeling**</span>
+
+<span class="sd">    The Symbol class may be used to model a protocol from scratch, by</span>
+<span class="sd">    specifying its structure in terms of fields:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(&quot;aaaa&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(&quot; # &quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(&quot;bbbbbb&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; for f in symbol.fields:</span>
+<span class="sd">    ...     print(&quot;{} - {}&quot;.format(f, f.domain))</span>
+<span class="sd">    Field - Data (String(&#39;aaaa&#39;))</span>
+<span class="sd">    Field - Data (String(&#39; # &#39;))</span>
+<span class="sd">    Field - Data (String(&#39;bbbbbb&#39;))</span>
+
+<span class="sd">    .. ifconfig:: scope in (&#39;netzob&#39;)</span>
+
+<span class="sd">       **Usage of Symbol for protocol dissecting**</span>
+
+<span class="sd">       The Symbol class may be used to dissect a list of messages</span>
+<span class="sd">       according to the fields structure:</span>
+
+<span class="sd">       &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">       &gt;&gt;&gt; f0 = Field(&quot;hello&quot;, name=&quot;f0&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; f1 = Field(String(nbChars=(0, 10)), name=&quot;f1&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; m1 = RawMessage(&quot;hello world&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; m2 = RawMessage(&quot;hello earth&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; symbol = Symbol(fields=[f0, f1], messages=[m1, m2])</span>
+<span class="sd">       &gt;&gt;&gt; print(symbol.str_data())</span>
+<span class="sd">       f0      | f1      </span>
+<span class="sd">       ------- | --------</span>
+<span class="sd">       &#39;hello&#39; | &#39; world&#39;</span>
+<span class="sd">       &#39;hello&#39; | &#39; earth&#39;</span>
+<span class="sd">       ------- | --------</span>
+
+
+<span class="sd">    .. ifconfig:: scope in (&#39;netzob&#39;)</span>
+
+<span class="sd">       **Usage of Symbol for protocol reverse engineering**</span>
+
+<span class="sd">       The Symbol class may be used is to do reverse engineering on a</span>
+<span class="sd">       list of captured messages of unknown/undocumented protocols:</span>
+
+<span class="sd">       &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">       &gt;&gt;&gt; m1 = RawMessage(&quot;hello aaaa&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; m2 = RawMessage(&quot;hello bbbb&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; symbol = Symbol(messages=[m1, m2])</span>
+<span class="sd">       &gt;&gt;&gt; Format.splitStatic(symbol)</span>
+<span class="sd">       &gt;&gt;&gt; print(symbol.str_data())</span>
+<span class="sd">       Field-0  | Field-1</span>
+<span class="sd">       -------- | -------</span>
+<span class="sd">       &#39;hello &#39; | &#39;aaaa&#39; </span>
+<span class="sd">       &#39;hello &#39; | &#39;bbbb&#39; </span>
+<span class="sd">       -------- | -------</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Symbol&quot;</span><span class="p">):</span>
+        <span class="c1"># type: (List[Field], List[AbstractMessage], str) -&gt; None</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Symbol</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__messages</span> <span class="o">=</span> <span class="n">TypedList</span><span class="p">(</span><span class="n">AbstractMessage</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">messages</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="n">messages</span>
+        <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># create a default empty field</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">Field</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">fields</span>
+
+<div class="viewcode-block" id="Symbol.copy"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol.copy">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_objects</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the current object as well as all its dependencies. This</span>
+<span class="sd">        method returns a new object of the same type.</span>
+
+<span class="sd">        :return: A new object of the same type.</span>
+<span class="sd">        :rtype: :class:`Symbol &lt;netzob.Model.Vocabulary.Symbol.Symbol&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># map_objects is a dict that contains already copied instances. This allows to copy objects, such as fields, that contains relationships with already copied elements.</span>
+
+        <span class="k">if</span> <span class="n">map_objects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">map_objects</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+
+        <span class="n">new_symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="p">[],</span> <span class="n">messages</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_symbol</span>
+
+        <span class="n">new_fields</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">new_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">map_objects</span><span class="p">[</span><span class="n">f</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_field</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">map_objects</span><span class="p">)</span>
+                <span class="n">new_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_field</span><span class="p">)</span>
+
+        <span class="n">new_symbol</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">new_fields</span>
+        <span class="k">return</span> <span class="n">new_symbol</span></div>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Symbol</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">__key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Symbol.str_structure"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol.str_structure">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">str_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deepness</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns a string which denotes the current symbol definition</span>
+<span class="sd">        using a tree display.</span>
+
+<span class="sd">        :param preset: The configuration used to parameterize values in fields and variables.</span>
+<span class="sd">        :type preset: :class:`Preset &lt;netzob.Model.Vocabulary.Preset.Preset&gt;`, optional</span>
+<span class="sd">        :return: The current symbol represented as a string.</span>
+<span class="sd">        :rtype: :class:`str`</span>
+
+
+<span class="sd">        This example shows the rendering of a symbol with multiple</span>
+<span class="sd">        fields.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f1 = Field(String(), name=&quot;field1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; f2 = Field(Integer(interval=(10, 100)), name=&quot;field2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; f3 = Field(Raw(nbBytes=14), name=&quot;field3&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol([f1, f2, f3], name=&quot;symbol_name&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; print(symbol.str_structure())</span>
+<span class="sd">        symbol_name</span>
+<span class="sd">        |--  field1</span>
+<span class="sd">             |--   Data (String(nbChars=(0,8192)))</span>
+<span class="sd">        |--  field2</span>
+<span class="sd">             |--   Data (Integer(10,100))</span>
+<span class="sd">        |--  field3</span>
+<span class="sd">             |--   Data (Raw(nbBytes=14))</span>
+<span class="sd">        &gt;&gt;&gt; print(f1.str_structure())</span>
+<span class="sd">        field1</span>
+<span class="sd">        |--   Data (String(nbChars=(0,8192)))</span>
+
+
+<span class="sd">        This example shows the rendering of a symbol where a Preset</span>
+<span class="sd">        configuration has been applied on several variables (the</span>
+<span class="sd">        :meth:`fuzz` method is explained in the fuzzing section).</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; field1 = Field(Raw(nbBytes=1), name=&quot;field 1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; v1 = Data(uint8(), name=&#39;v1&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; v2 = Data(uint8())</span>
+<span class="sd">        &gt;&gt;&gt; var_agg = Agg([v1, v2])</span>
+<span class="sd">        &gt;&gt;&gt; field2 = Field(var_agg, name=&quot;field 2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; field3 = Field(Raw(nbBytes=1), name=&quot;field 3&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(name=&quot;symbol 1&quot;, fields=[field1, field2, field3])</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset[field1] = b&#39;\x42&#39;</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(&#39;v1&#39;, mode=FuzzingMode.MUTATE)</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(field3)</span>
+<span class="sd">        &gt;&gt;&gt; print(symbol.str_structure(preset))</span>
+<span class="sd">        symbol 1</span>
+<span class="sd">        |--  field 1</span>
+<span class="sd">             |--   Data (Raw(nbBytes=1)) [FuzzingMode.FIXED (b&#39;B&#39;)]</span>
+<span class="sd">        |--  field 2</span>
+<span class="sd">             |--   Agg</span>
+<span class="sd">                   |--   Data (Integer(0,255)) [FuzzingMode.MUTATE]</span>
+<span class="sd">                   |--   Data (Integer(0,255))</span>
+<span class="sd">        |--  field 3</span>
+<span class="sd">             |--   Data (Raw(nbBytes=1)) [FuzzingMode.GENERATE]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tab</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;|--  &quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">deepness</span><span class="p">)]</span>
+        <span class="n">tab</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tab</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">str_structure</span><span class="p">(</span><span class="n">preset</span><span class="p">,</span> <span class="n">deepness</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Symbol.specialize"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol.specialize">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">specialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                   <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">memory</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The :meth:`specialize()` method is intended to produce concrete</span>
+<span class="sd">        :class:`bytes` data based on the symbol model and the current :class:`Preset &lt;netzob.Model.Vocabulary.Preset.Preset&gt;` configuration. This method</span>
+<span class="sd">        returns a Python generator that in turn provides data</span>
+<span class="sd">        :class:`bytes` object at each call to ``next(generator)``.</span>
+
+<span class="sd">        The specialize() method expects some parameters:</span>
+
+<span class="sd">        :param preset: The configuration used to parameterize values in fields and variables.</span>
+<span class="sd">        :param memory: A memory used to store variable values during</span>
+<span class="sd">                       specialization and abstraction of successive</span>
+<span class="sd">                       symbols, especially to handle inter-symbol</span>
+<span class="sd">                       relationships. If None, a temporary memory is</span>
+<span class="sd">                       created by default and used internally during the scope of the</span>
+<span class="sd">                       specialization process.</span>
+<span class="sd">        :type preset: :class:`Preset &lt;netzob.Model.Vocabulary.Preset.Preset&gt;`, optional</span>
+<span class="sd">        :type memory: :class:`Memory &lt;netzob.Model.Vocabulary.Domain.Variables.Memory.Memory&gt;`, optional</span>
+<span class="sd">        :return: A generator that provides data :class:`bytes` at each call to ``next(generator)``.</span>
+<span class="sd">        :rtype: :class:`Generator[bytes]`</span>
+<span class="sd">        :raises: :class:`GenerationException &lt;netzob.Model.Vocabulary.AbstractField.GenerationException&gt;` if an error occurs while specializing the field.</span>
+
+<span class="sd">        The following example shows the :meth:`specialize()` method used for a</span>
+<span class="sd">        field which contains a String field and a Size field.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f1 = Field(domain=String(&#39;hello&#39;))</span>
+<span class="sd">        &gt;&gt;&gt; f2 = Field(domain=String(&#39; &#39;))</span>
+<span class="sd">        &gt;&gt;&gt; f3 = Field(domain=String(&#39;John&#39;))</span>
+<span class="sd">        &gt;&gt;&gt; s = Symbol(fields=[f1, f2, f3])</span>
+<span class="sd">        &gt;&gt;&gt; next(s.specialize())</span>
+<span class="sd">        b&#39;hello John&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Specializer.MessageSpecializer</span> <span class="kn">import</span> <span class="n">MessageSpecializer</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">MessageSpecializer</span><span class="p">(</span><span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">)</span>
+
+        <span class="n">specializing_paths</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">specializeSymbol</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_specialize</span><span class="p">(</span><span class="n">specializing_paths</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_inner_specialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specializing_paths</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">specializing_path</span> <span class="ow">in</span> <span class="n">specializing_paths</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">specializing_path</span><span class="o">.</span><span class="n">generatedContent</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">%</span> <span class="mi">8</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GenerationException</span><span class="p">(</span><span class="s2">&quot;specialize() produced </span><span class="si">{}</span><span class="s2"> bits, which is not aligned on 8 bits. You should review the symbol model.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+            <span class="k">yield</span> <span class="n">data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Symbol.count"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol.count">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The :meth:`count` method computes the expected number of unique</span>
+<span class="sd">        messages produced, considering the initial symbol model and the</span>
+<span class="sd">        preset configuration of fields.</span>
+
+<span class="sd">        The :meth:`count` method expects the following parameters:</span>
+
+<span class="sd">        :param preset: The configuration used to parameterize values in fields and variables. This configuration will impact the expected number of unique messages the symbol would produce.</span>
+<span class="sd">        :type preset: :class:`Preset &lt;netzob.Model.Vocabulary.Preset.Preset&gt;`, optional</span>
+<span class="sd">        :return: The number of unique values the symbol specialization can produce.</span>
+<span class="sd">        :rtype: :class:`int`</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">           The theoretical value returned by :meth:`~count`</span>
+<span class="sd">           may be huge. Therefore, we force the returned value to be</span>
+<span class="sd">           :attr:`MAXIMUM_POSSIBLE_VALUES` (86400000000), if the</span>
+<span class="sd">           theoretical result is beyond this threshold. This limit</span>
+<span class="sd">           corresponds to 1 day of data generation based on a generation</span>
+<span class="sd">           bandwith of 1 million per second.</span>
+
+<span class="sd">        &gt;&gt;&gt; # Symbol definition</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator</span>
+<span class="sd">        &gt;&gt;&gt; f1 = Field(uint16(interval=(50, 1000)))</span>
+<span class="sd">        &gt;&gt;&gt; f2 = Field(uint8())</span>
+<span class="sd">        &gt;&gt;&gt; f3 = Field(uint8())</span>
+<span class="sd">        &gt;&gt;&gt; symbol = Symbol(fields=[f1, f2, f3])</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Count the expected number of unique produced messages</span>
+<span class="sd">        &gt;&gt;&gt; symbol.count()  #  Here, the following computation is done: 951*256*256 (f1 is able to produce 1000-50+1=951 possible values, based on its interval)</span>
+<span class="sd">        62324736</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Specify a preset configuration for field &#39;f2&#39;</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">        &gt;&gt;&gt; preset[f2] = 42</span>
+<span class="sd">        &gt;&gt;&gt; symbol.count(preset)  # Here, the following computation is done: 951*1*256 (as the f2 field value is set to 42, f2 can now produce only 1 possible value)</span>
+<span class="sd">        243456</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Specify a preset configuration for field &#39;f3&#39; by activating fuzzing</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f3, generator=&#39;determinist&#39;)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; symbol.count(preset)  # Here, the following computation is done: 951*1*29 (29 corresponds to the number of possible values generated by the determinist generator)</span>
+<span class="sd">        27579</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">*=</span> <span class="n">field</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">count</span></div>
+
+    <span class="k">def</span> <span class="nf">clearMessages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete all the messages attached to the current symbol&quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__messages</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__messages</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+    <span class="c1"># Properties</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">messages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list containing all the messages that this symbol represent.</span>
+
+<span class="sd">        :type : a :class:`list` of :class:`AbstractMessage &lt;netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__messages</span>
+
+    <span class="nd">@messages</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">messages</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">messages</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># First it checks the specified messages are all AbstractMessages</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">AbstractMessage</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Cannot add messages of type </span><span class="si">{0}</span><span class="s2"> in the session, only AbstractMessages are allowed.&quot;</span><span class="o">.</span>
+                    <span class="nb">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">msg</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clearMessages</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a field from its name in the field database.</span>
+
+<span class="sd">        :param field_name: the name of the :class:`Field &lt;netzob.Model.Vocabulary.Field.Field&gt;` object</span>
+<span class="sd">        :type field_name: :class:`str`</span>
+<span class="sd">        :raise KeyError: when the field has not been found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getField</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test_many_relation_abstractions</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; eth_length = Field(bitarray(&#39;0000000000000000&#39;), &quot;eth.length&quot;)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; eth_llc = Field(Raw(nbBytes=3), &quot;eth.llc&quot;)  # IEEE 802.2 header</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; eth_payload = Field(Raw(), name=&quot;eth.payload&quot;)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; eth_padding = Field(Padding([eth_length, eth_llc, eth_payload],</span>
+<span class="sd">    ...                              data=Raw(nbBytes=1),</span>
+<span class="sd">    ...                              modulo=8*60),</span>
+<span class="sd">    ...                      &quot;eth.padding&quot;)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; eth_crc_802_3 = Field(bitarray(&#39;00000000000000000000000000000000&#39;), &quot;eth.crc&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; eth_crc_802_3.domain = CRC32([eth_length,</span>
+<span class="sd">    ...                               eth_llc,</span>
+<span class="sd">    ...                               eth_payload,</span>
+<span class="sd">    ...                               eth_padding],</span>
+<span class="sd">    ...                              dataType=Raw(nbBytes=4,</span>
+<span class="sd">    ...                                           unitSize=UnitSize.SIZE_32))</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; eth_length.domain = Size([eth_llc, eth_payload],</span>
+<span class="sd">    ...                           dataType=uint16(), factor=1./8)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(name=&quot;ethernet_802_3&quot;,</span>
+<span class="sd">    ...                  fields=[eth_length,</span>
+<span class="sd">    ...                          eth_llc,</span>
+<span class="sd">    ...                          eth_payload,</span>
+<span class="sd">    ...                          eth_padding,</span>
+<span class="sd">    ...                          eth_crc_802_3])</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(symbol)</span>
+<span class="sd">    &gt;&gt;&gt; preset[&#39;eth.payload&#39;] = b&quot;PAYLOAD&quot;</span>
+<span class="sd">    &gt;&gt;&gt; print(symbol.str_structure())</span>
+<span class="sd">    ethernet_802_3</span>
+<span class="sd">    |--  eth.length</span>
+<span class="sd">         |--   Size([&#39;eth.llc&#39;, &#39;eth.payload&#39;]) - Type:Integer(0,65535)</span>
+<span class="sd">    |--  eth.llc</span>
+<span class="sd">         |--   Data (Raw(nbBytes=3))</span>
+<span class="sd">    |--  eth.payload</span>
+<span class="sd">         |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">    |--  eth.padding</span>
+<span class="sd">         |--   Padding([&#39;eth.length&#39;, &#39;eth.llc&#39;, &#39;eth.payload&#39;]) - Type:Raw(nbBytes=1)</span>
+<span class="sd">    |--  eth.crc</span>
+<span class="sd">         |--   Relation([&#39;eth.length&#39;, &#39;eth.llc&#39;, &#39;eth.payload&#39;, &#39;eth.padding&#39;]) - Type:Raw(nbBytes=4)</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize(preset))</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)  # doctest: +ELLIPSIS</span>
+<span class="sd">    OrderedDict([(&#39;eth.length&#39;, b&#39;\x00\n&#39;), (&#39;eth.llc&#39;, b&#39;...&#39;), (&#39;eth.payload&#39;, b&#39;PAYLOAD&#39;), (&#39;eth.padding&#39;, b&#39;...&#39;), (&#39;eth.crc&#39;, ...)])</span>
+
+
+<span class="sd">    # Test abstraction of ARP message</span>
+
+<span class="sd">    &gt;&gt;&gt; data = b&quot;\x00\x01\x08\x00\x06\x04\x00\x02\x00\x22\x4d\x56\x4d\xac\xc0\xa8\xc8\xab\x84\x8f\x69\xc9\x28\x91\xc0\xa8\xc8\xe2&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; arp_hrd = Field(uint16(), &quot;arp.hrd&quot;) # Hardware address space (1 for Ethernet)</span>
+<span class="sd">    &gt;&gt;&gt; arp_pro = Field(uint16(), &quot;arp.pro&quot;) # Protocol address space (2048 for IP)</span>
+<span class="sd">    &gt;&gt;&gt; arp_hln = Field(uint8(), &quot;arp.hln&quot;)  # byte length of each hardware address</span>
+<span class="sd">    &gt;&gt;&gt; arp_pln = Field(uint8(), &quot;arp.pln&quot;)  # byte length of each protocol address</span>
+<span class="sd">    &gt;&gt;&gt; arp_op = Field(uint16(), &quot;arp.op&quot;)   # opcode (1 for request, 2 for reply)</span>
+
+<span class="sd">    &gt;&gt;&gt; arp_ip_sha = Field(Raw(nbBytes=6), &quot;arp.sha&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; arp_ip_spa = Field(Raw(nbBytes=4), &quot;arp.spa&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; arp_ip_tha = Field(Raw(nbBytes=6), &quot;arp.tha&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; arp_ip_tpa = Field(Raw(nbBytes=4), &quot;arp.tpa&quot;)</span>
+
+<span class="sd">    &gt;&gt;&gt; arp_ip_symbol = Symbol(name=&quot;arp.ip&quot;, fields=([</span>
+<span class="sd">    ...     arp_hrd, arp_pro, arp_hln, arp_pln, arp_op,</span>
+<span class="sd">    ...     arp_ip_sha, arp_ip_spa, arp_ip_tha, arp_ip_tpa]))</span>
+
+<span class="sd">    &gt;&gt;&gt; arp_ip_symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;arp.hrd&#39;, b&#39;\x00\x01&#39;), (&#39;arp.pro&#39;, b&#39;\x08\x00&#39;), (&#39;arp.hln&#39;, b&#39;\x06&#39;), (&#39;arp.pln&#39;, b&#39;\x04&#39;), (&#39;arp.op&#39;, b&#39;\x00\x02&#39;), (&#39;arp.sha&#39;, b&#39;\x00&quot;MVM\xac&#39;), (&#39;arp.spa&#39;, b&#39;\xc0\xa8\xc8\xab&#39;), (&#39;arp.tha&#39;, b&#39;\x84\x8fi\xc9(\x91&#39;), (&#39;arp.tpa&#39;, b&#39;\xc0\xa8\xc8\xe2&#39;)])</span>
+
+
+<span class="sd">    # Test Symbol cloning</span>
+
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Raw())</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size(f1))</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(Value(f2))</span>
+<span class="sd">    &gt;&gt;&gt; f4 = Field(CRC16([f2]))</span>
+<span class="sd">    &gt;&gt;&gt; f5 = Field(MD5([f2]))</span>
+<span class="sd">    &gt;&gt;&gt; f6 = Field(HMAC_MD5([f2], key=&quot;\x00&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; v1 = Data(int8(2))</span>
+<span class="sd">    &gt;&gt;&gt; f7 = Field(Agg([Raw(), v1]))</span>
+<span class="sd">    &gt;&gt;&gt; f8 = Field(Alt([Raw(), Raw()]))</span>
+<span class="sd">    &gt;&gt;&gt; f9 = Field(Repeat(Raw(), nbRepeat=1))</span>
+<span class="sd">    &gt;&gt;&gt; f10 = Field(Repeat(Raw(), nbRepeat=v1))</span>
+<span class="sd">    &gt;&gt;&gt; f11 = Field(Opt(Raw()))</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11])</span>
+<span class="sd">    &gt;&gt;&gt; print(s.str_structure())</span>
+<span class="sd">    Symbol</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Size([&#39;Field&#39;]) - Type:Integer(0,255)</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Value(Field)</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Relation([&#39;Field&#39;]) - Type:Raw(nbBytes=2)</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Relation([&#39;Field&#39;]) - Type:Raw(nbBytes=16)</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Relation([&#39;Field&#39;]) - Type:Raw(nbBytes=16)</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Agg</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">               |--   Data (Integer(2))</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Alt</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Repeat</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Repeat</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Opt</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">    &gt;&gt;&gt; ids = set()</span>
+<span class="sd">    &gt;&gt;&gt; for f in s.getLeafFields():</span>
+<span class="sd">    ...     ids.add(id(f))</span>
+<span class="sd">    ...     ids.add(id(f.domain))</span>
+<span class="sd">    ...     if f.domain.isnode():</span>
+<span class="sd">    ...         for v in f.domain.children:</span>
+<span class="sd">    ...             ids.add(id(v))</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; s_bis = s.copy()</span>
+<span class="sd">    &gt;&gt;&gt; print(s_bis.str_structure())</span>
+<span class="sd">    Symbol</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Size([&#39;Field&#39;]) - Type:Integer(0,255)</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Value(Field)</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Relation([&#39;Field&#39;]) - Type:Raw(nbBytes=2)</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Relation([&#39;Field&#39;]) - Type:Raw(nbBytes=16)</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Relation([&#39;Field&#39;]) - Type:Raw(nbBytes=16)</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Agg</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">               |--   Data (Integer(2))</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Alt</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Repeat</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Repeat</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">    |--  Field</span>
+<span class="sd">         |--   Opt</span>
+<span class="sd">               |--   Data (Raw(nbBytes=(0,8192)))</span>
+<span class="sd">    &gt;&gt;&gt; ids_bis = set()</span>
+<span class="sd">    &gt;&gt;&gt; for f in s_bis.getLeafFields():</span>
+<span class="sd">    ...     ids_bis.add(id(f))</span>
+<span class="sd">    ...     ids_bis.add(id(f.domain))</span>
+<span class="sd">    ...     if f.domain.isnode():</span>
+<span class="sd">    ...         for v in f.domain.children:</span>
+<span class="sd">    ...             ids_bis.add(id(v))</span>
+<span class="sd">    &gt;&gt;&gt; ids.intersection(ids_bis)</span>
+<span class="sd">    set()</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

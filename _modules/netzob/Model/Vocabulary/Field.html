@@ -1,0 +1,1415 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Field &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Field</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#|             ANSSI,   https://www.ssi.gouv.fr                              |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| File contributors :                                                       |</span>
+<span class="c1">#|       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1">#|       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span>  <span class="c1"># noqa: F401</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">public_api</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.AbstractField</span> <span class="kn">import</span> <span class="n">AbstractField</span><span class="p">,</span> <span class="n">GenerationException</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.Raw</span> <span class="kn">import</span> <span class="n">Raw</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Leafs.Data</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.DomainFactory</span> <span class="kn">import</span> <span class="n">DomainFactory</span>
+
+
+<span class="k">class</span> <span class="nc">InvalidDomainException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="Field"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Field.Field">[docs]</a><span class="k">class</span> <span class="nc">Field</span><span class="p">(</span><span class="n">AbstractField</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Field class is used in the definition of a Symbol structure.</span>
+
+<span class="sd">    A Field describes a chunk of a Symbol and is specified by a</span>
+<span class="sd">    definition domain, representing the set of values the field</span>
+<span class="sd">    accepts.</span>
+
+<span class="sd">    The Field constructor expects some parameters:</span>
+
+<span class="sd">    :param domain: The definition domain of the field (i.e. the set of values</span>
+<span class="sd">                   the field accepts). If not specified, the default definition</span>
+<span class="sd">                   domain will be ``Raw()``, meaning it accepts any values.</span>
+<span class="sd">                   When this parameter is a list of fields, the constructor set</span>
+<span class="sd">                   ``self.fields=domain`` and ``self.domain=None``. Otherwise, it sets the :attr:`domain` attribute. During this later operation, a normalization is done in order to convert the provided domain into a :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`.</span>
+<span class="sd">    :param name: The name of the field. If not specified, the</span>
+<span class="sd">                 default name will be &quot;Field&quot;.</span>
+<span class="sd">    :param isPseudoField: A flag indicating if the field is a</span>
+<span class="sd">                          pseudo field, meaning it is used</span>
+<span class="sd">                          internally to help the computation</span>
+<span class="sd">                          of the value of another field, but does</span>
+<span class="sd">                          not directly produce data. The default value is False.</span>
+<span class="sd">    :type domain: :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`,</span>
+<span class="sd">                  :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`,</span>
+<span class="sd">                  :class:`bytes`, :class:`str`, :class:`int`, :class:`bitarray &lt;bitarray.bitarray&gt;`,</span>
+<span class="sd">                  or :class:`list` of :class:`~netzob.Model.Vocabulary.Field.Field`, optional</span>
+<span class="sd">    :type name: :class:`str`, optional</span>
+<span class="sd">    :type isPseudoField: :class:`bool`, optional</span>
+
+
+<span class="sd">    The Field class provides the following public variables:</span>
+
+<span class="sd">    :var domain: The definition domain of the field (i.e. the</span>
+<span class="sd">                 set of values the field accepts). Only applicable when the current field has a definition domain. Setting this attribute will clean the list of sub-fields (i.e. the :attr:`fields` attribute will be set to ``[]``).</span>
+<span class="sd">                 ``None`` when ``self.fields`` is set.</span>
+<span class="sd">    :var name: The name of the field.</span>
+<span class="sd">    :var description: The description of the field.</span>
+<span class="sd">    :var fields: The sorted list of sub-fields. Only applicable when the current field has sub-fields. Setting this attribute will clean the definition domain of the current field.</span>
+<span class="sd">    :var parent: The parent element.</span>
+<span class="sd">    :var isPseudoField: A flag indicating if the field is a</span>
+<span class="sd">                        pseudo field, meaning it is used</span>
+<span class="sd">                        internally to help the computation</span>
+<span class="sd">                        of the value of another field, but does</span>
+<span class="sd">                        not directly produce data.</span>
+<span class="sd">    :vartype domain: :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`</span>
+<span class="sd">    :vartype name: :class:`str`</span>
+<span class="sd">    :vartype description: :class:`str`</span>
+<span class="sd">    :vartype fields: list[~netzob.Model.Vocabulary.Field.Field]</span>
+<span class="sd">    :vartype parent: ~typing.Union[~netzob.Model.Vocabulary.Field.Field,</span>
+<span class="sd">                     ~netzob.Model.Vocabulary.Symbol.Symbol]</span>
+<span class="sd">    :vartype isPseudoField: :class:`bool`</span>
+
+
+<span class="sd">    **Fields hierarchy**</span>
+
+<span class="sd">    A field can be composed of sub-fields. This is useful for example</span>
+<span class="sd">    to separate a header, composed of multiple fields, from its</span>
+<span class="sd">    payload. The parent field can be seen as a facility to access</span>
+<span class="sd">    a group of fields.</span>
+
+<span class="sd">    In the following example, the ``fheader`` field is a parent field</span>
+<span class="sd">    for a group of sub-fields. The parent field does not contain any</span>
+<span class="sd">    concrete data, contrary to its sub-fields.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; fh0 = Field(name=&#39;fh0&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; fh1 = Field(name=&#39;fh1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; fheader = Field([fh0, fh1], name=&#39;fheader&#39;)</span>
+
+<span class="sd">    More generally, a field is part of a tree whose root is a symbol</span>
+<span class="sd">    and whose all other nodes are fields. Hence, a field</span>
+<span class="sd">    always has a parent which can be another field or a symbol if it</span>
+<span class="sd">    is the root.</span>
+
+
+<span class="sd">    **Field definition domain**</span>
+
+<span class="sd">    The value that can take a field is defined by its definition</span>
+<span class="sd">    domain. The definition domain of a field can take multiple forms,</span>
+<span class="sd">    in order to easily express basic types (such as Integer or String)</span>
+<span class="sd">    or to model complex data structures (such as alternatives,</span>
+<span class="sd">    repetitions or sequences).</span>
+
+<span class="sd">    The following examples present the different forms that make it possible to</span>
+<span class="sd">    express the same field content (i.e. an Integer with a constant</span>
+<span class="sd">    value of 10):</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(Data(Integer(10)))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(Integer(10))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(10)</span>
+
+<span class="sd">    If these fields are equivalent, this is because the first</span>
+<span class="sd">    parameter of the Field constructor is :attr:`domain`, thus its</span>
+<span class="sd">    name can be omitted. Besides, the domain parameter will be parsed</span>
+<span class="sd">    by a factory, which accepts either the canonical form of a</span>
+<span class="sd">    definition domain (such as `domain=Data(Integer(10))`) or a</span>
+<span class="sd">    shortened form (such as `domain=Integer(10)`, or even</span>
+<span class="sd">    `domain=10`). In the later case, this means that it is possible to</span>
+<span class="sd">    use a Python native type that will be automatically converted to its equivalent in</span>
+<span class="sd">    Netzob type. Supported Python native types are :class:`bytes` (converted in :class:`Raw &lt;netzob.Model.Vocabulary.Types.Raw.Raw&gt;`), :class:`str` (converted in :class:`String &lt;netzob.Model.Vocabulary.Types.String.String&gt;`), :class:`int` (converted in :class:`Integer &lt;netzob.Model.Vocabulary.Types.Integer.Integer&gt;`) and :class:`bitarray &lt;bitarray.bitarray&gt;` (converted in :class:`BitArray &lt;netzob.Model.Vocabulary.Types.BitArray.BitArray&gt;`).</span>
+
+<span class="sd">    .. ifconfig:: scope in (&#39;netzob&#39;)</span>
+
+<span class="sd">       A domain may be composed of basic types, or complex data</span>
+<span class="sd">       structures. The following examples show how to express data</span>
+<span class="sd">       structures composed of 1) an alternative between the integers `10`</span>
+<span class="sd">       and `20`, 2) a repetition of the string `a`, and 3) an aggregate</span>
+<span class="sd">       (or concatenation) of the strings `aa` and `bb`:</span>
+
+<span class="sd">       &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">       &gt;&gt;&gt; f = Field(Alt([10, 20]))</span>
+<span class="sd">       &gt;&gt;&gt; f = Field(Repeat(&quot;a&quot;, nbRepeat=(4,8)))</span>
+<span class="sd">       &gt;&gt;&gt; f = Field(Agg([&quot;aa&quot;, &quot;bb&quot;]))</span>
+
+
+<span class="sd">    **Relationships between fields**</span>
+
+<span class="sd">    A field can have its value related to the content of another</span>
+<span class="sd">    field. Such relationships may be specified through specific domain</span>
+<span class="sd">    objects, such as</span>
+<span class="sd">    :class:`~netzob.Model.Vocabulary.Domain.Variables.Leafs.Size.Size` or</span>
+<span class="sd">    :class:`~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value` classes.</span>
+
+<span class="sd">    The following example describes a size relationship with a String</span>
+<span class="sd">    field:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(String(&quot;test&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Size(f0))</span>
+<span class="sd">    &gt;&gt;&gt; fheader = Field([f0, f1])</span>
+<span class="sd">    </span>
+<span class="sd">    **Pseudo fields**</span>
+
+<span class="sd">    Sometimes, a specific field can be needed to express a complex</span>
+<span class="sd">    data structure that depends on external data. This is the purpose</span>
+<span class="sd">    of the `isPseudoField` flag. This flag indicates that the current</span>
+<span class="sd">    field is only used for the computation of the value of another</span>
+<span class="sd">    field, but does not produce real content during</span>
+<span class="sd">    specialization. The following example shows a pseudo field that</span>
+<span class="sd">    contains external data, and a real field whose content is the</span>
+<span class="sd">    size of the external data:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f_pseudo = Field(domain=&quot;An external data&quot;, isPseudoField=True)</span>
+<span class="sd">    &gt;&gt;&gt; f_real = Field(domain=Size(f_pseudo))</span>
+<span class="sd">    &gt;&gt;&gt; fheader = Field([f_pseudo, f_real])</span>
+
+<span class="sd">    A real example of a pseudo field is found in the UDP checksum,</span>
+<span class="sd">    which relies on a pseudo IP header for its computation.</span>
+
+
+<span class="sd">    .. ifconfig:: scope in (&#39;netzob&#39;)</span>
+
+<span class="sd">       **Encoding functions applied to fields**</span>
+
+<span class="sd">       Encoding functions represent functions which apply to modify the</span>
+<span class="sd">       encoding of a data. The following example shows the use of the</span>
+<span class="sd">       :class:`Base64EncodingFunction &lt;netzob.Model.Vocabulary.Functions.EncodingFunctions.Base64EncodingFunction.Base64EncodingFunction&gt;`</span>
+<span class="sd">       function to automatically decode base64 strings in the `f1` field:</span>
+
+<span class="sd">       &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">       &gt;&gt;&gt; m1 = &quot;hello YWxs&quot;</span>
+<span class="sd">       &gt;&gt;&gt; m2 = &quot;hello bXkgbG9yZA==&quot;</span>
+<span class="sd">       &gt;&gt;&gt; m3 = &quot;hello d29ybGQ=&quot;</span>
+<span class="sd">       &gt;&gt;&gt; messages = [RawMessage(m1), RawMessage(m2), RawMessage(m3)]</span>
+<span class="sd">       &gt;&gt;&gt; f0 = Field(name=&quot;f0&quot;, domain=String(&quot;hello &quot;))</span>
+<span class="sd">       &gt;&gt;&gt; f1 = Field(name=&quot;f1&quot;, domain=String(nbChars=(0, 20)))</span>
+<span class="sd">       &gt;&gt;&gt; s = Symbol(fields=[f0, f1], messages=messages)</span>
+<span class="sd">       &gt;&gt;&gt; print(s.str_data())</span>
+<span class="sd">       f0       | f1            </span>
+<span class="sd">       -------- | --------------</span>
+<span class="sd">       &#39;hello &#39; | &#39;YWxs&#39;        </span>
+<span class="sd">       &#39;hello &#39; | &#39;bXkgbG9yZA==&#39;</span>
+<span class="sd">       &#39;hello &#39; | &#39;d29ybGQ=&#39;    </span>
+<span class="sd">       -------- | --------------</span>
+<span class="sd">       &gt;&gt;&gt; f1.addEncodingFunction(Base64EncodingFunction(encode_data = False))</span>
+<span class="sd">       &gt;&gt;&gt; print(s.str_data())</span>
+<span class="sd">       f0       | f1       </span>
+<span class="sd">       -------- | ---------</span>
+<span class="sd">       &#39;hello &#39; | &#39;all&#39;    </span>
+<span class="sd">       &#39;hello &#39; | &#39;my lord&#39;</span>
+<span class="sd">       &#39;hello &#39; | &#39;world&#39;  </span>
+<span class="sd">       -------- | ---------</span>
+
+
+<span class="sd">    .. ifconfig:: scope in (&#39;netzob&#39;)</span>
+
+<span class="sd">       **Field examples**</span>
+
+<span class="sd">       Here are examples of fields:</span>
+
+<span class="sd">       * a field containing the integer value 100</span>
+
+<span class="sd">         &gt;&gt;&gt; f = Field(100)</span>
+
+<span class="sd">       * a field containing a specific binary: &#39;1000&#39; = 8 in decimal</span>
+
+<span class="sd">         &gt;&gt;&gt; f = Field(0b1000)</span>
+
+<span class="sd">       * a field containing a raw value of 8 bits (1 byte)</span>
+
+<span class="sd">         &gt;&gt;&gt; f = Field(Raw(nbBytes=8))</span>
+
+<span class="sd">       * a field with a specific raw value</span>
+
+<span class="sd">         &gt;&gt;&gt; f = Field(Raw(b&#39;\x00\x01\x02\x03&#39;))</span>
+
+<span class="sd">       * a field representing a random IPv4:</span>
+
+<span class="sd">         &gt;&gt;&gt; f = Field(IPv4())</span>
+
+<span class="sd">       * a field representing a random String of 6 characters length:</span>
+
+<span class="sd">         &gt;&gt;&gt; f = Field(String(nbChars=6))</span>
+
+<span class="sd">       * a field representing a random String with length between 5 and 20 characters:</span>
+
+<span class="sd">         &gt;&gt;&gt; payloadField = Field(String(nbChars=(5, 20)))</span>
+
+<span class="sd">       * a field whose value is the size of the payloadField:</span>
+
+<span class="sd">         &gt;&gt;&gt; f = Field([Size(payloadField)])</span>
+
+<span class="sd">       * a field representing an alternative between two different strings, either &quot;john&quot; or &quot;kurt&quot;:</span>
+
+<span class="sd">         &gt;&gt;&gt; f = Field([&quot;john&quot;, &quot;kurt&quot;])</span>
+
+<span class="sd">       * a field representing a decimal (10) or a String of 16 chars:</span>
+
+<span class="sd">         &gt;&gt;&gt; f = Field([10, String(nbChars=(16))])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="n">isPseudoField</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Field</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># Handle each possibility for the domain parameter</span>
+        <span class="k">if</span> <span class="n">domain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Check if domain is not defined</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">Raw</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c1"># Check if domain is a list of fields</span>
+
+            <span class="c1"># Check if each domain element is of type Field</span>
+            <span class="n">is_domain_list_of_fields</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">domain</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elt</span><span class="p">,</span> <span class="n">Field</span><span class="p">):</span>
+                    <span class="n">is_domain_list_of_fields</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">is_domain_list_of_fields</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">domain</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">domain</span>  <span class="c1"># Domain will be normalized is such case</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">domain</span>  <span class="c1"># Domain will be normalized is such case</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">isPseudoField</span> <span class="o">=</span> <span class="n">isPseudoField</span>
+
+<div class="viewcode-block" id="Field.copy"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Field.Field.copy">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_objects</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the current object as well as all its dependencies.</span>
+
+<span class="sd">        :return: A new object of the same type.</span>
+<span class="sd">        :rtype: :class:`Field &lt;netzob.Model.Vocabulary.Field.Field&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">map_objects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">map_objects</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+
+        <span class="n">new_field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">isPseudoField</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">isPseudoField</span><span class="p">)</span>
+        <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_field</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">new_domain</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">new_domain</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">map_objects</span><span class="p">[</span><span class="n">f</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_sub_field</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">map_objects</span><span class="p">)</span>
+                    <span class="n">new_domain</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_sub_field</span><span class="p">)</span>
+            <span class="n">new_field</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">new_domain</span>
+            <span class="n">new_field</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">new_domain</span> <span class="o">=</span> <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_domain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">map_objects</span><span class="p">)</span>
+            <span class="n">new_field</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">new_domain</span>
+
+        <span class="k">return</span> <span class="n">new_field</span></div>
+
+<div class="viewcode-block" id="Field.str_structure"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Field.Field.str_structure">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">str_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deepness</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a string which denotes the current field definition</span>
+<span class="sd">        using a tree display.</span>
+
+<span class="sd">        :return: The current field represented as a string.</span>
+<span class="sd">        :rtype: :class:`str`</span>
+
+<span class="sd">        :param preset: The configuration used to parameterize values in fields and variables.</span>
+<span class="sd">        :type preset: :class:`Preset &lt;netzob.Model.Vocabulary.Preset.Preset&gt;`, optional</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f1 = Field(String(), name=&quot;field1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; f2 = Field(Integer(interval=(10, 100)), name=&quot;field2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; f3 = Field(Raw(nbBytes=14), name=&quot;field3&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; field = Field([f1, f2, f3], name=&quot;Main field&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; print(field.str_structure())</span>
+<span class="sd">        Main field</span>
+<span class="sd">        |--  field1</span>
+<span class="sd">             |--   Data (String(nbChars=(0,8192)))</span>
+<span class="sd">        |--  field2</span>
+<span class="sd">             |--   Data (Integer(10,100))</span>
+<span class="sd">        |--  field3</span>
+<span class="sd">             |--   Data (Raw(nbBytes=14))</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tab</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;|--  &quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">deepness</span><span class="p">)]</span>
+        <span class="n">tab</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tab</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">str_structure</span><span class="p">(</span><span class="n">preset</span><span class="p">,</span> <span class="n">deepness</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">str_structure</span><span class="p">(</span><span class="n">preset</span><span class="p">,</span> <span class="n">deepness</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">getVariables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the list of all underlying variables.</span>
+
+<span class="sd">        :return: the list of variables</span>
+<span class="sd">        :rtype: :class:`list` of :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable`.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; v1 = Data(uint8(), name=&#39;v1&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; v2 = Data(uint8(), name=&#39;v2&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; v_agg = Agg([v1, v2], name=&#39;v_agg&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; f1 = Field(v_agg)</span>
+<span class="sd">        &gt;&gt;&gt; variables = f1.getVariables()</span>
+<span class="sd">        &gt;&gt;&gt; len(variables)</span>
+<span class="sd">        3</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">getVariables</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Field.specialize"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Field.Field.specialize">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">specialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The :meth:`specialize()` method is intended to produce concrete</span>
+<span class="sd">        :class:`bytes` data based on the field model. This method</span>
+<span class="sd">        returns a Python generator that in turn provides data</span>
+<span class="sd">        :class:`bytes` object at each call to ``next(generator)``.</span>
+
+<span class="sd">        :param preset: The configuration used to parameterize values in fields and variables.</span>
+<span class="sd">        :param memory: A memory used to store variable values during</span>
+<span class="sd">                       specialization and abstraction of successive</span>
+<span class="sd">                       fields, especially to handle inter-symbol</span>
+<span class="sd">                       relationships. If None, a temporary memory is</span>
+<span class="sd">                       created by default and used internally during the scope of the</span>
+<span class="sd">                       specialization process.</span>
+<span class="sd">        :type preset: :class:`Preset &lt;netzob.Model.Vocabulary.Preset.Preset&gt;`, optional</span>
+<span class="sd">        :type memory: :class:`Memory &lt;netzob.Model.Vocabulary.Domain.Variables.Memory.Memory&gt;`, optional</span>
+<span class="sd">        :return: A generator that provides data :class:`bytes` at each call to ``next(generator)``.</span>
+<span class="sd">        :rtype: :class:`Generator[bytes]`</span>
+<span class="sd">        :raises: :class:`GenerationException &lt;netzob.Model.Vocabulary.AbstractField.GenerationException&gt;` if an error occurs while specializing the field.</span>
+
+<span class="sd">        The following example shows the :meth:`specialize()` method used for a</span>
+<span class="sd">        field which contains a string with a constant value.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f = Field(String(&quot;hello&quot;))</span>
+<span class="sd">        &gt;&gt;&gt; next(f.specialize())</span>
+<span class="sd">        b&#39;hello&#39;</span>
+
+<span class="sd">        The following example shows the :meth:`specialize()` method used for a</span>
+<span class="sd">        field which contains a string with a variable value.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; f = Field(String(nbChars=4))</span>
+<span class="sd">        &gt;&gt;&gt; len(next(f.specialize()))</span>
+<span class="sd">        4</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Specializes field </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="c1"># Sanity check</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__domain</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidDomainException</span><span class="p">(</span><span class="s2">&quot;No domain or sub-fields are defined.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># We normalize the sub_fields variables</span>
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf</span> <span class="kn">import</span> <span class="n">AbstractRelationVariableLeaf</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">getLeafFields</span><span class="p">(</span><span class="n">includePseudoFields</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">domain</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="n">AbstractRelationVariableLeaf</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Normalize field targets for field &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                    <span class="n">field</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">normalize_targets</span><span class="p">()</span>
+
+        <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Specializer.FieldSpecializer</span> <span class="kn">import</span> <span class="n">FieldSpecializer</span>
+        <span class="n">fs</span> <span class="o">=</span> <span class="n">FieldSpecializer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">)</span>
+
+        <span class="n">specializing_paths</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">specialize</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inner_specialize</span><span class="p">(</span><span class="n">specializing_paths</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_inner_specialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specializing_paths</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">specializing_path</span> <span class="ow">in</span> <span class="n">specializing_paths</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">specializing_path</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">%</span> <span class="mi">8</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GenerationException</span><span class="p">(</span><span class="s2">&quot;specialize() produced </span><span class="si">{}</span><span class="s2"> bits, which is not aligned on 8 bits. You should review the field model.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+            <span class="k">yield</span> <span class="n">data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Field.count"><a class="viewcode-back" href="../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Field.Field.count">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The :meth:`count` method computes the expected number of unique</span>
+<span class="sd">        messages produced, considering the initial field model and the</span>
+<span class="sd">        preset configuration.</span>
+
+<span class="sd">        The :meth:`count` method expects the following parameters:</span>
+
+<span class="sd">        :param preset: The configuration used to parameterize values in fields and variables. This configuration will impact the expected number of unique messages the field would produce.</span>
+<span class="sd">        :type preset: :class:`Preset &lt;netzob.Model.Vocabulary.Preset.Preset&gt;`, optional</span>
+<span class="sd">        :return: The number of unique values the field specialization can produce.</span>
+<span class="sd">        :rtype: :class:`int`</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">           The theoretical value returned by :meth:`~count`</span>
+<span class="sd">           may be huge. Therefore, we force the returned value to be</span>
+<span class="sd">           :attr:`MAXIMUM_POSSIBLE_VALUES` (86400000000), if the</span>
+<span class="sd">           theoretical result is beyond this threshold. This limit</span>
+<span class="sd">           corresponds to 1 day of data generation based on a generation</span>
+<span class="sd">           bandwith of 1 million per second.</span>
+
+<span class="sd">        &gt;&gt;&gt; # Field definition</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.Fuzzing.Generators.DeterministGenerator import DeterministGenerator</span>
+<span class="sd">        &gt;&gt;&gt; f1 = Field(uint16(interval=(50, 1000)))</span>
+<span class="sd">        &gt;&gt;&gt; f2 = Field(uint8())</span>
+<span class="sd">        &gt;&gt;&gt; f3 = Field(uint8())</span>
+<span class="sd">        &gt;&gt;&gt; f = Field([f1, f2, f3])</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Count the expected number of unique produced messages</span>
+<span class="sd">        &gt;&gt;&gt; f.count()  #  Here, the following computation is done: 951*256*256 (f1 is able to produce 1000-50+1=951 possible values, based on its interval)</span>
+<span class="sd">        62324736</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Specify a preset configuration for field &#39;f2&#39;</span>
+<span class="sd">        &gt;&gt;&gt; preset = Preset(f)</span>
+<span class="sd">        &gt;&gt;&gt; preset[f2] = 42</span>
+<span class="sd">        &gt;&gt;&gt; f.count(preset)  # Here, the following computation is done: 951*1*256 (as the f2 field value is set to 42, f2 can now produce only 1 possible value)</span>
+<span class="sd">        243456</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Specify a preset configuration for field &#39;f3&#39; by activating fuzzing</span>
+<span class="sd">        &gt;&gt;&gt; preset.fuzz(f3, generator=&#39;determinist&#39;)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; f.count(preset)  # Here, the following computation is done: 951*1*29 (29 corresponds to the number of possible values generated by the determinist generator)</span>
+<span class="sd">        27579</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">*=</span> <span class="n">field</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">count</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This defines the definition domain of a field.</span>
+
+<span class="sd">        This definition domain is made of a list of typed values which can optionally have a static value.</span>
+<span class="sd">        More information on the available types and their specificities are available on their documentations.</span>
+
+<span class="sd">        :type: a :class:`list` of :class:`object` -- By object we refer to a primitive object (:class:`int`, :class:`str`, :class:`hex`, :class:`binary`) and netzob types objects inherited from :class:`AbstractType &lt;netzob.Model.Vocabulary.Types.AbstractType.AbstractType&gt;`</span>
+<span class="sd">        :raises: :class:`InvalidDomainException &lt;netzob.Model.Vocabulary.Field.InvalidDomainException&gt;` if domain invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__domain</span>
+
+    <span class="nd">@domain</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">domain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__domain</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">Raw</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__domain</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Normalize the domain</span>
+            <span class="n">normalizedDomain</span> <span class="o">=</span> <span class="n">DomainFactory</span><span class="o">.</span><span class="n">normalizeDomain</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+
+            <span class="c1"># Link the domain variables with the current field</span>
+            <span class="n">normalizedDomain</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="bp">self</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">__domain</span> <span class="o">=</span> <span class="n">normalizedDomain</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">messages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A list containing all the messages that the parents of this field have.</span>
+<span class="sd">        In reality, a field doesn&#39;t have messages, it just returns the messages of its symbol</span>
+
+<span class="sd">        :type: a :class:`list` of :class:`AbstractMessage &lt;netzob.Model.Vocabulary.Messages.AbstractMessage.AbstractMessage&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getSymbol</span><span class="p">()</span><span class="o">.</span><span class="n">messages</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;The field is attached to no symbol and so it has no messages: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span>
+                <span class="nb">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">messages</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">isPseudoField</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A flag indicating if the field is a pseudo field, meaning it is</span>
+<span class="sd">        used internally to help for the computation of the value of</span>
+<span class="sd">        another field, but does not directly produce data.</span>
+
+<span class="sd">        :type: :class:`bool`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__isPseudoField</span>
+
+    <span class="nd">@isPseudoField</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">isPseudoField</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">isPseudoField</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">isPseudoField</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">isPseudoField</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__isPseudoField</span> <span class="o">=</span> <span class="n">isPseudoField</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    # Test field specialization</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(String(&quot;hello&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; next(f.specialize())</span>
+<span class="sd">    b&#39;hello&#39;</span>
+
+
+<span class="sd">    # Test field specialization with sub-fields</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;hello&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(String(&quot; john&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; next(f.specialize())</span>
+<span class="sd">    b&#39;hello john&#39;</span>
+
+
+<span class="sd">    # Test field specialization with fuzzing</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(String(&quot;hello&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(f)</span>
+<span class="sd">    &gt;&gt;&gt; preset.fuzz(f)</span>
+<span class="sd">    &gt;&gt;&gt; next(f.specialize(preset))</span>
+<span class="sd">    b&#39;System(&quot;ls -al /&quot;)\x00                                                                                                                                                                                                                                             &#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_field_integer</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    # test field can define integer: signed and unsigned, represented in little/big endian and represented on 8/16/24/32/64 bit</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+
+<span class="sd">    &gt;&gt;&gt; i1 = Integer(1, unitSize=UnitSize.SIZE_8, sign=Sign.UNSIGNED)</span>
+<span class="sd">    &gt;&gt;&gt; i2 = Integer(255, unitSize=UnitSize.SIZE_8, sign=Sign.UNSIGNED)</span>
+<span class="sd">    &gt;&gt;&gt; i3 = Integer(-2, unitSize=UnitSize.SIZE_8, sign=Sign.SIGNED)</span>
+<span class="sd">    &gt;&gt;&gt; i4 = Integer(255, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)</span>
+<span class="sd">    &gt;&gt;&gt; i5 = Integer(255, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)</span>
+<span class="sd">    &gt;&gt;&gt; i6 = Integer(255, unitSize=UnitSize.SIZE_24)</span>
+<span class="sd">    &gt;&gt;&gt; i7 = Integer(255, unitSize=UnitSize.SIZE_32)</span>
+<span class="sd">    &gt;&gt;&gt; i8 = Integer(255, unitSize=UnitSize.SIZE_64)</span>
+
+<span class="sd">    &gt;&gt;&gt; field = Field(domain=[i1, i2, i3, i4, i5, i6, i7, i8])</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([field])</span>
+<span class="sd">    &gt;&gt;&gt; list = []</span>
+<span class="sd">    &gt;&gt;&gt; for _ in range(40):</span>
+<span class="sd">    ...     list.append(next(s.specialize()))</span>
+
+<span class="sd">    # i1</span>
+<span class="sd">    &gt;&gt;&gt; b&#39;\x01&#39; in list</span>
+<span class="sd">    True</span>
+
+<span class="sd">    # i2</span>
+<span class="sd">    &gt;&gt;&gt; b&#39;\xff&#39; in list</span>
+<span class="sd">    True</span>
+
+<span class="sd">    # i3</span>
+<span class="sd">    &gt;&gt;&gt; b&#39;\xfe&#39; in list</span>
+<span class="sd">    True</span>
+
+<span class="sd">    # i4</span>
+<span class="sd">    &gt;&gt;&gt; b&#39;\x00\xff&#39; in list</span>
+<span class="sd">    True</span>
+
+<span class="sd">    # i5</span>
+<span class="sd">    &gt;&gt;&gt; b&#39;\xff\x00&#39; in list</span>
+<span class="sd">    True</span>
+
+<span class="sd">    # i6</span>
+<span class="sd">    &gt;&gt;&gt; b&#39;\x00\x00\xff&#39; in list</span>
+<span class="sd">    True</span>
+
+<span class="sd">    # i7</span>
+<span class="sd">    &gt;&gt;&gt; b&#39;\x00\x00\x00\xff&#39; in list</span>
+<span class="sd">    True</span>
+
+<span class="sd">    # i8</span>
+<span class="sd">    &gt;&gt;&gt; b&#39;\x00\x00\x00\x00\x00\x00\x00\xff&#39; in list</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_field_bitarray</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    # test field representation on bit array data with variable length</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+
+<span class="sd">    &gt;&gt;&gt; next(Field(BitArray(&#39;00000000&#39;)).specialize())</span>
+<span class="sd">    b&#39;\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(Field(BitArray(&#39;00000001&#39;)).specialize())</span>
+<span class="sd">    b&#39;\x01&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(Field(BitArray(&#39;00000010&#39;)).specialize())</span>
+<span class="sd">    b&#39;\x02&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(Field(BitArray(&#39;00000100&#39;)).specialize())</span>
+<span class="sd">    b&#39;\x04&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(Field(BitArray(&#39;11111111&#39;)).specialize())</span>
+<span class="sd">    b&#39;\xff&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(Field(BitArray(&#39;1111111100000000&#39;)).specialize())</span>
+<span class="sd">    b&#39;\xff\x00&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; len(next(Field(BitArray(nbBits=32)).specialize()))</span>
+<span class="sd">    4</span>
+<span class="sd">    &gt;&gt;&gt; len(next(Field(BitArray(nbBits=64)).specialize()))</span>
+<span class="sd">    8</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_field_string</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    # test field representation on string data (ASCII &amp; Unicode) (output is hex of UTF-8 encoding)</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+
+<span class="sd">    &gt;&gt;&gt; next(Field(domain=String(&#39;abcdef&#39;)).specialize())</span>
+<span class="sd">    b&#39;abcdef&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(Field(domain=String(&#39;Ω&#39;)).specialize())</span>
+<span class="sd">    b&#39;\xce\xa9&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(Field(domain=String(&#39;abcdefΩ&#39;)).specialize())</span>
+<span class="sd">    b&#39;abcdef\xce\xa9&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; next(Field(domain=String(&#39;abcdef&#39;, eos=[&#39;123&#39;])).specialize())</span>
+<span class="sd">    b&#39;abcdef123&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_field_padding</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # test field with Padding</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+
+<span class="sd">    &gt;&gt;&gt; f_str = Field(String(&quot;abcdef&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f_pad = Field(Padding(f_str, data=String(&#39;*&#39;), modulo=64))</span>
+<span class="sd">    &gt;&gt;&gt; a = next(Field([f_str, f_pad]).specialize())</span>
+<span class="sd">    &gt;&gt;&gt; a</span>
+<span class="sd">    b&#39;abcdef**&#39;</span>
+<span class="sd">    &gt;&gt;&gt; len(a) * 8</span>
+<span class="sd">    64</span>
+<span class="sd">    &gt;&gt;&gt; f_pad = Field(Padding(f_str, data=String(&#39;*&#39;), modulo=128))</span>
+<span class="sd">    &gt;&gt;&gt; len(next(Field([f_str, f_pad]).specialize())) * 8</span>
+<span class="sd">    128</span>
+<span class="sd">    &gt;&gt;&gt; f_pad = Field(Padding(f_str, data=String(&#39;*&#39;), modulo=256))</span>
+<span class="sd">    &gt;&gt;&gt; len(next(Field([f_str, f_pad]).specialize())) * 8</span>
+<span class="sd">    256</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_field_padding_callback</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # test field with Padding with the use of a callback function that determine the data value</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Raw(nbBytes=10))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Raw(b&quot;##&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; def cbk_data(current_length, modulo):</span>
+<span class="sd">    ...     length_to_pad = modulo - (current_length % modulo)  # Length in bits</span>
+<span class="sd">    ...     length_to_pad = int(length_to_pad / 8)  # Length in bytes</span>
+<span class="sd">    ...     res_bytes = b&quot;&quot;.join([t.to_bytes(1, byteorder=&#39;big&#39;) for t in list(range(length_to_pad))])</span>
+<span class="sd">    ...     res_bits = bitarray(endian=&#39;big&#39;)</span>
+<span class="sd">    ...     res_bits.frombytes(res_bytes)</span>
+<span class="sd">    ...     return res_bits</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d[12:]</span>
+<span class="sd">    b&#39;\x00\x01\x02\x03&#39;</span>
+<span class="sd">    &gt;&gt;&gt; len(d) * 8</span>
+<span class="sd">    128</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_field_multi_type</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # test field with several different types</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f_int = Field([42, Integer(43)])</span>
+<span class="sd">    &gt;&gt;&gt; f_str = Field([&quot;abc&quot;, String(&quot;def&quot;)])</span>
+<span class="sd">    &gt;&gt;&gt; f_bit = Field([BitArray(&#39;11111111&#39;), Raw(b&#39;##&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; f_f = Field([f_int, f_str, f_bit])</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f_f])</span>
+<span class="sd">    &gt;&gt;&gt; b = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; for _ in range(10):</span>
+<span class="sd">    ...     b += next(f.specialize())</span>
+
+<span class="sd">    &gt;&gt;&gt; b.find(b&#39;\x2A&#39;) != -1 # 42 in hexa</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; b.find(b&#39;\x2B&#39;) != -1 # 43 in hexa</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; b.find(b&#39;abc&#39;) != -1</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; b.find(b&#39;def&#39;) != -1</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; b.find(b&#39;\xff&#39;) != -1 # BitArray(&#39;11111111&#39;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; b.find(b&#39;##&#39;) != -1</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_inaccessible_variable_during_specialization_agg</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; length = Field(uint8be(), &quot;icmp.length&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; payloadVar = Data(Raw(nbBytes=(1, 10)))</span>
+<span class="sd">    &gt;&gt;&gt; paddingVar = Padding([payloadVar],</span>
+<span class="sd">    ...                       data=Raw(b&quot;\x00&quot;),</span>
+<span class="sd">    ...                       modulo=32,</span>
+<span class="sd">    ...                       once=False)</span>
+<span class="sd">    &gt;&gt;&gt; field_payload_padding = Field(Agg([payloadVar, paddingVar]), &quot;icmp.payload&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; length.domain = Size([field_payload_padding],</span>
+<span class="sd">    ...                      dataType=uint8be())</span>
+<span class="sd">    ...                      #factor=1./32)</span>
+<span class="sd">    &gt;&gt;&gt; checksum = Field(InternetChecksum([paddingVar],</span>
+<span class="sd">    ...                                   dataType=Raw(nbBytes=2,</span>
+<span class="sd">    ...                                   unitSize=UnitSize.SIZE_16)),</span>
+<span class="sd">    ...                  &quot;icmp.checksum&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(</span>
+<span class="sd">    ...     [checksum, length, field_payload_padding],</span>
+<span class="sd">    ...     name=&quot;unreach&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; print(next(s.specialize()))</span>
+<span class="sd">    b&#39;\xff\xff\x04\xdb\x00\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(s)</span>
+<span class="sd">    &gt;&gt;&gt; preset[&#39;icmp.payload&#39;] = b&#39;PAYLOAD\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; print(next(s.specialize(preset=preset)))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf.InaccessibleVariableException: The following variable is inaccessible: &#39;Padding([&#39;Data&#39;]) - Type:Raw(b&#39;\x00&#39;)&#39; for field &#39;icmp.payload&#39;. This may be because a parent field or variable is preset.</span>
+
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw1 = Data(Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; v_raw2 = Data(Raw(nbBytes=4))</span>
+<span class="sd">    &gt;&gt;&gt; v_agg = Agg([v_raw1, v_raw2])</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_agg)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Value(v_agg))</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize())</span>
+<span class="sd">    b&#39;\xdb\xf7i\xec\xfb\x8e\xdb\xf7i\xec\xfb\x8e&#39;</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(s)</span>
+<span class="sd">    &gt;&gt;&gt; preset[v_agg] = b&quot;aa&quot;</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize(preset))</span>
+<span class="sd">    b&#39;aaaa&#39;</span>
+
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw1 = Data(Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; v_raw2 = Data(Raw(nbBytes=4))</span>
+<span class="sd">    &gt;&gt;&gt; v_agg = Agg([v_raw1, v_raw2])</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_agg)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Value(v_raw1))</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize())</span>
+<span class="sd">    b&#39;\xdb\xf7i\xec\xfb\x8e\xdb\xf7&#39;</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(s)</span>
+<span class="sd">    &gt;&gt;&gt; preset[v_agg] = b&quot;aa&quot;</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize(preset))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf.InaccessibleVariableException: The following variable is inaccessible: &#39;Data (Raw(nbBytes=2))&#39; for field &#39;Field&#39;. This may be because a parent field or variable is preset.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_inaccessible_variable_during_specialization_alt</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw1 = Data(Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; v_raw2 = Data(Raw(nbBytes=4))</span>
+<span class="sd">    &gt;&gt;&gt; v_alt = Alt([v_raw1, v_raw2])</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_alt)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Value(v_alt))</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize())</span>
+<span class="sd">    b&#39;\xf7\x07\xf7\x07&#39;</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(s)</span>
+<span class="sd">    &gt;&gt;&gt; preset[v_alt] = b&quot;aa&quot;</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize(preset))</span>
+<span class="sd">    b&#39;aaaa&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw1 = Data(Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; v_raw2 = Data(Raw(nbBytes=4))</span>
+<span class="sd">    &gt;&gt;&gt; v_alt = Alt([v_raw1, v_raw2])</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_alt)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Value(v_raw1))</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize())</span>
+<span class="sd">    b&#39;\xf7\x07\xf7\x07&#39;</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(s)</span>
+<span class="sd">    &gt;&gt;&gt; preset[v_alt] = b&quot;aa&quot;</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize(preset))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf.InaccessibleVariableException: The following variable is inaccessible: &#39;Data (Raw(nbBytes=2))&#39; for field &#39;Field&#39;. This may be because a parent field or variable is preset.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_inaccessible_variable_during_specialization_repeat</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw1 = Data(Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; v_repeat = Repeat(v_raw1, nbRepeat=2)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_repeat)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Value(v_repeat))</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize())</span>
+<span class="sd">    b&#39;\xf7\x07\xec\xfb\xf7\x07\xec\xfb&#39;</span>
+<span class="sd">    &gt;&gt;&gt; preset = Preset(s)</span>
+<span class="sd">    &gt;&gt;&gt; preset[v_repeat] = b&quot;aa&quot;</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize(preset))</span>
+<span class="sd">    b&#39;aaaa&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw1 = Data(Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; v_repeat = Repeat(v_raw1, nbRepeat=2)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_repeat)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Value(v_raw1))</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize())</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    TypeError: Value target is a child of a Repeat variable, which is not supported</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_field_multiple_targets</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; length = Field(uint8be(), &quot;icmp.length&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; payloadVar = Data(Raw(nbBytes=(1, 10)))</span>
+<span class="sd">    &gt;&gt;&gt; paddingVar = Padding([payloadVar],</span>
+<span class="sd">    ...                      data=Raw(b&quot;\x00&quot;),</span>
+<span class="sd">    ...                      modulo=32,</span>
+<span class="sd">    ...                      once=False)</span>
+<span class="sd">    &gt;&gt;&gt; field_payload_padding = Field(Agg([payloadVar, paddingVar]), name=&#39;icmp.padding&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; length.domain = Size([field_payload_padding],</span>
+<span class="sd">    ...                      dataType=uint8be(),</span>
+<span class="sd">    ...                      factor=1./32)</span>
+<span class="sd">    &gt;&gt;&gt; checksum = Field(InternetChecksum([field_payload_padding],</span>
+<span class="sd">    ...                                   dataType=Raw(nbBytes=2,</span>
+<span class="sd">    ...                                   unitSize=UnitSize.SIZE_16)),</span>
+<span class="sd">    ...                  &quot;icmp.checksum&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(</span>
+<span class="sd">    ...     [checksum, length, field_payload_padding],</span>
+<span class="sd">    ...     name=&quot;unreach&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; data = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;$\xff\x01\xdb\x00\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;icmp.checksum&#39;, b&#39;$\xff&#39;), (&#39;icmp.length&#39;, b&#39;\x01&#39;), (&#39;icmp.padding&#39;, b&#39;\xdb\x00\x00\x00&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_field_alt_with_future_dependency</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw1 = Data(Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; v_value = Value(v_raw1)</span>
+<span class="sd">    &gt;&gt;&gt; v_alt = Alt([v_value])</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_alt, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(v_raw1, name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\xf7\x07\xf7\x07&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;\xf7\x07&#39;), (&#39;f2&#39;, b&#39;\xf7\x07&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_field_repeat_with_future_dependency</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw1 = Data(Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; v_value = Value(v_raw1)</span>
+<span class="sd">    &gt;&gt;&gt; v_repeat = Repeat(v_value, nbRepeat=2)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_repeat, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(v_raw1, name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\xf7\x07\xf7\x07\xf7\x07&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;\xf7\x07\xf7\x07&#39;), (&#39;f2&#39;, b&#39;\xf7\x07&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw1 = Data(Raw(nbBytes=(1, 4)))</span>
+<span class="sd">    &gt;&gt;&gt; v_value = Value(v_raw1)</span>
+<span class="sd">    &gt;&gt;&gt; v_repeat = Repeat(v_value, nbRepeat=(2, 5))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_repeat, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(v_raw1, name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\xf7\x07\xf7\x07\xf7\x07\xf7\x07&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)  # doctest: +SKIP</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;\xf7\x07\xf7\x07\xf7&#39;), (&#39;f2&#39;, b&#39;\x07&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw1 = Data(Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; v_size = Size(v_raw1)</span>
+<span class="sd">    &gt;&gt;&gt; v_repeat = Repeat(v_size, nbRepeat=(2, 5))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_repeat, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(v_raw1, name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\x02\x02\xf7\x07&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;\x02\x02&#39;), (&#39;f2&#39;, b&#39;\xf7\x07&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw1 = Data(Raw(nbBytes=(1, 4)))</span>
+<span class="sd">    &gt;&gt;&gt; v_size = Size(v_raw1)</span>
+<span class="sd">    &gt;&gt;&gt; v_repeat = Repeat(v_size, nbRepeat=(2, 5))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_repeat, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(v_raw1, name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\x02\x02\x02\xf7\x07&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)  # doctest: +SKIP</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;\x02\x02&#39;), (&#39;f2&#39;, b&#39;\xf7\x07&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_field_with_future_common_target_for_multiple_variables</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw = Data(Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; v_value1 = Value(v_raw)</span>
+<span class="sd">    &gt;&gt;&gt; v_value2 = Value(v_raw)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_raw, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(v_value1, name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(v_value2, name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f2, f3, f1])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\xdb\xf7\xdb\xf7\xdb\xf7&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;\xdb\xf7&#39;), (&#39;f3&#39;, b&#39;\xdb\xf7&#39;), (&#39;f1&#39;, b&#39;\xdb\xf7&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw = Data(Raw(nbBytes=(1, 4)))</span>
+<span class="sd">    &gt;&gt;&gt; v_value1 = Value(v_raw)</span>
+<span class="sd">    &gt;&gt;&gt; v_value2 = Value(v_raw)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_raw, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(v_value1, name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(v_value2, name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f2, f3, f1])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\x10\xdb\xf7\x10\xdb\xf7\x10\xdb\xf7&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;\x10\xdb\xf7&#39;), (&#39;f3&#39;, b&#39;\x10\xdb\xf7&#39;), (&#39;f1&#39;, b&#39;\x10\xdb\xf7&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw = Data(Raw(nbBytes=2))</span>
+<span class="sd">    &gt;&gt;&gt; v_value1 = Size(v_raw)</span>
+<span class="sd">    &gt;&gt;&gt; v_value2 = Size(v_raw)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_raw, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(v_value1, name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(v_value2, name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f2, f3, f1])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\x02\x02\xdb\xf7&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;\x02&#39;), (&#39;f3&#39;, b&#39;\x02&#39;), (&#39;f1&#39;, b&#39;\xdb\xf7&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw = Data(Raw(nbBytes=(1, 4)))</span>
+<span class="sd">    &gt;&gt;&gt; v_value1 = Size(v_raw)</span>
+<span class="sd">    &gt;&gt;&gt; v_value2 = Size(v_raw)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_raw, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(v_value1, name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(v_value2, name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f2, f3, f1])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\x03\x03\x10\xdb\xf7&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;\x03&#39;), (&#39;f3&#39;, b&#39;\x03&#39;), (&#39;f1&#39;, b&#39;\x10\xdb\xf7&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; v_raw = Data(Raw(nbBytes=(1, 4)))</span>
+<span class="sd">    &gt;&gt;&gt; v_value1 = Size(v_raw)</span>
+<span class="sd">    &gt;&gt;&gt; v_value2 = Size([v_raw, v_value1])</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(v_raw, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(v_value2, name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(v_value1, name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f2, f3, f1])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\x04\x03\x10\xdb\xf7&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;\x04&#39;), (&#39;f3&#39;, b&#39;\x03&#39;), (&#39;f1&#39;, b&#39;\x10\xdb\xf7&#39;)])</span>
+
+<span class="sd">   &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

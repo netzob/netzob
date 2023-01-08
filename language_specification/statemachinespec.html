@@ -1,0 +1,1492 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>State Machine Modeling &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Protocol Modeling" href="protospec.html" />
+    <link rel="prev" title="Format Message Modeling" href="dataspec.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/language_specification/statemachinespec.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#state-machine-modeling-concepts">
+   State Machine Modeling Concepts
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#modeling-states">
+   Modeling States
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#modeling-transitions">
+   Modeling Transitions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#taking-control-over-emitted-symbol-and-selected-transition">
+   Taking Control over Emitted Symbol and Selected Transition
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#executing-actions-during-transitions">
+   Executing Actions during Transitions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#summary-of-states-and-transitions-processing">
+   Summary of States and Transitions Processing
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#modeling-automata">
+   Modeling Automata
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>State Machine Modeling</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#state-machine-modeling-concepts">
+   State Machine Modeling Concepts
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#modeling-states">
+   Modeling States
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#modeling-transitions">
+   Modeling Transitions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#taking-control-over-emitted-symbol-and-selected-transition">
+   Taking Control over Emitted Symbol and Selected Transition
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#executing-actions-during-transitions">
+   Executing Actions during Transitions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#summary-of-states-and-transitions-processing">
+   Summary of States and Transitions Processing
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#modeling-automata">
+   Modeling Automata
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="state-machine-modeling">
+<span id="statemachinespec"></span><h1>State Machine Modeling<a class="headerlink" href="#state-machine-modeling" title="Permalink to this headline">#</a></h1>
+<section id="state-machine-modeling-concepts">
+<h2>State Machine Modeling Concepts<a class="headerlink" href="#state-machine-modeling-concepts" title="Permalink to this headline">#</a></h2>
+<p>The ZDL language can be used to specify a <strong>state machine</strong>, or automaton, for a protocol. A state machine is based on two components: <strong>States</strong> and <strong>Transitions</strong>. A state represents the status of a service, and expects conditions to trigger the execution of a transition. A transition is a list of actions that will be executed when a condition is met at a specific state (such as the receipt of a network message). The list of actions may contain sending a network message, changing the value of session or global variables, moving to another state in the automaton, etc.</p>
+<p>The language defines three kinds of transition in an automaton:</p>
+<ul class="simple">
+<li><p><strong>Standard transitions</strong>: this represents a transition between two
+states (an initial state and an end state) in an automaton. The
+initial state and the end state can be the same.</p></li>
+<li><p><strong>Opening channel transitions</strong>: this represents a transition which, when
+executed, requests to open the current underlying communication channel.</p></li>
+<li><p><strong>Closing channel transitions</strong>: this represents a transition which, when
+executed, requests to close the current underlying communication channel.</p></li>
+</ul>
+<p>In the Netzob library, a state machine relies on symbols to trigger transitions between states. In order to represent the state machine structure, the library relies on a mathematical model based on a <strong>Mealy machine</strong> (cf. <a class="reference external" href="https://en.wikipedia.org/wiki/Mealy_machine">https://en.wikipedia.org/wiki/Mealy_machine</a>). The library leverages this model by associating, for each transition, an input symbol and a list of output symbols, as shown on the figure below.</p>
+<figure class="align-center" id="id1">
+<img alt="../_images/state_machine.png" src="../_images/state_machine.png" />
+<figcaption>
+<p><span class="caption-text">Example of State Machine modeling with states, transitions, input and output symbols.</span><a class="headerlink" href="#id1" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Depending on the peer point of view, either an initiator (e.g. a client that starts a communication with a remote service) or a non initiator (e.g. a service that waits for input messages), the interpretation of the state machine is different. This intepretation is done with a state machine visitor that is called an <a class="reference internal" href="actor.html#netzob.Simulator.Actor.Actor" title="netzob.Simulator.Actor.Actor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Actor</span></code></a> in the API.</p>
+<p>From an <strong>initiator point of view</strong>, when the actor is at a specific state in the automaton, a random transition is taken amongst the available transitions. In the above example, two transitions, <code class="docutils literal notranslate"><span class="pre">T1</span></code> and <code class="docutils literal notranslate"><span class="pre">T2</span></code>, are available at the state <code class="docutils literal notranslate"><span class="pre">S1</span></code>. Then, the input symbol of the picked transition is specialized into a message and this message is emitted to the target. If the target replies, the actor abstracts the received message into a symbol, and checks if this symbol corresponds to one of the expected output symbols. If it matches, the transition succeeds and thus leads to the end state of the transition. In the above example, the transition <code class="docutils literal notranslate"><span class="pre">T2</span></code> would lead to the state <code class="docutils literal notranslate"><span class="pre">S3</span></code>. If no response comes from the target, or if a wrong message is received, we leave the automaton.</p>
+<p>From a <strong>non initiator point of view</strong>, when at a specific state in the automaton, the actor waits for a network message. When one network message is received, it is abstracted into a symbol. Then, we retrieve the transition that has this symbol as input symbol. When a transition is retrieved, we randomly pick one symbol amongst the output symbols, and send this symbol to the remote peer. Finally, the transition leads to the end state of the transition.</p>
+<p>When the actor has to select a transition, or when the actor has to identify the current transition according to the received message, it is possible to influence this choice through the help of callback functions.</p>
+<p>Likewise, when the actor sends the input symbol, or when the actor sends an output symbol, it is possible to influence the selection of the symbol, through the help of callback functions or selection probability weight.</p>
+<p>In order to model hybrid state machines where a peer is able to send or receive symbols depending on the context, it is possible to change the initiator behavior at specific transitions. This is done through the <code class="xref py py-attr docutils literal notranslate"><span class="pre">inverseInitiator</span></code> attribute on <a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a> objects. When setting this attribute to <code class="docutils literal notranslate"><span class="pre">True</span></code> on a transition, an actor will inverse the way symbols are exchanged (e.g. an initiator actor will first wait for an input symbol and then send one of the output symbols).</p>
+<p>A <strong>Memory</strong> (see <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Memory.Memory" title="netzob.Model.Vocabulary.Domain.Variables.Memory.Memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Memory</span></code></a>) is used to keep track of a context for a specific communication. This memory can leverage variable from the protocol or even the environment. The memory is initialized at the beginning of the communication, and its internal state evolves throughout the exchanged messages.</p>
+</section>
+<section id="modeling-states">
+<h2>Modeling States<a class="headerlink" href="#modeling-states" title="Permalink to this headline">#</a></h2>
+<p>In the API, automaton states are modeled through the State class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.States.State.State">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">State</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/States/State.html#State"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.States.State.State" title="Permalink to this definition">#</a></dt>
+<dd><p>This class represents a state in an automaton.</p>
+<p>The State constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – The name of the state. If <cite>None</cite>, it is set to ‘State’.</p>
+</dd>
+</dl>
+<p>The State class provides the following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The name of the state. The default value is ‘State’.</p></li>
+<li><p><strong>transitions</strong> (<em>List</em><em>[</em><a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><em>Transition</em></a><em>]</em>) – The list of outgoing transitions</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following example shows the definition of an <code class="docutils literal notranslate"><span class="pre">s0</span></code> state and an <code class="docutils literal notranslate"><span class="pre">s1</span></code> state:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;State&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;S1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;S1&#39;</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.States.State.State.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/States/State.html#State.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.States.State.State.copy" title="Permalink to this definition">#</a></dt>
+<dd><p>Copy the current state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A new object of the same type.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="modeling-transitions">
+<h2>Modeling Transitions<a class="headerlink" href="#modeling-transitions" title="Permalink to this headline">#</a></h2>
+<p>The available transitions are detailed in this chapter.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Transitions.Transition.Transition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startState</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endState</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputSymbol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputSymbols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Transitions/Transition.html#Transition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="Permalink to this definition">#</a></dt>
+<dd><p>This class represents a transition between two states (an initial
+state and an end state) in an automaton. The initial state and the
+end state can be the same.</p>
+<p>A transition is either in an initiator or non initiator
+context. In an initiator context, the input symbol of the
+transition is emitted and one of the output symbols of the
+transition is expected. In non initiator context, the input symbol
+of the transition is expected and one of the output symbols of the
+transition is emitted.</p>
+<p>The context of the transition (either initiator or non initiator)
+is defined from the actor type that visits the automaton and from the
+value of the <code class="docutils literal notranslate"><span class="pre">inverseInitiator</span></code> attribute of the transition
+(which is by default set to <code class="docutils literal notranslate"><span class="pre">False</span></code>). The context is defined as
+follows:</p>
+<ul class="simple">
+<li><p>if the actor has its <code class="docutils literal notranslate"><span class="pre">initiator</span></code> attribute set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, and if the <code class="docutils literal notranslate"><span class="pre">inverseInitiator</span></code> attribute is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the transition context is <code class="docutils literal notranslate"><span class="pre">initiator</span></code>;</p></li>
+<li><p>if the actor has its <code class="docutils literal notranslate"><span class="pre">initiator</span></code> attribute set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, and if the <code class="docutils literal notranslate"><span class="pre">inverseInitiator</span></code> attribute is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, the transition context is <code class="docutils literal notranslate"><span class="pre">non</span> <span class="pre">initiator</span></code>;</p></li>
+<li><p>if the actor has its <code class="docutils literal notranslate"><span class="pre">initiator</span></code> attribute set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, and if the <code class="docutils literal notranslate"><span class="pre">inverseInitiator</span></code> attribute is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the transition context is <code class="docutils literal notranslate"><span class="pre">initiator</span></code>;</p></li>
+<li><p>if the actor has its <code class="docutils literal notranslate"><span class="pre">initiator</span></code> attribute set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, and if the <code class="docutils literal notranslate"><span class="pre">inverseInitiator</span></code> attribute is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, the transition context is <code class="docutils literal notranslate"><span class="pre">non</span> <span class="pre">initiator</span></code>.</p></li>
+</ul>
+<p>When an actor encounters a state where multiple transitions are
+defined, a random choice is made amongst all these transitions by
+considering their probabilities. Two scenarios are possible:</p>
+<ul class="simple">
+<li><p>if the picked transition is in an <code class="docutils literal notranslate"><span class="pre">initiator</span></code> context, this transition is executed;</p></li>
+<li><p>otherwise, the executed transition depends on the received symbol.</p></li>
+</ul>
+<p>It is possible to define probability on transition selection during
+state processing, through the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">inputSymbolProbability</span></code>
+attribute. This functionality makes it possible to implement a
+variety of state machines.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In a state, if several transitions are available, where some of them expect to receive the input symbol (non initiator context) and the others expect to send the input symbol (initiator context), it is recommended in the last case to not set any output symbols to be received. In such a situation, it is better to handle the receiving of the potential peer symbols in a second state.</p>
+</div>
+<p>Two transitions in the same context, initiator or non initiator,
+that start at the same state cannot have the same input symbol, as
+this symbol is used to determine the corresponding transition when
+receiving a new message. The only exception is when the
+transitions that have the same input symbol leverage the
+<code class="docutils literal notranslate"><span class="pre">inputSymbolPreset</span></code> attribute. In such case, the
+<code class="docutils literal notranslate"><span class="pre">inputSymbolPreset</span></code> attribute makes it possible to determine the
+corresponding transition based on field content from the same
+input symbol.</p>
+<p>The Transition constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>startState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>, required) – This parameter is the initial state of the transition.</p></li>
+<li><p><strong>endState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>, required) – This parameter is the end state of the transition.</p></li>
+<li><p><strong>inputSymbol</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>, optional) – The input symbol which triggers the execution of the
+transition.
+The default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means that no symbol
+is expected in a non initiator context, and no symbol is sent
+in an initiator context. Internally,
+<cite>None</cite> symbol will be replaced by an
+<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.EmptySymbol.EmptySymbol" title="netzob.Model.Vocabulary.EmptySymbol.EmptySymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmptySymbol</span></code></a>.</p></li>
+<li><p><strong>outputSymbols</strong> (a <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>, optional) – A list of expected output symbols when
+the current transition is executed.
+The default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means that no
+symbol will be sent in a non initiator context, and no
+symbol is expected in an initiator context.
+Internally, <code class="docutils literal notranslate"><span class="pre">None</span></code> symbol will be replaced by an
+<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.EmptySymbol.EmptySymbol" title="netzob.Model.Vocabulary.EmptySymbol.EmptySymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmptySymbol</span></code></a>.</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – The name of the transition. The default value is <cite>None</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The Transition class provides the following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>startState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – The initial state of the transition.</p></li>
+<li><p><strong>endState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – The end state of the transition.</p></li>
+<li><p><strong>inputSymbolProbability</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – This value holds the probability of the current transition of being chosen when processing the state where it is attached. The value between <code class="docutils literal notranslate"><span class="pre">0.0</span></code> and <code class="docutils literal notranslate"><span class="pre">100.0</span></code> corresponds to the weight of the transition in terms of selection probability. The default value is set to 10.0.</p></li>
+<li><p><strong>inputSymbol</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – The input symbol is the symbol which triggers the
+execution of the transition.</p></li>
+<li><p><strong>outputSymbols</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – Output symbols that can be generated or expected when
+the current transition is executed.</p></li>
+<li><p><strong>inputSymbolPreset</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Preset.Preset" title="netzob.Model.Vocabulary.Preset.Preset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Preset</span></code></a>) – A preset configuration
+used during specialization and abstraction
+of symbols emitted and received. During
+specialization, values in this
+configuration will override any field
+definition, constraints or relationship
+dependencies. During abstraction, this
+structure is used to validate the data of
+the received symbol. If the data does
+not match, we leave the automaton or execute the function set by the <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_cbk_read_unexepected_symbol()</span></code> method. See <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Preset.Preset" title="netzob.Model.Vocabulary.Preset.Preset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Preset</span></code></a>
+for a complete explanation of Preset
+usage.</p></li>
+<li><p><strong>outputSymbolsPreset</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> of <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Preset.Preset" title="netzob.Model.Vocabulary.Preset.Preset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Preset</span></code></a>) – A <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> of preset configurations
+used during specialization and abstraction
+of symbols emitted and received. During
+specialization, values in this
+configuration will override any field
+definition, constraints or relationship
+dependencies. During abstraction, this
+structure is used to validate the data of
+the received symbol. If the data does
+not match, we leave the automaton or execute the function set by the <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_cbk_read_unexepected_symbol()</span></code> method. See <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Preset.Preset" title="netzob.Model.Vocabulary.Preset.Preset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Preset</span></code></a>
+for a complete explanation of Preset
+usage.</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The name of the transition.</p></li>
+<li><p><strong>inputSymbolReactionTime</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The timeout value in seconds to wait for the
+input value (only used in a non initiator context).</p></li>
+<li><p><strong>outputSymbolsReactionTime</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> {<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>}) – A <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> containing, for
+each output symbol, the timeout
+value in seconds to wait for the
+output value (only used in an initiator context).</p></li>
+<li><p><strong>outputSymbolsProbabilities</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> {<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>}) – A structure that holds the selection probability of each symbol as an output symbol. The value between <code class="docutils literal notranslate"><span class="pre">0.0</span></code> and <code class="docutils literal notranslate"><span class="pre">100.0</span></code> corresponds to the weight of the symbol in terms of selection probability. The default value of each symbol as an output symbol is set to 10.0.</p></li>
+<li><p><strong>inverseInitiator</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Indicates to inverse the behavior of the actor <code class="docutils literal notranslate"><span class="pre">initiator</span></code> attribute.</p></li>
+<li><p><strong>description</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The description of the transition. If not explicitly set,
+it is generated from the input and output symbol strings.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following example shows the definition of a transition <cite>t</cite> between
+two states, <cite>s0</cite> and <cite>s1</cite>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;transition&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following code shows access to attributes of a Transition:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="go">transition</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">==</span> <span class="n">t</span><span class="o">.</span><span class="n">startState</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">==</span> <span class="n">t</span><span class="o">.</span><span class="n">endState</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>The following example shows the definition of a named Transition
+that accepts a specific input symbol and produces an output
+symbol from a list that contains one symbol element:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">State</span><span class="p">(),</span> <span class="n">State</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;testTransition&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">inputSymbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">outputSymbols</span> <span class="o">=</span> <span class="p">[</span><span class="n">Symbol</span><span class="p">()]</span>
+</pre></div>
+</div>
+<p>The following example shows the definition of a state with two
+transitions that have a different probability. Here, the transition T2 is twice as likely to be chosen as T1.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s2</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t1</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;T1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t1</span><span class="o">.</span><span class="n">inputSymbolProbability</span> <span class="o">=</span> <span class="mf">20.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t2</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;T2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t2</span><span class="o">.</span><span class="n">inputSymbolProbability</span> <span class="o">=</span> <span class="mf">40.0</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Transitions.Transition.Transition.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Transitions/Transition.html#Transition.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Transitions.Transition.Transition.copy" title="Permalink to this definition">#</a></dt>
+<dd><p>Copy the current transition.</p>
+<p>This method copies the transition object but keeps references to the
+original callbacks and symbols.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A new object of the same type.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Transitions.OpenChannelTransition.OpenChannelTransition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OpenChannelTransition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startState</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endState</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Transitions/OpenChannelTransition.html#OpenChannelTransition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Transitions.OpenChannelTransition.OpenChannelTransition" title="Permalink to this definition">#</a></dt>
+<dd><p>This class represents a transition which, when executed, requests
+to open the underlying communication channel that the actor uses
+to exchange messages with the peer (i.e. a call
+to the <code class="xref py py-meth docutils literal notranslate"><span class="pre">open()</span></code> method of the channel is made). The starting
+state of this transition corresponds to the initial state of the
+automaton.</p>
+<p>The OpenChannelTransition expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>startState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>, required) – This parameter is the initial state of the transition. This also corresponds to the initial state of the
+automaton.</p></li>
+<li><p><strong>endState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>, required) – This parameter is the end state of the transition.</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – The name of the transition. The default value is <cite>OpenChannelTransition</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The OpenChannelTransition class provides the following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>startState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – The initial state of the transition.</p></li>
+<li><p><strong>endState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – The end state of the transition.</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The name of the transition.</p></li>
+<li><p><strong>description</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – description of the transition. If not explicitly set,
+its value is ‘OpenChannelTransition’.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following example shows the creation of an
+OpenChannelTransition transition:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">OpenChannelTransition</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;transition&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="go">transition</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">==</span> <span class="n">t</span><span class="o">.</span><span class="n">startState</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">==</span> <span class="n">t</span><span class="o">.</span><span class="n">endState</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Transitions.OpenChannelTransition.OpenChannelTransition.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Transitions/OpenChannelTransition.html#OpenChannelTransition.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Transitions.OpenChannelTransition.OpenChannelTransition.copy" title="Permalink to this definition">#</a></dt>
+<dd><p>Copy the current transition.</p>
+<p>This method copies the transition object but keeps references to the
+original callbacks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A new object of the same type.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#netzob.Model.Grammar.Transitions.OpenChannelTransition.OpenChannelTransition" title="netzob.Model.Grammar.Transitions.OpenChannelTransition.OpenChannelTransition"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpenChannelTransition</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Transitions.CloseChannelTransition.CloseChannelTransition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CloseChannelTransition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startState</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endState</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Transitions/CloseChannelTransition.html#CloseChannelTransition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Transitions.CloseChannelTransition.CloseChannelTransition" title="Permalink to this definition">#</a></dt>
+<dd><p>This class represents a transition which, when executed, requests
+to close the underlying communication channel that the actor uses
+to exchange messages with the peer (i.e. a call
+to the <code class="xref py py-meth docutils literal notranslate"><span class="pre">close()</span></code> method of the channel is made). The ending state of this
+transition corresponds to a terminal state of the automaton. From
+an automaton point of view, we can have multiple
+CloseChannelTransition, and therefore we can have multiple
+terminal states in the automaton.</p>
+<p>The CloseChannelTransition expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>startState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>, required) – This parameter is the initial state of the transition.</p></li>
+<li><p><strong>endState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>, required) – This parameter is the ending state of the transition. This also corresponds to an ending state of the
+automaton.</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – The name of the transition. The default value is <cite>CloseChannelTransition</cite></p></li>
+</ul>
+</dd>
+</dl>
+<p>The CloseChannelTransition class provides the following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>startState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – The initial state of the transition.</p></li>
+<li><p><strong>endState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – The end state of the transition.</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The name of the transition.</p></li>
+<li><p><strong>description</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – description of the transition. If not explicitly set,
+its value is ‘CloseChannelTransition’.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following example shows the creation of a CloseChannelTransition
+transition:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">CloseChannelTransition</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;transition&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="go">transition</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">s0</span> <span class="o">==</span> <span class="n">t</span><span class="o">.</span><span class="n">startState</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">s1</span> <span class="o">==</span> <span class="n">t</span><span class="o">.</span><span class="n">endState</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Transitions.CloseChannelTransition.CloseChannelTransition.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Transitions/CloseChannelTransition.html#CloseChannelTransition.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Transitions.CloseChannelTransition.CloseChannelTransition.copy" title="Permalink to this definition">#</a></dt>
+<dd><p>Copy the current transition.</p>
+<p>This method copies the transition object but keeps references to the
+original callbacks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A new object of the same type.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#netzob.Model.Grammar.Transitions.CloseChannelTransition.CloseChannelTransition" title="netzob.Model.Grammar.Transitions.CloseChannelTransition.CloseChannelTransition"><code class="xref py py-class docutils literal notranslate"><span class="pre">CloseChannelTransition</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="taking-control-over-emitted-symbol-and-selected-transition">
+<h2>Taking Control over Emitted Symbol and Selected Transition<a class="headerlink" href="#taking-control-over-emitted-symbol-and-selected-transition" title="Permalink to this headline">#</a></h2>
+<p>A state may have different available transitions to other states. It
+is possible to filter those available transitions in order to limit
+them or to force a specific transition to be taken. The filtering
+capability works by adding callbacks through the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">add_cbk_filter_transitions()</span></code> method on a
+<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a> instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.States.State.State.add_cbk_filter_transitions">
+<span class="sig-prename descclassname"><span class="pre">State.</span></span><span class="sig-name descname"><span class="pre">add_cbk_filter_transitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cbk_method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netzob.Model.Grammar.States.State.State.add_cbk_filter_transitions" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a function called during state execution to filter the
+available transitions. Callbacks defined through this method
+are executed before the random choice made by the actor,
+amongst the available transitions, when it visits the current
+state of the automaton.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cbk_method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>, required) – the callback function</p>
+</dd>
+<dt class="field-even">Raise</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeError</span></code> if <code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> is not a callable function</p>
+</dd>
+</dl>
+<p>The callback function that can be used in the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> parameter has the following prototype:</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cbk_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">available_transitions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_sent_symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_sent_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_sent_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_received_symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_received_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_received_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em><span class="sig-paren">)</span></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>available_transitions</strong> (<em>List</em><em>[</em><a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><em>Transition</em></a><em>]</em>) – Corresponds to the list of available transitions starting
+from the current state.</p></li>
+<li><p><strong>current_state</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – Current state in the automaton.</p></li>
+<li><p><strong>last_sent_symbol</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – Last sent symbol by the actor on the communication channel, and thus making it
+possible to create relationships with the previously sent symbol.</p></li>
+<li><p><strong>last_sent_message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code>) – Corresponds to the last sent message by the actor on the communication channel,
+and thus making it possible to create relationships with
+the previously sent message.</p></li>
+<li><p><strong>last_sent_structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code> where keys are <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Field.Field" title="netzob.Model.Vocabulary.Field.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a> and values are <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – Corresponds to the last sent message structure by the actor on the communication channel,
+and thus making it possible to create relationships with
+the previously sent message structure.</p></li>
+<li><p><strong>last_received_symbol</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – Corresponds to the last received symbol by the actor on the communication channel, and thus making it possible to create relationships
+with the previously received symbol.</p></li>
+<li><p><strong>last_received_message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code>) – Corresponds to the last received message by the actor on the communication channel, and thus making it possible to create relationships
+with the previously received message.</p></li>
+<li><p><strong>last_received_structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code> where keys are <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Field.Field" title="netzob.Model.Vocabulary.Field.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a> and values are <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – Corresponds to the last received message structure by the actor on the communication channel, and thus making it possible to create relationships
+with the previously received message structure.</p></li>
+<li><p><strong>memory</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Memory.Memory" title="netzob.Model.Vocabulary.Domain.Variables.Memory.Memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Memory</span></code></a>) – Corresponds to the current memory context.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The callback function should return a list of transition
+objects.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p>When a transition is selected, it is possible to modify it by adding
+callbacks through the <code class="xref py py-meth docutils literal notranslate"><span class="pre">add_cbk_modify_transition()</span></code> method on a
+<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a> instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.States.State.State.add_cbk_modify_transition">
+<span class="sig-prename descclassname"><span class="pre">State.</span></span><span class="sig-name descname"><span class="pre">add_cbk_modify_transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cbk_method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netzob.Model.Grammar.States.State.State.add_cbk_modify_transition" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a function called during state execution to help modify the
+current transition. The current transition may therefore be
+replaced by a new transition. The transition returned by the
+callback should have its
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">inverseInitiator</span></code>
+attribute set to the same value as for the current transition.</p>
+<p>Depending on the context of the current transition, the transition modification has a different impact:</p>
+<ul class="simple">
+<li><p>If the current transition has its context defined to be <code class="docutils literal notranslate"><span class="pre">initiator</span></code>, the input symbol of the new transition is emitted and one of the output symbols of the new transition is expected. The exiting state corresponds to the ending state of the new transition.</p></li>
+<li><p>If the current transition has its context defined to be <code class="docutils literal notranslate"><span class="pre">non</span> <span class="pre">initiator</span></code>, as the input symbol of the current transition has already been received when the callback is called, it only remains to emit one of the output symbols of the new transition. The exiting state corresponds to the ending state of the new transition.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cbk_method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>, required) – the callback function</p>
+</dd>
+<dt class="field-even">Raise</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeError</span></code> if <code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> is not a callable function</p>
+</dd>
+</dl>
+<p>The callback function that can be used in the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> parameter has the following prototype:</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cbk_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">available_transitions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_transition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_sent_symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_sent_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_sent_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_received_symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_received_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_received_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em><span class="sig-paren">)</span></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>available_transitions</strong> (<em>List</em><em>[</em><a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><em>Transition</em></a><em>]</em>) – Corresponds to the list of available transitions starting
+from the current state.</p></li>
+<li><p><strong>current_transition</strong> (<a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a>) – Current transition in the automaton.</p></li>
+<li><p><strong>current_state</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – Current state in the automaton.</p></li>
+<li><p><strong>last_sent_symbol</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – Last sent symbol by the actor on the communication channel, and thus making it
+possible to create relationships with the previously sent symbol.</p></li>
+<li><p><strong>last_sent_message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code>) – Corresponds to the last sent message by the actor on the communication channel,
+and thus making it possible to create relationships with
+the previously sent message.</p></li>
+<li><p><strong>last_sent_structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code> where keys are <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Field.Field" title="netzob.Model.Vocabulary.Field.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a> and values are <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – Corresponds to the last sent message structure by the actor on the communication channel,
+and thus making it possible to create relationships with
+the previously sent message structure.</p></li>
+<li><p><strong>last_received_symbol</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – Corresponds to the last received symbol by the actor on the communication channel, and thus making it possible to create relationships
+with the previously received symbol.</p></li>
+<li><p><strong>last_received_message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code>) – Corresponds to the last received message by the actor on the communication channel, and thus making it possible to create relationships
+with the previously received message.</p></li>
+<li><p><strong>last_received_structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code> where keys are <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Field.Field" title="netzob.Model.Vocabulary.Field.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a> and values are <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – Corresponds to the last received message structure by the actor on the communication channel, and thus making it possible to create relationships
+with the previously received message structure.</p></li>
+<li><p><strong>memory</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Memory.Memory" title="netzob.Model.Vocabulary.Domain.Variables.Memory.Memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Memory</span></code></a>) – Corresponds to the current memory context.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The callback function should return a transition
+object. The returned transition should have its
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">inverseInitiator</span></code>
+attribute set to the same value as for the current
+transition.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p>Besides, during execution of a transition, it is possible to change
+the symbol that will be sent to the remote peer, by adding callbacks
+through the <code class="xref py py-meth docutils literal notranslate"><span class="pre">add_cbk_modify_symbol()</span></code> method on a
+<a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a> instance.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Transitions.Transition.Transition.add_cbk_modify_symbol">
+<span class="sig-prename descclassname"><span class="pre">Transition.</span></span><span class="sig-name descname"><span class="pre">add_cbk_modify_symbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cbk_method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netzob.Model.Grammar.Transitions.Transition.Transition.add_cbk_modify_symbol" title="Permalink to this definition">#</a></dt>
+<dd><p>Function called during transition execution, to help
+choose/modify the output symbol to send (in a non initiator
+context) or the input symbol to send (in an initiator context).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cbk_method</strong> (<em>Callable</em><em>, </em><em>required</em>) – the callback function</p>
+</dd>
+<dt class="field-even">Raise</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeError</span></code> if <code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> is not a callable function</p>
+</dd>
+</dl>
+<p>The callback function that can be used in the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> parameter has the following prototype:</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cbk_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">available_symbols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_symbol_preset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_sent_symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_sent_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_sent_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_received_symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_received_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_received_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em><span class="sig-paren">)</span></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>available_symbols</strong> (<em>List</em><em>[</em><a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><em>Symbol</em></a><em>]</em>) – Corresponds to the list of possible symbols to send.</p></li>
+<li><p><strong>current_symbol</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – Currently selected symbol that will be sent, either the initial
+symbol or the symbol returned by the previous callback.</p></li>
+<li><p><strong>current_symbol_preset</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Preset.Preset" title="netzob.Model.Vocabulary.Preset.Preset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Preset</span></code></a>) – Preset configuration associated to selected symbol.</p></li>
+<li><p><strong>current_state</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – Current state in the automaton.</p></li>
+<li><p><strong>last_sent_symbol</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – This parameter is the last sent symbol by the actor on the communication channel, and thus making it
+possible to create relationships with the previously sent symbol.</p></li>
+<li><p><strong>last_sent_message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code>) – This parameter is the last sent message by the actor on the communication channel, and thus making
+it possible to create relationships with the previously sent
+message.</p></li>
+<li><p><strong>last_sent_structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code> where keys are <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Field.Field" title="netzob.Model.Vocabulary.Field.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a> and values are <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – This parameter is the last sent message structure by the actor on the communication channel,
+and thus making it possible to create relationships with
+the previously sent message structure.</p></li>
+<li><p><strong>last_received_symbol</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – This parameter is the last received symbol by the actor on the communication channel, and thus
+making it possible to create relationships with the
+previously received symbol.</p></li>
+<li><p><strong>last_received_message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code>) – This parameter is the last received message (<code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code>) by the actor on the communication channel,
+and this makes it possible to create relationships with
+received message.</p></li>
+<li><p><strong>last_received_structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code> where keys are <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Field.Field" title="netzob.Model.Vocabulary.Field.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a> and values are <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – This parameter is the last received message structure by the actor on the communication channel, and thus making it possible to create relationships
+with the previously received message structure.</p></li>
+<li><p><strong>memory</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Memory.Memory" title="netzob.Model.Vocabulary.Domain.Variables.Memory.Memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Memory</span></code></a>) – This parameter corresponds to the current memory context.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The callback function should return a tuple. The
+first tuple element is the symbol (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) that
+will be sent. This could be the same as the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">current_symbol</span></code> or another one. The second
+tuple element is a preset (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Preset.Preset" title="netzob.Model.Vocabulary.Preset.Preset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Preset</span></code></a>)
+configuration used to parameterize fields during
+symbol specialization. This configuration will
+override any field definition, constraints or
+relationship dependencies (see
+<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol.specialize" title="netzob.Model.Vocabulary.Symbol.Symbol.specialize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">specialize()</span></code></a>,
+for more information).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><em>Tuple</em>[<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><em>Symbol</em></a>,<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Preset.Preset" title="netzob.Model.Vocabulary.Preset.Preset"><em>Preset</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="executing-actions-during-transitions">
+<h2>Executing Actions during Transitions<a class="headerlink" href="#executing-actions-during-transitions" title="Permalink to this headline">#</a></h2>
+<p>It is possible to execute specific actions during transitions, after sending or receiving a symbol, by adding
+callbacks through the <code class="xref py py-meth docutils literal notranslate"><span class="pre">add_cbk_action()</span></code> method on a
+<a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a> instance. The typical usage of this callback is that it is possible to manipulate the memory context of the automaton after sending or receiving a symbol.</p>
+<p>When specifying such callback on a transition, this callback is then called twice for a transition: in an initiator context, the callback is first called after sending the input symbol, and then called after receiving one of the output symbols; while in a non initiator context, the callback is called after receiving the input symbol, and then called after sending one of the output symbols.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Transitions.Transition.Transition.add_cbk_action">
+<span class="sig-prename descclassname"><span class="pre">Transition.</span></span><span class="sig-name descname"><span class="pre">add_cbk_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cbk_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Transitions/Transition.html#Transition.add_cbk_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Transitions.Transition.Transition.add_cbk_action" title="Permalink to this definition">#</a></dt>
+<dd><p>Function called after sending or receiving a symbol in the
+transition. This function should be used to modify the memory context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cbk_method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>, required) – the callback function</p>
+</dd>
+<dt class="field-even">Raise</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeError</span></code> if <code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> is not a callable function</p>
+</dd>
+</dl>
+<p>The callback function that can be used in the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> parameter has the following prototype:</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cbk_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span></em><span class="sig-paren">)</span></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>symbol</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – Corresponds to the last sent or received symbol.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – Corresponds to the last sent or received data.</p></li>
+<li><p><strong>data_structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code>) – Corresponds to the last sent or received data structure.</p></li>
+<li><p><strong>operation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Operation</span></code>) – Tells the way the symbol is manipulated: either
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">Operation.ABSTRACT</span></code> for symbols that are abstracted or
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">Operation.SPECIALIZE</span></code> for symbols that are specialized.</p></li>
+<li><p><strong>current_state</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – Current state in the automaton.</p></li>
+<li><p><strong>memory</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Memory.Memory" title="netzob.Model.Vocabulary.Domain.Variables.Memory.Memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Memory</span></code></a>) – Corresponds to the current memory context.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p>The callback method is not expected to return something.</p>
+</dd></dl>
+
+</section>
+<section id="summary-of-states-and-transitions-processing">
+<h2>Summary of States and Transitions Processing<a class="headerlink" href="#summary-of-states-and-transitions-processing" title="Permalink to this headline">#</a></h2>
+<p>The following figure gives a summary of the sequence of operations during states and transitions processing.</p>
+<figure class="align-center" id="id2">
+<a class="reference internal image-reference" href="../_images/Grammar_procedure.png"><img alt="../_images/Grammar_procedure.png" src="../_images/Grammar_procedure.png" style="width: 450.09999999999997px; height: 805.6999999999999px;" /></a>
+<figcaption>
+<p><span class="caption-text">Sequence of operations during states and transitions processing</span><a class="headerlink" href="#id2" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="modeling-automata">
+<h2>Modeling Automata<a class="headerlink" href="#modeling-automata" title="Permalink to this headline">#</a></h2>
+<p>In the API, an automaton is made of a list of permitted symbols
+and an initial state. An automaton is modeled using the Automata class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Automata.Automata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Automata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initialState</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbols</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Automata.html#Automata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Automata.Automata" title="Permalink to this definition">#</a></dt>
+<dd><p>Class which describes an automaton (i.e. state machine) of a
+protocol. The underlying structure of the automaton is a Mealy
+machine (cf. <a class="reference external" href="https://en.wikipedia.org/wiki/Mealy_machine">https://en.wikipedia.org/wiki/Mealy_machine</a>).</p>
+<p>The Automata constructor expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initialState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>, required) – The initial state of the automaton.</p></li>
+<li><p><strong>symbols</strong> (a <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>, required) – The list of permitted symbols for every transition of the automaton.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The Automata class provides the following public variables:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initialState</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a>) – This parameter is the initial state of the automaton.</p></li>
+<li><p><strong>symbols</strong> (a <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>) – This parameter is the list of permitted symbols for every transition of the automaton.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The following example shows the definition of an automaton with
+three states <cite>s0</cite>, <cite>s1</cite>, <cite>s2</cite>, an opening transition between
+states <cite>s0</cite> and <cite>s1</cite>, a standard transition within the same state
+<cite>s1</cite> which accepts the input symbol <cite>inputSymbol</cite> and generate the
+output symbol <cite>outputSymbol</cite>, and a closing transition between
+states <cite>s1</cite> and <cite>s2</cite>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Creation of some states and transitions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;S0&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;S1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s2</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;S2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">openTransition</span> <span class="o">=</span> <span class="n">OpenChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s0</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Open&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inputSymbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">outputSymbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mainTransition</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">inputSymbol</span><span class="o">=</span><span class="n">inputSymbol</span><span class="p">,</span> <span class="n">outputSymbols</span><span class="o">=</span><span class="p">[</span><span class="n">outputSymbol</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">closeTransition</span> <span class="o">=</span> <span class="n">CloseChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Close&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Creation of the automata</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">automata</span> <span class="o">=</span> <span class="n">Automata</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="p">[</span><span class="n">inputSymbol</span><span class="p">,</span> <span class="n">outputSymbol</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Automata.Automata.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Automata.html#Automata.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Automata.Automata.copy" title="Permalink to this definition">#</a></dt>
+<dd><p>Copy the current automaton.</p>
+<p>This method copies the states and transitions of the
+automaton, but keeps references to the original callbacks and
+symbols.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A new object of the same type.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#netzob.Model.Grammar.Automata.Automata" title="netzob.Model.Grammar.Automata.Automata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Automata</span></code></a></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Creation of some states and transitions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;S0&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;S1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s2</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;S2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">openTransition</span> <span class="o">=</span> <span class="n">OpenChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s0</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;open transition&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inputSymbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">outputSymbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mainTransition</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">inputSymbol</span><span class="o">=</span><span class="n">inputSymbol</span><span class="p">,</span> <span class="n">outputSymbols</span><span class="o">=</span><span class="p">[</span><span class="n">outputSymbol</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;main transition&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">closeTransition</span> <span class="o">=</span> <span class="n">CloseChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;close transition&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Creation of the automata</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">automata</span> <span class="o">=</span> <span class="n">Automata</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="p">[</span><span class="n">inputSymbol</span><span class="p">,</span> <span class="n">outputSymbol</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">automata_bis</span> <span class="o">=</span> <span class="n">automata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Automata.Automata.generateASCII">
+<span class="sig-name descname"><span class="pre">generateASCII</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Automata.html#Automata.generateASCII"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Automata.Automata.generateASCII" title="Permalink to this definition">#</a></dt>
+<dd><p>Render the ASCII representation of the automaton.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A string containing an ASCII representation of the automaton.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Automata.Automata.generateDotCode">
+<span class="sig-name descname"><span class="pre">generateDotCode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Automata.html#Automata.generateDotCode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Automata.Automata.generateDotCode" title="Permalink to this definition">#</a></dt>
+<dd><p>Generates the dot code representing the automaton.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A string containing a dot code representation of the automaton.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create some states and transitions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;S0&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;S1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s2</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;S2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">openTransition</span> <span class="o">=</span> <span class="n">OpenChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s0</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Open&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inputSymbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">outputSymbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mainTransition</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">inputSymbol</span><span class="o">=</span><span class="n">inputSymbol</span><span class="p">,</span> <span class="n">outputSymbols</span><span class="o">=</span><span class="p">[</span><span class="n">outputSymbol</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">closeTransition</span> <span class="o">=</span> <span class="n">CloseChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Close&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create the automaton</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">automata</span> <span class="o">=</span> <span class="n">Automata</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="p">[</span><span class="n">inputSymbol</span><span class="p">,</span> <span class="n">outputSymbol</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">automata</span><span class="o">.</span><span class="n">generateDotCode</span><span class="p">())</span> 
+<span class="go">digraph G {</span>
+<span class="go">&quot;S0&quot; [shape=doubleoctagon, label=&quot;S0&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="go">&quot;S1&quot; [shape=ellipse, label=&quot;S1&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="go">&quot;S2&quot; [shape=ellipse, label=&quot;S2&quot;, style=filled, fillcolor=white, URL=&quot;...&quot;];</span>
+<span class="go">&quot;S0&quot; -&gt; &quot;S1&quot; [fontsize=5, label=&quot;OpenChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="go">&quot;S1&quot; -&gt; &quot;S1&quot; [fontsize=5, label=&quot;hello (Symbol;{Symbol})&quot;, URL=&quot;...&quot;];</span>
+<span class="go">&quot;S1&quot; -&gt; &quot;S2&quot; [fontsize=5, label=&quot;CloseChannelTransition&quot;, URL=&quot;...&quot;];</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a string containing the dot code of the automata.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>a <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Automata.Automata.getState">
+<span class="sig-name descname"><span class="pre">getState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Automata.html#Automata.getState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Automata.Automata.getState" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the State object of the given name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, required) – The name of the State object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The State object with stateName as name.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a></p>
+</dd>
+<dt class="field-even">Raise</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code> if the name is not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Automata.Automata.getStates">
+<span class="sig-name descname"><span class="pre">getStates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Automata.html#Automata.getStates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Automata.Automata.getStates" title="Permalink to this definition">#</a></dt>
+<dd><p>Visits the automata to discover all the available states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>main_states</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Specify that all states except the initial state and the closing states are returned. Default value is <code class="docutils literal notranslate"><span class="pre">False</span></code>, meaning that all states are returned.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list containing all the automaton states.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>a <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create some states and transitions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s0</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;State 0&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s1</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;State 1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s2</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;State 2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">openTransition</span> <span class="o">=</span> <span class="n">OpenChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s0</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Open&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inputSymbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">outputSymbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mainTransition</span> <span class="o">=</span> <span class="n">Transition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">inputSymbol</span><span class="o">=</span><span class="n">inputSymbol</span><span class="p">,</span> <span class="n">outputSymbols</span><span class="o">=</span><span class="p">[</span><span class="n">outputSymbol</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">closeTransition</span> <span class="o">=</span> <span class="n">CloseChannelTransition</span><span class="p">(</span><span class="n">startState</span><span class="o">=</span><span class="n">s1</span><span class="p">,</span> <span class="n">endState</span><span class="o">=</span><span class="n">s2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Close&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create the automata</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">automata</span> <span class="o">=</span> <span class="n">Automata</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="p">[</span><span class="n">inputSymbol</span><span class="p">,</span> <span class="n">outputSymbol</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">automata</span><span class="o">.</span><span class="n">getStates</span><span class="p">():</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="go">State 0</span>
+<span class="go">State 1</span>
+<span class="go">State 2</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">automata</span><span class="o">.</span><span class="n">getStates</span><span class="p">(</span><span class="n">main_states</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="go">State 1</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Automata.Automata.getTransition">
+<span class="sig-name descname"><span class="pre">getTransition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Automata.html#Automata.getTransition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Automata.Automata.getTransition" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the Transition object of the given name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, required) – The name of the Transition object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Transition object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></a></p>
+</dd>
+<dt class="field-even">Raise</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code> if the name is not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Automata.Automata.getTransitions">
+<span class="sig-name descname"><span class="pre">getTransitions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Automata.html#Automata.getTransitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Automata.Automata.getTransitions" title="Permalink to this definition">#</a></dt>
+<dd><p>Return all the transitions of the automaton.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list containing all the automaton transitions.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>a <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">Transition</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Automata.Automata.set_cbk_read_symbol_timeout">
+<span class="sig-name descname"><span class="pre">set_cbk_read_symbol_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cbk_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Automata.html#Automata.set_cbk_read_symbol_timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Automata.Automata.set_cbk_read_symbol_timeout" title="Permalink to this definition">#</a></dt>
+<dd><p>Function called to handle cases where a timeout appears when
+waiting for a symbol. In a non initiator context, this symbol would
+correspond to the input symbol that should trigger a
+transition. In an initiator context, this symbol would correspond to an
+output symbol that is expected according to the current
+transition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cbk_method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>, required) – A function used to handle the selection of the next
+state when no symbol is received after the timeout
+has expired.</p></li>
+<li><p><strong>states</strong> (<em>List</em><em>[</em><a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><em>State</em></a><em>]</em><em>, </em><em>optional</em>) – A list of states on which the callback function should apply.
+If no states are specified, the callback function is
+applied on all states of the automaton.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raise</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeError</span></code> if <code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> is not a callable function</p>
+</dd>
+</dl>
+<p>The callback function that can be used in the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> parameter has the following prototype:</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cbk_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_transition</span></span></em><span class="sig-paren">)</span></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_state</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><em>State</em></a>) – Corresponds to the current state in the automaton.
+It is expected that the current state cannot be <code class="docutils literal notranslate"><span class="pre">None</span></code>, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).</p></li>
+<li><p><strong>current_transition</strong> (<a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><em>Transition</em></a>) – Corresponds to the current transition in the automaton.
+It is expected that the current transition may be <code class="docutils literal notranslate"><span class="pre">None</span></code>, especially
+in a non initiator context, where no transition has been initiated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The callback function should return the next
+state.  For example, to stay at the same state,
+the callback function would have to return the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">current_state</span></code> value.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Automata.Automata.set_cbk_read_unexpected_symbol">
+<span class="sig-name descname"><span class="pre">set_cbk_read_unexpected_symbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cbk_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Automata.html#Automata.set_cbk_read_unexpected_symbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Automata.Automata.set_cbk_read_unexpected_symbol" title="Permalink to this definition">#</a></dt>
+<dd><p>Function called to handle cases where a symbol is received but not
+expected. In a non initiator context, this symbol would not match the input
+symbol of the available transitions. In an initiator context, this
+symbol would not match the expected output symbols of the current
+transition.</p>
+<p>The method expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cbk_method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>, required) – A function used to handle the selection of the next
+state when a unexpected symbol is received.</p></li>
+<li><p><strong>states</strong> (<em>List</em><em>[</em><a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><em>State</em></a><em>]</em><em>, </em><em>optional</em>) – A list of states on which the callback function should apply.
+If no states are specified, the callback function is
+applied on all states of the automaton.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raise</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeError</span></code> if <code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> is not a callable function</p>
+</dd>
+</dl>
+<p>The callback function that can be used in the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> parameter has the following prototype:</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cbk_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_transition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">received_symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">received_message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">received_structure</span></span></em><span class="sig-paren">)</span></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_state</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><em>State</em></a>) – Corresponds to the current state in the automaton.
+It is expected that the current state cannot be <code class="docutils literal notranslate"><span class="pre">None</span></code>, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).</p></li>
+<li><p><strong>current_transition</strong> (<a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><em>Transition</em></a>) – Corresponds to the current transition in the automaton.
+It is expected that the current transition may be <code class="docutils literal notranslate"><span class="pre">None</span></code>, especially
+in a non initiator context, where no transition has been initiated.</p></li>
+<li><p><strong>received_symbol</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><em>Symbol</em></a>) – Corresponds to the received symbol.</p></li>
+<li><p><strong>received_message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – Corresponds to the received raw message.</p></li>
+<li><p><strong>received_structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code> where keys are <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Field.Field" title="netzob.Model.Vocabulary.Field.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a> and values are <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – Corresponds to the received message structure.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The callback function should return the next
+state.  For example, to stay at the same state,
+the callback function would have to return the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">current_state</span></code> value.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Grammar.Automata.Automata.set_cbk_read_unknown_symbol">
+<span class="sig-name descname"><span class="pre">set_cbk_read_unknown_symbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cbk_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Grammar/Automata.html#Automata.set_cbk_read_unknown_symbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Grammar.Automata.Automata.set_cbk_read_unknown_symbol" title="Permalink to this definition">#</a></dt>
+<dd><p>Function called to handle cases where a message is received but
+does not correspond to a known symbol. In a non initiator context,
+this message would not match the input symbol of the available
+transitions. In an initiator context, this message would not match
+the expected output symbols of the current transition.</p>
+<p>The method expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cbk_method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>, required) – A callable function used to handle the selection of
+the next state when an unknown symbol is received.</p></li>
+<li><p><strong>states</strong> (<em>List</em><em>[</em><a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><em>State</em></a><em>]</em><em>, </em><em>optional</em>) – A list of states on which the callback function should apply.
+If no states are specified, the callback function is
+applied on all states of the automaton.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raise</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeError</span></code> if <code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> is not a callable function</p>
+</dd>
+</dl>
+<p>The callback function that can be used in the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">cbk_method</span></code> parameter has the following prototype:</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cbk_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_transition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">received_message</span></span></em><span class="sig-paren">)</span></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_state</strong> (<a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><em>State</em></a>) – Corresponds to the current state in the automaton.
+It is expected that the current state cannot be <code class="docutils literal notranslate"><span class="pre">None</span></code>, because when an actor visits an automaton, it is always positioned at a state even if it is executing a transition (in such case, the current state is the initial state of the transition).</p></li>
+<li><p><strong>current_transition</strong> (<a class="reference internal" href="#netzob.Model.Grammar.Transitions.Transition.Transition" title="netzob.Model.Grammar.Transitions.Transition.Transition"><em>Transition</em></a>) – Corresponds to the current transition in the automaton.
+It is expected that the current transition may be <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+especially in a non initiator context, where no transition has been initiated.</p></li>
+<li><p><strong>received_message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – Corresponds to the received raw message.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The callback function should return the next
+state.  For example, to stay at the same state,
+the callback function would have to return the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">current_state</span></code> value.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#netzob.Model.Grammar.States.State.State" title="netzob.Model.Grammar.States.State.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">State</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="dataspec.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Format Message Modeling</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="protospec.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Protocol Modeling</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,707 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Domain.Variables.Scope &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../../_static/jquery.js"></script>
+    <script src="../../../../../../_static/underscore.js"></script>
+    <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Domain.Variables.Scope</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| File contributors :                                                       |</span>
+<span class="c1">#|       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1">#|       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">NetzobLogger</span><span class="p">,</span> <span class="n">public_api</span>
+
+
+<div class="viewcode-block" id="Scope"><a class="viewcode-back" href="../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Scope.Scope">[docs]</a><span class="nd">@public_api</span>
+<span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">Scope</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;This class represents the Assignment Strategy of a variable.</span>
+
+<span class="sd">    The scope of a variable defines how its value is used while</span>
+<span class="sd">    abstracting and specializing, and therefore impacts the</span>
+<span class="sd">    memorization strategy.</span>
+
+<span class="sd">    A scope strategy can be attached to a variable and is used both</span>
+<span class="sd">    when abstracting and specializing. A scope strategy describes the</span>
+<span class="sd">    set of memory operations that must be performed each time a</span>
+<span class="sd">    variable is abstracted or specialized. These operations can be</span>
+<span class="sd">    separated into two groups: those used during the abstraction and</span>
+<span class="sd">    those used during the specialization.</span>
+
+<span class="sd">    The available scope strategies for a variable are:</span>
+
+<span class="sd">    * Scope.SESSION</span>
+<span class="sd">    * Scope.MESSAGE</span>
+<span class="sd">    * Scope.NONE (the default strategy for variables)</span>
+
+<span class="sd">    Those strategies are explained below. In addition, some following</span>
+<span class="sd">    examples are shown in order to understand how the strategies can</span>
+<span class="sd">    be applied during abstraction and specialization of Field with</span>
+<span class="sd">    Data variables.</span>
+
+<span class="sd">    * **Scope.SESSION**: This kind of variable carries a value, such as</span>
+<span class="sd">      a session identifier, generated and memorized during its first</span>
+<span class="sd">      specialization and reused as such in the remainder of the</span>
+<span class="sd">      session. Conversely, the first time a Session Scope field is</span>
+<span class="sd">      abstracted, the value of its variable is not defined and the received</span>
+<span class="sd">      value is saved. Later in the session, if this field is</span>
+<span class="sd">      abstracted again, the corresponding variable is then defined and</span>
+<span class="sd">      we compare the received field value against the memorized one.</span>
+
+<span class="sd">      The following example shows the **abstraction and specialization of data with Session Scope**:</span>
+
+<span class="sd">      &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">      &gt;&gt;&gt; f = Field(domain=Data(String(nbChars=4), scope=Scope.SESSION), name=&#39;f1&#39;)</span>
+<span class="sd">      &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">      &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">      &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">      b&#39;SZ,1&#39;</span>
+<span class="sd">      &gt;&gt;&gt; s.abstract(b&#39;SZ,1&#39;, memory=m)</span>
+<span class="sd">      OrderedDict([(&#39;f1&#39;, b&#39;SZ,1&#39;)])</span>
+<span class="sd">      &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">      b&#39;SZ,1&#39;</span>
+<span class="sd">      &gt;&gt;&gt; s.abstract(b&#39;test&#39;, memory=m)</span>
+<span class="sd">      Traceback (most recent call last):</span>
+<span class="sd">      ...</span>
+<span class="sd">      netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;S0&#39;, cannot abstract the data: &#39;b&#39;test&#39;&#39;. Error: &#39;No parsing path returned while parsing &#39;b&#39;test&#39;&#39;&#39;</span>
+
+<span class="sd">      &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">      &gt;&gt;&gt; f = Field(domain=Data(String(nbChars=4), scope=Scope.SESSION), name=&#39;f1&#39;)</span>
+<span class="sd">      &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">      &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">      &gt;&gt;&gt; s.abstract(&quot;john&quot;, memory=m)</span>
+<span class="sd">      OrderedDict([(&#39;f1&#39;, b&#39;john&#39;)])</span>
+<span class="sd">      &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">      b&#39;john&#39;</span>
+<span class="sd">      &gt;&gt;&gt; s.abstract(&quot;john&quot;, memory=m)</span>
+<span class="sd">      OrderedDict([(&#39;f1&#39;, b&#39;john&#39;)])</span>
+<span class="sd">      &gt;&gt;&gt; s.abstract(b&#39;test&#39;, memory=m)</span>
+<span class="sd">      Traceback (most recent call last):</span>
+<span class="sd">      ...</span>
+<span class="sd">      netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;S0&#39;, cannot abstract the data: &#39;b&#39;test&#39;&#39;. Error: &#39;No parsing path returned while parsing &#39;b&#39;test&#39;&#39;&#39;</span>
+
+
+<span class="sd">    * **Scope.MESSAGE**: With this kind of variable, the value is</span>
+<span class="sd">      generated and then memorized during the first specialization and</span>
+<span class="sd">      is always memorized during abstraction. For further specialization, the value is taken from memory. However, in contrary to</span>
+<span class="sd">      the Session Scope, no comparison is made during abstraction with</span>
+<span class="sd">      the current memorized value (i.e. the received value is always memorized). For example, the IRC `nick` command</span>
+<span class="sd">      corresponds to a Message Scope, that denotes the new nick name</span>
+<span class="sd">      of the user. This nick name can afterwards be used in other</span>
+<span class="sd">      fields, but whenever a NICK command is emitted, its value is</span>
+<span class="sd">      regenerated.</span>
+
+<span class="sd">      The following example shows the **abstraction and specialization of data with Message Scope**:</span>
+
+<span class="sd">      &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">      &gt;&gt;&gt; f = Field(domain=Data(String(nbChars=4), scope=Scope.MESSAGE), name=&#39;f1&#39;)</span>
+<span class="sd">      &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">      &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">      &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">      b&#39;X!z@&#39;</span>
+<span class="sd">      &gt;&gt;&gt; s.abstract(&quot;john&quot;, memory=m)</span>
+<span class="sd">      OrderedDict([(&#39;f1&#39;, b&#39;john&#39;)])</span>
+<span class="sd">      &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">      b&#39;john&#39;</span>
+<span class="sd">      &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">      b&#39;john&#39;</span>
+
+<span class="sd">      &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">      &gt;&gt;&gt; f = Field(domain=Data(String(nbChars=4), scope=Scope.MESSAGE), name=&#39;f1&#39;)</span>
+<span class="sd">      &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">      &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">      &gt;&gt;&gt; s.abstract(&quot;john&quot;, memory=m)</span>
+<span class="sd">      OrderedDict([(&#39;f1&#39;, b&#39;john&#39;)])</span>
+<span class="sd">      &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">      b&#39;john&#39;</span>
+<span class="sd">      &gt;&gt;&gt; s.abstract(&quot;kurt&quot;, memory=m)</span>
+<span class="sd">      OrderedDict([(&#39;f1&#39;, b&#39;kurt&#39;)])</span>
+<span class="sd">      &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">      b&#39;kurt&#39;</span>
+
+
+<span class="sd">    * **Scope.NONE**: This kind of variable denotes a value which</span>
+<span class="sd">      changes whenever it is specialized and is never</span>
+<span class="sd">      memorized. The abstraction</span>
+<span class="sd">      process of such a field only verifies that the received value</span>
+<span class="sd">      complies with the field definition domain without memorizing</span>
+<span class="sd">      it. For example, a size field or a CRC field should have such a scope.</span>
+
+
+<span class="sd">      The following example shows the **abstraction and specializaion of data without persistence**:</span>
+
+<span class="sd">      &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">      &gt;&gt;&gt; f = Field(domain=Data(String(nbChars=4), scope=Scope.NONE), name=&#39;f1&#39;)</span>
+<span class="sd">      &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">      &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">      &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">      b&#39;4%!F&#39;</span>
+<span class="sd">      &gt;&gt;&gt; s.abstract(&quot;john&quot;, memory=m)</span>
+<span class="sd">      OrderedDict([(&#39;f1&#39;, b&#39;john&#39;)])</span>
+<span class="sd">      &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">      b&#39;v\tK5&#39;</span>
+
+<span class="sd">      &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">      &gt;&gt;&gt; f = Field(domain=Data(String(nbChars=4), scope=Scope.NONE), name=&#39;f1&#39;)</span>
+<span class="sd">      &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">      &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">      &gt;&gt;&gt; s.abstract(&quot;john&quot;, memory=m)</span>
+<span class="sd">      OrderedDict([(&#39;f1&#39;, b&#39;john&#39;)])</span>
+<span class="sd">      &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">      b&#39;h:JM&#39;</span>
+<span class="sd">      &gt;&gt;&gt; s.abstract(&quot;kurt&quot;, memory=m)</span>
+<span class="sd">      OrderedDict([(&#39;f1&#39;, b&#39;kurt&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">CONSTANT</span> <span class="o">=</span> <span class="s2">&quot;Constant Scope&quot;</span>
+    <span class="n">SESSION</span> <span class="o">=</span> <span class="s2">&quot;Session Scope&quot;</span>
+    <span class="n">MESSAGE</span> <span class="o">=</span> <span class="s2">&quot;Message Scope&quot;</span>
+    <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;None Scope&quot;</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    **Scope.CONSTANT**: A constant value denotes a static content</span>
+<span class="sd">    defined once and for all in the protocol. When abstracting, the</span>
+<span class="sd">    concrete value is compared with the symbolic value, which is a</span>
+<span class="sd">    constant and succeeds only if it matches. On the other hand, the</span>
+<span class="sd">    specialization of a constant value does not imply any additional</span>
+<span class="sd">    operations than just using the value as it is. A typical example of</span>
+<span class="sd">    a constant value is a magic number in a protocol or a delimiter</span>
+<span class="sd">    field.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       When creating a data type with a defined value, a normalization step will automatically set the data Scope to :attr:`Scope.CONSTANT`.</span>
+
+<span class="sd">    The following example shows the **abstraction of constant</span>
+<span class="sd">    data**, through the parsing of a message that corresponds to the</span>
+<span class="sd">    expected model:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; st = String(&quot;john&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(st, scope=Scope.CONSTANT)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(&quot;john&quot;, memory=m)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;john&#39;)])</span>
+
+<span class="sd">    The following example shows that the abstraction of a data that</span>
+<span class="sd">    do not correspond to the expected model returns an exception:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; st = String(&quot;john&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(st, scope=Scope.CONSTANT)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(&quot;kurt&quot;, memory=m)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;S0&#39;, cannot abstract the data: &#39;kurt&#39;. Error: &#39;No parsing path returned while parsing &#39;b&#39;kurt&#39;&#39;&#39;</span>
+
+<span class="sd">    The following example shows the **specialization of constant</span>
+<span class="sd">    data**:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; st = String(&quot;john&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(st, scope=Scope.CONSTANT)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">    b&#39;john&#39;</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">    b&#39;john&#39;</span>
+<span class="sd">    &gt;&gt;&gt; len(str(m))</span>
+<span class="sd">    0</span>
+
+<span class="sd">    The following example shows that the specialization of constant</span>
+<span class="sd">    data raises an exception when no specific value is attached to the</span>
+<span class="sd">    definition domain of the variable:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(String(nbChars=(5, 10)), scope=Scope.CONSTANT)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    StopIteration</span>
+
+<span class="sd">    The following example shows the **abstraction of data with Session Scope**:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(String(nbChars=(5, 10)), scope=Scope.SESSION)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(&quot;dylan&quot;, memory=m)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;dylan&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(&quot;dylan&quot;, memory=m)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;dylan&#39;)])</span>
+
+<span class="sd">    The following example shows that the abstraction of Session Scope</span>
+<span class="sd">    data that does not correspond to the expected model triggers an exception:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(String(nbChars=(5, 10)), scope=Scope.SESSION)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(&quot;kurt&quot;, memory=m)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;S0&#39;, cannot abstract the data: &#39;kurt&#39;. Error: &#39;No parsing path returned while parsing &#39;b&#39;kurt&#39;&#39;&#39;</span>
+
+
+<span class="sd">    The following examples show the **specialization of data with Session Scope**:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; st = String(&quot;john&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(st, scope=Scope.SESSION)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; next(s.specialize(memory=m))</span>
+<span class="sd">    b&#39;john&#39;</span>
+<span class="sd">    &gt;&gt;&gt; len(str(m))</span>
+<span class="sd">    0</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field()</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(String(nbChars=5), scope=Scope.SESSION)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; generated1 = next(s.specialize(memory=m))</span>
+<span class="sd">    &gt;&gt;&gt; len(generated1)</span>
+<span class="sd">    5</span>
+<span class="sd">    &gt;&gt;&gt; m.hasValue(f.domain)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; generated2 = next(s.specialize(memory=m))</span>
+<span class="sd">    &gt;&gt;&gt; len(generated2)</span>
+<span class="sd">    5</span>
+<span class="sd">    &gt;&gt;&gt; generated1 == generated2</span>
+<span class="sd">    True</span>
+
+
+<span class="sd">    The following example shows the **abstraction of data with Message Scope**:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(String(nbChars=(4, 10)), scope=Scope.MESSAGE)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(&quot;john&quot;, memory=m)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;john&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; print(m)</span>
+<span class="sd">    Data (String(nbChars=(4,10))) from field &#39;f1&#39;: b&#39;john&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(&quot;john&quot;, memory=m)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;john&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; print(m)</span>
+<span class="sd">    Data (String(nbChars=(4,10))) from field &#39;f1&#39;: b&#39;john&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(&quot;kurt&quot;, memory=m)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;kurt&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; print(m)</span>
+<span class="sd">    Data (String(nbChars=(4,10))) from field &#39;f1&#39;: b&#39;kurt&#39;</span>
+
+
+<span class="sd">    The following examples show the **specialization of data with Message Scope**:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; st = String(&quot;john&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(st, scope=Scope.MESSAGE)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; m.hasValue(f.domain)</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; generated1 = next(s.specialize(memory=m))</span>
+<span class="sd">    &gt;&gt;&gt; m.hasValue(f.domain)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; generated2 = next(s.specialize(memory=m))</span>
+<span class="sd">    &gt;&gt;&gt; generated1 == generated2</span>
+<span class="sd">    True</span>
+
+
+<span class="sd">    The following example shows the **abstraction data without persistence**:</span>
+<span class="sd">  </span>
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(String(nbChars=(4, 10)), scope=Scope.NONE)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(&quot;john&quot;, memory=m)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;john&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; len(m)</span>
+<span class="sd">    0</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(&quot;john&quot;, memory=m)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;john&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; len(m)</span>
+<span class="sd">    0</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(&quot;kurt&quot;, memory=m)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;kurt&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; len(m)</span>
+<span class="sd">    0</span>
+
+
+<span class="sd">    The following example shows the **specialization data without persistence**:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f.domain = Data(String(nbChars=(5,10)), scope=Scope.NONE)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(name=&quot;S0&quot;, fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; m = Memory()</span>
+<span class="sd">    &gt;&gt;&gt; m.hasValue(f.domain)</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; generated = next(s.specialize(memory=m))</span>
+<span class="sd">    &gt;&gt;&gt; m.hasValue(f.domain)</span>
+<span class="sd">    False</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">_test_scope_none</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+
+<span class="sd">    &gt;&gt;&gt; t = IPv4(value=&quot;127.0.0.1&quot;, endianness=Endianness.LITTLE)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=t, name=&quot;field&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x7f\x00\x00\x01&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field&#39;, b&#39;\x7f\x00\x00\x01&#39;)])</span>
+
+<span class="sd">    &gt;&gt;&gt; t = IPv4(value=&quot;127.0.0.1&quot;, endianness=Endianness.LITTLE)</span>
+<span class="sd">    &gt;&gt;&gt; domain = Data(dataType=t, name=&quot;IPv4&quot;, scope=Scope.NONE)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(domain=domain, name=&quot;field&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x7f\x00\x00\x01&#39;</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;field&#39;, b&#39;\x7f\x00\x00\x01&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

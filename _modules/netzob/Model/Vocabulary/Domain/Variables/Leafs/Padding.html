@@ -1,0 +1,761 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../../../" id="documentation_options" src="../../../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../../../_static/jquery.js"></script>
+    <script src="../../../../../../../_static/underscore.js"></script>
+    <script src="../../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#|             ANSSI,   https://www.ssi.gouv.fr                              |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| File contributors :                                                       |</span>
+<span class="c1">#|       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1">#|       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">bitarray</span> <span class="kn">import</span> <span class="n">bitarray</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">NetzobLogger</span><span class="p">,</span> <span class="n">public_api</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractVariableLeaf</span> <span class="kn">import</span> <span class="n">AbstractVariableLeaf</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf</span> <span class="kn">import</span> <span class="n">AbstractRelationVariableLeaf</span><span class="p">,</span> <span class="n">RelationDependencyException</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode</span> <span class="kn">import</span> <span class="n">AbstractVariableNode</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Nodes.Agg</span> <span class="kn">import</span> <span class="n">Agg</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.AbstractType</span> <span class="kn">import</span> <span class="n">AbstractType</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.GenericPath</span> <span class="kn">import</span> <span class="n">GenericPath</span>
+
+
+<div class="viewcode-block" id="Padding"><a class="viewcode-back" href="../../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding.Padding">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">Padding</span><span class="p">(</span><span class="n">AbstractRelationVariableLeaf</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Padding class is a variable whose content makes it possible to produce a</span>
+<span class="sd">    padding value that can be used to align a structure to a fixed</span>
+<span class="sd">    size.</span>
+
+<span class="sd">    The Padding constructor expects some parameters:</span>
+
+<span class="sd">    :param targets: The targeted objects of the relationship. If a :class:`~netzob.Model.Vocabulary.Field.Field` is provided, it will be normalized by the associated :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`.</span>
+<span class="sd">    :param data: Specify that the produced value should be represented</span>
+<span class="sd">                 according to this data. A callback function,</span>
+<span class="sd">                 returning the padding value, can be used here.</span>
+<span class="sd">    :param modulo: Specify the expected modulo size. The padding value</span>
+<span class="sd">                   will be computed so that the whole structure aligns</span>
+<span class="sd">                   to this value. This typically corresponds to a</span>
+<span class="sd">                   block size in cryptography.</span>
+<span class="sd">    :param once: If True, the padding is applied only if the total size of the</span>
+<span class="sd">                 targeted fields is smaller than the modulo value.</span>
+<span class="sd">                 Default value is ``False``.</span>
+<span class="sd">    :param factor: Specify that the length of the targeted structure (always</span>
+<span class="sd">                   expressed in bits) should be</span>
+<span class="sd">                   multiplied by this factor. The default value is ``1.0``.</span>
+<span class="sd">                   For example, to express a length in bytes, the factor should</span>
+<span class="sd">                   be ``1.0/8``, whereas to express a length in bits, the</span>
+<span class="sd">                   factor should be ``1.0``.</span>
+<span class="sd">    :param offset: Specify a value in bits that should be added to the length</span>
+<span class="sd">                   of the targeted structure (after applying the factor</span>
+<span class="sd">                   parameter). The default value is 0.</span>
+<span class="sd">    :param name: The name of the variable. If None, the name</span>
+<span class="sd">                 will be generated.</span>
+<span class="sd">    :type targets: a :class:`~netzob.Model.Vocabulary.Field` or a :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;` or a :class:`list` of :class:`~netzob.Model.Vocabulary.Field` or :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`, required</span>
+<span class="sd">    :type data: a :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`</span>
+<span class="sd">                or a :class:`Callable &lt;collections.abc.Callable&gt;`, required</span>
+<span class="sd">    :type modulo: :class:`int`, required</span>
+<span class="sd">    :type once: :class:`bool`, optional</span>
+<span class="sd">    :type factor: :class:`float`, optional</span>
+<span class="sd">    :type offset: :class:`int`, optional</span>
+<span class="sd">    :type name: :class:`str`, optional</span>
+
+
+<span class="sd">    The Padding class provides the following public variables:</span>
+
+<span class="sd">    :var targets: The list of variables that are required before computing</span>
+<span class="sd">                   the value of this relation</span>
+<span class="sd">    :var dataType: The type of the data.</span>
+<span class="sd">    :var factor: Defines the multiplication factor to apply to the targeted</span>
+<span class="sd">                 length.</span>
+<span class="sd">    :var offset: Defines the offset to apply to the computed length.</span>
+<span class="sd">    :vartype dataType: :class:`~netzob.Model.Vocabulary.Types.AbstractType.AbstractType`</span>
+<span class="sd">    :vartype factor: :class:`float`</span>
+<span class="sd">    :vartype offset: :class:`int`</span>
+<span class="sd">    :vartype targets: a list of</span>
+<span class="sd">                      :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`</span>
+
+
+<span class="sd">    **Callback prototype**</span>
+
+<span class="sd">    The callback function that can be used in the ``data``</span>
+<span class="sd">    parameter to specify the padding value has the following prototype:</span>
+
+<span class="sd">    .. function:: cbk_data(current_length, modulo)</span>
+<span class="sd">       :noindex:</span>
+
+<span class="sd">       :param current_length: corresponds to the current size in bits of</span>
+<span class="sd">                              the targeted structure.</span>
+<span class="sd">       :type current_length: :class:`int`</span>
+
+<span class="sd">       :param modulo: corresponds to the expected modulo size in bits.</span>
+<span class="sd">       :type modulo: :class:`int`</span>
+
+<span class="sd">       :return: The callback function should return a :class:`bitarray &lt;bitarray.bitarray&gt;`.</span>
+<span class="sd">       :rtype: :class:`bitarray &lt;bitarray.bitarray&gt;`</span>
+
+
+<span class="sd">    **Padding examples**</span>
+
+<span class="sd">    The following code illustrates a padding with a modulo integer.</span>
+<span class="sd">    Here, the padding data ``b&#39;\x00&#39;`` is repeated ``n``</span>
+<span class="sd">    times, where ``n`` is computed by decrementing the modulo number,</span>
+<span class="sd">    ``128``, by the current length of the targeted structure. The</span>
+<span class="sd">    padding length is therefore equal to ``128 - (10+2)*8 = 32`` bits.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Raw(nbBytes=10))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Raw(b&quot;##&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Padding([f0, f1], data=Raw(b&#39;\x00&#39;), modulo=128))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d[12:]</span>
+<span class="sd">    b&#39;\x00\x00\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; len(d) * 8</span>
+<span class="sd">    128</span>
+
+<span class="sd">    The following code illustrates a padding with the use of the</span>
+<span class="sd">    ``offset`` parameter, where the targeted field sizes are decremented by</span>
+<span class="sd">    8 when computing the padding value length.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Raw(nbBytes=10))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Raw(b&quot;##&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Padding([f0, f1], data=Raw(b&#39;\x00&#39;), modulo=128, offset=8))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d[12:]</span>
+<span class="sd">    b&#39;\x00\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; len(d) * 8</span>
+<span class="sd">    120</span>
+
+<span class="sd">    The following code illustrates a padding with the use of the</span>
+<span class="sd">    ``factor`` parameter, where the targeted field sizes are multiplied by ``1.0/2``</span>
+<span class="sd">    before computing the padding value length.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Raw(nbBytes=10))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Raw(b&quot;##&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Padding([f0, f1], data=Raw(b&#39;\x00&#39;), modulo=128, factor=1./2))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d[12:]</span>
+<span class="sd">    b&#39;\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; len(d) * 8</span>
+<span class="sd">    256</span>
+
+<span class="sd">    The following code illustrates a padding with the use of a</span>
+<span class="sd">    callback function that helps to determine the padding value. In</span>
+<span class="sd">    this example, the padding value is an incrementing integer.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Raw(nbBytes=10))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Raw(b&quot;##&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; def cbk_data(current_length, modulo):</span>
+<span class="sd">    ...     length_to_pad = modulo - (current_length % modulo)  # Length in bits</span>
+<span class="sd">    ...     length_to_pad = int(length_to_pad / 8)  # Length in bytes</span>
+<span class="sd">    ...     res_bytes = b&quot;&quot;.join([t.to_bytes(1, byteorder=&#39;big&#39;) for t in list(range(length_to_pad))])</span>
+<span class="sd">    ...     res_bits = bitarray()</span>
+<span class="sd">    ...     res_bits.frombytes(res_bytes)</span>
+<span class="sd">    ...     return res_bits</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d[12:]</span>
+<span class="sd">    b&#39;\x00\x01\x02\x03&#39;</span>
+<span class="sd">    &gt;&gt;&gt; len(d) * 8</span>
+<span class="sd">    128</span>
+
+<span class="sd">    The following code illustrates a padding with the use of a</span>
+<span class="sd">    callback function that helps to determine the padding value. In</span>
+<span class="sd">    this example, the padding value is a repetition of an incrementing</span>
+<span class="sd">    integer, thus implementing the PKCS #7 padding.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Raw(nbBytes=10))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Raw(b&quot;##&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; def cbk_data(current_length, modulo):</span>
+<span class="sd">    ...     length_to_pad = modulo - (current_length % modulo)  # Length in bits</span>
+<span class="sd">    ...     length_to_pad = int(length_to_pad / 8)  # Length in bytes</span>
+<span class="sd">    ...     res_bytes = b&quot;&quot;.join([int(length_to_pad).to_bytes(1, byteorder=&#39;big&#39;) * length_to_pad])</span>
+<span class="sd">    ...     res_bits = bitarray()</span>
+<span class="sd">    ...     res_bits.frombytes(res_bytes)</span>
+<span class="sd">    ...     return res_bits</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Padding([f0, f1], data=cbk_data, modulo=128))</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d[12:]</span>
+<span class="sd">    b&#39;\x04\x04\x04\x04&#39;</span>
+<span class="sd">    &gt;&gt;&gt; len(d) * 8</span>
+<span class="sd">    128</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">targets</span><span class="p">,</span>
+                 <span class="n">data</span><span class="p">,</span>
+                 <span class="n">modulo</span><span class="p">,</span>
+                 <span class="n">once</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
+                 <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Padding</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modulo</span> <span class="o">=</span> <span class="n">modulo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">once</span> <span class="o">=</span> <span class="n">once</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
+
+        <span class="c1"># Internal variable used to store current value of length to pad for further usage in self.compareValue()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_length_to_pad</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Internal variable used to tell if the padding is random (if so, parsing will be less constrained)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_padding_random</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Handle the data parameter which can be a dataType or a method that return the padding data</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_callback</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataType</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_callback</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Padding.copy"><a class="viewcode-back" href="../../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding.Padding.copy">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_objects</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the current object as well as all its dependencies.</span>
+
+<span class="sd">        :return: A new object of the same type.</span>
+<span class="sd">        :rtype: :class:`Padding &lt;netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding.Padding&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">map_objects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">map_objects</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataType</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataType</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_callback</span>
+
+        <span class="n">new_padding</span> <span class="o">=</span> <span class="n">Padding</span><span class="p">([],</span> <span class="n">new_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">modulo</span><span class="p">,</span> <span class="n">once</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">once</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
+        <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_padding</span>
+
+        <span class="n">new_targets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">new_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">map_objects</span><span class="p">[</span><span class="n">target</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">map_objects</span><span class="p">)</span>
+                <span class="n">new_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_target</span><span class="p">)</span>
+
+        <span class="n">new_padding</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">new_targets</span>
+        <span class="k">return</span> <span class="n">new_padding</span></div>
+
+    <span class="k">def</span> <span class="nf">compareLength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">expectedSize</span><span class="p">,</span> <span class="n">computedValue</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_length_to_pad</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">computedValue</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">compareValues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">expectedSize</span><span class="p">,</span> <span class="n">computedValue</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compareLength</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">expectedSize</span><span class="p">,</span> <span class="n">computedValue</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">content</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_length_to_pad</span><span class="p">]</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span> <span class="o">==</span> <span class="n">computedValue</span><span class="o">.</span><span class="n">tobytes</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The current variable data &#39;</span><span class="si">{}</span><span class="s2">&#39; contain the expected value &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">content</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_length_to_pad</span><span class="p">]</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="n">computedValue</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The current variable data &#39;</span><span class="si">{}</span><span class="s2">&#39; does not contain the expected value &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">content</span><span class="p">[:</span><span class="n">expectedSize</span><span class="p">]</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="n">computedValue</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__computeExpectedValue_stage1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">remainingVariables</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the total size of targets</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+
+            <span class="c1"># variable is a leaf</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">AbstractVariableLeaf</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">size</span> <span class="o">+=</span> <span class="n">variable</span><span class="o">.</span><span class="n">getFixedBitSize</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+            <span class="c1"># variable is a node</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">AbstractVariableNode</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">Agg</span><span class="p">):</span>
+                    <span class="n">size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__computeExpectedValue_stage1</span><span class="p">(</span>
+                        <span class="n">variable</span><span class="o">.</span><span class="n">children</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">remainingVariables</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+            <span class="n">remainingVariables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">size</span>
+
+    <span class="k">def</span> <span class="nf">__computeExpectedValue_stage2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">remainingVariables</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the size of remaining variables</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">remainingVariables</span><span class="p">:</span>
+
+            <span class="c1"># Retrieve variable value</span>
+            <span class="k">if</span> <span class="n">variable</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="n">variable</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;The following variable has no value: &#39;</span><span class="si">{}</span><span class="s2">&#39; for field &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">variable</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">RelationDependencyException</span><span class="p">(</span><span class="n">error_message</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="c1"># Retrieve length of variable value</span>
+            <span class="n">size</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">size</span>
+
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">GenericPath</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">computeExpectedValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Compute expected value for Padding variable&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Reinitialize current length size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_length_to_pad</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># first checks the pointed fields all have a value</span>
+        <span class="n">remainingVariables</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__computeExpectedValue_stage1</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">remainingVariables</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__computeExpectedValue_stage2</span><span class="p">(</span><span class="n">parsingPath</span><span class="p">,</span> <span class="n">remainingVariables</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
+
+        <span class="c1"># Compute the padding value according to the current size</span>
+        <span class="n">padding_value</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">()</span>
+
+        <span class="n">length_to_pad</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_callback</span><span class="p">):</span>
+                <span class="n">data_to_extend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_callback</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">modulo</span><span class="p">)</span>
+                <span class="n">length_to_pad</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_to_extend</span><span class="p">)</span>
+                <span class="n">padding_value</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">data_to_extend</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Callback parameter is not callable.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Compute length to pad</span>
+            <span class="n">mod</span> <span class="o">=</span> <span class="n">size</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">modulo</span>
+            <span class="n">length_to_pad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modulo</span> <span class="o">-</span> <span class="n">mod</span> <span class="k">if</span> <span class="n">mod</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">once</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">modulo</span><span class="p">:</span>
+                <span class="n">length_to_pad</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="c1"># Handle factor parameter</span>
+            <span class="n">length_to_pad</span> <span class="o">=</span> <span class="n">length_to_pad</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_is_padding_random</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="c1"># Add potential padding</span>
+            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">length_to_pad</span><span class="p">:</span>
+                <span class="n">padding_value</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">generate</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Computed padding for </span><span class="si">{}</span><span class="s2">: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()))</span>
+
+        <span class="c1"># Save current value of length to pad for further usage in self.compareValue()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_length_to_pad</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">length_to_pad</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">padding_value</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The str method.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;Padding(</span><span class="si">{0}</span><span class="s2">) - Type:</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">([</span><span class="n">v</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataType</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getFixedBitSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Determine the deterministic size of the value of &quot;</span>
+                           <span class="s2">&quot;the padding variable&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot determine a deterministic size of a padding &quot;</span>
+                         <span class="s2">&quot;variable&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dataType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The datatype used to encode the result of the computed size.</span>
+
+<span class="sd">        :type: :class:`AbstractType &lt;netzob.Model.Vocabulary.Types.AbstractType.AbstractType&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataType</span>
+
+    <span class="nd">@dataType</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">AbstractType</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">dataType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataType</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dataType</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Datatype cannot be None&quot;</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">dataType</span><span class="o">.</span><span class="n">unitSize</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The datatype of a Size field must declare its unitSize&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dataType</span> <span class="o">=</span> <span class="n">dataType</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Defines the multiplication factor to apply on the targeted length (in bits)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__factor</span>
+
+    <span class="nd">@factor</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Factor cannot be None, use 1.0 for the identity.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__factor</span> <span class="o">=</span> <span class="n">factor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">offset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Defines the offset to apply on the computed length</span>
+<span class="sd">        computed size = (factor*size(targetField)+offset)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__offset</span>
+
+    <span class="nd">@offset</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">((</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Offset cannot be None, use 0 if no offset should be applied.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__offset</span> <span class="o">=</span> <span class="n">offset</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+
+<span class="sd">    &gt;&gt;&gt; f_data = Field(Raw(nbBytes=(0, 8)), &quot;payload&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f_size = Field(Size([f_data], dataType=uint8(), factor=1/8), &quot;size&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f_pad = Field(Padding([f_size, f_data], data=Raw(b&quot;\x00&quot;), modulo=8*16), &quot;padding&quot;)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f_size, f_data, f_pad])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; structured_data = s.abstract(data)</span>
+<span class="sd">    &gt;&gt;&gt; ord(structured_data[&#39;size&#39;]) == len(structured_data[&#39;payload&#39;])</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

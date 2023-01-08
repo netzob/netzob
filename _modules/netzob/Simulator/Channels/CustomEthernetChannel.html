@@ -1,0 +1,669 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Simulator.Channels.CustomEthernetChannel &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Simulator.Channels.CustomEthernetChannel</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#|             ANSSI,   https://www.ssi.gouv.fr                              |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| File contributors :                                                       |</span>
+<span class="c1">#|       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">from</span> <span class="nn">bitarray</span> <span class="kn">import</span> <span class="n">bitarray</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">NetzobLogger</span><span class="p">,</span> <span class="n">public_api</span>
+<span class="kn">from</span> <span class="nn">netzob.Simulator.AbstractChannel</span> <span class="kn">import</span> <span class="n">AbstractChannel</span><span class="p">,</span> <span class="n">NetUtils</span>
+<span class="kn">from</span> <span class="nn">netzob.Simulator.ChannelBuilder</span> <span class="kn">import</span> <span class="n">ChannelBuilder</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Field</span> <span class="kn">import</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Leafs.Padding</span> <span class="kn">import</span> <span class="n">Padding</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Preset</span> <span class="kn">import</span> <span class="n">Preset</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Symbol</span> <span class="kn">import</span> <span class="n">Symbol</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.Raw</span> <span class="kn">import</span> <span class="n">Raw</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.Integer</span> <span class="kn">import</span> <span class="n">uint16be</span>
+
+
+<div class="viewcode-block" id="CustomEthernetChannel"><a class="viewcode-back" href="../../../../language_specification/trafficgeneration.html#netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">CustomEthernetChannel</span><span class="p">(</span><span class="n">AbstractChannel</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A CustomEthernetChannel is a communication channel to send Ethernet</span>
+<span class="sd">    frames. This channel is responsible for building the Ethernet</span>
+<span class="sd">    layer.</span>
+
+<span class="sd">    The CustomEthernetChannel constructor expects some parameters:</span>
+
+<span class="sd">    :param remoteMac: This parameter is the remote MAC address to connect to.</span>
+<span class="sd">    :param localMac: This parameter is the local MAC address.</span>
+<span class="sd">    :param timeout: The default timeout of the channel for global</span>
+<span class="sd">                    connection. Default value is blocking (None).</span>
+<span class="sd">    :type remoteMac: :class:`str` or :class:`netaddr.EUI`, required</span>
+<span class="sd">    :type localMac: :class:`str` or :class:`netaddr.EUI`, required</span>
+<span class="sd">    :type timeout: :class:`float`, optional</span>
+
+<span class="sd">    .. todo:: add support of netaddr.EUI</span>
+
+<span class="sd">    Adding to AbstractChannel variables, the CustomEthernetChannel class provides</span>
+<span class="sd">    the following public variables:</span>
+
+<span class="sd">    :var remoteMac: The remote MAC address to connect to.</span>
+<span class="sd">    :var localMac: The local MAC address.</span>
+<span class="sd">    :var interface: The network Interface name such as &#39;eth0&#39;, &#39;lo&#39;, determined</span>
+<span class="sd">                    with the local MAC address. Read only variable.</span>
+<span class="sd">    :vartype remoteMac: :class:`str`</span>
+<span class="sd">    :vartype localMac: :class:`str`</span>
+<span class="sd">    :vartype interface: :class:`str`</span>
+
+
+<span class="sd">    The following example shows how to instantiate a CustomEthernetChannel.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; from binascii import hexlify</span>
+<span class="sd">    &gt;&gt;&gt; def example_channel():</span>
+<span class="sd">    ...     client = CustomEthernetChannel(</span>
+<span class="sd">    ...        remoteMac=&quot;00:01:02:03:04:05&quot;,</span>
+<span class="sd">    ...        localMac=&quot;00:06:07:08:09:10&quot;)</span>
+<span class="sd">    ...     client.open()</span>
+<span class="sd">    ...     symbol = Symbol([Field(&quot;ABC&quot;)])</span>
+<span class="sd">    ...     client.write(next(symbol.specialize()))</span>
+<span class="sd">    ...     client.close()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">## Class attributes ##</span>
+
+    <span class="n">ETH_P_ALL</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">FAMILIES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ethernet&quot;</span><span class="p">]</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">remoteMac</span><span class="p">,</span>
+                 <span class="n">localMac</span><span class="p">,</span>
+                 <span class="n">timeout</span><span class="o">=</span><span class="n">AbstractChannel</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CustomEthernetChannel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remoteMac</span> <span class="o">=</span> <span class="n">remoteMac</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">localMac</span> <span class="o">=</span> <span class="n">localMac</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__interface</span> <span class="o">=</span> <span class="n">NetUtils</span><span class="o">.</span><span class="n">getLocalInterfaceFromMac</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localMac</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__interface</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;No interface found for &#39;</span><span class="si">{}</span><span class="s2">&#39; MAC address&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localMac</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initHeader</span><span class="p">()</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">getBuilder</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">CustomEthernetChannelBuilder</span>
+
+    <span class="k">def</span> <span class="nf">initHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">eth_dst</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;eth.dst&#39;</span><span class="p">,</span>
+                        <span class="n">domain</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">macToBitarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remoteMac</span><span class="p">)))</span>
+        <span class="n">eth_src</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;eth.src&#39;</span><span class="p">,</span>
+                        <span class="n">domain</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">macToBitarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">localMac</span><span class="p">)))</span>
+        <span class="n">eth_type</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;eth.type&#39;</span><span class="p">,</span>
+                         <span class="n">domain</span><span class="o">=</span><span class="n">uint16be</span><span class="p">(</span><span class="mh">0x800</span><span class="p">))</span>  <span class="c1"># default: IPv4</span>
+        <span class="n">eth_payload</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;eth.payload&#39;</span><span class="p">,</span>
+                            <span class="n">domain</span><span class="o">=</span><span class="n">Raw</span><span class="p">())</span>
+        <span class="c1"># PADDING field is present if frame length &lt; 60 bytes</span>
+        <span class="c1"># (+ 4 optional CRC bytes)</span>
+        <span class="n">ethPaddingVariable</span> <span class="o">=</span> <span class="n">Padding</span><span class="p">([</span><span class="n">eth_dst</span><span class="p">,</span>
+                                      <span class="n">eth_src</span><span class="p">,</span>
+                                      <span class="n">eth_type</span><span class="p">,</span>
+                                      <span class="n">eth_payload</span><span class="p">],</span>
+                                     <span class="n">data</span><span class="o">=</span><span class="n">Raw</span><span class="p">(</span><span class="n">nbBytes</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                                     <span class="n">modulo</span><span class="o">=</span><span class="mi">8</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span>
+                                     <span class="n">once</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">eth_padding</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ethPaddingVariable</span><span class="p">,</span> <span class="s2">&quot;eth.padding&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ethernet layer&#39;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">eth_dst</span><span class="p">,</span>
+                                                            <span class="n">eth_src</span><span class="p">,</span>
+                                                            <span class="n">eth_type</span><span class="p">,</span>
+                                                            <span class="n">eth_payload</span><span class="p">,</span>
+                                                            <span class="n">eth_padding</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">AbstractChannel</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open the communication channel. If the channel is a client, it</span>
+<span class="sd">        starts to connect to the specified server.</span>
+
+<span class="sd">        :param timeout: The default timeout of the channel for opening</span>
+<span class="sd">                        connection and waiting for a message. Default value</span>
+<span class="sd">                        is blocking (None).</span>
+<span class="sd">        :type timeout: :class:`float`, optional</span>
+<span class="sd">        :raise: RuntimeError if the channel is already opened</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span>
+            <span class="n">socket</span><span class="o">.</span><span class="n">AF_PACKET</span><span class="p">,</span>
+            <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_RAW</span><span class="p">,</span>
+            <span class="n">socket</span><span class="o">.</span><span class="n">htons</span><span class="p">(</span><span class="n">CustomEthernetChannel</span><span class="o">.</span><span class="n">ETH_P_ALL</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="n">timeout</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span> <span class="n">CustomEthernetChannel</span><span class="o">.</span><span class="n">ETH_P_ALL</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isOpen</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the communication channel.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isOpen</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the next message on the communication channel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">recvfrom</span><span class="p">(</span><span class="mi">65535</span><span class="p">)</span>
+
+            <span class="c1"># Remove Ethernet header from received data</span>
+            <span class="n">ethHeaderLen</span> <span class="o">=</span> <span class="mi">14</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ethHeaderLen</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ethHeaderLen</span><span class="p">:]</span>
+
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;socket is not available&quot;</span><span class="p">)</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">sendReceive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write on the communication channel and returns the next packet</span>
+<span class="sd">        coming from the destination address.</span>
+
+<span class="sd">        :param data: the data to write on the channel</span>
+<span class="sd">        :type data: :class:`bytes`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">rawRemoteMac</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">unhexlify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remoteMac</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">recvfrom</span><span class="p">(</span><span class="mi">65535</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span> <span class="o">==</span> <span class="n">rawRemoteMac</span><span class="p">:</span>
+                    <span class="c1"># Remove Ethernet header from received data</span>
+                    <span class="n">ethHeaderLen</span> <span class="o">=</span> <span class="mi">14</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ethHeaderLen</span><span class="p">:</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ethHeaderLen</span><span class="p">:]</span>
+                    <span class="k">return</span> <span class="n">data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;socket is not available&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">writePacket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write on the communication channel the specified data</span>
+
+<span class="sd">        :param data: the data to write on the channel</span>
+<span class="sd">        :type data: :class:`bytes`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;socket is not available&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_preset</span><span class="p">[</span><span class="s2">&quot;eth.payload&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">packet</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header_preset</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">len_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">sendto</span><span class="p">(</span><span class="n">packet</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span>
+                                                    <span class="n">CustomEthernetChannel</span><span class="o">.</span><span class="n">ETH_P_ALL</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;OSError durring socket.sendto(): &#39;</span><span class="si">{}</span><span class="s2">&#39;. Trying a second time after sleeping 1s...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">len_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">sendto</span><span class="p">(</span><span class="n">packet</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span>
+                                                    <span class="n">CustomEthernetChannel</span><span class="o">.</span><span class="n">ETH_P_ALL</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">len_data</span>
+
+    <span class="k">def</span> <span class="nf">macToBitarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts a mac address represented as a string to its bitarray value.</span>
+
+<span class="sd">        &gt;&gt;&gt; client = CustomEthernetChannel(&#39;00:01:02:03:04:05&#39;, &#39;06:07:08:09:10:11&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; client.macToBitarray(&#39;00:01:02:03:04:05&#39;)</span>
+<span class="sd">        bitarray(&#39;000000000000000100000010000000110000010000000101&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; client.macToBitarray(b&#39;\\x00\\x01\\x02\\x03\\x04\\x05&#39;)</span>
+<span class="sd">        bitarray(&#39;000000000000000100000010000000110000010000000101&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">addr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">bitarray</span><span class="p">(</span><span class="mi">48</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">addr</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">hexlify</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+        <span class="n">numeric</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">addr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="n">binary</span> <span class="o">=</span> <span class="nb">bin</span><span class="p">(</span><span class="n">numeric</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">binLength</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">binLength</span> <span class="o">&gt;</span> <span class="mi">48</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Binary overflow while converting hexadecimal value&quot;</span><span class="p">)</span>
+
+        <span class="n">binary</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">48</span> <span class="o">-</span> <span class="n">binLength</span><span class="p">)</span> <span class="o">+</span> <span class="n">binary</span>
+        <span class="k">return</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CustomEthernetChannel.setProtocol"><a class="viewcode-back" href="../../../../language_specification/trafficgeneration.html#netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel.setProtocol">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">setProtocol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upperProtocol</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the code of the upper protocol</span>
+
+<span class="sd">        :param upperProtocol: the upper protocol code</span>
+<span class="sd">        :type upperProtocol: :class:`int`</span>
+<span class="sd">        :raise: TypeError if the value is outside of the interval (0, 0xFFFF)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">upperProtocol</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">upperProtocol</span> <span class="o">&gt;</span> <span class="mh">0xffff</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Upper protocol should be between 0 and 0xffff&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_preset</span><span class="p">[</span><span class="s1">&#39;eth.type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">upperProtocol</span></div>
+
+    <span class="c1"># Properties</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">remoteMac</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remote hardware address (MAC)</span>
+
+<span class="sd">        :type: :class:`str`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__remoteMac</span>
+
+    <span class="nd">@remoteMac</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">remoteMac</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remoteMac</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">remoteMac</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;remoteMac cannot be None&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__remoteMac</span> <span class="o">=</span> <span class="n">remoteMac</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">localMac</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Local hardware address (MAC)</span>
+
+<span class="sd">        :type: :class:`str`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__localMac</span>
+
+    <span class="nd">@localMac</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">localMac</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">localMac</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">localMac</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;localMac cannot be None&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__localMac</span> <span class="o">=</span> <span class="n">localMac</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">interface</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Local network interface name (such as &#39;eth0&#39;, &#39;lo&#39;).</span>
+
+<span class="sd">        :type: :class:`str`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__interface</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">set_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method set the the given transmission rate to the channel.</span>
+<span class="sd">        Used in testing network under high load</span>
+
+<span class="sd">        :parameter rate: This specifies the bandwidth in bytes per second to</span>
+<span class="sd">                         respect during traffic emission. Default value is</span>
+<span class="sd">                         ``None``, which means that the bandwidth is only</span>
+<span class="sd">                         limited by the underlying physical layer.</span>
+<span class="sd">        :type rate: :class:`int`, required</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">NetUtils</span><span class="o">.</span><span class="n">set_rate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span> <span class="n">rate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Network rate limited to </span><span class="si">{:.2f}</span><span class="s2"> kBps (</span><span class="si">{}</span><span class="s2"> kbps) on </span><span class="si">{}</span><span class="s2"> interface&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rate</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rate</span><span class="o">*</span><span class="mi">8</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="o">=</span> <span class="n">rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tc status on </span><span class="si">{}</span><span class="s2"> interface: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span> <span class="n">NetUtils</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">)))</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">unset_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method clears the transmission rate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">NetUtils</span><span class="o">.</span><span class="n">set_rate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rate</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Network rate limitation removed on </span><span class="si">{}</span><span class="s2"> interface&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tc status on </span><span class="si">{}</span><span class="s2"> interface: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">,</span> <span class="n">NetUtils</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="CustomEthernetChannelBuilder"><a class="viewcode-back" href="../../../../language_specification/trafficgeneration.html#netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannelBuilder">[docs]</a><span class="k">class</span> <span class="nc">CustomEthernetChannelBuilder</span><span class="p">(</span><span class="n">ChannelBuilder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This builder is used to create an</span>
+<span class="sd">    :class:`~netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel` instance</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.Simulator.Channels.NetInfo import NetInfo</span>
+<span class="sd">    &gt;&gt;&gt; netinfo = NetInfo(dst_addr=&quot;00:00:00:00:00:00&quot;,</span>
+<span class="sd">    ...                   src_addr=&quot;00:00:00:00:00:00&quot;,</span>
+<span class="sd">    ...                   protocol=0x0800,</span>
+<span class="sd">    ...                   interface=&quot;lo&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; builder = CustomEthernetChannelBuilder().set_map(netinfo.getDict())</span>
+<span class="sd">    &gt;&gt;&gt; chan = builder.build()</span>
+<span class="sd">    &gt;&gt;&gt; type(chan)</span>
+<span class="sd">    &lt;class &#39;netzob.Simulator.Channels.CustomEthernetChannel.CustomEthernetChannel&#39;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; chan.localMac  # src_addr key has been mapped to localMac attribute</span>
+<span class="sd">    &#39;00:00:00:00:00:00&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CustomEthernetChannel</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_src_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;localMac&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">set_dst_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;remoteMac&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">set_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">cb</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">channel</span><span class="p">:</span> <span class="n">channel</span><span class="o">.</span><span class="n">setProtocol</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">after_init_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cb</span><span class="p">)</span></div>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

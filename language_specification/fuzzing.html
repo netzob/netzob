@@ -1,0 +1,1161 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Fuzzing Message Format &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Fuzzing Automata" href="fuzzing_automata.html" />
+    <link rel="prev" title="Visiting a State Machine with an Actor" href="actor.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/language_specification/fuzzing.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Fuzzing Message Format</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="fuzzing-message-format">
+<span id="fuzzing-symbols"></span><h1>Fuzzing Message Format<a class="headerlink" href="#fuzzing-message-format" title="Permalink to this headline">#</a></h1>
+<p>The Preset class can be used to apply format message fuzzing. Fuzzing configuration is provided by the <code class="xref py py-meth docutils literal notranslate"><span class="pre">fuzz()</span></code> method.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Vocabulary.Preset.Preset.fuzz">
+<span class="sig-prename descclassname"><span class="pre">Preset.</span></span><span class="sig-name descname"><span class="pre">fuzz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counterMax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Vocabulary/Preset.html#Preset.fuzz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Vocabulary.Preset.Preset.fuzz" title="Permalink to this definition">#</a></dt>
+<dd><p>The <a class="reference internal" href="#netzob.Model.Vocabulary.Preset.Preset.fuzz" title="netzob.Model.Vocabulary.Preset.Preset.fuzz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fuzz</span></code></a> method specifies the fuzzing
+strategy for a symbol, a field, a variable or a type.</p>
+<p>Applying a fuzzing strategy on a object has the effect to
+propagate the fuzzing strategy to the object descendants
+(i.e. fuzzing a symbol will activate fuzzing on its fields,
+which then triggers the fuzzing of the associated field
+variables). It is possible to control the fuzzing propagation
+on node variables (<code class="docutils literal notranslate"><span class="pre">Agg</span></code>, <code class="docutils literal notranslate"><span class="pre">Alt</span></code>, <code class="docutils literal notranslate"><span class="pre">Repeat</span></code> and <code class="docutils literal notranslate"><span class="pre">Opt</span></code>)
+with the <code class="xref py py-attr docutils literal notranslate"><span class="pre">mutateChild</span></code> parameter. Besides, it is
+possible to specifically deactivate fuzzing on a object with
+the <a class="reference internal" href="#netzob.Model.Vocabulary.Preset.Preset.unset" title="netzob.Model.Vocabulary.Preset.Preset.unset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">unset</span></code></a> method.</p>
+<p>The <a class="reference internal" href="#netzob.Model.Vocabulary.Preset.Preset.fuzz" title="netzob.Model.Vocabulary.Preset.Preset.fuzz"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fuzz</span></code></a> method expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Field.Field" title="netzob.Model.Vocabulary.Field.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a>,
+or <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>,
+or <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable" title="netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>,
+or <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Types.AbstractType.AbstractType" title="netzob.Model.Vocabulary.Types.AbstractType.AbstractType"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractType</span></code></a>, required) – The targeted object (either a symbol, a field, a
+variable or a type).</p></li>
+<li><p><strong>mode</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code>, optional) – <p>The fuzzing strategy, which can be either:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">FuzzingMode.MUTATE</span></code>: in this mode, the specialization process generates a legitimate message from a symbol, then some mutations are applied to it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FuzzingMode.GENERATE</span></code>: in this mode, the fuzzing component directly produces a random message.</p></li>
+</ul>
+<p>Default value is <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingMode.GENERATE</span></code>.</p>
+</p></li>
+<li><p><strong>generator</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">iter</span></code>, optional) – <p>The underlying generator used to produce
+pseudo-random or deterministic
+values.</p>
+<p>Default generator is <code class="docutils literal notranslate"><span class="pre">'xorshift'</span></code>, which is
+efficient to produce unique pseudo-random
+numbers.</p>
+<p>A deterministic is also available
+(<code class="docutils literal notranslate"><span class="pre">generator='determinist'</span></code>), and
+may be used in case where a domain has an
+interval (see below).</p>
+</p></li>
+<li><p><strong>seed</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, optional) – <p>An integer used to initialize the underlying
+generator.</p>
+<p>If None, the default value will be set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">Mutator.SEED_DEFAULT</span></code>. The <code class="xref py py-attr docutils literal notranslate"><span class="pre">Mutator.SEED_DEFAULT</span></code> constant is initialized from the configuration variable <code class="xref py py-attr docutils literal notranslate"><span class="pre">Conf.seed</span></code> from the Netzob API <code class="xref py py-class docutils literal notranslate"><span class="pre">Conf</span></code> class.</p>
+</p></li>
+<li><p><strong>counterMax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, optional) – <p>An integer used to limit the number of
+mutations.</p>
+<p>If None, the default value will be set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">COUNTER_MAX_DEFAULT</span></code> = <code class="docutils literal notranslate"><span class="pre">2**32</span></code>.</p>
+</p></li>
+<li><p><strong>kwargs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>, optional) – Some context dependent parameters (see below)
+(optional).</p></li>
+</ul>
+</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> parameter is used to provide specific options
+depending on the targeted object type. Available options are
+described in the following tables:</p>
+<p>Integer options:</p>
+<table class="table">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>interval</p></td>
+<td><p>The scope of values to generate.</p>
+<ul class="simple">
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>, the values will be
+generated between the min and max values of the domain.</p></li>
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>, the values will be
+generated in [0, 2^N-1], where N is the bitsize (storage) of the field.</p></li>
+<li><p>If it is a tuple of integers (min, max), the values will be generated
+between min and max.</p></li>
+</ul>
+<p>Default value is dependant on the chosen generator:</p>
+<ul class="simple">
+<li><p>If the generator is <cite>determinist</cite>,
+default interval will be <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>.</p></li>
+<li><p>Else, default interval will be <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>lengthBitSize</p></td>
+<td><p>The size in bits of the memory on which the generated values have to
+be encoded.</p>
+<p>The following sizes are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (default value), which indicates to use the unit size set
+in the field domain.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_8</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_16</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_24</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_32</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_64</span></code></p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>String options:</p>
+<table class="table">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>endChar</p></td>
+<td><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> character(s) which will end the string. This terminal
+symbol will be mutated by truncating its value if defined on several
+bytes.</p>
+<p>Default value is <code class="xref py py-attr docutils literal notranslate"><span class="pre">DEFAULT_END_CHAR</span></code>. It is used to set the eos
+parameter of <code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>interval</p></td>
+<td><p>The scope of values to generate.</p>
+<ul class="simple">
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>, the values will be
+randomly generated with a size between the min and max values of the
+domain.</p></li>
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>, the values will be
+randomly generated with a size of [0, 2^N-1], where N is the length in
+bits of the integer used to represent the String length.</p></li>
+<li><p>If it is a tuple of integers (min, max), the values will be randomly
+generated with a size between min and max.</p></li>
+</ul>
+<p>Default value is <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>lengthBitSize</p></td>
+<td><p>The size in bits of the memory on which the generated length will be
+encoded. This parameter should be used in conjunction with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code> or with a tuple interval, in order
+to generate String with a length bigger than the original full interval.
+This parameter will not have any effect when used with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>.</p>
+<p>The following sizes are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (default value), which indicates to use the unit size set in
+the field domain.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_4</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_8</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_16</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_24</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_32</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_64</span></code></p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>naughtyStrings</p></td>
+<td><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of potentially dangerous <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> elements.</p>
+<p>Default value is <code class="xref py py-attr docutils literal notranslate"><span class="pre">StringMutator.DEFAULT_NAUGHTY_STRINGS</span></code>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="xref py py-attr docutils literal notranslate"><span class="pre">StringMutator.DEFAULT_NAUGHTY_STRINGS</span></code> default value is the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DEFAULT_NAUGHTY_STRINGS</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="s1">&#39;System(&quot;ls -al /&quot;)&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;`ls -al /`&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;Kernel.exec(&quot;ls -al /&quot;)&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;Kernel.exit(1)&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;</span><span class="si">%x</span><span class="s1">(&quot;ls -al /&quot;)&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;&lt;img </span><span class="se">\\</span><span class="s1">x00src=x onerror=&quot;alert(1)&quot;&gt;&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;$ENV{&quot;HOME&quot;}&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Raw options:</p>
+<table class="table">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>interval</p></td>
+<td><p>The scope of values to generate.</p>
+<ul class="simple">
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>, the values will be
+randomly generated with a size between the min and max values of the
+domain.</p></li>
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>, the values will be
+randomly generated with a size of [0, 2^N-1], where N is the length in
+bits of the integer used to represent the Raw data length.</p></li>
+<li><p>If it is a tuple of integers (min, max), the values will be randomly
+generated with a size between min and max.</p></li>
+</ul>
+<p>Default value is <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>lengthBitSize</p></td>
+<td><p>The size in bits of the memory on which the generated length will be
+encoded. This parameter should be used in conjunction with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code> or with a tuple interval, in order
+to generate Raw data with a length bigger than the original full
+interval. This parameter will not have any effect when used with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>.</p>
+<p>The following sizes are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (default value), which indicates to use the unit size set in
+the field domain.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_4</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_8</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_16</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_24</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_32</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_64</span></code></p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>HexaString options:</p>
+<table class="table">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>interval</p></td>
+<td><p>The scope of values to generate.</p>
+<ul class="simple">
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>, the values will be
+randomly generated with a size between the min and max values of the
+domain.</p></li>
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>, the values will be
+randomly generated with a size of [0, 2^N-1], where N is the length in
+bits of the integer used to represent the HexaString length.</p></li>
+<li><p>If it is a tuple of integers (min, max), the values will be randomly
+generated with a size between min and max.</p></li>
+</ul>
+<p>Default value is <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>lengthBitSize</p></td>
+<td><p>The size in bits of the memory on which the generated length will be
+encoded. This parameter should be used in conjunction with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code> or with a tuple interval, in order
+to generate HexaStrings with a length bigger than the original full
+interval. This parameter will not have any effect when used with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>.</p>
+<p>The following sizes are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (default value), which indicates to use the unit size set in
+the field domain.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_4</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_8</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_16</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_24</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_32</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_64</span></code></p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>BitArray options:</p>
+<table class="table">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>interval</p></td>
+<td><p>The scope of values to generate.</p>
+<ul class="simple">
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>, the values will be
+randomly generated with a size between the min and max values of the
+domain.</p></li>
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>, the values will be
+randomly generated with a size of [0, 2^N-1], where N is the length in
+bits of the integer used to represent the BitArray length.</p></li>
+<li><p>If it is a tuple of integers (min, max), the values will be randomly
+generated with a size between min and max.</p></li>
+</ul>
+<p>Default value is <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>lengthBitSize</p></td>
+<td><p>The size in bits of the memory on which the generated length will be
+encoded. This parameter should be used in conjunction with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code> or with a tuple interval, in order
+to generate BitArrays with a length bigger than the original full
+interval. This parameter will not have any effect when used with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>.</p>
+<p>The following sizes are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (default value), which indicates to use the unit size set in
+the field domain.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_4</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_8</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_16</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_24</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_32</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_64</span></code></p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Timestamp options:</p>
+<table class="table">
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>No option</em></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>IPv4 options:</p>
+<table class="table">
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>No option</em></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Alt options:</p>
+<table class="table">
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mutateChild</p></td>
+<td><p>If <code class="xref py py-const docutils literal notranslate"><span class="pre">True</span></code>, the children variables will
+also be fuzzed.</p>
+<p>Default value is <code class="xref py py-const docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>mappingTypesMutators</p></td>
+<td><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> used to override the global
+default mapping of types with their default
+mutators.</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">{}</span></code>.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>maxDepth</p></td>
+<td><p>An <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> used to limit the recursive calls
+to the mutator.</p>
+<p>Default value is
+<code class="docutils literal notranslate"><span class="pre">AltMutator.DEFAULT_MAX_DEPTH</span> <span class="pre">=</span> <span class="pre">20</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Agg options:</p>
+<table class="table">
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mutateChild</p></td>
+<td><p>If <code class="xref py py-const docutils literal notranslate"><span class="pre">True</span></code>, the children variables will
+also be fuzzed.</p>
+<p>Default value is <code class="xref py py-const docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>mappingTypesMutators</p></td>
+<td><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> used to override the global
+default mapping of types with their default
+mutators.</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">{}</span></code>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Repeat options:</p>
+<table class="table">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mutateChild</p></td>
+<td><p>If <code class="xref py py-const docutils literal notranslate"><span class="pre">True</span></code>, the children variables will also be fuzzed.</p>
+<p>Default value is <code class="xref py py-const docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>mappingTypesMutators</p></td>
+<td><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> used to override the global default mapping of types with
+their default mutators.</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">{}</span></code>.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>interval</p></td>
+<td><p>The scope of values to generate.</p>
+<ul class="simple">
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>, the values will be
+randomly generated with a size between the min and max values of the
+domain.</p></li>
+<li><p>If set to <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>, the values will be
+randomly generated with a size of [0, 2^N-1], where N is the length in
+bits of the integer used to represent the number of repetitions.</p></li>
+<li><p>If it is a tuple of integers (min, max), the values will be randomly
+generated with a size between min and max.</p></li>
+</ul>
+<p>Default value is <code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>lengthBitSize</p></td>
+<td><p>The size in bits of the memory on which the generated length will be
+encoded. This parameter should be used in conjunction with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.FULL_INTERVAL</span></code> or with a tuple interval, in order
+to generate a Repeat with a length bigger than the original full
+interval. This parameter will not have any effect when used with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">FuzzingInterval.DEFAULT_INTERVAL</span></code>.</p>
+<p>The following sizes are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (default value), which indicates to use the unit size set in
+the field domain.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_4</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_8</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_16</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_24</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_32</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UnitSize.SIZE_64</span></code></p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Optional options:</p>
+<table class="table">
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mutateChild</p></td>
+<td><p>If <code class="xref py py-const docutils literal notranslate"><span class="pre">True</span></code>, the children variable will also
+be fuzzed.</p>
+<p>Default value is <code class="xref py py-const docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>mappingTypesMutators</p></td>
+<td><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> used to override the global
+default mapping of types with their default
+mutators.</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">{}</span></code>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Values produced by the determinist generator</strong></p>
+<p>Considering a data field whose length allows to store an <code class="docutils literal notranslate"><span class="pre">N</span></code>
+bits integer (signed or unsigned) with an interval ranging
+from <code class="docutils literal notranslate"><span class="pre">P</span></code> to <code class="docutils literal notranslate"><span class="pre">Q</span></code> inclusive, the determinist generator will produce
+the following integer values:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Q</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">P</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">P</span> <span class="pre">-</span> <span class="pre">1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">-</span> <span class="pre">1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">P</span> <span class="pre">+</span> <span class="pre">1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">+</span> <span class="pre">1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">k</span> <span class="pre">in</span> <span class="pre">[0..N-2]:</span></code></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">-2^k</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-2^k</span> <span class="pre">-</span> <span class="pre">1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-2^k</span> <span class="pre">+</span> <span class="pre">1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2^k</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2^k</span> <span class="pre">-</span> <span class="pre">1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2^k</span> <span class="pre">+</span> <span class="pre">1</span></code></p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Simple fuzzing example</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_data</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="go">b&#39;\x00&#39;</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing example of a field that contains an integer</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int16</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_data</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_data</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">32000</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="go">b&#39;U*&#39;</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing example of a field that contains a size relationship with another field</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int16</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_size</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Size</span><span class="p">([</span><span class="n">f_data</span><span class="p">],</span> <span class="n">Integer</span><span class="p">(</span><span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_data</span><span class="p">,</span> <span class="n">f_size</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_size</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">32000</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="go">b&#39;\x00\x03U*&#39;</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing example in mutation mode of a field that contains an integer</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int16</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_data</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_data</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">FuzzingMode</span><span class="o">.</span><span class="n">MUTATE</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">32000</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00\x02</span><span class="s1">&#39;</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p><strong>Multiple fuzzing call on the same symbol</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int16</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_data</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_data</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30000</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nbFuzz</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbFuzz</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">result</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1000</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing of a field that contains sub-fields</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data1</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data1&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data2</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data2&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int16</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_parent</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="p">[</span><span class="n">f_data1</span><span class="p">,</span> <span class="n">f_data2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_parent</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_parent</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="go">b&#39;\x00\x00\x00&#39;</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing of a whole symbol, and covering all field storage spaces with default fuzzing strategy per types</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data1</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data1&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data2</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data2&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_data1</span><span class="p">,</span> <span class="n">f_data2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">FuzzingInterval</span><span class="o">.</span><span class="n">FULL_INTERVAL</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="go">b&#39;\x00\x00&#39;</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing and covering full storage space of a field</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data1</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data1&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data2</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data2&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_data1</span><span class="p">,</span> <span class="n">f_data2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_data2</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">FuzzingInterval</span><span class="o">.</span><span class="n">FULL_INTERVAL</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="go">b&#39;\x02\x00&#39;</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing and covering full storage space of a field, after redefining its storage space from 8 to 16 bits</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data1</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data1&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data2</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data2&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_data1</span><span class="p">,</span> <span class="n">f_data2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_data2</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">FuzzingInterval</span><span class="o">.</span><span class="n">FULL_INTERVAL</span><span class="p">,</span> <span class="n">lengthBitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="go">b&#39;\x02\x00\x00&#39;</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing and changing the default fuzzing parameters for types</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data1</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data1&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data2</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data2&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_data1</span><span class="p">,</span> <span class="n">f_data2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="go">b&#39;\x0c\x0c&#39;</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing of an aggregate of variables with non-default types/mutators mapping</strong></p>
+<p>In this example, we use a determinist integer mutator instead
+of the pseudo-random integer mutator used by default for integer fuzzing.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.IntegerMutator</span> <span class="kn">import</span> <span class="n">IntegerMutator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_agg</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;agg&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Agg</span><span class="p">([</span><span class="n">int16</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
+<span class="gp">... </span>                                      <span class="n">int16</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">))]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_agg</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mapping</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mapping</span><span class="p">[</span><span class="n">Integer</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;generator&#39;</span><span class="p">:</span><span class="s1">&#39;determinist&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_agg</span><span class="p">,</span> <span class="n">mappingTypesMutators</span><span class="o">=</span><span class="n">mapping</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span>
+<span class="go">b&#39; \x01 \x01&#39;</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing of an alternate of variables with non-default types/mutators mapping</strong></p>
+<p>In this example, we use a determinist integer mutator instead
+of the pseudo-random integer mutator used by default for integer fuzzing.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.IntegerMutator</span> <span class="kn">import</span> <span class="n">IntegerMutator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_alt</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;alt&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Alt</span><span class="p">([</span><span class="n">int16</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
+<span class="gp">... </span>                                      <span class="n">int16</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">))]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_alt</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mapping</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mapping</span><span class="p">[</span><span class="n">Integer</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;generator&#39;</span><span class="p">:</span><span class="s1">&#39;determinist&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_alt</span><span class="p">,</span> <span class="n">mappingTypesMutators</span><span class="o">=</span><span class="n">mapping</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span>
+<span class="go">b&#39; \x01&#39;</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing of an aggregate of variables without fuzzing the children</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f_agg</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;agg&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Agg</span><span class="p">([</span><span class="n">int8</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
+<span class="gp">... </span>                                      <span class="n">int8</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">))]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_agg</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_agg</span><span class="p">,</span> <span class="n">mutateChild</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">4</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">5</span> <span class="o">&lt;=</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">8</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing configuration with a global maximum number of mutations</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_alt</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;alt&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Alt</span><span class="p">([</span><span class="n">int8</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
+<span class="gp">... </span>                                      <span class="n">int8</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">))]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_alt</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">setFuzzingCounterMax</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">f_alt</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="go">b&#39;\x00&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="gr">StopIteration</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing configuration with a maximum number of mutations, expressed with an absolute limit, on a symbol</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Agg</span><span class="p">([</span><span class="n">uint8</span><span class="p">(),</span> <span class="n">uint8</span><span class="p">()]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">field</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="go">65536</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">counterMax</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="c1"># use data</span>
+<span class="gp">... </span>    <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+<span class="go">80</span>
+</pre></div>
+</div>
+<p><strong>Fuzzing configuration with a maximum number of mutations, expressed with a ratio, on a symbol</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Agg</span><span class="p">([</span><span class="n">uint8</span><span class="p">(),</span> <span class="n">uint8</span><span class="p">()]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">([</span><span class="n">field</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="go">65536</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.001</span><span class="p">)</span>
+<span class="go">65</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">counterMax</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="c1"># use data</span>
+<span class="gp">... </span>    <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+<span class="go">65</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>  <span class="c1"># This is needed to restore counterMax default value for unit test purpose</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Vocabulary.Preset.Preset.setFuzzingCounterMax">
+<span class="sig-prename descclassname"><span class="pre">Preset.</span></span><span class="sig-name descname"><span class="pre">setFuzzingCounterMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counterMax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Types.Integer.Integer" title="netzob.Model.Vocabulary.Types.Integer.Integer"><span class="pre">netzob.Model.Vocabulary.Types.Integer.Integer</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Vocabulary/Preset.html#Preset.setFuzzingCounterMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Vocabulary.Preset.Preset.setFuzzingCounterMax" title="Permalink to this definition">#</a></dt>
+<dd><p>Set the default value for the maximum number of mutations to
+produce in the context of the Preset instance. A <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>
+should be used to represent an absolute value, whereas a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> should be used to represent a ratio in percent.</p>
+<p>The default maximum value is <code class="xref py py-attr docutils literal notranslate"><span class="pre">COUNTER_MAX_DEFAULT</span></code> = <code class="docutils literal notranslate"><span class="pre">2**32</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>counterMax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, required) – the maximum number of mutations to produce.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Vocabulary.Preset.Preset.getFuzzingCounterMax">
+<span class="sig-prename descclassname"><span class="pre">Preset.</span></span><span class="sig-name descname"><span class="pre">getFuzzingCounterMax</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Vocabulary/Preset.html#Preset.getFuzzingCounterMax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Vocabulary.Preset.Preset.getFuzzingCounterMax" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the default value for the maximum number of mutations to
+produce in the context of the Preset instance. A <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>
+should be used to represent an absolute value, whereas a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> should be used to represent a ratio in percent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the maximum number of mutations to produce.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="netzob.Model.Vocabulary.Preset.Preset.unset">
+<span class="sig-prename descclassname"><span class="pre">Preset.</span></span><span class="sig-name descname"><span class="pre">unset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/netzob/Model/Vocabulary/Preset.html#Preset.unset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netzob.Model.Vocabulary.Preset.Preset.unset" title="Permalink to this definition">#</a></dt>
+<dd><p>The <a class="reference internal" href="#netzob.Model.Vocabulary.Preset.Preset.unset" title="netzob.Model.Vocabulary.Preset.Preset.unset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">unset</span></code></a> method deactivates the fixed
+value or the fuzzing strategy for a symbol, a field or a
+variable. It is not possible to unset the fuzzing on a type.</p>
+<p>The <a class="reference internal" href="#netzob.Model.Vocabulary.Preset.Preset.unset" title="netzob.Model.Vocabulary.Preset.Preset.unset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">unset</span></code></a> method expects some parameters:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Field.Field" title="netzob.Model.Vocabulary.Field.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a>,
+or <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Symbol.Symbol" title="netzob.Model.Vocabulary.Symbol.Symbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">Symbol</span></code></a>,
+or <a class="reference internal" href="dataspec.html#netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable" title="netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>, required) – The targeted object (either a symbol, a field or a
+variable).</p>
+</dd>
+</dl>
+<p>Example of fuzzing of a whole symbol except one field:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netzob.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data1</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data1&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f_data2</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data2&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">int8</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">symbol</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">f_data1</span><span class="p">,</span> <span class="n">f_data2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span> <span class="o">=</span> <span class="n">Preset</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">fuzz</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">FuzzingInterval</span><span class="o">.</span><span class="n">FULL_INTERVAL</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preset</span><span class="o">.</span><span class="n">unset</span><span class="p">(</span><span class="n">f_data2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">symbol</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">preset</span><span class="p">))</span>
+<span class="go">b&#39;\x00\x04&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="actor.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Visiting a State Machine with an Actor</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="fuzzing_automata.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Fuzzing Automata</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

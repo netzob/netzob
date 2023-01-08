@@ -1,0 +1,1395 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Types.Integer &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Types.Integer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># |          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># |               Netzob : Inferring communication protocols                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1"># | This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1"># | it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1"># | the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1"># | (at your option) any later version.                                       |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1"># | but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1"># | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1"># | GNU General Public License for more details.                              |</span>
+<span class="c1"># |                                                                           |</span>
+<span class="c1"># | You should have received a copy of the GNU General Public License         |</span>
+<span class="c1"># | along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | @url      : http://www.netzob.org                                         |</span>
+<span class="c1"># | @contact  : contact@netzob.org                                            |</span>
+<span class="c1"># | @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1"># |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | File contributors :                                                       |</span>
+<span class="c1"># |       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1"># |       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Standard library imports                                                  |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">bitarray</span> <span class="kn">import</span> <span class="n">bitarray</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Related third party imports                                               |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="c1"># | Local application imports                                                 |</span>
+<span class="c1"># +---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary</span> <span class="kn">import</span> <span class="n">partialclass</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.AbstractType</span> <span class="kn">import</span> <span class="n">AbstractType</span><span class="p">,</span> <span class="n">Endianness</span><span class="p">,</span> <span class="n">Sign</span><span class="p">,</span> <span class="n">UnitSize</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">public_api</span>
+
+
+<div class="viewcode-block" id="Integer"><a class="viewcode-back" href="../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Types.Integer.Integer">[docs]</a><span class="k">class</span> <span class="nc">Integer</span><span class="p">(</span><span class="n">AbstractType</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Integer class represents an integer, with the</span>
+<span class="sd">    capability to express constraints regarding the sign, the</span>
+<span class="sd">    endianness and the unit size.</span>
+
+<span class="sd">    The Integer constructor expects some parameters:</span>
+
+<span class="sd">    :param value: This parameter is used to describe a domain that contains a fixed integer. If None, the constructed Integer will represent an interval of values (see :attr:`interval` parameter).</span>
+<span class="sd">    :type value: :class:`bitarray` or :class:`int`, optional</span>
+<span class="sd">    :param interval: This parameter is used to describe a domain that contains an interval of permitted values. This information is used to compute the storage size of the Integer. If None, the interval will range from the minimum value to the maximum value that an integer can encode, according to its unit size, endianness and sign attributes.</span>
+<span class="sd">    :type interval: a tuple with the min and the max values specified as :class:`int`, optional</span>
+<span class="sd">    :param unitSize: The unitsize, in bits, of the storage area used to encode the integer. Values must be one of UnitSize.SIZE_*.</span>
+
+<span class="sd">      The following unit sizes are available:</span>
+
+<span class="sd">      * UnitSize.SIZE_8</span>
+<span class="sd">      * UnitSize.SIZE_16 (default unit size)</span>
+<span class="sd">      * UnitSize.SIZE_24</span>
+<span class="sd">      * UnitSize.SIZE_32</span>
+<span class="sd">      * UnitSize.SIZE_64</span>
+
+<span class="sd">    :type unitSize: :class:`UnitSize &lt;netzob.Model.Vocabulary.Types.AbstractType.UnitSize&gt;`, optional</span>
+
+<span class="sd">    :param endianness: The endianness of the value.</span>
+
+<span class="sd">      The following endiannesses are available:</span>
+
+<span class="sd">      * Endianness.BIG (default endianness)</span>
+<span class="sd">      * Endianness.LITTLE</span>
+
+<span class="sd">    :type endianness: :class:`Endianness &lt;netzob.Model.Vocabulary.Types.AbstractType.Endianness&gt;`, optional</span>
+
+<span class="sd">    :param sign: The sign of the value.</span>
+
+<span class="sd">      The following signs are available:</span>
+
+<span class="sd">      * Sign.SIGNED (default sign)</span>
+<span class="sd">      * Sign.UNSIGNED</span>
+
+<span class="sd">    :type sign: :class:`Sign &lt;netzob.Model.Vocabulary.Types.AbstractType.Sign&gt;`, optional</span>
+<span class="sd">    :param default: This parameter is the default value used in specialization.</span>
+<span class="sd">    :type default: :class:`bitarray` or :class:`int`, optional</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">       :attr:`value` and :attr:`interval` parameters are mutually exclusive.</span>
+<span class="sd">       Setting both values raises an :class:`Exception`.</span>
+
+<span class="sd">       :attr:`value` and :attr:`default` parameters are mutually exclusive.</span>
+<span class="sd">       Setting both values raises an :class:`Exception`.</span>
+
+
+<span class="sd">    The Integer class provides the following public variables:</span>
+
+<span class="sd">    :var value: The current value of the instance. This value is represented</span>
+<span class="sd">                under the bitarray format.</span>
+<span class="sd">    :var size: The size of the expected data type defined by a tuple (min integer, max integer).</span>
+<span class="sd">               Instead of a tuple, an integer can be used to represent both min and max values.</span>
+<span class="sd">    :var unitSize: The unitSize of the current value.</span>
+<span class="sd">    :var endianness: The endianness of the current value.</span>
+<span class="sd">    :var sign: The sign of the current value.</span>
+<span class="sd">    :var default: The default value used in specialization.</span>
+<span class="sd">    :vartype value: :class:`bitarray`</span>
+<span class="sd">    :vartype size: a tuple (:class:`int`, :class:`int`) or :class:`int`</span>
+<span class="sd">    :vartype unitSize: :class:`str`</span>
+<span class="sd">    :vartype endianness: :class:`str`</span>
+<span class="sd">    :vartype sign: :class:`str`</span>
+<span class="sd">    :vartype default: :class:`bitarray`</span>
+
+<span class="sd">    **Examples of Integer object instantiations**</span>
+
+<span class="sd">    The creation of an Integer with no parameter will create a signed,</span>
+<span class="sd">    big-endian integer of 16 bits:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = Integer()</span>
+<span class="sd">    &gt;&gt;&gt; i.generate().tobytes()  # doctest: +SKIP</span>
+<span class="sd">    b&#39;\x94\xba&#39;</span>
+
+<span class="sd">    The following example shows how to define an integer encoded in</span>
+<span class="sd">    sequences of 8 bits and with a constant value of 12 (thus producing</span>
+<span class="sd">    ``\x0c``):</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = Integer(12, unitSize=UnitSize.SIZE_8)</span>
+<span class="sd">    &gt;&gt;&gt; i.generate().tobytes()</span>
+<span class="sd">    b&#39;\x0c&#39;</span>
+
+<span class="sd">    The following example shows how to define an integer encoded in</span>
+<span class="sd">    sequences of 32 bits and with a constant value of 12 (thus</span>
+<span class="sd">    producing ``\x00\x00\x00\x0c``):</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = Integer(12, unitSize=UnitSize.SIZE_32)</span>
+<span class="sd">    &gt;&gt;&gt; i.generate().tobytes()</span>
+<span class="sd">    b&#39;\x00\x00\x00\x0c&#39;</span>
+
+<span class="sd">    The following example shows how to define an integer encoded in</span>
+<span class="sd">    sequences of 32 bits in little endian with a constant value of 12</span>
+<span class="sd">    (thus producing ``\x0c\x00\x00\x00``):</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = Integer(12, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)</span>
+<span class="sd">    &gt;&gt;&gt; i.generate().tobytes()</span>
+<span class="sd">    b&#39;\x0c\x00\x00\x00&#39;</span>
+
+<span class="sd">    The following example shows how to define a signed integer</span>
+<span class="sd">    encoded in sequences of 16 bits with a constant value of -12 (thus</span>
+<span class="sd">    producing ``\xff\xf4``):</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = Integer(-12, sign=Sign.SIGNED, unitSize=UnitSize.SIZE_16)</span>
+<span class="sd">    &gt;&gt;&gt; i.generate().tobytes()</span>
+<span class="sd">    b&#39;\xff\xf4&#39;</span>
+
+
+<span class="sd">    **Examples of pre-defined Integer types**</span>
+
+<span class="sd">    For convenience, common specific integer types are also available, with</span>
+<span class="sd">    pre-defined values of :attr:`unitSize`, :attr:`sign` and :attr:`endianness`</span>
+<span class="sd">    attributes. They are used to shorten calls of singular definitions.</span>
+
+<span class="sd">    Available big-endian pre-defined Integer types are:</span>
+
+<span class="sd">    * int8be (or int8)</span>
+<span class="sd">    * int16be (or int16)</span>
+<span class="sd">    * int24be (or int24)</span>
+<span class="sd">    * int32be (or int32)</span>
+<span class="sd">    * int64be (or int64)</span>
+<span class="sd">    * uint8be (or uint8)</span>
+<span class="sd">    * uint16be (or uint16)</span>
+<span class="sd">    * uint24be (or uint24)</span>
+<span class="sd">    * uint32be (or uint32)</span>
+<span class="sd">    * uint64be (or uint64)</span>
+
+<span class="sd">    Available little-endian pre-defined Integer types are:</span>
+
+<span class="sd">    * int8le</span>
+<span class="sd">    * int16le</span>
+<span class="sd">    * int24le</span>
+<span class="sd">    * int32le</span>
+<span class="sd">    * int64le</span>
+<span class="sd">    * uint8le</span>
+<span class="sd">    * uint16le</span>
+<span class="sd">    * uint24le</span>
+<span class="sd">    * uint32le</span>
+<span class="sd">    * uint64le</span>
+
+<span class="sd">    For example, a *16-bit little-endian unsigned* Integer is classically defined</span>
+<span class="sd">    like this:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = Integer(42,</span>
+<span class="sd">    ...             unitSize=UnitSize.SIZE_16,</span>
+<span class="sd">    ...             sign=Sign.UNSIGNED,</span>
+<span class="sd">    ...             endianness=Endianness.LITTLE)</span>
+
+<span class="sd">    Could also be called in an equivalent form:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = uint16le(42)</span>
+
+<span class="sd">    There is an equivalence between these two integers, for every</span>
+<span class="sd">    internal value of the type:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i1 = Integer(42,</span>
+<span class="sd">    ...              unitSize=UnitSize.SIZE_16,</span>
+<span class="sd">    ...              sign=Sign.UNSIGNED,</span>
+<span class="sd">    ...              endianness=Endianness.LITTLE)</span>
+<span class="sd">    &gt;&gt;&gt; i2 = uint16le(42)</span>
+<span class="sd">    &gt;&gt;&gt; i1, i2</span>
+<span class="sd">    (42, 42)</span>
+<span class="sd">    &gt;&gt;&gt; i1 == i2</span>
+<span class="sd">    True</span>
+
+<span class="sd">    But a comparison between two specific integers of different kinds will</span>
+<span class="sd">    always fail, even if their values look equivalent:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i1 = uint16le(42)</span>
+<span class="sd">    &gt;&gt;&gt; i2 = uint32le(42)</span>
+<span class="sd">    &gt;&gt;&gt; i1 == i2</span>
+<span class="sd">    False</span>
+
+<span class="sd">    And even when the concrete value seems identical, the integer</span>
+<span class="sd">    objects are not:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i1 = uint16le(42)</span>
+<span class="sd">    &gt;&gt;&gt; i2 = int16le(42)</span>
+<span class="sd">    &gt;&gt;&gt; i1, i2</span>
+<span class="sd">    (42, 42)</span>
+<span class="sd">    &gt;&gt;&gt; print(i1, i2)</span>
+<span class="sd">    Integer(42) Integer(42)</span>
+<span class="sd">    &gt;&gt;&gt; i1 == i2</span>
+<span class="sd">    False</span>
+
+
+<span class="sd">    **Integer raw representations**</span>
+
+<span class="sd">    The following examples show how to create integers with different</span>
+<span class="sd">    raw representation, depending on data type attributes. In these</span>
+<span class="sd">    examples, we create a 16-bit little endian, a 16-bit big endian,</span>
+<span class="sd">    a 32-bit little endian and a 32-bit big endian:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; int16le(1234).value.tobytes()</span>
+<span class="sd">    b&#39;\xd2\x04&#39;</span>
+<span class="sd">    &gt;&gt;&gt; int16be(1234).value.tobytes()</span>
+<span class="sd">    b&#39;\x04\xd2&#39;</span>
+<span class="sd">    &gt;&gt;&gt; int32le(1234).value.tobytes()</span>
+<span class="sd">    b&#39;\xd2\x04\x00\x00&#39;</span>
+<span class="sd">    &gt;&gt;&gt; int32be(1234).value.tobytes()</span>
+<span class="sd">    b&#39;\x00\x00\x04\xd2&#39;</span>
+
+
+<span class="sd">    **Representation of Integer type objects**</span>
+
+<span class="sd">    The following examples show the representation of Integer objects</span>
+<span class="sd">    with and without a constant value.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = int16le(12)</span>
+<span class="sd">    &gt;&gt;&gt; print(i)</span>
+<span class="sd">    Integer(12)</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = int16le()</span>
+<span class="sd">    &gt;&gt;&gt; print(i)</span>
+<span class="sd">    Integer(-32768,32767)</span>
+
+
+<span class="sd">    **Encoding of Integer type objects**</span>
+
+<span class="sd">    The following examples show the encoding of Integer objects with</span>
+<span class="sd">    and without a constant value.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = int32le(12)</span>
+<span class="sd">    &gt;&gt;&gt; repr(i)</span>
+<span class="sd">    &#39;12&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; i = int32le()</span>
+<span class="sd">    &gt;&gt;&gt; repr(i)</span>
+<span class="sd">    &#39;None&#39;</span>
+
+
+<span class="sd">    **Using a default value**</span>
+
+<span class="sd">    This next example shows the usage of a default value:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; t = uint8(default=3)</span>
+<span class="sd">    &gt;&gt;&gt; t.generate().tobytes()</span>
+<span class="sd">    b&#39;\x03&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; t = Integer(interval=(1, 4), default=4)</span>
+<span class="sd">    &gt;&gt;&gt; t.generate().tobytes()</span>
+<span class="sd">    b&#39;\x00\x04&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span><span class="p">,</span>
+                 <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+                 <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">(),</span>
+                 <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;An Integer should have either its value or its interval set, but not both&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;An Integer should have either its constant value or its default value set, but not both&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Validate uniSize</span>
+        <span class="n">valid_unitSizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_8</span><span class="p">,</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span><span class="p">,</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span><span class="p">,</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_32</span><span class="p">,</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_64</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">unitSize</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_unitSizes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;unitSize parameter should be one of &#39;</span><span class="si">{}</span><span class="s2">&#39;, but not &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">valid_unitSizes</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">unitSize</span><span class="p">)))</span>
+
+        <span class="c1"># Convert value to bitarray</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+
+            <span class="c1"># Check if value is correct</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input value shoud be a integer. Value received: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+            <span class="n">value</span> <span class="o">=</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+                <span class="n">value</span><span class="p">,</span>
+                <span class="n">Integer</span><span class="p">,</span>
+                <span class="n">BitArray</span><span class="p">,</span>
+                <span class="n">src_unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">src_endianness</span><span class="o">=</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">src_sign</span><span class="o">=</span><span class="n">sign</span><span class="p">,</span>
+                <span class="n">dst_unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">dst_endianness</span><span class="o">=</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">dst_sign</span><span class="o">=</span><span class="n">sign</span><span class="p">)</span>
+
+        <span class="c1"># Convert default value to bitarray</span>
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+
+            <span class="c1"># Check if default value is correct</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input default value shoud be a integer. Default value received: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">default</span><span class="p">))</span>
+
+            <span class="n">default</span> <span class="o">=</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+                <span class="n">default</span><span class="p">,</span>
+                <span class="n">Integer</span><span class="p">,</span>
+                <span class="n">BitArray</span><span class="p">,</span>
+                <span class="n">src_unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">src_endianness</span><span class="o">=</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">src_sign</span><span class="o">=</span><span class="n">sign</span><span class="p">,</span>
+                <span class="n">dst_unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">dst_endianness</span><span class="o">=</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">dst_sign</span><span class="o">=</span><span class="n">sign</span><span class="p">)</span>
+
+        <span class="c1"># Handle interval</span>
+        <span class="k">if</span> <span class="n">unitSize</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;unitSize cannot be None&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sign</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;sign cannot be None&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">endianness</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;endianness cannot be None&quot;</span><span class="p">)</span>
+        <span class="n">interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalizeInterval</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">unitSize</span><span class="p">,</span> <span class="n">sign</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">value</span><span class="p">,</span>
+            <span class="n">interval</span><span class="p">,</span>
+            <span class="n">unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span>
+            <span class="n">endianness</span><span class="o">=</span><span class="n">endianness</span><span class="p">,</span>
+            <span class="n">sign</span><span class="o">=</span><span class="n">sign</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="n">Integer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="n">unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span> <span class="n">endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;PAN&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(interval=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">,</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_normalizeInterval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">unitSize</span><span class="p">,</span> <span class="n">sign</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">interval</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">interval</span> <span class="o">=</span> <span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">interval</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input interval shoud be a tuple of two integers. Value received: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">interval</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;First element of interval should be an integer&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Second element of interval should be an integer&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Interval must be defined with a tuple of integers, and cannot be both equal to zero&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Internal must be defined with a tuple of integers, where the second value is greater than the first value&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Compute min and max values</span>
+        <span class="n">min_interval</span> <span class="o">=</span> <span class="n">getMinStorageValue</span><span class="p">(</span><span class="n">unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="n">sign</span><span class="p">)</span>
+        <span class="n">max_interval</span> <span class="o">=</span> <span class="n">getMaxStorageValue</span><span class="p">(</span><span class="n">unitSize</span><span class="o">=</span><span class="n">unitSize</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="n">sign</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_interval</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">max_interval</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Specified interval &#39;</span><span class="si">{}</span><span class="s2">&#39; does not fit in specified unitSize &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">unitSize</span><span class="p">))</span>
+
+        <span class="c1"># Reset min and max values if a valid interval is provided</span>
+        <span class="k">if</span> <span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">min_interval</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_interval</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">min_interval</span><span class="p">,</span> <span class="n">max_interval</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; Integer().count()</span>
+<span class="sd">        65536</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer(4).count()</span>
+<span class="sd">        1</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer(interval=(1, 10)).count()</span>
+<span class="sd">        10</span>
+
+<span class="sd">        &gt;&gt;&gt; uint8(interval=(1, 10)).count()</span>
+<span class="sd">        10</span>
+
+<span class="sd">        &gt;&gt;&gt; uint8().count()</span>
+<span class="sd">        256</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getMaxValue</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">getMinValue</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">getMinValue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+            <span class="k">return</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">BitArray</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">dst_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span> <span class="n">dst_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span> <span class="n">dst_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getMaxValue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+            <span class="k">return</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">BitArray</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">dst_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span> <span class="n">dst_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span> <span class="n">dst_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getMinStorageValue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">getMinStorageValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getMaxStorageValue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">getMaxStorageValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">canParse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">data</span><span class="p">,</span>
+                 <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+                 <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+                 <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method returns True if data is a Integer.</span>
+<span class="sd">        For the moment its always true because we consider</span>
+<span class="sd">        the integer type to be very similar to the raw type.</span>
+
+<span class="sd">        :param data: the data to check</span>
+<span class="sd">        :type data: python raw</span>
+<span class="sd">        :return: True if data is can be parsed as a Integer</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        :raise: TypeError if the data is None</span>
+
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.TypeConverter import TypeConverter</span>
+<span class="sd">        &gt;&gt;&gt; Integer().canParse(10)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer(10).canParse(11)</span>
+<span class="sd">        False</span>
+
+<span class="sd">        By default, an Integer() with no parameter has a storage size</span>
+<span class="sd">        of 8 bits:</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer().canParse(-128)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer().canParse(32768)</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        struct.error: &#39;h&#39; format requires -32768 &lt;= number &lt;= 32767</span>
+
+<span class="sd">        To specify a bigger storage, the unitSize should be used:</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer(unitSize=UnitSize.SIZE_32).canParse(32768)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;data cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># data cannot be an empty string</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Convert data to bitarray</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+
+            <span class="c1"># Check if data is correct</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input data shoud be a integer. Data received: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">Integer</span><span class="p">,</span>
+                <span class="n">BitArray</span><span class="p">,</span>
+                <span class="n">src_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">src_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">src_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span>
+                <span class="n">dst_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                <span class="n">dst_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span>
+                <span class="n">dst_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">)</span>
+
+        <span class="c1"># Compare with self.value if it is defined</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">data</span>
+
+        <span class="c1"># Else, compare with expected size</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="n">minSize</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+            <span class="n">maxSize</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+            <span class="n">int_data</span> <span class="o">=</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">BitArray</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span>
+                                             <span class="n">dst_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                                             <span class="n">dst_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span>
+                                             <span class="n">dst_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">minSize</span> <span class="o">&lt;=</span> <span class="n">int_data</span> <span class="o">&lt;=</span> <span class="n">maxSize</span>
+
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot parse this data &#39;</span><span class="si">{}</span><span class="s2">&#39; because no domain is &quot;</span>
+                        <span class="s2">&quot;expected.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+               <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+               <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+               <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;This method convert the specified data in python raw format.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; Integer.decode(23)</span>
+<span class="sd">        b&#39;\x17&#39;</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer.decode(-1, sign=Sign.UNSIGNED)</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        struct.error: ubyte format requires 0 &lt;= number &lt;= 255</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer.decode(-1, sign=Sign.SIGNED)</span>
+<span class="sd">        b&#39;\xff&#39;</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer.decode(2000000000000000)</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        struct.error: byte format requires -128 &lt;= number &lt;= 127</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer.decode(2000000000000000, unitSize=UnitSize.SIZE_64)</span>
+<span class="sd">        b&#39;\x00\x07\x1a\xfdI\x8d\x00\x00&#39;</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer.decode(25, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)</span>
+<span class="sd">        b&#39;\x19\x00&#39;</span>
+<span class="sd">        &gt;&gt;&gt; Integer.decode(25, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)</span>
+<span class="sd">        b&#39;\x00\x19&#39;</span>
+
+<span class="sd">        &gt;&gt;&gt; val = 167749568</span>
+<span class="sd">        &gt;&gt;&gt; a = Integer.decode(val, unitSize=UnitSize.SIZE_32)</span>
+<span class="sd">        &gt;&gt;&gt; b = Integer.encode(a, unitSize=UnitSize.SIZE_32)</span>
+<span class="sd">        &gt;&gt;&gt; b == val</span>
+<span class="sd">        True</span>
+
+
+<span class="sd">        :param data: the data encoded in Integer which will be decoded in raw</span>
+<span class="sd">        :type data: the current type</span>
+<span class="sd">        :keyword unitSize: the unitsize to consider while encoding. Values must be one of UnitSize.SIZE_*</span>
+<span class="sd">        :type unitSize: str</span>
+<span class="sd">        :keyword endianness: the endianness to consider while encoding. Values must be Endianness.BIG or Endianness.LITTLE</span>
+<span class="sd">        :type endianness: str</span>
+<span class="sd">        :keyword sign: the sign to consider while encoding Values must be Sign.SIGNED or Sign.UNSIGNED</span>
+<span class="sd">        :type sign: :class:`Enum`</span>
+
+<span class="sd">        :return: data encoded in python raw</span>
+<span class="sd">        :rtype: python raw</span>
+<span class="sd">        :raise: TypeError if parameters are not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;data cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="n">computeFormat</span><span class="p">(</span><span class="n">unitSize</span><span class="p">,</span> <span class="n">endianness</span><span class="p">,</span> <span class="n">sign</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+        <span class="c1"># Special case for 24 bits integers</span>
+        <span class="k">if</span> <span class="n">unitSize</span> <span class="o">==</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">endianness</span> <span class="o">==</span> <span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+               <span class="n">unitSize</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultUnitSize</span><span class="p">(),</span>
+               <span class="n">endianness</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultEndianness</span><span class="p">(),</span>
+               <span class="n">sign</span><span class="o">=</span><span class="n">AbstractType</span><span class="o">.</span><span class="n">defaultSign</span><span class="p">()):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;This method converts a python raw data to an Integer.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+
+<span class="sd">        &gt;&gt;&gt; raw = Integer.decode(23)</span>
+<span class="sd">        &gt;&gt;&gt; Integer.encode(raw)</span>
+<span class="sd">        23</span>
+
+<span class="sd">        &gt;&gt;&gt; raw = Integer.decode(1200, unitSize=UnitSize.SIZE_16)</span>
+<span class="sd">        &gt;&gt;&gt; Integer.encode(raw, unitSize=UnitSize.SIZE_16)</span>
+<span class="sd">        1200</span>
+
+<span class="sd">        &gt;&gt;&gt; raw = Integer.decode(25, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)</span>
+<span class="sd">        &gt;&gt;&gt; Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)</span>
+<span class="sd">        6400</span>
+<span class="sd">        &gt;&gt;&gt; Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.LITTLE)</span>
+<span class="sd">        25</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer.encode(b&#39;\xcc\xac\x9c\x0c\x1c\xacL\x1c,\xac&#39;, unitSize=UnitSize.SIZE_8)</span>
+<span class="sd">        -395865088909314208584756</span>
+
+<span class="sd">        &gt;&gt;&gt; raw = b&#39;\xcc\xac\x9c&#39;</span>
+<span class="sd">        &gt;&gt;&gt; Integer.encode(raw, unitSize=UnitSize.SIZE_16, endianness=Endianness.BIG)</span>
+<span class="sd">        10210476</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer.encode(raw, unitSize=UnitSize.SIZE_32, endianness=Endianness.BIG)</span>
+<span class="sd">        13413532</span>
+
+<span class="sd">        &gt;&gt;&gt; Integer.encode(raw, unitSize=UnitSize.SIZE_32, endianness=Endianness.LITTLE)</span>
+<span class="sd">        10267852</span>
+
+<span class="sd">        :param data: the data encoded in python raw which will be encoded in current type</span>
+<span class="sd">        :type data: python raw</span>
+<span class="sd">        :keyword unitSize: the unitsize to consider while encoding. Values must be one of UnitSize.SIZE_*</span>
+<span class="sd">        :type unitSize: :class:`Enum`</span>
+<span class="sd">        :keyword endianness: the endianness to consider while encoding. Values must be Endianness.BIG or Endianness.LITTLE</span>
+<span class="sd">        :type endianness: :class:`Enum`</span>
+<span class="sd">        :keyword sign: the sign to consider while encoding Values must be Sign.SIGNED or Sign.UNSIGNED</span>
+<span class="sd">        :type sign: :class:`Enum`</span>
+
+<span class="sd">        :return: data encoded in python raw</span>
+<span class="sd">        :rtype: python raw</span>
+<span class="sd">        :raise: TypeError if parameters are not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;data cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="n">perWordFormat</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="n">computeFormat</span><span class="p">(</span><span class="n">unitSize</span><span class="p">,</span> <span class="n">endianness</span><span class="p">,</span> <span class="n">sign</span><span class="p">)</span>
+
+        <span class="n">nbWords</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">/</span> <span class="nb">int</span><span class="p">(</span><span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="c1"># Check whether the input data matches unitSize. If not take</span>
+        <span class="c1"># precautions to able to pad it with null bytes later.</span>
+        <span class="n">padding_nullbytes</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">rest</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span> <span class="o">%</span> <span class="nb">int</span><span class="p">(</span><span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rest</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">nbWords</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">padding_nullbytes</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">-</span> <span class="n">rest</span><span class="p">)</span> <span class="o">/</span> <span class="mi">8</span>
+
+        <span class="n">finalValue</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">iWord</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">nbWords</span>
+        <span class="n">inc</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">endianness</span> <span class="o">==</span> <span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">nbWords</span>
+            <span class="n">inc</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">inc</span><span class="p">):</span>
+            <span class="c1"># Extract the portion that represents the current word</span>
+            <span class="n">startPos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">iWord</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="n">endPos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">iWord</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">/</span> <span class="mi">8</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
+
+            <span class="n">wordData</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">startPos</span><span class="p">:</span><span class="n">endPos</span><span class="p">]</span>
+
+            <span class="c1"># Pad with null bytes to statisfy the unitSize.</span>
+            <span class="k">if</span> <span class="n">padding_nullbytes</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">==</span> <span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">inc</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">endianness</span> <span class="o">==</span> <span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">:</span>
+                    <span class="n">wordData</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">padding_nullbytes</span><span class="p">)</span> <span class="o">+</span> <span class="n">wordData</span>
+                <span class="k">elif</span> <span class="n">endianness</span> <span class="o">==</span> <span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">:</span>
+                    <span class="n">wordData</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">padding_nullbytes</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Invalid endianness value: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">endianness</span><span class="p">))</span>
+
+            <span class="c1"># Special case for 24 bits integers</span>
+            <span class="k">if</span> <span class="n">unitSize</span> <span class="o">==</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">endianness</span> <span class="o">==</span> <span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">:</span>
+                    <span class="n">wordData</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">wordData</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">wordData</span> <span class="o">=</span> <span class="n">wordData</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
+
+            <span class="n">unpackedWord</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">perWordFormat</span><span class="p">,</span> <span class="n">wordData</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Special case for 24 bits integers</span>
+            <span class="k">if</span> <span class="n">unitSize</span> <span class="o">==</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span> <span class="ow">and</span> <span class="n">sign</span> <span class="o">==</span> <span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">:</span>
+                <span class="n">unpackedWord</span> <span class="o">=</span> <span class="n">unpackedWord</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">unpackedWord</span> <span class="o">&amp;</span> <span class="mh">0x800000</span><span class="p">)</span> <span class="k">else</span> <span class="n">unpackedWord</span> <span class="o">-</span> <span class="mh">0x1000000</span>
+
+            <span class="n">unpackedWord</span> <span class="o">=</span> <span class="n">unpackedWord</span> <span class="o">&lt;&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">*</span> <span class="n">iWord</span>
+
+            <span class="n">finalValue</span> <span class="o">=</span> <span class="n">finalValue</span> <span class="o">+</span> <span class="n">unpackedWord</span>
+
+            <span class="n">iWord</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">finalValue</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">computeFormat</span><span class="p">(</span><span class="n">unitSize</span><span class="p">,</span> <span class="n">endianness</span><span class="p">,</span> <span class="n">sign</span><span class="p">):</span>
+        <span class="c1"># endian</span>
+        <span class="k">if</span> <span class="n">endianness</span> <span class="o">==</span> <span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">:</span>
+            <span class="n">endianFormat</span> <span class="o">=</span> <span class="s1">&#39;&gt;&#39;</span>
+        <span class="k">elif</span> <span class="n">endianness</span> <span class="o">==</span> <span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">:</span>
+            <span class="n">endianFormat</span> <span class="o">=</span> <span class="s1">&#39;&lt;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid endianness value: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">endianness</span><span class="p">))</span>
+
+        <span class="c1"># unitSize</span>
+        <span class="k">if</span> <span class="n">unitSize</span> <span class="o">==</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_8</span> <span class="ow">or</span> <span class="n">unitSize</span> <span class="o">==</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_4</span><span class="p">:</span>
+            <span class="n">unitFormat</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span>
+        <span class="k">elif</span> <span class="n">unitSize</span> <span class="o">==</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span><span class="p">:</span>
+            <span class="n">unitFormat</span> <span class="o">=</span> <span class="s1">&#39;h&#39;</span>
+        <span class="k">elif</span> <span class="n">unitSize</span> <span class="o">==</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span><span class="p">:</span>
+            <span class="n">unitFormat</span> <span class="o">=</span> <span class="s1">&#39;i&#39;</span>
+        <span class="k">elif</span> <span class="n">unitSize</span> <span class="o">==</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_32</span><span class="p">:</span>
+            <span class="n">unitFormat</span> <span class="o">=</span> <span class="s1">&#39;i&#39;</span>
+        <span class="k">elif</span> <span class="n">unitSize</span> <span class="o">==</span> <span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_64</span><span class="p">:</span>
+            <span class="n">unitFormat</span> <span class="o">=</span> <span class="s1">&#39;q&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Only 8, 16, 32 and 64 bits unitsize are available for integers&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># sign</span>
+        <span class="k">if</span> <span class="n">sign</span> <span class="o">==</span> <span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">:</span>
+            <span class="n">unitFormat</span> <span class="o">=</span> <span class="n">unitFormat</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">endianFormat</span> <span class="o">+</span> <span class="n">unitFormat</span>
+
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a random integer inside the given interval.</span>
+
+<span class="sd">        &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">        &gt;&gt;&gt; v1 = Integer(interval=(-10, -1)).generate()</span>
+<span class="sd">        &gt;&gt;&gt; v1[0] is True  # sign bit (MSB) is set</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; v1</span>
+<span class="sd">        bitarray(&#39;1111111111111111&#39;)</span>
+
+<span class="sd">        &gt;&gt;&gt; v2 = Integer(42, sign=Sign.UNSIGNED)</span>
+<span class="sd">        &gt;&gt;&gt; v2.generate()</span>
+<span class="sd">        bitarray(&#39;0000000000101010&#39;)</span>
+
+<span class="sd">        &gt;&gt;&gt; v3 = uint16be(0xff00)</span>
+<span class="sd">        &gt;&gt;&gt; v3.generate()</span>
+<span class="sd">        bitarray(&#39;1111111100000000&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.TypeConverter</span> <span class="kn">import</span> <span class="n">TypeConverter</span>
+            <span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+
+            <span class="c1"># Size is interpreted here as an interval</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">TypeConverter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">BitArray</span><span class="p">,</span>
+                                         <span class="n">src_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span>
+                                         <span class="n">src_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                                         <span class="n">src_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">,</span>
+                                         <span class="n">dst_sign</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">,</span>
+                                         <span class="n">dst_unitSize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="p">,</span>
+                                         <span class="n">dst_endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot generate integer value, as nor constant value or interval is defined&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getFixedBitSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Determine the deterministic size of the value of &quot;</span>
+                           <span class="s2">&quot;the type&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unitSize</span><span class="o">.</span><span class="n">value</span></div>
+
+
+<span class="k">def</span> <span class="nf">getMinStorageValue</span><span class="p">(</span><span class="n">unitSize</span><span class="p">,</span> <span class="n">sign</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sign</span> <span class="o">==</span> <span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="nb">int</span><span class="p">((</span><span class="mi">2</span><span class="o">**</span><span class="nb">int</span><span class="p">(</span><span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">getMaxStorageValue</span><span class="p">(</span><span class="n">unitSize</span><span class="p">,</span> <span class="n">sign</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sign</span> <span class="o">==</span> <span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">unitSize</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">d</span>
+
+
+<span class="n">int8be</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                      <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_8</span><span class="p">,</span>
+                      <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">,</span>
+                      <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">)</span>
+<span class="n">int8le</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                      <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_8</span><span class="p">,</span>
+                      <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">,</span>
+                      <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">)</span>
+<span class="n">uint8be</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                       <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_8</span><span class="p">,</span>
+                       <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">,</span>
+                       <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">)</span>
+<span class="n">uint8le</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                       <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_8</span><span class="p">,</span>
+                       <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">,</span>
+                       <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">)</span>
+<span class="n">int16be</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                       <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span><span class="p">,</span>
+                       <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">,</span>
+                       <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">)</span>
+<span class="n">int16le</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                       <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span><span class="p">,</span>
+                       <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">,</span>
+                       <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">)</span>
+<span class="n">uint16be</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                        <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span><span class="p">,</span>
+                        <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">,</span>
+                        <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">)</span>
+<span class="n">uint16le</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                        <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_16</span><span class="p">,</span>
+                        <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">,</span>
+                        <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">)</span>
+<span class="n">int24be</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                       <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span><span class="p">,</span>
+                       <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">,</span>
+                       <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">)</span>
+<span class="n">int24le</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                       <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span><span class="p">,</span>
+                       <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">,</span>
+                       <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">)</span>
+<span class="n">uint24be</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                        <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span><span class="p">,</span>
+                        <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">,</span>
+                        <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">)</span>
+<span class="n">uint24le</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                        <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_24</span><span class="p">,</span>
+                        <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">,</span>
+                        <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">)</span>
+<span class="n">int32be</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                       <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_32</span><span class="p">,</span>
+                       <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">,</span>
+                       <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">)</span>
+<span class="n">int32le</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                       <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_32</span><span class="p">,</span>
+                       <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">,</span>
+                       <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">)</span>
+<span class="n">uint32be</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                        <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_32</span><span class="p">,</span>
+                        <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">,</span>
+                        <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">)</span>
+<span class="n">uint32le</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                        <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_32</span><span class="p">,</span>
+                        <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">,</span>
+                        <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">)</span>
+<span class="n">int64be</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                       <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_64</span><span class="p">,</span>
+                       <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">,</span>
+                       <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">)</span>
+<span class="n">int64le</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                       <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_64</span><span class="p">,</span>
+                       <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">SIGNED</span><span class="p">,</span>
+                       <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">)</span>
+<span class="n">uint64be</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                        <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_64</span><span class="p">,</span>
+                        <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">,</span>
+                        <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">BIG</span><span class="p">)</span>
+<span class="n">uint64le</span> <span class="o">=</span> <span class="n">partialclass</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span>
+                        <span class="n">unitSize</span><span class="o">=</span><span class="n">UnitSize</span><span class="o">.</span><span class="n">SIZE_64</span><span class="p">,</span>
+                        <span class="n">sign</span><span class="o">=</span><span class="n">Sign</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">,</span>
+                        <span class="n">endianness</span><span class="o">=</span><span class="n">Endianness</span><span class="o">.</span><span class="n">LITTLE</span><span class="p">)</span>
+<span class="n">int8</span><span class="p">,</span> <span class="n">int16</span><span class="p">,</span> <span class="n">int24</span><span class="p">,</span> <span class="n">int32</span><span class="p">,</span> <span class="n">int64</span> <span class="o">=</span> <span class="n">int8be</span><span class="p">,</span> <span class="n">int16be</span><span class="p">,</span> <span class="n">int24be</span><span class="p">,</span> <span class="n">int32be</span><span class="p">,</span> <span class="n">int64be</span>
+<span class="n">uint8</span><span class="p">,</span> <span class="n">uint16</span><span class="p">,</span> <span class="n">uint24</span><span class="p">,</span> <span class="n">uint32</span><span class="p">,</span> <span class="n">uint64</span> <span class="o">=</span> <span class="n">uint8be</span><span class="p">,</span> <span class="n">uint16be</span><span class="p">,</span> <span class="n">uint24be</span><span class="p">,</span> <span class="n">uint32be</span><span class="p">,</span> <span class="n">uint64be</span>
+
+
+<span class="k">def</span> <span class="nf">_test</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; t = Integer()</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    Integer(-32768,32767)</span>
+<span class="sd">    &gt;&gt;&gt; t.size</span>
+<span class="sd">    (-32768, 32767)</span>
+<span class="sd">    &gt;&gt;&gt; t.unitSize</span>
+<span class="sd">    UnitSize.SIZE_16</span>
+
+<span class="sd">    &gt;&gt;&gt; t = Integer(interval=(4, 16))</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    Integer(4,16)</span>
+
+<span class="sd">    &gt;&gt;&gt; t = Integer(4)</span>
+<span class="sd">    &gt;&gt;&gt; print(t)</span>
+<span class="sd">    Integer(4)</span>
+
+
+<span class="sd">    Examples of Integer internal attribute access</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; cDec = Integer(20)</span>
+<span class="sd">    &gt;&gt;&gt; print(repr(cDec))</span>
+<span class="sd">    20</span>
+<span class="sd">    &gt;&gt;&gt; cDec.typeName</span>
+<span class="sd">    &#39;Integer&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cDec.value</span>
+<span class="sd">    bitarray(&#39;0000000000010100&#39;)</span>
+
+<span class="sd">    The required size in bits is automatically computed following the specifications:</span>
+
+<span class="sd">    &gt;&gt;&gt; dec = Integer(10)</span>
+<span class="sd">    &gt;&gt;&gt; dec.size</span>
+<span class="sd">    (-32768, 32767)</span>
+
+<span class="sd">    &gt;&gt;&gt; dec = Integer(interval=(-120, 10))</span>
+<span class="sd">    &gt;&gt;&gt; dec.size</span>
+<span class="sd">    (-120, 10)</span>
+
+<span class="sd">    Symbol abstraction:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import Field, Symbol</span>
+<span class="sd">    &gt;&gt;&gt; domains = [</span>
+<span class="sd">    ...     uint16(1), int8le(), int32be(0x007F0041), uint16le(2)</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; symbol = Symbol(fields=[Field(d, str(i)) for i, d in enumerate(domains)])</span>
+<span class="sd">    &gt;&gt;&gt; data = b&#39;&#39;.join(next(f.specialize()) for f in symbol.fields)</span>
+<span class="sd">    &gt;&gt;&gt; symbol.abstract(data)  #doctest: +ELLIPSIS</span>
+<span class="sd">    OrderedDict([(&#39;0&#39;, b&#39;\x00\x01&#39;), (&#39;1&#39;, b&#39;...&#39;), (&#39;2&#39;, b&#39;\x00\x7f\x00A&#39;), (&#39;3&#39;, b&#39;\x02\x00&#39;)])</span>
+
+
+<span class="sd">    # Verify that you cannot create an Integer with a value AND an interval:</span>
+
+<span class="sd">    &gt;&gt;&gt; i = Integer(2, interval=(2, 10))</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    ValueError: An Integer should have either its value or its interval set, but not both</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_24_bits_integers</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; t = Integer(unitSize=UnitSize.SIZE_24)</span>
+<span class="sd">    &gt;&gt;&gt; len(t.generate().tobytes())</span>
+<span class="sd">    3</span>
+
+<span class="sd">    &gt;&gt;&gt; t = Integer(unitSize=UnitSize.SIZE_24, endianness=Endianness.LITTLE)</span>
+<span class="sd">    &gt;&gt;&gt; len(t.generate().tobytes())</span>
+<span class="sd">    3</span>
+
+<span class="sd">    &gt;&gt;&gt; raw = b&#39;\xff\xff\xff&#39;</span>
+<span class="sd">    &gt;&gt;&gt; Integer.encode(raw, unitSize=UnitSize.SIZE_24, endianness=Endianness.BIG, sign=Sign.UNSIGNED)</span>
+<span class="sd">    16777215</span>
+
+<span class="sd">    &gt;&gt;&gt; Integer.encode(raw, unitSize=UnitSize.SIZE_24, endianness=Endianness.LITTLE, sign=Sign.UNSIGNED)</span>
+<span class="sd">    16777215</span>
+
+<span class="sd">    &gt;&gt;&gt; Integer.encode(raw, unitSize=UnitSize.SIZE_24, endianness=Endianness.BIG, sign=Sign.SIGNED)</span>
+<span class="sd">    -1</span>
+
+<span class="sd">    &gt;&gt;&gt; Integer.encode(raw, unitSize=UnitSize.SIZE_24, endianness=Endianness.LITTLE, sign=Sign.SIGNED)</span>
+<span class="sd">    -1</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_weird_size</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+
+<span class="sd">    # This test should trigger an exception</span>
+
+<span class="sd">    &gt;&gt;&gt; domain = Integer(value=bitarray(&#39;10001001000011001001101&#39;), unitSize=UnitSize.SIZE_24, endianness=Endianness.LITTLE, sign=Sign.UNSIGNED)</span>
+<span class="sd">    &gt;&gt;&gt; f       = Field(domain=domain, name=&quot;field&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol  = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data    = next(symbol.specialize())</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.GenerationException: specialize() produced 23 bits, which is not aligned on 8 bits. You should review the symbol model.</span>
+
+
+<span class="sd">    # This test should work</span>
+
+<span class="sd">    &gt;&gt;&gt; domain = Integer(value=bitarray(&#39;010001001000011001001101&#39;), unitSize=UnitSize.SIZE_24, endianness=Endianness.LITTLE, sign=Sign.UNSIGNED)</span>
+<span class="sd">    &gt;&gt;&gt; f       = Field(domain=domain, name=&quot;field&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; symbol  = Symbol(fields=[f])</span>
+<span class="sd">    &gt;&gt;&gt; data    = next(symbol.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;D\x86M&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">_test_int_endianness</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(domain=Raw(nbBytes=2), name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2.domain = Size([f1, f2], dataType=uint16le())</span>
+<span class="sd">    &gt;&gt;&gt; f1.domain.dataType.endianness</span>
+<span class="sd">    Endianness.BIG</span>
+<span class="sd">    &gt;&gt;&gt; f2.domain.dataType.endianness</span>
+<span class="sd">    Endianness.LITTLE</span>
+<span class="sd">    &gt;&gt;&gt; s0 = Symbol([f2, f1])</span>
+<span class="sd">    &gt;&gt;&gt; s1 = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; print(next(s0.specialize()).hex() + &#39; - &#39; + next(s1.specialize()).hex())</span>
+<span class="sd">    0400f707 - ecfb0400</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_test_specialize_abstract</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; from collections import OrderedDict</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+<span class="sd">    &gt;&gt;&gt; from netzob.Model.Vocabulary.Types.AbstractType import test_type_one_parameter, test_type_multiple_parameters, test_type_specialize_abstract</span>
+
+<span class="sd">    &gt;&gt;&gt; data_type = Integer</span>
+
+<span class="sd">    &gt;&gt;&gt; possible_parameters = OrderedDict()</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;value&quot;] = [0, 42, -5, 24242]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;interval&quot;] = [None, 3, (4, 10), (-10, 10), (20, 257)]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;unitSize&quot;] = [UnitSize.SIZE_8, UnitSize.SIZE_16, UnitSize.SIZE_24, UnitSize.SIZE_32, UnitSize.SIZE_64]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;endianness&quot;] = [Endianness.LITTLE, Endianness.BIG]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;sign&quot;] = [Sign.SIGNED, Sign.UNSIGNED]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;default&quot;] = [None, 0, 44, -10]</span>
+
+<span class="sd">    &gt;&gt;&gt; test_type_one_parameter(data_type, possible_parameters)</span>
+
+<span class="sd">    &gt;&gt;&gt; possible_parameters = OrderedDict()</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;value&quot;] = [0, 42]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;interval&quot;] = [None, (4, 10), (-10, 10), (20, 257)]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;unitSize&quot;] = [UnitSize.SIZE_8, UnitSize.SIZE_16, UnitSize.SIZE_24, UnitSize.SIZE_32, UnitSize.SIZE_64]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;endianness&quot;] = [Endianness.LITTLE, Endianness.BIG]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;sign&quot;] = [Sign.SIGNED, Sign.UNSIGNED]</span>
+<span class="sd">    &gt;&gt;&gt; possible_parameters[&quot;default&quot;] = [None, 0, 44, -10]</span>
+
+<span class="sd">    &gt;&gt;&gt; (parameter_names, functional_combinations_possible_parameters) = test_type_multiple_parameters(data_type, possible_parameters)</span>
+
+<span class="sd">    &gt;&gt;&gt; test_type_specialize_abstract(data_type, parameter_names, functional_combinations_possible_parameters)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

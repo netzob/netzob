@@ -1,0 +1,774 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../../../" id="documentation_options" src="../../../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../../../_static/jquery.js"></script>
+    <script src="../../../../../../../_static/underscore.js"></script>
+    <script src="../../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| File contributors :                                                       |</span>
+<span class="c1">#|       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1">#|       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">bitarray</span> <span class="kn">import</span> <span class="n">bitarray</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">public_api</span><span class="p">,</span> <span class="n">NetzobLogger</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.AbstractVariable</span> <span class="kn">import</span> <span class="n">AbstractVariable</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Nodes.AbstractVariableNode</span> <span class="kn">import</span> <span class="n">AbstractVariableNode</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.GenericPath</span> <span class="kn">import</span> <span class="n">GenericPath</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Parser.ParsingPath</span> <span class="kn">import</span> <span class="n">ParsingPath</span><span class="p">,</span> <span class="n">ParsingException</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Specializer.SpecializingPath</span> <span class="kn">import</span> <span class="n">SpecializingPath</span>
+<span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutators.DomainMutator</span> <span class="kn">import</span> <span class="n">FuzzingMode</span>
+
+
+<span class="n">altCbkType</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">GenericPath</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">AbstractVariable</span><span class="p">]],</span> <span class="n">AbstractVariable</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Alt"><a class="viewcode-back" href="../../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">Alt</span><span class="p">(</span><span class="n">AbstractVariableNode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Alt class is a node variable that represents an alternative of variables.</span>
+
+<span class="sd">    A definition domain can take the form of a combination of</span>
+<span class="sd">    permitted values/types/domains. This combination is represented by</span>
+<span class="sd">    an alternate node. It can be seen as an OR operator between two or</span>
+<span class="sd">    more children nodes.</span>
+
+<span class="sd">    The Alt constructor expects some parameters:</span>
+
+<span class="sd">    :param children: The set of variable elements permitted in the</span>
+<span class="sd">                     alternative. The default is None.</span>
+<span class="sd">    :param callback: The callback function that may be used to determine the child index to select. The default is None.</span>
+<span class="sd">    :param name: The name of the variable (if None, the name will</span>
+<span class="sd">                 be generated).</span>
+<span class="sd">    :type children: a :class:`list` of :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`, optional</span>
+<span class="sd">    :type callback: :class:`Callable &lt;collections.abc.Callable&gt;`, optional</span>
+<span class="sd">    :type name: :class:`str`, optional</span>
+
+<span class="sd">    The Alt class provides the following public variables:</span>
+
+<span class="sd">    :var children: The sorted typed list of children attached to the variable node.</span>
+<span class="sd">    :var callback: The callback function that may be used to determine the child index to select.</span>
+<span class="sd">    :vartype children: a list of :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`</span>
+<span class="sd">    :vartype callback: :class:`Callable &lt;collections.abc.Callable&gt;`</span>
+
+
+<span class="sd">    **Callback prototype**</span>
+
+<span class="sd">    The callback function that can be used to determine the child</span>
+<span class="sd">    index to select has the following prototype:</span>
+
+<span class="sd">    .. function:: cbk_child_selection(path, children)</span>
+<span class="sd">       :noindex:</span>
+
+<span class="sd">       :param path: data structure that allows access to the values of the</span>
+<span class="sd">                    :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`</span>
+<span class="sd">                    elements.</span>
+<span class="sd">       :type path: object</span>
+<span class="sd">       :param children: children of the</span>
+<span class="sd">                        :class:`~netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt`</span>
+<span class="sd">                        variable.</span>
+<span class="sd">       :type children: ~typing.List[~netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt]</span>
+
+<span class="sd">       :return: The callback function should return an integer used to determine</span>
+<span class="sd">                the child index to select.</span>
+<span class="sd">       :rtype: :class:`int`</span>
+
+<span class="sd">    The ``children`` is a list of :class:`Variable</span>
+<span class="sd">    &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`. Each</span>
+<span class="sd">    ``child`` can have children if it is a node. Access to child</span>
+<span class="sd">    values, as well as to its own children values, is done through the</span>
+<span class="sd">    ``path`` data structure, thanks to its methods</span>
+<span class="sd">    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.hasData` and</span>
+<span class="sd">    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.getData`. Those</span>
+<span class="sd">    methods therefore allow access to a hierarchy of elements for</span>
+<span class="sd">    which the ``child`` is the root element:</span>
+
+<span class="sd">    * ``path.hasData(element)`` will return a :class:`bool` telling if a data has</span>
+<span class="sd">      been specialized or parsed for the element</span>
+<span class="sd">      :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`.</span>
+<span class="sd">    * ``path.getData(element)`` will return a :class:`bitarray` that corresponds</span>
+<span class="sd">      to the value specialized or parsed for the element</span>
+<span class="sd">      :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`.</span>
+
+<span class="sd">    It is possible to test if a ``child`` variable is a node</span>
+<span class="sd">    of the tree structure through the ``isnode(child)`` method. A</span>
+<span class="sd">    node may represent an ``Agg``, an ``Alt``, a ``Repeat`` or an</span>
+<span class="sd">    ``Opt`` variable. Access to the node leafs is possible with the</span>
+<span class="sd">    attribute ``children`` (i.e. ``child.children``). The type of the</span>
+<span class="sd">    children leafs is also :class:`Variable</span>
+<span class="sd">    &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`.</span>
+
+
+<span class="sd">    **Alt examples**</span>
+
+<span class="sd">    The following code denotes an alternate object that</span>
+<span class="sd">    accepts either the string &quot;filename1.txt&quot; or the string</span>
+<span class="sd">    &quot;filename2.txt&quot;:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; t1 = String(&quot;filename1.txt&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; t2 = String(&quot;filename2.txt&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; domain = Alt([t1, t2])</span>
+
+
+<span class="sd">    **Examples of Alt internal attribute access**</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; domain = Alt([Raw(), String()])</span>
+<span class="sd">    &gt;&gt;&gt; print(domain.children[0].dataType)</span>
+<span class="sd">    Raw(nbBytes=(0,8192))</span>
+<span class="sd">    &gt;&gt;&gt; print(domain.children[1].dataType)</span>
+<span class="sd">    String(nbChars=(0,8192))</span>
+
+
+<span class="sd">    **Example of a deterministic Alt computation**</span>
+
+<span class="sd">    &gt;&gt;&gt; def cbk(path, children):</span>
+<span class="sd">    ...    return -1</span>
+<span class="sd">    &gt;&gt;&gt; f = Field(Alt([String(_) for _ in &quot;abc&quot;], callback=cbk), &quot;alt&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; sym = Symbol([f])</span>
+<span class="sd">    &gt;&gt;&gt; data = next(sym.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; print(data)</span>
+<span class="sd">    b&#39;c&#39;</span>
+<span class="sd">    &gt;&gt;&gt; sym.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;alt&#39;, b&#39;c&#39;)])</span>
+
+
+<span class="sd">    .. ifconfig:: scope in (&#39;netzob&#39;)</span>
+
+<span class="sd">       **Abstraction of alternate variables**</span>
+
+<span class="sd">       This example shows the abstraction process of an Alternate</span>
+<span class="sd">       variable:</span>
+
+<span class="sd">       &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">       &gt;&gt;&gt; v0 = String(&quot;john&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; v1 = String(&quot;kurt&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; f0 = Field(Alt([v0, v1]), name=&#39;f0&#39;)</span>
+<span class="sd">       &gt;&gt;&gt; s = Symbol([f0])</span>
+<span class="sd">       &gt;&gt;&gt; data = &quot;john&quot;</span>
+<span class="sd">       &gt;&gt;&gt; s.abstract(data)</span>
+<span class="sd">       OrderedDict([(&#39;f0&#39;, b&#39;john&#39;)])</span>
+<span class="sd">       &gt;&gt;&gt; data = &quot;kurt&quot;</span>
+<span class="sd">       &gt;&gt;&gt; s.abstract(data)</span>
+<span class="sd">       OrderedDict([(&#39;f0&#39;, b&#39;kurt&#39;)])</span>
+
+<span class="sd">       In the following example, an Alternate variable is defined. A</span>
+<span class="sd">       message that does not correspond to the expected model is then</span>
+<span class="sd">       parsed, thus an exception is returned:</span>
+
+<span class="sd">       &gt;&gt;&gt; data = &quot;nothing&quot;</span>
+<span class="sd">       &gt;&gt;&gt; s.abstract(data)</span>
+<span class="sd">       Traceback (most recent call last):</span>
+<span class="sd">       ...</span>
+<span class="sd">       netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;Symbol&#39;, cannot abstract the data: &#39;nothing&#39;. Error: &#39;No parsing path returned while parsing &#39;b&#39;nothing&#39;&#39;&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Alt</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="n">children</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">callback</span>  <span class="c1"># type: altCbkType</span>
+
+<div class="viewcode-block" id="Alt.copy"><a class="viewcode-back" href="../../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt.copy">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_objects</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the current object as well as all its dependencies.</span>
+
+<span class="sd">        :return: A new object of the same type.</span>
+<span class="sd">        :rtype: :class:`Alt &lt;netzob.Model.Vocabulary.Domain.Variables.Nodes.Alt.Alt&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">map_objects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">map_objects</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+
+        <span class="n">new_alt</span> <span class="o">=</span> <span class="n">Alt</span><span class="p">([],</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">)</span>
+        <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_alt</span>
+
+        <span class="n">new_children</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">new_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">map_objects</span><span class="p">[</span><span class="n">child</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_child</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">map_objects</span><span class="p">)</span>
+                <span class="n">new_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_child</span><span class="p">)</span>
+
+        <span class="n">new_alt</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="n">new_children</span>
+        <span class="k">return</span> <span class="n">new_alt</span></div>
+
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">ParsingPath</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">acceptCallBack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">carnivorous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">triggered</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the content with the definition domain of the alternate.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">parsingPath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;ParsingPath cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot parse data if ALT has no children&quot;</span><span class="p">)</span>
+
+        <span class="n">dataToParse</span> <span class="o">=</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parse &#39;</span><span class="si">{}</span><span class="s2">&#39; with &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataToParse</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="bp">self</span><span class="p">))</span>
+
+        <span class="n">parserPaths</span> <span class="o">=</span> <span class="p">[</span><span class="n">parsingPath</span><span class="p">]</span>
+        <span class="n">parsingPath</span><span class="o">.</span><span class="n">assignData</span><span class="p">(</span><span class="n">dataToParse</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># create a path for each child</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">newParsingPath</span> <span class="o">=</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">newParsingPath</span><span class="o">.</span><span class="n">assignData</span><span class="p">(</span><span class="n">dataToParse</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">child</span><span class="p">)</span>
+                <span class="n">parserPaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newParsingPath</span><span class="p">)</span>
+
+        <span class="c1"># parse each child according to its definition</span>
+        <span class="k">for</span> <span class="n">i_child</span><span class="p">,</span> <span class="n">child</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">):</span>
+            <span class="n">parsingPath</span> <span class="o">=</span> <span class="n">parserPaths</span><span class="p">[</span><span class="n">i_child</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Start Alt parsing of </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2"> with </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i_child</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">),</span> <span class="n">parsingPath</span><span class="p">))</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">childParsingPaths</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">parsingPath</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">ParsingException</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Error in parsing of child&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">childParsingPath</span> <span class="ow">in</span> <span class="n">childParsingPaths</span><span class="p">:</span>
+                    <span class="n">data_parsed</span> <span class="o">=</span> <span class="n">childParsingPath</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;End of Alt parsing of </span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2"> with </span><span class="si">{}</span><span class="s2">. Data parsed: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i_child</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">),</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">data_parsed</span><span class="p">))</span>
+                    <span class="n">childParsingPath</span><span class="o">.</span><span class="n">addResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_parsed</span><span class="p">)</span>
+                    <span class="k">yield</span> <span class="n">childParsingPath</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;End of parsing of Alt variable&quot;</span><span class="p">)</span>
+
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">SpecializingPath</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">specialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specializingPath</span><span class="p">,</span> <span class="n">acceptCallBack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">triggered</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Specializes an Alt&quot;&quot;&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">netzob.Fuzzing.Mutator</span> <span class="kn">import</span> <span class="n">MaxFuzzingException</span>
+
+        <span class="k">if</span> <span class="n">specializingPath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;SpecializingPath cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot specialize ALT if its has no children&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If we are in a fuzzing mode</span>
+        <span class="k">if</span> <span class="n">preset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">preset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="c1"># Retrieve the mutator</span>
+            <span class="n">mutator</span> <span class="o">=</span> <span class="n">preset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+            <span class="c1"># As the current node variable is preset, we set its children to be inaccessible when targeted by another field/variable</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="n">specializingPath</span><span class="o">.</span><span class="n">setInaccessibleVariableRecursively</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Chose the child according to the integer returned by the mutator</span>
+                <span class="n">generated_value</span> <span class="o">=</span> <span class="n">mutator</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">MaxFuzzingException</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Maximum mutation counter reached&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="k">if</span> <span class="n">mutator</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">FuzzingMode</span><span class="o">.</span><span class="n">FIXED</span><span class="p">:</span>
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">generated_value</span><span class="p">,</span> <span class="n">bitarray</span><span class="p">):</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">generated_value</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">endian</span><span class="o">=</span><span class="s1">&#39;big&#39;</span><span class="p">)</span>
+                        <span class="n">value</span><span class="o">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">generated_value</span><span class="p">)</span>
+
+                    <span class="n">specializingPath</span><span class="o">.</span><span class="n">addResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                    <span class="k">yield</span> <span class="n">specializingPath</span>
+
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">generated_value</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">):</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">generated_value</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Field position &#39;</span><span class="si">{}</span><span class="s2">&#39; is bigger than the length of available children &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">generated_value</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)))</span>
+
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">):</span>
+            <span class="n">i_child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="n">specializingPath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i_child</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The Alt callback return value must be the index&quot;</span>
+                                <span class="s2">&quot; (int) of the child to select, not &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i_child</span><span class="p">))</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">i_child</span><span class="p">]</span>
+        <span class="c1"># Else, randomly chose the child</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+
+        <span class="n">newSpecializingPath</span> <span class="o">=</span> <span class="n">specializingPath</span><span class="c1">#.copy()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Specialize </span><span class="si">{0}</span><span class="s2"> child with </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">newSpecializingPath</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">newSpecializingPath</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+            <span class="n">childSpecializingPaths</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">newSpecializingPath</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Not specializing the ALT.child as it has already a data&quot;</span><span class="p">)</span>
+            <span class="n">childSpecializingPaths</span> <span class="o">=</span> <span class="p">(</span><span class="n">newSpecializingPath</span><span class="p">,</span> <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">childSpecializingPath</span> <span class="ow">in</span> <span class="n">childSpecializingPaths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">childSpecializingPath</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">childSpecializingPath</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Generated value for </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2"> (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+                <span class="n">childSpecializingPath</span><span class="o">.</span><span class="n">addResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+                <span class="k">yield</span> <span class="n">childSpecializingPath</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;The ALT child (&#39;</span><span class="si">{}</span><span class="s2">&#39;) has no content, therefore we don&#39;t produce content for the ALT&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Callback registered on ancestor node: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Callback registered due to absence of content in target: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
+                <span class="n">childSpecializingPath</span><span class="o">.</span><span class="n">registerVariablesCallBack</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">child</span><span class="p">],</span> <span class="bp">self</span><span class="p">,</span> <span class="n">parsingCB</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">childSpecializingPath</span>
+
+    <span class="nd">@public_api</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A callback function can be used to determine the child index to</span>
+<span class="sd">        select, during specialization (see &#39;Callback prototype&#39; above</span>
+<span class="sd">        for further explanation).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span>
+
+    <span class="nd">@callback</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">callback</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Callback function should be a callable, not a &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">callback</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">callback</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test_alt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; Conf.apply()</span>
+
+<span class="sd">    Here is an example with an Alt variable:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; m1 = RawMessage(&quot;220044&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(&quot;22&quot;, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Alt([&quot;00&quot;, &quot;0044&quot;, &quot;0&quot;, &quot;004&quot;]), name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2], messages=[m1], name=&quot;S0&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; print(s.str_data())</span>
+<span class="sd">    f1   | f2    </span>
+<span class="sd">    ---- | ------</span>
+<span class="sd">    &#39;22&#39; | &#39;0044&#39;</span>
+<span class="sd">    ---- | ------</span>
+
+
+<span class="sd">    ## Size field on the right</span>
+
+<span class="sd">    Size field targeting a field containing a alt variable, with size field on the right:</span>
+
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Alt([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size(f1, dataType=uint8()), name=&#39;f2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f2, f1])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\x01C&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;\x01&#39;), (&#39;f1&#39;, b&#39;C&#39;)])</span>
+
+<span class="sd">    Size field targeting a alt variable, with size field on the right:</span>
+
+<span class="sd">    &gt;&gt;&gt; v1 = Alt([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Size(v1, dataType=uint8())</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([Field(v2, name=&#39;f2&#39;), Field(v1, name=&#39;f1&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;\x01A&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;\x01&#39;), (&#39;f1&#39;, b&#39;A&#39;)])</span>
+
+
+<span class="sd">    ## Size field on the left</span>
+
+<span class="sd">    Size field targeting a field containing a alt variable, with size field on the left:</span>
+
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Alt([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Size(f1, dataType=uint8()), name=&#39;f2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;B\x01&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;B&#39;), (&#39;f2&#39;, b&#39;\x01&#39;)])</span>
+
+<span class="sd">    Size field targeting a alt variable, with size field on the left:</span>
+
+<span class="sd">    &gt;&gt;&gt; v1 = Alt([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Size(v1, dataType=uint8())</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([Field(v1, name=&#39;f1&#39;), Field(v2, name=&#39;f2&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;B\x01&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;B&#39;), (&#39;f2&#39;, b&#39;\x01&#39;)])</span>
+
+
+<span class="sd">    ## Value field on the right</span>
+
+<span class="sd">    Value field targeting a field containing a alt variable, with value field on the right:</span>
+
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Alt([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Value(f1), name=&#39;f2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f2, f1])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;CC&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;C&#39;), (&#39;f1&#39;, b&#39;C&#39;)])</span>
+
+<span class="sd">    Value field targeting a alt variable, with value field on the right:</span>
+
+<span class="sd">    &gt;&gt;&gt; v1 = Alt([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Value(v1)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([Field(v2, name=&#39;f2&#39;), Field(v1, name=&#39;f1&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;AA&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f2&#39;, b&#39;A&#39;), (&#39;f1&#39;, b&#39;A&#39;)])</span>
+
+
+<span class="sd">    ## Value field on the left</span>
+
+<span class="sd">    Value field targeting a field containing a alt variable, with value field on the left:</span>
+
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Alt([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(Value(f1), name=&#39;f2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([f1, f2])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;AA&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;A&#39;), (&#39;f2&#39;, b&#39;A&#39;)])</span>
+
+<span class="sd">    Value field targeting a alt variable, with value field on the left:</span>
+
+<span class="sd">    &gt;&gt;&gt; v1 = Alt([&quot;A&quot;, &quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; v2 = Value(v1)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol([Field(v1, name=&#39;f1&#39;), Field(v2, name=&#39;f2&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; d = next(s.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    b&#39;BB&#39;</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(d)</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;B&#39;), (&#39;f2&#39;, b&#39;B&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

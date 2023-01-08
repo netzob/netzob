@@ -1,0 +1,734 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netzob.Model.Vocabulary.Domain.Variables.Leafs.Value &#8212; Netzob Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../../../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../../../../../" id="documentation_options" src="../../../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../../../_static/jquery.js"></script>
+    <script src="../../../../../../../_static/underscore.js"></script>
+    <script src="../../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../../../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../../../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../../../../../_static/zoby.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Netzob Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../../../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../../../../index.html">
+                    Netzob documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../installation/python.html">
+   Installation of Netzob
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Protocol Modelization
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/dataspec.html">
+   Format Message Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/statemachinespec.html">
+   State Machine Modeling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/protospec.html">
+   Protocol Modeling
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Traffic Generation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/trafficgeneration.html">
+   Sending and Receiving Messages
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/actor.html">
+   Visiting a State Machine with an Actor
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Fuzzing
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/fuzzing.html">
+   Fuzzing Message Format
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../../../../../language_specification/fuzzing_automata.html">
+   Fuzzing Automata
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for netzob.Model.Vocabulary.Domain.Variables.Leafs.Value</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-*- coding: utf-8 -*-</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#|          01001110 01100101 01110100 01111010 01101111 01100010            |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#|               Netzob : Inferring communication protocols                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Copyright (C) 2011-2017 Georges Bossert and Frédéric Guihéry              |</span>
+<span class="c1">#| This program is free software: you can redistribute it and/or modify      |</span>
+<span class="c1">#| it under the terms of the GNU General Public License as published by      |</span>
+<span class="c1">#| the Free Software Foundation, either version 3 of the License, or         |</span>
+<span class="c1">#| (at your option) any later version.                                       |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| This program is distributed in the hope that it will be useful,           |</span>
+<span class="c1">#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |</span>
+<span class="c1">#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |</span>
+<span class="c1">#| GNU General Public License for more details.                              |</span>
+<span class="c1">#|                                                                           |</span>
+<span class="c1">#| You should have received a copy of the GNU General Public License         |</span>
+<span class="c1">#| along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.      |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| @url      : http://www.netzob.org                                         |</span>
+<span class="c1">#| @contact  : contact@netzob.org                                            |</span>
+<span class="c1">#| @sponsors : Amossys, http://www.amossys.fr                                |</span>
+<span class="c1">#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| File contributors :                                                       |</span>
+<span class="c1">#|       - Georges Bossert &lt;georges.bossert (a) supelec.fr&gt;                  |</span>
+<span class="c1">#|       - Frédéric Guihéry &lt;frederic.guihery (a) amossys.fr&gt;                |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Standard library imports                                                  |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Related third party imports                                               |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="c1">#| Local application imports                                                 |</span>
+<span class="c1">#+---------------------------------------------------------------------------+</span>
+<span class="kn">from</span> <span class="nn">netzob.Common.Utils.Decorators</span> <span class="kn">import</span> <span class="n">typeCheck</span><span class="p">,</span> <span class="n">NetzobLogger</span><span class="p">,</span> <span class="n">public_api</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Leafs.AbstractRelationVariableLeaf</span> <span class="kn">import</span> <span class="n">AbstractRelationVariableLeaf</span><span class="p">,</span> <span class="n">RelationDependencyException</span><span class="p">,</span> <span class="n">InaccessibleVariableException</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Parser.ParsingPath</span> <span class="kn">import</span> <span class="n">ParsingPath</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.GenericPath</span> <span class="kn">import</span> <span class="n">GenericPath</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Domain.Variables.Nodes.Repeat</span> <span class="kn">import</span> <span class="n">Repeat</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.AbstractField</span> <span class="kn">import</span> <span class="n">AbstractField</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Field</span> <span class="kn">import</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">netzob.Model.Vocabulary.Types.BitArray</span> <span class="kn">import</span> <span class="n">BitArray</span>
+
+
+<div class="viewcode-block" id="Value"><a class="viewcode-back" href="../../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value">[docs]</a><span class="nd">@NetzobLogger</span>
+<span class="k">class</span> <span class="nc">Value</span><span class="p">(</span><span class="n">AbstractRelationVariableLeaf</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Value class is a variable whose content is the value of another field.</span>
+
+<span class="sd">    It is possible to define a field so that its value is equal to the</span>
+<span class="sd">    value of another field, on which an operation can be</span>
+<span class="sd">    performed.</span>
+
+<span class="sd">    The Value constructor expects some parameters:</span>
+
+<span class="sd">    :param target: The targeted object of the relationship. If a :class:`~netzob.Model.Vocabulary.Field.Field` is provided, it will be normalized by the associated :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`.</span>
+<span class="sd">    :param name: The name of the variable. If None, the name</span>
+<span class="sd">                     will be generated.</span>
+<span class="sd">    :param operation: An optional transformation operation to be</span>
+<span class="sd">                      applied to the targeted field value, through a callback.</span>
+<span class="sd">                      The default is None.</span>
+<span class="sd">    :type target: :class:`Field &lt;netzob.Model.Vocabulary.Field&gt;` or :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`, required</span>
+<span class="sd">    :type name: :class:`str`, optional</span>
+<span class="sd">    :type operation: :class:`Callable &lt;collections.abc.Callable&gt;`, optional</span>
+
+
+<span class="sd">    The Value class provides the following public variables:</span>
+
+<span class="sd">    :var target: The variable that is required before computing</span>
+<span class="sd">                 the value of this relation.</span>
+<span class="sd">    :var operation: Defines the operation to be performed on the found value.</span>
+<span class="sd">                    The prototype of this callback is detailed below.</span>
+<span class="sd">    :vartype target: :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`</span>
+<span class="sd">    :vartype operation: :class:`Callable &lt;collections.abc.Callable&gt;`</span>
+
+
+<span class="sd">    **Callback prototype**</span>
+
+<span class="sd">    The callback function that can be used to specify a complex</span>
+<span class="sd">    relationship in the ``operation`` parameter has the following</span>
+<span class="sd">    prototype:</span>
+
+<span class="sd">    .. function:: cbk_operation(data, path, variable)</span>
+<span class="sd">       :noindex:</span>
+
+<span class="sd">       :param data: contains the current data of the targeted field.</span>
+<span class="sd">       :type data: ~bitarray.bitarray</span>
+<span class="sd">       :param path: data structure that allows access to the values of the</span>
+<span class="sd">                    :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`</span>
+<span class="sd">                    element.</span>
+<span class="sd">       :type path: object</span>
+<span class="sd">       :param variable: the current Value variable.</span>
+<span class="sd">       :type variable: ~netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value</span>
+
+<span class="sd">       :return: The callback function should return a :class:`bitarray</span>
+<span class="sd">                &lt;bitarray&gt;` representing the computed data during</span>
+<span class="sd">                specialization or abstraction. In the latter case, if</span>
+<span class="sd">                the callback function does not succeed to parse the</span>
+<span class="sd">                data, it should return the :const:`None` value. The length of the computed data may differ from the length of the targeted data.</span>
+<span class="sd">       :rtype: :class:`bitarray &lt;bitarray.bitarray&gt;`</span>
+
+<span class="sd">    Access to :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`</span>
+<span class="sd">    values is done through the ``path``, thanks to its methods</span>
+<span class="sd">    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.hasData` and</span>
+<span class="sd">    :meth:`~netzob.Model.Vocabulary.Domain.GenericPath.getData`:</span>
+
+<span class="sd">    * ``path.hasData(variable)`` will return a :class:`bool` telling if a data has</span>
+<span class="sd">      been specialized or parsed for the Value variable</span>
+<span class="sd">      :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`.</span>
+<span class="sd">    * ``path.getData(variable)`` will return a :class:`bitarray` that corresponds</span>
+<span class="sd">      to the data specialized or parsed for the Value variable</span>
+<span class="sd">      :class:`Variable &lt;netzob.Model.Vocabulary.Domain.Variables.AbstractVariable.AbstractVariable&gt;`.</span>
+
+<span class="sd">    The callback function is expected to implement relationship</span>
+<span class="sd">    operations based on the provided data.</span>
+
+
+<span class="sd">    **Value usage**</span>
+
+<span class="sd">    The following example shows how to define a field with a copy of</span>
+<span class="sd">    another field value, in specialization mode:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(String(&quot;abcd&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Value(f0))</span>
+<span class="sd">    &gt;&gt;&gt; fheader = Field([f0, f1])</span>
+<span class="sd">    &gt;&gt;&gt; next(fheader.specialize())</span>
+<span class="sd">    b&#39;abcdabcd&#39;</span>
+
+
+<span class="sd">    .. ifconfig:: scope in (&#39;netzob&#39;)</span>
+
+<span class="sd">       The following example shows how to define a field with a copy of</span>
+<span class="sd">       another field value, in abstraction mode:</span>
+
+<span class="sd">       &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">       &gt;&gt;&gt; data = &quot;john;john!&quot;</span>
+<span class="sd">       &gt;&gt;&gt; f1 = Field(String(nbChars=(2, 8)), name=&quot;f1&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; f2 = Field(String(&quot;;&quot;), name=&quot;f2&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; f3 = Field(Value(f1), name=&quot;f3&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; f4 = Field(String(&quot;!&quot;), name=&quot;f4&quot;)</span>
+<span class="sd">       &gt;&gt;&gt; s = Symbol(fields=[f1, f2, f3, f4])</span>
+<span class="sd">       &gt;&gt;&gt; s.abstract(data)  # doctest: +NORMALIZE_WHITESPACE</span>
+<span class="sd">       OrderedDict([(&#39;f1&#39;, b&#39;john&#39;), (&#39;f2&#39;, b&#39;;&#39;), (&#39;f3&#39;, b&#39;john&#39;), (&#39;f4&#39;, b&#39;!&#39;)])</span>
+
+
+<span class="sd">    **Value field with a variable as a target**</span>
+
+<span class="sd">    The following example shows the specialization process of a Value</span>
+<span class="sd">    field whose target is a variable:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; d = Data(String(&quot;john&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(domain=d, name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(String(&quot;;&quot;), name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(Value(d), name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f4 = Field(String(&quot;!&quot;), name=&quot;f4&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f1, f2, f3, f4])</span>
+<span class="sd">    &gt;&gt;&gt; next(f.specialize())</span>
+<span class="sd">    b&#39;john;john!&#39;</span>
+
+
+<span class="sd">    **Specialization of Value objects**</span>
+
+<span class="sd">    The following examples show the specialization process of Value</span>
+<span class="sd">    objects. The first example illustrates a case where the Value</span>
+<span class="sd">    variable is placed before the targeted variable.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(String(&quot;john&quot;), name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(String(&quot;;&quot;), name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(Value(f1), name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f4 = Field(String(&quot;!&quot;), name=&quot;f4&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f1, f2, f3, f4])</span>
+<span class="sd">    &gt;&gt;&gt; next(f.specialize())</span>
+<span class="sd">    b&#39;john;john!&#39;</span>
+
+<span class="sd">    The second example illustrates a case where the Value variable is</span>
+<span class="sd">    placed after the targeted variable.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(String(&quot;john&quot;), name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(String(&quot;;&quot;), name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Value(f3), name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f4 = Field(String(&quot;!&quot;), name=&quot;f4&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f1, f2, f3, f4])</span>
+<span class="sd">    &gt;&gt;&gt; next(f.specialize())</span>
+<span class="sd">    b&#39;john;john!&#39;</span>
+
+
+<span class="sd">    **Transformation operation on targeted field value**</span>
+
+<span class="sd">    A named callback function can be used to specify a more complex</span>
+<span class="sd">    relationship. The following example shows a relationship where the</span>
+<span class="sd">    computed value corresponds to the reversed bits of the targeted</span>
+<span class="sd">    field value. The ``data`` parameter of the ``cbk`` function contains a</span>
+<span class="sd">    bitarray object of the targeted field value. The ``cbk`` function</span>
+<span class="sd">    returns a bitarray object.</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; def cbk(data, path, value):</span>
+<span class="sd">    ...    ret = data.copy()</span>
+<span class="sd">    ...    ret.reverse()</span>
+<span class="sd">    ...    if ret == bitarray(&#39;10000000&#39;):</span>
+<span class="sd">    ...        return ret</span>
+<span class="sd">    ...    else:</span>
+<span class="sd">    ...        return None</span>
+<span class="sd">    &gt;&gt;&gt; f0 = Field(Raw(b&#39;\x01&#39;), name=&#39;f0&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Value(f0, operation = cbk), name=&#39;f1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; f = Field([f0, f1], name=&#39;f&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; data = next(f.specialize())</span>
+<span class="sd">    &gt;&gt;&gt; data</span>
+<span class="sd">    b&#39;\x01\x80&#39;</span>
+
+<span class="sd">    Callback functions are also triggered during data abstraction. In</span>
+<span class="sd">    the next portion of the example, the previously specialized data</span>
+<span class="sd">    is abstracted according to the field definition.</span>
+
+<span class="sd">    &gt;&gt;&gt; f.abstract(data)</span>
+<span class="sd">    OrderedDict([(&#39;f0&#39;, b&#39;\x01&#39;), (&#39;f1&#39;, b&#39;\x80&#39;)])</span>
+
+<span class="sd">    If the targeted field (``f0``) does not contain the expected data,</span>
+<span class="sd">    the callback function should return :const:`None`, indicating that the</span>
+<span class="sd">    relationship does not apply. In this case, the abstraction process</span>
+<span class="sd">    will return an exception.</span>
+
+<span class="sd">    &gt;&gt;&gt; data = b&#39;\x02\x80&#39;</span>
+<span class="sd">    &gt;&gt;&gt; f.abstract(data)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    netzob.Model.Vocabulary.AbstractField.AbstractionException: With the symbol/field &#39;f&#39;, cannot abstract the data: &#39;b&#39;\x02\x80&#39;&#39;. Error: &#39;No parsing path returned while parsing &#39;b&#39;\x02\x80&#39;&#39;&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">target</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Value</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span>
+
+<div class="viewcode-block" id="Value.copy"><a class="viewcode-back" href="../../../../../../../language_specification/dataspec.html#netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value.copy">[docs]</a>    <span class="nd">@public_api</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_objects</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the current object as well as all its dependencies.</span>
+
+<span class="sd">        :return: A new object of the same type.</span>
+<span class="sd">        :rtype: :class:`Value &lt;netzob.Model.Vocabulary.Domain.Variables.Leafs.Value.Value&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">map_objects</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">map_objects</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">map_objects</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+
+        <span class="n">new_value</span> <span class="o">=</span> <span class="n">Value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">)</span>
+        <span class="n">map_objects</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_value</span>
+
+        <span class="k">return</span> <span class="n">new_value</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">check_target_consistency</span><span class="p">(</span><span class="n">tmp_target</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function used to check targets consistency (i.e. it should not</span>
+<span class="sd">        contain a Repeat element, as it makes parsing ambiguous)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tmp_target</span><span class="p">,</span> <span class="n">Field</span><span class="p">):</span>
+            <span class="n">tmp_target</span> <span class="o">=</span> <span class="n">tmp_target</span><span class="o">.</span><span class="n">domain</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tmp_target</span><span class="p">,</span> <span class="n">Repeat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Value target contains a Repeat variable, which is not supported&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tmp_target</span><span class="o">.</span><span class="n">isnode</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">tmp_target_child</span> <span class="ow">in</span> <span class="n">tmp_target</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="n">Value</span><span class="o">.</span><span class="n">check_target_consistency</span><span class="p">(</span><span class="n">tmp_target_child</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">current_parent</span> <span class="o">=</span> <span class="n">tmp_target</span><span class="o">.</span><span class="n">parent</span>
+            <span class="k">while</span> <span class="n">current_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_parent</span><span class="p">,</span> <span class="n">Repeat</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Value target is a child of a Repeat variable, which is not supported&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_parent</span><span class="p">,</span> <span class="n">AbstractField</span><span class="p">):</span>
+                    <span class="k">break</span>
+                <span class="n">current_parent</span> <span class="o">=</span> <span class="n">current_parent</span><span class="o">.</span><span class="n">parent</span>
+
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">GenericPath</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">valueCMP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">acceptCallBack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">carnivorous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">triggered</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;ValueCMP&quot;</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">parsingPath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;ParsingPath cannot be None&quot;</span><span class="p">)</span>
+
+        <span class="n">content</span> <span class="o">=</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No data assigned.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># we verify we have access to the expected value</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">expectedValue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeExpectedValue</span><span class="p">(</span><span class="n">parsingPath</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">RelationDependencyException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">expectedValue</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">expectedValue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+                <span class="c1"># Check targets consistency</span>
+                <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+                    <span class="n">Value</span><span class="o">.</span><span class="n">check_target_consistency</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Let&#39;s compute what could be the possible value based on the target datatype&quot;</span><span class="p">)</span>
+
+                <span class="n">target_type_aligned_octets</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Tells if we are sure that the target type is aligned on octets</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isnode</span><span class="p">():</span>
+                    <span class="n">minSizeDep</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">maxSizeDep</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="p">(</span><span class="n">minSizeDep</span><span class="p">,</span> <span class="n">maxSizeDep</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">size</span>
+
+                    <span class="k">if</span> <span class="n">minSizeDep</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Size of the content to parse is smaller than the min expected size of the dependency field&quot;</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="n">results</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dataType</span><span class="p">),</span> <span class="n">BitArray</span><span class="p">):</span>
+                        <span class="n">target_type_aligned_octets</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="k">if</span> <span class="n">target_type_aligned_octets</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">step</span> <span class="o">=</span> <span class="o">-</span><span class="mi">8</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">step</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># In order to support a target that manipulates bitarays</span>
+
+                <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">maxSizeDep</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)),</span> <span class="n">minSizeDep</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+                    <span class="c1"># we create a new parsing path and returns it</span>
+                    <span class="n">newParsingPath</span> <span class="o">=</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    <span class="n">newParsingPath</span><span class="o">.</span><span class="n">addResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">[:</span><span class="n">size</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_addCallBacksOnUndefinedVariables</span><span class="p">(</span><span class="n">newParsingPath</span><span class="p">)</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newParsingPath</span><span class="p">)</span>
+
+        <span class="c1"># If the expectedValue contains data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Expected value to parse: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expectedValue</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()))</span>
+            <span class="k">if</span> <span class="n">content</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">expectedValue</span><span class="p">)]</span> <span class="o">==</span> <span class="n">expectedValue</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;add result: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expectedValue</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()))</span>
+                <span class="n">parsingPath</span><span class="o">.</span><span class="n">addResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">expectedValue</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parsingPath</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="nd">@typeCheck</span><span class="p">(</span><span class="n">ParsingPath</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">domainCMP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">acceptCallBack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">carnivorous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">triggered</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method participates in the abstraction process.</span>
+
+<span class="sd">        It creates a result in the provided path if the remainingData</span>
+<span class="sd">        (or some if it) follows the type definition</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">valueCMP</span><span class="p">(</span><span class="n">parsingPath</span><span class="p">,</span> <span class="n">acceptCallBack</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">computeExpectedValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Compute expected value for Value field &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">))</span>
+
+        <span class="c1"># Check target variable consistency</span>
+        <span class="n">target_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">isVariableInaccessible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;The following variable is inaccessible: &#39;</span><span class="si">{}</span><span class="s2">&#39; for field &#39;</span><span class="si">{}</span><span class="s2">&#39;. This may be because a parent field or variable is preset.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">InaccessibleVariableException</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+            <span class="c1"># Check is target is part of the current symbol or not</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_same_symbol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">hasData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="n">target_data</span> <span class="o">=</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">getData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">hasDataInMemory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="n">target_data</span> <span class="o">=</span> <span class="n">parsingPath</span><span class="o">.</span><span class="n">getDataInMemory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No dependency field specified.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">target_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Check targets consistency</span>
+            <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+                <span class="n">Value</span><span class="o">.</span><span class="n">check_target_consistency</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+            <span class="n">current_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;The following variable has no value: &#39;</span><span class="si">{}</span><span class="s2">&#39; for field &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">current_target</span><span class="p">,</span> <span class="n">current_target</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">RelationDependencyException</span><span class="p">(</span><span class="n">error_message</span><span class="p">,</span> <span class="n">current_target</span><span class="p">)</span>
+
+        <span class="c1"># Check if a callback operation is defined</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__operation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Computed value for </span><span class="si">{}</span><span class="s2">: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()))</span>
+            <span class="k">return</span> <span class="n">target_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Use callback to compute expected value&quot;</span><span class="p">)</span>
+            <span class="n">target_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__operation</span><span class="p">(</span><span class="n">target_data</span><span class="p">,</span> <span class="n">parsingPath</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Computed value for </span><span class="si">{}</span><span class="s2">: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()))</span>
+            <span class="k">return</span> <span class="n">target_data</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The str method.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Value(</span><span class="si">{0}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Value()&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">operation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property (getter.setter  # type: ignore).</span>
+<span class="sd">        Defines the operation to be performed on the found value.</span>
+<span class="sd">        This operation takes the form of a python function that accepts</span>
+<span class="sd">        a single parameter of BitArray type and returns a BitArray.</span>
+
+<span class="sd">        :type: :class:`Callable &lt;collections.abc.Callable&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__operation</span>
+
+    <span class="nd">@operation</span><span class="o">.</span><span class="n">setter</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">operation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">operation</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Operation must be a function&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__operation</span> <span class="o">=</span> <span class="n">operation</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test_value</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    The following example shows how to define a field with a copy of</span>
+<span class="sd">    another field value:</span>
+
+<span class="sd">    &gt;&gt;&gt; from netzob.all import *</span>
+<span class="sd">    &gt;&gt;&gt; data = &quot;john;john!&quot;</span>
+<span class="sd">    &gt;&gt;&gt; f3 = Field(String(nbChars=4), name=&quot;f3&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f1 = Field(Value(f3), name=&quot;f1&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f2 = Field(String(&quot;;&quot;), name=&quot;f2&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; f4 = Field(String(&quot;!&quot;), name=&quot;f4&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; s = Symbol(fields=[f1, f2, f3, f4])</span>
+<span class="sd">    &gt;&gt;&gt; s.abstract(data)  # doctest: +NORMALIZE_WHITESPACE</span>
+<span class="sd">    OrderedDict([(&#39;f1&#39;, b&#39;john&#39;), (&#39;f2&#39;, b&#39;;&#39;), (&#39;f3&#39;, b&#39;john&#39;), (&#39;f4&#39;, b&#39;!&#39;)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+      &copy; Copyright 2011-2022, Frédéric Guihéry, Georges Bossert.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
