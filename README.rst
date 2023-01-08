@@ -123,7 +123,7 @@ You can install Netzob from Pypi (recommended choice)::
 Installing Netzob from sources
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you have retrieve Netzob sources, the installation procedure is::
+If you have retrieved Netzob sources, the installation procedure is::
 
   (venv) $ pip3 install Cython==0.29.32  # Should be manually installed because of setup.py direct dependency
   (venv) $ pip3 install -e .
