@@ -113,7 +113,7 @@ Then, create a virtualenv::
   $ virtualenv venv
   $ source venv/bin/activate
 
-Installing Netzob from Pypi
+Installing Netzob from PyPI
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can install Netzob from Pypi (recommended choice)::
