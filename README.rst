@@ -116,7 +116,7 @@ Then, create a virtualenv::
 Installing Netzob from PyPI
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can install Netzob from Pypi (recommended choice)::
+You can install Netzob from PyPI (recommended choice)::
 
   (venv) $ pip3 install netzob
 
