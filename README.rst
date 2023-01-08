@@ -94,6 +94,9 @@ Get Started with Netzob
 Install it
 ----------
 
+Installing Netzob system dependencies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 First thing to do is to check the version of your python3 interpretor.
 Netzob requires at least Python 3.8::
 
@@ -108,21 +111,29 @@ Then, create a virtualenv::
 
   $ mkdir venv
   $ virtualenv venv
-  $ ./venv/bin/activate
+  $ source venv/bin/activate
 
-You can install Netzob and its dependencies::
+Installing Netzob from PyPI
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can install Netzob from PyPI (recommended choice)::
+
+  (venv) $ pip3 install netzob
+
+Installing Netzob from sources
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you have retrieved Netzob sources, the installation procedure is::
 
   (venv) $ pip3 install Cython==0.29.32  # Should be manually installed because of setup.py direct dependency
   (venv) $ pip3 install -e .
   
-
 API usage
 ---------
 
 Once installed, we recommend to use the Netzob API inside scripts, with the following statement to import Netzob::
 
   from netzob.all import *
-
 
 Start Netzob CLI
 ----------------
