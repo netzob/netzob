@@ -69,7 +69,7 @@ PyObject* PyInit__libScoreComputation(void) {
 //+---------------------------------------------------------------------------+
 //| py_computeSimilarityMatrix : Python wrapper for computeSimilarityMatrix
 //+---------------------------------------------------------------------------+
-PyObject* py_computeSimilarityMatrix(__attribute__((unused))PyObject* self, PyObject* args) {
+PyObject* py_computeSimilarityMatrix(__aPyObject* self, PyObject* args) {
   unsigned int doInternalSlick = 0;
   unsigned int debugMode = 0;
   int i = 0;

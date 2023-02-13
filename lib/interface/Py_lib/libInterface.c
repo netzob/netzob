@@ -129,7 +129,7 @@ int callbackStatus(int stage, double percent, char* message, ...) {
 //+---------------------------------------------------------------------------+
 //| py_deserializeMessages : Python wrapper for deserializeMessages
 //+---------------------------------------------------------------------------+
-PyObject* py_deserializeMessages(__attribute__((unused))PyObject* self, PyObject* args) {
+PyObject* py_deserializeMessages(PyObject* self, PyObject* args) {
   unsigned int nbMessages = (unsigned int) PyObject_Size(args);
   char *format;
   int sizeFormat;
@@ -177,7 +177,7 @@ PyObject* py_deserializeMessages(__attribute__((unused))PyObject* self, PyObject
 //+---------------------------------------------------------------------------+
 //| py_deserializeGroups : Python wrapper for deserializeGroups
 //+---------------------------------------------------------------------------+
-PyObject* py_deserializeGroups(__attribute__((unused))PyObject* self, PyObject* args) {
+PyObject* py_deserializeGroups(PyObject* self, PyObject* args) {
   unsigned int nbGroups = 0;
   char *format;
   int sizeFormat;
@@ -234,7 +234,7 @@ PyObject* py_deserializeGroups(__attribute__((unused))PyObject* self, PyObject* 
 *         push list of symbols in the groups
 *
 *********************************************************************/
-PyObject * py_deserializeSymbols(__attribute__((unused))PyObject* self, PyObject* args) {
+PyObject * py_deserializeSymbols(PyObject* self, PyObject* args) {
 
      deserializeSymbols(args,0);
      return Py_BuildValue("i", 1);
