@@ -38,3 +38,5 @@ doc/documentation/build/
 .idea/
 
 *.dll
+
+*.pyd

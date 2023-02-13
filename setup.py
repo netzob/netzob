@@ -45,11 +45,15 @@ try:
 except Exception:
     def dummy():
         pass
+
+
     test_command = dummy
+
 
 def opj(*args):
     path = os.path.join(*args)
     return os.path.normpath(path)
+
 
 # +----------------------------------------------------------------------------
 # | Compute the compilation arguments given the current compilation profile
@@ -110,6 +114,32 @@ includesPath = opj(libPath, "includes")
 pyIncludesPath = opj(includesPath, "Py_lib")
 includes = [includesPath, pyIncludesPath]
 
+if sys.platform == "win32":
+    os.environ["LIB"] = \
+        r"C:\Python310\libs;" \
+        r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\lib\x64;" \
+        r"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64;" \
+        r"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\ucrt\x64"
+
+    os.environ["PATH"] = os.environ["PATH"] + r";C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\."
+
+    os.environ["INCLUDE"] = \
+        r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt;" \
+        r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared;" \
+        r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um"
+
+    extraCompileArgs = []
+
+    includes += [
+        # r"C:\Python310\include",
+        r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\ATLMFC\include",
+        r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include",
+        r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt",
+        r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\km\crt"
+        r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared",
+        r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um",
+    ]
+
 # Interface path
 interfacePath = opj(libPath, "interface")
 pyInterfacePath = opj(interfacePath, "Py_lib")
@@ -167,14 +197,17 @@ moduleLibInterface = Extension('netzob._libInterface',
                                define_macros=macros,
                                include_dirs=includes)
 
-# Module Relation
-moduleLibRelation = Extension('netzob._libRelation',
-                              extra_compile_args=extraCompileArgs,
-                              sources=[os.path.join(relPath, "relation.c"),
-                                       os.path.join(pyRelPath, "libRelation.c")],
-                              define_macros=macros,
-                              include_dirs=includes,
-                              libraries=["dl"])
+# Can't link dl on Windows
+moduleLibRelation = None
+if sys.platform != "win32":
+    # Module Relation
+    moduleLibRelation = Extension('netzob._libRelation',
+                                  extra_compile_args=extraCompileArgs,
+                                  sources=[os.path.join(relPath, "relation.c"),
+                                           os.path.join(pyRelPath, "libRelation.c")],
+                                  define_macros=macros,
+                                  include_dirs=includes,
+                                  libraries=["dl"])
 
 # Cython extensions
 cythonModules = cythonize(["src/netzob/Fuzzing/Generators/xorshift.pyx"],
@@ -203,6 +236,7 @@ def get_dependencies():
 
     # Temporary deactivate randomstate==1.13.1, which has dependency constraint with numpy==1.14.3
 
+
 extra_dependencies = {
     # 'docs': ['Sphinx==5.3.0'],
 }
@@ -225,15 +259,20 @@ NEWS = open('NEWS.rst', 'rt').read()
 # +----------------------------------------------------------------------------
 # | Definition of Netzob for setup
 # +----------------------------------------------------------------------------
+ext_modules = [moduleLibNeedleman, moduleLibScoreComputation,
+               moduleLibInterface] + cythonModules
+
+if moduleLibRelation is not None:
+    ext_modules.append(moduleLibRelation)
+
 setup(
     name=release.name,
     packages=find_packages(where='src'),
     package_dir={
         "": "src",
     },
-    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation,
-                 moduleLibInterface, moduleLibRelation] + cythonModules,
-    #data_files=data_files,
+    ext_modules=ext_modules,
+    # data_files=data_files,
     scripts=["netzob"],
     install_requires=get_dependencies(),
     extras_require=extra_dependencies,
@@ -263,4 +302,3 @@ setup(
     long_description=README + '\n' + NEWS,
     cmdclass=CMD_CLASS,
 )
-
