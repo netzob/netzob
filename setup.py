@@ -33,7 +33,7 @@ import sys
 import os
 import uuid
 
-from setuptools import setup, Extension, find_packages
+from setuptools import setup, Extension, find_packages, msvc
 from Cython.Build import cythonize
 
 sys.path.insert(0, 'src/')
@@ -115,9 +115,10 @@ pyIncludesPath = opj(includesPath, "Py_lib")
 includes = [includesPath, pyIncludesPath]
 
 if sys.platform == "win32":
-    os.environ["LIB"] = \
+    env = msvc.EnvironmentInfo("64")
+
+    os.environ["LIB"] = ";".join(env.VCLibraries) + ";" + \
         r"C:\Python310\libs;" \
-        r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\lib\x64;" \
         r"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64;" \
         r"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\ucrt\x64"
 
@@ -130,10 +131,7 @@ if sys.platform == "win32":
 
     extraCompileArgs = []
 
-    includes += [
-        # r"C:\Python310\include",
-        r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\ATLMFC\include",
-        r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include",
+    includes += env.VCIncludes + [
         r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt",
         r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\km\crt"
         r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared",
