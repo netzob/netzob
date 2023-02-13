@@ -65,7 +65,7 @@ PyObject* PyInit__libRelation(void) {
  * > [(m0f0, m0f1, ...), (m1f0, m1f1, ...)]
  */
 static PyObject*
-py_find(__aPyObject* self, PyObject* args) {
+py_find(PyObject* self, PyObject* args) {
     PyObject* pListCells;
     PyObject* pCells;
     PyObject* pCell;

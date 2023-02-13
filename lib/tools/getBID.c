@@ -29,7 +29,7 @@
 //+---------------------------------------------------------------------------+
 //| py_getBID : Returns the unique Binary IDentifier
 //+---------------------------------------------------------------------------+
-PyObject * py_getBID(__aPyObject* self, __aPyObject *noarg) {
+PyObject * py_getBID(PyObject* self, PyObject *noarg) {
 	char str_bid[37];
 	#ifdef BID
 		strncpy(str_bid,STR(BID), sizeof str_bid - 1);
