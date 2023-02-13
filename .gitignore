@@ -34,3 +34,7 @@ dist/
 src/netzob/Fuzzing/Generators/xorshift.c
 doc/documentation/build/
 .vagrant/
+
+.idea/
+
+*.dll
