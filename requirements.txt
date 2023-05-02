@@ -13,7 +13,7 @@ cryptography==38.0.4
 Cython==0.29.32
 dnspython==2.2.1
 docutils==0.17.1
-Flask==2.2.2
+Flask==2.3.2
 future==0.18.2
 getmac==0.8.3
 idna==3.4
